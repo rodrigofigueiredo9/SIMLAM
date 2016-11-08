@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:jwolib="http://www.jwolib.com/2006/mxml"
+				xmlns:scripts="com.tecnomapas.scripts.*"
+				xmlns:identificador="tm.componentes.identificador.*"
+				xmlns:componentes="com.tecnomapas.componentes.*"
+				width="1000" close="fechar()" creationComplete="creationCompleteHandler(event)"
+				horizontalScrollPolicy="off" layout="vertical" showCloseButton="true"
+				styleName="opaquePanel">
+	
+	<mx:Style source="assets/styles/paginadorStyle.css"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.Extent;
+			import com.idaf.controllers.DataController;
+			import com.idaf.controllers.DataControllerEvent;
+			import com.idaf.models.Listas;
+			
+			import mx.collections.ArrayCollection;
+			import mx.containers.Canvas;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+
+			[Bindable] public var mapa:Map;
+
+			[Bindable] public var xBack:Number;
+			[Bindable] public var yBack:Number;
+			
+			private var searching:int = 0;
+			private var time:int = getTimer();
+
+
+			private var strOrdenacao:String = "nome_proprietario";
+			private var arrayFiltros:Array = new Array();
+			private var informacaoShape:InformacaoShape = null;
+			private var isZoomComInformacao:Boolean = false;
+
+			private var resultadoListagem:Array;
+
+			private var oldCodFiscal:String;
+			private var oldCodQuadra:String;
+			private var oldCodLote:String;
+			private var oldBairroId:int;
+			private var oldProcesso:String;
+			private var oldProprietario:String;
+			private var oldHeight:Number;
+			
+			public var openAction:Function; 
+			
+			[Bindable] private var segmentos:ArrayCollection = new ArrayCollection();
+			[Bindable] private var municipios:ArrayCollection = new ArrayCollection();
+			[Bindable] private var atividades: ArrayCollection = new ArrayCollection();
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				DataController.getInstance().addEventListener(DataControllerEvent.LISTAS_ATUALIZADAS,handleListasAtualizadas);
+				DataController.getInstance().addEventListener(DataControllerEvent.EMPREENDIMENTOS_ATUALIZADOS,handleEmpreendimentosAtualizados);
+				DataController.getInstance().GetListas();
+				listar();
+			}
+			
+			protected function handleListasAtualizadas(event:DataControllerEvent):void
+			{
+				var result: Listas = event.result[0];
+				
+				this.atividades = new ArrayCollection(result.atividades);
+				this.atividades.addItemAt({id: 0, atividade: "Todos"},0);
+				this.segmentos = new ArrayCollection(result.segmentos);
+				this.segmentos.addItemAt({id: 0, texto: "Todos"},0);
+				this.municipios = new ArrayCollection(result.municipios);
+				this.municipios .addItemAt({id: 0, texto: "Todos"},0);
+				
+				cmbAtividade.enabled = true;
+				cmbSegmento.enabled = true;
+				cmbMunicipio.enabled = true;
+			}
+			
+			private function limpar(event:Event):void{
+				cmbSegmento.selectedIndex = -1;
+				cmbMunicipio.selectedIndex = -1;
+				cmbAtividade.selectedIndex = -1;
+				txtEmpreendimento.text = "";
+				txtPessoa.text = "";
+				txtProcesso.text = "";
+			}
+			
+			public function listar():void
+			{
+				if (!searching)
+					cursorManager.setBusyCursor();
+				
+				searching ++;
+				time = getTimer();
+				
+				var empreendimento: String = txtEmpreendimento.text;
+				var pessoa: String = txtPessoa.text;
+				var processo: String = txtProcesso.text;
+				
+/* 				var segmento: String = "";
+				if (cmbSegmento.selectedItem) {
+					if () {
+						cmbSegmento.selectedItem.texto;	
+					}
+				}
+ */				
+				var segmento: String = (cmbSegmento.selectedItem && cmbSegmento.selectedIndex != 0)?cmbSegmento.selectedItem.texto:"";
+				var municipio: String = (cmbMunicipio.selectedItem && cmbMunicipio.selectedIndex != 0)?cmbMunicipio.selectedItem.texto:"";
+				var atividade: String = (cmbAtividade.selectedItem && cmbAtividade.selectedIndex != 0)?cmbAtividade.selectedItem.atividade:"";
+				
+				DataController.getInstance().GetPontoEmpreendimento(empreendimento,pessoa,processo,segmento,municipio,atividade);
+			}
+
+			protected function handleEmpreendimentosAtualizados(event:DataControllerEvent):void
+			{
+				searching --;
+				if (!searching)
+					cursorManager.removeBusyCursor();
+				
+				this.dgResultado.dataProvider = new ArrayCollection(event.result);
+				
+			}
+			
+			public function zoomEmpreendimento(data:Object, isZoomComInformacao:Boolean = false):void
+			{
+				var dx:Number = data.x;
+				var dy:Number = data.y;
+				var envelope:Extent =  new Extent(dx-1000, dy-1000, dx+1000, dy+1000,mapa.spatialReference);
+
+				if(isZoomComInformacao)
+				{
+					setTimeout(zoomComInformacao, 300, envelope);
+				}
+				else
+				{
+					setTimeout(zoom, 300, envelope);
+				}
+				
+				fechar();
+			}
+			
+			public function zoom(envelope:Extent):void
+			{
+				mapa.extent = envelope;
+			}
+			
+			public function zoomComInformacao(envelope:Extent):void
+			{
+				mapa.extent = envelope;
+				
+				setTimeout(exibirDestaquePosZoom, 600);
+			}
+			
+			private function exibirDestaquePosZoom():void
+			{
+				if(informacaoShape)
+				{
+					informacaoShape.exibirDestaque(true);
+				}
+			}
+            
+			public function info(data:Object):void
+			{
+				var atributos:Array = new Array();
+				
+				if(informacaoShape != null)
+				{
+					informacaoShape.close();
+				}
+				
+				/* 
+				atributos.push(criarAtrituto("Proprietario", data.Proprietario));
+		    	atributos.push(criarAtrituto("Bairro", data.Bairro));
+				atributos.push(criarAtrituto("Classificação Fiscal",data.ClassificacaoFiscal));
+				atributos.push(criarAtrituto("Processo", data.Processo)); 
+				*/
+
+				atributos.push(criarAtributo("Segmento", data.segmento));
+				atributos.push(criarAtributo("Empreendimento", data.denominador));
+				atributos.push(criarAtributo("Município", data.municipio));
+				atributos.push(criarAtributo("Atividade", data.atividade));
+				atributos.push(criarAtributo("Processos", data.processos));
+
+				informacaoShape = new InformacaoShape();
+				informacaoShape.exibirDownloadShape = false;
+				informacaoShape.atributos = atributos;
+				informacaoShape.ordenadas = [data.x,data.y];
+				informacaoShape.title = "INFORMAÇÕES DO EMPREENDIMENTO";
+				informacaoShape.mapa = mapa;
+				informacaoShape.actionVoltar = this.openAction;
+
+				PopUpManager.addPopUp(informacaoShape, parent);
+
+				
+				zoomEmpreendimento(data, true);
+			}
+			
+			private function criarAtributo(nome:String, valor:String):Object
+	    	{
+		        var item:Object = new Object;
+		    	item.atrituto = nome;
+				item.valor = valor;
+				return item;
+	    	}
+			
+			public function fechar():void
+			{
+				efeitoFechar.end();
+				efeitoFechar.play();
+				
+				cursorManager.removeBusyCursor();
+				
+				setTimeout(fecharPosEfeito, efeitoFechar.duration - 20);
+			}
+			
+			private function fecharPosEfeito():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Style>
+		.InfoStyle 
+		{
+			disabledSkin: Embed(source="assets/img/info.png");
+			downSkin: Embed(source="assets/img/info_ativo.png");
+			selected-down-skin: Embed(source="assets/img/info_ativo.png");
+			selected-over-skin: Embed(source="assets/img/info_ativo.png");
+			selected-up-skin: Embed(source="assets/img/info_ativo.png");
+            overSkin: Embed(source="assets/img/info_ativo.png");
+            upSkin: Embed(source="assets/img/info.png");
+		}
+		
+		.ZoomStyle 
+		{
+			disabledSkin: Embed(source="assets/img/lupa.png");
+			downSkin: Embed(source="assets/img/lupa_ativo.png");
+			selected-down-skin: Embed(source="assets/img/lupa_ativo.png");
+			selected-over-skin: Embed(source="assets/img/lupa_ativo.png");
+			selected-up-skin: Embed(source="assets/img/lupa_ativo.png");
+            overSkin: Embed(source="assets/img/lupa_ativo.png");
+            upSkin: Embed(source="assets/img/lupa.png");
+		}
+		
+		.DownloadStyle 
+		{
+			disabledSkin: Embed(source="assets/img/download_shape.png");
+			downSkin: Embed(source="assets/img/download_shape_ativo.png");
+			selected-down-skin: Embed(source="assets/img/download_shape_ativo.png");
+			selected-over-skin: Embed(source="assets/img/download_shape_ativo.png");
+			selected-up-skin: Embed(source="assets/img/download_shape_ativo.png");
+            overSkin: Embed(source="assets/img/download_shape_ativo.png");
+            upSkin: Embed(source="assets/img/download_shape.png");
+		}
+		
+		.PdfStyle 
+		{
+			disabledSkin: Embed(source="assets/img/pdf.png");
+			downSkin: Embed(source="assets/img/pdf_ativo.png");
+			selected-down-skin: Embed(source="assets/img/pdf_ativo.png");
+			selected-over-skin: Embed(source="assets/img/pdf_ativo.png");
+			selected-up-skin: Embed(source="assets/img/pdf_ativo.png");
+            overSkin: Embed(source="assets/img/pdf_ativo.png");
+            upSkin: Embed(source="assets/img/pdf.png");
+		}
+		
+	</mx:Style>
+	
+	<mx:Parallel id="efeitoFechar" target="{this}">
+		<mx:Move duration="600" xTo="{xBack}" yTo="{yBack}"/>
+		<mx:Resize id="expand" duration="600" heightTo="10" target="{this}" widthTo="10"/>
+		<mx:Fade id="fadeOut" alphaFrom="1.0" alphaTo="0.0" duration="600" target="{this}"/>
+	</mx:Parallel>
+
+	<mx:Canvas width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:HBox width="100%" horizontalAlign="center">
+			<jwolib:FieldSet width="100%" borderStyle="solid" borderThickness="2" cornerRadius="4"
+							 paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"
+							 title="Filtros">
+				<mx:VBox width="100%" backgroundColor="0xFFFFFF">
+					<mx:Canvas width="100%" backgroundColor="#EEEEEE">
+						<mx:Label fontWeight="bold" paddingBottom="5" paddingLeft="10" paddingTop="5"
+								  text="Filtrar Por"/>
+					</mx:Canvas>
+					<mx:HBox width="100%" paddingLeft="5">
+						<mx:VBox width="33%" horizontalAlign="left">
+							<mx:Label fontWeight="bold" text="Empreendimento"/>
+							<mx:HBox width="100%">
+								<mx:TextInput id="txtEmpreendimento" width="100%" cornerRadius="2"/>
+							</mx:HBox>
+						</mx:VBox>
+						<mx:VBox width="33%" horizontalAlign="left" verticalAlign="middle">
+							<mx:Label fontWeight="bold" text="Pessoa"/>
+							<mx:HBox width="100%">
+								<mx:TextInput id="txtPessoa" width="100%" cornerRadius="2"/>
+							</mx:HBox>
+						</mx:VBox>
+						<mx:VBox width="33%" horizontalAlign="left">
+							<mx:Label fontWeight="bold" text="Processo"/>
+							<mx:HBox width="100%">
+								<mx:TextInput id="txtProcesso" width="100%" cornerRadius="2"/>
+							</mx:HBox>
+						</mx:VBox>
+					</mx:HBox>
+					<mx:HBox width="100%">
+						<mx:VBox width="33%" horizontalAlign="center">
+							<mx:HBox width="100%">
+								<mx:Label fontWeight="bold" text="Segmento"/>
+							</mx:HBox>
+							<mx:ComboBox id="cmbSegmento" width="300" cornerRadius="2"
+										 dataProvider="{segmentos}" enabled="false"
+										 labelField="texto" prompt="*** Selecione ***"/>
+						</mx:VBox>
+						<mx:VBox width="33%" horizontalAlign="center">
+							<mx:HBox width="100%">
+								<mx:Label fontWeight="bold" text="Município"/>
+							</mx:HBox>
+							<mx:ComboBox id="cmbMunicipio" width="300" cornerRadius="2"
+										 dataProvider="{municipios}" enabled="false"
+										 labelField="texto" prompt="*** Selecione ***"/>
+						</mx:VBox>
+						<mx:VBox width="33%" horizontalAlign="center">
+							<mx:HBox width="100%">
+								<mx:Label fontWeight="bold" text="Atividade"/>	
+							</mx:HBox>
+							<mx:ComboBox id="cmbAtividade" width="300" cornerRadius="2"
+										 dataProvider="{atividades}" enabled="false"
+										 labelField="atividade" prompt="*** Selecione ***"/>
+						</mx:VBox>
+					</mx:HBox>
+					<mx:HBox width="100%" horizontalAlign="right" paddingBottom="10"
+							 paddingRight="15" verticalAlign="middle">
+						<mx:Button label="Buscar" click="listar()"/>
+						<mx:Button label="Limpar Filtro" click="limpar(event)"/>
+					</mx:HBox>
+				</mx:VBox>
+			</jwolib:FieldSet>
+		</mx:HBox>
+	</mx:Canvas>
+	<mx:Canvas width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:VBox width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+			<mx:VBox id="vbResultados" width="100%" height="350" borderStyle="solid"
+					 borderThickness="2" horizontalAlign="center" horizontalScrollPolicy="off"
+					 verticalScrollPolicy="off">
+				<mx:DataGrid id="dgResultado" width="100%" height="100%"
+							 alternatingItemColors="[#EEEEEE, white]" horizontalScrollPolicy="off">
+					<mx:columns>
+						<mx:DataGridColumn width="15" minWidth="15" dataField="id" headerText="ID"/>
+						<mx:DataGridColumn width="100" minWidth="100" dataField="denominador"
+										   headerText="Empreendimento"/>
+						<mx:DataGridColumn width="60" minWidth="60" dataField="segmento"
+										   headerText="Segmento"/>
+						<mx:DataGridColumn width="60" minWidth="60" dataField="atividade"
+										   headerText="Atividade"/>
+						<mx:DataGridColumn width="80" minWidth="60" dataField="municipio"
+										   headerText="Município"/>
+						<mx:DataGridColumn width="50" minWidth="80" dataField="processos"
+										   headerText="Processos - Pessoas"/>
+						<mx:DataGridColumn width="25" minWidth="25" sortable="false"
+										   textAlign="center">
+							<mx:itemRenderer>
+								<mx:Component>
+									<mx:HBox width="20" horizontalAlign="center" horizontalGap="5"
+											 horizontalScrollPolicy="off" paddingLeft="8"
+											 paddingRight="8" verticalScrollPolicy="off">
+									<mx:Button width="20" click="outerDocument.info(data)"
+											   styleName="InfoStyle" toolTip="Informação"/>
+									</mx:HBox>
+								</mx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:VBox>
+		</mx:VBox>
+	</mx:Canvas>
+</mx:TitleWindow>

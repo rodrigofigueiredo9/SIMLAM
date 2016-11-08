@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:local="*"
+			   xmlns:spark="tm.spark.*"
+			   xmlns:esri="http://www.esri.com/2008/ags"
+			   xmlns:componentes="tm.componentes.*"
+			   xmlns:assets="assets.*"
+			   minWidth="700" minHeight="500"
+			   applicationComplete="applicationCompleteHandler(event)"
+			   creationComplete="creationCompleteHandler(event)" currentState="defaultMode"
+			   initialize="initLoad()">
+	<fx:Style source="assets/css/style.css"/>
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.layers.TiledMapServiceLayer;
+			import com.idaf.controllers.DataController;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.rpc.soap.LoadEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import tm.componentes.MapLoader;
+			import tm.componentes.PanelLocalizarCoordenada;
+			
+			[Bindable] 
+			private var tematicoURL	: String;
+			[Bindable] 
+			private var imagemURL	: String;
+			[Bindable] 
+			private var versaoMapa	: String;
+			[Bindable] 
+			private var versaoMXD	: String;
+			
+			private var localizadorCoordenada	: PanelLocalizarCoordenada;
+			
+			[Bindable] 
+			private var wkt1:String = 'PROJCS["SIRGAS 2000 / UTM zone 24S",GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-39],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["Meter",1]]';
+			
+			[Bindable] 
+			private var wkt2: String = 'GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]';
+			
+			private function initLoad():void
+			{
+				var configService:HTTPService = new HTTPService();
+				configService.url = "config.xml";
+				configService.resultFormat = "e4x";
+				configService.addEventListener(ResultEvent.RESULT, onConfigResult);
+				configService.addEventListener(FaultEvent.FAULT, onConfigFault);
+				configService.send();
+				
+				localizadorCoordenada = new PanelLocalizarCoordenada();
+				localizadorCoordenada.mapa = map;
+				
+				ExternalInterface.addCallback("externalLoadMapCoordinates",externalLoadMapCoordinates);
+				
+				loadInitialCoordinates();
+			}
+			
+			private function externalSaveAndClose(): void {
+				if (ExternalInterface.available) {
+					var saveAndClose: String = "saveAndClose";
+					var result: Object = getMapCenterCoordinate();
+					
+					var json:String = JSON.stringify(result);
+
+					ExternalInterface.call(saveAndClose,json);
+				}
+			}
+			
+			private function externalClose(): void {
+				if (ExternalInterface.available) {
+					var justClose: String = "justClose";
+					
+					ExternalInterface.call(justClose);
+				}
+			}
+			
+			private function externalLoadMapCoordinates(easting: String, northing: String,pagemode: String): void {
+				switch(pagemode) {
+					case "createMode":
+					case "editMode":
+						break;
+					case "viewMode":
+						currentState = "viewMode";
+						break;
+				}
+				
+				if (easting != "" && northing != "") {
+					easting = easting.replace(".",",");
+					northing = northing.replace(".",",");
+					
+					localizadorCoordenada.convertAndCenterMap(easting,northing);
+				}
+			}
+			
+			private function loadInitialCoordinates():void
+			{
+				if (ExternalInterface.available) {
+					var loadMapCoordinates: String = "loadMapCoordinates";
+					
+					ExternalInterface.call(loadMapCoordinates);
+				}
+			}
+			
+			
+			public function getMapCenterCoordinate(): Object {
+				var center: Object = new Object();
+				
+				cbTipoCoordenada.selectedIndex = 0;
+				
+				mapCenter.wktOrigem = wkt1;
+				mapCenter.wktDestino = wkt1;
+				mapCenter.showGMSFormat = true;
+				mapCenter.updateCoordinateText();
+				
+				center.easting = mapCenter.EastingCoordinate;
+				center.northing = mapCenter.NorthingCoordinate;
+				
+				return center;
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void {
+				
+			}
+			
+			protected function applicationCompleteHandler(event:FlexEvent):void
+			{
+				var loader:MapLoader = new MapLoader(map);
+				
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, tematicoURL, null, null, "tematico");
+				loader.addLayer(MapLoader.TILEDMAPSERVICELAYER, imagemURL, null, null, "imagem");
+				
+				loader.addEventListener(LoadEvent.LOAD, loadComplete);
+				loader.load();
+			}
+			
+			protected function onConfigResult(event:ResultEvent):void
+			{
+				var configXML:XML = event.result as XML;
+				var serviceList:XMLList = configXML.service;
+				
+				for (var i:int = 0; i < serviceList.length(); i++)
+				{
+					tematicoURL = serviceList[i].mapaTematicoURL;
+					imagemURL 	= serviceList[i].mapaImagemURL;
+					versaoMapa = serviceList[i].versaoMapa;
+					versaoMXD = serviceList[i].versaoMXD;
+					DataController.getInstance().setDataServiceUrl(serviceList[i].webserviceURL);
+				}
+			}
+			
+			protected function onConfigFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+			}
+			
+			protected function loadComplete(event:Event):void
+			{
+				
+			}
+			
+			private function layerShowHandler(event:FlexEvent):void
+			{
+				var tiledLayer:TiledMapServiceLayer = event.target as TiledMapServiceLayer;
+				map.lods = tiledLayer.tileInfo.lods;
+			}
+			
+			protected function openWindow(event:MouseEvent):void
+			{
+				PopUpManager.addPopUp(localizadorCoordenada,this,true);
+				PopUpManager.centerPopUp(localizadorCoordenada);
+			}
+			
+			protected function cbTipoCoordenada_changeHandler(event:IndexChangeEvent):void
+			{
+				switch(event.target.selectedIndex)
+				{
+					case 0:
+						//UTM
+						mapCenter.wktOrigem = wkt1;
+						mapCenter.wktDestino = wkt1;
+						mapCenter.showGMSFormat = true;
+						break;
+					case 1:
+						//GMS
+						mapCenter.wktOrigem = wkt1;
+						mapCenter.wktDestino = wkt2;
+						mapCenter.showGMSFormat = true;
+						break;
+					case 2:
+						//GDEC
+						mapCenter.wktOrigem = wkt1;
+						mapCenter.wktDestino = wkt2;
+						mapCenter.showGMSFormat = false;
+						break;
+				}
+				mapCenter.updateCoordinateText();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="defaultMode"/>
+		<s:State name="viewMode"/>
+	</s:states>
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	
+	<s:controlBarLayout>
+		<s:HorizontalLayout paddingBottom="7" paddingTop="7" verticalAlign="middle"/>
+	</s:controlBarLayout>
+	
+	<s:controlBarContent>
+		<s:HGroup verticalAlign="middle">
+			<s:Label fontSize="16" fontWeight="bold" paddingLeft="7" paddingRight="5"
+					 text="Localização do Empreendimento"/>
+			<componentes:CenterLatLong id="mapCenter" width="100%" map="{map}" showGMSFormat="true"
+									   wktDestino="{wkt1}" wktOrigem="{wkt1}"/>
+			<spark:ComboBoxExt id="cbTipoCoordenada" width="60"
+							   change="cbTipoCoordenada_changeHandler(event)" enabled="true"
+							   selectedIndex="0">
+				<spark:dataProvider>
+					<s:ArrayCollection>
+						<fx:Object label="UTM"/>
+						<fx:Object label="GMS"/>
+						<fx:Object label="GDEC"/>
+					</s:ArrayCollection>
+				</spark:dataProvider>
+			</spark:ComboBoxExt>
+		</s:HGroup>
+		<s:HGroup width="100%" gap="5" horizontalAlign="right" paddingRight="10"
+				  verticalAlign="middle">
+			<s:Button includeIn="defaultMode" label="Localizar" chromeColor="#C9C9C9"
+					  click="openWindow(event)" color="#000000"
+					  toolTip="Localizar por Coordenadas, Logradouro ou Classificação Fiscal"/>
+			<s:Button includeIn="defaultMode" label="Salvar" chromeColor="#C9C9C9"
+					  click="externalSaveAndClose()" color="#000000"
+					  toolTip="Salva a coordenada como a localização do empreendimento"/>
+		</s:HGroup>
+	</s:controlBarContent>
+	
+	<esri:Map id="map" crosshairVisible="false" logoVisible="false">
+		<esri:ArcGISTiledMapServiceLayer visible="true" show="layerShowHandler(event)"
+										 url="{imagemURL}"/>
+	</esri:Map>
+
+	<assets:crosshairFXG horizontalCenter="0" verticalCenter="0"/>
+	
+	<componentes:LatLong left="0" bottom="0" map="{map}" showGMSFormat="true" wktDestino="{wkt1}"
+						 wktOrigem="{wkt1}"/>
+</s:Application>

@@ -1,0 +1,1 @@
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Tecnomapas.EtramiteX.Credenciado.Global" Language="C#" %>

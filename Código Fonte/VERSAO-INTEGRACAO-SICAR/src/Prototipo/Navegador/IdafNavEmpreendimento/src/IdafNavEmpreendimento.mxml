@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:componentes1="com.tecnomapas.componentes.*"
+				xmlns:local="*"
+				xmlns:ferramentas="tm.componentes.ferramentas.*"
+				xmlns:webservices="tm.webservices.*"
+				xmlns:esri="http://www.esri.com/2008/ags"
+				xmlns:componentes="tm.componentes.*"
+				xmlns:componentespa="componentes.*"
+				xmlns:legenda="tm.componentes.legenda.*"
+				xmlns:identificador="tm.componentes.identificador.*"
+				width="100%" height="100%" applicationComplete="init()"
+				backgroundGradientColors="[#4E4D4D, #030303]" initialize="initLoad()"
+				layout="absolute" resize="resizeComponents()">
+	
+	<mx:Style source="assets/styles/defaultCustom.css"/>
+	
+	<mx:Style>
+	
+		.btnExibirCamadasAtivoStyle
+		{
+			downSkin: Embed(source='assets/img/btn_camada_ativa_click.png');
+			overSkin: Embed(source='assets/img/btn_camada_ativa_hover.png');
+			upSkin: Embed(source='assets/img/btn_camada_ativa_normal.png');
+		}
+		
+		.btnExibirCamadasInativoStyle
+		{
+			downSkin: Embed(source='assets/img/btn_camada_click.png');
+			overSkin: Embed(source='assets/img/btn_camada_hover.png');
+			upSkin: Embed(source='assets/img/btn_camada_normal.png');
+		}
+		
+		.boxContainerCamadasStyle
+		{
+			padding-left:9px; 
+			padding-bottom:9px; 
+			padding-right:9px; 
+			padding-top:9px; 
+			background-color:#E3E3E3; 
+			background-alpha:0.7;
+			border-style:solid;
+			border-thickness:1px;
+			border-color:#0B333C;
+		}
+		
+		.btnGerarPdfStyle
+		{
+			downSkin: Embed(source="assets/img/btn_gerar_pdf_ativo.jpg");
+			overSkin: Embed(source="assets/img/btn_gerar_pdf_ativo.jpg");
+			upSkin: Embed(source="assets/img/btn_gerar_pdf_normal.jpg");
+		}
+		
+		.btnCancelarPdfStyle
+		{
+			downSkin: Embed(source="assets/img/btn_cancelar_pdf_ativo.jpg");
+			overSkin: Embed(source="assets/img/btn_cancelar_pdf_ativo.jpg");
+			upSkin: Embed(source="assets/img/btn_cancelar_pdf.jpg");
+		}
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.layers.ArcGISTiledMapServiceLayer;
+			import com.idaf.controllers.DataController;
+			import com.tecnomapas.componentes.Dicas;
+			import com.tecnomapas.componentes.ProgressBarCustom;
+			import com.tecnomapas.navegadores.PrintMap;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Button;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.rpc.soap.LoadEvent;
+			
+			import tm.componentes.MapLoader;
+			
+			private var printMap:PrintMap;
+			
+			private var arrayFerramentas:ArrayCollection = new ArrayCollection();
+			private var canvasLoad:Canvas;
+			
+			public var popUpProgressBar:ProgressBarCustom;
+			
+			[Bindable] private var dicas:Dicas = null;
+			
+			[Bindable] private var tematicoURL:String;
+			[Bindable] private var imagemURL:String;
+			[Bindable] private var empreendimentoURL:String;
+			[Bindable] private var atividadesURL:String;
+			[Bindable] private var projetoAmbientalURL:String;
+			[Bindable] private var limitesURL:String;
+			[Bindable] private var geometryServiceURL:String;
+			[Bindable] private var sistemaAspURL:String;
+			
+			[Bindable] private var versaoMapa:String;
+			[Bindable] private var versaoMXD:String;
+			
+			[Bindable] private var wkt1:String = 'PROJCS["SIRGAS 2000 / UTM zone 24S",GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-39],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["Meter",1]]';
+			[Bindable] private var wkt2:String = 'GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]';
+			
+			[Bindable] private var dicasXTo:Number = 0;
+			[Bindable] private var dicasYTo:Number = 0;
+			[Bindable] private var dicasLargura:Number = 0;
+			[Bindable] private var dicasAltura:Number = 0;
+			
+			
+			private function initLoad():void
+			{
+				var configService:HTTPService = new HTTPService();
+				configService.url = "config.xml";
+				configService.resultFormat = "e4x";
+				configService.addEventListener(ResultEvent.RESULT, onConfigResult);
+				configService.addEventListener(FaultEvent.FAULT, onConfigFault);
+				configService.send();
+			}
+			
+			private function onConfigResult(event:ResultEvent):void
+			{
+				var configXML:XML = event.result as XML;
+				var serviceList:XMLList = configXML.service;
+				
+				for (var i:int = 0; i < serviceList.length(); i++)
+				{
+					tematicoURL = serviceList[i].mapaTematicoURL;
+					imagemURL 	= serviceList[i].mapaImagemURL;
+					atividadesURL 	= serviceList[i].mapaAtividadesURL;
+					projetoAmbientalURL = serviceList[i].mapaProjetoAmbientalURL;
+					limitesURL = serviceList[i].mapaLimitesURL;
+					empreendimentoURL = serviceList[i].mapaEmpreendimentoURL;
+					
+					geometryServiceURL = serviceList[i].geometryServiceURL;
+					sistemaAspURL = serviceList[i].sistemaAspURL;
+					versaoMapa = serviceList[i].versaoMapa;
+					versaoMXD = serviceList[i].versaoMXD;
+					
+					DataController.getInstance().setDataServiceUrl(sistemaAspURL);
+				}
+				
+				listagemDeLotes.urlDownloadShape = sistemaAspURL + "DownloadArquivoShape.aspx?";
+				listagemDeLotes.urlPdfTitulo = sistemaAspURL + "GerarPdfTitulo.aspx?";     	
+			}
+			
+			private function resizeComponents():void
+			{
+				if(listagemDeLotes)
+				{
+					listagemDeLotes.resize();
+					
+					if(popUpProgressBar != null)
+					{
+						PopUpManager.centerPopUp(popUpProgressBar);
+					}
+				}
+			}
+			
+			private function onConfigFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+			}
+			
+			private function init():void
+			{	
+				canvasLoad = new Canvas();
+				canvasLoad.setStyle("backgroundColor", "#FFFFFF");
+				canvasLoad.percentHeight = 100;
+				canvasLoad.percentWidth = 100
+				
+				canvas.addChild(canvasLoad);
+				
+				popUpProgressBar = ProgressBarCustom(PopUpManager.createPopUp(this, ProgressBarCustom, true));
+				popUpProgressBar.styleName = "opaquePanel";
+				popUpProgressBar.progressBar.label = "Carregando...";
+				popUpProgressBar.progressBar.setStyle("color", 0xffffff);
+				popUpProgressBar.progressBar.setStyle("themeColor", parseInt("D9D9D9"));
+				
+				PopUpManager.centerPopUp(popUpProgressBar);
+				
+				arrayFerramentas.addItem(localizadorCoordenada);
+				arrayFerramentas.addItem(listagemDeLotes);
+				arrayFerramentas.addItem(ferramentaMedirPosicao);
+				arrayFerramentas.addItem(identificador);
+				arrayFerramentas.addItem(legenda);
+				
+				ferramentaMedirPosicao.enabled = false;
+				navegador.enabled = false;
+				overview.enabled = false;
+				trocaMapa.enabled = false;
+				identificador.enabled = false;
+				localizadorCoordenada.enabled = false;
+				listagemDeLotes.enabled = false;
+				impressaoPdf.enabled = false;
+				
+				ferramentaMedirPosicao._Ferramentas_Button1.addEventListener(MouseEvent.MOUSE_DOWN, desativarFerramentas);
+				localizadorCoordenada.btnExibirLocalizadorCoordenada.addEventListener(MouseEvent.MOUSE_DOWN, desativarFerramentas);
+				listagemDeLotes.btnListarLotes.addEventListener(MouseEvent.MOUSE_DOWN, desativarFerramentas);
+				identificador.btnExibirConfigIdentificar.addEventListener(MouseEvent.MOUSE_DOWN, desativarFerramentas);
+				legenda._Legenda_Button1.addEventListener(MouseEvent.MOUSE_DOWN, desativarFerramentas);
+				
+				var loader:MapLoader = new MapLoader(mapa);
+				
+				loader.addLayer(MapLoader.TILEDMAPSERVICELAYER, imagemURL, null, null, "imagem");
+				loader.addLayer(MapLoader.TILEDMAPSERVICELAYER, tematicoURL, null, null, "tematico");
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, atividadesURL,  null, null, "atividades");
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, projetoAmbientalURL, null, null, "projetoambiental");
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, limitesURL, null, null, "limites");
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, empreendimentoURL, null, null, "empreendimento");
+				
+				loader.addEventListener(LoadEvent.LOAD, loadComplete);
+				loader.load();
+				
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent);
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativarFerramentas(event);
+						break;
+				}
+			}
+			
+			private function loadComplete(event:Event):void
+			{
+				overview.layers = [new ArcGISTiledMapServiceLayer(tematicoURL)];
+				
+				trocaMapa.load();
+				
+				ferramentaMedirPosicao.enabled = true;
+				navegador.enabled = true;
+				overview.enabled = true;
+				trocaMapa.enabled = true;
+				identificador.enabled = true;
+				localizadorCoordenada.enabled = true;
+				listagemDeLotes.enabled = true;
+				impressaoPdf.enabled = true;
+				
+				localizadorCoordenada.load();
+				
+				listagemDeLotes.load();
+				
+				legenda.layerList = [1,2,3,4,5];
+				//legenda.layerList = [1,2];
+				legenda.load();
+				
+				identificador.panelLoading = popUpProgressBar;
+				identificador.layerIndex = 5;
+				identificador.layerName = 'empreendimento';
+				identificador.load();
+				
+				printMap = new PrintMap(mapa, 540, 480);
+				printMap.styleNameBtnGerarPdf = "btnGerarPdfStyle";
+				printMap.styleNameBtnCancelar = "btnCancelarPdfStyle";
+				arrayFerramentas.addItem(printMap);
+				
+				PopUpManager.removePopUp(popUpProgressBar);
+				
+				canvas.removeChild(canvasLoad);
+			}
+			
+			public function desativarFerramentas(event:Event):void
+			{
+				for(var i:int = 0; i < arrayFerramentas.length; i++)
+				{
+					arrayFerramentas[i].desativar(event);
+				}
+			}
+			
+			private function exibirAreaImpressaoPDF():void
+			{
+				if(!printMap.isHabilitado)
+				{
+					printMap.layersOcultasTexto = (!true)?"":"|0|";
+					printMap.exibirAreaImpressao(true);
+				}
+				else
+				{
+					printMap.exibirAreaImpressao(false);
+				}
+			}
+			
+			private function exibirDicas():void
+			{
+				if(this.dicas == null || !dicas.isHabilitado)
+				{
+					this.dicas = Dicas(PopUpManager.createPopUp(this, Dicas, true));
+					
+					this.dicasLargura = 510;
+					this.dicasAltura = 320;
+					
+					this.dicas.width = 10;
+					this.dicas.height = 10;
+					this.dicas.x = Application.application.width;
+					this.dicas.y = 0;
+					this.dicas.isHabilitado = true; 
+					
+					dicasXTo = (Application.application.width - this.dicasLargura) / 2;
+					dicasYTo = (Application.application.height - this.dicasAltura) / 2;
+					
+					efeitoAbrir.end();
+					efeitoAbrir.play();
+				}
+				else
+				{
+					this.dicas.isHabilitado = false;
+					PopUpManager.removePopUp(this.dicas);
+				}
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Parallel id="efeitoAbrir" duration="800" target="{dicas}">
+		<mx:Move duration="800" xTo="{dicasXTo}" yTo="{dicasYTo}"/>
+		<mx:Resize id="expand1" duration="800" heightTo="{dicasAltura}" target="{dicas}"
+				   widthTo="{dicasLargura}"/>
+		<mx:Fade id="fadeOut" alphaFrom="0.0" alphaTo="1.0" duration="800" target="{dicas}"/>
+	</mx:Parallel>
+	<mx:VBox width="100%" height="100%" paddingLeft="15" paddingRight="15" paddingTop="5">
+		<mx:HBox width="100%">
+			<mx:HBox width="100%">
+				<mx:Image source="assets/img/logomarca.png"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="right">
+				<mx:Button id="btnAjuda" click="exibirDicas()"
+						   downSkin="@Embed(source='assets/img/btn_avisos_ativo.png')"
+						   overSkin="@Embed(source='assets/img/btn_avisos_normal.png')"
+						   upSkin="@Embed(source='assets/img/btn_avisos_normal.png')"/>
+			</mx:HBox>
+		</mx:HBox>
+		<mx:Canvas id="canvas" width="100%" height="100%" backgroundColor="#FFFFFF"
+				   borderStyle="solid" borderThickness="4">
+			<esri:Map id="mapa" backgroundColor="#FFFFFF" horizontalScrollPolicy="off"
+					  logoVisible="false" name="mapaNavegacao" verticalScrollPolicy="off"/>
+			<componentes:TrocaMapa id="trocaMapa" right="5" top="10" map="{mapa}" selectedIndex="1">
+				<componentes:dataProvider>
+					<mx:ArrayCollection>
+						<componentes:ItemTrocaMapa>
+							<componentes:nomeBotao>Imagem</componentes:nomeBotao>
+							<componentes:layers>
+								<mx:ArrayCollection>
+									<mx:String>imagem</mx:String>
+								</mx:ArrayCollection>
+							</componentes:layers>
+						</componentes:ItemTrocaMapa>
+						<componentes:ItemTrocaMapa>
+							<componentes:nomeBotao>Híbrido</componentes:nomeBotao>
+							<componentes:layers>
+								<mx:ArrayCollection>
+									<mx:String>tematico</mx:String>
+									<mx:String>imagem</mx:String>
+								</mx:ArrayCollection>
+							</componentes:layers>
+						</componentes:ItemTrocaMapa>
+						<componentes:ItemTrocaMapa>
+							<componentes:nomeBotao>Temático</componentes:nomeBotao>
+							<componentes:layers>
+								<mx:ArrayCollection>
+									<mx:String>tematico</mx:String>
+								</mx:ArrayCollection>
+							</componentes:layers>
+						</componentes:ItemTrocaMapa>
+					</mx:ArrayCollection>
+				</componentes:dataProvider>
+			</componentes:TrocaMapa>
+			<componentes1:Camada right="5" top="40" map="{mapa}"/>
+			
+			<componentes:Navegador id="navegador" mapa="{mapa}"/>
+			<componentes1:IdentificadorGeometria id="identificador" left="150" top="15" mapa="{mapa}"
+												 styleNamePanel="opaquePanel"
+												 title="IDENTIFICAR GEOMETRIAS"/>
+			
+			<componentes1:FerramentasCustom id="ferramentaMedirPosicao" left="150" top="55"
+											geometryService="{geometryService}" map="{mapa}"
+											orientadoAEsquerda="true" wktDestino="{wkt2}"
+											wktOrigem="{wkt1}"/>
+			<componentes1:LocalizadorCoordenada id="localizadorCoordenada" left="150" top="95"
+												mapa="{mapa}" styleNome="opaquePanel"
+												title="LANÇAR COORDENADA"
+												toolTip="Ferramenta para lançar coordenadas"/>
+			
+			<componentes1:ListagemDeEmpreendimentos id="listagemDeLotes" left="150" top="135"
+													application="{this}" mapa="{mapa}"
+													toolTip="Ferramenta para listar as propriedades cadastradas"/>
+			<mx:Canvas id="impressaoPdf" left="150" top="175">
+				<mx:Button id="btnExibirAreaImpressao" click="exibirAreaImpressaoPDF()"
+						   downSkin="@Embed(source='assets/img/btn_pdf_ativo.png')"
+						   overSkin="@Embed(source='assets/img/btn_pdf_ativo.png')"
+						   toolTip="Ferramenta para selecionar a área que será exibida no PDF"
+						   upSkin="@Embed(source='assets/img/btn_pdf_normal.png')"/>
+			</mx:Canvas>
+			<componentes:Overview id="overview" right="5" bottom="5" iconeADireita="true"
+								  iconeCantoInferior="true" map="{mapa}"/>
+			<componentes:LatLong left="0" bottom="0" map="{mapa}" showGMSFormat="false"
+								 wktDestino="{wkt1}" wktOrigem="{wkt1}"/>
+			<componentes1:LegendaCustom id="legenda" right="5" top="150" bottomDistance="30"
+										colunas="2" map="{mapa}"/>
+		</mx:Canvas>
+		<mx:HBox width="100%">
+			<mx:HBox width="100%" horizontalAlign="left">
+				<mx:Label color="#FFFFFF" fontWeight="bold"
+						  text="{'Versão ' + versaoMapa +  ' | mxd ' + versaoMXD}"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="right">
+				<mx:Label color="#FFFFFF" fontWeight="bold" text="Resolução recomendada 1280x1024"/>
+			</mx:HBox>
+		</mx:HBox>
+	</mx:VBox>
+	
+	<webservices:CustomGeometryService id="geometryService" url="{geometryServiceURL}"/>
+	<componentes:GerenciadorFerramenta id="gerenciador" application="{this}"/>
+	
+</mx:Application>

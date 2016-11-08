@@ -1,0 +1,26 @@
+.btnExibirCamadasAtivoStyle
+{
+	downSkin: Embed(source="img/btn-camadas-ativa-click.png");
+    overSkin: Embed(source="img/btn-camadas-ativa-over.png");
+    upSkin: Embed(source="img/btn-camadas-ativa-normal.png");
+}
+
+.btnExibirCamadasInativoStyle
+{
+	downSkin: Embed(source="img/btn-camadas-click.png");
+    overSkin: Embed(source="img/btn-camadas-over.png");
+    upSkin: Embed(source="img/btn-camadas-normal.png");
+}
+
+.boxContainerCamadasStyle
+{
+	padding-left:9px; 
+	padding-bottom:9px; 
+	padding-right:9px; 
+	padding-top:9px; 
+	background-color:#E3E3E3; 
+	background-alpha:0.7;
+	border-style:solid;
+	border-thickness:1px;
+	border-color:#0B333C;
+}

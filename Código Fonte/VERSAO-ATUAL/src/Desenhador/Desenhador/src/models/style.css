@@ -1,0 +1,13 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+.SelecionarGeometria {
+	disabledSkin: Embed(source="../assets/selecionar_geo_off.png");
+	downSkin: Embed(source="../assets/selecionar_geo_on.png");
+	selected-down-skin: Embed(source="../assets/selecionar_geo_on.png");
+	selected-over-skin: Embed(source="../assets/selecionar_geo_on.png");
+	selected-up-skin: Embed(source="../assets/selecionar_geo_on.png");
+	overSkin: Embed(source="../assets/selecionar_geo_on.png");
+	upSkin: Embed(source="../assets/selecionar_geo_on.png");
+}

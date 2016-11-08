@@ -1,0 +1,50 @@
+/* -----------------------------------------------------------------------
+	Etramite 2010
+	Tecnompas © 2010
+	www.tecnomapas.com.br
+	
+			Baseado em:
+			|	 Blueprint CSS Framework 1.0
+			|	 http://blueprintcss.org
+			|	
+			|	   * Copyright (c) 2007-Present. See LICENSE for more info.
+			|	   * See README for instructions on how to use Blueprint.
+			|	   * For credits and origins, see AUTHORS.
+			|	   * This is a compressed file. See the sources in the 'src' directory.
+
+----------------------------------------------------------------------- */
+
+/* ie.css */
+body {text-align:left;}
+.container {text-align:left;}
+* html legend {margin:0px -8px 16px 0;padding:0;}
+sup {vertical-align:text-top;}
+sub {vertical-align:text-bottom;}
+html>body p code {*white-space:normal;}
+hr {margin:-8px auto 11px;}
+img {-ms-interpolation-mode:bicubic;}
+.clearfix, .container {display:inline-block;}
+* html .clearfix, * html .container {height:1%;}
+
+fieldset {padding-top:0; margin-top: 15px;}
+legend {margin-top:-1.75em; margin-bottom:1em; }/**/
+fieldset.block { overflow: visible;}
+
+/*.fundoModal fieldset {margin-top: -0.5em;}
+.fundoModal legend {margin-top:0px; margin-bottom:0.5em; }*/
+
+textarea {overflow:auto;}
+label {vertical-align:middle;/*top:-0.25em;*/}
+input.text, input.title, textarea {background-color:#fff;border:1px solid #bbb;}
+input.text:focus, input.title:focus {border-color:#666;}
+input.text, input.title, textarea, select { margin:0em 0 0.5em; padding: .1em; }
+input.text { padding-bottom: 1px; }
+input.checkbox, input.radio {top:.25em;}
+form.inline div, form.inline p {vertical-align:middle;}
+form.inline input.checkbox, form.inline input.radio, form.inline input.button, form.inline button {margin:0.5em 0;}
+button, input.button {/*top:0.25em;*/}
+.inlineBotao		{ margin-top: 1.3em; }
+.botaoInserirListaCaixa	{ /*padding-top: 25px;*/ }
+input[type=file]	{ height: 20px }
+
+.loginTxtSenha, .loginTxt {padding-top:7px !important; border:none !important; height:23px !important}

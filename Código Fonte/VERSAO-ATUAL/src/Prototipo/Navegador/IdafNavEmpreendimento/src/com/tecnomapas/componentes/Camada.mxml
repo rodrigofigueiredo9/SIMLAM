@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">	
+				<mx:Button id="btnLigar" click="_visible=!_visible" styleName="camadaVisivel"/>				
+					<mx:Canvas id="cvCamadas" label="Camadas" horizontalCenter="0">
+						<mx:VBox visible="{_visible}" left="25" width="{(_visible)?220:0}"
+								 height="110" horizontalAlign="left" styleName="defaultStyle"
+								 verticalGap="0">
+							<mx:CheckBox id="ckEmpreendimentos" label="Exibir Empreendimentos" click="ligarDesligarServico('empreendimento')"
+										 selected="true"/>
+							<mx:CheckBox id="ckLevantamento" label="Exibir Atividades" click="ligarDesligarServico('atividades')"
+										 selected="true"/>
+							<mx:CheckBox id="ckQueima" label="Exibir Projeto Ambiental" click="ligarDesligarServico('projetoambiental')"
+										 selected="true"/>
+							<mx:CheckBox id="ckSupressao" label="Exibir Limites" click="ligarDesligarServico('limites')"
+										 selected="true"/>
+					</mx:VBox>
+					</mx:Canvas>
+	<mx:Style>
+		.camadaVisivel {
+			downSkin: Embed(source="assets/camadas.png");
+            overSkin: Embed(source="assets/camadas_over.png");
+            upSkin: Embed(source="assets/camadas.png");
+		}
+		
+		.defaultStyle{
+			padding-left:9px; 
+			padding-bottom:9px; 
+			padding-right:9px; 
+			padding-top:9px; 
+			background-color:#E3E3E3; 
+			background-alpha:0.7;
+			border-style:solid;
+			border-thickness:1px;
+			border-color:#0B333C;
+		}
+		.defaultTextStyle{
+			font-weight:bold;
+			font-size:11px;
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.layers.Layer;
+			
+			[Bindable]
+			public var map:Map;
+			[Bindable]
+			private var _visible:Boolean = false;
+	
+			private function ligarDesligarServico(servico:String):void
+			{					
+						var layer:Layer = map.getLayer(servico);
+						if (layer != null)
+							layer.visible = !layer.visible;			
+			}
+		]]>
+	</mx:Script>
+</mx:Canvas>

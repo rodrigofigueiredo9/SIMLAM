@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns="*"
+		   xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:esri="http://www.esri.com/2008/ags"
+		   xmlns:componentes="com.tecnomapas.componentes.*"
+		   width="{pnlConfigIdentificar.width + 60}" height="{pnlConfigIdentificar.height + 40}"
+		   creationComplete="init()">
+	<mx:Style>
+		
+		.selectionRectangleStyle 
+		{ 
+			backgroundAlpha: 0.3; 
+			backgroundColor: #1C1C1C; 
+			borderColor: #FFFFFF; 
+			borderStyle: inset; 
+			borderThickness: 2; 
+			cornerRadius: 0; 
+		}
+		
+		.boxMensagemSemItensStyle
+		{
+			padding-left:8px; 
+			padding-bottom:8px; 
+			padding-right:8px; 
+			padding-top:8px;
+			background-color:#FFFFFF; 
+			background-alpha:0.7;
+			font-weight:bold;
+			border-style:solid;
+			border-thickness:1px;
+			border-color:#E2E2E2;
+		}
+		
+	</mx:Style>  
+	
+	<mx:Script source="../scripts/SelectionRectangle.as"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.Map;
+			import com.esri.ags.events.ZoomEvent;
+			import com.esri.ags.geometry.Extent;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.tasks.IdentifyParameters;
+			import com.esri.ags.tasks.IdentifyResult;
+			import com.esri.ags.tasks.IdentifyTask;
+			import com.idaf.controllers.DataController;
+			import com.idaf.controllers.DataControllerEvent;
+			import com.tecnomapas.Utilitarios.UtilCollections;
+			import com.tecnomapas.events.TreeCheckBoxEvent;
+			import com.tecnomapas.responders.CustomResponder;
+			
+			import mx.binding.utils.ChangeWatcher;
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.AsyncResponder;
+			
+			[Embed(source="assets/img/cursor_borda.gif")]
+            private var cursorSelecaoArea:Class; 
+            private var currentCursorMapaID:Number = 0;
+            private var currentCursorBtnID:Number = 0;
+            private var identifyTask:IdentifyTask = null;    
+            private var identificadorGeometrias:IdentifyParameters = null;
+            private var arrayLayersDetails:ArrayCollection = new ArrayCollection();
+            private var camadasIdentificacao:ArrayCollection = new ArrayCollection();
+            
+            [Bindable] private var informacaoGeometrias:InformacaoGeometriaJSON = null;
+            [Bindable] private var informacaoGeometriasXTo:Number = 0;
+            [Bindable] private var informacaoGeometriasYTo:Number = 0;
+            [Bindable] private var informacaoGeometriasLargura:Number = 0;
+            [Bindable] private var informacaoGeometriasAltura:Number = 0;
+			
+			[Bindable] public var styleNamePanel:String;
+			[Bindable] public var title:String = "";
+			[Bindable] public var layerIndex:int = 0;
+			[Bindable] public var layerName:String = "";
+			[Bindable] public var mapa:Map = null;
+			[Bindable] public var panelLoading:ProgressBarCustom = null;
+            
+            override public function set toolTip(description:String):void 
+			{ 
+				btnExibirConfigIdentificar.toolTip = description;
+			}
+			
+			override public function get toolTip():String 
+			{ 
+				return btnExibirConfigIdentificar.toolTip;
+			}
+			
+			private function init():void
+			{
+				this.informacaoGeometrias = InformacaoGeometriaJSON(PopUpManager.createPopUp(this, InformacaoGeometriaJSON, true));
+				
+				PopUpManager.removePopUp(this.informacaoGeometrias);
+				
+				DataController.getInstance().addEventListener(DataControllerEvent.EMPREENDIMENTOS_IDENTIFICADOS,handleIdentificarEmpreendimentos);
+			}
+			
+			public function load():void
+			{	
+				ChangeWatcher.watch(mapa.layers[layerIndex], "layerInfos", carregarCamadas);
+				
+				this.panelLoading.progressBar.label = "Identificando Geometrias...";
+				
+				this.informacaoGeometrias.mapa = mapa;
+				this.informacaoGeometrias.title = "INFORMAÇÃO DAS GEOMETRIAS";
+				
+				this.identificadorGeometrias = new IdentifyParameters()
+				this.identificadorGeometrias.returnGeometry = true;                
+				this.identificadorGeometrias.tolerance = 3;                
+				this.identificadorGeometrias.width = mapa.width;                
+				this.identificadorGeometrias.height = mapa.height;                
+				this.identificadorGeometrias.mapExtent = mapa.extent; 
+				this.identificadorGeometrias.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+				
+				this.identifyTask = new IdentifyTask(mapa.layers[layerIndex].url);   
+				this.identifyTask.concurrency = "last";  
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar(null);
+						break;
+				}
+			}
+			
+			private function carregarCamadas(event:Event):void
+			{
+				//var layerPropriedades:ArcGISDynamicMapServiceLayer = mapa.layers[layerIndex] as ArcGISDynamicMapServiceLayer;
+				var layerPropriedades:Object = mapa.layers[layerIndex];
+                
+				if(layerPropriedades.layerInfos && arrayLayersDetails.length <= 0)
+				{
+					for (var i:int = 0; i < layerPropriedades.layerInfos.length; i ++)
+					{
+						buscarDetalhesLayer(layerPropriedades.layerInfos[i].id);
+					}
+				}
+			}
+			
+			private function buscarDetalhesLayer(idLayer:int):void
+			{
+				var responder:CustomResponder = new CustomResponder(carregarDetalhesLayer, null, retornarBuscarDetalhesLayer, null);
+                mapa.layers[layerIndex].getLayerDetails(idLayer, responder);
+			}
+			
+			private function retornarBuscarDetalhesLayer(info:Object, params:Array):void
+			{
+				setTimeout(buscarDetalhesLayer, 1000, params[0]);
+			}
+
+			private function carregarDetalhesLayer(data:Object, params:Array):void
+			{
+				arrayLayersDetails.addItem(data);
+				
+				if(mapa.layers[layerIndex].layerInfos.length == arrayLayersDetails.length)
+				{	
+					addLayers();
+					
+					mapa.addEventListener(ZoomEvent.ZOOM_END, addLayers);
+					mapa.getLayer(layerName).addEventListener(FlexEvent.SHOW, addLayers);
+					mapa.getLayer(layerName).addEventListener(FlexEvent.HIDE, addLayers);
+				}
+			}
+			
+			private function podeCarregarLayer(idLayer:int):Boolean
+			{
+				if(arrayLayersDetails)
+				{
+					for(var i:int = 0; i < arrayLayersDetails.length; i++)
+					{
+						if(arrayLayersDetails[i].id == idLayer)
+						{
+							return (arrayLayersDetails[i].minScale == 0 && arrayLayersDetails[i].maxScale == 0) ||
+								   (mapa.scale <= arrayLayersDetails[i].minScale && mapa.scale >= arrayLayersDetails[i].maxScale);
+						}
+					}
+				}
+				
+				return true;
+			}
+			
+			private function carregarSituacaoLayers(xmlCamadas:XMLList, arrayVisibleLayers:ArrayCollection):void
+			{	
+				for each (var xmlNode:XML in xmlCamadas) 
+	        	{	
+	        		arrayVisibleLayers.addItem({layerId: xmlNode.@layerId, selected: xmlNode.@selected, indeterminate: xmlNode.@indeterminate});
+					
+					if(xmlNode.children() != null && xmlNode.children().length() > 0)
+					{
+						carregarSituacaoLayers(xmlNode.children(), arrayVisibleLayers);
+					}
+	        	}
+			}
+			
+			private function buscarSituacaoLayer(layerId:int, arrayVisibleLayers:ArrayCollection):Object
+			{
+				for (var i:int = 0; i < arrayVisibleLayers.length; i ++)
+				{
+					if(arrayVisibleLayers[i].layerId.toString() == layerId.toString())
+					{
+						return arrayVisibleLayers[i];
+					}
+				}
+				
+				return null;
+			}
+			
+			private function verificarItemVisibleLayer(itemVisibleLayer:Object):Object
+			{
+				if(!itemVisibleLayer)
+				{
+					itemVisibleLayer = new Object();
+					itemVisibleLayer.selected = true;
+					itemVisibleLayer.indeterminate = false;
+				}
+				
+				return itemVisibleLayer;
+			}
+			
+			private function addLayers(event:Event = null):void
+			{
+				var layerInfo:Object = null;
+				var isGroupLayers:Boolean = false;
+				var xmlCamadas:XMLListCollection = new XMLListCollection();
+				var arrayVisibleLayers:ArrayCollection = new ArrayCollection();
+				//var layerLote:ArcGISDynamicMapServiceLayer = mapa.layers[layerIndex] as ArcGISDynamicMapServiceLayer;
+				var layerLote:Object = mapa.layers[layerIndex];
+
+				var itemVisibleLayer:Object = null;
+				var countVisibleSubLayers:int = 0;
+				
+				camadasIdentificacao = new ArrayCollection();
+				
+				if(tcbCamadas.dataProvider)
+				{
+					carregarSituacaoLayers(new XMLList(tcbCamadas.dataProvider), arrayVisibleLayers);
+				}
+				
+				if(layerLote.layerInfos && layerLote.layerInfos.length > 0)
+				{
+					for (var i:int = 0; i < layerLote.layerInfos.length; i ++)
+					{
+						if(layerLote.layerInfos[i].parentLayerId < 0)
+						{ 
+							if(podeCarregarLayer(layerLote.layerInfos[i].id))
+							{
+								isGroupLayers = (layerLote.layerInfos[i].subLayerIds && layerLote.layerInfos[i].subLayerIds.length > 0);
+								
+								itemVisibleLayer = verificarItemVisibleLayer(buscarSituacaoLayer(layerLote.layerInfos[i].id, arrayVisibleLayers));
+								
+								var layer:XML = new XML("<node label = '" + layerLote.layerInfos[i].name + "' tooltip='' selected='" + itemVisibleLayer.selected + "' indeterminate='" + itemVisibleLayer.indeterminate + "' layerId='" + layerLote.layerInfos[i].id + "' groupLayers='" + isGroupLayers + "'></node>");
+								
+								if(isGroupLayers)
+								{	
+									countVisibleSubLayers = addSubLayers(layer, layerLote.layerInfos[i].subLayerIds, arrayVisibleLayers, layerLote);
+									
+									if(countVisibleSubLayers == layer.children().length())
+									{
+										layer.@selected = true;
+										layer.@indeterminate = false;
+									}
+									else if (countVisibleSubLayers == 0)
+									{
+										layer.@selected = false;
+										layer.@indeterminate = false;
+									}
+									else
+									{
+										layer.@selected = false;
+										layer.@indeterminate = true;
+									}
+								}
+								else
+								{	
+									if(itemVisibleLayer.selected.toString() == "true")
+									{
+										camadasIdentificacao.addItem({layerId: layerLote.layerInfos[i].id});
+									}
+								}
+								
+								xmlCamadas.addItem(layer);
+							}
+						}
+					}
+					
+					tcbCamadas.dataProvider = xmlCamadas;
+				}
+				
+				vbNenhumItemExibicao.visible = !(xmlCamadas && xmlCamadas.length > 0);
+				vbCamadasExbicao.visible = (xmlCamadas && xmlCamadas.length > 0);
+			}
+			
+			private function addSubLayers(parentLayer:XML, subLayers:Array, arrayVisibleLayers:ArrayCollection, layerLote:Object /*ArcGISDynamicMapServiceLayer*/):int
+			{
+				var layer:XML = null;
+				var layerId:int = 0;
+				var isGroupLayers:Boolean = false;
+				var itemVisibleLayer:Object = null;
+				var countVisibleLayers:int = 0;
+				var countVisibleSubLayers:int = 0;
+				
+				for(var i:int = 0; i < subLayers.length; i++)
+				{	
+					layerId = subLayers[i];
+					
+					if(podeCarregarLayer(layerId))
+					{
+						for(var j:int = 0; j < layerLote.layerInfos.length; j++)
+						{	
+							if(layerId == layerLote.layerInfos[j].id)
+							{
+								isGroupLayers = (layerLote.layerInfos[j].subLayerIds && layerLote.layerInfos[j].subLayerIds.length > 0);
+								
+								itemVisibleLayer = verificarItemVisibleLayer(buscarSituacaoLayer(layerLote.layerInfos[j].id, arrayVisibleLayers));
+								
+								layer = new XML("<node label = '" + layerLote.layerInfos[j].name + "' selected='" + itemVisibleLayer.selected + "' indeterminate='" + itemVisibleLayer.indeterminate + "' layerId='" + layerLote.layerInfos[j].id + "' groupLayers='" + isGroupLayers + "'></node>");
+										
+								if(isGroupLayers)
+								{	
+									countVisibleSubLayers = addSubLayers(layer, layerLote.layerInfos[j].subLayerIds, arrayVisibleLayers, layerLote);
+									
+									if(countVisibleSubLayers == layer.children().length())
+									{
+										layer.@selected = true;
+										layer.@indeterminate = false;
+										
+										countVisibleLayers++;
+									}
+									else if (countVisibleSubLayers == 0)
+									{
+										layer.@selected = false;
+										layer.@indeterminate = false;
+									}
+									else
+									{
+										layer.@selected = false;
+										layer.@indeterminate = true;
+									}
+								}
+								else
+								{
+									if(itemVisibleLayer.selected.toString() == "true")
+									{		
+										countVisibleLayers++;			
+										camadasIdentificacao.addItem({layerId: layerLote.layerInfos[j].id});
+									}
+								}
+								
+								parentLayer.appendChild(layer); 
+								
+								break;
+							}
+						}
+					}
+				}
+				
+				return countVisibleLayers;
+			}
+			
+			private function configLayerIdentificar(event:TreeCheckBoxEvent):void
+			{
+				var item:Object = null;
+				var node:XMLList = new XMLList(event.itemDataSelected);
+				
+				if(node[0].@groupLayers == "false")
+				{		
+					item = new Object();
+					item.layerId = Number(node[0].@layerId);
+						
+					if (event.itemCheckBox.selected)
+					{	
+						camadasIdentificacao.addItem(item);
+					}
+					else
+					{	
+						for(var i:int = 0; i < camadasIdentificacao.length; i++)
+						{
+							if(camadasIdentificacao[i].layerId == item.layerId)
+							{
+								camadasIdentificacao.removeItemAt(i);
+							}
+						}
+					}
+				}
+			}
+			
+			private function configurarSelecionar(event:Event):void
+			{
+				if(!verificarCamadasSelecionadas())
+				{
+					btnSelecionar.selected = false;
+					return;
+				}
+				
+				if(!isEnableSelectionRectangle())
+				{
+					ativarSelecionar();
+				}
+				else
+				{
+					desativarSelecionar();
+				}
+			}
+			
+			private function ativarSelecionar():void
+			{
+				enableSelectionRectangle(idenfiticarGeometrias);
+				mapa.rubberbandZoomEnabled = false;
+				mapa.panEnabled = false;
+				mapa.clickRecenterEnabled = false;
+				mapa.addEventListener(MouseEvent.MOUSE_OVER, setCursorManagerMapa);
+				mapa.addEventListener(MouseEvent.MOUSE_OUT, removeCursorManagerMapa);
+				btnSelecionar.addEventListener(MouseEvent.MOUSE_OVER, setCursorManagerBtn);
+				btnSelecionar.addEventListener(MouseEvent.MOUSE_OUT, removeCursorManagerBtn);
+				
+				currentCursorBtnID = btnSelecionar.cursorManager.setCursor(cursorSelecaoArea);
+			}
+			
+			private function setCursorManagerMapa(event:Event = null):void
+			{
+				if(currentCursorMapaID == 0)
+				{
+					currentCursorMapaID = mapa.cursorManager.setCursor(cursorSelecaoArea);
+				}
+			}
+			
+			private function removeCursorManagerMapa(event:Event = null):void
+			{
+				mapa.cursorManager.removeCursor(currentCursorMapaID);
+				currentCursorMapaID = 0;
+			}
+			
+			private function setCursorManagerBtn(event:Event = null):void
+			{
+				if(currentCursorBtnID == 0)
+				{
+					currentCursorBtnID = btnSelecionar.cursorManager.setCursor(cursorSelecaoArea);
+				}
+			}
+			
+			private function removeCursorManagerBtn(event:Event = null):void
+			{
+				btnSelecionar.cursorManager.removeCursor(currentCursorBtnID);
+				currentCursorBtnID = 0;
+			}
+			
+			private function desativarSelecionar():void
+			{
+				disableSelectionRectangle(idenfiticarGeometrias);
+			    mapa.rubberbandZoomEnabled = true;
+				mapa.panEnabled = true;
+				mapa.clickRecenterEnabled = true;
+				mapa.removeEventListener(MouseEvent.MOUSE_OVER, setCursorManagerMapa);
+				mapa.removeEventListener(MouseEvent.MOUSE_OUT, removeCursorManagerMapa);
+				btnSelecionar.removeEventListener(MouseEvent.MOUSE_OVER, setCursorManagerBtn);
+				btnSelecionar.removeEventListener(MouseEvent.MOUSE_OUT, removeCursorManagerBtn);
+				btnSelecionar.cursorManager.removeCursor(currentCursorBtnID);
+				currentCursorBtnID = 0;
+			}
+			
+			private function idenfiticarGeometrias(event:MouseEvent):void
+			{
+				var layerIds:ArrayCollection = new ArrayCollection();
+				
+				if(!verificarCamadasSelecionadas())
+				{
+					return;
+				}
+				
+				this.x1 = this.x1 + ((Application.application.width - mapa.width) / 2);
+				this.y1 = this.y1 + ((Application.application.height - mapa.height) / 2);
+				
+				this.x2 = this.x2 + ((Application.application.width - mapa.width) / 2);
+				this.y2 = this.y2 + ((Application.application.height - mapa.height) / 2);
+				
+				x2 = (x1 == x2)? x2 += 1 : x2;
+				y2 = (y1 == y2)? y2 += 1 : y2;
+				
+				var coord1:MapPoint = mapa.toMapFromStage(this.x1, this.y1);
+				var coord2:MapPoint = mapa.toMapFromStage(this.x2, this.y2);
+				
+				var valorX:Number = coord2.x - coord1.x;
+	            var valorY:Number = coord2.y - coord1.y;
+	            
+	            var limiteLatitude:Number = 110658.213527635 * 3;
+	            var limiteLongitude:Number = 111298.37356624 * 3;
+	
+	            if (valorX > limiteLongitude || valorY > limiteLatitude)
+	            {
+	            	Alert.show("Área deve ser menor que 3 Graus de distância.");
+	            	return;
+	            }
+	            
+	            if(camadasIdentificacao)
+				{
+					for each(var item:Object in camadasIdentificacao)
+					{
+						layerIds.addItem(item.layerId);
+					}
+				}
+				
+				this.identificadorGeometrias.layerIds = layerIds.toArray();
+				this.identificadorGeometrias.geometry = new Extent(coord1.x, coord1.y, coord2.x, coord2.y);
+				this.identifyTask.execute(identificadorGeometrias, new AsyncResponder(identifyResultFunction, identifyFaultFunction, null)); 
+				
+				if(panelLoading)
+				{
+					PopUpManager.addPopUp(panelLoading, parent, true);
+					PopUpManager.centerPopUp(panelLoading);     
+				}
+			}
+			
+			private function identifyResultFunction(results:Array, clickGraphic:Graphic = null):void            
+			{   
+				if(panelLoading)
+				{
+					PopUpManager.removePopUp(panelLoading); 
+				}
+				          
+				var identifyResult:IdentifyResult = null;
+				var identifyResults:ArrayCollection = new ArrayCollection();  
+				   
+				if (results)
+				{           
+					for(var i:int; i < results.length; i++)
+					{
+						identifyResult = results[i];
+						
+						if(UtilCollections.buscarItemArrayOrdenando(identifyResult.layerId.toString(), "layerId", "layerId", camadasIdentificacao) != null)
+						{
+							identifyResults.addItem(identifyResult);
+						}
+					}
+				} 
+				
+				if(!identifyResults || identifyResults.length <= 0)
+				{
+					Alert.show("Nenhuma geometria foi encontrada nas camadas da área selecionada.", "Aviso");
+					return;
+				}
+				
+				var empreendimentos: Array = [];
+				for each (var result: Object in identifyResults) {
+					empreendimentos.push(result.feature.attributes["EMPREENDIMENTO"]);
+				}
+				
+				DataController.getInstance().IdentificarEmpreendimentos(empreendimentos);
+			}
+			
+			private function handleIdentificarEmpreendimentos(event: DataControllerEvent): void {
+				this.informacaoGeometrias.carregarCampos(event.result);
+				
+				PopUpManager.removePopUp(this.informacaoGeometrias);
+				PopUpManager.addPopUp(informacaoGeometrias, parent, false);
+				
+				informacaoGeometriasXTo = (Application.application.width - this.informacaoGeometrias.width) - ((Application.application.width - this.informacaoGeometrias.width) * 0.1);
+				informacaoGeometriasYTo = (Application.application.height - this.informacaoGeometrias.height) / 2;
+				informacaoGeometriasLargura = this.informacaoGeometrias.width;
+				informacaoGeometriasAltura = this.informacaoGeometrias.height;
+				
+				this.informacaoGeometrias.width = 10;
+				this.informacaoGeometrias.height = 10;
+				this.informacaoGeometrias.x = this.x1;
+				this.informacaoGeometrias.y = this.y1;
+				
+				efeitoAbrir.end();
+				efeitoAbrir.play();
+			}                        
+			
+			private function identifyFaultFunction(error:Object, clickGraphic:Graphic = null):void            
+			{           
+				if(panelLoading)
+				{
+					PopUpManager.removePopUp(panelLoading); 
+				}
+				  
+				Alert.show(String(error), "Identify Error");            
+			}  
+			
+			private function verificarCamadasSelecionadas():Boolean
+			{
+				if(camadasIdentificacao.length <= 0)
+				{
+					Alert.show("Ao menos uma camada deve ser selecionada");
+					return false;
+				}
+				
+				return true;
+			}
+			
+			private function exibirConfigIndentificar(event:Event):void
+			{	
+				hbConfigIdentificar.visible = !hbConfigIdentificar.visible;
+				
+				if(!hbConfigIdentificar.visible)
+				{
+					limparCampos();
+				}
+			}
+			
+			private function limparCampos():void
+			{
+				btnSelecionar.selected = false;
+				
+				if(isEnableSelectionRectangle())
+				{
+					desativarSelecionar();
+				}
+			}
+			
+			public function desativar(event:Event):void
+			{
+				if(!event || event.target.id != btnExibirConfigIdentificar.id)
+				{
+					hbConfigIdentificar.visible = false;
+					limparCampos();
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Parallel id="efeitoAbrir" duration="800" target="{informacaoGeometrias}">
+		<mx:Move duration="800" xTo="{informacaoGeometriasXTo}" yTo="{informacaoGeometriasYTo}"/>
+		<mx:Resize id="expand1" duration="800" heightTo="{informacaoGeometriasAltura}"
+				   target="{informacaoGeometrias}" widthTo="{informacaoGeometriasLargura}"/>
+		<mx:Fade id="fadeOut" alphaFrom="0.0" alphaTo="1.0" duration="800"
+				 target="{informacaoGeometrias}"/>
+	</mx:Parallel>
+	
+	<mx:HBox width="100%" height="100%" horizontalGap="0" verticalGap="0">
+		<mx:HBox width="0%" height="100%">
+			<mx:Button id="btnExibirConfigIdentificar" click="exibirConfigIndentificar(event)"
+					   downSkin="@Embed(source='assets/img/btn_info_hover.png')"
+					   overSkin="@Embed(source='assets/img/btn_info_hover.png')"
+					   upSkin="@Embed(source='assets/img/btn_info_normal.png')"/>
+		</mx:HBox>
+		<mx:HBox id="hbConfigIdentificar" visible="false" width="100%" height="100%"
+				 backgroundAlpha="0.5" backgroundColor="#808285" horizontalAlign="center"
+				 verticalAlign="middle">
+			<mx:Panel id="pnlConfigIdentificar" width="230" height="180" alpha="1"
+					  horizontalScrollPolicy="off" layout="absolute" styleName="{styleNamePanel}"
+					  title="{title}" verticalScrollPolicy="off">
+				<mx:VBox id="vbCamadasExbicao" visible="false" width="100%" height="100%"
+						 horizontalAlign="center" horizontalScrollPolicy="off"
+						 verticalScrollPolicy="off">
+					<componentes:TreeCheckBox id="tcbCamadas" width="100%" height="100%"
+											  alternatingItemColors="[#FFFFFF,#CCCCCC]"
+											  itemChange="{configLayerIdentificar(event)}"
+											  labelField="@label" showRoot="true"/>
+				</mx:VBox>
+				<mx:VBox id="vbNenhumItemExibicao" width="100%" height="100%"
+						 horizontalAlign="center" horizontalScrollPolicy="off"
+						 styleName="boxMensagemSemItensStyle" verticalAlign="middle"
+						 verticalScrollPolicy="off">
+					<mx:Label text="Nenhum item em exibição"/>
+				</mx:VBox>
+				<mx:ControlBar width="100%">   
+					<mx:HBox width="100%" horizontalAlign="center">
+						<mx:Button id="btnSelecionar" click="configurarSelecionar(event)"
+								   downSkin="@Embed(source='assets/img/btn_identificar_over.png')"
+								   overSkin="@Embed(source='assets/img/btn_identificar_over.png')"
+								   upSkin="@Embed(source='assets/img/btn_identificar_normal.png')"/>
+					</mx:HBox>         
+			   </mx:ControlBar>
+			</mx:Panel>
+		</mx:HBox>
+	</mx:HBox>
+</mx:Canvas>

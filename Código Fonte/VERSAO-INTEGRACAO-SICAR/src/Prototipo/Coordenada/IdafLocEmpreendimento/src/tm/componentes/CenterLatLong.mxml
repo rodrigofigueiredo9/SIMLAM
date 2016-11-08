@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  creationComplete="init(event)" horizontalAlign="left"
+		  verticalAlign="middle">
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.events.ExtentEvent;
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.events.FlexEvent;
+			
+			import tm.spatialReference.Coordinate;
+			import tm.spatialReference.CoordinateSystemConverter;
+			
+			public var map:Map;
+			public var wktOrigem:String;
+			public var wktDestino:String;
+			
+			[Bindable]
+			public var showGMSFormat:Boolean=true;
+			public var angularUnitTransformationFactor:Number=1;
+			
+			[Bindable]
+			private var mapVal1:String = "";
+			[Bindable]
+			private var mapVal2:String = "";
+			
+			[Bindable]
+			private var typeVal1:String;
+			[Bindable]
+			private var typeVal2:String;
+			
+			private var cs:CoordinateSystemConverter;
+			
+			public function init(event:FlexEvent):void {
+				map.addEventListener(ExtentEvent.EXTENT_CHANGE,handleExtentChange);
+				
+				updateCoordinateText();
+			}
+			
+			protected function handleExtentChange(event:Event):void
+			{
+				if (map == null || event == null) return;
+				
+				updateCoordinateText();
+			}
+				
+			public function updateCoordinateText(): void {
+				try
+				{
+					cs = new CoordinateSystemConverter(wktOrigem, wktDestino);
+					
+					if (cs.isDestinyGeographic())
+					{
+						typeVal1 = "Lat";
+						typeVal2 = "Lon";
+					}
+					else
+					{
+						typeVal1 = "E";
+						typeVal2 = "N";
+					}
+					
+				}
+				catch (exc:Object){
+					typeVal1 = "X";
+					typeVal2 = "Y";
+				}
+				
+				if (map == null) return;
+				try
+				{
+					const mapPoint:MapPoint = map.extent.center;
+					
+					if (cs){
+						var c:Coordinate= cs.transform(new Coordinate(mapPoint.x,mapPoint.y));
+						
+						if (cs.isDestinyGeographic()){
+							if (showGMSFormat){
+								mapVal1 = gms(c.y*angularUnitTransformationFactor);
+								mapVal2 = gms(c.x*angularUnitTransformationFactor);
+							}
+							else{
+								mapVal1 = c.y.toFixed(6);
+								mapVal2 = c.x.toFixed(6);
+							}							
+						}
+						else{
+							mapVal1 = c.x.toFixed(0);
+							mapVal2 = c.y.toFixed(0);
+						}
+					}
+					else{
+						mapVal1 = mapPoint.x.toFixed(0);
+						mapVal2 = mapPoint.y.toFixed(0);
+					}
+				}
+				catch (exc:Object){
+					mapVal1 = "";
+					mapVal2 = "";
+				}
+			}
+			
+			private function gms(grau:Number):String{
+				var sinal:String= " ";
+				if (grau<0){
+					sinal ="-"
+					grau = -grau;
+				}
+				
+				var g:Number = Math.floor(grau);
+				grau-= g;
+				
+				grau*= 60
+				var m:Number = Math.floor(grau);
+				grau-= m;
+				
+				var s:Number = grau*60;
+				
+				return sinal + ((g<10)?"0":"") + g.toString() +"°"+ ((m<10)?"0":"") + m.toString() + "'" + ((s<10)?"0":"") + s.toFixed(4) + "\"";  
+			}
+			
+			public function get EastingCoordinate(): String {
+				return this.mapVal1.replace(".",",");
+			}
+			
+			public function get NorthingCoordinate(): String {
+				return this.mapVal2.replace(".",",");
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:TextInput selectable="false" editable="false" text="{mapVal1} {typeVal1}" fontWeight="bold"/>
+	<s:TextInput selectable="false" editable="false" text="{mapVal2} {typeVal2}" fontWeight="bold"/>
+</s:HGroup>

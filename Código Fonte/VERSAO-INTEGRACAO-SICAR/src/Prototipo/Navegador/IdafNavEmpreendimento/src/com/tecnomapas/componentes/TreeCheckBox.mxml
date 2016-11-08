@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml" initialize="init()"  updateComplete="initListItems()" itemRenderer="com.tecnomapas.renderers.CheckIndeterminateTreeItemRenderer">
+
+	<mx:Metadata>
+		[Event(name="itemChange", type="com.tecnomapas.events.TreeCheckBoxEvent")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.tecnomapas.events.TreeCheckBoxEvent;
+			import com.tecnomapas.renderers.CheckIndeterminateTreeItemRenderer;
+			import com.tecnomapas.auxiliares.CheckBoxIndeterminate;
+			
+			[Bindable] public var isDefaultSelected:Boolean = false; 
+			
+			private function init():void
+			{
+				if(super.listItems)
+				{
+					var itemRendererAux:CheckIndeterminateTreeItemRenderer;
+					
+					for(var i:int = 0; i < listItems.length; i++)
+					{
+						if(listItems[i].length > 0)
+						{					
+							itemRendererAux = listItems[i][0] as CheckIndeterminateTreeItemRenderer;
+							itemRendererAux.check.selected = isDefaultSelected;
+							
+							var node:XMLList = new XMLList(itemRendererAux.data);
+
+				            node[0].@selectedAnterior = isDefaultSelected;
+				            node[0].@selected = isDefaultSelected;
+						}
+					}
+				}
+			}
+			
+			protected function initListItems():void 
+	        {	
+	            if(super.listItems)
+				{
+					var itemRendererAux:CheckIndeterminateTreeItemRenderer;
+					
+					for(var i:int = 0; i < super.listItems.length; i++)
+					{
+						if(listItems[i].length > 0)
+						{					
+							itemRendererAux = super.listItems[i][0] as CheckIndeterminateTreeItemRenderer;
+							itemRendererAux.addEventListener(TreeCheckBoxEvent.ITEM_CHANGE, onDispatchChange);
+						}
+					}
+				}
+	        }
+	        
+	        public function getItemRendererByProperty(propertyName:String, propertyValue:Object):CheckIndeterminateTreeItemRenderer
+	        {
+	        	if(super.listItems && super.listItems.length > 0)
+	        	{
+	        		for(var i:int = 0; i < super.listItems.length; i++)
+					{
+						if(super.listItems[i] == null || super.listItems[i].length <= 0)
+						{
+							continue;
+						}
+						
+						var node:XMLList = new XMLList(super.listItems[i][0].data);
+					
+						if(node[0].attribute(propertyName).toString() == propertyValue)
+						{
+							return super.listItems[i][0] as CheckIndeterminateTreeItemRenderer; 
+						}
+					}
+	        	}
+	        	
+	        	return null;
+	        }
+			
+			private function onDispatchChange(event:TreeCheckBoxEvent):void
+			{
+				dispatchEvent(new TreeCheckBoxEvent(event.itemDataSelected, event.itemCheckBox, TreeCheckBoxEvent.ITEM_CHANGE));
+			} 
+		]]>
+	</mx:Script>
+	
+</mx:Tree>

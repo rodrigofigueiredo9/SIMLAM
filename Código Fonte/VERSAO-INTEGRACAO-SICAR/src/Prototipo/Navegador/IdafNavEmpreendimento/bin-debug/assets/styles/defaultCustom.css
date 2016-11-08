@@ -1,0 +1,15 @@
+.opaquePanel
+{
+    backgroundColor: #D9D9D9;
+    borderAlpha: 1;
+    borderColor: #D9D9D9;
+    footerColors: #D9D9D9, #000000;
+    headerColors: #000000, #D9D9D9;
+    titleStyleName: "windowStyles";
+}
+
+.windowStyles
+{
+    color: #FFFFFF;
+	font-weight: bold;
+}

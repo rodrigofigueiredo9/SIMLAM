@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="init()" width="100%" minHeight="0" height="20" top="0" >
+	<fx:Script>
+		<![CDATA[
+			import models.ArquivoProcessado;
+			
+			[Bindable]public var item:ArquivoProcessado;
+			
+			override public function set data(value:Object):void 
+			{
+				super.data = value;
+				
+				if (value== null)
+					return;
+				
+				item = data as ArquivoProcessado;	
+				init();
+				
+			}
+			
+			private function init():void
+			{
+				if(item && lblNome)	
+				{
+					lblNome.text =  (item.Texto.toString().length >43 ? item.Texto.toString().substr(0,43) : item.Texto.toString());
+					lblNome.toolTip = item.Texto.toString();
+					currentState = (item.IsPDF ? "pdf":"arquivo");
+				}
+			}
+			
+			private function download():void 
+			{
+				if (ExternalInterface.available) { ExternalInterface.call("onBaixarArquivo("+item.Id.toString()+","+item.Tipo.toString()+")")};
+			}
+			 
+		]]>
+	</fx:Script>
+	
+	<s:BorderContainer id="bdArquivo" height="20" minHeight="0" styleName="fundo_cinza_claro" minWidth="0" borderWeight="0"  width="100%" >
+		<s:HGroup verticalAlign="middle" paddingLeft="20" width="100%" height="100%" minHeight="0">
+			<s:Label id="lblNome" verticalAlign="middle" textAlign="left" height="100%" width="95%" />	
+			<s:HGroup width="5%" horizontalAlign="right">
+				<s:Image id="imgDownloadArquivo"  source="@Embed(source='../assets/download.png')" useHandCursor="true" includeIn="arquivo" height="24"  click="download()"  horizontalAlign="right" verticalAlign="middle" left="2" right="8" />
+				<s:Image id="imgDownloadPDF"  source="@Embed(source='../assets/pdf.png')" useHandCursor="true" includeIn="pdf" height="24"  click="download()"  horizontalAlign="right" verticalAlign="middle" left="2" right="8" />
+			</s:HGroup>
+		</s:HGroup>
+	</s:BorderContainer>
+	<s:states> 
+		<s:State id="arquivo" name="arquivo"/>	
+		<s:State id="pdf" name="pdf"  />
+	</s:states>
+</s:ItemRenderer>

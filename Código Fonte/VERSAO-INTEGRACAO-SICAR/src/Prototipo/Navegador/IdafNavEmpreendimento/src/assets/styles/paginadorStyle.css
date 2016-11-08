@@ -1,0 +1,68 @@
+.btnPaginaStyle
+{
+   cornerRadius: 0;
+   textIndent: 0;
+   highlightAlphas: 0.52, 0.54;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   themeColor: #333333;
+}
+
+.btnPaginaAnteriorStyle
+{
+   cornerRadius: 0;
+   textIndent: 0;
+   highlightAlphas: 0.52, 0.54;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   themeColor: #333333;
+   icon: Embed(source='assets/img/anterior.png');
+}
+
+.btnPaginaProximaStyle
+{
+   cornerRadius: 0;
+   textIndent: 0;
+   highlightAlphas: 0.52, 0.54;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   themeColor: #333333;
+   icon: Embed(source='assets/img/proxima.png');
+}
+
+.btnGrupoBotoesAnteriorStyle
+{
+   cornerRadius: 0;
+   textIndent: 0;
+   highlightAlphas: 0.52, 0.54;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   themeColor: #333333;
+}
+
+.btnGrupoBotoesProximoStyle
+{
+   cornerRadius: 0;
+   textIndent: 0;
+   highlightAlphas: 0.52, 0.54;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   themeColor: #333333;
+}
+
+.cbItensPorPaginaStyle 
+{
+   cornerRadius: 0;
+   highlightAlphas: 0.52, 0.52;
+   fillColors: #999999, #ffffff, #ffffff, #999999;
+   arrowButtonWidth: 17;
+   backgroundAlpha: 1;
+   selectionColor: #cccccc;
+   useRollOver: true;
+   rollOverColor: #999999;
+   themeColor: #000000;
+   openDuration: 10;
+   closeDuration: 10;
+   letterSpacing: 0;
+   dropdownStyleName: "myComboBoxDropDowns";
+}
+
+.myComboBoxDropDowns 
+{
+   cornerRadius: 0;
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" horizontalAlign="center" creationComplete="init()">
+
+	<mx:Metadata>
+		[ExcludeClass]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			[Bindable] public var _intervalos:Array = null;
+			[Bindable] public var styleNameBtnPaginaAnterior:String;
+			[Bindable] public var styleNameBtnPaginaProxima:String;
+			[Bindable] public var styleNameBtnGrupoBotoesAnterior:String;
+			[Bindable] public var styleNameBtnGrupoBotoesProximo:String;
+			
+			private function init():void
+			{
+				if(_intervalos == null)
+				{
+					intervalos = [50, 100, 500];
+				}
+			}
+			
+			public function set intervalos(values:Array):void
+			{
+				if(values != null)
+				{
+					_intervalos = [];
+					
+					for(var i:int = 0; i < values.length; i++)
+					{
+						var item:Object = new Object();
+						item.label = values[i];
+						item.value = values[i];
+						
+						_intervalos.push(item);
+					}
+					
+					cbIntevalo.selectedIndex = 0;
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Button id="btnPaginaAnterior" toggle="false" enabled="false" styleName="{styleNameBtnPaginaAnterior}" useHandCursor="true" buttonMode="true"/>
+	<mx:Button id="btnGrupoBotoesAnterior" toggle="false" label="..."  enabled="false" styleName="{styleNameBtnGrupoBotoesAnterior}" useHandCursor="true" buttonMode="true"/>
+	<mx:HBox id="containerBpIntermadiarios"/>
+	<mx:Button id="btnGrupoBotoesProximo" toggle="false" label="..." enabled="false" styleName="{styleNameBtnGrupoBotoesProximo}" useHandCursor="true" buttonMode="true"/>
+	<mx:Button id="btnPaginaProxima" toggle="false" enabled="false" styleName="{styleNameBtnPaginaProxima}" useHandCursor="true" buttonMode="true"/>
+	<mx:ComboBox id="cbIntevalo" width="60" labelField="label" dataProvider="{_intervalos}"/>
+</mx:HBox>

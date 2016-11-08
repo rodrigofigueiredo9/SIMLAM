@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" height="30" xmlns:esri="http://www.esri.com/2008/ags" initialize="init()">
+	<mx:Style>
+		
+		.selectionRectangleStyle 
+		{ 
+			backgroundAlpha: 0.3; 
+			backgroundColor: #1C1C1C; 
+			borderColor: #FFFFFF; 
+			borderStyle: inset; 
+			borderThickness: 2; 
+			cornerRadius: 0; 
+		}
+		
+	</mx:Style>  
+	
+	<mx:Script source="scripts\\SelectionRectangle.as"/>
+
+	<mx:Script>
+		<![CDATA[
+			import com.tecnomapas.navegadores.PopupWin;
+			import mx.controls.Button;
+			import mx.controls.Alert;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.Map;
+			
+			[Bindable] public var mapa:Map;
+			[Bindable] public var layerList:Array;
+			
+			public var urlDownloadShape:String;
+			private var currentCursorID:int = 0;
+			
+			[Embed(source="img/cursor_borda.gif")]
+            private var cursorSelecaoArea:Class; 
+            
+           	[Bindable] private var descriptionToolTip:String = "";
+			
+			override public function set toolTip(description:String):void 
+			{ 
+				this.descriptionToolTip = description;
+			}
+			
+			private function init():void
+			{
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar(null);
+						break;
+				}
+			}
+			
+			private function configurarSelecionar(event:Event):void
+			{
+				if(!verificarCamadaSelecionada())
+				{
+					btnSelecionar.selected = false;
+					return;
+				}
+				
+				if(!isEnableSelectionRectangle())
+				{
+					ativarSelecionar();
+				}
+				else
+				{
+					desativarSelecionar();
+				}
+			}
+			
+			private function ativarSelecionar():void
+			{
+				enableSelectionRectangle(baixarShape);
+				mapa.rubberbandZoomEnabled = false;
+				mapa.panEnabled = false;
+				mapa.clickRecenterEnabled = false;
+				
+				mapa.addEventListener(MouseEvent.MOUSE_OVER, setCursorManager);
+				mapa.addEventListener(MouseEvent.MOUSE_OUT, removeCursorManager);
+			}
+			
+			private function setCursorManager(event:Event = null):void
+			{
+				if(currentCursorID == 0)
+				{
+					currentCursorID = mapa.cursorManager.setCursor(cursorSelecaoArea);
+				}
+			}
+			
+			private function removeCursorManager(event:Event = null):void
+			{
+				mapa.cursorManager.removeCursor(currentCursorID);
+				currentCursorID = 0;
+			}
+			
+			private function desativarSelecionar():void
+			{
+				disableSelectionRectangle(baixarShape);
+			    mapa.rubberbandZoomEnabled = true;
+				mapa.panEnabled = true;
+				mapa.clickRecenterEnabled = true;
+				mapa.removeEventListener(MouseEvent.MOUSE_OVER, setCursorManager);
+				mapa.removeEventListener(MouseEvent.MOUSE_OUT, removeCursorManager);
+			}
+			
+			private function baixarShape(event:MouseEvent):void
+			{
+				if(!verificarCamadaSelecionada())
+				{
+					return;
+				}
+				
+				this.x1 = this.x1 + ((Application.application.width - mapa.width) / 2);
+				this.y1 = this.y1 + ((Application.application.height - mapa.height) / 2);
+				
+				this.x2 = this.x2 + ((Application.application.width - mapa.width) / 2);
+				this.y2 = this.y2 + ((Application.application.height - mapa.height) / 2);
+				
+				if(x1 == x2)
+				{
+					x2 += 1; 
+				}
+				
+				if(y1 == y2)
+				{
+					y2 += 1; 
+				}
+				
+				var coord1:MapPoint = mapa.toMapFromStage(this.x1, this.y1);
+				var coord2:MapPoint = mapa.toMapFromStage(this.x2, this.y2);
+				
+				var valorX:Number = coord2.x - coord1.x;
+	            var valorY:Number = coord2.y - coord1.y;
+	            
+	            var limiteLatitude:Number = 110658.213527635 * 3;
+	            var limiteLongitude:Number = 111298.37356624 * 3;
+	
+	            if (valorX > limiteLongitude || valorY > limiteLatitude)
+	            {
+	            	Alert.show("Área deve ser menor que 3 Graus de distância.");
+	            	return;
+	            }
+	            
+	            if(urlDownloadShape == "")
+	            {
+	            	Alert.show("A URL para download de shape não foi informada.");
+	            	return;
+	            }
+	            
+	            PopupWin.openWindow(urlDownloadShape + "porSelecao=true&x1=" + coord1.x + "&y1=" + coord1.y + "&x2=" + coord2.x + "&y2=" + coord2.y + "&tipo=" + cbCamadas.selectedItem.IdLayer, "_blank", "height=200,width=260,type=fullWindow");
+			}
+			
+			private function verificarCamadaSelecionada():Boolean
+			{
+				if(cbCamadas.selectedItem.IdLayer <= 0)
+				{
+					Alert.show("A camada deve ser selecionada");
+					return false;
+				}
+				
+				return true;
+			}
+			
+			private function exibirDownloadShape(event:Event):void
+			{	
+				hbDownloadShape.visible = !hbDownloadShape.visible;
+				
+				if(!hbDownloadShape.visible)
+				{
+					limparCampos();
+				}
+			}
+			
+			private function limparCampos():void
+			{
+				btnSelecionar.selected = false;
+				cbCamadas.selectedIndex = 0;
+				
+				if(isEnableSelectionRectangle())
+				{
+					desativarSelecionar();
+				}
+			}
+			
+			public function desativar(event:Event):void
+			{
+				if(!event || event.target.id != btnExibirDownloadShape.id)
+				{
+					hbDownloadShape.visible = false;
+					limparCampos();
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:HBox width="100%" height="100%" verticalGap="0" horizontalGap="0">
+		<mx:HBox width="0%" height="100%">
+			<mx:Button id="btnExibirDownloadShape" toolTip="{descriptionToolTip}" upSkin="@Embed(source='img/download_geometria.png')" downSkin="@Embed(source='img/download_geometria_ativo.png')" overSkin="@Embed(source='img/download_geometria_ativo.png')" click="exibirDownloadShape(event)"/>
+		</mx:HBox>
+		<mx:HBox id="hbDownloadShape" visible="false" width="100%" height="100%" paddingLeft="5" backgroundColor="#808285" backgroundAlpha="0.65" verticalAlign="middle" horizontalAlign="left">
+			<mx:ComboBox id="cbCamadas" labelField="Texto" toolTip="Texto" selectedIndex="0">
+				<mx:dataProvider>
+					<mx:Object Texto="Selecione" IdLayer="0"/>
+					<mx:Object Texto="CAR - Definitivo" IdLayer="1"/>
+	                <mx:Object Texto="CAR - Provisório" IdLayer="2"/>
+	       		</mx:dataProvider>
+			</mx:ComboBox>
+			<mx:HBox horizontalAlign="left" width="30">
+				<mx:Button id="btnSelecionar" toggle="true" upSkin="@Embed(source='img/seta_normal.png')" overSkin="@Embed(source='img/seta_over.png')" downSkin="@Embed(source='img/seta_ativa.png')" selectedDownSkin="@Embed(source='img/seta_ativa.png')" selectedOverSkin="@Embed(source='img/seta_ativa.png')" selectedUpSkin="@Embed(source='img/seta_ativa.png')" click="configurarSelecionar(event)"/>		
+			</mx:HBox>
+		</mx:HBox>
+	</mx:HBox>
+</mx:Canvas>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:buttonext="com.tm.spark.buttonext.*"
+		 height="30" xmlns:esri="http://www.esri.com/2008/ags" currentState="desligado" xmlns:resizabletitlewindow="com.tm.spark.resizabletitlewindow.*">
+	<fx:Metadata>
+		[Event(name="finalizar_geometria", type="controllers.FerramentaGeometriaControllerEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import com.tm.spark.resizabletitlewindow.ResizableTitleWindow;
+			
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.IdentifyControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.DrawEsriEvent;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Feicao;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.Geometria;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+						
+			private var popup:ResizableTitleWindow;
+			public var janela:SelecionarFeicaoJanela;
+			
+			private var completeCallback:Function;
+			
+			[Embed( source="../assets/cursor_selecionar.png")]
+			private var cursorMouse:Class;
+			public var pausado:Boolean = false;
+						
+			public function ligarDesligar():void
+			{
+				if(currentState=="ligado")
+				{
+					if(pausado)
+						pausarDespausar();
+					else
+					{
+						desligar();
+					}
+				}
+				else
+					ligar();
+			}
+			
+			public function ligar():void
+			{
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+			}
+			
+			private function ligarOk(isInit:Boolean=true):void
+			{
+				btnSelecionar.styleName = "selecionar_geo_ativado";
+				if(isInit)
+				{
+					FeicaoSelecionada.getInstance().reiniciarGeometria();
+					FeicoesSelecionadas.getInstance().reiniciarGeometria();
+				}
+				if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria)
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Selecionado,false);
+				else
+					FeicoesSelecionadas.getInstance().desenhar(GeometriaEsriGraphic.Selecionado);
+				
+				currentState = "ligado";		
+				cursorManager.removeAllCursors();
+				cursorManager.setCursor(cursorMouse,1,-1, 0);
+				DesenhadorEsri.getInstance().addEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, resultadoIdentificar);				
+				DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.MBR, GeometriaEsriGraphic.Selecionar);		
+				DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, DesenhadorEsri.getInstance().identificarFeicoes);
+				
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_DOWN, acaoTecladoDown);
+			}	
+			
+			public function desligar():void
+			{ 	
+				currentState = "desligado";
+				DesenhadorEsri.getInstance().removeEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, resultadoIdentificar);
+				DesenhadorEsri.getInstance().ativarDesativarDraw(false, Geometria.MBR, GeometriaEsriGraphic.Selecionar);	
+				DesenhadorEsri.getInstance().map.removeEventListener(DrawEsriEvent.DRAW_END, DesenhadorEsri.getInstance().identificarFeicoes);
+				
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_DOWN, acaoTecladoDown);
+				cursorManager.removeAllCursors();
+				btnSelecionar.styleName = "selecionar_geo";
+			}
+			
+			private function desligarLimpandoSelecao():void
+			{
+				desligar();
+				FeicaoSelecionada.getInstance().limpar(true);
+				FeicoesSelecionadas.getInstance().limpar(true);
+				cursorManager.removeAllCursors();
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = true;				
+			}
+			
+			public function pausarDespausar(deixarHabilitadoSnap:Boolean=false):void
+			{
+				if(ligado)
+				{
+					if(pausado)
+					{
+						ligarOk(false);
+						pausado = false;
+					}
+					else
+					{
+						desligar();
+						btnSelecionar.styleName = "selecionar_geo_ativado";
+						currentState = "ligado";
+						pausado = true;
+					}
+				}
+			}
+			
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{	
+				switch(event.keyCode)
+				{
+					case Keyboard.SHIFT:
+						currentState = "ligado";		
+						cursorManager.removeAllCursors();
+						cursorManager.setCursor(cursorMouse,1,-1, 0);
+						DesenhadorEsri.getInstance().addEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, resultadoIdentificar);				
+						DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.MBR, GeometriaEsriGraphic.Selecionar);		
+						DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, DesenhadorEsri.getInstance().identificarFeicoes);
+					break;
+					case Keyboard.ESCAPE:
+						desligarLimpandoSelecao();
+						fecharJanela();
+						break;
+				}
+			}
+			
+			protected function acaoTecladoDown(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case Keyboard.SHIFT:	
+						currentState = "desligado";
+						DesenhadorEsri.getInstance().removeEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, resultadoIdentificar);
+						DesenhadorEsri.getInstance().ativarDesativarDraw(false, Geometria.MBR, GeometriaEsriGraphic.Selecionar);	
+						DesenhadorEsri.getInstance().map.removeEventListener(DrawEsriEvent.DRAW_END, DesenhadorEsri.getInstance().identificarFeicoes);
+						break;
+				}
+			}
+			
+			//##Correção de urgencia para nao selecionar Areas de abrangencia
+			private function removerAbrangencia(obj:Feicao, index:int, arr:Vector.<Feicao>):Boolean {
+				return obj.layerFeicao.Nome != "Área Abrangência";
+			}
+			
+			private function resultadoIdentificar(event:IdentifyControllerEvent):void
+			{	
+				FeicaoSelecionada.getInstance().limpar(true);
+				FeicoesSelecionadas.getInstance().limpar(true);
+				
+				cursorManager.removeBusyCursor();
+				if(popup)
+				{
+					PopUpManager.removePopUp(popup);
+				}
+				
+				//##Correção de urgencia para nao selecionar Areas de abrangencia
+				if (event && event.listaFeicoes && event.listaFeicoes.length > 0)
+				{
+					event.listaFeicoes = event.listaFeicoes.filter(removerAbrangencia);
+				}
+				
+				if (event && event.listaFeicoes && event.listaFeicoes.length > 0)
+				{	
+					janela = new SelecionarFeicaoJanela();
+				
+					janela.isAddVarias = false;
+					janela.posicao = event.ptCliqueInicial;
+					
+					janela.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanela);
+					FeicoesSelecionadas.getInstance().feicoesSelecionaveis = new Vector.<Feicao>();
+					FeicoesSelecionadas.getInstance().feicoes = event.listaFeicoes;
+					
+					popup = new ResizableTitleWindow();					
+					popup.title="Geometrias Encontradas";
+					popup.styleName = "topo_popup";
+					popup.showCloseButton= true ;
+					popup.showMinimizeButton = true;
+					popup.width = 480;
+					popup.height = 400;					
+					popup.minimizedHeight = 30;
+					popup.minimizedWidth = 130;
+					popup.minimizedX = (this.parentApplication as DesenhadorIdaf).width - 130;
+					popup.minimizedY = (this.parentApplication as DesenhadorIdaf).height - 35;
+					popup.x = (this.parentApplication as DesenhadorIdaf).width - 480;
+					popup.y = (this.parentApplication as DesenhadorIdaf).height - 400;
+					popup.resizeEnabled = true;
+					popup.addEventListener(CloseEvent.CLOSE, fecharJanela); 					
+					PopUpManager.addPopUp(popup, (this.parentApplication as DesenhadorIdaf));	
+					
+					popup.addElement(janela);
+				}			
+			}		
+			
+			public function fecharJanela(event:Event=null):void
+			{
+				
+				if(popup)
+					PopUpManager.removePopUp(popup);		
+				if(currentState == "ligado")
+				{
+					DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.MBR, GeometriaEsriGraphic.Selecionar);
+					DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, DesenhadorEsri.getInstance().identificarFeicoes);
+				}
+				
+			}
+			
+			private function FaultFunction(erro:Object):void
+			{
+				Alert.show(String(erro));				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	
+	<buttonext:ButtonExt right="0" id="btnSelecionar"  click="ligarDesligar()" toolTip="Selecionar" styleName="selecionar_geo" />
+	
+</s:Group>

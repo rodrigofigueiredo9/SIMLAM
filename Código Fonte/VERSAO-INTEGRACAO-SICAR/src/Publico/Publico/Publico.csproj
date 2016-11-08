@@ -1,0 +1,597 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EF613AA9-854D-4D04-ADBA-AC156661CD58}</ProjectGuid>
+    <ProjectTypeGuids>{e53f8fea-eae0-44a6-8774-ffd645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Publico</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Publico</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Interno.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Interno.Model.WebService.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Web.Helpers" />
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Interno.Model">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Interno.Model.Extensoes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
+    <Compile Include="Areas\GeoProcessamento\Controllers\SimuladorGeoController.cs" />
+    <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
+    <Compile Include="Areas\GeoProcessamento\VMSimuladorGeo\ArquivoItemGridVM.cs" />
+    <Compile Include="Areas\GeoProcessamento\VMSimuladorGeo\SimuladorGeoVM.cs" />
+    <Compile Include="Controllers\AgrotoxicosController.cs" />
+    <Compile Include="Controllers\ArquivoController.cs" />
+    <Compile Include="Controllers\HabilitarEmissaoCFOCFOCController.cs" />
+    <Compile Include="Controllers\CARSolicitacaoController.cs" />
+    <Compile Include="Controllers\CredenciadoController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\EmpreendimentoController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ListaController.cs" />
+    <Compile Include="Controllers\PessoaController.cs" />
+    <Compile Include="Controllers\ProfissaoController.cs" />
+    <Compile Include="Controllers\ProtocoloController.cs" />
+    <Compile Include="Controllers\PTVController.cs" />
+    <Compile Include="Controllers\RequerimentoController.cs" />
+    <Compile Include="Controllers\RoteiroController.cs" />
+    <Compile Include="Controllers\TituloController.cs" />
+    <Compile Include="Controllers\TramitacaoController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\SharedVM\AtividadeSolicitadaVM.cs" />
+    <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarAtividadesSolicitadasVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarAtividadesSolicitadasVME.cs" />
+    <Compile Include="ViewModels\VMCARSolicitacao\CARSolicitacaoVM.cs" />
+    <Compile Include="ViewModels\VMCARSolicitacao\ListarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ResponsavelVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\SalvarVM.cs" />
+    <Compile Include="ViewModels\VMHabilitarEmissaoCFOCFOC\HabilitarEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMHabilitarEmissaoCFOCFOC\ListarVM.cs" />
+    <Compile Include="ViewModels\VMPessoa\ContatoVME.cs" />
+    <Compile Include="ViewModels\VMPessoa\PessoaVM.cs" />
+    <Compile Include="ViewModels\VMPessoa\ProfissaoListarVM.cs" />
+    <Compile Include="ViewModels\VMProfissao\ProfissaoListarVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\ListarVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\DocumentoVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\ProcessoVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\RequerimentoVM.cs" />
+    <Compile Include="ViewModels\ViewModelHelper.cs" />
+    <Compile Include="ViewModels\VMPTV\PTVListarVM.cs" />
+    <Compile Include="ViewModels\VMRoteiro\ListarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\AssinanteVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\DestinatarioEmailVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\ListarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\SalvarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\TituloCondicionanteVM.cs" />
+    <Compile Include="ViewModels\VMTramitacao\HistoricoVM.cs" />
+    <Compile Include="ViewModels\VMTramitacao\HistoricoVME.cs" />
+    <Compile Include="ViewModels\VMValidacao\ValidacaoVM.cs" />
+    <Compile Include="Views\Shared\Publico.Master.cs">
+      <DependentUpon>Publico.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Shared\Publico.Master.designer.cs">
+      <DependentUpon>Publico.Master</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\GeoProcessamento\Views\SimuladorGeo\BaseReferenciaPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\SimuladorGeo\EnviarPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\SimuladorGeo\Verificar.aspx" />
+    <Content Include="Areas\GeoProcessamento\Views\SimuladorGeo\VerificarPartial.ascx" />
+    <Content Include="Areas\Navegadores\Mapa\AC_OETags.js" />
+    <Content Include="Areas\Navegadores\Mapa\assets\camadas.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\camadas_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\1_2_06.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\2uparrow.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\3dwarro.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\anterior.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\area.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\area1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\area_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\area_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\avancar_nav.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\baixo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\base.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_avisos_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_avisos_hover.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_avisos_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_ativa_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_ativa_hover.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_ativa_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_hover.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_camada_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_cancelar_pdf.jpg" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_cancelar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_gerar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_gerar_pdf_normal.jpg" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_identificar_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_identificar_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_info_hover.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_info_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_organizar-click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_organizar-normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_organizar-over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_pdf_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_zoom.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\btn_zoom_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\camera.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\carimbo_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\centro.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\cima.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\closeButton.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\Cross_23x23_Preto.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\cursor_borda.gif" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\cursor_editar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\cursor_flood.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\cursor_flood_error.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\decreaseButton.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\dir.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\dir_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\dir_cima_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\down.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\download_geometria.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\download_geometria_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\download_shape.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\download_shape_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\down_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\down_desativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\edit.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\esq.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\esq_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\esq_cima_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\estado.GIF" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\fechar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\fechar_1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\fechar_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\fechar_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\feicoes.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\feicoes_desabilidado.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\ferramenta.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\globe.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\icone_camadas.gif" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\identificar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\identificar_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\identificar_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\increaseButton.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\info.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\informacao-ck.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\informacao-ov.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\informacao.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\information.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\info_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\lancador.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\lancador_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\legenda_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\linha.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\linha1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\linha_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\linha_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\listar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\listar_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\loading.gif" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\Logomarca-SEMASA_peq.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\logomarca.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\lupa.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\lupa_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\luz_desligada.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\luz_ligada.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\mais_1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\maximizar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\maximizar_1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\maximizar_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\maximizar_off.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\maximizar_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\minimizar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\minimizar_1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\minimizar_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\minimizar_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\next.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\norte.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\pdf.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\ponto.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\ponto1.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\ponto_click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\ponto_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\previous.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\proxima.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh-ck-click.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh-ck-normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh-ck-over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh-ck.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh-ov.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\refresh.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\resizeCursor.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\resizeHandler.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\save.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\selecionar.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\selecionar_area_down.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\selecionar_area_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\selecionar_area_up.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\selecionar_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\seta_ativa.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\seta_normal.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\seta_over.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\topo.gif" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\tpo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\transparente.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\up.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\up_ativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\up_desativo.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\voltar_nav.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\zoom-ck.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\zoom-ov.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\zoom.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\_2_06.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\_2_25.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\img\___logomarca.png" />
+    <Content Include="Areas\Navegadores\Mapa\assets\styles\camadasStyle.css" />
+    <Content Include="Areas\Navegadores\Mapa\assets\styles\defaultCustom.css" />
+    <Content Include="Areas\Navegadores\Mapa\assets\styles\gerarPdfStyle.css" />
+    <Content Include="Areas\Navegadores\Mapa\assets\styles\paginadorStyle.css" />
+    <Content Include="Areas\Navegadores\Mapa\config.xml" />
+    <Content Include="Areas\Navegadores\Mapa\history\history.css" />
+    <Content Include="Areas\Navegadores\Mapa\history\history.js" />
+    <Content Include="Areas\Navegadores\Mapa\history\historyFrame.html" />
+    <Content Include="Areas\Navegadores\Mapa\IdafNavEmpreendimento.html" />
+    <Content Include="Areas\Navegadores\Mapa\IdafNavEmpreendimento.swf" />
+    <Content Include="Areas\Navegadores\Mapa\playerProductInstall.swf" />
+    <Content Include="Content\_css\etramite.css" />
+    <Content Include="Content\_css\ie.css" />
+    <Content Include="Content\_css\ie7.css" />
+    <Content Include="Content\_css\jquery-ui-custom.css" />
+    <Content Include="Content\_css\print.css" />
+    <Content Include="Content\_css\screen.css" />
+    <Content Include="Content\_imgLogo\fundo_sobre.png" />
+    <Content Include="Content\_imgLogo\logobrasao.jpg" />
+    <Content Include="Content\_imgLogo\logoestado.png" />
+    <Content Include="Content\_imgLogo\logomarca.png" />
+    <Content Include="Content\_imgLogo\logomarcaComTexto.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_credenciado_pb.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.jpg" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_pb.png" />
+    <Content Include="Content\_imgLogo\logo_entrada.png" />
+    <Content Include="Content\_imgLogo\logo_idaf_versoes.jpg" />
+    <Content Include="Content\_imgLogo\logo_login.png" />
+    <Content Include="Content\_imgLogo\logo_topo.png" />
+    <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
+    <Content Include="Content\_img\bt_fechar_mensagem.gif" />
+    <Content Include="Content\_img\bt_lista_associar.png" />
+    <Content Include="Content\_img\bt_lista_excluir.png" />
+    <Content Include="Content\_img\foto3x4.jpg" />
+    <Content Include="Content\_img\fundo_campo_erro.png" />
+    <Content Include="Content\_img\fundo_mensagen_alerta.gif" />
+    <Content Include="Content\_img\fundo_mensagen_erro.gif" />
+    <Content Include="Content\_img\fundo_mensagen_info.gif" />
+    <Content Include="Content\_img\fundo_mensagen_sucesso.gif" />
+    <Content Include="Content\_img\fundo_modal.png" />
+    <Content Include="Content\_img\icone_alerta.png" />
+    <Content Include="Content\_img\icone_fechar_sessao.png" />
+    <Content Include="Content\_img\icone_filtro_simples.png" />
+    <Content Include="Content\_img\icone_mensagem_alerta.png" />
+    <Content Include="Content\_img\icone_mensagem_erro.png" />
+    <Content Include="Content\_img\icone_mensagem_info.png" />
+    <Content Include="Content\_img\icone_mensagem_sucesso.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_c3c3c3_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e9e9e9_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_c3c3c3_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_f5f5f5_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_ffffff_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_000000_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_1f1f1f_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_222222_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_454545_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_888888_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\_img\loader_branco.gif" />
+    <Content Include="Content\_img\loader_cinza.gif" />
+    <Content Include="Content\_img\lupa_localizar_valor.png" />
+    <Content Include="Content\_img\paginacao_anterior.png" />
+    <Content Include="Content\_img\paginacao_primeira.png" />
+    <Content Include="Content\_img\paginacao_proxima.png" />
+    <Content Include="Content\_img\paginacao_ultima.png" />
+    <Content Include="Content\_img\seta_azul.png" />
+    <Content Include="Content\_img\seta_filtro.png" />
+    <Content Include="Content\_img\seta_tabela_ordem.png" />
+    <Content Include="Content\_img\sprite_bt_lista.png" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\_pdfAspose\PTV.doc" />
+    <None Include="leiame.txt" />
+    <Content Include="Scripts\Agrotoxico\listar.js" />
+    <Content Include="Scripts\Areas\GeoProcessamento\simulador.js" />
+    <Content Include="Scripts\Atividade\atividadesSolicitadas.js" />
+    <Content Include="Scripts\CARSolicitacao\listar.js" />
+    <Content Include="Scripts\Credenciado\chaveReenviar.js" />
+    <Content Include="Scripts\datagrid.js" />
+    <Content Include="Scripts\Documento\documento.js" />
+    <Content Include="Scripts\Empreendimento\listar.js" />
+    <Content Include="Content\_pdfAspose\SolicitacaoInscricaoCAR_Credenciado.docx" />
+    <None Include="Scripts\Lib\JQuery\jquery-1.10.1-vsdoc.js" />
+    <Content Include="Scripts\HabilitarEmissaoCFOCFOC\habilitarEmissaoCFOCFOCListar.js" />
+    <Content Include="Scripts\jquery.cb.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.js" />
+    <Content Include="Scripts\jquery.associar-multiplo.js" />
+    <Content Include="Scripts\jquery.ddl.js" />
+    <Content Include="Scripts\jquery.listar-ajax.js" />
+    <Content Include="Scripts\jquery.listar-grid.js" />
+    <Content Include="Scripts\Lib\date-pt-BR.js" />
+    <Content Include="Scripts\Lib\FileUpload\jquery.fileupload-ui.js" />
+    <Content Include="Scripts\Lib\FileUpload\jquery.fileupload.js" />
+    <Content Include="Scripts\Lib\iehtml5.js" />
+    <Content Include="Scripts\Lib\jquery-globalize\cultures\globalize.culture.pt-BR.js" />
+    <Content Include="Scripts\Lib\jquery-globalize\globalize.js" />
+    <Content Include="Scripts\Lib\jquery-ui-1.10.3.custom.min.js" />
+    <Content Include="Scripts\Lib\jquery.flash.js" />
+    <Content Include="Scripts\Lib\jquery.json-2.2.min.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.min.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate.min.js" />
+    <Content Include="Scripts\Lib\json2.js" />
+    <Content Include="Scripts\Lib\mask\jquery.maskedinput.js" />
+    <Content Include="Scripts\Lib\mask\jquery.maskMoney.js" />
+    <Content Include="Scripts\Lib\mask\TextInputMask.js" />
+    <Content Include="Scripts\Lib\tooltip.js" />
+    <Content Include="Scripts\masterpage.js" />
+    <Content Include="Scripts\mensagem.js" />
+    <Content Include="Scripts\passwordmeter.js" />
+    <Content Include="Scripts\Pessoa\associar.js" />
+    <Content Include="Scripts\Pessoa\pessoa.js" />
+    <Content Include="Scripts\Pessoa\profissao.js" />
+    <Content Include="Scripts\Pessoa\tela.js" />
+    <Content Include="Scripts\Processo\processo.js" />
+    <Content Include="Scripts\Profissao\listar.js" />
+    <Content Include="Scripts\Protocolo\listar.js" />
+    <Content Include="Scripts\PTV\listar.js" />
+    <Content Include="Scripts\Requerimento\atividadeSolicitadaAssociar.js" />
+    <Content Include="Scripts\Roteiro\listar.js" />
+    <Content Include="Scripts\Titulo\listar.js" />
+    <Content Include="Views\Agrotoxico\Index.aspx" />
+    <Content Include="Views\Agrotoxico\ListarFiltros.ascx" />
+    <Content Include="Views\Agrotoxico\ListarResultados.ascx" />
+    <Content Include="Views\Atividade\AsmAtividadesSolicitadas.ascx" />
+    <Content Include="Views\Atividade\AtividadesSolicitadas.aspx" />
+    <Content Include="Views\Atividade\AtividadesSolicitadasPartial.ascx" />
+    <Content Include="Views\CARSolicitacao\Index.aspx" />
+    <Content Include="Views\CARSolicitacao\ListarFiltros.ascx" />
+    <Content Include="Views\CARSolicitacao\ListarResultados.ascx" />
+    <Content Include="Views\Credenciado\CredenciadoPartial.ascx" />
+    <Content Include="Views\Credenciado\Criar.aspx" />
+    <Content Include="Views\Credenciado\OrgaoParceiroConveniado.ascx" />
+    <Content Include="Views\Credenciado\Reenviar.aspx" />
+    <Content Include="Views\Empreendimento\AsmResponsavel.ascx" />
+    <Content Include="Views\Empreendimento\Index.aspx" />
+    <Content Include="Views\Empreendimento\ListarFiltros.ascx" />
+    <Content Include="Views\Empreendimento\ListarResultados.ascx" />
+    <Content Include="Views\Empreendimento\Visualizar.aspx" />
+    <Content Include="Views\Empreendimento\VisualizarPartial.ascx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\HabilitarEmissaoCFOCFOCVisualizar.ascx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\IndexHabilitarEmissaoCFOCFOC.aspx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\ListarFiltrosHabilitarEmissaoCFOCFOC.ascx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\ListarResultadosHabilitarEmissaoCFOCFOC.ascx" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Pessoa\Fisica.ascx" />
+    <Content Include="Views\Pessoa\Juridica.ascx" />
+    <Content Include="Views\Pessoa\PessoaModal.ascx" />
+    <Content Include="Views\Pessoa\PessoaPartial.ascx" />
+    <Content Include="Views\Pessoa\PessoaPartialVisualizar.ascx" />
+    <Content Include="Views\Profissao\ListarFiltros.ascx" />
+    <Content Include="Views\Profissao\ListarResultados.ascx" />
+    <Content Include="Views\Protocolo\CriarRespTecnicoVisualizar.ascx" />
+    <Content Include="Views\Protocolo\DocumentoVisualizar.aspx" />
+    <Content Include="Views\Protocolo\DocumentoVisualizarPartial.ascx" />
+    <Content Include="Views\Protocolo\Index.aspx" />
+    <Content Include="Views\Protocolo\ListarFiltros.ascx" />
+    <Content Include="Views\Protocolo\ListarResultados.ascx" />
+    <Content Include="Views\Protocolo\ProcessoVisualizar.aspx" />
+    <Content Include="Views\Protocolo\ProcessoVisualizarPartial.ascx" />
+    <Content Include="Views\Protocolo\RequerimentoVisualizar.ascx" />
+    <Content Include="Views\PTV\Index.aspx" />
+    <Content Include="Views\PTV\ListarFiltros.ascx" />
+    <Content Include="Views\PTV\ListarResultados.ascx" />
+    <Content Include="Views\Roteiro\Index.aspx" />
+    <Content Include="Views\Roteiro\ListarFiltros.ascx" />
+    <Content Include="Views\Roteiro\ListarResultados.ascx" />
+    <Content Include="Views\Shared\AtividadeSolicitada.ascx" />
+    <Content Include="Views\Shared\AtividadeSolicitadaVisualizar.ascx" />
+    <Content Include="Views\Shared\Mensagem.ascx" />
+    <Content Include="Views\Shared\ModalDialog.ascx" />
+    <Content Include="Views\Shared\Paginacao.ascx" />
+    <Content Include="Views\Titulo\Index.aspx" />
+    <Content Include="Views\Titulo\TituloListarFiltros.ascx" />
+    <Content Include="Views\Titulo\TituloListarResultados.ascx" />
+    <Content Include="Views\Tramitacao\HistoricoPartial.ascx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Publico.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Publico.Model\Publico.Model.csproj">
+      <Project>{814B0933-8D99-4F22-8EB2-2437392DF7AB}</Project>
+      <Name>Publico.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\GeoProcessamento\Views\Shared\" />
+    <Folder Include="Areas\Navegadores\Mapa\img\" />
+    <Folder Include="Areas\Navegadores\Mapa\styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\GeoProcessamento\Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Areas\Navegadores\Mapa\assets\img\Thumbs.db" />
+    <Content Include="Content\_pdfAspose\Roteiro.doc" />
+    <Content Include="Content\_pdfAspose\Requerimento.doc" />
+    <Content Include="Content\_zipModeloGeo\ModeloShape.zip" />
+    <Content Include="Content\_manuais\ManualElaboracaoProjetoGeografico-Simulador.pdf" />
+    <Content Include="Content\_pdfAspose\SolicitacaoInscricaoCAR.docx" />
+    <None Include="Properties\PublishProfiles\versao.pubxml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>22190</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

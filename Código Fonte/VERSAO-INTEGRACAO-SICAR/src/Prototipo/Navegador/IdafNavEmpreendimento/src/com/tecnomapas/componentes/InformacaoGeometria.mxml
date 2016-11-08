@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:esri="http://www.esri.com/2008/ags"
+				width="360" height="500" maxHeight="{mapa.height}" close="close()"
+				creationComplete="init()" layout="vertical" paddingBottom="3" paddingLeft="3"
+				paddingRight="3" paddingTop="3" showCloseButton="true" styleName="opaquePanel">
+
+	<mx:Script>
+		<![CDATA[
+			import com.tecnomapas.Utilitarios.UtilCollections;
+			
+			import com.esri.ags.Graphic;
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.Extent;
+			import com.esri.ags.geometry.Geometry;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.symbol.SimpleFillSymbol;
+			
+			import mx.collections.ArrayCollection;
+			import mx.containers.Canvas;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import mx.events.ResizeEvent;
+			import mx.managers.PopUpManager;
+			
+			private var idenfityResults:Array = null;
+			
+			[Bindable] public var mapa:Map;
+			
+			[Bindable] private var camadas:ArrayCollection = null;
+			[Bindable] private var resultadosLayer:ArrayCollection = null;
+			[Bindable] private var atributos:ArrayCollection = null;
+
+			private var graphicsLayer:GraphicsLayer = null;
+			private var resultGraphic:Graphic = null;
+			
+			private function init():void
+			{	
+				this.graphicsLayer = new GraphicsLayer();
+				
+				Application.application.addEventListener(ResizeEvent.RESIZE, movePopUp);
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						close();
+						break;
+				}
+			}
+			
+			public function carregarCampos(idenfityResults:Array):void
+			{
+				this.idenfityResults = idenfityResults;
+				this.graphicsLayer.clear();
+				
+				if(idenfityResults)
+				{
+					camadas = new ArrayCollection();
+					camadas.addItemAt({layerId:-1, layerName:"Selecione"}, 0);
+					
+					for(var i:int = 0; i < idenfityResults.length; i++)
+					{
+						if(UtilCollections.buscarItemArrayOrdenando(idenfityResults[i].layerId, "layerId", "layerId", camadas) == null)
+						{							
+							camadas.addItem({layerId: idenfityResults[i].layerId, layerName: idenfityResults[i].layerName});
+						}
+					}
+					
+					resultadosLayer = new ArrayCollection();
+					resultadosLayer.addItem({layerId: -1, value: "Selecione"});
+					
+					cbCodigo.enabled = false;
+					
+					if(!this.mapa.contains(this.graphicsLayer))
+					{
+						this.mapa.addLayer(this.graphicsLayer);
+					}
+				}
+				
+				this.atributos = new ArrayCollection();
+				
+				ckbExibirDestaque.enabled = false;
+				
+				cbCamada.selectedIndex = 1;
+				buscarResultadosLayer();
+				cbCodigo.selectedIndex = 1;
+				carregarResultado();
+			}
+			
+			public function close():void
+			{				
+				this.mapa.removeLayer(this.graphicsLayer);
+				
+				PopUpManager.removePopUp(this);
+			}
+			
+			public function movePopUp(event:Event = null):void
+			{
+				if(parent)
+				{
+					var xTo:Number = (parent.stage.width - this.width) - ((parent.stage.width - this.width) * 0.1);
+					var yTo:Number = (parent.stage.height - this.height) / 2;
+					
+					move(xTo, yTo);
+				}
+			}
+			
+			private function buscarResultadosLayer():void
+			{	
+				resultadosLayer = new ArrayCollection();
+				
+				this.atributos = new ArrayCollection();
+				
+				resultadosLayer.addItem({layerId: -1, value: "Selecione"});
+				
+				if(idenfityResults && cbCamada.selectedItem.layerId > -1)
+				{	
+					for(var i:int = 0; i < idenfityResults.length; i++)
+					{
+						if(idenfityResults[i].layerId == cbCamada.selectedItem.layerId)
+						{
+							resultadosLayer.addItem(idenfityResults[i]);
+						}
+					}
+				}
+				
+				cbCodigo.enabled = (idenfityResults && cbCamada.selectedItem.layerId > -1);
+			}
+			
+			private function carregarResultado():void
+			{
+				var item:Object = null;
+				var attributes:Object = null;
+				
+				this.resultGraphic = null;
+				this.atributos = new ArrayCollection();
+				this.graphicsLayer.clear();
+				
+				if(cbCodigo.selectedIndex > 0)
+				{
+					attributes = cbCodigo.selectedItem.feature.attributes;
+					
+					for(var atributo:String in attributes)
+					{	
+						atributos.addItem({atributo:atributo, valor:(attributes[atributo] != "Null")? attributes[atributo] : "-"});
+					}
+					
+					this.resultGraphic = cbCodigo.selectedItem.feature;
+					
+					if(this.resultGraphic.geometry.type == Geometry.POLYGON)
+					{
+						this.resultGraphic.symbol = sfsDestaqueGeometria;
+						
+						this.graphicsLayer.add(this.resultGraphic);
+					}
+				}
+				
+				ckbExibirDestaque.enabled = (cbCodigo.selectedIndex > 0);
+				ckbExibirDestaque.selected = ckbExibirDestaque.enabled;
+			}
+			
+			private function exibirDestaque():void
+			{
+				if(resultGraphic)
+				{
+					if(ckbExibirDestaque.selected)
+					{
+						this.graphicsLayer.add(resultGraphic);
+					}
+					else
+					{
+						this.graphicsLayer.remove(this.resultGraphic);
+					}
+				}
+			}
+			
+			private function zoomGeometria():void
+			{	
+				if(cbCodigo.selectedItem.layerId < 0)
+				{
+					Alert.show("A geometria deve ser selecionada.");
+					return;
+				}
+				
+				var xmin:Number = cbCodigo.selectedItem.feature.geometry.extent.xmin;
+				var ymin:Number = cbCodigo.selectedItem.feature.geometry.extent.ymin;
+				var xmax:Number = cbCodigo.selectedItem.feature.geometry.extent.xmax;
+				var ymax:Number = cbCodigo.selectedItem.feature.geometry.extent.ymax;
+				
+				var envelope:Extent = new Extent(xmin, ymin, xmax, ymax);
+				
+				setTimeout(setEnvelope,300, envelope);
+			}
+			
+			private function setEnvelope(envelope:Extent):void
+			{
+				mapa.extent = envelope;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="100%" height="100%" paddingBottom="3" paddingLeft="3" paddingRight="3"
+			 paddingTop="3">
+		<mx:Canvas width="100%" height="100%" borderColor="#000000" borderStyle="solid"
+				   cornerRadius="4">
+			<mx:VBox width="100%" height="100%" paddingBottom="6" paddingLeft="6" paddingRight="6"
+					 paddingTop="6">
+				<mx:Label visible="false" fontWeight="bold" includeInLayout="false" text="Camada"/>
+				<mx:ComboBox id="cbCamada" visible="false" width="100%"
+							 change="buscarResultadosLayer()" dataProvider="{camadas}"
+							 includeInLayout="false" labelField="layerName"/>
+				<mx:Label fontWeight="bold" text="Identificador"/>
+				<mx:ComboBox id="cbCodigo" width="100%" change="carregarResultado()"
+							 dataProvider="{resultadosLayer}" labelField="value"/>
+				<mx:DataGrid id="dgAtritutos" width="100%" height="100%"
+							 alternatingItemColors="[#EEEEEE, white]" borderColor="#000000"
+							 borderStyle="solid" borderThickness="2" dataProvider="{atributos}"
+							 editable="false" rowHeight="20" showHeaders="true"
+							 verticalScrollPolicy="on">
+					<mx:columns>
+						<mx:DataGridColumn width="120" headerText="Atributo" textAlign="left">
+							<mx:itemRenderer>
+								<mx:Component>
+									<mx:HBox width="100%" paddingLeft="3" paddingRight="3">
+										<mx:Text fontWeight="bold" text="{data.atributo}"
+												 toolTip="{data.atributo}"/>
+									</mx:HBox>
+								</mx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+						<mx:DataGridColumn width="150" headerText="Valor" textAlign="left">
+							<mx:itemRenderer>
+								<mx:Component>
+									<mx:HBox width="100%" paddingLeft="3" paddingRight="3">
+										<mx:Text text="{data.valor}"
+												 textAlign="{(data.valor == '-')? 'center': 'left'}"
+												 toolTip="{data.valor}"/>
+									</mx:HBox>
+								</mx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+					</mx:columns>
+				</mx:DataGrid>
+				<mx:HBox width="100%">
+					<mx:HBox width="100%" horizontalAlign="left">
+						<mx:CheckBox id="ckbExibirDestaque" visible="false" label="Exibir destaque"
+									 change="exibirDestaque()" enabled="false" fontWeight="bold"
+									 includeInLayout="false" selected="true"/>
+					</mx:HBox>
+					<mx:HBox width="100%" horizontalAlign="right">
+						<mx:Button id="btnZoomGeometria" visible="false" click="zoomGeometria()"
+								   downSkin="@Embed(source='assets/img/btn_zoom_ativo.png')"
+								   includeInLayout="false"
+								   overSkin="@Embed(source='assets/img/btn_zoom_ativo.png')"
+								   upSkin="@Embed(source='assets/img/btn_zoom.png')"/>
+					</mx:HBox>
+				</mx:HBox>
+				
+			</mx:VBox>
+		</mx:Canvas>
+	</mx:VBox>
+	<mx:ControlBar width="100%">
+		<mx:HBox width="100%" horizontalAlign="center">
+			<mx:Button label="Fechar" click="close()"/>
+		</mx:HBox>
+	</mx:ControlBar>
+	<esri:SimpleFillSymbol id="sfsDestaqueGeometria" alpha="1" color="#002ef0"/>      
+</mx:TitleWindow>
+

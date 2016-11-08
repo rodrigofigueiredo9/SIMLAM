@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:local="*"
+			   xmlns:spark="tm.spark.*"
+			   xmlns:esri="http://www.esri.com/2008/ags"
+			   xmlns:componentes="tm.componentes.*"
+			   xmlns:assets="assets.*"
+			   minWidth="700" minHeight="300"
+			   applicationComplete="applicationCompleteHandler(event)"
+			   currentState="defaultMode"
+			   initialize="initLoad()">
+	<fx:Style source="assets/css/style.css"/>
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.geometry.Extent;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.geometry.Polygon;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.layers.TiledMapServiceLayer;
+			import com.esri.ags.symbols.SimpleFillSymbol;
+			import com.esri.ags.utils.GraphicUtil;
+			
+			import flash.utils.setTimeout;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.rpc.soap.LoadEvent;
+			
+			import components.WorkspaceArea;
+			
+			import tm.componentes.MapLoader;
+			import tm.componentes.PanelLocalizarCoordenada;
+			
+			[Bindable] 
+			private var tematicoURL	: String = "";
+			[Bindable] 
+			private var imagemURL	: String = "";
+			
+			[Bindable] 
+			private var versaoMapa	: String = "";
+			[Bindable] 
+			private var versaoMXD	: String = "";
+			
+			private var localizadorCoordenada	: PanelLocalizarCoordenada;
+			private var workspaceArea:WorkspaceArea;
+			
+			[Bindable] 
+			private var wkt1:String = 'PROJCS["SIRGAS 2000 / UTM zone 24S",GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-39],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["Meter",1]]';
+			
+			[Bindable] 
+			private var wkt2: String = 'GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]';
+			
+			private var empX: Number = 0;
+			private var empY: Number = 0;
+
+			private var empExtent:Extent;
+			private var empLayer:GraphicsLayer = new GraphicsLayer();
+			
+			private function initLoad():void
+			{
+				var configService:HTTPService = new HTTPService();
+				configService.url = "config.xml";
+				configService.resultFormat = "e4x";
+				configService.addEventListener(ResultEvent.RESULT, onConfigResult);
+				configService.addEventListener(FaultEvent.FAULT, onConfigFault);
+				configService.send();
+				
+				localizadorCoordenada = new PanelLocalizarCoordenada();
+				localizadorCoordenada.mapa = map;
+				
+				ExternalInterface.addCallback("externalLoadMapCoordinates",externalLoadMapCoordinates);
+				
+				loadInitialCoordinates();
+			}
+			
+			private function externalSaveAndClose(): void {
+				if (ExternalInterface.available) {
+					var saveAndClose: String = "saveAndClose";
+					var result: Object = {};
+					
+					result.easting1 = this.workspaceArea.workspace.xmin.toFixed(0).replace(".",",");
+					result.northing1 = this.workspaceArea.workspace.ymin.toFixed(0).replace(".",",");
+					result.easting2 = this.workspaceArea.workspace.xmax.toFixed(0).replace(".",",");
+					result.northing2 = this.workspaceArea.workspace.ymax.toFixed(0).replace(".",",");
+					
+					/* Alert.show("E1 " + result.easting1 + " " +
+						"N1 " + result.northing1 + "\n" +
+						"E2 " + result.easting2 + " " +
+						"N2 " + result.northing2 + "\n" + 
+						"EX " + empX + " " + "EY " + empY); */
+					
+					if ((empX > result.easting1) && (empX < result.easting2)) {
+						if ((empY < result.northing1) && (empY > result.northing2)) {
+							ExternalInterface.call(saveAndClose,result);
+						} else {
+							Alert.show("A Área de abrangência selecionada não contém a localização inicial informada. Tente novamente.","Erro ao salvar Área de Abrangência");
+						}
+					}else {
+						Alert.show("A Área de abrangência selecionada não contém a localização inicial informada. Tente novamente.","Erro ao salvar Área de Abrangência");
+					}
+				}
+			}
+			
+			private function externalClose(): void {
+				if (ExternalInterface.available) {
+					var justClose: String = "justClose";
+					
+					ExternalInterface.call(justClose);
+				}
+			}
+			
+			private function externalLoadMapCoordinates(easting1: String, northing1: String,easting2: String, northing2: String,empEasting: String, empNorthing:String): void {
+				if (easting1 != "" && northing1 != "" && easting2 != "" && northing2 != "") {
+					var east1: Number = Number(easting1.replace(",","."));
+					var nort1: Number = Number(northing1.replace(",","."));
+					var east2: Number = Number(easting2.replace(",","."));
+					var nort2: Number = Number(northing2.replace(",","."));
+					
+					empX = Number(empEasting.replace(",","."));
+					empY = Number(empNorthing.replace(",","."));
+					
+					empExtent = new Extent(empX-5000,empY-5000,empX+5000,empY+5000,map.spatialReference);
+					
+					if (east1 != 0 && nort1 != 0 && east2 != 0 && nort2 != 0) {
+						//If the empreendimento and the area information are avaliable
+						var extent: Extent = new Extent(east1,nort1,east2,nort2,map.spatialReference);
+						
+						var points:Array = [
+							new MapPoint(east1,nort1,map.spatialReference),
+							new MapPoint(east2,nort1,map.spatialReference),
+							new MapPoint(east2,nort2,map.spatialReference),
+							new MapPoint(east1,nort2,map.spatialReference)
+						]
+						var areaExterna:Polygon = new Polygon([points], map.spatialReference);
+						var graphic:Graphic = null;
+						
+						graphic = new Graphic(areaExterna);
+						graphic.symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_FORWARD_DIAGONAL, 0xFFFF00, 0.8);
+						
+						empLayer.add(graphic);
+						
+						var graphicsExtent:Extent = GraphicUtil.getGraphicsExtent([graphic]);
+						
+						if (graphicsExtent)
+						{
+							map.extent = graphicsExtent;
+							
+							// make sure the whole extent is visible
+							if (!map.extent.contains(graphicsExtent))
+							{
+								map.level--;
+							}
+						}
+						
+					} else {
+						//If the empreendimento is the only information avaliable
+						map.extent = empExtent;
+						map.scale = 125000;
+					}
+					
+					var emp: Graphic = new Graphic(new MapPoint(empX,empY,map.spatialReference));
+					emp.symbol = defaultSymbol;
+					empLayer.add(emp);
+				}
+				/* Alert.show("E1 " + easting1 + " " +
+					"N1 " + northing1 + "\n" +
+					"E2 " + easting2 + " " +
+					"N2 " + northing2 + "\n" + 
+					"EX " + empNorthing + " " + "EY " + empEasting); */
+			}
+			
+			private function loadInitialCoordinates():void
+			{
+				if (ExternalInterface.available) {
+					var loadMapCoordinates: String = "loadMapCoordinates";
+					
+					ExternalInterface.call(loadMapCoordinates);
+				}
+			}
+			
+			public function getMapCenterCoordinate(): Object {
+				var center: Object = new Object();
+				
+				mapCenter.wktOrigem = wkt1;
+				mapCenter.wktDestino = wkt1;
+				mapCenter.showGMSFormat = true;
+				mapCenter.updateCoordinateText();
+				
+				center.easting = mapCenter.EastingCoordinate;
+				center.northing = mapCenter.NorthingCoordinate;
+				
+				return center;
+			}
+			
+			protected function applicationCompleteHandler(event:FlexEvent):void
+			{
+				loadLayers();
+			}
+			
+			protected function loadLayers():void
+			{
+				if (imagemURL=="" || !map || !map.width)
+					return;
+					
+				var loader:MapLoader = new MapLoader(map);
+				
+				loader.addLayer(MapLoader.TILEDMAPSERVICELAYER, imagemURL, null, null, "imagem");
+				loader.addLayer(MapLoader.DYNAMICMAPSERVICELAYER, tematicoURL, null, null, "tematico");
+				
+				loader.addEventListener(LoadEvent.LOAD, loadComplete);
+				loader.load();
+			}
+			
+			protected function onConfigResult(event:ResultEvent):void
+			{
+				var configXML:XML = event.result as XML;
+				var serviceList:XMLList = configXML.service;
+				
+				for (var i:int = 0; i < serviceList.length(); i++)
+				{
+					tematicoURL = serviceList[i].mapaTematicoURL;
+					imagemURL 	= serviceList[i].mapaImagemURL;
+					
+					versaoMapa = serviceList[i].versaoMapa;
+					versaoMXD = serviceList[i].versaoMXD;
+				}
+				
+				loadLayers();
+			}
+			
+			protected function onConfigFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString,"Erro de Configuração");
+			}
+			
+			protected function loadComplete(event:Event):void
+			{
+				empLayer.symbol = defaultSymbol;
+				map.addLayer(empLayer);
+				
+				var tiledLayer:TiledMapServiceLayer = map.getLayer("imagem") as TiledMapServiceLayer;
+				map.lods = tiledLayer.tileInfo.lods;
+
+				
+				workspaceArea = new WorkspaceArea(map);
+				showWorkspace();
+				
+				//externalLoadMapCoordinates("0","0","0","0","316959","7828568");
+				//externalLoadMapCoordinates("311959","7833568","321959","7823568","316959","7828568");
+				//externalLoadMapCoordinates("316659","7828625","317188","7828096","316959","7828568");
+				//externalLoadMapCoordinates("316573","7828874","317631","7827816","316959","7828568");
+			}
+			/*
+			private function layerShowHandler(event:FlexEvent):void
+			{
+				var tiledLayer:TiledMapServiceLayer = event.target as TiledMapServiceLayer;
+				map.lods = tiledLayer.tileInfo.lods;
+				
+			}
+			*/
+			protected function openWindow(event:MouseEvent):void
+			{
+				PopUpManager.addPopUp(localizadorCoordenada,this,true);
+				PopUpManager.centerPopUp(localizadorCoordenada);
+			}
+			
+			private function showWorkspace():void
+			{
+				if(!workspaceArea.isHabilitado)
+				{
+					workspaceArea.layersOcultasTexto = "";
+					workspaceArea.exibirAreaImpressao(true);
+				}
+				else
+				{
+					workspaceArea.exibirAreaImpressao(false);
+				}
+			}
+			
+			protected function goToEmpreendimento(event:MouseEvent):void
+			{
+				if (empExtent) {
+					this.map.extent = empExtent;
+					this.map.scale = 125000;
+				}
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="defaultMode"/>
+		<s:State name="viewMode"/>
+	</s:states>
+	<fx:Declarations>
+		<esri:SimpleMarkerSymbol id="defaultSymbol" alpha="1" color="0xFFFF00" size="20"
+								 style="triangle">
+			<esri:SimpleLineSymbol/>
+		</esri:SimpleMarkerSymbol>
+	</fx:Declarations>
+	
+	<s:controlBarLayout>
+		<s:HorizontalLayout paddingBottom="7" paddingTop="7" verticalAlign="middle"/>
+	</s:controlBarLayout>
+	
+	<s:controlBarContent>
+		<s:HGroup verticalAlign="middle">
+			<s:Label fontSize="16" fontWeight="bold" paddingLeft="7" paddingRight="5"
+					 text="Área de Abrangência"/>
+			<componentes:CenterLatLong id="mapCenter" includeIn="viewMode" width="100%" map="{map}"
+									   showGMSFormat="true" wktDestino="{wkt1}" wktOrigem="{wkt1}"/>
+			<s:Spacer width="20"/>
+			<s:Button label="Ir para posição inicial" click="goToEmpreendimento(event)"/>
+		</s:HGroup>
+		<s:HGroup width="100%" gap="5" horizontalAlign="right" paddingRight="10"
+				  verticalAlign="middle">
+			<s:Button includeIn="defaultMode" label="Salvar" chromeColor="#C9C9C9"
+					  click="externalSaveAndClose()" color="#000000"
+					  toolTip="Salva as coordenadas da Área de Abrangência"/>
+		</s:HGroup>
+	</s:controlBarContent>
+	
+	<esri:Map id="map" crosshairVisible="false" logoVisible="false" width="100%" height="100%">
+		<!--<esri:ArcGISTiledMapServiceLayer visible="true" show="layerShowHandler(event)"
+										 url="{imagemURL}"/>
+		<esri:GraphicsLayer id="empLayer" symbol="{defaultSymbol}"/>-->
+	</esri:Map>
+	
+	<componentes:LatLong left="0" bottom="0" map="{map}" showGMSFormat="true" wktDestino="{wkt1}"
+						 wktOrigem="{wkt1}"/>
+</s:Application>

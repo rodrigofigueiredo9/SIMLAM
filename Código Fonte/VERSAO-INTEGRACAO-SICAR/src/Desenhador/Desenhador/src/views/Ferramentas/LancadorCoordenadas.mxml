@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" height="30" xmlns:buttonext="com.tm.spark.buttonext.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.tm.spark.resizabletitlewindow.ResizableTitleWindow;
+			
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.LayerFeicaoSelecionada;
+			
+			import mx.controls.TextInput;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;	
+			
+			private var txtPontoInicial:mx.controls.TextInput;			
+			private var ligado:Boolean = false;
+			[Bindable]private var popup:ResizableTitleWindow;		
+			
+			public function ligarDesligar():void
+			{
+				if(ligado)
+				{
+					desligar();
+				}
+				else
+				{
+					if(LayerFeicaoSelecionada.getInstance().layerFeicao)
+					{
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+					}
+				}
+			}
+			
+			private function ligarOk():void
+			{
+				ligado = true;
+				btnLancarCoord.styleName = "lancar_coordenada_ativado";
+				FeicaoSelecionada.getInstance().limpar(true);
+				FeicoesSelecionadas.getInstance().limpar(true);
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this,true,true,true));
+				
+				if(popup)
+				{
+					popup.dispatchEvent(new CloseEvent(CloseEvent.CLOSE));
+					return;
+				}
+				
+				popup = new ResizableTitleWindow();			
+				popup.showCloseButton= true ;
+				popup.showMinimizeButton = true;	
+				popup.title = "Lançar Lista de Coordenadas";
+				popup.styleName = "topo_popup";
+				popup.width = 370;
+				popup.height = 400;
+				popup.minimizedHeight = 30;
+				popup.minimizedWidth = 130;
+				popup.minimizedX = (this.parentApplication as DesenhadorIdaf).width - 130;
+				popup.minimizedY = (this.parentApplication as DesenhadorIdaf).height - 35;
+				popup.x = (this.parentApplication as DesenhadorIdaf).width - popup.width;
+				popup.y = (this.parentApplication as DesenhadorIdaf).height - popup.height;
+				popup.resizeEnabled = false;
+				popup.addEventListener(CloseEvent.CLOSE, fecharJanela);				
+				
+				var janela:LancadorCoordenadasJanela = new LancadorCoordenadasJanela();				
+				popup.addElement(janela);
+				
+				PopUpManager.addPopUp(popup, this.parentApplication as DesenhadorIdaf);									
+			}
+			
+			public function desligar():void
+			{
+				fecharJanela();
+				btnLancarCoord.styleName = "lancar_coordenada";
+				ligado = false;
+			}
+			
+			protected function fecharJanela(event:CloseEvent=null):void
+			{				
+				PopUpManager.removePopUp(popup);		
+				popup = null;
+			}
+			
+		]]>
+	</fx:Script>
+	<buttonext:ButtonExt id="btnLancarCoord" styleName="lancar_coordenada" toolTip="Lançar Coordenadas" click="ligarDesligar()"/>
+</s:Group>

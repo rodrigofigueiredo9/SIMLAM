@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark" 
+				   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:spark="spark.skins.spark.*" xmlns:views="views.*" 
+				   minHeight="0" minWidth="0" currentState="desligado" width="100%" borderAlpha="0.2" height="100%" borderVisible="false" borderWeight="0" xmlns:buttonext="com.tm.spark.buttonext.*">
+	
+	<fx:Declarations>
+	</fx:Declarations> 
+	<fx:Script>
+		<![CDATA[
+			import controllers.ProjetoController;
+			import controllers.ProjetoControllerEvent;
+			
+			import models.CategoriaQuadroDeArea;
+			import models.Esri.DesenhadorEsri;
+			 
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+			
+			public var categorias:Vector.<CategoriaQuadroDeArea>;
+			private var listaCategorias:IList;
+			private var timer:Timer;
+			private var isBuscando:Boolean;
+			
+			public function init():void
+			{
+				isBuscando = false; 
+				ProjetoController.getInstance().addEventListener(ProjetoControllerEvent.LISTAR_QUADROAREAS,listarQuadroAreasResult);
+				buscarQuadroAreas();
+			}
+			
+			public function buscarQuadroAreas():void
+			{
+				if(!isBuscando)
+				{
+					ProjetoController.getInstance().ListarQuadroAreas(DesenhadorEsri.getInstance().idNavegador, DesenhadorEsri.getInstance().idProjeto);
+					isBuscando = true;	
+				}
+			}
+			
+			public function listarQuadroAreasResult(ev:ProjetoControllerEvent):void 
+			{
+				isBuscando = false;
+				if(ev && ev.categorias)
+				{
+					carregarCategorias(ev.categorias as Vector.<CategoriaQuadroDeArea>);
+				}
+			} 
+				
+			protected function carregarCategorias(_categorias:Vector.<CategoriaQuadroDeArea>):void
+			{
+				if(_categorias)
+				{
+					listaCategorias = new ArrayList();
+					for(var i:int=0; i< _categorias.length; i++)
+					{
+						listaCategorias.addItem(_categorias[i]);
+					} 
+					
+					if(listaCategoria)
+						listaCategoria.dataProvider = listaCategorias;
+					
+					categorias = _categorias;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:VGroup id="vgLista" minHeight="0" minWidth="0" gap="0" includeIn="ligado" width="100%" height="100%">
+		<s:BorderContainer height="34.5" minHeight="0" minWidth="0" width="100%"  styleName="titulo_listar" >
+		<s:HGroup  click="buscarQuadroAreas()" height="34.5" minHeight="0" minWidth="0" width="100%" >
+			<s:Label text="Quadro de Áreas" height="34.5" minHeight="0" minWidth="0" width="100%" verticalAlign="middle" paddingLeft="5"	  />
+			<buttonext:ButtonExt id="btnAtualizar" styleName="refresh"  toolTip="Atualizar quadro de áreas" />
+		</s:HGroup> 
+		</s:BorderContainer>
+		<mx:VBox minHeight="0" minWidth="0" horizontalScrollPolicy="off"  width="100%" height="100%" >
+			<s:List id="listaCategoria"  borderVisible="false" width="100%" horizontalScrollPolicy="off"  dataProvider="{listaCategorias}" minHeight="0" >
+				<s:itemRenderer>
+					<fx:Component>
+						<views:CategoriaQuadroDeAreaView  minHeight="0" minWidth="0" width="100%"  />
+					</fx:Component>
+				</s:itemRenderer> 
+			</s:List>
+		</mx:VBox>
+	</s:VGroup>
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+</s:BorderContainer>

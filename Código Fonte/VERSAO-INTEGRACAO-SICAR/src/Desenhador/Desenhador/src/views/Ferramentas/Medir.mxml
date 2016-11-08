@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="ligar()" xmlns:esri="http://www.esri.com/2008/ags" gap="2" xmlns:buttonext="com.tm.spark.buttonext.*">
+		
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.geometry.MapPoint;
+			import com.gmaps.geom.GeomArea;
+			import com.gmaps.geom.GeomPoint;
+			import com.gmaps.geom.Mbr;
+			
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.DrawEsriEvent;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Geometria;
+			
+			import mx.controls.Alert;
+			
+			import spark.formatters.NumberFormatter;
+			
+			import tm.spatialReference.Coordinate;
+			
+			private var gInfo:Graphic;
+			private var formatador:NumberFormatter;
+			[Bindable] public var graphicLayer:GraphicsLayer;
+			[Bindable] public var graphicLayerGeo:GraphicsLayer;
+			
+			public function ligar():void
+			{				
+				currentState = "desligados";
+			}
+						
+			public function desligar():void
+			{
+				if(DesenhadorEsri.getInstance().draw)
+					DesenhadorEsri.getInstance().draw.deactivate();						
+				
+				DesenhadorEsri.getInstance().map.removeEventListener(DrawEsriEvent.DRAW_END, mostrarPosicao);
+				DesenhadorEsri.getInstance().map.removeEventListener(DrawEsriEvent.DRAW_END, mostrarArea);
+				DesenhadorEsri.getInstance().map.removeEventListener(DrawEsriEvent.DRAW_END, mostrarDistancia);
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+			
+				if(graphicLayer)
+					graphicLayer.clear();
+				if(graphicLayerGeo)
+					graphicLayerGeo.clear();
+				
+				btnPosicao.styleName = "posicao";
+				btnMedirArea.styleName = "medir_geo";
+				btnMedirDistancia.styleName = "medir_distancia";
+			}
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{
+				switch(event.keyCode) 
+				{
+					case Keyboard.ESCAPE:
+						desligar();
+						mudarState("desligados");
+						break;
+				}
+			}
+			public function mudarState(novoState:String):void
+			{
+				if(currentState == "desligados" || novoState=="desligados")
+				{
+					currentState = novoState;
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.PAUSAR_FERRAMENTA,null,this));
+				}
+				else
+				{
+					currentState = novoState;
+				}
+			}
+			public function ativarDesativarPosicao():void
+			{	
+				desligar();
+				if(currentState =="posicao")
+				{
+					mudarState("desligados");
+				}
+				else
+				{
+					mudarState("posicao");
+					this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+					btnPosicao.styleName = "posicao_ativado";
+					DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, mostrarPosicao);
+					DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.Ponto, GeometriaEsriGraphic.MedirPosicaoAreaDistancia);
+					
+				}
+			}
+			
+			public function ativarDesativarMedirArea():void
+			{
+				desligar();
+				if(currentState =="medirarea")
+				{
+					mudarState("desligados");
+				}
+				else
+				{
+					mudarState("medirarea");
+					this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+					btnMedirArea.styleName = "medir_geo_ativado";
+					DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, mostrarArea);
+					DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.Poligono, GeometriaEsriGraphic.MedirPosicaoAreaDistancia);
+				}				
+			}
+			
+			public function ativarDesativarMedirDistancia():void
+			{					
+				desligar();
+				if(currentState =="medirdistancia")
+				{
+					mudarState("desligados");
+				}
+				else
+				{
+					mudarState("medirdistancia");
+					this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+					btnMedirDistancia.styleName = "medir_distancia_ativado";
+					DesenhadorEsri.getInstance().map.addEventListener(DrawEsriEvent.DRAW_END, mostrarDistancia);
+					DesenhadorEsri.getInstance().ativarDesativarDraw(true, Geometria.Linha, GeometriaEsriGraphic.MedirPosicaoAreaDistancia);
+					
+				}
+			}
+			
+			private function mostrarPosicao(event:DrawEsriEvent):void {	
+				cursorManager.removeBusyCursor();
+				if(event && event.geometry)
+				{
+					if(!graphicLayerGeo)
+						graphicLayerGeo = new GraphicsLayer();
+					if(!graphicLayer)
+						graphicLayer = new GraphicsLayer();		
+					
+					var ponto:MapPoint = event.geometry as MapPoint;
+					
+					var novaCoordenada:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaProjParaGeografico(ponto.x, ponto.y);
+						
+					var graphicGeo:Graphic = new GeometriaEsriGraphic(GeometriaEsriGraphic.MedirPosicaoAreaDistancia,null, ponto, Geometria.Ponto);
+					gInfo = new Graphic();	
+					gInfo.geometry = ponto;
+					gInfo.symbol = infoSbl;
+					gInfo.attributes = new Object();			
+					gInfo.attributes.x = DesenhadorEsri.getInstance().ConverterPontoGeograficoParaGMS(novaCoordenada.x, false);
+					gInfo.attributes.y = DesenhadorEsri.getInstance().ConverterPontoGeograficoParaGMS(novaCoordenada.y);
+					gInfo.attributes.estado = "Posicao";
+					gInfo.attributes.informacao = gInfo;
+					gInfo.attributes.funcaoinformacao = graphicLayer.remove;
+					
+					gInfo.attributes.geometria = graphicGeo;
+					
+					gInfo.attributes.informacao = gInfo;
+					gInfo.attributes.funcaogeometria = graphicLayerGeo.remove;
+					gInfo.attributes.funcaoinformacao = graphicLayer.remove;
+					graphicLayerGeo.add(graphicGeo);								
+					DesenhadorEsri.getInstance().map.addLayer(graphicLayerGeo);
+					graphicLayer.add(gInfo);
+					DesenhadorEsri.getInstance().map.addLayer(graphicLayer);
+				}
+			}		
+			
+			private function mostrarArea(event:DrawEsriEvent):void {
+				configurarFormatador();
+				cursorManager.removeBusyCursor();
+				if(event && event.geometry && event.geometria)
+				{
+					var mbr:Mbr = calcularMbr(event.geometria.vertices);
+					var area:GeomArea = event.geometria.converterVerticesParaGeomArea(); 
+					
+					if(!mbr || !area || area.getArea() == NaN)
+					{
+						Alert.show('Ocorreu um erro ao calcular a área, tente novamente!');
+						return;
+					}
+					var pontoCentral:MapPoint = new MapPoint(mbr.centerX, mbr.centerY);
+					if(!graphicLayerGeo)
+						graphicLayerGeo = new GraphicsLayer();
+					if(!graphicLayer)
+						graphicLayer = new GraphicsLayer();		
+					
+					var graphicGeo:Graphic = new GeometriaEsriGraphic(GeometriaEsriGraphic.MedirPosicaoAreaDistancia,null, event.geometry, Geometria.Poligono);
+					gInfo = new Graphic();	
+					gInfo.geometry = pontoCentral;
+					gInfo = new Graphic();	
+					gInfo.symbol = infoSbl;
+					gInfo.geometry = pontoCentral;
+					gInfo.attributes = new Object();
+					gInfo.attributes.estado = "Area";
+					gInfo.attributes.area = formatador.format(area.getArea());
+					gInfo.attributes.areaha = formatador.format((area.getArea() as Number) / 10000);
+					gInfo.attributes.geometria = graphicGeo;
+					gInfo.attributes.informacao = gInfo;
+					gInfo.attributes.funcaogeometria = graphicLayerGeo.remove;
+					gInfo.attributes.funcaoinformacao = graphicLayer.remove;
+					graphicLayerGeo.add(graphicGeo);								
+					DesenhadorEsri.getInstance().map.addLayer(graphicLayerGeo);
+					graphicLayer.add(gInfo);
+					DesenhadorEsri.getInstance().map.addLayer(graphicLayer);
+				}
+			}
+			
+			private function mostrarDistancia(event:DrawEsriEvent):void {
+				configurarFormatador();
+				cursorManager.removeBusyCursor();
+				var geoPoints:Vector.<GeomPoint> = event.geometria.converterVerticesParaGeomPoints();
+			 	var mbr:Mbr = calcularMbr(event.geometria.vertices);
+				var tamanho:Number = calcularTamanhoLinha(geoPoints);
+				
+				if(!mbr || tamanho == NaN)
+				{
+					Alert.show('Ocorreu um erro ao calcular distância, tente novamente!');
+					return;
+				}
+				if(!graphicLayerGeo)
+					graphicLayerGeo = new GraphicsLayer();
+				if(!graphicLayer)
+					graphicLayer = new GraphicsLayer();	
+				var pontoCentral:MapPoint = new MapPoint(mbr.centerX, mbr.centerY);
+				
+				var graphicGeo:Graphic = new GeometriaEsriGraphic(GeometriaEsriGraphic.MedirPosicaoAreaDistancia,null, event.geometry, Geometria.Linha);
+				gInfo = new Graphic();	
+				gInfo.geometry = pontoCentral;
+				gInfo.symbol = infoSbl;
+				gInfo.attributes = new Object();
+				gInfo.attributes.estado = "Distancia";
+				gInfo.attributes.distancia = formatador.format(tamanho);
+				gInfo.attributes.distanciakm = formatador.format((tamanho as Number) / 1000);
+				gInfo.autoMoveToTop = true;
+				gInfo.attributes.geometria = graphicGeo;
+				gInfo.attributes.informacao = gInfo;
+				gInfo.attributes.funcaogeometria = graphicLayerGeo.remove;
+				gInfo.attributes.funcaoinformacao = graphicLayer.remove;		
+				
+				graphicLayerGeo.add(graphicGeo);								
+				DesenhadorEsri.getInstance().map.addLayer(graphicLayerGeo);
+				graphicLayer.add(gInfo);
+				DesenhadorEsri.getInstance().map.addLayer(graphicLayer);
+				
+			}
+			
+			private function configurarFormatador():void
+			{
+				formatador = new NumberFormatter();
+				formatador.decimalSeparator = ",";
+				formatador.groupingSeparator = ".";
+			}		
+			
+			public function calcularTamanhoLinha(pontos:Vector.<GeomPoint>):Number
+			{
+				var tamanho:Number = 0;
+				for(var i:int = 0; i< pontos.length - 1;i++)
+				{
+					tamanho += (pontos[i] as GeomPoint).distanceFromPoint((pontos[i + 1] as GeomPoint).point);
+				}
+				return tamanho;
+			}
+			public function calcularMbr(vertices:Vector.<Point>):Mbr
+			{
+				var minx:Number = 9999999999999;
+				var miny:Number = 9999999999999;
+				var maxx:Number =  0;
+				var maxy:Number =  0;
+				
+				if(vertices)
+				{	
+					for each(var ponto:Point in vertices)
+					{
+						if(ponto.x < minx)
+							minx = ponto.x;
+						if(ponto.x >maxx)
+							maxx = ponto.x;
+						if(ponto.y<miny)
+							miny = ponto.y;
+						if(ponto.y > maxy)
+							maxy = ponto.y;
+					}
+				}
+				
+				if(minx != 9999999999999 &&  miny != 9999999999999 && maxx !=  0 && maxy !=  0)
+					return new Mbr(minx, miny, maxx, maxy);
+				else
+					return null;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<esri:InfoSymbol id="infoSbl" >
+			<esri:infoRenderer>  				
+				<fx:Component>				
+					<s:ItemRenderer currentState="{data.estado}">							
+						<s:states>
+							<s:State id="Posicao" name="Posicao"/>
+							<s:State id="Area" name="Area"/>
+							<s:State id="Distancia" name="Distancia"/>
+						</s:states>
+						<s:VGroup fontWeight="bold" horizontalAlign="right" 
+								  paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
+							<fx:Script>
+								<![CDATA[	
+									private function mudarEstado(destino:String):void 
+									{
+										this.currentState = destino;
+									}
+									
+									private function fechar(ev:Event):void
+									{
+										if (this.data.funcaogeometria) 
+											this.data.funcaogeometria(this.data.geometria); 
+										if (this.data.funcaoinformacao) 
+											this.data.funcaoinformacao(this.data.informacao);
+									}
+								]]>
+							</fx:Script>
+							
+							<s:VGroup horizontalAlign="center" includeIn="Posicao">
+								<s:Label text="Lon: {data.x}"/>						
+								<s:Label text="Lat: {data.y}"/>					
+								<s:Button label="Fechar" click="fechar(event)" />
+							</s:VGroup>
+							
+							<s:VGroup horizontalAlign="center" includeIn="Area">
+								<s:Label text="Área (m2): {data.area}"/>							
+								<s:Label text="Área (ha): {data.areaha}"/>		
+								<s:Button label="Fechar" click="fechar(event)" />
+							</s:VGroup>
+							
+							<s:VGroup horizontalAlign="center" includeIn="Distancia">
+								<s:Label text="Distância (m): {data.distancia}"/>							
+								<s:Label text="Distância (km): {data.distanciakm}"/>
+								<s:Button label="Fechar"  click="fechar(event)"/>
+							</s:VGroup>             
+						</s:VGroup>  
+					</s:ItemRenderer>
+				</fx:Component>        
+			</esri:infoRenderer>   
+		</esri:InfoSymbol>
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State id="desligados" name="desligados"/>
+		<s:State id="posicao" name="posicao" basedOn="desligados"/>		
+		<s:State id="medirarea" name="medirarea" basedOn="desligados" />
+		<s:State id="medirdistancia" name="medirdistancia" basedOn="desligados"/>
+	</s:states>
+	<buttonext:ButtonExt id="btnPosicao" useHandCursor="true" buttonMode="true" styleName="posicao" click="ativarDesativarPosicao()" toolTip="Posição" /> 
+	<buttonext:ButtonExt id="btnMedirDistancia" styleName="medir_distancia"  useHandCursor="true" buttonMode="true" click="ativarDesativarMedirDistancia()" toolTip="Distância"/>
+	<buttonext:ButtonExt id="btnMedirArea" styleName="medir_geo"  useHandCursor="true" buttonMode="true" click="ativarDesativarMedirArea()" toolTip="Área"/>
+	<esri:GraphicsLayer id="clickGraphicsLayer"/>
+</s:HGroup>

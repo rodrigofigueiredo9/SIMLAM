@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="init()" width="100%" minHeight="0" height="25" top="0" xmlns:spark="com.tm.spark.*">
+		
+	<fx:Script>
+		<![CDATA[
+			import models.ItemQuadroDeArea;
+			[Bindable]public var item:ItemQuadroDeArea;
+			
+			override public function set data(value:Object):void 
+			{ 
+				super.data = value; 
+				
+				if (value== null)
+					return;
+				
+				item = data as ItemQuadroDeArea;	
+				init();
+				
+			}
+			
+			private function init():void
+			{
+				if(item && lblNome)	
+				{
+					lblNome.text =  item.Nome;//(item.Nome.toString().length > 34 ?  item.Nome.toString().substr(0,34) : item.Nome.toString()) ;
+					lblNome.toolTip = item.Descricao ? item.Descricao.toString() : item.Nome.toString();
+					if(item.IsProcessada)
+						bdLayer.styleName = (item.IsSubArea? 'item_laranja_claro':'item_laranja');
+					else
+						bdLayer.styleName = (item.IsSubArea? 'item_branco':'item_cinza');
+					lblArea.text = (item.Area.toString().length > 15 ?  item.Area.toString().substr(0,15) : item.Area.toString()) ;
+					lblArea.toolTip = item.Area.toString();
+				} 
+			}		
+		]]>
+	</fx:Script>
+	
+	<s:BorderContainer id="bdLayer" height="100%" minHeight="0"  minWidth="0"  width="100%" >
+		<s:HGroup verticalAlign="middle" paddingLeft="3" width="100%" height="100%" minHeight="0" gap="1">
+			<s:Label id="lblNome" paddingLeft="3" verticalAlign="middle" textAlign="left" height="100%" width="68%" />			
+			<spark:Separator width="3" height="100%" alpha="0.4" verticalAlign="middle" styleName="fundo_cinza_claro" />
+			<s:Label id="lblArea" verticalAlign="middle" textAlign="right" height="100%" width="32%"  paddingRight="2" />	
+		</s:HGroup>
+	</s:BorderContainer>
+</s:ItemRenderer>

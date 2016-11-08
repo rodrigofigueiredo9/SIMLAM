@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Legenda xmlns="tm.componentes.legenda.*" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="init()">
+	<mx:Script>
+		<![CDATA[
+			private var isAtivo:Boolean = false;
+		
+			private function init():void
+			{	
+				super._Legenda_Button1.addEventListener(MouseEvent.CLICK, onSetEstado);
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar(null);
+						break;
+				}
+			}
+			
+			private function onSetEstado(event:Event):void
+			{
+				isAtivo = !isAtivo;
+				
+				if(isAtivo)
+				{
+					move(this.x - 28, this.y);
+				}
+				else
+				{
+					move(this.x + 28, this.y);
+				}
+			}
+			
+			public function desativar(event:Event):void
+			{
+				if(!event || event.target.id != super._Legenda_Button1.id)
+				{
+					if(isAtivo)
+					{
+						_Legenda_Button1.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+					}
+				}
+			} 
+		]]>
+	</mx:Script>
+</Legenda>

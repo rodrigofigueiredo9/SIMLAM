@@ -1,0 +1,38 @@
+﻿<?xml version="1.0"?>
+<configuration>
+	<service>
+		<!-- Versão do Mapa de Navegacao -->
+		<versaoMapa>
+			1.0.0.0
+		</versaoMapa>
+		
+		<!-- Versão do MXD -->
+		<versaoMXD>
+			1.0
+		</versaoMXD>
+
+		<!-- URL do Servico do Mapa Tematico-->
+		<mapaTematicoURL>http://mapas.geobases.es.gov.br/ArcGIS/rest/services/Vetor_Aerolevantamento/MapServer</mapaTematicoURL>
+
+		<!-- URL do Servico das Imagens-->
+		<mapaImagemURL>http://mapas.geobases.es.gov.br/ArcGIS/rest/services/IMAGEM/Aerolevantamento/MapServer</mapaImagemURL>
+
+		<!-- URL do Servico de Empreendimento -->
+		<mapaEmpreendimentoURL>http://www3.suportetm.com.br/ArcGIS/rest/services/DEV_IDAF/EMPREENDIMENTO/MapServer</mapaEmpreendimentoURL>
+
+		<!-- URL do Servico de Atividades -->
+		<mapaAtividadesURL>http://www3.suportetm.com.br/ArcGIS/rest/services/DEV_IDAF/N_Atividades/MapServer</mapaAtividadesURL>
+
+		<!-- URL do Servico de Projeto ambiental -->
+		<mapaProjetoAmbientalURL>http://www3.suportetm.com.br/ArcGIS/rest/services/DEV_IDAF/N_ProjetoAmbiental/MapServer</mapaProjetoAmbientalURL>
+
+		<!-- URL do Servico de Limites -->
+		<mapaLimitesURL>http://www3.suportetm.com.br/ArcGIS/rest/services/DEV_IDAF/N_Limites/MapServer</mapaLimitesURL>
+
+		<!-- URL do GeometryServer -->
+		<geometryServiceURL>http://www3.suportetm.com.br/ArcGIS/rest/services/Geometry/GeometryServer</geometryServiceURL>
+
+		<!-- URL do sistema -->
+		<sistemaAspURL>http://devap6/Projetos/ES/IDAF/Desenvolvimento/Publico/GeoProcessamento/mapa</sistemaAspURL>
+	</service>
+</configuration>

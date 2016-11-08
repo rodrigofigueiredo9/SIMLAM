@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark" 
+				   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:spark="spark.skins.spark.*" xmlns:views="views.*" 
+				   minHeight="0" minWidth="0" currentState="desligado"  borderAlpha="0.2" height="100%" borderVisible="false" width="100%" borderWeight="0">
+	 
+	<fx:Declarations>
+	</fx:Declarations> 
+	<fx:Script>
+		<![CDATA[
+			import controllers.LayerFeicaoController;
+			import controllers.LayerFeicaoControllerEvent;
+			
+			import models.CategoriaLayerFeicao;
+			import models.Esri.DesenhadorEsri;
+			import models.Feicao;
+			import models.LayerFeicao;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+					
+			public var categorias:Vector.<CategoriaLayerFeicao>;
+			private var listaCategorias:IList;
+			//private var timer:Timer;
+			
+			public function init():void
+			{
+				LayerFeicaoController.getInstance().addEventListener(LayerFeicaoControllerEvent.LISTAR_CATEGORIAS,listarCategoriasResult);
+				LayerFeicaoController.getInstance().addEventListener(LayerFeicaoControllerEvent.LISTAR_QUANTIDADE,listarQuantidadeResult);
+				LayerFeicaoController.getInstance().listarCategorias(DesenhadorEsri.getInstance().idNavegador, DesenhadorEsri.getInstance().idProjeto);
+			}
+			
+			public function listarCategoriasResult(ev:LayerFeicaoControllerEvent):void 
+			{
+				if(ev && ev.categorias)
+				{
+					for each(var categoria:CategoriaLayerFeicao in ev.categorias)
+					{
+						for each(var layer:LayerFeicao in categoria.LayersFeicao)
+						{
+							if(layer)
+								DesenhadorEsri.getInstance().ligarDesligarLayerFeicao(layer.IdLayer, layer.Visivel, layer.ServicoId);
+						}
+					}
+					
+					carregarCategorias(ev.categorias as Vector.<CategoriaLayerFeicao>);
+					/*if(!timer)
+					{
+						timer = new Timer(3000);
+						timer.addEventListener(TimerEvent.TIMER,buscarQuantidadeLayers);
+					}
+					timer.start(); */
+					
+					buscarQuantidadeLayers();
+				}
+			} 
+			public function listarQuantidadeResult(ev:LayerFeicaoControllerEvent):void 
+			{
+				if(ev && ev.categorias)
+				{
+					carregarCategorias(ev.categorias as Vector.<CategoriaLayerFeicao>);
+					//timer.start(); 
+				}
+			}
+			
+			//public function buscarQuantidadeLayers(event:TimerEvent = null):void 
+			public function buscarQuantidadeLayers():void
+			{
+				//timer.stop();
+				LayerFeicaoController.getInstance().listarQuantidadeLayerFeicao(DesenhadorEsri.getInstance().idNavegador, DesenhadorEsri.getInstance().idProjeto);
+				
+			}
+			
+			public function initCategoria():void
+			{
+				listaCategoria.addEventListener(LayerFeicaoControllerEvent.SELECIONOU_LAYER, selecionouLayer);
+			}
+			
+			protected function carregarCategorias(_categorias:Vector.<CategoriaLayerFeicao>):void
+			{
+				if(_categorias)
+				{
+					listaCategorias = new ArrayList();
+					for(var i:int=0; i< _categorias.length; i++)
+					{
+						listaCategorias.addItem(_categorias[i]);
+					} 
+					
+					if(listaCategoria)
+						listaCategoria.dataProvider = listaCategorias;
+					
+					categorias = _categorias;
+				}
+			} 
+			
+			protected function selecionouLayer(event:LayerFeicaoControllerEvent=null):void
+			{
+				carregarCategorias(LayerFeicaoController.getInstance().categorias as Vector.<CategoriaLayerFeicao>);
+			} 
+			
+		]]>
+	</fx:Script>
+	<s:VGroup id="vgLista" minHeight="0" minWidth="0" gap="0" includeIn="ligado" width="100%" height="100%">
+		<s:Label text="Feições" height="34.5" minHeight="0" minWidth="0" width="100%" styleName="titulo_listar" />
+		<mx:HBox minHeight="0" minWidth="0"  horizontalScrollPolicy="off"  width="100%" height="100%" > 
+			
+			<s:List id="listaCategoria" borderVisible="false" width="100%" horizontalScrollPolicy="off"  dataProvider="{listaCategorias}" minHeight="0" creationComplete="initCategoria()" >
+				<s:itemRenderer>
+					<fx:Component>
+						<views:CategoriaLayerFeicaoView  minHeight="0" minWidth="0" width="100%"  />
+					</fx:Component>
+				</s:itemRenderer> 
+			</s:List>
+		</mx:HBox>
+	</s:VGroup>
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	 
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+</s:BorderContainer>

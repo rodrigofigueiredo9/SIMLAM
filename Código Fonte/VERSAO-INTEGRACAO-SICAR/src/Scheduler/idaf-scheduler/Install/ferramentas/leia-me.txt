@@ -1,0 +1,4 @@
+1 - instalar o NSIS
+2 - sobrepor o conteudo da pasta de instalacao com a versao rareada contendo os pluggins (NSIS.rar)
+3 - instalar o HM NIS Edit (editor de arquivo nsis para gerar a instalação)
+4 - executar o arquivo bat para gerar o instalador

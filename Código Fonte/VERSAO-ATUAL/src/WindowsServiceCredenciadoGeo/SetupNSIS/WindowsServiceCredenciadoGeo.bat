@@ -1,0 +1,1 @@
+nant /t:net-4.0 -buildfile:WindowsServiceCredenciadoGeo.build -l:WindowsServiceCredenciadoGeo.log

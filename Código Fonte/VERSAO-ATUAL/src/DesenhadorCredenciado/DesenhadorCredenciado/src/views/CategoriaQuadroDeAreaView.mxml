@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"  
+				xmlns:s="library://ns.adobe.com/flex/spark"  xmlns:mx="library://ns.adobe.com/flex/mx"  
+				autoDrawBackground="false" xmlns:views="views.*" xmlns:spark="com.tm.spark.*" >
+	<fx:Script>
+		<![CDATA[
+			import controllers.ProjetoController;
+			
+			import models.CategoriaQuadroDeArea;
+			import models.ItemQuadroDeArea;
+			 
+			import mx.collections.ArrayList;
+			import mx.collections.IList; 
+		
+			private var Id:int;
+			private var Itens:Vector.<ItemQuadroDeArea>;
+			private var listaAr:IList; 
+			private var nomeCategoria:String;
+			private var categoriaQuadroArea:CategoriaQuadroDeArea;
+			
+			override public function set data(value:Object):void {
+				super.data = value;
+				
+				if (value== null)
+					return;
+				categoriaQuadroArea = data as CategoriaQuadroDeArea;
+				nomeCategoria = categoriaQuadroArea.Nome;
+				if(lblNome)
+					lblNome.text = nomeCategoria;
+				Id = categoriaQuadroArea.Id;
+				Itens = categoriaQuadroArea.Itens;
+				listaAr = new ArrayList();
+				
+				if(Itens)
+				{
+					for(var f:int=0; f<Itens.length; f++)
+					{
+						listaAr.addItem((Itens[f] as ItemQuadroDeArea));
+					}
+					if(listaAreas)
+					{						
+						listaAreas.dataProvider = listaAr;
+						
+						if(categoriaQuadroArea.IsAtivo && listaAr)
+						{
+							listaAreas.height = (listaAr.length *26)+25;
+						}
+						else
+						{
+							listaAreas.height = 0;
+						}
+					}
+					
+				}
+				currentState = (data.IsAtivo ? "ligado" : "desligado");
+			}
+			
+			public function mudarState():void
+			{
+				if(currentState == "ligado")
+				{
+					listaAreas.height = 0;
+					currentState = "desligado";
+					ProjetoController.getInstance().ativarDesativarCategoria(false,Id);
+				}
+				else
+				{
+					if(listaAreas)
+					{	
+						listaAreas.height = (listaAr.length *26)+25;
+					}
+					currentState = "ligado";
+					ProjetoController.getInstance().ativarDesativarCategoria(true,Id);	
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:states> 
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	<s:BorderContainer styleName="fundo_cinza_claro" height.desligado="20" height.ligado ="{listaAreas.height}"  borderVisible="false"  borderAlpha="0.2"  minHeight="0" minWidth="0" width="100%" height="100%"  >
+		<s:VGroup id="vgLista"  minHeight="0" minWidth="0" width="100%" gap="0" >
+			<s:BorderContainer height="20"  width="100%"  borderAlpha="0.2"  minHeight="0" minWidth="0"  >
+				<s:backgroundFill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry color="0xFFFFFF"/>
+						<s:GradientEntry color="0xF2F2F2"/>
+					</s:LinearGradient>
+				</s:backgroundFill>
+				<s:HGroup click="mudarState()"  height="20"  paddingLeft="10"  width="100%"  >
+					<s:Label id="lblNome" text="{nomeCategoria}" height="20"  includeIn="desligado"  width="100%" verticalAlign="middle"  />
+					<s:VGroup paddingTop="2"  >
+						<s:Image source.ligado="@Embed(source='../assets/seta_cima.png')"  source.desligado="@Embed(source='../assets/seta_baixo.png')" horizontalAlign="right"   right="0"/>
+						
+					</s:VGroup>
+				</s:HGroup> 
+			</s:BorderContainer>
+			<s:BorderContainer id="bdLayer" width="100%" minWidth="0" minHeight="0" 
+							   styleName="titulo_quadroArea" borderAlpha="0.4" visible.desligado="false" visible.ligado="true" height.desligado="0" height.ligado="25" >
+				<s:HGroup id="hg" width="100%" height="25" paddingLeft="3" verticalAlign="middle" >
+					<s:Label paddingLeft="1" horizontalCenter="0" text="Feições" width="72.2%"/>
+					<spark:Separator width="3" height="100%" alpha="0.4"  color="#8E8E8E" verticalAlign="middle" />
+					<s:Label text="Área (m2)" width="27.8%" paddingRight="1"   />
+				</s:HGroup>
+			</s:BorderContainer>
+			<s:List id="listaAreas" dataProvider="{listaAr}" horizontalScrollPolicy="off" includeIn="desligado" visible.desligado="false" visible.ligado="true" width="100%" borderVisible="false" >
+				<s:itemRenderer>
+					<fx:Component>
+						<views:ItemQuadroAreaView  width="100%" />
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>
+		</s:VGroup>
+	</s:BorderContainer>
+</s:ItemRenderer>

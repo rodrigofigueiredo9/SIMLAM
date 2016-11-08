@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Business.Executor">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Business\Executor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Entities.DadosRelatorio">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAABAAAAAQAAAABAAAAAAgAEAAAA=</HashCode>
+      <FileName>Entities\DadosRelatorio.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Dados" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Grupos" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Business.ExportadorPdf">
+    <Position X="5.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Business\ExportadorPdf.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Business.ExportadorXls">
+    <Position X="5.75" Y="5.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AwAQAAAAAAAAAABAAAAAAEBAABAIAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Business\ExportadorXls.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Entities.ColecaoDados" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAQAAAAAAAAACAACAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\ColecaoDados.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tecnomapas.Blocos.RelatorioPersonalizado.Entities.GrupoDados">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAEAAAAAAAAAAAAAAAAEAAAAAAAAACAAgAAAAAA=</HashCode>
+      <FileName>Entities\GrupoDados.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Tecnomapas.Blocos.RelatorioPersonalizado.Business.IExportador" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Business\IExportador.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

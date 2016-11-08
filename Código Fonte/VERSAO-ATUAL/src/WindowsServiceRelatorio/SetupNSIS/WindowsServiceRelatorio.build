@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<project name="Geral" default="Geral">
+    
+    <property name="NSIS_SCRIPT" value="WindowsServiceRelatorio.nsi"/>	
+	<property name="SERVICE_BIN" value="D:\BinNant"/>
+
+	<!-- Templates -->
+	<property name="SOLUTION_NAME" value="..\WindowsService.sln"/>
+	<property name="SERVICE_NAME" value="WindowsServiceDefault"/>
+	<property name="PRODUCT_DIR" value="IDAF - Servico de Processamento Geo"/>
+	<property name="PRODUCT_EXE" value="SVCOperacoesGeo.exe"/>
+	<property name="PRODUCT_NAME" value="IDAF - Serviço Geo"/>
+	<!-- Fim Templates -->
+
+	<target name="Geral" Description="Geral" >
+	
+		<call target="LimparExe" />
+
+		<property name="SOLUTION_NAME" value="..\WindowsServiceRelatorio.sln"/>
+		<property name="SERVICE_NAME" value="IDAF_SVCRelatorio"/>
+		<property name="PRODUCT_DIR" value="IDAF - Servico de Relatorio - Importação de Dados ETL"/>
+		<property name="PRODUCT_EXE" value="IDAF_SVCRelatorio.exe"/>
+		<property name="PRODUCT_NAME" value="IDAF - Serviço de Relatorio - Importação de Dados ETL"/>
+		<property name="OUTFILE" value="SetupIDAFServicoRelatorio"/>
+
+		<call target="LimparBin" />
+		<call target="build" />
+		<call target="build_NSIS" />
+		
+		<call target="LimparBin" />
+		
+	</target>
+	
+	
+	<target name="build" Description="Compila a solucao." >
+		<exec program="MSBuild.exe" append="true" basedir="C:\Windows\Microsoft.NET\Framework\v4.0.30319" commandline="/verbosity:m ${SOLUTION_NAME} /p:Configuration=Debug;OutDir=${SERVICE_BIN}" /> 
+	</target>
+	
+	<target name="build_NSIS" Description="Compila a solucao." >
+		<exec program="makensis.exe" append="true" basedir="C:\Program Files (x86)\NSIS" commandline="/O&quot;${OUTFILE}.log&quot; /DSERVICE_NAME=&quot;${SERVICE_NAME}&quot; /DPRODUCT_DIR=&quot;${PRODUCT_DIR}&quot; /DPRODUCT_EXE=&quot;${PRODUCT_EXE}&quot; /DPRODUCT_NAME=&quot;${PRODUCT_NAME}&quot; /DSOURCE_DIR=&quot;${SERVICE_BIN}&quot; /DOUTFILE=&quot;${OUTFILE}&quot; ${NSIS_SCRIPT}  " /> 
+	</target>
+	
+	<target name="Copy" Description="Copiar" >
+		<copy todir="${COPY_OUT}" overwrite="true">
+			<fileset basedir="${COPY_DIR}">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="LimparBin" Description="Copiar" >
+		<delete>
+			<fileset>
+				<include name="${SERVICE_BIN}/**" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="LimparExe" Description="Copiar" >
+		<delete>
+			<fileset>
+				<include name="*.exe" />
+			</fileset>
+		</delete>
+	</target>
+	
+</project>

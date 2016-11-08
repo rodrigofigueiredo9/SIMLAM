@@ -1,0 +1,95 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+@font-face 
+{
+	src			: url("/css/MyriadWebPro.ttf");
+	fontFamily	: MyriadWebPro;
+	embedAsCFF	: true;
+}
+@font-face 
+{
+	src			: url("/css/MyriadWebPro-Bold.ttf");
+	fontFamily	: MyriadWebProBold;
+	embedAsCFF	: true;
+}
+@font-face
+{
+	src			: url("/css/MyriadWebPro.ttf");
+	font-family	: main;
+	font-style	: normal;
+	font-weight	: normal;
+	embedAsCff	: true;
+}
+@font-face
+{
+	src			: url("/css/MyriadWebPro-Bold.ttf");
+	font-family	: main;
+	font-style	: normal;
+	font-weight	: bold;
+	embedAsCff	: true;	
+}
+@font-face
+{
+	src			: url("/css/MyriadWebPro-Italic.ttf");
+	font-family	: main;
+	font-style	: italic;
+	font-weight	: normal;
+	embedAsCff	: true;	
+}
+@font-face
+{
+	src					: url("/css/MyriadWebPro.ttf");
+	font-family			: mainNoCFF;
+	font-style			: normal;
+	font-weight			: normal;
+	advancedAntiAliasing: true; 
+	embedAsCFF			: false;
+}
+@font-face
+{
+	src					: url("/css/MyriadWebPro-Bold.ttf");
+	font-family			: mainNoCFF;
+	font-style			: normal;
+	font-weight			: bold;
+	advancedAntiAliasing: true; 
+	embedAsCFF			: false;	
+}
+@font-face
+{
+	src					: url("/css/MyriadWebPro-Italic.ttf");
+	font-family			: mainNoCFF;
+	font-style			: italic;
+	font-weight			: normal;
+	advancedAntiAliasing: true; 
+	embedAsCFF			: false;	
+}
+@font-face
+{
+	src			: url("/css/Framd.TTF");
+	font-family	: franklin1;
+	font-style	: normal;
+	font-weight	: normal;
+	embedAsCff	: true;	
+}
+@font-face
+{
+	src			: url("/css/Framd.TTF");
+	font-family	: franklin1NoCFF;
+	font-style	: normal;
+	font-weight	: normal;
+	embedAsCff	: false;	
+}
+@font-face
+{
+	src			: url("/css/FRABK.TTF");
+	fontFamily	: franklin;
+	fontStyle	: normal;
+	font-weight	: normal;
+	embedAsCff	: true;	
+}
+s|Label
+{
+	fontFamily	: main;
+}

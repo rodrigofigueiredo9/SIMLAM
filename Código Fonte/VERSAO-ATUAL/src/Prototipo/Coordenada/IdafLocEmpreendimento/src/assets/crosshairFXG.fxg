@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graphic version="2.0" xmlns="http://ns.adobe.com/fxg/2008" xmlns:d="http://ns.adobe.com/fxg/2008/dt" xmlns:fc="http://ns.adobe.com/flashcatalyst/2009"  viewHeight= "42" viewWidth= "42">
+	<Library>
+	</Library>
+
+	<Group d:userLabel="Layer_1" d:type="layer">
+		<Line xFrom="18" yFrom="1" xTo="18" yTo="19" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="1" yFrom="19" xTo="18" yTo="19" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="1" yFrom="23" xTo="18" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="22" yFrom="40" xTo="22" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="40" yFrom="23" xTo="22" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="40" yFrom="19" xTo="22" yTo="19" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="22" yFrom="1" xTo="22" yTo="19" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="18" yFrom="40" xTo="18" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="1" yFrom="19" xTo="1" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="18" yFrom="1" xTo="22" yTo="1" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="18" yFrom="41" xTo="22" yTo="41" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Line xFrom="41" yFrom="19" xTo="41" yTo="23" alpha="1" blendMode="normal" d:userLabel="Line">
+			<stroke>
+				<SolidColorStroke color="#000000" weight="2" caps="none"/>
+			</stroke>
+		</Line>
+		<Rect x="2" y="20" width="38" height="2" alpha="1" blendMode="normal" radiusX="0" radiusY="0">
+			<fill>
+				<SolidColor color="#ffff00"/>
+			</fill>
+			<stroke>
+				<SolidColorStroke color="#ffff00" weight="1" caps="none"/>
+			</stroke>
+		</Rect>
+		<Rect x="19" y="2" width="2" height="38" alpha="1" blendMode="normal" radiusX="0" radiusY="0">
+			<fill>
+				<SolidColor color="#ffff00"/>
+			</fill>
+			<stroke>
+				<SolidColorStroke color="#ffff00" weight="1" caps="none"/>
+			</stroke>
+		</Rect>
+	</Group>
+</Graphic>

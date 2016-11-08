@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:com="com.*" minWidth="0"  top="2" xmlns:views="views.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.CenarioServicoArcGisControllerEvent;
+			import controllers.IdentificarControllerEvent;
+			import controllers.LegendaControllerEvent;
+			import controllers.NavegadorController;
+			import controllers.NavegadorControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.LayerLoad;
+			import models.Item;
+			import models.Navegador.CenarioServicoArcGis;
+			import models.Navegador.Navegador;
+			import models.Navegador.ServicoArcGis;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.Sort;
+			import mx.collections.SortField;
+			import mx.controls.Alert;
+			import mx.rpc.soap.LoadEvent;
+			import mx.utils.ObjectUtil;
+			
+			import org.osmf.events.LoaderEvent;
+			
+			public static const TILEDMAPSERVICELAYER:String = "arcgis_tiled_map_service_layer";
+			public static const DYNAMICMAPSERVICELAYER:String = "arcgis_dynamic_map_service_layer";
+			private var listaAr:ArrayList;
+			private var idCenarioPrincipal:int =0;
+			
+			public function init(event:Object = null):void
+			{
+				NavegadorController.getInstance().addEventListener(NavegadorControllerEvent.NAVEGADOR_BUSCAR,getNavegador);
+				NavegadorController.getInstance().buscarNavegador(DesenhadorEsri.getInstance().idNavegador, DesenhadorEsri.getInstance().idProjeto);
+			}
+			
+			public function getNavegador(ev:NavegadorControllerEvent):void
+			{
+				if(ev && ev.navegador)
+				{
+					var servicosQueGeramLegenda:Array = new Array();
+					var servicosIdentificam:Vector.<Item> = new Vector.<Item>();
+					var navegador:Navegador = ev.navegador as Navegador;
+					DesenhadorEsri.getInstance().limparMapa();
+					if(navegador)
+					{	
+						if(navegador.Servicos)
+						{
+							var servico:ServicoArcGis;
+							
+							for(var i:int = 0; i< navegador.Servicos.length; i++)
+							{
+								servico = navegador.Servicos[i];
+							
+								var layer:LayerLoad = new LayerLoad();
+								
+								layer.Nome = servico.Nome;
+								layer.Url = servico.Url;
+								layer.Id =  servico.Id.toString();
+								layer.Filtros = (servico.IsPrincipal ?navegador.Filtros:null);
+								
+								if(servico.IsCacheado)
+								{
+									layer.Type =  TILEDMAPSERVICELAYER;
+								}
+								else								
+								{
+									layer.Type =  DYNAMICMAPSERVICELAYER;
+								}
+								
+								layer.Posicao = i;
+								
+								DesenhadorEsri.getInstance().addServicoMap(layer);
+								DesenhadorEsri.getInstance().layersLoad.push(layer);
+								
+								if(servico.IsPrincipal)
+								{
+									DesenhadorEsri.getInstance().idLayerMapDesenho = servico.Id.toString();
+								}
+								if(servico.GeraLegenda)
+								{
+									servicosQueGeramLegenda.push(i);
+								}
+								if(servico.Identificar)
+								{
+									var item:Item = new Item();
+									item.Texto = servico.Nome;
+									item.Chave = (i).toString();
+									servicosIdentificam.push(item);
+								}
+							}
+							
+							servicosIdentificam.sort(function (itemA:Object, itemB:Object):int {
+								try{
+									
+									return ObjectUtil.stringCompare(itemA.Nome, itemB.Nome);
+								}
+								catch(evt:Object){}
+								
+								return -1;
+								
+							});
+							
+							DesenhadorEsri.getInstance().servicosIdentificam = servicosIdentificam;
+							DesenhadorEsri.getInstance().dispatchEvent(new LegendaControllerEvent(LegendaControllerEvent.LAYERS_SERVICOS_ATUALIZAR, servicosQueGeramLegenda));
+							DesenhadorEsri.getInstance().dispatchEvent(new IdentificarControllerEvent(IdentificarControllerEvent.LAYERS_SERVICOS_ATUALIZAR, servicosIdentificam));
+						}
+						
+						if(navegador.Cenarios)
+						{
+							listaAr = new ArrayList();
+							
+							for(var i:int =0; i< navegador.Cenarios.length; i++)
+							{
+								listaAr.addItem(navegador.Cenarios[i]);								
+								if(navegador.Cenarios[i].IsPrincipal)
+								{
+									cenarioSelecionado.data = navegador.Cenarios[i];
+									idCenarioPrincipal = listaAr.length-1;
+								}
+							}
+						}
+						if(navegador.ProjetosAssociados)
+							DesenhadorEsri.getInstance().projetosAssociados = navegador.ProjetosAssociados;
+						
+					}
+				}
+				
+				listaCenarios.dataProvider = listaAr;
+				
+				DesenhadorEsri.getInstance().addEventListener(mx.rpc.soap.LoadEvent.LOAD, loaded);
+				DesenhadorEsri.getInstance().load();
+			}
+			
+			public function loaded(event:LoadEvent):void
+			{
+				if (cenarioSelecionado.data == null)
+					return;
+				
+				DesenhadorEsri.getInstance().desligarLayersMap();
+				DesenhadorEsri.getInstance().ligarLayersMap(cenarioSelecionado.data.Servicos);								
+			}
+			
+			public function initCenario():void
+			{
+				listaCenarios.addEventListener( CenarioServicoArcGisControllerEvent.SELECIONOU_CENARIO, selecionouCenario);
+			}
+			
+			public function selecionouCenario(ev:CenarioServicoArcGisControllerEvent):void
+			{
+				if(ev && ev.cenario)
+				{	
+					DesenhadorEsri.getInstance().desligarLayersMap();
+					DesenhadorEsri.getInstance().ligarLayersMap(ev.cenario.Servicos);
+					cenarioSelecionado.data = ev.cenario;
+					currentState='desligado';
+				}
+			}
+			
+			public function mudarState():void
+			{
+				if(currentState == "ligado")
+				{
+					listaCenarios.height = 0;
+					currentState = "desligado";
+				}
+				else
+				{
+					if(listaCenarios)
+					{	
+						listaCenarios.height = (listaAr.length *23)+5;
+					}
+					currentState = "ligado";
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states> 
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	<s:BorderContainer id="bdCenario" styleName="fundo_cinza_claro" borderAlpha="0.2"   minHeight="0" minWidth="0" width="100%" >
+		<s:VGroup height.desligado="22" gap="0" height.ligado ="{listaCenarios.height-24}" minHeight="0" minWidth="0" width="100%" >
+			<s:BorderContainer  minHeight="0" styleName="fundo_cinza_claro" borderVisible="false" minWidth="0" height="24" borderAlpha="0" borderWeight="0" width="100%"  >
+				<s:backgroundFill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry color="0xFFFFFF"/>
+						<s:GradientEntry color="0xF2F2F2"/>
+					</s:LinearGradient>
+				</s:backgroundFill>
+				<s:HGroup gap="2" click="mudarState()" minWidth="0" height="24" verticalAlign="middle" paddingRight="8" >
+					<views:CenarioArcGisView id="cenarioSelecionado" minWidth="0" height="100%" width="{bdCenario.width - imgCombo.width-10-5}"  />
+					<s:HGroup paddingLeft="3" minWidth="0">
+						<s:Image id="imgCombo" source.ligado="@Embed(source='../assets/seta_cima_combo.png')" height="24"  source.desligado="@Embed(source='../assets/seta_baixo_combo.png')"  horizontalAlign="right" verticalAlign="middle" left="2" right="8" />
+					</s:HGroup>
+				</s:HGroup>
+			</s:BorderContainer>
+			<s:List id="listaCenarios" dataProvider="{listaAr}" includeIn="desligado"  visible.desligado="false" visible.ligado="true" width="100%" minWidth="0" creationComplete="initCenario()" borderVisible="false" minHeight="0"  >
+				<s:itemRenderer>
+					<fx:Component>
+						<views:CenarioArcGisView minWidth="0" width="100%" />
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>
+		</s:VGroup>
+	</s:BorderContainer>		
+</s:Group>

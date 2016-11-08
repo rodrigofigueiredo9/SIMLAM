@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="f092e1d7-12cf-401d-befd-c5d9f4190b76" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="f9072394-f87d-414a-bf69-18e261a67bb7" name="Interno.UI">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="4edea609-d01b-4a63-b53d-c2e5e947ac48" direction="Forward">
+          <layerMoniker Id="2f1daee9-e6ea-4847-9ae0-ab44ac576df1" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="ab6c2ab0-f226-4913-8028-81fe8d1e5806" direction="Forward">
+          <layerMoniker Id="efe0e26e-ca7b-476e-86fb-005889ec0f16" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="ad04ac02-c6b3-4846-a960-e8444b9f5f80" name="Controllers" />
+        <layer Id="2683d1f6-52b8-4a5a-9950-0e5f109d6171" name="View" />
+      </childLayers>
+      <references>
+        <reference Id="3170d34f-8642-4c32-89b3-e087f9af2b20" name="Interno">
+          <ArtifactNode Label="Interno" Category="CodeSchema_Project" Id="(Assembly=../Interno/Interno.csproj)">
+            <Category Ref="CodeSchema_SourceFile" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=Tecnomapas.EtramiteX.Interno)" Label="Tecnomapas.EtramiteX.Interno.dll" Category="FileSystem.Category.FileOfType.dll">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="2f1daee9-e6ea-4847-9ae0-ab44ac576df1" name="Model">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="511f9137-96b6-4525-aeb7-0996c2d5d110" direction="Forward">
+          <layerMoniker Id="efe0e26e-ca7b-476e-86fb-005889ec0f16" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <childLayers>
+        <layer Id="7de6628a-f0ed-41ed-9e66-42e91d47c2f7" name="Interno.Model.Extensoes">
+          <childLayers>
+            <layer Id="6cd403c0-aab7-4be2-9967-1d9e800d0e61" name="Business" />
+            <layer Id="c879ff25-abe4-49cf-9c3c-f532553a1457" name="Data" />
+            <layer Id="7e97dc93-2b85-434d-bcd3-78fec17782c5" name="Entities&#xD;&#xA;" />
+          </childLayers>
+          <references>
+            <reference Id="844a0fda-c76d-485d-b130-589bd82b3c1c" name="Interno.Model.Extensoes">
+              <ArtifactNode Label="Interno.Model.Extensoes" Category="CodeSchema_Project" Id="(Assembly=../Model.Extencao/Interno.Model.Extensoes.csproj)">
+                <Category Ref="CodeSchema_SourceFile" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=Tecnomapas.EtramiteX.Interno.Model.Extencao)" Label="Tecnomapas.EtramiteX.Interno.Model.Extencao.dll" Category="FileSystem.Category.FileOfType.dll">
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="d7664c93-b74a-428b-9c41-bb1018ed2b8a" name="Interno.Model.RelatorioIndividual">
+          <childLayers>
+            <layer Id="96a1d094-d76a-4713-85f0-f09321523102" name="Business" />
+            <layer Id="4ccbd5fb-2027-47fb-9736-099da31174af" name="Entities" />
+            <layer Id="da5d9d64-10d0-4c53-8b65-9ee836404f38" name="Data" />
+          </childLayers>
+          <references>
+            <reference Id="bf30bfaa-cdb3-4f8f-b8e7-d90a57da7e54" name="Interno.Model.RelatorioIndividual">
+              <ArtifactNode Label="Interno.Model.RelatorioIndividual" Category="CodeSchema_Project" Id="(Assembly=../Relatorio/Interno.Model.RelatorioIndividual.csproj)">
+                <Category Ref="CodeSchema_SourceFile" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual)" Label="Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll" Category="FileSystem.Category.FileOfType.dll">
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+        <layer Id="7cdda06e-de61-4d11-b6dd-35333a24813b" name="Interno.Model">
+          <childLayers>
+            <layer Id="356255a5-22a5-4474-852f-1a934274b9fc" name="Data" />
+            <layer Id="23962817-a685-4116-9f74-3f07e5c513bd" name="Business" />
+            <layer Id="2084100c-839c-449d-af18-ab25f7b98f0a" name="Entities&#xD;&#xA;" />
+          </childLayers>
+          <references>
+            <reference Id="9d803143-2820-40d3-9df4-5f32b36b8fc3" name="Interno.Model">
+              <ArtifactNode Label="Interno.Model" Category="CodeSchema_Project" Id="(Assembly=../Model/Interno.Model.csproj)">
+                <Category Ref="CodeSchema_SourceFile" />
+              </ArtifactNode>
+              <ExpandedNode Id="(Assembly=Tecnomapas.EtramiteX.Interno.Model)" Label="Tecnomapas.EtramiteX.Interno.Model.dll" Category="FileSystem.Category.FileOfType.dll">
+                <LinkCategory Ref="Produces" />
+                <LinkCategory Ref="Represents" />
+              </ExpandedNode>
+            </reference>
+          </references>
+        </layer>
+      </childLayers>
+    </layer>
+    <layer Id="efe0e26e-ca7b-476e-86fb-005889ec0f16" name="Bibliotecas">
+      <references>
+        <reference Id="c8abd1bb-3b38-4f2b-9d3f-6a24492d07f0" name="Configuracao">
+          <ArtifactNode Label="Configuracao" Category="CodeSchema_Project" Id="(Assembly=../../../lib/src/Configuracao/Configuracao.csproj)">
+            <Category Ref="CodeSchema_SourceFile" />
+          </ArtifactNode>
+          <ExpandedNode Id="(Assembly=Tecnomapas.EtramiteX.Configuracao)" Label="Tecnomapas.EtramiteX.Configuracao.dll" Category="FileSystem.Category.FileOfType.dll">
+            <LinkCategory Ref="Produces" />
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+  </layers>
+</layerModel>

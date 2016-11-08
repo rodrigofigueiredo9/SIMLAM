@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:controllers="controllers.*"
+				width="100%" minWidth="0" minHeight="0" autoDrawBackground="false"  >
+	<fx:Script>
+		<![CDATA[
+			import com.tm.spark.Separator;
+			import com.tm.spark.textmask.TextInputMask;
+			
+			import models.AtributoFeicao;
+			import models.ColunaLayerFeicao;
+			import models.FeicaoSelecionada;
+			import models.Item;
+			
+			import mx.controls.Label;
+			
+			import spark.components.DropDownList;
+			import spark.components.TextInput;
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			public var coluna:ColunaLayerFeicao;
+			public var valor:String;
+			
+			override public function set data(value:Object):void {
+				super.data = value;
+				
+				if (value== null)
+					return;
+				coluna = data as ColunaLayerFeicao;
+				init();
+				
+			}
+			private function init():void
+			{
+				if(coluna)
+				{
+					hg.removeAllElements();
+					var lblAlias:Label = new Label();
+					lblAlias.percentWidth = 50;
+					lblAlias.text = coluna.Alias + (coluna.IsObrigatorio?"*":"");
+					hg.addElement(lblAlias);
+					
+					var sep:Separator = new Separator();
+					sep.width = 3;
+					sep.percentHeight=100;
+					sep.alpha = 0.4;
+					sep.verticalAlign = "middle";
+					sep.styleName = "fundo_cinza_claro";
+					hg.addElement(sep);
+					
+					switch(coluna.Tipo)
+					{
+						case ColunaLayerFeicao.Numero:
+							var txtNumero:TextInput = new TextInput();
+							txtNumero.visible = true;
+							txtNumero.text = coluna.Valor;
+							txtNumero.enabled = coluna.IsEditavel;
+							
+							var tamanho:String = coluna.Tamanho.toString().replace(",",".");
+							var lista:Array = tamanho.split(".") as Array;
+							tamanho = "0";
+							var precisao:String ="0";
+							if(lista)
+							{
+								if(lista.length >0)
+									tamanho = lista[0];
+								if(lista.length>1)
+									precisao = lista[1];
+							}
+							txtNumero.addEventListener(TextOperationEvent.CHANGE, alterar);
+							new TextInputMask(txtNumero, new RegExp("^(-?\\d{0,"+tamanho+"}(\\d\\,\\d{0,"+precisao+"})?)$"),[',','0']);
+							txtNumero.maxChars = coluna.Tamanho;
+							txtNumero.percentWidth = 50;
+							txtNumero.styleName = "fundo_branco";
+						
+							txtNumero.errorString = (coluna.IsObrigatorio &&   txtNumero.text.length ==0?("'"+coluna.Alias+"' deve ser informado"):"");
+						
+							hg.addElement(txtNumero);
+							break;
+						case ColunaLayerFeicao.ListaDeValores:
+							var ddlValor:DropDownList = new DropDownList();
+							ddlValor.addEventListener(IndexChangeEvent.CHANGE, alterar);
+							ddlValor.visible = true;
+							ddlValor.enabled = coluna.IsEditavel;
+							ddlValor.id = "Chave";
+							ddlValor.labelField = "Texto";
+							ddlValor.percentWidth = 50;
+							ddlValor.dataProvider = coluna.Itens;
+							ddlValor.styleName= "fundo_branco";
+							ddlValor.alpha = 0.7;
+							
+							if(ddlValor.dataProvider && ddlValor.dataProvider.toArray().length>0)
+							{				
+								
+								for each(var item:Item in ddlValor.dataProvider.toArray())
+								{									
+									if(item.Chave.toLowerCase() == coluna.Valor.toLowerCase())
+									{
+										ddlValor.selectedItem = item;									
+										break;	
+									}
+								}
+								
+								if(ddlValor.selectedIndex < 0)
+									ddlValor.selectedIndex=0;
+							}
+							
+							hg.addElement(ddlValor);
+							break;
+						case ColunaLayerFeicao.Texto:
+							
+							var txtTexto:TextInput = new TextInput();
+							txtTexto.visible = true;
+							txtTexto.styleName = "fundo_branco";
+							txtTexto.addEventListener(TextOperationEvent.CHANGE, alterar);
+							txtTexto.text = coluna.Valor;
+							txtTexto.enabled = coluna.IsEditavel;
+							txtTexto.maxChars = coluna.Tamanho;
+							txtTexto.percentWidth = 50;
+							txtTexto.errorString = (coluna.IsObrigatorio &&   txtTexto.text.length ==0?("'"+coluna.Alias+"' deve ser informado"):"");
+							hg.addElement(txtTexto);
+							break;
+					}
+					alterar();
+				}
+			}
+			private function alterar(ev:Event=null):void
+			{
+				var atributo:AtributoFeicao = new AtributoFeicao();
+				if(ev)
+				{
+					switch(coluna.Tipo)
+					{
+					    case ColunaLayerFeicao.ListaDeValores:
+							var ddlValor:DropDownList = (ev.target as DropDownList);
+							coluna.Valor = (ddlValor.selectedItem as Item).Chave;
+							break;
+						case ColunaLayerFeicao.Numero:
+							var txtNumero:TextInput  = (ev.target as TextInput);
+							coluna.Valor = txtNumero.text.toString();
+							txtNumero.errorString = (coluna.IsObrigatorio &&   txtNumero.text.length ==0?("'"+coluna.Alias+"' deve ser informado"):"");
+							
+							break;
+						case ColunaLayerFeicao.Texto:
+							var txtTexto:TextInput  = (ev.target as TextInput);
+							coluna.Valor = txtTexto.text.toString();
+							txtTexto.errorString = (coluna.IsObrigatorio &&   txtTexto.text.length ==0?("'"+coluna.Alias+"' deve ser informado"):"");
+							break;
+					}
+				}
+				if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().layerFeicao.Colunas)
+				{
+					for(var k:int=0; k<FeicaoSelecionada.getInstance().layerFeicao.Colunas.length; k++)
+					{
+						if(FeicaoSelecionada.getInstance().layerFeicao.Colunas[k].Coluna)
+						{
+							var str1:String = FeicaoSelecionada.getInstance().layerFeicao.Colunas[k].Coluna.toString().toLowerCase();
+							var str2:String = coluna.Coluna.toString().toLowerCase();
+							if(str1 == str2)
+							{
+								FeicaoSelecionada.getInstance().layerFeicao.Colunas[k].Valor = coluna.Valor;
+								break;
+							}
+						}
+					}	
+				}
+			}
+		]]> 
+	</fx:Script>
+	<s:BorderContainer id="bdLayer" width="100%" minWidth="0" minHeight="0" borderWeight="0"
+					   styleName="{(data.IdLista%2==0? 'fundo_cinza_claro':'fundo_branco')}" borderAlpha="0.4" >
+		<s:HGroup id="hg" width="100%" height="25" paddingLeft="3" verticalAlign="middle" horizontalAlign="center" />		 
+	</s:BorderContainer>
+</s:ItemRenderer>

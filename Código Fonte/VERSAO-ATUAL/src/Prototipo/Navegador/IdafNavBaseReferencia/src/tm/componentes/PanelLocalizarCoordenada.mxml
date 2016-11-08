@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:spark="tm.spark.*"
+		 xmlns:ui="http://www.kapit.fr/flex4/ui"
+		 width="350" height="280" creationComplete="creationCompleteHandler(event)"
+		 creationPolicy="all" currentState="coordenadas" title="Localizar">
+
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.Extent;
+			import com.idaf.controllers.DataController;
+			import com.idaf.controllers.DataControllerEvent;
+			import com.idaf.models.Lote;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import tm.componentes.scripts.TokenTimer;
+			import tm.spark.textmask.TextInputMask;
+			import tm.spatialReference.Coordinate;
+			import tm.spatialReference.CoordinateSystemConverter;
+			import tm.spatialReference.CoordinateSystemConverterFactory;
+			
+			private var totalHeight:Number = 0;
+			
+			[Bindable] public var mapa:Map;
+			[Bindable] private var temAdvertencia:Boolean = false;
+			[Bindable] public var styleNome:String;
+			[Bindable] private var descriptionToolTip:String = "";
+			
+			public var wktSysCoord:String;
+			public var datumName:String = "sirgas2000";
+			
+			protected static var REGEX_GMS_LAT:RegExp = /^(-?(((90)|([0-8]\d)|\d)(:([0-5]?\d(:([0-5]?\d(\.\d{0,4})?)?)?)?)?)?)$/;
+			protected static var REGEX_GMS_LNG:RegExp = /^(-?(([0-9]{1,2}|1[0-7][0-9]|180)(:([0-5]?\d(:([0-5]?\d(\.\d{0,4})?)?)?)?)?)?)$/;
+			protected static var AUTOCOMPLETE_GMS:Array = [',','.','0',':',':0'];
+			
+			protected static var REGEX_GDEC_LAT:RegExp = /^(-?(((90)|([0-8]\d)|\d)(\.\d{0,7})?)?)$/;
+			protected static var REGEX_GDEC_LNG:RegExp = /^(-?((([0-9]{1,2})|(1[0-7][0-9])|(180))(\.\d{0,7})?)?)$/;
+			protected static var AUTOCOMPLETE_GDEC:Array = [',','.','0'];
+			
+			protected static var REGEX_EASTING:RegExp = /^(-?(\d{0,9}(\.\d{0,4})?)?)$/;
+			protected static var AUTOCOMPLETE_EASTING:Array = [',','.','0'];
+			
+			protected static var REGEX_NORTHING:RegExp = /^(-?(\d{0,9}(\.\d{0,4})?)?)$/;
+			protected static var AUTOCOMPLETE_NORTHING:Array = [',','.','0'];
+			
+			private var maskLongitudeEasting:TextInputMask;
+			private var maskLatitudeNorthing:TextInputMask;
+			
+			private var token:uint = 0;
+			private var currentLote:Lote = null;
+			
+			override public function set toolTip(description:String):void 
+			{
+				this.descriptionToolTip = description;
+			}
+			
+			public function load():void {
+				maskLongitudeEasting = new TextInputMask(txtLongitudeEasting);
+				maskLatitudeNorthing = new TextInputMask(txtLatitudeNorthing);
+				
+				configurarTipoCoordenada(null, 0);
+			}
+			
+			private function exibirLocalizadorCoordenada(event:Event):void
+			{
+				limparCampos();
+			}
+			
+			public function onServiceFault(event:FaultEvent):void
+			{
+				Alert.show(event.toString());
+			}
+			
+			private function goHandler(): void {
+				switch (currentState) {
+					case "coordenadas":
+						converterCoordenada();
+						break;
+					case "municipio":
+						localizarMunicipio();
+						break;
+				}
+			}
+			
+			private function converterCoordenada(event:Event = null):void
+			{
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				cbFuso.errorString = "";
+				cbHemisferio.errorString = "";
+				lblMensagem.text = "Alguns campos não foram preenchidos";
+				temAdvertencia = false;
+				
+				switch(cbTipoCoordenada.selectedItem.value)
+				{
+					case 1:
+						if(txtLongitudeEasting.text == "")
+						{
+							txtLongitudeEasting.errorString = "O Easting deve ser preenchido.";
+							temAdvertencia = true;
+						}
+						
+						if(txtLatitudeNorthing.text == "")
+						{
+							txtLatitudeNorthing.errorString = "O Northing deve ser preenchido.";
+							temAdvertencia = true;
+						}
+						
+						if(cbFuso.selectedItem.value == "0")
+						{
+							cbFuso.errorString =  "O Fuso deve ser selecionado.";
+							temAdvertencia = true;
+						}
+						
+						if(cbHemisferio.selectedItem.value == "0")
+						{
+							cbHemisferio.errorString =  "O Hemisfério deve ser selecionado.";
+							temAdvertencia = true;
+						}
+						
+						if(!temAdvertencia)
+						{
+							//Como é UTM e foi travado em 23 Sul basta usar o easting e northing
+							zoomCoordenada( parseNumber(txtLongitudeEasting.text), parseNumber(txtLatitudeNorthing.text) );
+						}
+						break;
+					
+					case 2:
+					case 3:
+						if(txtLongitudeEasting.text == "")
+						{
+							txtLongitudeEasting.errorString = "A longitude deve ser preenchida.";
+							temAdvertencia = true;
+						}
+						
+						if(txtLatitudeNorthing.text == "")
+						{
+							txtLatitudeNorthing.errorString = "A longitude deve ser preenchida.";
+							temAdvertencia = true;
+						}
+						
+						if(cbTipoCoordenada.selectedItem.value == 3)
+						{
+							if( Math.abs(parseNumber(txtLongitudeEasting.text)) > 180 )
+							{
+								txtLongitudeEasting.errorString = "A Longitude está fora do intervalo permitido (-180  a  180).";
+								temAdvertencia = true;
+							}
+							
+							if( Math.abs(parseNumber(txtLatitudeNorthing.text)) > 90 )
+							{
+								txtLatitudeNorthing.errorString = "A Latitude está fora do intervalo permitido (-90  a  90).";
+								temAdvertencia = true;
+							}
+						}
+						
+						if(!temAdvertencia)
+						{
+							var coord:Coordinate;
+							var converter:CoordinateSystemConverter = CoordinateSystemConverterFactory.getConverter( CoordinateSystemConverterFactory.WKT_GEO_SIRGAS2000, CoordinateSystemConverterFactory.getUtmWKT('sirgas2000',24,true));
+							
+							switch(cbTipoCoordenada.selectedItem.value)
+							{
+								case 2:
+									//GMS
+									coord = new Coordinate(	parseGMS(txtLongitudeEasting.text), parseGMS(txtLatitudeNorthing.text) );
+									break;
+								
+								case 3:
+									//GDEC
+									coord = new Coordinate(	parseNumber(txtLongitudeEasting.text), parseNumber(txtLatitudeNorthing.text) );
+									break;
+							}
+							
+							coord = converter.transform(coord);
+							zoomCoordenada(coord.x, coord.y);
+						}
+						break;
+				}
+			}
+			
+			public function convertAndCenterMap(easting: String, northing: String): void {
+				//Como é UTM e foi travado em 24 Sul basta usar o easting e northing
+				zoomCoordenada( parseNumber(easting), parseNumber(northing) );
+			}
+			
+			private function parseNumber(str:String):Number{
+				return parseFloat(str.replace(",", "."));
+			}
+			
+			private function parseGMS(str:String):Number{
+				var array:Array = str.split(":");
+				
+				for (var i:int = 0; i < array.length; i++){
+					array[i] = parseNumber(array[i]);
+				}
+				
+				while (array.length<3){
+					array.push(0);
+				}
+				
+				var sentido:int = (array[0]<0)?-1:1;
+				array[0] *= sentido;
+				
+				return sentido * (array[0] + array[1]/60 + array[2]/3600);
+			}
+			
+			public function zoomCoordenada(x:Number, y:Number):void
+			{
+				var margin: int = 10000;
+				var envelope:Extent = new Extent(x - margin, y - margin, x + margin, y + margin);
+				setTimeout(setEnvelope, 300, envelope);
+			}
+			
+			public function setEnvelope(envelope:Extent):void
+			{
+				mapa.extent = envelope;
+				doClose();
+			}
+			
+			protected function configurarTipoCoordenada(event:IndexChangeEvent, tipoCoordenada:int = 0):void
+			{
+				txtLongitudeEasting.text = "";
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				txtLatitudeNorthing.text = "";
+				cbFuso.errorString = "";
+				cbFuso.selectedIndex = 0;
+				cbHemisferio.errorString = "";
+				cbHemisferio.selectedIndex = 0;
+				
+				temAdvertencia = false;
+				
+				hbFusoHemisferio.visible = false;
+				
+				if(tipoCoordenada != 0)
+				{
+					cbTipoCoordenada.selectedIndex = tipoCoordenada;
+				}
+				else if (cbTipoCoordenada.selectedIndex==-1){
+					cbTipoCoordenada.selectedIndex = 0;
+				}
+				
+				switch(cbTipoCoordenada.selectedItem.value)
+				{
+					case 1:
+						lblLongitudeEasting.text = "Easting";
+						maskLongitudeEasting.mask = REGEX_EASTING;
+						maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_EASTING;
+						
+						lblLatidudeNorthing.text = "Northing";
+						maskLatitudeNorthing.mask = REGEX_NORTHING;
+						maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_NORTHING;
+						
+						hbFusoHemisferio.visible = true;
+						break;
+					
+					case 2:
+					case 3:
+						lblLongitudeEasting.text = "Longitude";
+						lblLatidudeNorthing.text = "Latidude";
+						
+						if(cbTipoCoordenada.selectedItem.value == 2)
+						{
+							maskLongitudeEasting.mask = REGEX_GMS_LNG;
+							maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_GMS;
+							
+							maskLatitudeNorthing.mask = REGEX_GMS_LAT;
+							maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_GMS;
+						}
+						else
+						{
+							maskLongitudeEasting.mask = REGEX_GDEC_LNG;
+							maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_GDEC;
+							
+							maskLatitudeNorthing.mask = REGEX_GDEC_LAT;
+							maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_GDEC;
+						}
+						
+						break;
+				}
+			}
+			
+			public function limparCampos():void
+			{
+				txtLongitudeEasting.text = "";
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				txtLatitudeNorthing.text = "";
+				cbFuso.errorString = "";
+				cbFuso.selectedIndex = 0;
+				cbHemisferio.errorString = "";
+				cbHemisferio.selectedIndex = 0;
+				
+				temAdvertencia = false;
+				
+				configurarTipoCoordenada(null, 0);
+			}
+			
+			protected function cbTipoCoordenada_creationCompleteHandler(event:FlexEvent):void
+			{
+				cbTipoCoordenada.enabled = true;
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				load();
+				this.addEventListener(KeyboardEvent.KEY_DOWN,handleKeyDown);
+				DataController.getInstance().addEventListener(DataControllerEvent.MUNICIPIOS_ATUALIZADOS,handleLogradourosAtualizados);
+			}
+			
+			protected function handleKeyDown(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ESCAPE) {
+					doClose();
+				}
+			}
+			
+			private function doClose():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function buttonBar_changeHandler(event:IndexChangeEvent):void
+			{
+				switch(event.target.selectedIndex)
+				{
+					case 0:
+						//Coordenada
+						currentState = "coordenadas";
+						break;
+					case 1:
+						//Municipio
+						currentState = "municipio";
+						break;
+				}
+			}
+			
+			private function localizarMunicipio():void
+			{
+				if (dataGrid.selectedItem) {
+					zoomCoordenada(dataGrid.selectedItem.x, dataGrid.selectedItem.y);
+				}
+			}
+			
+			protected function handleLogradourosAtualizados(event:DataControllerEvent):void
+			{
+				var logradouros: Array = [];
+				
+				dataGrid.dataProvider = new ArrayCollection(event.result);
+			}
+			
+			protected function tiFindMunicipio_changeHandler(event:TextOperationEvent):void
+			{
+				if (tiFindMunicipio.text.length>3) {
+					var timer: TokenTimer = new TokenTimer(++token,400,1);
+					timer.addEventListener(TimerEvent.TIMER_COMPLETE,handleTimerComplete);
+					timer.start();
+				}
+			}
+			
+			protected function handleTimerComplete(event:TimerEvent):void
+			{
+				if (event.currentTarget.token == token) {
+					DataController.getInstance().getMunicipios(tiFindMunicipio.text);
+				}
+			}
+
+			protected function clearMunicipio(event:MouseEvent):void {
+				tiFindMunicipio.text = "";
+				dataGrid.dataProvider = new ArrayCollection();
+			}
+			
+			private function localizarLote():void
+			{
+				if (currentLote) 
+					zoomCoordenada(currentLote.x, currentLote.y);
+			}
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="coordenadas"/>
+		<s:State name="municipio"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%">
+		<s:HGroup width="100%" horizontalAlign="center" paddingBottom="5" paddingLeft="10"
+				  paddingRight="10" paddingTop="5" verticalAlign="middle">
+			<s:ButtonBar id="buttonBar" width="100%" change="buttonBar_changeHandler(event)"
+						 requireSelection="true" selectedIndex="0">
+				<s:ArrayCollection>
+					<fx:Object label="Coordenadas"/>
+					<fx:Object label="Município"/>
+				</s:ArrayCollection>
+			</s:ButtonBar>
+		</s:HGroup>
+		
+		<s:VGroup x="0" bottom="0" width="100%" height="100%" horizontalAlign="center"
+				  paddingBottom="5" paddingLeft="10" paddingRight="10" paddingTop="5"
+				  verticalAlign="top"> 
+			<s:VGroup includeIn="coordenadas" width="100%" horizontalAlign="left">
+				<s:VGroup width="100%" horizontalAlign="left">
+					<s:Label fontWeight="bold" text="Tipo de Coordenada"/>
+				</s:VGroup>
+				<s:VGroup width="100%" horizontalAlign="left">
+					<spark:ComboBoxExt id="cbTipoCoordenada" width="100%"
+									   change="configurarTipoCoordenada(event)"
+									   creationComplete="cbTipoCoordenada_creationCompleteHandler(event)"
+									   enabled="false">
+						<spark:dataProvider>
+							<s:ArrayCollection>
+								<fx:Object label="Projetado UTM" value="1"/>
+								<fx:Object label="Geografico (Grau Minuto Segundo)" value="2"/>
+								<fx:Object label="Geografico (Grau Decimal)" value="3"/>
+							</s:ArrayCollection>
+						</spark:dataProvider>
+					</spark:ComboBoxExt>
+				</s:VGroup>
+				<s:HGroup width="100%" horizontalAlign="left">
+					<s:VGroup width="50%" horizontalAlign="left">
+						<s:Label id="lblLongitudeEasting" fontWeight="bold" text="Longitude"/>
+						<s:TextInput id="txtLongitudeEasting" width="100%"/>
+					</s:VGroup>
+					<s:VGroup width="50%" horizontalAlign="left">
+						<s:Label id="lblLatidudeNorthing" fontWeight="bold" text="Latidude"/>
+						<s:TextInput id="txtLatitudeNorthing" width="100%"/>
+					</s:VGroup>
+				</s:HGroup>
+				
+				<s:HGroup id="hbFusoHemisferio" width="100%">
+					<s:VGroup width="50%" horizontalAlign="left">
+						<s:Label fontWeight="bold" text="Fuso"/>
+						<spark:ComboBoxExt id="cbFuso" width="100%"
+										   change="if (cbFuso.selectedIndex==-1){ event.preventDefault(); cbFuso.selectedIndex=0 }"
+										   selectedIndex="0">
+							<spark:dataProvider>
+								<s:ArrayCollection>
+									<!--<mx:Object label="Selecione" value="0"/>
+									<mx:Object label="21" value="21"/>
+									<mx:Object label="22" value="22"/>
+									<fx:Object label="23" value="23"/>-->
+									<fx:Object label="24" value="24"/>
+								</s:ArrayCollection>
+							</spark:dataProvider>
+						</spark:ComboBoxExt>
+					</s:VGroup>
+					<s:VGroup width="50%" horizontalAlign="left">
+						<s:Label fontWeight="bold" text="Hemisfério"/>
+						<spark:ComboBoxExt id="cbHemisferio" width="100%"
+										   change="if (cbHemisferio.selectedIndex==-1){ event.preventDefault(); cbHemisferio.selectedIndex=0 }"
+										   selectedIndex="0">
+							<spark:dataProvider>
+								<s:ArrayCollection>
+									<fx:Object label="Sul" value="1"/>	
+								</s:ArrayCollection>
+							</spark:dataProvider>
+						</spark:ComboBoxExt>
+					</s:VGroup>
+				</s:HGroup>
+				<s:Label id="lblMensagem" visible="{temAdvertencia}" color="#f1272c" fontSize="12"
+						 fontWeight="bold" text="Alguns campos não foram preenchidos"/>
+			</s:VGroup>
+			
+			<s:VGroup includeIn="municipio" width="100%" height="100%" horizontalAlign="left">
+				<s:HGroup width="100%" gap="2">
+					<s:TextInput id="tiFindMunicipio" width="100%"
+								 change="tiFindMunicipio_changeHandler(event)"
+								 prompt="Nome do Municipio"/>
+					<s:Button label="Limpar" click="clearMunicipio(event)"/>
+					
+				</s:HGroup>
+				<s:DataGrid id="dataGrid" width="100%" height="100%" requestedRowCount="4">
+					<s:columns>
+						<s:ArrayList>
+							<s:GridColumn dataField="nome" headerText="Município"></s:GridColumn>
+						</s:ArrayList>
+					</s:columns>
+				</s:DataGrid>
+			</s:VGroup>
+		</s:VGroup>
+	</s:VGroup>		
+	<s:controlBarContent>
+		<s:HGroup width="50%" horizontalAlign="left" verticalAlign="middle">
+		</s:HGroup>   
+		<s:HGroup width="50%" horizontalAlign="right">
+			<s:Button label="Ir" click="goHandler()"/>
+			<s:Button label="Cancelar" click="doClose()"/>
+		</s:HGroup>
+	</s:controlBarContent>
+</s:Panel>

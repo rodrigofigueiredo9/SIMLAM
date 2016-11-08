@@ -1,0 +1,13 @@
+.btnGerarPdfStyle
+{
+	downSkin: Embed(source="img/btn_gerar_pdf_ativo.jpg");
+    overSkin: Embed(source="img/btn_gerar_pdf_ativo.jpg");
+    upSkin: Embed(source="img/btn_gerar_pdf_normal.jpg");
+}
+
+.btnCancelarPdfStyle
+{
+	downSkin: Embed(source="img/btn_cancelar_pdf_ativo.jpg");
+    overSkin: Embed(source="img/btn_cancelar_pdf_ativo.jpg");
+    upSkin: Embed(source="img/btn_cnacelar_pdf.jpg");
+}

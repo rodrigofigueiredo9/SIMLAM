@@ -1,0 +1,15 @@
+===Serviço Windows IDAF Scheduler===
+ - Na instalação na base do Cliente substituir a chave "SicarToken", no arquivo .config.
+ - Na instalação na base do Cliente substituir a chave "SicarUrl", no arquivo .config.
+
+===Scripts de Banco===
+ - Já foram executados na base do cliente, os scripts 1 e 2 da pasta "01_processamento_sicar",
+   são referentes as propriedades que possuem ARL cedente para compensação. Devem ser processadas 
+   primeiro, só depois da conclusão dessas solicitações deve ser executados os scripts 3 e 4.
+
+ - Os scripts 3 e 4 são referentes as demais propriedades não encontradas nos scripts anteriores.
+
+ - O arquivo "banco/02_reverter_situacao_processamento_sicar.sql" pode ser usado para reverter a situação
+   do processamento dos arquivos .car que foram enviados e obtiveram o código "500". Esse script irá revertê-los
+   afim de que entrem na fila para serem enviados novamente.
+   

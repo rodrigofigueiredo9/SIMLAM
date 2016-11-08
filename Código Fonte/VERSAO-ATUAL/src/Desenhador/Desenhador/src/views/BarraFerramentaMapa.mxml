@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark"  styleName="barraFerramenta"
+				   xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:Ferramentas="views.Ferramentas.*" 
+				   xmlns:views="views.*" xmlns:esri="http://www.esri.com/2008/ags" xmlns:buttonext="com.tm.spark.buttonext.*" xmlns:identificador="tm.componentes.identificador.*"    >
+	<fx:Declarations>
+	
+			<esri:NavigationTool id="navegacao" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.Extent;
+			import com.esri.ags.geometry.MapPoint;
+			import com.tm.spark.resizabletitlewindow.ResizableTitleWindow;
+			
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.IdentificarControllerEvent;
+			import controllers.IdentifyControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Item;
+			import models.Mascara;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Button;
+			import mx.controls.TextInput;
+			import mx.events.CloseEvent;
+			import mx.graphics.codec.PNGEncoder;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.DropDownList;
+			import spark.components.Group;
+			import spark.events.IndexChangeEvent;
+			
+			import tm.spatialReference.Coordinate;
+			import tm.spatialReference.CoordinateSystemConverter;
+			import tm.spatialReference.CoordinateSystemConverterFactory;	
+			
+			[Embed( source="../assets/cursor_zoom_mais.png")]
+			private var cursorZoomMais:Class;
+			[Embed( source="../assets/cursor_zoom_menos.png")]
+			private var cursorZoomMenos:Class;
+			private var popup:ResizableTitleWindow;
+			private var ddlTipo:DropDownList;			
+			private var txtCoordenadaXUTM:TextInput;
+			private var txtCoordenadaYUTM:TextInput;			
+			private var txtCoordenadaXGDEC:TextInput;
+			private var txtCoordenadaYGDEC:TextInput;			
+			private var txtCoordenadaXGMS:TextInput;
+			private var txtCoordenadaYGMS:TextInput;
+			private var estado:String;
+			public var idNavegador:int;
+			
+			public function init():void
+			{
+				cenariosMapa.init();
+				medir.addEventListener(FerramentaGeometriaControllerEvent.PAUSAR_FERRAMENTA, executarPausarDespausarOutrasFerramentas);
+				DesenhadorEsri.getInstance().addEventListener(IdentificarControllerEvent.LAYERS_SERVICOS_ATUALIZAR, atualizarIdentificar);
+				idNavegador = DesenhadorEsri.getInstance().idNavegador;
+				navegacao.map = DesenhadorEsri.getInstance().map;
+				identificador.map = DesenhadorEsri.getInstance().map;
+				identificador.enabled = true;
+			}
+			public function desligarTodasFerramentas(ev:FerramentaGeometriaControllerEvent=null):void
+			{
+				btnPan.styleName = "pan";
+				medir.desligar();
+				estado = "desligados";
+				medir.currentState = "desligados";
+				
+			}
+			
+			public function executarPausarDespausarOutrasFerramentas(ev:FerramentaGeometriaControllerEvent):void
+			{
+				if(medir.currentState != "desligados" && estado =="pan")
+					estado ="desligados";
+				else
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.PAUSAR_FERRAMENTA,null,this));
+			}
+			
+			public function ZoomMais():void
+			{
+				DesenhadorEsri.getInstance().map.zoomIn();
+			}
+			
+			public function ZoomMenos():void
+			{
+				DesenhadorEsri.getInstance().map.zoomOut();		
+			}
+			
+			public function ZoomCoordenada():void
+			{
+				estado= "zoom_coordenada";
+				desligarTodasFerramentas();
+				cursorManager.removeAllCursors();
+				if(popup)
+				{
+					popup.dispatchEvent(new CloseEvent(CloseEvent.CLOSE));
+					popup = null;
+				}
+				popup = new ResizableTitleWindow();
+				popup.showCloseButton= true ;
+				popup.title = "Zoom na Coordenada";
+				popup.width = 500;
+				popup.height = 100;
+				popup.resizeEnabled = false;
+				popup.addEventListener(CloseEvent.CLOSE, fecharJanela);
+				
+				ddlTipo = new DropDownList();				
+				txtCoordenadaXUTM = new TextInput();
+				txtCoordenadaYUTM = new TextInput();
+				
+				txtCoordenadaXGDEC = new TextInput();
+				txtCoordenadaYGDEC = new TextInput();
+				
+				txtCoordenadaXGMS = new TextInput();
+				txtCoordenadaYGMS = new TextInput();
+				
+				var hGroup:HGroup = new HGroup();		
+				var gCoords:Group = new Group();
+				var btnIr:Button = new Button();
+				
+				hGroup.horizontalAlign = "center"; 
+				hGroup.verticalAlign = "middle";
+				hGroup.width = 500;
+				hGroup.height = 60;
+				
+				var itens:ArrayCollection = new ArrayCollection();
+				var item:Object = new Object();
+				item.chave = 0;
+				item.valor = "UTM";
+				itens.addItem(item);
+				
+				item = new Object();
+				item.chave = 1;
+				item.valor = "GDEC";
+				itens.addItem(item);
+				
+				item = new Object();
+				item.chave = 2;
+				item.valor = "GMS";
+				itens.addItem(item);
+				
+				ddlTipo.labelField = "valor";
+				ddlTipo.addEventListener(IndexChangeEvent.CHANGE, FormatarCoordenada);
+				ddlTipo.width = 90;
+				ddlTipo.dataProvider = itens;
+				ddlTipo.selectedIndex = 0;			
+				
+				hGroup.addElement(ddlTipo);
+				
+				var msk:Mascara;
+				msk = new Mascara(txtCoordenadaXUTM,"999999.9999");
+				msk = new Mascara(txtCoordenadaYUTM,"9999999.9999");
+				
+				msk = new Mascara(txtCoordenadaXGDEC,"-99.999999999");
+				msk = new Mascara(txtCoordenadaYGDEC,"-99.999999999");
+				
+				msk = new Mascara(txtCoordenadaXGMS,"99°99'99.9999''");
+				msk = new Mascara(txtCoordenadaYGMS,"99°99'99.9999''");
+				
+				txtCoordenadaXUTM.text = "";
+				txtCoordenadaYUTM.text = "";
+				
+				txtCoordenadaXGDEC.text = "";
+				txtCoordenadaYGDEC.text = "";
+				
+				txtCoordenadaXGMS.text = "";
+				txtCoordenadaYGMS.text = "";				
+				
+				gCoords.addElement(txtCoordenadaXUTM);
+				txtCoordenadaYUTM.left = 165; 
+				gCoords.addElement(txtCoordenadaYUTM);
+				
+				gCoords.addElement(txtCoordenadaXGDEC);
+				txtCoordenadaYGDEC.left = 165;
+				gCoords.addElement(txtCoordenadaYGDEC);
+				
+				gCoords.addElement(txtCoordenadaXGMS);
+				txtCoordenadaYGMS.left = 165;
+				gCoords.addElement(txtCoordenadaYGMS);
+				
+				hGroup.addElement(gCoords);
+				
+				txtCoordenadaXGDEC.visible = false;
+				txtCoordenadaYGDEC.visible = false;
+				
+				txtCoordenadaXGMS.visible = false;
+				txtCoordenadaYGMS.visible = false;
+				
+				btnIr.addEventListener(MouseEvent.CLICK, IrCoordenadaSelecionada);
+				btnIr.width = 50;
+				btnIr.label = "Ir";
+				
+				hGroup.addElement(btnIr);
+				popup.addElement(hGroup);
+				PopUpManager.addPopUp(popup, this.parentApplication as DesenhadorIdaf);
+				PopUpManager.centerPopUp(popup);
+			}
+			
+			public function ligarDesligarPan(ev:FerramentaGeometriaControllerEvent):void
+			{
+				if(ev && ev.ativar && medir.currentState =="desligados")
+				{
+					estado = "pan";
+					btnPan.styleName = "pan_ativado";
+					cursorManager.removeAllCursors();
+					DesenhadorEsri.getInstance().map.panEnabled = true;
+				}
+				else
+				{
+					estado= "desligados";
+					btnPan.styleName = "pan";
+				}
+			}
+			
+			public function pan():void
+			{
+				cursorManager.removeAllCursors();
+			//	DesenhadorEsri.getInstance().map.panEnabled = true;
+				
+				btnPan.styleName = "pan";
+				if(medir.currentState != "desligados")
+				{
+					desligarTodasFerramentas();
+					estado = "pan";
+					btnPan.styleName = "pan_ativado";	
+				}
+				else
+				{
+					estado = "pan";
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.PAUSAR_FERRAMENTA,null,this));
+				}
+			}
+			
+			protected function IrCoordenadaSelecionada(event:MouseEvent):void
+			{
+				if(ddlTipo)
+				{
+					var wktGeografico:String = 'GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]';
+					var wktProjetado:String = 'PROJCS["SIRGAS 2000 / UTM zone 24S",GEOGCS["SIRGAS 2000",DATUM["D_SIRGAS_2000",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-39],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["Meter",1]]';							
+					
+					var conversor:CoordinateSystemConverter = CoordinateSystemConverterFactory.getConverter(wktGeografico, wktProjetado);
+					
+					var novaCoordenada:Coordinate;
+					switch(ddlTipo.selectedIndex)
+					{						
+						case 0:
+							// UTM
+							if(txtCoordenadaXUTM.text != "" && txtCoordenadaYUTM.text != "")
+							{
+								var pt:MapPoint = new MapPoint(Number(txtCoordenadaXUTM.text), Number(txtCoordenadaYUTM.text));
+								DesenhadorEsri.getInstance().map.extent = new Extent((pt.x-1), (pt.y - 1), (pt.x+1),(pt.y + 1));
+							}
+							break;
+						case 1:
+							// GDEC
+							if(txtCoordenadaXGDEC.text != "" && txtCoordenadaYGDEC.text != "")
+							{
+								novaCoordenada = conversor.transform(new Coordinate(Number(txtCoordenadaXGDEC.text), Number(txtCoordenadaYGDEC.text)));						
+								DesenhadorEsri.getInstance().map.extent = new Extent((novaCoordenada.x-1), (novaCoordenada.y - 1), (novaCoordenada.x+1),(novaCoordenada.y + 1));
+							}
+							break;
+						case 2:
+							// GMS	
+							if(txtCoordenadaXGMS.text != "" && txtCoordenadaYGMS.text != "")
+							{
+								var coordX:String = txtCoordenadaXGMS.text;
+								coordX = coordX.replace("°", "");
+								coordX = coordX.replace("'", "");
+								coordX = coordX.replace("''", "");
+								
+								var coordY:String = txtCoordenadaYGMS.text;
+								coordY = coordY.replace("°", "");
+								coordY = coordY.replace("'", "");
+								coordY = coordY.replace("''", "");
+								
+								var coordGrauX:Number = Number(coordX.substring(0,2));	
+								var coordMinX:Number = Number(coordX.substring(2,4));
+								var coordSegX:Number = Number(coordX.substr(4));
+								
+								var coordGrauY:Number = Number(coordY.substring(0,2));	
+								var coordMinY:Number = Number(coordY.substring(2,4));
+								var coordSegY:Number = Number(coordY.substr(4));
+								
+								var decimalX:Number = (coordGrauX + (coordMinX/60) + (coordSegX/3600))* (-1);
+								var decimalY:Number = (coordGrauY + (coordMinY/60) + (coordSegY/3600))* (-1);							
+								
+								novaCoordenada = conversor.transform(new Coordinate(decimalX, decimalY));						
+								DesenhadorEsri.getInstance().map.extent = new Extent((novaCoordenada.x-1), (novaCoordenada.y - 1), (novaCoordenada.x+1),(novaCoordenada.y + 1));
+							}
+							break;
+					}
+				}
+			}
+			
+			protected function fecharJanela(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(popup);	
+				popup = null;
+			}
+			
+			protected function FormatarCoordenada(event:IndexChangeEvent):void
+			{
+				if(ddlTipo)
+				{
+					txtCoordenadaXUTM.visible = ddlTipo.selectedIndex == 0;
+					txtCoordenadaYUTM.visible = ddlTipo.selectedIndex == 0;
+					
+					txtCoordenadaXGDEC.visible = ddlTipo.selectedIndex == 1;
+					txtCoordenadaYGDEC.visible = ddlTipo.selectedIndex == 1;
+					
+					txtCoordenadaXGMS.visible = ddlTipo.selectedIndex == 2;
+					txtCoordenadaYGMS.visible = ddlTipo.selectedIndex == 2;
+				}
+			}
+			
+			public function retornarNavegacao():void {
+				cursorManager.removeAllCursors();
+				navegacao.zoomToPrevExtent();
+			}
+			
+			public function avancarNavegacao():void {
+				cursorManager.removeAllCursors();
+				navegacao.zoomToNextExtent();
+			}
+			
+			private function exportar():void
+			{
+				var mapa:Map = DesenhadorEsri.getInstance().map;
+				cursorManager.setBusyCursor();
+				var bd:BitmapData = new BitmapData(mapa.width, mapa.height);
+				var m:Matrix = new Matrix();
+				mapa.zoomSliderVisible = false;
+				bd.draw(mapa, m);
+				mapa.zoomSliderVisible = true;
+				
+				var e:PNGEncoder = new PNGEncoder();
+				var png:ByteArray = e.encode(bd);
+				
+				
+				cursorManager.removeBusyCursor();
+				var r:FileReference = new FileReference();
+				r.save(png, "mapa.png");
+				
+			}
+			public var carregado:Boolean = false;
+			protected function atualizarIdentificar(ev:IdentificarControllerEvent):void
+			{
+				if(ev && identificador.enabled)
+				{
+					if(!carregado)
+					{
+						identificador.comboValores.dataProvider = new ArrayList();
+						identificador.valores = new ArrayList();
+						identificador.layerList = new Array();
+						identificador.layerNamesList = new Array();
+						identificador._layers = new Object();
+						for each(var item:Item in ev.servicosIdentificam)
+						{
+							identificador.layerList.push(item.Chave);
+							identificador.layerNamesList.push(item.Texto);
+						}
+						identificador.load();
+						carregado = true;
+					}
+					
+					identificador.refresh();
+					//	setTimeout(atualizarIdentificar, 5000, ev);
+				} 
+				else
+				{
+					identificador.comboValores.dataProvider = new ArrayList();
+					identificador.valores = new ArrayList();
+					identificador.layerList = new Array();
+					identificador.layerNamesList = new Array();
+					identificador._layers = new Object();
+					setTimeout(atualizarIdentificar, 2000, ev);
+				}
+			}
+			
+			public function zoomPontoEmpreendimento():void
+			{
+				DesenhadorEsri.getInstance().zoomAreaAbrangencia();
+			}
+		]]>
+	</fx:Script>
+		<s:HGroup id="hg" width="100%" gap="0">
+			<buttonext:ButtonExt  id="btnPan" click="pan()" styleName="pan" toolTip="Aplicar pan no mapa" />
+			<buttonext:ButtonExt  id="btnZoomMais" click="ZoomMais()"  styleName="zoom_mais" toolTip="Zoom mais" />
+			<buttonext:ButtonExt  id="btnZoomMenos" click="ZoomMenos()"  styleName="zoom_menos" toolTip="Zoom menos"/>
+			<buttonext:ButtonExt  id="btnZoomCoord" click="ZoomCoordenada()"  styleName="zoom_coordenada"  toolTip="Zoom na coordenada"/>
+			<Ferramentas:Medir id="medir"/>
+			<buttonext:ButtonExt  id="btnAnterior" click="retornarNavegacao()" styleName="navegacao_anterior"  toolTip="Retornar navegação"/>
+			<buttonext:ButtonExt  id="btnProximo" click="avancarNavegacao()" styleName="navegacao_proximo"  toolTip="Avançar navegação"/>
+			<buttonext:ButtonExt  id="btnImprimir" click="exportar()" styleName="camera"  toolTip="Exportar em PNG"/>
+			<buttonext:ButtonExt  id="btnPontoEmpreendimento" click="zoomPontoEmpreendimento()" styleName="zoom_area_abrangencia"  toolTip="Ir para a área de abrangência"/>
+			<identificador:Identificador id="identificador" navegadorId="{idNavegador}"  left="330" top="8" enabled="false"  app="{this.parentApplication as DesenhadorIdaf}" />
+		    <s:HGroup minWidth="0"  width="100%" horizontalAlign="right" >
+				<views:ListarCenariosServicoArcGisView id="cenariosMapa"  width="130"     />
+			</s:HGroup>
+		</s:HGroup>
+</s:BorderContainer>

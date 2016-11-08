@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{814B0933-8D99-4F22-8EB2-2437392DF7AB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Publico.Model</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Publico.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Interno.Model">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ModuloAgrotoxico\Business\AgrotoxicoBus.cs" />
+    <Compile Include="ModuloAgrotoxico\Data\AgrotoxicoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Business\CARSolicitacaoBus.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Business\CARSolicitacaoValidar.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoDa.cs" />
+    <Compile Include="ModuloEmpreendimento\Business\EmpreendimentoBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\ListasBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\PontoEmpreendimentoBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\SimuladorGeoArquivoBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\SimuladorGeoBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\SimuladorGeoValidar.cs" />
+    <Compile Include="ModuloGeoProcessamento\Data\ListasDa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Data\PontoEmpreendimentoDa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Data\SimuladorGeoDa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoSituacao.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoFilaSituacao.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoArquivoTipo.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoFilaEtapa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoFilaTipo.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\eSimuladorGeoMecanismo.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\SimuladorGeoArquivo.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\Atividade.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\Listas.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\Municipio.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\PontoEmpreendimento.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\Segmento.cs" />
+    <Compile Include="ModuloGeoProcessamento\Entities\SimuladorGeo.cs" />
+    <Compile Include="ModuloHabilitarEmissaoCFOCFOC\Business\HabilitarEmissaoCFOCFOCBus.cs" />
+    <Compile Include="ModuloHabilitarEmissaoCFOCFOC\Data\HabilitarEmissaoCFOCFOCDa.cs" />
+    <Compile Include="ModuloProtocolo\Business\ProtocoloBus.cs" />
+    <Compile Include="ModuloProtocolo\Data\ProtocoloDa.cs" />
+    <Compile Include="ModuloPTV\Business\PTVBus.cs" />
+    <Compile Include="ModuloPTV\Data\PTVDa.cs" />
+    <Compile Include="ModuloRoteiro\Business\RoteiroBus.cs" />
+    <Compile Include="ModuloRoteiro\Data\RoteiroDa.cs" />
+    <Compile Include="ModuloRoteiro\Entities\ListarFiltro.cs" />
+    <Compile Include="ModuloRoteiro\Entities\Roteiro.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloModeloBus.cs" />
+    <Compile Include="ModuloTitulo\Data\TituloDa.cs" />
+    <Compile Include="ModuloTitulo\Data\TituloModeloDa.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

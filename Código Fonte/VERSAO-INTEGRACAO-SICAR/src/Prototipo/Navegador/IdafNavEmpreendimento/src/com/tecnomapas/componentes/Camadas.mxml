@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:componentes="com.tecnomapas.componentes.*"
+		   horizontalScrollPolicy="off" initialize="init()" verticalScrollPolicy="off">
+	
+	<mx:Metadata>
+		[Event(name="itemChange")]
+	</mx:Metadata>
+	
+	<mx:Style>
+		.defaultTextStyle
+		{
+			font-weight:bold;
+			font-size:11px;
+		}
+		
+		.boxMensagemSemItensStyle
+		{
+			padding-left:8px; 
+			padding-bottom:8px; 
+			padding-right:8px; 
+			padding-top:8px;
+			background-color:#FFFFFF; 
+			background-alpha:0.7;
+			font-weight:bold;
+			border-style:solid;
+			border-thickness:1px;
+			border-color:#E2E2E2;
+		}
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.events.ZoomEvent;
+			import com.esri.ags.layers.ArcGISDynamicMapServiceLayer;
+			
+			import mx.binding.utils.ChangeWatcher;
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.events.FlexEvent;
+			
+			import com.tecnomapas.responders.CustomResponder;
+			
+			import com.tecnomapas.events.TreeCheckBoxEvent;
+			
+			[Bindable] public var layerIndex:int;
+			[Bindable] public var layerName:String;
+			[Bindable] public var mapa:Map;
+			[Bindable] public var styleNameBoxContainerCamadas:String;
+			[Bindable] public var styleNameBtnCamadasAtivo:String;
+			[Bindable] public var styleNameBtnCamadasInativo:String;
+			
+			public var camadasOcultasTexto:String = "@|";
+			
+			private var isAtivo:Boolean = false;
+			private var isCarregado:Boolean = false;
+			private var larguraDefault:Number = 0;
+			private var larguraInativo:Number = 26;
+			private var arrayLayersDetails:ArrayCollection = new ArrayCollection();
+			
+			private function init():void
+			{
+				vbContainerCamadas.width = 0;
+				vbContainerCamadas.visible = false;
+				this.larguraDefault = this.width;
+				this.width = larguraInativo;
+			}
+			
+			public function load():void
+			{
+				ChangeWatcher.watch(mapa.layers[layerIndex], "layerInfos", carregarCamadas);
+				
+				mapa.getLayer(layerName).alpha = hslAlphaCamadas.value/100; 
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar(null);
+						break;
+				}
+			}
+			
+			private function carregarCamadas(event:Event):void
+			{
+				var layerPropriedades:ArcGISDynamicMapServiceLayer = mapa.layers[layerIndex] as ArcGISDynamicMapServiceLayer;
+                
+				if(layerPropriedades.layerInfos && arrayLayersDetails.length <= 0)
+				{
+					for (var i:int = 0; i < layerPropriedades.layerInfos.length; i ++)
+					{
+						buscarDetalhesLayer(layerPropriedades.layerInfos[i].id);
+					}
+				}
+			}
+			
+			private function buscarDetalhesLayer(idLayer:int):void
+			{
+				var responder:CustomResponder = new CustomResponder(carregarDetalhesLayer, null, retornarBuscarDetalhesLayer, null);
+                mapa.layers[layerIndex].getLayerDetails(idLayer, responder);
+			}
+			
+			private function retornarBuscarDetalhesLayer(info:Object, params:Array):void
+			{
+				setTimeout(buscarDetalhesLayer, 1000, params[0]);
+			}
+
+			private function carregarDetalhesLayer(data:Object, params:Array):void
+			{
+				arrayLayersDetails.addItem(data);
+				
+				if(mapa.layers[layerIndex].layerInfos.length == arrayLayersDetails.length)
+				{	
+					addLayers(null, true);
+					
+					mapa.addEventListener(ZoomEvent.ZOOM_END, addLayers);
+					mapa.getLayer(layerName).addEventListener(FlexEvent.SHOW, addLayers);
+					mapa.getLayer(layerName).addEventListener(FlexEvent.HIDE, addLayers);
+				}
+			}
+			
+			private function podeCarregarLayer(idLayer:int):Boolean
+			{
+				if(arrayLayersDetails)
+				{
+					for(var i:int = 0; i < arrayLayersDetails.length; i++)
+					{
+						if(arrayLayersDetails[i].id == idLayer)
+						{
+							return (arrayLayersDetails[i].minScale == 0 && arrayLayersDetails[i].maxScale == 0) ||
+								   (mapa.scale <= arrayLayersDetails[i].minScale && mapa.scale >= arrayLayersDetails[i].maxScale);
+						}
+					}
+				}
+				
+				return true;
+			}
+			
+			private function carregarSituacaoLayers(xmlCamadas:XMLList, arrayVisibleLayers:ArrayCollection):void
+			{	
+				for each (var xmlNode:XML in xmlCamadas) 
+	        	{	
+	        		arrayVisibleLayers.addItem({layerId: xmlNode.@layerId, selected: xmlNode.@selected, indeterminate: xmlNode.@indeterminate});
+					
+					if(xmlNode.children() != null && xmlNode.children().length() > 0)
+					{
+						carregarSituacaoLayers(xmlNode.children(), arrayVisibleLayers);
+					}
+	        	}
+			}
+			
+			private function buscarSituacaoLayer(layerId:int, arrayVisibleLayers:ArrayCollection):Object
+			{
+				for (var i:int = 0; i < arrayVisibleLayers.length; i ++)
+				{
+					if(arrayVisibleLayers[i].layerId.toString() == layerId.toString())
+					{
+						return arrayVisibleLayers[i];
+					}
+				}
+				
+				return null;
+			}
+			
+			private function verificarItemVisibleLayer(itemVisibleLayer:Object):Object
+			{
+				if(!itemVisibleLayer)
+				{
+					itemVisibleLayer = new Object();
+					itemVisibleLayer.selected = true;
+					itemVisibleLayer.indeterminate = false;
+				}
+				
+				return itemVisibleLayer;
+			}
+			
+			private function addLayers(event:Event = null, isLoadInit:Boolean = false):void
+			{
+				var visibleLayersCount:int = 0;
+				var isGroupLayers:Boolean = false;
+				var itemVisibleLayer:Object = null;
+				var countVisibleSubLayers:int = 0;
+				var xmlCamadas:XMLListCollection = new XMLListCollection();
+				var arrayVisibleLayers:ArrayCollection = new ArrayCollection();
+				var layerPropriedades:ArcGISDynamicMapServiceLayer = mapa.layers[layerIndex] as ArcGISDynamicMapServiceLayer;
+				
+				if(isLoadInit)
+				{	
+					for(var j:int = 0; j < layerPropriedades.layerInfos.length; j++)
+					{				
+						if(layerPropriedades.layerInfos[j].subLayerIds && layerPropriedades.layerInfos[j].subLayerIds.length > 0)
+						{
+							layerPropriedades.visibleLayers.removeItemAt(layerPropriedades.visibleLayers.getItemIndex(layerPropriedades.layerInfos[j].id));
+						}
+					}
+				}
+				
+				if(tcbCamadas.dataProvider)
+				{
+					carregarSituacaoLayers(new XMLList(tcbCamadas.dataProvider), arrayVisibleLayers);
+				}
+				
+				if(layerPropriedades.layerInfos && layerPropriedades.layerInfos.length > 0)
+				{
+					for (var i:int = 0; i < layerPropriedades.layerInfos.length; i ++)
+					{
+						if(layerPropriedades.layerInfos[i].parentLayerId < 0)
+						{ 
+							if(podeCarregarLayer(layerPropriedades.layerInfos[i].id))
+							{
+								isGroupLayers = (layerPropriedades.layerInfos[i].subLayerIds && layerPropriedades.layerInfos[i].subLayerIds.length > 0);
+								
+								itemVisibleLayer = verificarItemVisibleLayer(buscarSituacaoLayer(layerPropriedades.layerInfos[i].id, arrayVisibleLayers));
+								
+								var layer:XML = new XML("<node label = '" + layerPropriedades.layerInfos[i].name + "' tooltip='" + layerPropriedades.layerInfos[i].name + "' selected='" + itemVisibleLayer.selected + "' indeterminate='" + itemVisibleLayer.indeterminate + "' layerId='" + layerPropriedades.layerInfos[i].id + "' groupLayers='" + isGroupLayers + "'></node>");
+								
+								if(isGroupLayers)
+								{
+									countVisibleSubLayers = addSubLayers(layer, layerPropriedades.layerInfos[i].subLayerIds, arrayVisibleLayers, layerPropriedades);
+									
+									if(countVisibleSubLayers == layer.children().length())
+									{
+										layer.@selected = true;
+										layer.@indeterminate = false;
+									}
+									else if (countVisibleSubLayers == 0)
+									{
+										layer.@selected = false;
+										layer.@indeterminate = false;
+									}
+									else
+									{
+										layer.@selected = false;
+										layer.@indeterminate = true;
+									}
+								}
+								
+								xmlCamadas.addItem(layer);
+							}
+						}
+					}
+					
+					tcbCamadas.dataProvider = xmlCamadas;
+				}
+				
+				isCarregado = (xmlCamadas.length > 0);
+				
+				if(isAtivo)
+				{
+					vbContainerCamadas.removeAllChildren();
+					abrir();
+				}
+			}
+			
+			private function addSubLayers(parentLayer:XML, subLayers:Array, arrayVisibleLayers:ArrayCollection, layerAPRT:ArcGISDynamicMapServiceLayer):int
+			{
+				var layer:XML = null;
+				var layerId:int = 0;
+				var isGroupLayers:Boolean = false;
+				var itemVisibleLayer:Object = null;
+				var countVisibleLayers:int = 0;
+				var countVisibleSubLayers:int = 0;
+				
+				for(var i:int = 0; i < subLayers.length; i++)
+				{	
+					layerId = subLayers[i];
+					
+					if(podeCarregarLayer(layerId))
+					{
+						for(var j:int = 0; j < layerAPRT.layerInfos.length; j++)
+						{	
+							if(layerId == layerAPRT.layerInfos[j].id)
+							{
+								isGroupLayers = (layerAPRT.layerInfos[j].subLayerIds && layerAPRT.layerInfos[j].subLayerIds.length > 0);
+								
+								itemVisibleLayer = verificarItemVisibleLayer(buscarSituacaoLayer(layerAPRT.layerInfos[j].id, arrayVisibleLayers));
+								
+								layer = new XML("<node label = '" + layerAPRT.layerInfos[j].name + "' tooltip='" + layerAPRT.layerInfos[j].name + "' selected='" + itemVisibleLayer.selected + "' indeterminate='" + itemVisibleLayer.indeterminate + "' layerId='" + layerAPRT.layerInfos[j].id + "' groupLayers='" + isGroupLayers + "'></node>");
+										
+								if(isGroupLayers)
+								{
+									countVisibleSubLayers = addSubLayers(layer, layerAPRT.layerInfos[j].subLayerIds, arrayVisibleLayers, layerAPRT);
+									
+									if(countVisibleSubLayers == layer.children().length())
+									{
+										layer.@selected = true;
+										layer.@indeterminate = false;
+										
+										countVisibleLayers++;
+									}
+									else if (countVisibleSubLayers == 0)
+									{
+										layer.@selected = false;
+										layer.@indeterminate = false;
+									}
+									else
+									{
+										layer.@selected = false;
+										layer.@indeterminate = true;
+									}
+								}
+								else
+								{
+									if(itemVisibleLayer.selected.toString() == "true")
+									{
+										countVisibleLayers++;
+									}
+								}
+								
+								parentLayer.appendChild(layer); 
+								
+								break;
+							}
+						}
+					}
+				}
+				
+				return countVisibleLayers;
+			}
+			
+			public function exibirCamadas():void
+			{
+				vbContainerCamadas.removeAllChildren();
+				
+				if(!isAtivo)
+				{
+					abrir();
+				}
+				else
+				{
+					fechar();
+				}
+				
+				isAtivo = !isAtivo;
+			}
+			
+			private function abrir():void
+			{
+				vbContainerCamadas.percentWidth = 100;
+				vbContainerCamadas.visible = true;
+					
+				if(isCarregado)
+				{	
+					vbContainerCamadas.addChild(vbCarregado);
+				}
+				else
+				{
+					vbContainerCamadas.addChild(hbVazio);
+				}
+				
+				this.width = this.larguraDefault;
+				this.btnExibirCamadas.styleName = styleNameBtnCamadasAtivo;
+			}
+			
+			private function fechar():void
+			{
+				vbContainerCamadas.width = 0;
+				vbContainerCamadas.percentWidth = 0;
+				vbContainerCamadas.visible = false;
+				
+				this.width = larguraInativo;
+				this.btnExibirCamadas.styleName = styleNameBtnCamadasInativo;
+			}
+			
+			private function exibirLayer(event:TreeCheckBoxEvent):void
+			{
+				var indiceLayer:int = -1;
+				var node:XMLList = new XMLList(event.itemDataSelected);
+				var idLayer:int = node[0].@layerId;
+				
+				if(node[0].@groupLayers == "false")
+				{
+					indiceLayer = ArrayCollection(mapa.layers[layerIndex].visibleLayers).getItemIndex(idLayer);
+						
+					if (indiceLayer < 0 && event.itemCheckBox.selected)
+					{	
+						ArrayCollection(mapa.layers[layerIndex].visibleLayers).addItem(idLayer);
+						
+						camadasOcultasTexto = camadasOcultasTexto.replace("|" + idLayer + "|", "|");
+					}
+					else if (indiceLayer >= 0 && !event.itemCheckBox.selected)
+					{	
+						ArrayCollection(mapa.layers[layerIndex].visibleLayers).removeItemAt(indiceLayer);
+						
+						camadasOcultasTexto += idLayer + "|"; 
+					}
+				}
+				
+				dispatchEvent(new Event("itemChange"));
+			}
+			
+			public function desativar(event:Event):void
+			{
+				if(!event || event.target.id != btnExibirCamadas.id)
+				{
+					if(isAtivo)
+					{
+						exibirCamadas();
+					}
+				}
+			}
+			
+			private function atualizarAltura():void
+			{
+				hbConteudo.height = tcbCamadas.rowHeight * tcbCamadas.rowCount;
+			}
+		]]>
+	</mx:Script>
+		
+	<mx:VBox id="vbContainerCamadas" left="25" width="100%" height="100%" horizontalAlign="center"
+			 horizontalScrollPolicy="off" styleName="{styleNameBoxContainerCamadas}"
+			 verticalScrollPolicy="off">
+		<mx:VBox id="vbCarregado" width="100%" height="100%" horizontalAlign="center">
+			<mx:HBox id="hbCabecalho" width="100%" horizontalAlign="center">
+				<mx:Label styleName="defaultTextStyle" text="Lista de Camadas em exibição"/>
+			</mx:HBox>
+			<mx:HBox id="hbConteudo" width="100%" height="100%" horizontalAlign="center"
+					 horizontalScrollPolicy="off" styleName="boxConteudoStyle"
+					 verticalScrollPolicy="off">
+				<componentes:TreeCheckBox id="tcbCamadas" width="{hbConteudo.width}" height="100%"
+											alternatingItemColors="[#FFFFFF,#CCCCCC]"
+											itemChange="{exibirLayer(event)}" labelField="@label"
+											resize="atualizarAltura()" showRoot="true"/>
+			</mx:HBox>
+			<mx:HBox id="hbRodape" width="100%" horizontalAlign="center">
+				<mx:HSlider id="hslAlphaCamadas" width="100%" buttonMode="false"
+							change="{mapa.getLayer(layerName).alpha = hslAlphaCamadas.value/100}"
+							dataTipOffset="0" dataTipPlacement="left" dataTipPrecision="0"
+							dataTipStyleName="LineDadoTip" labels="[0,25,50,75,100]"
+							liveDragging="true" maximum="100" minimum="0" showTrackHighlight="true"
+							snapInterval="1" tickInterval="25" toolTip="Transparência" value="75"/>
+			</mx:HBox>
+		</mx:VBox>
+		<mx:HBox id="hbVazio" top="10" width="100%" height="100%" horizontalAlign="center"
+				 horizontalScrollPolicy="off" styleName="boxMensagemSemItensStyle"
+				 verticalAlign="middle">
+			<mx:Label text="Nenhum item em exibição"/>
+		</mx:HBox>
+	</mx:VBox>
+	<mx:Button id="btnExibirCamadas" click="exibirCamadas()" styleName="{styleNameBtnCamadasInativo}"/>
+</mx:Canvas>

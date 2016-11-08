@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:jwolib="http://www.jwolib.com/2006/mxml"
+				width="350" close="close()" creationComplete="init()" layout="vertical"
+				paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3"
+				showCloseButton="true" styleName="opaquePanel">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.tecnomapas.navegadores.PopupWin;
+			
+			import mx.containers.Canvas;
+			import mx.managers.PopUpManager;
+
+			[Bindable] public var exibirDownloadShape:Boolean = false;
+			[Bindable] public var atributos:Array = null;
+			[Bindable] public var ordenadas:Array = null;
+			[Bindable] public var urlDownloadShape:String = "";
+			[Bindable] public var mapa:Map;
+			
+			private var layer:GraphicsLayer = new GraphicsLayer();
+			
+			public var actionVoltar:Function;
+			
+			private function init():void
+			{
+				super.useHandCursor = false;
+				var xTo:Number = (parent.stage.width - this.width) - ((parent.stage.width - this.width) * 0.1);
+				var yTo:Number = (parent.stage.height - this.height) / 2;
+				
+				move(xTo, yTo);
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						close();
+						break;
+				}
+			}
+			
+			private function baixarShape():void
+			{
+				if(urlDownloadShape != null && urlDownloadShape != "")
+				{
+					PopupWin.openWindow(urlDownloadShape, "_blank", "height=200,width=260,type=fullWindow");
+				}
+			}
+			
+			public function onAtualizarDestaque(event:Event):void
+			{
+				//exibirDestaque(false);
+			}
+			
+			public function exibirDestaque(isExibirEmDestaque:Boolean):void
+			{
+				/* this.layer.clear();
+				
+				if(isExibirEmDestaque)
+				{
+					var graphic:Graphic = null;
+	        		var points:ArrayCollection = new ArrayCollection();
+	        		var areaExterna:Polygon = new Polygon(null, mapa.spatialReference);
+	        		
+	        		this.mapa.addLayer(this.layer);
+					this.mapa.addEventListener(PanEvent.PAN_END, onAtualizarDestaque);
+					this.mapa.addEventListener(ZoomEvent.ZOOM_END, onAtualizarDestaque);
+					
+					cbExibirDestaque.selected = true;
+					
+					var minMapPoint:MapPoint = mapa.toMap(new Point(-1000, -1000));
+					
+					points.addItem(mapa.toMap(new Point(-1200, 1200)));
+					points.addItem(mapa.toMap(new Point(-1200, -(mapa.extent.height + 1200))));
+					points.addItem(mapa.toMap(new Point(mapa.extent.width + 1200, -(mapa.extent.height + 1200))));
+					points.addItem(mapa.toMap(new Point(mapa.extent.width + 1200, 1200)));
+					points.addItem(mapa.toMap(new Point(-1200, 1200)));
+				
+					for(var i:int = 0; i < ordenadas.length; i = i + 2)
+					{
+						points.addItem(new MapPoint(ordenadas[i], ordenadas[i + 1]));
+					}
+
+					points.addItem(new MapPoint(ordenadas[0], ordenadas[1]));
+					points.addItem(mapa.toMap(new Point(-1200, 1200)));
+					
+					areaExterna.addRing(points.toArray());
+					 
+					graphic = new Graphic(areaExterna);
+			        graphic.symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, 0, 0.4);
+			        
+			        this.layer.add(graphic);
+				}
+				else
+				{
+					cbExibirDestaque.selected = false;
+					mapa.removeEventListener(PanEvent.PAN_END, onAtualizarDestaque);
+					mapa.removeEventListener(ZoomEvent.ZOOM_END, onAtualizarDestaque);
+				} */
+			}
+			
+			public function close():void
+			{
+				//exibirDestaque(false);
+				
+				PopUpManager.removePopUp(this);
+			}
+			
+			public function voltar():void{
+				if(actionVoltar!=null){ 
+					actionVoltar();
+					close();
+				}
+					
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="100%" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6">
+		<mx:Canvas width="100%" borderStyle="solid" cornerRadius="4" includeInLayout="false">
+			<mx:HBox width="100%" paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
+				<mx:HBox width="100%">
+					<mx:CheckBox id="cbExibirDestaque" visible="false" label="Exibir em Destaque"
+								 change="exibirDestaque(false)" includeInLayout="false"
+								 selected="false"/>		
+				</mx:HBox>
+				<mx:HBox width="100%" horizontalAlign="right">
+					<mx:Button visible="{exibirDownloadShape}" label="Download Shape"
+							   click="baixarShape()"/>
+				</mx:HBox>
+			</mx:HBox>
+		</mx:Canvas>
+		<mx:DataGrid id="dgAtritutos" width="100%" height="100%"
+					 alternatingItemColors="[#EEEEEE, white]" dataProvider="{atributos}"
+					 editable="false" rowCount="{atributos.length}" rowHeight="20"
+					 showHeaders="true">
+			<mx:columns>
+				<mx:DataGridColumn width="85" draggable="false" headerText="Atributo"
+								   sortable="false" textAlign="left">
+					<mx:itemRenderer>
+						<mx:Component>
+							<mx:Text fontWeight="bold" text="{data.atrituto}"
+									 toolTip="{data.atrituto}"/>
+						</mx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn width="110" draggable="false" headerText="Valor" sortable="false"
+								   textAlign="left">
+					<mx:itemRenderer>
+						<mx:Component>
+							<mx:Text text="{data.valor}" toolTip="{data.valor}"/>
+						</mx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+			</mx:columns>
+		</mx:DataGrid>
+	</mx:VBox>
+	<mx:ControlBar width="100%">
+		<mx:HBox width="100%" horizontalAlign="center">
+			<mx:Button label="Voltar" click="voltar()"/>
+			<mx:Button label="Fechar" click="close()"/>
+		</mx:HBox>
+	</mx:ControlBar>
+</mx:TitleWindow>

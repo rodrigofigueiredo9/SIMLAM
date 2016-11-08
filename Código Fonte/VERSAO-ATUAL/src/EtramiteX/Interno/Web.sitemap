@@ -1,0 +1,486 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+
+	<siteMapNode url="~/" title="Raiz"  description="">
+
+		<siteMapNode url="~/Administrador" title="Administrador" description="linkMenu administradores" roles="AdministradorVisualizar,AdministradorCriar,AdministradorEditar,AdministradorListar,AdministradorAlterarSituacao">
+			<siteMapNode url="~/Administrador/Index" title="Administradores" description="linkMenu" roles="AdministradorVisualizar,AdministradorEditar,AdministradorListar,AdministradorAlterarSituacao">
+				<siteMapNode url="~/Administrador/Filtrar" />
+				<siteMapNode url="~/Administrador/Editar" />
+				<siteMapNode url="~/Administrador/Visualizar" />
+				<siteMapNode url="~/Administrador/AlterarSituacao" />
+			</siteMapNode>
+			<siteMapNode url="~/Administrador/Criar" title="Cadastrar Administrador" description="linkMenu" roles="AdministradorCriar">
+				<siteMapNode url="~/Administrador/VerificarCpf" />
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Papel" title="Papel" description="linkMenu papeis" roles="PapeloCriar,PapelListar,PapelEditar,PapelVisualizar,PapelExcluir">
+			<siteMapNode url="~/Papel/Index" title="Papéis" description="linkMenu" roles="PapelListar,PapelEditar,PapelVisualizar,PapelExcluir">
+				<siteMapNode url="~/Papel/Filtrar" />
+				<siteMapNode url="~/Papel/Editar" />
+				<siteMapNode url="~/Papel/Visualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Papel/Criar" title="Cadastrar Papel" description="linkMenu papel" roles="PapelCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Funcionario" title="Funcionário" description="linkMenu funcionario" roles="FuncionarioVisualizar,FuncionarioCriar,FuncionarioEditar,FuncionarioListar,FuncionarioAlterarSituacao">
+			<siteMapNode url="~/Funcionario/Index" title="Funcionários" description="linkMenu" roles="FuncionarioVisualizar,FuncionarioEditar,FuncionarioListar,FuncionarioAlterarSituacao">
+				<siteMapNode url="~/Funcionario/Filtrar" />
+				<siteMapNode url="~/Funcionario/Editar" />
+				<siteMapNode url="~/Funcionario/Visualizar" />
+				<siteMapNode url="~/Funcionario/AlterarSituacao" />
+			</siteMapNode>
+			<siteMapNode url="~/Funcionario/Criar" title="Cadastrar Funcionário" description="linkMenu funcionario" roles="FuncionarioCriar">
+				<siteMapNode url="~/Funcionario/VerificarCpf" />
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Roteiro" title="Roteiro Orientativo"  description="linkMenu roteiros" roles="RoteiroCriar,RoteiroListar,RoteiroEditar,RoteiroVisualizar,ItemRoteiroCriar,ItemRoteiroListar,ItemRoteiroEditar,ItemRoteiroVisualizar">
+			<siteMapNode url="~/Roteiro/Index" title="Roteiros Orientativos" description="linkMenu" roles="RoteiroListar,RoteiroEditar,RoteiroVisualizar">
+				<siteMapNode url="~/Roteiro/Filtrar" />
+				<siteMapNode url="~/Roteiro/Editar" />
+				<siteMapNode url="~/Roteiro/Visualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Roteiro/Criar" title="Cadastrar Roteiro Orientativo" description="linkMenu" roles="RoteiroCriar"></siteMapNode>
+			<siteMapNode url="~/Roteiro/IndexItem" title="Itens de Roteiro" description="linkMenu" roles="ItemRoteiroListar,ItemRoteiroEditar,ItemRoteiroVisualizar">
+				<siteMapNode url="~/Roteiro/EditarItem" />
+				<siteMapNode url="~/Roteiro/ItemVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Roteiro/CriarItem" title="Cadastrar Item de Roteiro" description="linkMenu" roles="ItemRoteiroCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/ChecagemRoteiro" title="Checagem" description="linkMenu checarItem" roles="ChecagemItemRoteiroCriar,ChecagemItemRoteiroExcluir,ChecagemItemRoteiroListar,ChecagemPendenciaCriar,ChecagemPendenciaExcluir,ChecagemPendenciaEditar,ChecagemPendenciaListar">
+
+			<siteMapNode url="~/ChecagemRoteiro/Index" title="Checagens de Itens"  description="linkMenu" roles="ChecagemItemRoteiroExcluir,ChecagemItemRoteiroListar">
+				<siteMapNode url="~/ChecagemRoteiro/ChecagemRoteiroFiltrar" />
+				<siteMapNode url="~/ChecagemRoteiro/ChecagemRoteiroVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/ChecagemRoteiro/ChecagemRoteiroCriar" title="Cadastrar Checagem de Itens" description="linkMenu" roles="ChecagemItemRoteiroCriar"/>
+
+			<siteMapNode url="~/ChecagemPendencia" title="Checagens de Pendência"  description="linkMenu" roles="ChecagemPendenciaExcluir,ChecagemPendenciaEditar,ChecagemPendenciaListar">
+				<siteMapNode url="~/ChecagemPendencia/Index" />
+				<siteMapNode url="~/ChecagemPendencia/Filtrar" />
+				<siteMapNode url="~/ChecagemPendencia/Editar" />
+				<siteMapNode url="~/ChecagemPendencia/Visualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/ChecagemPendencia/Criar" title="Cadastrar Checagem de Pendência" description="linkMenu" roles="ChecagemPendenciaCriar"/>
+
+		</siteMapNode>
+
+		<siteMapNode url="~/Requerimento" title="Requerimento Padrão"  description="linkMenu requerimento" roles="RequerimentoCriar, RequerimentoListar, RequerimentoEditar, RequerimentoVisualizar, RequerimentoExcluir">
+			<siteMapNode url="~/Requerimento/Index" title="Requerimentos" description="linkMenu" roles="RequerimentoListar, RequerimentoEditar, RequerimentoVisualizar, RequerimentoExcluir">
+				<siteMapNode url="~/Requerimento/Filtrar"></siteMapNode>
+				<siteMapNode url="~/Requerimento/Editar"></siteMapNode>
+				<siteMapNode url="~/Requerimento/Visualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Requerimento/Criar" title="Cadastrar Requerimento Padrão" description="linkMenu" roles="RequerimentoCriar"/>
+
+			<siteMapNode url="~/ProjetoDigital" title="Importar Requerimento Digital" description="linkMenu" roles="ProjetoDigitalListar, ProjetoDigitalImportar, ProjetoDigitalVisualizar">
+				<siteMapNode url="~/ProjetoDigital/Filtrar" description="linkMenu" roles="ProjetoDigitalListar"></siteMapNode>
+				<siteMapNode url="~/ProjetoDigital/Importar" description="linkMenu" roles="ProjetoDigitalImportar"></siteMapNode>
+				<siteMapNode url="~/ProjetoDigital/Visualizar" description="linkMenu" roles="ProjetoDigitalVisualizar"></siteMapNode>
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Processo" title="Processo"  description="linkMenu processo" roles="ProcessoCriar, ProcessoListar, ProcessoEditar, ProcessoVisualizar, ProcessoExcluir">
+			<siteMapNode url="~/Processo/Index" title="Processos" description="linkMenu" roles="ProcessoListar, ProcessoEditar, ProcessoVisualizar, ProcessoExcluir">
+				<siteMapNode url="~/Processo/Filtrar"></siteMapNode>
+				<siteMapNode url="~/Processo/Editar"></siteMapNode>
+				<siteMapNode url="~/Processo/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Processo/EditarApensadosJuntados"></siteMapNode>
+				<siteMapNode url="~/Processo/AtividadesSolicitadas"></siteMapNode>
+				<siteMapNode url="~/Processo/ConsultarInformacoes"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Processo/Criar" title="Cadastrar Processo" description="linkMenu" roles="ProcessoCriar"/>
+		</siteMapNode>
+
+		<siteMapNode url="~/Documento" title="Documento"  description="linkMenu documentos" roles="DocumentoCriar, DocumentoListar, DocumentoEditar, DocumentoVisualizar, DocumentoExcluir">
+			<siteMapNode url="~/Documento/Index" title="Documentos" description="linkMenu" roles="DocumentoListar, DocumentoEditar, DocumentoVisualizar, DocumentoExcluir">
+				<siteMapNode url="~/Documento/Filtrar"></siteMapNode>
+				<siteMapNode url="~/Documento/Editar"></siteMapNode>
+				<siteMapNode url="~/Documento/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Documento/AtividadesSolicitadas"></siteMapNode>
+				<siteMapNode url="~/Documento/ConsultarInformacoes"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Documento/Criar" title="Cadastrar Documento" description="linkMenu" roles="DocumentoCriar"/>
+		</siteMapNode>
+
+		<siteMapNode url="~/Tramitacao/ArquivoListar" title="Arquivo"  description="linkMenu arquivo" roles="ArquivoTramitacaoCriar,ArquivoTramitacaoListar,ArquivoTramitacaoVisualizar,ArquivoTramitacaoEditar,ArquivoTramitacaoExcluir">
+			<siteMapNode url="~/Tramitacao/ArquivoListar/" title="Arquivos" description="linkMenu" roles="ArquivoTramitacaoListar,ArquivoTramitacaoVisualizar,ArquivoTramitacaoEditar,ArquivoTramitacaoExcluir">
+				<siteMapNode url="~/Tramitacao/ArquivoEditar"></siteMapNode>
+				<siteMapNode url="~/Tramitacao/ArquivoVisualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Tramitacao/ArquivoCriar" title="Cadastrar Arquivo" description="linkMenu" roles="ArquivoTramitacaoCriar" />
+		</siteMapNode>
+
+		<siteMapNode url="~/Tramitacao" title="Tramitação" description="linkMenu tramitacao" roles="TramitacaoEnviar,TramitacaoReceber,TramitacaoCancelar,TramitacaoVisualizar,TramitacaoConfigurar,TramitacaoEnviarRegistro,TramitacaoReceberRegistro,TramitacaoEnviarOrgaoExterno,TramitacaoRetirarOrgaoExterno,TramitacaoArquivar,TramitacaoDesarquivar,TramitacaoApensarJuntar">
+			<siteMapNode url="~/Tramitacao/Index" title="Tramitações" description="linkMenu" roles="TramitacaoEnviar,TramitacaoReceber,TramitacaoCancelar,TramitacaoVisualizar,TramitacaoEnviarRegistro,TramitacaoReceberRegistro,TramitacaoArquivar,TramitacaoDesarquivar"/>
+			<siteMapNode url="~/Tramitacao/Enviar" title="Enviar" description="linkMenu" roles="TramitacaoEnviar"/>
+			<siteMapNode url="~/Tramitacao/Receber" title="Receber" description="linkMenu" roles="TramitacaoReceber"/>
+			<siteMapNode url="~/Tramitacao/EnviarRegistro" title="Enviar por Registro" description="linkMenu" roles="TramitacaoEnviarRegistro"/>
+			<siteMapNode url="~/Tramitacao/ReceberRegistro" title="Receber por Registro" description="linkMenu" roles="TramitacaoReceberRegistro"/>
+			<siteMapNode url="~/Tramitacao/Arquivar" title="Arquivar" description="linkMenu" roles="TramitacaoArquivar"></siteMapNode>
+			<siteMapNode url="~/Tramitacao/Desarquivar" title="Desarquivar" description="linkMenu" roles="TramitacaoDesarquivar"></siteMapNode>
+			<siteMapNode url="~/Tramitacao/Configurar" title="Configurar Tramitação" description="linkMenu" roles="TramitacaoConfigurar"/>
+			<siteMapNode url="~/Tramitacao/ConfigurarMotivo" title="Configurar Motivo de Tramitação" description="linkMenu" roles="TramitacaoMotivoConfigurar"/>
+			<siteMapNode url="~/Processo/JuntarApensar" title="Juntar Documento/Apensar Processo" description="linkMenu" roles="TramitacaoApensarJuntar"/>
+			<siteMapNode url="~/Documento/ConverterDocumento" title="Converter Documento" description="linkMenu" roles="TramitacaoConverterDocumento"/>
+		</siteMapNode>
+
+		<siteMapNode url="~/Atividade" title="Atividade Solicitada"  description="linkMenu titulos" roles="AtividadeConfiguracaoCriar,AtividadeConfiguracaoListar, AtividadeConfiguracaoExcluir, AtividadeConfiguracaoVisualizar, AtividadeConfiguracaoEditar">
+			<siteMapNode url="~/Atividade/Index/" title="Configurações de Atividade Solicitada" description="linkMenu" roles="AtividadeConfiguracaoListar, AtividadeConfiguracaoEditar, AtividadeConfiguracaoVisualizar, AtividadeConfiguracaoExcluir">
+				<siteMapNode url="~/Atividade/ConfiguracaoEditar" />
+				<siteMapNode url="~/Atividade/ConfiguracaoVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Atividade/ConfiguracaoCriar" title="Configurar Atividade Solicitada" description="linkMenu" roles="AtividadeConfiguracaoCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/AnaliseItens" title="Análise Técnica"  description="linkMenu analiseItens" roles="AnaliseItensCriar,PecaTecnicaGerar">
+			<siteMapNode url="~/AnaliseItens/Analisar" title="Análise de Itens" description="linkMenu" roles="AnaliseItensCriar">
+				<siteMapNode url="~/Caracterizacoes/ProjetoGeografico/VisualizarProjetoGeoCredenciado" title="Visualizar Projeto Geográfico" description="linkMenu" roles="projetoGeograficoVisualizar"/>
+				<siteMapNode url="~/Caracterizacoes/Dominialidade/VisualizarCredenciado" title="Visualizar Projeto Geográfico" description="linkMenu" roles="AnaliseItensCriar"/>
+			</siteMapNode>
+			<siteMapNode url="~/AnaliseItens/GerarPecaTecnica" title="Gerar Peça Técnica" description="linkMenu" roles="PecaTecnicaGerar"/>
+		</siteMapNode>
+
+
+		<siteMapNode url="~/Pessoa" title="Pessoa" description="linkMenu pessoa" roles="PessoaVisualizar,PessoaCriar,PessoaEditar,PessoaListar">
+			<siteMapNode url="~/Pessoa/Index" title="Pessoas" description="linkMenu" roles="PessoaVisualizar,PessoaEditar,PessoaListar">
+				<siteMapNode url="~/Pessoa/Editar" title="Editar Pessoa" description="linkMenu" roles="PessoaEditar" />
+				<siteMapNode url="~/Pessoa/Visualizar" title="Visualizar Pessoa" description="linkMenu" roles="PessoaVisualizar" />
+				<siteMapNode url="~/Pessoa/Filtrar" title="Filtrar Pessoa" description="linkMenu" roles="PessoaListar" />
+			</siteMapNode>
+			<siteMapNode url="~/Pessoa/Criar" title="Cadastrar Pessoa" description="linkMenu" roles="PessoaCriar">
+				<siteMapNode url="~/Pessoa/VerificarCpfCnpj" />
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Empreendimento" title="Empreendimento" description="linkMenu empreendimento" roles="EmpreendimentoCriar,EmpreendimentoListar,EmpreendimentoEditar,EmpreendimentoVisualizar, EmpreendimentoExcluir">
+			<siteMapNode url="~/Empreendimento/Index" title="Empreendimentos" description="linkMenu" roles="EmpreendimentoListar, EmpreendimentoEditar, EmpreendimentoVisualizar, EmpreendimentoExcluir">
+				<siteMapNode url="~/Empreendimento/Filtrar"></siteMapNode>
+				<siteMapNode url="~/Empreendimento/Editar"></siteMapNode>
+				<siteMapNode url="~/Empreendimento/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Caracterizacao/Index"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProjetoGeografico/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProjetoGeografico/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProjetoGeografico/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DescricaoLicenciamentoAtividade/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DescricaoLicenciamentoAtividade/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DescricaoLicenciamentoAtividade/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Dominialidade/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Dominialidade/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Dominialidade/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegularizacaoFundiaria/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegularizacaoFundiaria/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegularizacaoFundiaria/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ExploracaoFlorestal/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ExploracaoFlorestal/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ExploracaoFlorestal/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/QueimaControlada/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/QueimaControlada/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/QueimaControlada/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/SecagemMecanicaGraos/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/SecagemMecanicaGraos/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/SecagemMecanicaGraos/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProducaoCarvaoVegetal/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProducaoCarvaoVegetal/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/ProducaoCarvaoVegetal/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DespolpamentoCafe/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DespolpamentoCafe/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/DespolpamentoCafe/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Avicultura/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Avicultura/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Avicultura/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Suinocultura/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Suinocultura/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Suinocultura/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BeneficiamentoMadeira/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BeneficiamentoMadeira/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BeneficiamentoMadeira/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Terraplanagem/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Terraplanagem/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Terraplanagem/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Aquicultura/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Aquicultura/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Aquicultura/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Silvicultura/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Silvicultura/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/Silvicultura/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/InformacaoCorte/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/InformacaoCorte/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/InformacaoCorte/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegistroAtividadeFlorestal/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegistroAtividadeFlorestal/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/RegistroAtividadeFlorestal/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PulverizacaoProduto/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PulverizacaoProduto/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PulverizacaoProduto/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PatioLavagem/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PatioLavagem/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/PatioLavagem/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/CadastroAmbientalRural/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/CadastroAmbientalRural/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/CadastroAmbientalRural/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeProducao/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeProducao/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeProducao/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeConsolidacao/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeConsolidacao/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/UnidadeConsolidacao/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Criar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Editar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Visualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Empreendimento/Criar" title="Cadastrar Empreendimento" description="linkMenu" roles="EmpreendimentoCriar"/>
+		</siteMapNode>
+
+		<siteMapNode url="~/Titulo" title="Título"  description="linkMenu titulos" roles="TituloCriar,TituloListar,TituloEditar,TituloVisualizar,TituloExcluir">
+			<siteMapNode url="~/Titulo/" title="Títulos" description="linkMenu" roles="TituloListar,TituloCriar">
+				<siteMapNode url="~/Titulo/Editar" title="Editar Título" description="linkMenu" roles="TituloEditar"></siteMapNode>
+				<siteMapNode url="~/Titulo/Visualizar" title="Visualizar Título" description="linkMenu" roles="TituloVisualizar"></siteMapNode>
+				<siteMapNode url="~/Titulo/AlterarSituacao" title="Alterar Situação de Título" description="linkMenu" roles="TituloEmitir,TituloCancelarEmissao,TituloAssinar,TituloProrrogar,TituloEncerrar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Titulo/Criar" title="Cadastrar Título" description="linkMenu" roles="TituloCriar">
+				<siteMapNode url="~/Titulo/CriarDeModelo" title="Cadastrar Título" description="linkMenu" roles="TituloCriar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Titulo/Entregar" title="Entrega de Título" description="linkMenu" roles="TituloEntregar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/TituloDeclaratorio" title="Título Declaratório"  description="linkMenu titulo_declaratorio" roles="TituloDeclaratorioCriar,TituloDeclaratorioListar,TituloDeclaratorioEditar,TituloDeclaratorioVisualizar,TituloDeclaratorioExcluir">
+			<siteMapNode url="~/TituloDeclaratorio/" title="Títulos Declaratórios" description="linkMenu" roles="TituloDeclaratorioListar,TituloDeclaratorioCriar">
+				<siteMapNode url="~/TituloDeclaratorio/Editar" title="Editar Título Declaratório" description="linkMenu" roles="TituloDeclaratorioEditar"></siteMapNode>
+				<siteMapNode url="~/TituloDeclaratorio/Visualizar" title="Visualizar Título Declaratório" description="linkMenu" roles="TituloDeclaratorioVisualizar"></siteMapNode>
+				<siteMapNode url="~/TituloDeclaratorio/AlterarSituacao" title="Alterar Situação de Título Declaratório" description="linkMenu" roles="TituloDeclaratorioAlterarSituacao"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/TituloDeclaratorio/Criar" title="Cadastrar Título Declaratório" description="linkMenu" roles="TituloDeclaratorioCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Titulo/TituloModeloListar" title="Modelo de Título" description="linkMenu titulos" roles="TituloModeloListar, TituloModeloEditar, TituloModeloAtivar, TituloModeloDesativar, TituloModeloVisualizar">
+			<siteMapNode url="~/Titulo/TituloModeloListar/" title="Modelos de Títulos" description="linkMenu" roles="TituloModeloListar">
+				<siteMapNode url="~/Titulo/TituloModeloVisualizar" title="Visualizar Modelo Título" description="linkMenu" roles="TituloModeloVisualizar"></siteMapNode>
+				<siteMapNode url="~/Titulo/TituloModeloEditar" title="Editar Modelo Título" description="linkMenu" roles="TituloModeloEditar"></siteMapNode>
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/CARSolicitacao" title="CAR" description="linkMenu car" roles="CadastroAmbientalRuralSolicitacaoListar, CadastroAmbientalRuralSolicitacaoVisualizar">
+			<siteMapNode url="~/CARSolicitacao/" title="CAR "  description="linkMenu" roles="CadastroAmbientalRuralSolicitacaoListar, CadastroAmbientalRuralSolicitacaoVisualizar">
+				<siteMapNode url="~/CARSolicitacao/Index" roles="CadastroAmbientalRuralSolicitacaoListar, CadastroAmbientalRuralSolicitacaoVisualizar"></siteMapNode>
+				<siteMapNode url="~/CARSolicitacao/Excluir" roles="CadastroAmbientalRuralSolicitacaoExcluir"></siteMapNode>
+				<siteMapNode url="~/CARSolicitacao/AlterarSituacao" roles="CadastroAmbientalRuralSolicitacaoExcluir"></siteMapNode>
+
+				<siteMapNode url="~/CARSolicitacao/Editar" roles="CadastroAmbientalRuraSolicitacaolEditar"></siteMapNode>
+				<siteMapNode url="~/CARSolicitacao/Visualizar" roles="CadastroAmbientalRuralSolicitacaoVisualizar"></siteMapNode>
+			</siteMapNode>
+
+			<siteMapNode url="~/CARSolicitacao/Criar" title="Cadastrar Solicitação de Inscrição" description="linkMenu car" roles="CadastroAmbientalRuralSolicitacaoCriar"></siteMapNode>
+			<siteMapNode url="~/Titulo/CriarDeModelo/?modeloCodigo=49#AJAX" title="Cadastrar Título de CAR" description="linkMenu car" roles="TituloCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Setor" title="Setor" description="linkMenu setor" roles="SetorEditar, SetorListar, SetorVisualizar">
+			<siteMapNode url="~/Setor/" title="Setor"  description="linkMenu" roles="SetorEditar, SetorListar, SetorVisualizar">
+				<siteMapNode url="~/Setor/Visualizar" roles="SetorVisualizar"></siteMapNode>
+				<siteMapNode url="~/Setor/Editar" roles="SetorEditar"></siteMapNode>
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Credenciado" title="Credenciado" description="linkMenu credenciado" roles="CredenciadoListar,CredenciadoVisualizar,CredenciadoRegerarChave,CredenciadoAlterarSituacao">
+			<siteMapNode url="~/Credenciado/Index" title="Credenciados" description="linkMenu" roles="CredenciadoListar,CredenciadoVisualizar,CredenciadoRegerarChave,CredenciadoAlterarSituacao">
+				<siteMapNode url="~/Credenciado/Filtrar"></siteMapNode>
+				<siteMapNode url="~/Credenciado/Editar"></siteMapNode>
+				<siteMapNode url="~/Credenciado/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Credenciado/AlterarSituacao"></siteMapNode>
+			</siteMapNode>
+
+			<siteMapNode url="~/OrgaosParceirosConveniados" title="Órgãos Parceiros/ Conveniados" description="linkMenu" roles="OrgaoParceiroConveniadoVisualizar,OrgaoParceiroConveniadoEditar,OrgaoParceiroConveniadoListar, OrgaoParceiroConveniadoAlterarSituacao">
+				<siteMapNode url="~/OrgaosParceirosConveniados/Filtrar"></siteMapNode>
+				<siteMapNode url="~/OrgaosParceirosConveniados/Editar"></siteMapNode>
+				<siteMapNode url="~/OrgaosParceirosConveniados/Visualizar"></siteMapNode>
+				<siteMapNode url="~/OrgaosParceirosConveniados/AlterarSituacao"></siteMapNode>
+				<siteMapNode url="~/OrgaosParceirosConveniados/Gerenciar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/OrgaosParceirosConveniados/Criar" title="Cadastrar Órgão Parceiro/ Conveniado" description="linkMenu" roles="OrgaoParceiroConveniadoCriar"></siteMapNode>
+
+			<siteMapNode url="~/Credenciado/IndexHabilitarEmissaoCFOCFOC" title="Habilitações para Emissão de CFO e CFOC" description="linkMenu" roles="HabilitarEmissaoCFOCFOCListar,HabilitarEmissaoCFOCFOCEditar,HabilitarEmissaoCFOCFOCVisualizar,HabilitarEmissaoCFOCFOCAlterarSituacao">
+				<siteMapNode url="~/Credenciado/EditarHabilitarEmissaoCFOCFOC" roles="HabilitarEmissaoCFOCFOCEditar" />
+				<siteMapNode url="~/Credenciado/VisualizarHabilitarEmissaoCFOCFOC" roles="HabilitarEmissaoCFOCFOCVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Credenciado/CriarHabilitarEmissaoCFOCFOC" title="Habilitar Emissão de CFO e CFOC" description="linkMenu" roles="HabilitarEmissaoCFOCFOCCriar" />
+			
+			<siteMapNode url="~/LiberacaoCFOCFOC" title="Liberações de Números de CFO e CFOC" description="linkMenu" roles="LiberacaoNumeroCFOCFOCListar" >
+				<siteMapNode url="~/LiberacaoCFOCFOC/Visualizar" roles="LiberacaoNumeroCFOCFOCListar" />
+			</siteMapNode>
+			
+			<siteMapNode url="~/LiberacaoCFOCFOC/LiberarNumeroCFOCFOC" title="Liberar Número de CFO e CFOC" description="linkMenu" roles="LiberacaoNumeroCFOCFOCCriar" />
+			<siteMapNode url="~/LiberacaoCFOCFOC/ConsultarNumeroCFOCFOCLiberado" title="Consultar número de CFO e CFOC liberado" description="linkMenu" roles="NumeroCFOCFOCConsultar" />
+			
+			<siteMapNode url="~/HabilitacaoEmissaoPTV" title="Habilitações para emissão de PTV" description="linkMenu" roles="HabilitacaoEmissaoPTVListar" >
+				<siteMapNode url="~/HabilitacaoEmissaoPTV/Visualizar" roles="LiberacaoNumeroCFOCFOCListar" />
+				<siteMapNode url="~/HabilitacaoEmissaoPTV/Editar" roles="LiberacaoNumeroCFOCFOCEditar" />
+			</siteMapNode>
+			<siteMapNode url="~/HabilitacaoEmissaoPTV/Criar" title="Habilitar Emissão de PTV" description="linkMenu" roles="HabilitacaoEmissaoPTVCriar" />
+
+	</siteMapNode>
+
+		<siteMapNode url="~/Motosserra" title="Motosserra" description="linkMenu motosserra" roles="MotosserraCriar,MotosserraListar,MotosserraEditar,MotosserraVisualizar,MotosserraExcluir">
+			<siteMapNode url="~/Motosserra/Index" title="Motosserras" description="linkMenu" roles="MotosserraListar,MotosserraEditar,MotosserraVisualizar,MotosserraExcluir">
+				<siteMapNode url="~/Motosserra/Filtrar" />
+				<siteMapNode url="~/Motosserra/Editar" />
+				<siteMapNode url="~/Motosserra/Visualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Motosserra/Criar" title="Cadastrar Motosserra" description="linkMenu motosserra" roles="MotosserraCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Fiscalizacao/Index" title="Fiscalização" description="linkMenu fiscalizacao" roles="FiscalizacaoCriar, FiscalizacaoEditar, FiscalizacaoVisualizar, FiscalizacaoListar">
+			<siteMapNode url="~/Fiscalizacao" title="Fiscalizações" description="linkMenu" roles="FiscalizacaoCriar, FiscalizacaoEditar, FiscalizacaoVisualizar, FiscalizacaoListar">
+				<siteMapNode url="~/Fiscalizacao/Filtrar" roles="FiscalizacaoListar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/Editar" roles="FiscalizacaoEditar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/Visualizar" roles="FiscalizacaoVisualizar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/LocalInfracao" ></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/ProjetoGeografico"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/AlterarSituacao" roles="FiscalizacaoAlterarSituacao"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/Acompanhamentos"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/AcompanhamentoCriar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/AcompanhamentoEditar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/AcompanhamentoVisualizar"></siteMapNode>
+				<siteMapNode url="~/Fiscalizacao/AcompanhamentoAlterarSituacao"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/Criar" title="Cadastrar Fiscalização" description="linkMenu" roles="FiscalizacaoCriar">
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Fiscalizacao/ConfiguracaoIndex" title="Config. da Fiscalização" description="linkMenu confFiscalizacao" roles="ConfigurarFiscCriar,ConfigurarFiscEditar,ConfigurarFiscVisualizar,ConfigurarFiscListar,ConfigurarFiscExcluir">
+			<siteMapNode url="~/Fiscalizacao/ConfiguracaoIndex/" title="Configurações" description="linkMenu" roles="ConfigurarFiscCriar,ConfigurarFiscEditar,ConfigurarFiscVisualizar,ConfigurarFiscListar,ConfigurarFiscExcluir">
+				<siteMapNode url="~/Fiscalizacao/ConfiguracaoVisualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfiguracaoSalvar" title="Configurar" description="linkMenu" roles="FiscalizacaoCriar,ConfigurarFiscEditar"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarTipoInfracao" title="Tipo de Infração" description="linkMenu" roles="ConfigurarTipoInfracao"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarItem" title="Item" description="linkMenu" roles="ConfigurarItem"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarSubItem" title="Subitem" description="linkMenu" roles="ConfigurarSubitem"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarCampo" title="Campo" description="linkMenu" roles="ConfigurarCampo"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarResposta" title="Resposta" description="linkMenu" roles="ConfigurarResposta"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarPerguntasListar" title="Perguntas" description="linkMenu" roles="ConfigurarPergunta">
+				<siteMapNode url="~/Fiscalizacao/ConfigurarPerguntaVisualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarPergunta" title="Cadastrar Pergunta" description="linkMenu" roles="ConfigurarPergunta"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Relatorios/Personalizado" title="Relatório" description="linkMenu relatorios" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoEditar,RelatorioPersonalizadoExcluir,RelatorioPersonalizadoExecutar,RelatorioPersonalizadoCriar,RelatorioPersonalizadoExportar,RelatorioPersonalizadoImportar,RelatorioMapa">
+			<siteMapNode url="~/Relatorios/Personalizado/Index" title="Relatórios" description="linkMenu" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoEditar,RelatorioPersonalizadoExcluir,RelatorioPersonalizadoExecutar">
+				<siteMapNode url="~/Relatorios/Personalizado/Filtrar" />
+				<siteMapNode url="~/Relatorios/Personalizado/Editar" />
+				<siteMapNode url="~/Relatorios/Personalizado/Excluir" />
+				<siteMapNode url="~/Relatorios/Personalizado/Executar" />
+				<siteMapNode url="~/Relatorios/Personalizado/AtribuirExecutor" />
+			</siteMapNode>
+			<siteMapNode url="~/Relatorios/Personalizado/Criar" title="Cadastrar" description="linkMenu" roles="RelatorioPersonalizadoCriar" />
+			<siteMapNode url="~/Relatorios/Personalizado/Importar" title="Importar" description="linkMenu" roles="RelatorioPersonalizadoImportar" />
+			<siteMapNode url="~/RelatorioEspecifico/RelatorioMapa" title="Relatório MAPA" description="linkMenu" roles="RelatorioMapa">
+				<siteMapNode url="~/RelatorioEspecifico/RelatorioMapa/" />
+			</siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/FichaFundiaria/" title="Ficha Fundiária" description="linkMenu fichafundiaria" roles="FichaFundiariaListar, FichaFundiariaVisualizar">
+			<siteMapNode url="~/FichaFundiaria" title="Fichas Fundiárias"  description="linkMenu" roles="FichaFundiariaListar, FichaFundiariaVisualizar">
+				<siteMapNode url="~/FichaFundiaria/Index" roles="FichaFundiariaVisualizar"></siteMapNode>
+				<siteMapNode url="~/FichaFundiaria/Visualizar" roles="FichaFundiariaVisualizar"></siteMapNode>
+				<siteMapNode url="~/FichaFundiaria/Editar" roles="FichaFundiariaEditar"></siteMapNode>
+				<siteMapNode url="~/FichaFundiaria/Excluir" roles="FichaFundiariaExcluir"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/FichaFundiaria/Criar" title="Cadastrar Ficha Fundiária" description="linkMenu fichafundiaria" roles="FichaFundiariaCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/Profissao" title="Profissão"  description="linkMenu profissao" roles="ProfissaoCriar,ProfissaoEditar,ProfissaoVisualizar,ProfissaoListar">
+			<siteMapNode url="~/Profissao/" title="Profissões" description="linkMenu" roles="ProfissaoCriar"></siteMapNode>
+			<siteMapNode url="~/Profissao/Criar" title="Cadastrar Profissão" description="linkMenu" roles="ProfissaoCriar"></siteMapNode>
+		</siteMapNode>
+
+		<siteMapNode url="~/ConfiguracaoVegetal/" title="Configuração Vegetal" description="linkMenu config-vegetal" roles="ModalidadeAplicacao,FormaApresentacao,ClassificacaoToxicologica,PericulosidadeAmbiental,ClasseUso,GrupoQuimico,Cultura,IngredienteAtivo,Praga">
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarModalidadeAplicacao" title="Modalidade de Aplicação" description="linkMenu" roles="ModalidadeAplicacao" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarFormasApresentacao" title="Forma de Apresentação" description="linkMenu" roles="FormaApresentacao" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarClassificacaoToxicologica" title="Classificação Toxicológica" description="linkMenu" roles="ClassificacaoToxicologica" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarPericulosidadeAmbiental" title="Periculosidade Ambiental" description="linkMenu" roles="PericulosidadeAmbiental" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarClasseUso" title="Classe de Uso" description="linkMenu" roles="ClasseUso" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarGrupoQuimico" title="Grupo Químico" description="linkMenu" roles="GrupoQuimico" />
+
+			<siteMapNode url="~/ConfiguracaoVegetal/Culturas" title="Culturas" description="linkMenu" roles="Cultura">
+				<siteMapNode url="~/ConfiguracaoVegetal/EditarCultura" roles="Cultura" />
+			</siteMapNode>
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarCultura" title="Cadastrar Cultura" description="linkMenu" roles="Cultura" />
+
+			<siteMapNode url="~/ConfiguracaoVegetal/IngredientesAtivos" title="Ingredientes Ativos"  description="linkMenu" roles="IngredienteAtivo">
+				<siteMapNode url="~/ConfiguracaoVegetal/EditarIngredienteAtivo" roles="IngredienteAtivo" />
+				<siteMapNode url="~/ConfiguracaoVegetal/AlterarSituacaoIngredienteAtivo" roles="IngredienteAtivo" />
+			</siteMapNode>
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarIngredienteAtivo" title="Cadastrar Ingrediente Ativo" description="linkMenu" roles="IngredienteAtivo" />
+
+			<siteMapNode url="~/ConfiguracaoVegetal/Pragas" title="Pragas"  description="linkMenu" roles="Praga">
+				<siteMapNode url="~/ConfiguracaoVegetal/EditarPraga" roles="Praga" />
+				<siteMapNode url="~/ConfiguracaoVegetal/AssociarCulturas" roles="Praga" />
+			</siteMapNode>
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarPraga" title="Cadastrar Praga" description="linkMenu" roles="Praga" />
+		</siteMapNode>
+
+		<siteMapNode url="~/Agrotoxico" title="Agrotóxico"  description="linkMenu agrotoxico" roles="AgrotoxicoCriar,AgrotoxicoListar,AgrotoxicoEditar,AgrotoxicoVisualizar">
+			<siteMapNode url="~/Agrotoxico/" title="Agrotóxicos" description="linkMenu" roles="AgrotoxicoListar,AgrotoxicoEditar,AgrotoxicoVisualizar">
+				<siteMapNode url="~/Agrotoxico/Editar" roles="AgrotoxicoEditar" />
+				<siteMapNode url="~/Agrotoxico/Visualizar" roles="AgrotoxicoVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/Agrotoxico/Criar" title="Cadastrar Agrotóxico" description="linkMenu" roles="AgrotoxicoCriar" />
+		</siteMapNode>
+
+		<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar" title="Numeração CFO/CFOC/PTV"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario">
+			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar/" title="Numeração CFO/CFOC/PTV" description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"/>
+		</siteMapNode>
+		
+		<siteMapNode url="~/PTV/" title="PTV"  description="linkMenu ptv" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar,DestinatarioPTVListar,DestinatarioPTVEditar,DestinatarioPTVExcluir,DestinatarioPTVVisualizar">
+			<siteMapNode url="~/PTV/Index" title="PTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
+				<siteMapNode url="~/PTV" description="linkMenu" roles="PTVListar" />
+				<siteMapNode url="~/PTV/Editar" description="linkMenu" roles="PTVEditar" />
+				<siteMapNode url="~/PTV/Visualizar" description="linkMenu" roles="PTVVisualizar" />
+				<siteMapNode url="~/PTV/Ativar" description="linkMenu" roles="PTVListar" />
+			</siteMapNode>
+			<siteMapNode url="~/PTV/Criar" title="Emitir PTV" description="linkMenu" roles="PTVCriar"/>
+
+			<siteMapNode url="~/PTV/EPTVListar/" title="EPTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
+				<siteMapNode url="~/EPTVListar" description="linkMenu" roles="PTVListar" />
+				<siteMapNode url="~/PTV/EPTVVisualizar" description="linkMenu" roles="PTVVisualizar" />
+				<siteMapNode url="~/PTV/EPTVAnalisar" description="linkMenu" roles="PTVEditar" />
+			</siteMapNode>
+
+			<siteMapNode url="~/PTV/DestinatarioIndex" title="Destinatários" description="linkMenu" roles="DestinatarioPTVListar,DestinatarioPTVEditar,DestinatarioPTVExcluir,DestinatarioPTVVisualiza">
+				<siteMapNode url="~/PTV/DestinatarioEditar" roles="DestinatarioPTVEditar" />
+				<siteMapNode url="~/PTV/DestinatarioExcluir" roles="DestinatarioPTVExcluir" />
+				<siteMapNode url="~/PTV/DestinatarioVisualizar" roles="DestinatarioPTVVisualiza" />
+			</siteMapNode>
+			<siteMapNode url="~/PTV/DestinatarioCriar" title="Cadastrar Destinatário" description="linkMenu" roles="DestinatarioPTVCriar" />
+
+			<siteMapNode url="~/LocalVistoria/Index" title="Locais de Vistoria" description="linkMenu" roles="LocalVistoriaListar,LocalVistoriaOperar,LocalVistoriaVisualizar">
+				<siteMapNode url="~/LocalVistoria/LocalVistoriaListar" description="linkMenu" roles="LocalVistoriaListar" />
+				<siteMapNode url="~/LocalVistoria/OperarLocalVistoria" description="linkMenu" roles="LocalVistoriaOperar" />
+				<siteMapNode url="~/LocalVistoria/VisualizarLocalVistoria" description="linkMenu" roles="LocalVistoriaVisualizar" />
+			</siteMapNode>
+			<siteMapNode url="~/LocalVistoria/CadastrarLocalVistoria" title="Cadastrar Local de Vistoria" description="linkMenu" roles="LocalVistoriaOperar" />
+
+			<siteMapNode url="~/PTVOutro/Index" title="PTVs Outro Estado" description="linkMenu" roles="PTVOutroCriar,PTVOutroEditar,PTVOutroExcluir,PTVOutroListar,PTVOutroVisualizar">
+				<siteMapNode url="~/PTVOutro" description="linkMenu" roles="PTVOutroListar" />
+				<siteMapNode url="~/PTVOutro/Visualizar" description="linkMenu" roles="PTVOutroVisualizar" />
+				<siteMapNode url="~/PTVOutro/Cancelar" description="linkMenu" roles="PTVOutroCancelar" />
+			</siteMapNode>
+			<siteMapNode url="~/PTVOutro/Criar" title="Emitir PTV Outro Estado" description="linkMenu" roles="PTVOutroCriar"/>
+		</siteMapNode>
+
+		<siteMapNode url="~/CFO/" title="CFO/CFOC"  description="linkMenu num_cfo_cfoc_ptv" roles="CFOListar, CFOCListar">
+			<siteMapNode url="~/CFO/Index" title="CFOs" description="linkMenu" roles="CFOListar">
+				<siteMapNode url="~/CFO" title="CFOs" description="linkMenu" roles="CFOListar"></siteMapNode>
+				<siteMapNode url="~/CFO/Visualizar" title="Visualizar CFO" description="linkMenu" roles="CFOVisualizar"></siteMapNode>
+			</siteMapNode>
+
+			<siteMapNode url="~/CFOC/Index" title="CFOCs" description="linkMenu" roles="CFOCListar">
+				<siteMapNode url="~/CFOC" title="CFOCs" description="linkMenu" roles="CFOCListar"></siteMapNode>
+				<siteMapNode url="~/CFOC/Visualizar" title="Visualizar CFOC" description="linkMenu" roles="CFOCVisualizar"></siteMapNode>
+			</siteMapNode>
+		</siteMapNode>
+
+	</siteMapNode>
+</siteMap>

@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5E0F5C2F-0105-4709-9553-48101BB78A4B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\lib\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Words, Version=9.7.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="ThoughtWorks.QRCode, Version=1.0.4778.30637, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\ThoughtWorks.QRCode.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoInternoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoCredenciadoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Pdf\PdfCARSolicitacaoCredenciado.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Pdf\PdfCARSolicitacaoInterno.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Pdf\PdfCARSolicitacaoPendenciasCredenciado.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Pdf\PdfCARSolicitacaoPendenciasInterno.cs" />
+    <Compile Include="ModuloCaracterizacao\Data\UnidadeConsolidacaoDa.cs" />
+    <Compile Include="ModuloCaracterizacao\Data\DominialidadeInternoRelatorioDa.cs" />
+    <Compile Include="ModuloCaracterizacao\Data\DominialidadeRelatorioDa.cs" />
+    <Compile Include="ModuloCaracterizacao\Pdf\PdfFichaInscricaoUnidadeConsolidacao.cs" />
+    <Compile Include="ModuloCFOCFOC\Data\CFOCDa.cs" />
+    <Compile Include="ModuloCFOCFOC\Data\CFODa.cs" />
+    <Compile Include="ModuloCFOCFOC\Pdf\PdfCFOC.cs" />
+    <Compile Include="ModuloCFOCFOC\Pdf\PdfCFO.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Data\EmissaoDa.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Pdf\PdfEmissaoPTV.cs" />
+    <Compile Include="ModuloProjetoDigital\Data\ProjetoDigitalDa.cs" />
+    <Compile Include="ModuloRelatorioTecnico\Data\RelatorioTecnicoDa.cs" />
+    <Compile Include="ModuloRelatorioTecnico\Pdf\PdfRelatorioTecnicoCredenciado.cs" />
+    <Compile Include="ModuloRequerimento\Data\RequerimentoRelatorioCredenciadoDa.cs" />
+    <Compile Include="ModuloRequerimento\Data\RequerimentoRelatorioInternoDa.cs" />
+    <Compile Include="ModuloRequerimento\Pdf\PdfRequerimentoPadraoCredenciado.cs" />
+    <Compile Include="ModuloRoteiro\Data\RoteiroRelatorioInternoDa.cs" />
+    <Compile Include="ModuloRoteiro\Pdf\PdfRoteiroOrientativoInterno.cs" />
+    <Compile Include="ModuloCaracterizacao\Data\UnidadeProducaoDa.cs" />
+    <Compile Include="ModuloCaracterizacao\Pdf\PdfFichaInscricaoUnidadeProducao.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

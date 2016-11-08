@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:buttonext="com.tm.spark.buttonext.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Feicao;
+			import models.FeicaoObjeto; 
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.LayerFeicaoQuantidade;
+			import models.Retorno;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			public function excluir():void
+			{
+				if((FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().objectId>0) || FeicoesSelecionadas.getInstance().feicoesSelecionaveis )
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+				else
+					Alert.show("Não há geometrias selecionados para excluir");
+			}
+			private function ligarOk():void
+			{
+				btnExcluir.styleName = "excluir_geo_ativado";
+				Alert.yesLabel = 'Sim';
+				Alert.noLabel = 'Não';
+				FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.EXCLUIR, excluirResult);
+				
+				if(FeicoesSelecionadas.getInstance().feicoesSelecionaveis)
+				{
+					FeicoesSelecionadas.getInstance().desenhar(GeometriaEsriGraphic.Selecionado, true);
+					if(FeicoesSelecionadas.getInstance().layersQuantidadeSelecionaveis.length ==1 && FeicoesSelecionadas.getInstance().layersQuantidadeSelecionaveis[0].Quantidade ==1)
+					{
+						Alert.show("Deseja realmente excluir a feição  '"+FeicoesSelecionadas.getInstance().layersQuantidadeSelecionaveis[0].NomeLayerFeicao + "' selecionada?",'',Alert.NO|Alert.YES,null, excluirConfirmado, null, Alert.NO);						
+					}
+					else
+					{
+						var mensagem:String = 'Deseja realmente excluir as feições? \n';
+						for each(var lyQtde:LayerFeicaoQuantidade in FeicoesSelecionadas.getInstance().layersQuantidadeSelecionaveis)
+						{
+							mensagem += lyQtde.NomeLayerFeicao + " - "+lyQtde.Quantidade.toString() +
+							(lyQtde.Quantidade ==1? ' geometria \n':' geometrias \n');
+						}
+						Alert.show(mensagem,'',Alert.NO|Alert.YES,null, excluirConfirmado, null, Alert.NO);	
+					}
+				}
+				else if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria && FeicaoSelecionada.getInstance().isSelecionavel)
+				{
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Selecionado,false);
+					Alert.show("Deseja realmente excluir a feição  '"+FeicaoSelecionada.getInstance().layerFeicao.Nome + "' selecionada?",'',Alert.NO|Alert.YES,null, excluirConfirmado, null, Alert.NO);						
+				}
+			}
+			public function excluirConfirmado(evento:CloseEvent):void
+			{
+				if(evento.detail == Alert.YES)
+				{
+					if(FeicoesSelecionadas.getInstance().feicoesSelecionaveis && FeicoesSelecionadas.getInstance().feicoesSelecionaveis.length >0)
+					{
+						var lista:Array = new Array();
+						var idProjeto:int = DesenhadorEsri.getInstance().idProjeto;
+						for(var i:int =0; i <FeicoesSelecionadas.getInstance().feicoesSelecionaveis.length; i++)
+						{
+							var feicao:Feicao = FeicoesSelecionadas.getInstance().feicoesSelecionaveis[i] as Feicao;
+							feicao.geometria.desenhar(null,null,GeometriaEsriGraphic.Selecionado,false);
+							lista.push(new FeicaoObjeto(feicao.layerFeicao, idProjeto,feicao.geometria.vertices,feicao.objectId, feicao.geometria.aneis));
+						}
+						FeicaoController.getInstance().ExcluirFeicoes(lista);
+						cursorManager.setBusyCursor();
+					}
+					else if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria && FeicaoSelecionada.getInstance().isSelecionavel)
+					{
+						FeicaoController.getInstance().ExcluirFeicao(FeicaoSelecionada.getInstance().layerFeicao.Id, FeicaoSelecionada.getInstance().objectId, DesenhadorEsri.getInstance().idProjeto);
+						cursorManager.setBusyCursor();
+					}
+					
+				}
+				btnExcluir.styleName = "excluir_geo";
+			}
+			
+			protected function excluirResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent && (event as FeicaoControllerEvent).resposta)
+				{
+					var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+					if(resposta.Sucesso)
+					{
+						FeicaoSelecionada.getInstance().limpar(true);
+						FeicoesSelecionadas.getInstance().limpar(true);
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						if(DesenhadorEsri.getInstance().map)
+							DesenhadorEsri.getInstance().map.panEnabled = true;
+					}
+					else
+						Alert.show(resposta.Mensagem);
+				}
+				else
+				{
+					var respostas:Vector.<Retorno> = (event as FeicaoControllerEvent).respostas;
+					var mensagem:String;
+					var sucesso:Boolean = true;
+					for(var i:int=0; i< respostas.length; i++)
+					{
+						var r:Retorno = respostas[i] as Retorno;
+						if(!r.Sucesso)
+						{
+							sucesso = false;
+							mensagem += r.Mensagem+"\n";
+						}
+					}
+					if(!sucesso)
+						Alert.show(mensagem);
+					else
+					{
+						FeicaoSelecionada.getInstance().limpar(true);
+						FeicoesSelecionadas.getInstance().limpar(true);
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						if(DesenhadorEsri.getInstance().map)
+							DesenhadorEsri.getInstance().map.panEnabled = true;	
+					}
+				}
+				cursorManager.removeBusyCursor();
+			}
+		]]>
+	</fx:Script>
+	
+	<buttonext:ButtonExt id="btnExcluir" click="excluir()" styleName="excluir_geo" toolTip="Excluir" />
+</s:Group>

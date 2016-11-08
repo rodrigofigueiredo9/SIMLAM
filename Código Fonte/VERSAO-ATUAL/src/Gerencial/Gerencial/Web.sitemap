@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+	<siteMapNode url="~/" title="Raiz"  description="">
+
+		<siteMapNode url="~/Relatorios/Personalizado" title="Relatorio" description="linkMenu relatorios" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoExecutar">
+			<siteMapNode url="~/Relatorios/Personalizado/Index" title="Relatorios" description="linkMenu" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoExecutar">
+				<siteMapNode url="~/Relatorios/Personalizado/Filtrar" />
+				<siteMapNode url="~/Relatorios/Personalizado/Executar" />
+			</siteMapNode>
+		</siteMapNode>
+
+	</siteMapNode>
+</siteMap>

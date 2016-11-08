@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" title="DICAS" showCloseButton="true" close="fechar()" styleName="opaquePanel" verticalScrollPolicy="off" horizontalScrollPolicy="off" initialize="init()">
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			public var isHabilitado:Boolean = false;
+			
+			public function init():void
+			{
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						fechar();
+						break;
+				}
+			}
+			
+			public function fechar():void
+			{
+				isHabilitado = false;
+				
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="480" height="270" paddingBottom="15" paddingLeft="15" paddingRight="15" paddingTop="15">
+		<mx:VBox id="vbDicas" width="100%" height="100%">
+			<mx:Label text="Zoom:" fontWeight="bold"/>
+			<mx:Spacer height="2"/>
+			<mx:Text width="{vbDicas.width}" text="- Mantenha precionada a tecla Shift, clique com o botão esquerdo do mouse e arraste para executar zoom em uma determinada área. Também pode ser feito o zoom com o botão scroll do mouse."/>
+			<mx:Spacer height="5"/>
+			
+			<mx:Label text="Tela Cheia:" fontWeight="bold"/>
+			<mx:Spacer height="2"/>
+			<mx:Text width="{vbDicas.width}" text="- Utilize a tecla F11 para ativar ou desativar o Mapa em Tela Cheia."/>
+			<mx:Spacer height="2"/>
+			
+			<mx:Label text="Camadas:" fontWeight="bold"/>
+			<mx:Spacer height="2"/>
+			<mx:Text width="{vbDicas.width}" text="- Através da aba Camada é possivel configurar as Feições que se deseja visualizar no Mapa."/>
+			<mx:Spacer height="2"/>
+			
+			<mx:Label text="Resolução:" fontWeight="bold"/>
+			<mx:Spacer height="2"/>
+			<mx:Text width="{vbDicas.width}" text="- Para uma melhor visualização do Mapa é recomendado que utilize a resolução 1280x1024."/>
+			<mx:Spacer height="2"/>
+		</mx:VBox>
+	</mx:VBox>
+	<mx:ControlBar/>
+</mx:TitleWindow>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"  borderVisible="false"  minHeight="0" minWidth="0"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" backgroundAlpha="0"
+		 xmlns:esri="http://www.esri.com/2008/ags" xmlns:buttonext="com.tm.spark.buttonext.*">
+	
+	<fx:Declarations>
+		<esri:NavigationTool id="navegacao" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.events.MapMouseEvent;
+			import com.tm.spark.resizabletitlewindow.ResizableTitleWindow;
+			
+			import models.Esri.DesenhadorEsri;
+			
+			import mx.controls.TextInput;
+			
+			import spark.components.DropDownList;	
+			
+			private var popup:ResizableTitleWindow;
+			private var ddlTipo:DropDownList;
+			private var txtCoordenadaXUTM:TextInput;
+			private var txtCoordenadaYUTM:TextInput;
+			private var txtCoordenadaXGDEC:TextInput;
+			private var txtCoordenadaYGDEC:TextInput;
+			private var txtCoordenadaXGMS:TextInput;
+			private var txtCoordenadaYGMS:TextInput;
+									
+			public function ativarZoom(zoomMais:Boolean):void
+			{								
+				navegacao.map = DesenhadorEsri.getInstance().map;
+			}
+			
+			public function zoomMais(ev:MapMouseEvent):void
+			{
+				DesenhadorEsri.getInstance().map.zoomIn();
+			}
+			
+			public function zoomMenos(ev:MapMouseEvent):void
+			{
+				DesenhadorEsri.getInstance().map.zoomOut();		
+			}
+			
+			public function zoomTotal():void
+			{	
+				cursorManager.removeAllCursors();
+				DesenhadorEsri.getInstance().map.zoomToInitialExtent();	
+			}
+			public function RetornarZoom():void 
+			{
+				cursorManager.removeAllCursors();
+				navegacao.zoomToPrevExtent();
+			}
+			public function AvancarZoom():void 
+			{			
+				cursorManager.removeAllCursors();
+				navegacao.zoomToNextExtent();
+			}
+			public function panCima():void {
+				DesenhadorEsri.getInstance().map.panUp();
+			}
+			public function panBaixo():void {
+				DesenhadorEsri.getInstance().map.panDown();
+			}
+			public function panDireita():void {
+				DesenhadorEsri.getInstance().map.panRight();
+			}
+			public function panEsquerda():void {
+				DesenhadorEsri.getInstance().map.panLeft();
+			}
+			
+		]]>
+	</fx:Script>
+	 
+	<s:VGroup gap="0" horizontalAlign="center">
+		<s:HGroup gap="0" paddingRight="2">
+			<s:Image  source="@Embed(source='../assets/seta_cima_mapa.png')" click="panCima()"/>
+		</s:HGroup>
+		<s:HGroup gap="0">
+			<s:Image  source="@Embed(source='../assets/seta_esq_mapa.png')" click="panEsquerda()" />
+			<s:Image  source="@Embed(source='../assets/centro_mapa.png')" click="zoomTotal()" />
+			<s:Image  source="@Embed(source='../assets/seta_dir_mapa.png')" click="panDireita()" />
+		</s:HGroup>
+		<s:HGroup gap="0" paddingRight="2">
+			<s:Image  source="@Embed(source='../assets/seta_baixo_mapa.png')" click="panBaixo()"/>
+		</s:HGroup>
+	</s:VGroup>
+	
+</s:BorderContainer>

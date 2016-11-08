@@ -1,0 +1,11 @@
+Banco de Dados Proprietário do Objeto: devdb6
+
+Nome do Usuário Proprietário: idafgeo
+
+Senha do Usuário: idafgeo 
+
+TMP_FISCAL_AREA
+TMP_FISCAL_LINHA
+TMP_FISCAL_PONTO
+GEO_FISC_LOCALIZACAO
+

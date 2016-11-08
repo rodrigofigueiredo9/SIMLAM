@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"  
+				xmlns:s="library://ns.adobe.com/flex/spark"  
+				xmlns:mx="library://ns.adobe.com/flex/mx"  
+				autoDrawBackground="false"  minWidth="0" width="100%" currentState="desligado" minHeight="0" xmlns:controllers="controllers.*" xmlns:views="views.*" >
+	<fx:Metadata>
+		[Event(name="selecionou_item", type="controllers.ItemFeicaoControllerEvent")]
+		[Event(name="adicionou_item", type="controllers.ItemFeicaoControllerEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import controllers.ItemFeicaoControllerEvent;
+			import controllers.SelecionarControllerEvent;
+			 
+			import models.Esri.DesenhadorEsri;
+			import models.Feicao;
+			import models.FeicoesSelecionadas;
+			import models.LayerFeicao;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+			
+			public var layerFeicao:LayerFeicao;
+			public var idLayer:int;
+			public var Id:int;
+			public var visivel:Boolean = false;
+			public var feicoes:IList;
+			public var nomeLayer:String;
+			
+			override public function set data(value:Object):void {
+				super.data = value; 
+				
+				if (value== null)
+					return;
+				layerFeicao = data as LayerFeicao;
+				nomeLayer = layerFeicao.Nome;
+				if(lblNome)
+					lblNome.text = nomeLayer;
+				hgLayer.toolTip = layerFeicao.Descricao;
+				idLayer = layerFeicao.IdLayer;
+				Id = layerFeicao.Id;
+				lblQuantidade.text = "["+data.Quantidade+"]";
+				var todasSelecionadas:Boolean = true;
+				feicoes = new ArrayList();
+				if(data.Feicoes)
+				{
+					for(var i:int =0; i< data.Feicoes.length; i++)
+					{
+						var feicao:Feicao = data.Feicoes[i] as Feicao;
+						feicao.IdLista = i;
+						if(!feicao.Selecionado)
+							todasSelecionadas = false;
+						feicoes.addItem(feicao);
+					}
+				}
+				if(listaFeicoes)
+				{
+					listaFeicoes.dataProvider = feicoes;
+					listaFeicoes.height =150;
+					
+				}
+				ckbSelecionado.selected = todasSelecionadas;
+				
+				currentState = (data.IsAtivo ? "ligado" : "desligado");
+				if(listaFeicoes)
+				{
+					if(data.IsAtivo && feicoes)
+					{
+						listaFeicoes.height = feicoes.length *21;
+					}
+					else
+					{
+						listaFeicoes.height = 0;
+					}
+				}
+			}
+			
+			public function selecionou(ev:Event):void
+			{	
+				ckbSelecionado.selected = !ckbSelecionado.selected;
+				DesenhadorEsri.getInstance().map.dispatchEvent(new SelecionarControllerEvent(SelecionarControllerEvent.PEDIR_CONFIRMACAO_SELECAO,true,	
+					function(resposta:Boolean) : void {
+						
+						if(resposta)
+						{
+							confirmouSelecao(ev);
+						}
+					},true,true));	
+			}
+			public function confirmouSelecao(ev:Event):void
+			{
+				ckbSelecionado.selected = !ckbSelecionado.selected;
+				var layers:Vector.<LayerFeicao> = FeicoesSelecionadas.getInstance().layers as Vector.<LayerFeicao>;
+				if(layers)
+				{
+					for each(var ly:LayerFeicao in layers)
+					{
+						if(ly.Id == Id)
+						{
+							ly.selecionado = ckbSelecionado.selected;
+							for each(var fc:Feicao in ly.Feicoes)
+							{
+								FeicoesSelecionadas.getInstance().exclirSelecaoFeicao(fc.objectId,fc.layerFeicao.Id);
+								if(ckbSelecionado.selected)
+								{
+									FeicoesSelecionadas.getInstance().feicoes.push(fc);
+									
+									if(fc.layerFeicao && fc.layerFeicao.Selecionavel && (fc.projetoId == DesenhadorEsri.getInstance().idProjeto))
+										FeicoesSelecionadas.getInstance().feicoesSelecionaveis.push(fc);
+								}
+								fc.Selecionado = ckbSelecionado.selected;
+							}
+						}
+					}
+				}
+				
+				
+				
+				this.dispatchEvent(new ItemFeicaoControllerEvent(ItemFeicaoControllerEvent.RECARREGAR_LISTA, null, false,true,true,false));			
+				
+			} 
+			public function mudarState():void
+			{
+				if(currentState == "ligado")
+				{
+					listaFeicoes.height = 0;
+					currentState = "desligado";
+					FeicoesSelecionadas.getInstance().ativarDesativarLayer(false,Id);
+				}
+				else
+				{
+					if(feicoes)
+						listaFeicoes.height = feicoes.length * 21;
+					currentState = "ligado";
+					FeicoesSelecionadas.getInstance().ativarDesativarLayer(true,Id);	
+				}
+			}
+		]]> 
+	</fx:Script>
+	<s:states> 
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	<s:BorderContainer styleName="fundo_cinza_claro"  borderVisible="false"  borderAlpha="0.2"  minHeight="0" minWidth="0" width="100%"   >
+		
+		<s:VGroup minHeight="0" minWidth="0" width="100%" gap="0">
+			<s:BorderContainer id="bdLayer" minHeight="0" styleName="'layer_cinza_claro'" borderAlpha="0.2"  minWidth="0"  borderWeight="0" width="100%" >
+				<s:backgroundFill>
+					<s:LinearGradient rotation="90">
+						<s:GradientEntry color="0xFFFFFF"/>
+						<s:GradientEntry color="0xF2F2F2"/>
+					</s:LinearGradient>
+				</s:backgroundFill>
+				<s:HGroup id="hgLayer"  paddingLeft="3" width="100%" height="25" verticalAlign="middle" minHeight="0" >
+					<s:CheckBox id="ckbSelecionado" click="selecionou(event)" styleName="checkbox" minHeight="0" height="100%" width="2%" />
+					<s:Label id="lblNome" click="mudarState()" text="{nomeLayer}" width="73%" minHeight="0"  />
+					<s:HGroup  click="mudarState()" paddingTop="2" paddingRight="5" width="20%" height="100%" minHeight="0"  horizontalAlign="right" verticalAlign="middle"  >
+						<s:Label id="lblQuantidade"  height="20" textAlign="right" verticalAlign="middle" minHeight="0" />
+						<s:Image source.ligado="@Embed(source='../assets/seta_cima.png')"  source.desligado="@Embed(source='../assets/seta_baixo.png')" minHeight="0"/>
+					</s:HGroup>
+				</s:HGroup>
+			</s:BorderContainer>
+			<s:List id="listaFeicoes" dataProvider="{feicoes}" height="0" includeIn="desligado" visible.desligado="false" minHeight="0" visible.ligado="true" width="100%" borderVisible="false" >
+				<s:itemRenderer>
+					<fx:Component>
+						<views:ItemFeicaoView  width="100%" minHeight="0" />
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>
+		</s:VGroup>
+	</s:BorderContainer>
+	
+</s:ItemRenderer>

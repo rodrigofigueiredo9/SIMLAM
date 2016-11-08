@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:buttonext="com.tm.spark.buttonext.*" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.gmaps.geom.GeomArea;
+			import com.gmaps.tools.flood.FloodEngine;
+			
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.FeicaoArea;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.FeicoesSnapSelecionadas;
+			import models.Geometria;
+			import models.LayerFeicaoSelecionada;
+			import models.Retorno; 
+			
+			import mx.controls.Alert;
+			
+			[Embed( source="../assets/cursor_inundar.png")]
+			private var cursorMouse:Class;
+			public var timer:Timer;
+			public var pontoMouse:Point;
+			public var pausado:Boolean = false;
+			public var ligado:Boolean =false;
+			public var geometria:Geometria = new Geometria(Geometria.Poligono);
+			public var feicoesAreas:Vector.<FeicaoArea> = null;
+			public var idGraphicInundar:String = "-1";
+			
+			public function ligarDesligar():void
+			{
+				if(ligado)
+				{
+					if(pausado)
+						pausarDespausar();
+					else
+					{
+						desligar();
+					}
+				}
+				else
+					ligar();
+			}
+			
+			public function ligar():void
+			{
+				if(FeicaoSelecionada.getInstance().layerFeicao || (FeicoesSelecionadas.getInstance().feicoes&&FeicoesSelecionadas.getInstance().feicoes.length))
+				{
+					FeicaoSelecionada.getInstance().reiniciarGeometria();
+					FeicoesSelecionadas.getInstance().reiniciarGeometria();		
+					feicoesAreas = verificaFlood();
+				
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+				}
+			}
+			
+			private function ligarOk(isInit:Boolean=true):void
+			{
+				btnInundar.styleName = "inundar_geo_ativado";
+				DesenhadorEsri.getInstance().map.addEventListener(MouseEvent.CLICK, desenharClickMouse);
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				if(isInit)
+				{
+					FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.CADASTRAR,cadastrarResult);
+				}
+				LayerFeicaoSelecionada.getInstance().isDesenhando = true;
+				
+				if(!timer)
+				{		
+					timer = new Timer(500);
+					timer.addEventListener(TimerEvent.TIMER,tempoInundar);
+				}
+				
+				timer.start();
+				
+				ligado = true;
+				cursorManager.removeAllCursors();
+				cursorManager.setCursor(cursorMouse,1,-1, -13);
+				desenharFloods(feicoesAreas);
+				
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR_OUTRAS_FERRAMENTAS, null, this,false,true,true));
+			}
+			
+			public function desligar():void
+			{
+				
+				desligarSemApagarFeicao();
+				FeicoesSelecionadas.getInstance().limpar(false);
+				FeicaoSelecionada.getInstance().limpar(false);
+				FeicoesSnapSelecionadas.getInstance().limpar(true);	
+				
+				idGraphicInundar = DesenhadorEsri.getInstance().excluirFeicao(idGraphicInundar);
+				geometria.excluir(true);
+				FeicaoController.getInstance().removeEventListener(FeicaoControllerEvent.CADASTRAR,cadastrarResult);
+			}
+			
+			public function desligarSemApagarFeicao():void
+			{
+				DesenhadorEsri.getInstance().map.removeEventListener(MouseEvent.CLICK, desenharClickMouse);
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				cursorManager.removeAllCursors();
+				ligado = false;
+				DesenhadorEsri.getInstance().map.panEnabled = true;
+				
+				if(timer)
+					timer.stop();
+				btnInundar.styleName = "inundar_geo";
+			}
+			
+			public function pausarDespausar():void
+			{
+				if(ligado)
+				{
+					if(pausado)
+					{
+						ligarOk(false);
+						pausado = false;
+					}
+					else
+					{
+						desligarSemApagarFeicao();
+						btnInundar.styleName = "inundar_geo_ativado";
+						ligado = true;
+						pausado = true;
+					}
+				}
+			}
+			
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{	 
+				switch(event.keyCode) 
+				{
+					case Keyboard.ESCAPE:
+						desligar();
+						if(geometria)
+							geometria.excluir(true);
+						break;
+				}	
+			}
+			
+			protected function desenharClickMouse(ev:MouseEvent):void
+			{
+				var pt:Point = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);
+				var range:Number = DesenhadorEsri.getInstance().range(2);
+				geometria.excluir(false);
+				
+				if(feicoesAreas)
+				{
+					for(var i:int=0; i< feicoesAreas.length; i++)
+					{
+						var feicaoArea:FeicaoArea = feicoesAreas[i] as FeicaoArea;
+						if(feicaoArea)
+						{
+							if(feicaoArea.geomArea.interactWithPoint(pt,range))
+							{
+								geometria.vertices = feicoesAreas[i].vertices;
+								geometria.desenhar(null,null,GeometriaEsriGraphic.InundarOver,false);	
+								
+								FeicaoController.getInstance().CadastrarFeicao(new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto, 
+									geometria.vertices ));
+								cursorManager.setBusyCursor();
+								return;
+							}
+						}
+					}
+				}
+			}
+			
+			public function verificaFlood():Vector.<FeicaoArea>
+			{
+				cursorManager.setBusyCursor();
+				var arrayFlood:Array = null;
+				var lista:Vector.<FeicaoArea> =null;
+				var floodEngine:FloodEngine = new FloodEngine();
+							
+				if((FeicoesSelecionadas.getInstance().feicoes && FeicoesSelecionadas.getInstance().feicoes.length>0))
+				{
+					for(var i:int = 0; i< FeicoesSelecionadas.getInstance().feicoes.length; i++)
+					{
+						var vertices:Array=null;
+						if(FeicoesSelecionadas.getInstance().feicoes[i] && FeicoesSelecionadas.getInstance().feicoes[i].geometria)
+						{
+							
+							var geo:Geometria = FeicoesSelecionadas.getInstance().feicoes[i].geometria as Geometria;
+							if(geo.tipoGeometria == Geometria.Linha || geo.tipoGeometria == Geometria.Poligono)
+							{
+								if(geo.vertices)
+								{
+									vertices = new Array(); 
+									for(var t:int =0; t< geo.vertices.length; t++)
+									{
+										vertices.push(geo.vertices[t]);	
+									}
+									if(vertices.length>0)
+										floodEngine.addVertices(vertices); 
+								} 
+								if(geo.aneis)
+								{
+									for(var k:int =0; k< geo.aneis.length; k++)
+									{
+										vertices = new Array();
+										var anel:Vector.<Point> = (geo.aneis[k] as Vector.<Point>);
+										for(var n:int=0; n<anel.length;n++)
+										{	
+											vertices.push(anel[n]);	
+										}
+										if(vertices.length>0)
+										{
+											vertices.push(vertices[0]);
+											floodEngine.addVertices(vertices);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				if( FeicaoSelecionada.getInstance().geometria)
+				{
+					var geo:Geometria = FeicaoSelecionada.getInstance().geometria;
+					if(geo.tipoGeometria == Geometria.Linha || geo.tipoGeometria == Geometria.Poligono)
+					{
+						if(geo.vertices)
+						{
+							vertices = new Array(); 
+							for(var t:int =0; t< geo.vertices.length; t++)
+							{
+								vertices.push(geo.vertices[t]);	
+							}
+							if(vertices.length>0)
+								floodEngine.addVertices(vertices); 
+						} 
+						if(geo.aneis)
+						{
+							for(var k:int =0; k< geo.aneis.length; k++)
+							{
+								vertices = new Array();
+								var anel:Vector.<Point> = (geo.aneis[k] as Vector.<Point>);
+								for(var n:int=0; n<anel.length;n++)
+								{	
+									vertices.push(anel[n]);	
+								}
+								if(vertices.length>0)
+								{
+									vertices.push(vertices[0]);
+									floodEngine.addVertices(vertices);
+								}
+							}
+							
+						}
+					}
+				}
+				
+				arrayFlood = floodEngine.getAreaPaths();
+			
+				if(arrayFlood)
+				{
+					var feicaoArea:FeicaoArea = new FeicaoArea();
+					for(var i:int=0; i< arrayFlood.length; i++)
+					{
+						if(arrayFlood[i])
+						{
+							feicaoArea = new FeicaoArea();
+							feicaoArea.verticesArray = arrayFlood[i] as Array;								
+							if(lista)
+							{
+								for(var k:int =0; k<lista.length;k++)
+								{
+									if(feicaoArea.area < lista[k].area)
+									{
+										lista.splice(k,0,feicaoArea);
+										break;
+									}
+								}
+								lista.push(feicaoArea);
+							}
+							else
+							{
+								lista = new Vector.<FeicaoArea>();
+								lista.push(feicaoArea);
+							}
+						}
+					}
+				}
+				cursorManager.removeBusyCursor();
+				return lista;
+			}
+			
+			protected function tempoInundar(ev:Event):void
+			{
+				if(ligado)
+				{
+					var encontrou:Boolean = false;
+					var pontoMouse:Point = DesenhadorEsri.getInstance().converterMouseXYParaPoint(this.parentApplication.mouseX, this.parentApplication.mouseY);
+					if(pontoMouse)
+					{
+						var range:Number = DesenhadorEsri.getInstance().range(2);
+						
+						if(feicoesAreas)
+						{
+							for(var i:int=0; i< feicoesAreas.length; i++)
+							{
+								var feicaoArea:FeicaoArea = feicoesAreas[i] as FeicaoArea;
+								if(feicaoArea)
+								{
+									if(feicaoArea.geomArea.interactWithPoint(pontoMouse,range))
+									{
+										geometria.vertices = feicoesAreas[i].vertices;
+										geometria.desenhar(null,null,GeometriaEsriGraphic.InundarOver,false);
+										encontrou = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+					if(!encontrou)
+						geometria.excluir(true);
+				}
+				else
+				{
+					geometria.excluir(true);
+				}
+			}
+			
+			private function desenharFloods(feicoes:Vector.<FeicaoArea>):void
+			{
+				idGraphicInundar = DesenhadorEsri.getInstance().excluirFeicao(idGraphicInundar);
+				if(feicoes)
+				{
+					for each(var feicao:FeicaoArea in feicoes)
+					{
+						idGraphicInundar = DesenhadorEsri.getInstance().desenharFeicao(idGraphicInundar,Geometria.Poligono, feicao.vertices,null, GeometriaEsriGraphic.Inundar,false,false);
+					}
+				}
+				
+			}
+			
+			private function converterVerticesParaGeomArea(ar:Array):GeomArea
+			{
+				var geomArea:GeomArea;
+				if(ar!=null)
+				{
+					geomArea = new GeomArea("1",ar,null,null);				
+				}
+				return geomArea;
+			}
+			
+			protected function cadastrarResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+					if(resposta.Sucesso)
+					{
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						desligar();
+						ligarOk();
+					}
+					else
+						Alert.show(resposta.Mensagem);
+					
+					cursorManager.removeBusyCursor();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<buttonext:ButtonExt id="btnInundar" click="ligarDesligar()" styleName="inundar_geo" toolTip="Inundar"  />
+</s:Group>

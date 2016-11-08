@@ -1,0 +1,149 @@
+﻿OBS: Após a instalação excluir este arquivo da pasta da aplicação.
+
+Pre-requisitos:
+-------------------------------------------------------------------------------------------------------------------------------------
+1 - Servidor com IIS 7
+2 - Cliente Oracle no servidor de aplicação, versão: 10G
+3 - Esquemas IDAF, IDAFCONSULTA, IDAFGEO, IDAFRELATORIO com no mínimo o Papel de "Connect"  
+4 - Devem ser criados no mínimo dois diretórios de armazenamente de arquivos com permissões adequadas ao IIS, 
+	configurados na tabela [CNF_ARQUIVO].
+5 - Framework 4.0 - Integrado 
+6 - Instalar/Verificar se o ASP.NET MVC 3 está instalado no servidor.
+
+
+Arquivos de Configuracao:
+-------------------------------------------------------------------------------------------------------------------------------------
+-Institucional
+[Raiz]\Web.config
+[Raiz]\Areas\Navegadores\AreaAbrangencia\config.xml
+[Raiz]\Areas\Navegadores\AreaAbrangenciaFisc\config.xml
+[Raiz]\Areas\Navegadores\Coordenada\config.xml
+[Raiz]\Areas\Navegadores\Desenhador\config.xml
+
+-Publico 
+[Raiz]\Web.config
+[Raiz]\Areas\Navegadores\Mapa\config.xml
+
+-Gerencial 
+[Raiz]\Web.config
+
+-Credenciado
+[Raiz]\Web.config
+
+-DesenhadorWebServices
+[Raiz]\Web.config
+
+-GeobasesWebServices
+[Raiz]\Web.config
+
+-WindowsServicesGeo
+[Raiz]\Tecnomapas\IDAF - Servico de Processamento Geo\SVCOperacoesGeo.exe.config
+[Raiz]\Tecnomapas\IDAF - Servico de Processamento Geo\ProcessOperacoesGeo.exe.config
+
+Tabelas de Configuração:
+-------------------------------------------------------------------------------------------------------------------------------------
+IDAF.CNF_SISTEMA
+IDAF.CNF_ARQUIVO
+IDAF.CNF_EMAIL
+
+IDAFGEO.CNF_SISTEMA_GEO
+IDAFGEO.CNF_CONFIGURACAO
+
+IDAFGEO.TAB_SERVICO
+IDAFGEO.TAB_FEICAO
+IDAFGEO.TAB_CONFIGURACAO
+
+
+Configuração:
+-------------------------------------------------------------------------------------------------------------------------------------
+1 - Rode os scripts de banco seguindo a ordem numerica de cada pasta e dos seu arquivos.
+	1.1 Pasta: Institucional\Banco\
+2 - No Web.cong, Configurar a chave <connectionStrings> de nome default com  a conexão com o banco de dados 
+
+3 - verificar no banco a tabela [CNF_ARQUIVO], caso não tenha valores, fazer insert das pastas para upload de arquivo exemplo:
+insert into CNF_ARQUIVO (ID, RAIZ, TIPO, ATIVO) values (1, 'd:\ETX\IDAF\Arquivo', 2, 1);
+insert into CNF_ARQUIVO (ID, RAIZ, TIPO, ATIVO) values (2, 'd:\ETX\IDAF\ArquivoTemporario', 1, 1);
+	
+	3.1 - Onde:
+		ID: Chave Unica.
+		RAIZ: Caminho fisico onde será gravado os arquivos.
+		TIPO: 1 - Para arquivos temporário / 2 - Para arquivos definitivos 
+		ATIVO: 0 - Desativo / 1 - Inidica se o diretorio será usado na gravação, 
+				caso esse valor sejá alterado deve ser feito limpeza do cache do processo no IIS [Reiniciar o serviço].
+
+
+4 - Verificar e configurar a tabela [cnf_email], caso não tenha valores, fazer o insert.
+insert into cnf_email (servidor_smtp, usuario_smtp, remetente, senha, num_tentativa)
+	values ('servidor_smtp', 'usuario_smtp', 'remetente', 'senha', 5);
+
+
+5 - Os log dos serviços windows estão sendo gravados no [log_servicos] do sistemas, caso não exista conexão sera gerado arquivo 
+.log no profile dos serviços.
+
+6 - Registrar tabelas:
+	IDAFGEO.GEO_EMP_LOCALIZACAO - PONTO - 31984
+
+MBR: 
+MINX: 78014
+MAXX: 555588
+MINY: 7572786
+MAXY: 8070865
+
+7 - Configurar o mapa flex - Coordenada
+	\Areas\Navegadores\Coordenada\config.xml
+
+
+Tabelas que NÃO podem estar registradas no SDE:
+-------------------------------------------------------------------------------------------------------------------------------------
+Devem permanecer no metadados da Oracle (User_Sdo_Geom_Metadata) 
+
+IDAFGEO.TAB_PONTO
+IDAFGEO.TAB_LINHA
+IDAFGEO.TAB_POLIGONO
+
+
+Configuração ArcGis Server:
+-------------------------------------------------------------------------------------------------------------------------------------
+8 - Criar serviço de ArCGIS-SERVER: 
+Sugestão de Nome:		Arquivo mxd
+
+[D_ATIVIDADE]			D_ATIVIDADE.mxd
+[D_DOMINIALIDADE]		D_DOMINIALIDADE.mxd
+[EMPREENDIMENTO]		idaf_empreendimento.mxd
+[N_ATIVIDADES]			N_Atividades.mxd
+[N_LIMITES]				N_Limites.mxd
+[N_PROJETO_AMBIENTAL]	N_ProjetoAmbiental.mxd
+[D_VIZINHOS]			D_VIZINHOS.mxd
+
+
+9 - Reapontar os layers do MXD D_ATIVIDADE.mxd e D_DOMINIALIDADE.mxd para o esquema do idafgeo que esta na pasta "Mxd"
+10 - Criar os serviços de arcgis dinamicos do D_ATIVIDADE.mxd e D_DOMINIALIDADE.mxd
+
+11 - Atualizar no esquema do idafgeo as seguintes linhas com os endereços dos serviços de arcgis criados
+	update tab_servico set url = 'http://devap3/ArcGIS/rest/services/IDAF/D_DOMINIALIDADE/MapServer' where id =1;
+	update tab_servico set url = 'http://devap3/ArcGIS/rest/services/IDAF/D_ATIVIDADE/MapServer' where id =2;
+	update tab_servico set url = 'http://devap3/ArcGIS/rest/services/IDAF/D_VIZINHOS/MapServer' where id =5;
+
+Tabelas do GEOBASES:
+-------------------------------------------------------------------------------------------------------------------------------------
+12 - Tabelas usadas do geobases
+	LIM_MUNICIPIO15
+	LIM_TERRA_INDIGENA
+	HID_BACIA_HIDROGRAFICA
+	ENC_TRECHO_ENERGIA
+	HID_TRECHO_DRENAGEM
+	HID_TRECHO_MASSA_DAGUA
+	LIM_LIMITE_URBANO
+	LIM_AREA_ESPECIAL
+	LIM_Outras_Unid_Protegidas
+	LIM_Unidade_Conserv_Nao_Snuc
+	LIM_Unidade_Protecao_Integral
+	LIM_Unidade_Uso_Sustentavel
+	LIM_UNIDADES_CONSERV_ARACRUZ
+	LIM_ESTADUAL
+	REL_CURVA_NIVEL
+	REL_ROCHA
+	TRA_TRECHO_DUTO
+	TRA_TRECHO_FERROVIARIO
+	TRA_TRECHO_RODOVIARIO
+	VEG_Uso_Do_Solo

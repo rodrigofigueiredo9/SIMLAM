@@ -1,0 +1,63 @@
+/* -----------------------------------------------------------------------
+	Etramite 2010
+	Tecnompas © 2010
+	www.tecnomapas.com.br
+	
+			Baseado em:
+			|	 Blueprint CSS Framework 1.0
+			|	 http://blueprintcss.org
+			|	
+			|	   * Copyright (c) 2007-Present. See LICENSE for more info.
+			|	   * See README for instructions on how to use Blueprint.
+			|	   * For credits and origins, see AUTHORS.
+			|	   * This is a compressed file. See the sources in the 'src' directory.
+
+----------------------------------------------------------------------- */
+
+/* ie7.css */
+/*button text element */
+.ui-button .ui-button-text { display: block; line-height: 1.2;  }
+.ui-button-text-only .ui-button-text { padding: 0em 1em; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 0em 0.1em; text-indent: -9999999px; }
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 0em 1em 0em 2.1em; }
+.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 0em 2.1em 0em 1em; }
+.ui-button-text-icons .ui-button-text { padding: 0em 2.1em; }
+/* no icon support for input elements, provide padding by default */
+input.ui-button { padding: 0em 1em; }
+
+.inlineBotao { margin-top: 1.5em; }
+
+.caixaScroll, .boxModal { position: relative; }/* Hack para os botões não flutuaram durante a rolagem */
+
+fieldset {padding-top:0; margin-top: 20px; }
+legend { margin-top:-1.8em; margin-left: -0.5em;}
+
+table { width: auto; }
+
+ul#sortable li { margin-bottom: 1px; }
+
+.coluna1, .coluna2, .coluna3, .coluna4, .coluna5, .coluna6, .coluna7, .coluna8, .coluna9, .coluna10,
+.coluna11, .coluna12, .coluna13, .coluna14, .coluna15, .coluna16, .coluna17, .coluna18, .coluna19, .coluna20,
+.coluna21, .coluna22, .coluna23, .coluna24, .coluna25, .coluna26, .coluna27, .coluna28, .coluna29, .coluna30,
+.coluna31, .coluna32, .coluna33, .coluna34, .coluna35, .coluna36, .coluna37, .coluna38, .coluna39, .coluna40,
+.coluna41, .coluna42, .coluna43, .coluna44, .coluna45, .coluna46, .coluna47, .coluna48, .coluna49, .coluna50,
+.coluna51, .coluna52, .coluna53, .coluna54, .coluna55, .coluna56, .coluna57, .coluna58, .coluna59, .coluna60,
+.coluna61, .coluna62, .coluna63, .coluna64, .coluna65, .coluna66, .coluna67, .coluna68, .coluna69, .coluna70,
+.coluna71, .coluna72, .coluna73, .coluna74, .coluna75, .coluna76, .coluna77, .coluna78, .coluna79, .coluna80,
+.coluna81, .coluna82, .coluna83, .coluna84, .coluna85, .coluna86, .coluna87, .coluna88, .coluna89, .coluna90,
+.coluna91, .coluna92, .coluna93, .coluna94, .coluna95, .coluna96, .coluna97, .coluna98, .coluna99, .coluna100 { margin-right: 0.8%;}
+.ultima { margin-right: 0px }
+
+/*.labelBig { filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3f3f3', endColorstr='#fafafa',GradientType=0 ); }*/
+.labelBig { padding: 0px; border-bottom: 1px solid #CCC; }
+.labelBig:hover { background-color: #ececec; }
+.labelBig.ativo { background-color: #f7eb90; }
+
+.labelBig span { height: 23px; padding-top: 7px; background-position:  5px 10px; }
+.labelBig.ativo span { background-position: 5px -70px; }
+
+
+ul.areaFiltroMultiplo { padding-bottom: 5px; }
+.dragButtons li { height: 18px; padding-top: 5px; }
+
+

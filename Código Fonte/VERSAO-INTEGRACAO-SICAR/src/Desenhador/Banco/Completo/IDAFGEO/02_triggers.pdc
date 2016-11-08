@@ -1,0 +1,960 @@
+-----------------------------------------------
+-- VW APMP
+create or replace view VW_DES_APMP as select * from DES_APMP;
+/
+
+create or replace trigger triggInsteadOfDelAPMP
+  instead of delete on VW_DES_APMP
+  for each row
+declare
+begin
+	delete DES_APMP p where p.id = :old.id;   
+
+  	-- sync tables
+	update DES_AA p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_ACV p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_AFS p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_ARL p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_AVN p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_LAGOA p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_REPRESA p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_RIO_AREA p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_ROCHA p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+	update DES_RPPN p set p.area_m2=null where p.projeto = :old.projeto and p.cod_apmp=:old.id;
+end;
+/
+
+-----------------------------------------------
+-- VW ATP
+create or replace view VW_DES_ATP as select * from DES_ATP;
+/
+
+create or replace trigger triggInsteadOfATP
+  instead of update or insert or delete on VW_DES_ATP
+  for each row
+declare
+begin
+   if UPDATING then
+		update DES_ATP p set p.area_m2 = :new.area_m2, p.geometry = :new.geometry where p.id = :new.id;
+
+	  	-- sync tables
+		update DES_APMP p set p.area_m2=null where p.projeto = :new.projeto and (p.cod_atp=:new.id or p.cod_atp is null);
+ 	elsif INSERTING then
+	   insert into DES_ATP (id, projeto, area_m2, geometry) values(:new.id, :new.projeto, :new.area_m2, :new.geometry);
+
+	  	-- sync tables
+		update DES_APMP p set p.area_m2=null where p.projeto = :new.projeto and p.cod_atp is null;
+   elsif DELETING then
+   	delete DES_ATP p where p.id = :old.id;
+
+      -- sync tables
+		update DES_APMP p set p.area_m2=null where p.projeto = :new.projeto and p.cod_atp=:new.id;
+   end if;
+end;
+/
+
+-----------------------------------------------
+-- VW AA
+create or replace view VW_DES_AA as select * from DES_AA;
+/
+
+create or replace trigger triggInsteadOfAA
+  instead of update or insert or delete on VW_DES_AA
+  for each row
+declare
+begin
+   if UPDATING then
+		update DES_AA p set p.cod_apmp = :new.cod_apmp, p.tipo = :new.tipo, p.area_m2 = :new.area_m2, p.geometry = :new.geometry where p.id = :new.id;
+
+	  	-- sync tables
+		update DES_ARL p set p.area_m2=null where p.projeto = :new.projeto and ( p.situacao='AA' and sdo_relate(p.geometry, :old.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' or p.situacao!='AA' and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE');
+ 	elsif INSERTING then
+	   insert into DES_AA (id, projeto, cod_apmp, tipo, area_m2, geometry) values(:new.id, :new.projeto, :new.cod_apmp, :new.tipo, :new.area_m2, :new.geometry);
+
+	  	-- sync tables
+		update DES_ARL p set p.area_m2=null where p.projeto = :new.projeto and p.situacao!='AA' and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+   elsif DELETING then
+   	delete DES_AA p where p.id = :old.id;
+
+      -- sync tables
+      update DES_ARL p set p.area_m2=null where p.projeto = :old.projeto and p.situacao='AA';
+   end if;
+end;
+/
+
+-----------------------------------------------
+-- VW AVN
+create or replace view VW_DES_AVN as select * from DES_AVN;
+/
+
+create or replace trigger triggInsteadOfAVN
+  instead of update or insert or delete on VW_DES_AVN
+  for each row
+declare
+begin
+   if UPDATING then
+		update DES_AVN p set p.cod_apmp = :new.cod_apmp, p.estagio = :new.estagio, p.area_m2 = :new.area_m2, p.geometry = :new.geometry where p.id = :new.id;
+
+	  	-- sync tables
+		update DES_ARL p set p.area_m2=null where p.projeto = :new.projeto and ( p.situacao='AA' and sdo_relate(p.geometry, :old.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' or p.situacao!='AA' and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE');
+ 	elsif INSERTING then
+	   insert into DES_AVN (id, projeto, cod_apmp, estagio, area_m2, geometry) values(:new.id, :new.projeto, :new.cod_apmp, :new.estagio, :new.area_m2, :new.geometry);
+
+	  	-- sync tables
+		update DES_ARL p set p.area_m2=null where p.projeto = :new.projeto and p.situacao!='AA' and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+   elsif DELETING then
+   	delete DES_AVN p where p.id = :old.id;
+
+  		-- sync tables
+		update DES_ARL p set p.area_m2=null where p.projeto = :old.projeto and p.situacao='AVN';
+   end if;
+end;
+/
+-----------------------------------------------
+-- APMP
+
+create or replace trigger triggBefAddUpdAPMP
+  before insert or update on DES_APMP 
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+   
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+
+	:new.cod_atp := null;
+   for j in (select p.id from DES_ATP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_atp := j.id;
+      exit;
+   end loop;
+end;
+/
+
+create or replace trigger triggAftAddAPMP
+  after insert on DES_APMP
+  for each row
+declare
+begin
+   -- sync tables not attributed
+	update DES_AA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ACV p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_AFS p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ARL p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_AVN p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_LAGOA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_REPRESA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_RIO_AREA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ROCHA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_RPPN p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and p.cod_apmp is null and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+end;
+/
+
+create or replace trigger triggAftUpdAPMP
+  after update on DES_APMP
+  for each row
+declare
+begin
+   -- sync tables
+  	update DES_AA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ACV p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_AFS p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ARL p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_AVN p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_LAGOA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_REPRESA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_RIO_AREA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_ROCHA p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+   update DES_RPPN p set p.cod_apmp = :new.id, p.area_m2=-1 where p.projeto = :new.projeto and (p.cod_apmp is null or p.cod_apmp=:new.id) and sdo_relate(p.geometry, :new.geometry, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE' and  SDO_GEOM.RELATE( :new.geometry, 'CONTAINS', geometria9i.pontoIdeal(p.geometry,3), 0.01001) = 'CONTAINS';
+end;
+/
+
+-----------------------------------------------
+-- TMP_RASC_TRACKMAKER
+create or replace trigger triggTmpRascTrackmaker
+  before insert or update on TMP_RASC_TRACKMAKER
+  for each row
+declare
+begin
+   if (:new.geometry is not null) then
+   	:new.geometry.sdo_srid := 999999;
+   end if;
+end;
+/
+
+-----------------------------------------------
+-- AA
+create or replace trigger triggAddAA
+  before insert on DES_AA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+
+end;
+/
+
+create or replace trigger triggUpdAA
+  before update on DES_AA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- ACV
+create or replace trigger triggAddACV
+  before insert on DES_ACV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdACV
+  before update on DES_ACV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- AFS
+create or replace trigger triggAddAFS
+  before insert on DES_AFS
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdAFS
+  before update on DES_AFS
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+
+
+
+-----------------------------------------------
+-- ARL
+create or replace trigger triggAddARL
+  before insert on DES_ARL
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+   
+   :new.situacao := 'Não Informado';
+   for j in (select p.id from DES_AA p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.situacao := 'AA';
+      exit;
+   end loop;
+   
+   if (:new.situacao = 'Não Informado') then
+      for j in (select p.id from DES_AVN p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      	:new.situacao := 'AVN';
+         exit;
+      end loop;
+   end if;
+
+end;
+/
+ 
+create or replace trigger triggUpdARL
+  before update on DES_ARL
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+      
+      :new.situacao := 'Não Informado';
+      for j in (select p.id from DES_AA p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.situacao := 'AA';
+         exit;
+      end loop;
+      
+      if (:new.situacao = 'Não Informado') then
+         for j in (select p.id from DES_AVN p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+            :new.situacao := 'AVN';
+            exit;
+         end loop;
+      end if;
+      
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- AVN
+create or replace trigger triggAddAVN
+  before insert on DES_AVN
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdAVN
+  before update on DES_AVN
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- LAGOA
+create or replace trigger triggAddLAGOA
+  before insert on DES_LAGOA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdLAGOA
+  before update on DES_LAGOA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- REPRESA
+create or replace trigger triggAddREPRESA
+  before insert on DES_REPRESA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdREPRESA
+  before update on DES_REPRESA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- RIO_AREA
+create or replace trigger triggAddRIO_AREA
+  before insert on DES_RIO_AREA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdRIO_AREA
+  before update on DES_RIO_AREA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- ROCHA
+create or replace trigger triggAddROCHA
+  before insert on DES_ROCHA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdROCHA
+  before update on DES_ROCHA
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- RPPN
+create or replace trigger triggAddRPPN
+  before insert on DES_RPPN
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+   for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+      :new.cod_apmp := j.id;
+      exit;
+   end loop;
+end;
+/
+ 
+create or replace trigger triggUpdRPPN
+  before update on DES_RPPN
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   -- workaround to prevent mutant table
+   if (:new.area_m2 < 0) then
+      :new.area_m2 := :old.area_m2;
+   else
+      :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+      geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+      :new.cod_apmp := null;
+      for j in (select p.id from DES_APMP p where p.projeto = :new.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+   end if;
+end;
+/
+ 
+ 
+ 
+-----------------------------------------------
+-- ATP
+create or replace trigger triggAddUpdATP
+  before insert or update on DES_ATP
+  for each row
+declare
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+end;
+/
+
+ 
+ 
+-----------------------------------------------
+-- AFD
+create or replace trigger triggAddUpdAFD
+  before insert or update on DES_AFD
+  for each row
+declare
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+end;
+/
+
+
+
+-----------------------------------------------
+-- ACONSTRUIDA
+create or replace trigger triggAddUpdACONSTRUIDA
+  before insert or update on DES_ACONSTRUIDA
+  for each row
+declare
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+end;
+/
+
+
+
+
+--====================================================================
+
+--====================================================================
+
+
+-----------------------------------------------
+-- PATIV
+create or replace trigger triggAddDES_PATIV
+  before insert or update on DES_PATIV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+
+	geo_point := :new.geometry;   
+
+	:new.cod_apmp := null;
+	:new.rocha := 'N';
+   :new.massa_dagua := 'N';
+   :new.avn := 'N';
+   :new.aa := 'N';
+   :new.afs := 'N';
+   :new.floresta_plantada := 'N';
+   :new.arl := 'N';
+   :new.rppn := 'N';
+   :new.app := 'N';
+   
+	select c.texto into :new.atividade from idaf.tmp_projeto_geo t, idaf.lov_caracterizacao_tipo c where t.id = :new.projeto and t.caracterizacao = c.id;
+
+	for i in (select t.id projeto from idaf.crt_projeto_geo t, idaf.tmp_projeto_geo a where t.caracterizacao=1 and t.empreendimento=a.empreendimento and a.id=:new.projeto) loop
+   
+      for j in (select p.id from GEO_APMP p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rocha from GEO_ROCHA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.massa_dagua from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='MASSA_DAGUA_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      for j in (select p.estagio from GEO_AVN p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         if (j.estagio='I') then
+	         :new.avn := j.estagio;
+            exit;
+         elsif ( (j.estagio='M') or (:new.avn<>'A') ) then
+         	:new.avn := j.estagio;
+         end if;
+      end loop;
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.aa from GEO_AA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_AFS t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_ACV t where t.projeto = i.projeto and t.tipo='FLORESTA_PLANTADA' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.arl from GEO_ARL t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rppn from GEO_RPPN t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.app from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='APP_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+		exit;
+	end loop;
+end;
+/
+
+
+
+ 
+-----------------------------------------------
+-- LATIV
+create or replace trigger triggAddDES_LATIV
+  before insert or update on DES_LATIV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.comprimento := sdo_geom.sdo_length(:new.geometry, 0.00001);
+ 
+   geo_point := sdo_lrs.convert_to_std_geom( sdo_lrs.locate_pt( sdo_lrs.convert_to_lrs_geom(:new.geometry), :new.comprimento/2) );
+ 
+	:new.cod_apmp := null;
+	:new.rocha := 'N';
+   :new.massa_dagua := 'N';
+   :new.avn := 'N';
+   :new.aa := 'N';
+   :new.afs := 'N';
+   :new.floresta_plantada := 'N';
+   :new.arl := 'N';
+   :new.rppn := 'N';
+   :new.app := 'N';
+   
+	select c.texto into :new.atividade from idaf.tmp_projeto_geo t, idaf.lov_caracterizacao_tipo c where t.id = :new.projeto and t.caracterizacao = c.id;
+
+	for i in (select t.id projeto from idaf.crt_projeto_geo t, idaf.tmp_projeto_geo a where t.caracterizacao=1 and t.empreendimento=a.empreendimento and a.id=:new.projeto) loop
+   
+      for j in (select p.id from GEO_APMP p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rocha from GEO_ROCHA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.massa_dagua from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='MASSA_DAGUA_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      for j in (select p.estagio from GEO_AVN p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         if (j.estagio='I') then
+	         :new.avn := j.estagio;
+            exit;
+         elsif ( (j.estagio='M') or (:new.avn<>'A') ) then
+         	:new.avn := j.estagio;
+         end if;
+      end loop;
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.aa from GEO_AA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_AFS t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_ACV t where t.projeto = i.projeto and t.tipo='FLORESTA_PLANTADA' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.arl from GEO_ARL t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rppn from GEO_RPPN t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.app from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='APP_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+		exit;
+	end loop;
+end;
+/
+
+
+
+-----------------------------------------------
+-- AATIV
+create or replace trigger triggAddDES_AATIV
+  before insert or update on DES_AATIV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+	:new.rocha := 'N';
+   :new.massa_dagua := 'N';
+   :new.avn := 'N';
+   :new.aa := 'N';
+   :new.afs := 'N';
+   :new.floresta_plantada := 'N';
+   :new.arl := 'N';
+   :new.rppn := 'N';
+   :new.app := 'N';
+   
+   select c.texto into :new.atividade from idaf.tmp_projeto_geo t, idaf.lov_caracterizacao_tipo c where t.id = :new.projeto and t.caracterizacao = c.id;
+
+	for i in (select t.id projeto from idaf.crt_projeto_geo t, idaf.tmp_projeto_geo a where t.caracterizacao=1 and t.empreendimento=a.empreendimento and a.id=:new.projeto) loop
+   
+      for j in (select p.id from GEO_APMP p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rocha from GEO_ROCHA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.massa_dagua from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='MASSA_DAGUA_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      for j in (select p.estagio from GEO_AVN p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         if (j.estagio='I') then
+	         :new.avn := j.estagio;
+            exit;
+         elsif ( (j.estagio='M') or (:new.avn<>'A') ) then
+         	:new.avn := j.estagio;
+         end if;
+      end loop;
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.aa from GEO_AA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_AFS t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_ACV t where t.projeto = i.projeto and t.tipo='FLORESTA_PLANTADA' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.arl from GEO_ARL t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rppn from GEO_RPPN t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.app from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='APP_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+		exit;
+	end loop;
+end;
+/
+
+
+-----------------------------------------------
+-- AIATIV
+create or replace trigger triggAddDES_AIATIV
+  before insert or update on DES_AIATIV
+  for each row
+declare
+	geo_point mdsys.sdo_geometry;
+begin
+   :new.area_m2 := sdo_geom.sdo_area(:new.geometry, 0.00001);
+ 
+   geo_point := geometria9i.pontoIdeal(:new.geometry,3);
+ 
+	:new.cod_apmp := null;
+	:new.rocha := 'N';
+   :new.massa_dagua := 'N';
+   :new.avn := 'N';
+   :new.aa := 'N';
+   :new.afs := 'N';
+   :new.floresta_plantada := 'N';
+   :new.arl := 'N';
+   :new.rppn := 'N';
+   :new.app := 'N';
+
+   select c.texto into :new.atividade from idaf.tmp_projeto_geo t, idaf.lov_caracterizacao_tipo c where t.id = :new.projeto and t.caracterizacao = c.id;
+
+	for i in (select t.id projeto from idaf.crt_projeto_geo t, idaf.tmp_projeto_geo a where t.caracterizacao=1 and t.empreendimento=a.empreendimento and a.id=:new.projeto) loop
+   
+      for j in (select p.id from GEO_APMP p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         :new.cod_apmp := j.id;
+         exit;
+      end loop;
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rocha from GEO_ROCHA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.massa_dagua from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='MASSA_DAGUA_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      for j in (select p.estagio from GEO_AVN p where p.projeto = i.projeto and sdo_relate(p.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE') loop
+         if (j.estagio='I') then
+	         :new.avn := j.estagio;
+            exit;
+         elsif ( (j.estagio='M') or (:new.avn<>'A') ) then
+         	:new.avn := j.estagio;
+         end if;
+      end loop;
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.aa from GEO_AA t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_AFS t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.afs from GEO_ACV t where t.projeto = i.projeto and t.tipo='FLORESTA_PLANTADA' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.arl from GEO_ARL t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.rppn from GEO_RPPN t where t.projeto = i.projeto and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+      
+      select (case when count(t.id)>0 then 'S' else 'N' end) into :new.app from GEO_AREAS_CALCULADAS t where t.projeto = i.projeto and t.tipo='APP_APMP' and sdo_relate(t.geometry, geo_point, 'MASK=ANYINTERACT QUERYTYPE=WINDOW') = 'TRUE';
+
+		exit;
+	end loop;
+end;
+/

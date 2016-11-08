@@ -1,0 +1,1 @@
+nant /t:net-4.0 -buildfile:WindowsServicePublicoGeo.build -l:WindowsServicePublicoGeo.log

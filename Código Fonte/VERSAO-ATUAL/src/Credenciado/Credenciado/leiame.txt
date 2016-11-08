@@ -1,0 +1,23 @@
+﻿Pre-requisitos:
+1 - Servidor com IIS 7
+2 - Cliente Oracle no servidor de aplicação, versão: 11G
+3 - Esquemas ETX, ETXCONSULTA com no mínimo o Papel de "Connect" 
+4 - Devem ser criados no mínimo dois diretórios de armazenamente de arquivos com permissões adequadas ao IIS, 
+	configurados na tabela [CNF_ARQUIVO].
+5 - Instalar/Verificar se o ASP.NET MCV 3 está instalado no servidor.
+
+
+Configuração:
+1 - Rode os scripts de banco seguindo a ordem numerica de cada pasta e dos seu arquivos.
+2 - No Web.cong, Configurar a chave <connectionStrings> de nome default com  a conexão com o banco de dados 
+
+3 - verificar no banco a tabela [CNF_ARQUIVO], caso não tenha valores, fazer insert das pastas para upload de arquivo exemplo:
+insert into CNF_ARQUIVO (ID, RAIZ, TIPO, ATIVO) values (1, 'd:\ETX\Arquivo', 2, 1);
+insert into CNF_ARQUIVO (ID, RAIZ, TIPO, ATIVO) values (2, 'd:\ETX\ArquivoTemporario', 1, 1);
+	
+	3.1 - Onde:
+		ID: Chave Unica.
+		RAIZ: Caminho fisico onde será gravado os arquivos.
+		TIPO: 1 - Para arquivos temporário / 2 - Para arquivos definitivos 
+		ATIVO: 0 - Desativo / 1 - Inidica se o diretorio será usado na gravação, 
+				caso esse valor sejá alterado deve ser feito limpeza do cache do processo no IIS [Reiniciar o serviço].

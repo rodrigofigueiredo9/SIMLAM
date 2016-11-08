@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		 backgroundAlpha="0.31" backgroundColor="#000000" borderColor="#B7BABC"
+		 creationComplete="definirEventoMouseMapa(event)" horizontalAlign="center">
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.events.FlexEvent;
+			
+			import tm.spatialReference.Coordinate;
+			import tm.spatialReference.CoordinateSystemConverter;
+			
+			public var map:Map;
+			public var wktOrigem:String;
+			public var wktDestino:String;
+			public var showGMSFormat:Boolean=true;
+			public var angularUnitTransformationFactor:Number=1;
+			
+			[Bindable]
+			private var mapVal1:String = "";
+			[Bindable]
+			private var mapVal2:String = "";
+			
+			[Bindable]
+			private var typeVal1:String;
+			[Bindable]
+			private var typeVal2:String;
+			
+			private var cs:CoordinateSystemConverter;
+			
+			private function gms(grau:Number):String{
+				var sinal:String= " ";
+				if (grau<0){
+					sinal ="-"
+					grau = -grau;
+				}
+				
+				var g:Number = Math.floor(grau);
+				grau-= g;
+				
+				grau*= 60
+				var m:Number = Math.floor(grau);
+				grau-= m;
+
+				var s:Number = grau*60;
+				
+				return sinal + ((g<10)?"0":"") + g.toString() +"°"+ ((m<10)?"0":"") + m.toString() + "'" + ((s<10)?"0":"") + s.toFixed(4) + "\"";  
+			}
+			
+			public function onCoordinatesChange(event:MouseEvent):void {
+				if (map == null || event == null) return;
+				try
+				{
+					const mapPoint:MapPoint = map.toMapFromStage(event.stageX, event.stageY);
+					
+					if (cs){
+						var c:Coordinate= cs.transform(new Coordinate(mapPoint.x,mapPoint.y));
+						
+						if (cs.isDestinyGeographic()){
+							if (showGMSFormat){
+								mapVal1 = gms(c.y*angularUnitTransformationFactor);
+								mapVal2 = gms(c.x*angularUnitTransformationFactor);
+							}
+							else{
+								mapVal1 = c.y.toFixed(6);
+								mapVal2 = c.x.toFixed(6);
+							}							
+						}
+						else{
+							mapVal1 = c.x.toFixed(4);
+							mapVal2 = c.y.toFixed(4);
+						}
+					}
+					else{
+						mapVal1 = mapPoint.x.toFixed(4);
+						mapVal2 = mapPoint.y.toFixed(4);
+					}
+				}
+				catch (exc:Object){
+					mapVal1 = "";
+					mapVal2 = "";
+				}
+			}
+			
+			public function definirEventoMouseMapa(event:FlexEvent):void {
+				try
+				{
+					cs = new CoordinateSystemConverter(wktOrigem, wktDestino);
+					
+					if (cs.isDestinyGeographic())
+					{
+						typeVal1 = "Lat";
+						typeVal2 = "Lon";
+					}
+					else
+					{
+						typeVal1 = "Easting";
+						typeVal2 = "Northing";
+					}
+					
+				}
+				catch (exc:Object){
+					typeVal1 = "X";
+					typeVal2 = "Y";
+				}
+				map.addEventListener(MouseEvent.MOUSE_MOVE, onCoordinatesChange);
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Label color="#FFFFFF" fontWeight="bold" text="{typeVal1}: {mapVal1}"/>
+	<mx:Label color="#FFFFFF" fontWeight="bold" text="{typeVal2}: {mapVal2}"/>
+</mx:HBox>

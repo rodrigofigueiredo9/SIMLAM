@@ -1,0 +1,10 @@
+Leia-me: WindowsServicesGeo
+
+01 - Desinstalar a versão anterior(Caso houver).
+02 - Instalar a versão usando o instalador de acordo com o cliente oracle instalado.
+03 - reapontar os mxds no diretorio de instalacao na pasta ArcGis
+04 - Altere as configurações de banco nos arquivos de configuracao do servico e do processo
+05 - Execute o servico com um usuario com permissao de acesso ao Poseidon(lugar onde possivelmente o catalogo de imagens estará) e com permissao de gravação no disco para a geracao dos arquivos de processamento do sistema
+
+Importante:
+Reaponte usando um arcMap 9.3, pois o metodo de "salvar como 9.3" do Arc 10 não funciona e corrompe o arquivo

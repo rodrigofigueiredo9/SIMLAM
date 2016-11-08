@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark" 
+				   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:spark="spark.skins.spark.*" xmlns:views="views.*" 
+				   minHeight="0" minWidth="0" currentState="desligado"  borderAlpha="0.2" height="100%" borderVisible="false" width="100%" borderWeight="0" xmlns:buttonext="com.tm.spark.buttonext.*">
+	<fx:Script>
+		<![CDATA[
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.ProjetoController;
+			import controllers.ProjetoControllerEvent;
+			
+			import models.ArquivoProcessado;
+			import models.Esri.DesenhadorEsri;
+			import models.LayerFeicaoSelecionada;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			public var arquivos:Vector.<ArquivoProcessado>;
+			private var listaArquivos:IList;
+			private var timer:Timer;
+			public var idSituacao:Number=0;
+			
+			public function init():void
+			{
+				ProjetoController.getInstance().addEventListener(ProjetoControllerEvent.ATUALIZAR_SITUACAOPROCESSAMENTO,situacaoResult);
+			}
+			
+			public function creation():void
+			{
+				lblSituacao.text = "Situação:  Aguardando solicitação";
+				ExternalInterface.call("obterSituacaoInicial");
+			}
+			
+			public function situacaoResult(ev:ProjetoControllerEvent):void 
+			{
+				if(ev && ev.situacao)
+				{					
+					idSituacao = ev.situacao.SituacaoId;
+					lblSituacao.text = (idSituacao == 0 ? "Situação:  Aguardando solicitação" : "Situação:  "+ev.situacao.SituacaoTexto);
+					if(ev.situacao.ArquivosProcessados)
+					{
+						carregarArquivos(ev.situacao.ArquivosProcessados as Vector.<ArquivoProcessado>);
+					}
+					if( idSituacao ==0 || idSituacao ==3 ||  idSituacao ==4 
+						|| idSituacao ==5 ||   idSituacao ==8 || idSituacao ==9 
+						||  idSituacao ==10 ||  idSituacao ==13 ||  idSituacao ==14 ||  idSituacao ==15)
+					{
+						btnProcessar.enabled = true;
+						LayerFeicaoSelecionada.getInstance().isDesativada = false;
+						DesenhadorEsri.getInstance().map.dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.ATIVAR_DESATIVAR_BOTOES,null, this));
+					}
+					else
+					{
+						btnProcessar.enabled = false;
+						LayerFeicaoSelecionada.getInstance().isDesativada = true;
+						DesenhadorEsri.getInstance().map.dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESATIVAR_TODAS_FERRAMENTAS,null, this));
+					}
+					btnCancelar.enabled =  idSituacao ==1 || idSituacao ==6	|| idSituacao == 11;
+				}
+				
+				setModo(DesenhadorEsri.getInstance().modo);
+			} 
+			
+			protected function carregarArquivos(_arquivos:Vector.<ArquivoProcessado>):void
+			{
+				if(_arquivos)
+				{
+					listaArquivos = new ArrayList();
+					for(var i:int=0; i< _arquivos.length; i++)
+					{
+						listaArquivos.addItem(_arquivos[i]);
+					} 
+					
+					if(listaArquivo)
+						listaArquivo.dataProvider = listaArquivos;
+					
+					arquivos = _arquivos;
+				}
+			} 
+			
+			public function processar():void
+			{
+				if(idSituacao ==0)
+				{
+					listaArquivos = new ArrayList();
+					if(listaArquivo)
+						listaArquivo.dataProvider = listaArquivos;
+					processarConfirmado();
+					
+				}
+				else
+				{
+					Alert.yesLabel = 'Sim';
+					Alert.noLabel = 'Não';
+					
+					Alert.show('As informações processadas serão substituídas. Tem certeza que deseja continuar?','',Alert.NO|Alert.YES,null, processarConfirmado, null, Alert.NO);	
+				}
+			}
+			
+			public function processarConfirmado(ev:CloseEvent=null):void {
+				
+				if(!ev || ev.detail == Alert.YES)
+				{
+					listaArquivos = new ArrayList();
+					if(listaArquivo)
+						listaArquivo.dataProvider = listaArquivos;
+					if (ExternalInterface.available) { ExternalInterface.call("onProcessar")};
+					LayerFeicaoSelecionada.getInstance().isDesativada = true;
+					DesenhadorEsri.getInstance().map.dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESATIVAR_TODAS_FERRAMENTAS,null, this));
+				}
+			}
+			
+			public function cancelarProcessamento():void
+			{	
+				if (ExternalInterface.available) { ExternalInterface.call("onCancelar")};
+				LayerFeicaoSelecionada.getInstance().isDesativada = false;
+				
+			}
+			
+			private function setModo(modo:Number):void
+			{
+				switch(modo)
+				{
+					case 2:
+						btnProcessar.visible = false;
+						btnCancelar.visible = false;
+						break;
+					
+					default:
+						btnProcessar.visible = true;
+						btnCancelar.visible = true;
+						break;
+				}
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup id="vgLista" minHeight="0" minWidth="0" gap="0" includeIn="ligado" width="100%" height="100%">
+		<s:BorderContainer height="34.5" minHeight="0" minWidth="0" width="100%"  styleName="titulo_listar" >
+			<s:HGroup   height="34.5" minHeight="0" minWidth="0" width="100%" >
+				<s:Label text="Arquivos para download" height="34.5" minHeight="0" minWidth="0" width="100%" verticalAlign="middle" paddingLeft="5"	  />
+				<buttonext:ButtonExt id="btnProcessar" visible="false" styleName="processar" click="processar()"  toolTip="Clique para processar o projeto" />
+				<buttonext:ButtonExt id="btnCancelar" visible="false" styleName="processar_cancelar"  click="cancelarProcessamento()" toolTip="Cancela processamento de projeto" />
+			</s:HGroup> 
+		</s:BorderContainer>
+		<s:BorderContainer id="bdSituacao" height="30" minHeight="0" styleName="fundo_cinza_claro" minWidth="0" borderWeight="0"  width="100%" >
+			<s:Label id="lblSituacao"  text="" creationComplete="creation()" paddingLeft="10" verticalAlign="middle" textAlign="left" height="30" width="100%" />	
+		</s:BorderContainer>
+		<s:List id="listaArquivo" borderVisible="false" width="100%" horizontalScrollPolicy="off"  dataProvider="{listaArquivos}" minHeight="0"  >
+			<s:itemRenderer>
+				<fx:Component>
+					<views:ArquivoProcessadoView  minHeight="0" minWidth="0" width="100%"  />
+				</fx:Component>
+			</s:itemRenderer> 
+		</s:List>
+	</s:VGroup>
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	 
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	
+</s:BorderContainer>

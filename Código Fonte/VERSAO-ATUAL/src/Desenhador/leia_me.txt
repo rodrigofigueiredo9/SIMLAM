@@ -1,0 +1,63 @@
+============================================================
+==     PATCH DE INSTALAÇÃO Do DESENHADOR                  ==
+============================================================
+
+IDAF - Esquema do idaf
+IDAFGEO - Esquema das bases geoespaciais do idaf
+
+============================================================
+
+01 - Executar todos scripts na ordem apresentada que esta na pasta "Banco" no esquema IDAFGEO	
+
+============================================================
+
+02 - Crie a aplicação webservice como .NET Framework 4 - MVC e publique a versão que esta na pasta "WebService"
+	
+============================================================
+
+03 - Alterar Web.Config 
+
+============================================================
+Webservice
+============================================================
+
+-- Alterar os valores das chaves "SchemaUsuario" e "StringConexao" para o nome do esquema do IDAF e sua respectiva senha
+    <add key="SchemaUsuario" value="tidaf"/>
+    <add key="StringConexao" value="C2Q773+wPzLnBxgJsVPWkLRLFm16Eq8Rl2w58rbj4436zGZCiZOw8yX2m7VIYYb0UvMSzc9ELSKOOlXb+TsKPA==" />
+
+-- Alterar os valores das chaves "SchemaUsuarioGeo" e "StringConexaoGeo" para o nome do esquema do IDAFGEO e sua respectiva senha
+    <add key="SchemaUsuarioGeo" value="tidafgeo"/>
+    <add key="StringConexaoGeo" value="fWdgg62Jgo/L0v9sX+sOmtSvr/0LXWPsMQ1mOWl/WCRIhfaXnCPa9WEyMdrKibq8N5bPmMsMXn4XyCK9obbxcg==" />
+
+============================================================
+
+04 - Publicar a versão do desenhador que está na pasta "Desenhador"
+
+============================================================
+
+05 - Alterar config.xml do Desenhador
+
+-- Alterar o valor da chave "webserviceURL" para o local onde está publicado o Webservice
+     <webserviceURL>http://devap2/Projetos/Idaf/webservice_apresentacao</webserviceURL>	
+
+============================================================
+
+06 - Reapontar os layers do MXD D_ATIVIDADE.mxd e D_DOMINIALIDADE.mxd para o esquema do idafgeo que esta na pasta "Mxds"
+
+============================================================
+
+07 - Criar os serviços de arcgis dinamicos do D_ATIVIDADE.mxd e D_DOMINIALIDADE.mxd
+
+============================================================
+
+08 - Atualizar no esquema do IDAFGEO as seguintes linhas com os endereços dos serviços de arcgis criados
+
+update tab_servico set url = 'http://devap3/ArcGIS/rest/services/IDAF/D_DOMINIALIDADE/MapServer' where id =1;
+update tab_servico set url = 'http://devap3/ArcGIS/rest/services/IDAF/D_ATIVIDADE/MapServer' where id =2;
+
+============================================================
+
+09 - Atualizar no esquema do IDAFGEO as seguintes linhas com os endereços dos serviços de arcgis cacheados que já devem estar criados
+
+update tab_servico set url = 'http://poseidon.suportetm.com.br/ArcGIS/rest/services/Geobases-LandSat_Cbers/Imagem_Aerolevantamento/MapServer' where id =3;
+update tab_servico set url = 'http://poseidon.suportetm.com.br/ArcGIS/rest/services/Geobases-LandSat_Cbers/Vetor_Aerolevantamento/MapServer' where id =4;

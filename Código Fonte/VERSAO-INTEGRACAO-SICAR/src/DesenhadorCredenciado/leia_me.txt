@@ -1,0 +1,43 @@
+============================================================
+==     PATCH DE INSTALAÇÃO Do DESENHADOR                  ==
+============================================================
+
+IDAFGEOCREDENCIADO - Esquema das bases geoespaciais do idaf credenciado
+
+============================================================
+
+01 - Executar todos scripts na ordem apresentada que esta na pasta "Banco" no esquema IDAFGEOCREDENCIADO	
+
+============================================================
+
+02 - Crie a aplicação webservice como .NET Framework 4 - MVC e publique a versão que esta na pasta "WebService"
+	
+============================================================
+
+03 - Alterar Web.Config 
+
+============================================================
+Webservice
+============================================================
+
+-- Alterar os valores das chaves "SchemaUsuarioGeo" e "StringConexaoGeo" para o nome do esquema do IDAFGEOCREDENCIADO e sua respectiva senha
+    <add key="SchemaUsuarioGeo" value="idafcredenciadogeo"/>
+    <add key="StringConexaoGeo" value="gQnx9vsCNYGT9bd+48vwhJJSUWB4R2zBKV0nFIWc7bZQB3tcYkKGWrQ06+At1b+17zZ5lfs1fvLJw3hZUFc6kiTfY9o2UY8MPfoolZSLnIM=" />
+
+
+============================================================
+
+04 - Alterar config.xml do Desenhador que está dentro da Aplicação do Credenciado
+
+-- Alterar o valor da chave "webserviceURL" para o local onde está publicado o Webservice
+     <webserviceURL>http://devap6/projetos/es/IDAF/Desenvolvimento/CredenciadoDesenhadorWS</webserviceURL>		
+
+============================================================
+
+05 - Reapontar os layers do MXD D_DOMINIALIDADE_CRED.mxd para o esquema do idafgeocredenciado que esta na pasta "Mxds"
+
+============================================================
+
+06 - Criar os serviços de arcgis dinamicos do D_DOMINIALIDADE_CRED.mxd
+
+============================================================

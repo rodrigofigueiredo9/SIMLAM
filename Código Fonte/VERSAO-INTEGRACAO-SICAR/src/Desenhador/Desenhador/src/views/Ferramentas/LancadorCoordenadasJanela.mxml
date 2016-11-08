@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" borderVisible="false" width="100%" height="100%">	
+	<fx:Script>
+		<![CDATA[
+			import com.gmaps.geom.Mbr;
+			
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.Geometria;
+			import models.LayerFeicaoSelecionada;
+			import models.Retorno;
+			import models.Vertice;
+			
+			import mx.controls.Alert;
+			
+			import spark.components.DropDownList;
+			import spark.components.HGroup;
+			import spark.components.Label;
+			import spark.components.TextArea;
+			import spark.components.TextInput;
+			import spark.components.VGroup;
+			import spark.events.IndexChangeEvent;
+			
+			import tm.spatialReference.Coordinate;				
+			
+			[Embed(source="../assets/imgSeta.png")]
+			private var cursorSeta:Class;
+			[Bindable]private var listaObjFeicao:Array;
+			[Bindable]private var coordenadas:Array;
+			[Bindable]private var pontoInicial:Point;
+			
+			private static var UTM:int =0;
+			private static var GDEC:int =1;
+			private static var GMS:int =2;
+			
+			private function CriarListaVertices():Boolean
+			{			
+				var regexp:RegExp = /[^[0-9.,-º'"=A-Ba-b]]*/ig;
+				var s:String = txtCoordenadas.text.replace(regexp, ";");
+				
+				var lista:Array = s.split(";") as Array;
+				
+				listaObjFeicao = new Array();
+				
+				if (lista.length%2!=0)
+				{
+					Alert.show("Existe um par de coordenadas incompleto");
+					return false;
+				}
+				
+				for (var i:uint=0;i<lista.length -1; i+=2)
+				{
+					var coordY:Array = lista[i+1].toString().split("=");
+					var nome:String = "";
+					
+					lista[i+1] = coordY[0].toString();
+					if(coordY.length > 1)
+					{						
+						nome = coordY[1].toString();						
+					}					
+					
+					lista[i] = lista[i].replace(",", ".");
+					lista[i+1] = lista[i+1].replace(",", ".");
+					
+					var obj:FeicaoObjeto = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+					
+					if(ddlTipo.selectedIndex == 2)
+					{
+						regexp = /[^[0-9.]]*/ig;
+						lista[i] = lista[i].replace(regexp, "");
+						lista[i+1] = lista[i+1].replace(regexp, "");
+					}
+					
+					var numX:Number = parseFloat(lista[i]);	
+					var numY:Number = parseFloat(lista[i + 1]);	
+					
+					if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+					{
+						obj = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+						obj.Vertices.push(new Vertice(numX, numY));		
+						if(nome != "")
+						{
+							var atr:Object = new Object();
+							obj.Atributos = new Array();
+							/*OBS: Quando o banco estiver atualizado validas aqui para somento marco, e descomentar essa parte*/
+							atr.Nome = "Nome";
+							atr.Valor = nome;
+							
+							obj.Atributos.push(atr);
+						}								
+						listaObjFeicao.push(obj);
+					}
+					else
+					{
+						obj.Vertices.push(new Vertice(numX, numY));								
+						listaObjFeicao.push(obj);
+					}					
+				}	
+				return true;
+			}
+			
+			private function ConverterVerticesGmsParaUtm():void
+			{ 
+				for each(var feicao:FeicaoObjeto in listaObjFeicao)
+				{	
+					for(var n:int = 0; n<feicao.Vertices.length;n++)
+					{	
+						var pt:Point = new Point(Number((feicao.Vertices[n] as Vertice).X), Number((feicao.Vertices[n] as Vertice).Y));											
+						var ponto:Coordinate = ConverterPontoGmsParaDecimal(pt.x.toString(), pt.y.toString());						
+						ponto = DesenhadorEsri.getInstance().converterCoordenadaGeografParaProjetado(ponto.x, ponto.y);
+						
+						(feicao.Vertices[z] as Vertice).X = ponto.x;
+						(feicao.Vertices[z] as Vertice).Y = ponto.y;	
+					}
+				}
+			}
+			
+			private function ConverterVerticesGdecParaUtm():void
+			{
+				var novaCoordenada:Coordinate;
+				var ponto:Point;
+				for each(var feicao:FeicaoObjeto in listaObjFeicao)
+				{			
+					for(var z:int = 0; z<feicao.Vertices.length; z++)
+					{
+						var pt:Point = new Point(Number((feicao.Vertices[z] as Vertice).X), Number((feicao.Vertices[z] as Vertice).Y));
+						novaCoordenada = DesenhadorEsri.getInstance().converterCoordenadaGeografParaProjetado(pt.x, pt.y);
+						
+						(feicao.Vertices[z] as Vertice).X = novaCoordenada.x;
+						(feicao.Vertices[z] as Vertice).Y = novaCoordenada.y;
+					}
+				}
+			}
+			
+			private function InterpretarAzimute():Boolean
+			{
+				if(!pontoInicial)
+					ConverterPontoInicial(UTM,UTM);
+				
+				var regexp:RegExp = /[^[0-9.,=:A-Za-z]]*/ig;	
+				var regexpGMS:RegExp = /[º°']/ig;	
+				var s:String = txtCoordenadas.text.replace(regexpGMS, ":");
+				var regexpSpace:RegExp = /["]/ig; 
+				s = s.replace(regexpSpace,"");
+				s = s.replace(regexp, "@");
+			
+				var num:Number;
+				var lista:Array = s.split("@") as Array;
+				var valores:Array = new Array();
+				var coordenada:String ;							
+				var coordenadaOk:Boolean = false;
+				var nome:String = "";
+				for (var i:uint=0;i<lista.length; i++)
+				{					
+					if (lista[i]!="")
+					{	
+						var valorPosicao:Array = lista[i].toString().split("=");
+						if(valorPosicao.length > 1)
+						{
+							lista[i] = valorPosicao[0];
+							nome = "=" + valorPosicao[1];							
+						}
+						
+						var listaCoord:Array = lista[i].split(":") as Array;						
+						if(listaCoord.length>1)
+						{
+							coordenada = "";
+							for(var k:uint=0; k <listaCoord.length; k++)
+							{
+								num = parseFloat(listaCoord[k].toString().replace(',','.').replace(nome,"")); 
+								if(isNaN(num))
+								{
+									Alert.show("Existe um par de coordenadas azimute;distância incorreto");
+									return false;
+								}
+								else
+								{
+									coordenada += num.toString();
+								}
+								if(k<2)
+								{
+									coordenada += ":";
+								}
+							}
+							
+							
+							valores.push(coordenada);							
+						}
+						else if(listaCoord.length>0)
+						{
+							num = parseFloat(lista[i].toString().replace(',','.'));
+							if(isNaN(num))
+							{
+								Alert.show("Existe um par de coordenadas azimute;distância incorreto");
+								return false;
+							}
+							else
+							{
+								valores.push(num);
+							}
+						
+							if(nome != "")
+							{							
+								valores.push(nome);
+								nome = "";
+							}
+						}
+					}
+				}
+				
+				var valor:String = "";
+				if(valores!=null)
+				{
+					var x:Number =  pontoInicial.x;
+					var y:Number =  pontoInicial.y;
+					
+					listaObjFeicao = new Array();					
+					var obj:FeicaoObjeto = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+					obj.Vertices.push(new Vertice(pontoInicial.x, pontoInicial.y));
+					
+					if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+						listaObjFeicao.push(obj);				
+					
+					nome = "";
+					var existeNome:Boolean = false;
+					//for(var b:int=0; b<valores.length - 1; b= (existeNome? b+3: b+2))
+					for(var b:int=0; b<valores.length; b= (existeNome? b+3: b+2))
+					{ 				
+						if(valores[b+2] && valores[b+2].toString().substring(0,1) == "=")
+						{
+							nome = valores[b+2].toString().substring(1);
+							existeNome = true;
+						}
+						else
+						{
+							existeNome = false;
+						}
+						
+						valor += "\nAzimute"+b.toString()+" : "+azimute.toString()+ " Distância"+b.toString()+": "+distancia.toString();
+						
+						var azimute:Number = formatarDecimal(valores[b]);
+						var distancia:Number = parseFloat(valores[b+1]);
+						
+						var x2:Number =  x+distancia*Math.sin((azimute)* (Math.PI / 180));						 
+						var y2:Number = y+distancia *Math.cos((azimute) * (Math.PI / 180));
+						
+					//	Alert.show("X"+b.toString()+": "+x2.toString() + " Y"+b.toString()+": "+y2.toString());
+						
+						if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+						{							
+							obj = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+							obj.Vertices.push(new Vertice(x2, y2));
+							
+							if(nome != "")
+							{
+								var atr:Object = new Object();
+								obj.Atributos = new Array();
+								//OBS: Quando o banco estiver atualizado validas aqui para somento marco, e descomentar essa parte
+								atr.Nome = "Nome";
+								atr.Valor = nome								
+								obj.Atributos.push(atr);	
+								valores.splice(valores[b+2], 1);
+								nome = "";
+							}							
+							listaObjFeicao.push(obj);
+						}
+						else
+						{
+							obj.Vertices.push(new Vertice(x2, y2));
+						}
+						x = x2;
+						y = y2;										
+					}
+					
+					if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria != Geometria.Ponto)
+						listaObjFeicao.push(obj);
+				}
+				return true;
+			}
+			
+			private function InterpretarRumo():Boolean
+			{
+				if(!pontoInicial)
+					ConverterPontoInicial(UTM,UTM);
+				
+				var regexp:RegExp = /[^[0-9.,=:A-Za-z]]*/ig;	
+				var regexpGMS:RegExp = /[º°']/ig;	
+				var s:String = txtCoordenadas.text.replace(regexpGMS, ":");
+				var regexpSpace:RegExp = /["]/ig; 
+				s = s.replace(regexpSpace,"");
+				s = s.replace(regexp, "@");
+				
+				var lista:Array = s.split("@") as Array;
+				var valores:Array = new Array();
+				var valor:String = "";
+				var coordenada:String ;
+				var num:Number;
+				for (var i:uint=0;i<lista.length; i++)
+				{
+					var nome:String = "";
+					if (lista[i]!= "")
+					{	
+						var valorPosicao:Array = lista[i].toString().split("=");
+						if(valorPosicao.length > 1)
+						{
+							lista[i] = valorPosicao[0];
+							nome = "=" + valorPosicao[1];							
+						}
+						
+						var listaCoord:Array = lista[i].split(":") as Array;
+						valor = lista[i].slice(lista[i].length-2, lista[i].length);						
+						
+						if(listaCoord.length>1)
+						{
+							coordenada = "";
+							for(var k:uint=0; k <listaCoord.length; k++)
+							{								
+								num = parseFloat(listaCoord[k].toString().replace(',','.').replace(valor,"")); 
+								coordenada += ( isNaN(num)?0:num ).toString();
+								if(k<2)
+								{
+									coordenada += ":";
+								}
+							}
+							
+							switch(valor.toUpperCase())
+							{
+								case "NE":								
+								case "SE":									
+								case "SO":
+								case "SW":									
+								case "NO":
+								case "NW":
+									valores.push(coordenada+= valor.toUpperCase());
+									break;
+								default:
+									Alert.show("O rumo não foi corretamente definido certifique que no final esteja NO, NE, SO, SE");
+									return false;
+									break;
+							}
+						}
+						else if(listaCoord.length>0)
+						{							
+							num = parseFloat(lista[i].toString().replace(',','.'));						
+							valores.push( isNaN(num)?0:num );
+							
+							if(nome != "")
+							{							
+								valores.push(nome);
+								nome = "";
+							}
+						}					
+					}					
+				}			
+				
+				var x:Number = pontoInicial.x;
+				var y:Number = pontoInicial.y;
+				
+				listaObjFeicao = new Array();
+				
+				var obj:FeicaoObjeto = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+				obj.Vertices.push(new Vertice(pontoInicial.x, pontoInicial.y));
+				
+				if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+					listaObjFeicao.push(obj);				
+				
+				if(valores != null)
+				{
+					var nome:String = "";
+					var existeNome:Boolean = true;
+					for(var r:int=0; r<valores.length-1;  r= (existeNome? r+3: r+2))
+					{										
+						if(valores[r+2] && valores[r+2].toString().substring(0,1) == "=")
+						{
+							nome = valores[r+2].toString().substring(1);	
+							existeNome = true;
+						}	
+						else
+						{
+							existeNome = false;
+						}
+						
+						valor = valores[r].toString().slice(valores[r].toString().length-2, valores[r].toString().length);
+						
+						var rumo:Number = formatarDecimal(valores[r].toString().replace(valor, ""));
+						var azimute:Number = 0; 
+						
+						switch(valor.toUpperCase())
+						{
+							case "SE":
+								azimute = 180 - rumo;
+								break;
+							case "SO":
+							case "SW":
+								azimute = 180 + rumo;
+								break;
+							case "NO":
+							case "NW":
+								azimute = 360 - rumo;
+								break;
+							case "NE":
+							default:
+								azimute = rumo;
+								break;
+						}
+						var distancia:Number = Number(valores[r+1]);						
+						
+						var y2:Number =  distancia*Math.cos(azimute* (Math.PI / 180))+y;						 
+						var x2:Number = distancia *Math.sin(azimute * (Math.PI / 180))+x;
+						
+						if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+						{							
+							obj = new FeicaoObjeto(LayerFeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto);
+							obj.Vertices.push(new Vertice(x2, y2));
+							
+							if(nome != "")
+							{
+								var atr:Object = new Object();
+								obj.Atributos = new Array();
+								//OBS: Quando o banco estiver atualizado validas aqui para somento marco, e descomentar essa parte
+								atr.Nome = "Nome";
+								atr.Valor = nome
+								
+								obj.Atributos.push(atr);
+								valores.splice(valores[r+2], 1);
+								nome = "";
+							}							
+							listaObjFeicao.push(obj);
+						}
+						else
+						{
+							obj.Vertices.push(new Vertice(x2, y2));
+						}
+						
+						x = x2;
+						y = y2;							
+					}
+					
+					if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria != Geometria.Ponto)
+						listaObjFeicao.push(obj);
+				}	
+				return true;
+			}
+			
+			public function CapturarPontoInicial(ev:MouseEvent):void
+			{
+				if(txtPontoInicial)
+				{
+					cursorManager.setCursor(cursorSeta,1,0,0);
+					DesenhadorEsri.getInstance().map.addEventListener(MouseEvent.CLICK, CapturarClickMouse);
+				}
+			}
+			
+			private function CapturarClickMouse(ev:MouseEvent):void
+			{
+				cursorManager.removeAllCursors();
+				
+				var pt:Point = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);	
+				pontoInicial = pt;
+				
+				txtPontoInicial.text = pt.x.toString() + ";" + pt.y.toString();
+				ddlTipoPtInicial.selectedIndex = 0;
+				DesenhadorEsri.getInstance().map.removeEventListener(MouseEvent.CLICK, CapturarClickMouse);
+			}
+			
+			public function FormatarPontoInicial(tipoAntigo:int):void
+			{
+				
+				if(txtPontoInicial.text && txtPontoInicial.text.length>0)
+				{
+					
+					ConverterPontoInicial(tipoAntigo,UTM);
+					/*
+					pontoInicial = new Point();
+					var regexp:RegExp = /[^[0-9.]]ig;
+					var a:String =  txtPontoInicial.text.replace(" ","").replace(",",".").replace(regexp, ";");
+					var pts:Array = a.split(";");
+					switch(tipoNovo)
+					{
+						case UTM:
+							pontoInicial.x = Number(pts[0].replace(",", "."));
+							pontoInicial.y = Number(pts[1].replace(",", "."));
+							break;
+						case GDEC:
+							var coord:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaGeografParaProjetado(Number(pts[0]), Number(pts[1]));
+							pontoInicial.x = coord.x;
+							pontoInicial.y  = coord.y;				
+							break;
+						case GMS:
+							var regexp:RegExp = /[^[0-9.]]ig;
+							pts[0] = pts[0].replace(",", ".");	
+							pts[1] = pts[1].replace(",", ".");
+							pts[0] = pts[0].replace(regexp, "");	
+							pts[1] = pts[1].replace(regexp, "");				
+							
+							var ponto:Coordinate = ConverterPontoGmsParaDecimal(pts[0], pts[1]);				
+							
+							var novoponto:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaGeografParaProjetado(ponto.x, ponto.y);
+							pontoInicial.x = novoponto.x;
+							pontoInicial.y  = novoponto.y;		
+							break;
+					}*/
+				}
+			}	
+			
+			public function ConverterPontoInicial(tipoAntigo:int, tipoNovo:int):void
+			{
+				if(txtPontoInicial.text && txtPontoInicial.text.length>0 )
+				{
+					var pontoConvertido:Point;
+					var regexp:RegExp = /[^[0-9.:º'"(\+|-)]]*/ig;
+					var a:String =  txtPontoInicial.text.replace(" ","").replace(",",".").replace(regexp, ";");
+					var pts:Array = a.split(";");
+					
+					if(pts && pts.length>1)
+					{
+						switch(tipoNovo)
+						{
+							case UTM:
+								pontoConvertido = new Point();
+								if(tipoAntigo == UTM)
+								{
+									pontoInicial = new Point();
+									pontoInicial.x = Number(pts[0].replace(",", "."));
+									pontoInicial.y = Number(pts[1].replace(",", "."));
+								}
+								else
+								{
+									if(tipoAntigo == GDEC)
+									{
+										
+										pontoConvertido.x = Number(pts[0].replace(",", "."));
+										pontoConvertido.y = Number(pts[1].replace(",", "."));
+									}
+									else 
+									{
+										var regexpGMS:RegExp = /[º°']/ig;	
+										var x:String = pts[0].replace(regexpGMS, ":");
+										var y:String = pts[1].replace(regexpGMS, ":");
+										
+										var coord:Number = formatarDecimal(x.replace("-",""));
+										
+										pontoConvertido.x = (x.substr(0,1) == "-"? -coord : coord); 
+										coord = formatarDecimal(y.replace("-",""));
+										pontoConvertido.y = (y.substr(0,1) == "-"? -coord : coord);
+									}
+									
+									var novoponto:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaGeografParaProjetado(pontoConvertido.x, pontoConvertido.y);
+									pontoConvertido.x = novoponto.x;
+									pontoConvertido.y  = novoponto.y;		
+									txtPontoInicial.text = pontoConvertido.x.toString()+";"+pontoConvertido.y.toString();
+									pontoInicial = new Point();
+									pontoInicial.x = pontoConvertido.x;
+									pontoInicial.y = pontoConvertido.y;
+								}
+								break;
+							case GDEC:
+								if(tipoAntigo == GDEC)
+								{
+									pontoInicial = new Point();
+									pontoInicial.x = Number(pts[0].replace(",", "."));
+									pontoInicial.y = Number(pts[1].replace(",", "."));
+								}
+								else
+								{
+									pontoConvertido = new Point();
+									if(tipoAntigo == UTM)
+									{
+										
+										pontoConvertido.x = Number(pts[0].replace(",", "."));
+										pontoConvertido.y = Number(pts[1].replace(",", "."));
+										var novoponto:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaProjParaGeografico(pontoConvertido.x, pontoConvertido.y);
+										pontoConvertido.x = novoponto.x;
+										pontoConvertido.y  = novoponto.y;	
+									}
+									else
+									{
+										var regexpGMS:RegExp = /[º°']/ig;	
+										var x:String = pts[0].replace(regexpGMS, ":");
+										var y:String = pts[1].replace(regexpGMS, ":");
+										
+										var coord:Number = formatarDecimal(x.replace("-",""));
+										
+										pontoConvertido.x = (x.substr(0,1) == "-"? -coord : coord); 
+										coord = formatarDecimal(y.replace("-",""));
+										pontoConvertido.y = (y.substr(0,1) == "-"? -coord : coord);
+									}
+									txtPontoInicial.text = pontoConvertido.x.toString()+";"+pontoConvertido.y.toString();
+								}
+								break;
+							case GMS:
+								if(tipoAntigo != GMS)
+								{
+									if(tipoAntigo == GDEC)
+									{
+										txtPontoInicial.text = FormatarDecimalParaGrauMinutoSegundo(Number(pts[0].replace(",", ".")))+";"+
+										FormatarDecimalParaGrauMinutoSegundo(Number(pts[1].replace(",", ".")));
+									}
+									else
+									{							
+										var novoponto:Coordinate = DesenhadorEsri.getInstance().converterCoordenadaProjParaGeografico( Number(pts[0].replace(",", ".")),  Number(pts[1].replace(",", ".")));
+										
+										txtPontoInicial.text = FormatarDecimalParaGrauMinutoSegundo(novoponto.x)+";"+
+											FormatarDecimalParaGrauMinutoSegundo(novoponto.y);
+									}
+								}
+								break;
+						}
+					}
+				}	
+			}
+			
+			public function FormatarDecimalParaGrauMinutoSegundo(grauDecimal:Number):String
+			{
+				var isNegativo:Boolean = grauDecimal<0;
+				
+				if(isNegativo)
+					grauDecimal = -grauDecimal;
+				
+				var grau:Number = grauDecimal;
+				var minuto:Number = ((grau * 10) % 10) * 6;
+				var segundo:Number = ((minuto * 10) % 10) * 6; 
+				
+				minuto = (isNaN(parseInt(minuto.toString()))?0:parseInt(minuto.toString()) );
+				
+				segundo = (isNaN(parseInt(segundo.toString()))?0:parseInt(segundo.toString()) ); 
+				
+				grau = (isNaN(parseInt(grau.toString()))?0:parseInt(grau.toString()) ); 
+				
+				var conversao:String =   grau.toString() + "º" +  
+				(minuto <= 9 ? "0" : "") + minuto.toString() + "'" +  
+				(segundo <= 9 ? "0" : "") +segundo.toString()+ "\"";
+				//return conversao.Replace("-", "");
+				
+				return (isNegativo ? "-":"")+ conversao;
+			}
+			
+			
+			
+			public function formatarDecimal(grauRecebido:String):Number
+			{
+				var grauDecimal:Number = 0;
+				var graus:Array = grauRecebido.split(':');
+				var grau:Number =0;
+				var minuto:Number = 0;
+				var segundo:Number =0;
+				var cent:Number =0;
+				for(var k:int; k<graus.length; k++)
+				{
+					switch(k)
+					{
+						case 0: 
+							grau = parseFloat(graus[0]);
+							break;
+						case 1:
+							minuto = parseFloat(graus[1]);
+							break;
+						case 2:  
+							cent = (graus[2] % 10)*100;		       
+							if(!cent || cent == NaN)
+								cent = 0;
+							else
+								cent = (cent / 100);
+							segundo = parseInt(graus[2]);
+							break;
+					}
+				}
+				grauDecimal = ((((cent + segundo) / 60) + minuto) / 60) + grau;
+				
+				return grauDecimal;
+			}
+			
+			public function ConverterPontoGmsParaDecimal(x:String, y:String):Coordinate
+			{
+				var coordGrauX:Number = Number(x.substring(0,2));	
+				var coordMinX:Number = Number(x.substring(2,4));
+				var coordSegX:Number = Number(x.substr(4));
+				
+				var coordGrauY:Number = Number(y.substring(0,2));	
+				var coordMinY:Number = Number(y.substring(2,4));
+				var coordSegY:Number = Number(y.substr(4));
+				
+				var decimalX:Number = (coordGrauX + (coordMinX/60) + (coordSegX/3600))* (-1);
+				var decimalY:Number = (coordGrauY + (coordMinY/60) + (coordSegY/3600))* (-1);	
+				
+				var ponto:Coordinate = new Coordinate(Number(decimalX), Number(decimalY));
+				return ponto;
+			}
+			
+			public function LancarPontos(ev:Event):void
+			{	
+				if(!LayerFeicaoSelecionada.getInstance().layerFeicao)
+				{
+					Alert.show("É necessário selecionar uma layer");
+					return;
+				}
+				
+				switch(ddlTipo.selectedIndex)
+				{
+					case 0:
+						if(!CriarListaVertices())
+							return;
+						break;
+					case 1:
+						if(!CriarListaVertices())
+							return;
+						ConverterVerticesGdecParaUtm();
+						break;
+					case 2:
+						if(!CriarListaVertices())
+							return;
+						ConverterVerticesGmsParaUtm();
+						break;
+					case 3:
+						if (txtPontoInicial.text == "")
+						{
+							Alert.show("É obrigatória a coordenada X;Y inicial para esse formato");
+						}
+						else
+						{
+							FormatarPontoInicial(ddlTipoPtInicial.selectedIndex);
+							if(!InterpretarRumo())
+								return;
+						}
+						break;
+					case 4:	
+						if (txtPontoInicial.text == "")
+						{
+							Alert.show("É obrigatória a coordenada X;Y inicial para esse formato");
+						}
+						else
+						{
+							FormatarPontoInicial(ddlTipoPtInicial.selectedIndex);
+							if(!InterpretarAzimute())
+								return;
+						}
+						break;
+				}			
+				
+				var ponto:Point;
+				var geometrias:Array = new Array();
+				var mbr:Mbr;
+				if(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+				{ 
+					for each(var feicaoObj:FeicaoObjeto in listaObjFeicao)
+					{					
+						geometrias.push(feicaoObj);	
+					}
+					FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.CADASTRARTODOS,cadastrarGeometriasResult);
+					FeicaoController.getInstance().CadastrarGeometrias(geometrias);	
+					
+					
+				}
+				else
+				{		
+					if(!(this.parentApplication as DesenhadorIdaf).barraGeometria.inserir.ligado)
+						(this.parentApplication as DesenhadorIdaf).barraGeometria.inserir.ligarDesligar();
+					
+					var pontos:Vector.<Point> = new Vector.<Point>();
+					FeicaoSelecionada.getInstance().geometria = new Geometria(LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria);
+					for each(var feicaoOb:FeicaoObjeto in listaObjFeicao)
+					{
+						for (var z:int = 0;z<feicaoOb.Vertices.length;z++)
+						{
+							ponto = new Point();
+							ponto.x = (feicaoOb.Vertices[z] as Vertice).X;
+							ponto.y = (feicaoOb.Vertices[z] as Vertice).Y;
+							FeicaoSelecionada.getInstance().geometria.adicionarPonto(ponto);	
+						}				
+					}
+					
+					FeicaoSelecionada.getInstance().geometria.desenhar();				}
+				
+				zoomMbrTodasFeicoesObjeto();
+				
+				
+			}
+			
+			public function zoomMbrTodasFeicoesObjeto():void
+			{
+				var mbr:Mbr = null;
+				var minx:Number = 9999999999999;
+				var miny:Number = 9999999999999;
+				var maxx:Number =  0;
+				var maxy:Number =  0;
+				
+				if(listaObjFeicao)
+				{
+					for each (var feicao:FeicaoObjeto in listaObjFeicao)
+					{
+						var vertices:Vector.<Point>;
+						
+						if(feicao.Vertices)
+						{
+							for each(var ponto:Vertice in feicao.Vertices)
+							{
+								if(ponto.X < minx)
+									minx = ponto.X;
+								if(ponto.X >maxx)
+									maxx = ponto.X;
+								if(ponto.Y<miny)
+									miny = ponto.Y;
+								if(ponto.Y > maxy)
+									maxy = ponto.Y;
+							}
+						}
+					}
+				}
+				
+				if(minx != 9999999999999 &&  miny != 9999999999999 && maxx !=  0 && maxy !=  0)
+					mbr= new Mbr(minx, miny, maxx, maxy);
+				
+				if(mbr)
+					DesenhadorEsri.getInstance().zoomMBR(mbr);
+			}
+			
+			protected function cadastrarGeometriasResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					var respostas:Vector.<Retorno> = (event as FeicaoControllerEvent).respostas;
+					
+					FeicaoSelecionada.getInstance().limpar(true);
+					var sucesso:Boolean = true;
+					var mensagem:String;
+					for each(var resp:Retorno in respostas)
+					{
+						if(!resp.Sucesso)
+						{
+							sucesso= false;
+							mensagem += resp.Mensagem + "\n";
+						}
+					}
+					
+					if(!sucesso)
+						Alert.show(mensagem);
+					
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+					
+				}
+			}				
+			
+			protected function CancelarTudo(event:MouseEvent):void
+			{
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+				
+				txtCoordenadas.text = "";
+				(this.parentApplication as DesenhadorIdaf).barraGeometria.lancarCoords.desligar();
+			}	
+			
+			protected function ddlTipoPtInicialChanging(event:IndexChangeEvent):void
+			{
+				if(event.oldIndex != event.newIndex) 
+					ConverterPontoInicial(event.oldIndex,  event.newIndex);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup horizontalAlign="center" width="100%" height="100%">
+		<s:Group>
+			<s:VGroup horizontalAlign="left">
+				<s:HGroup paddingTop="5">
+					<s:Label styleName="label_popup" id="lblPtInicial" text="Ponto Inicial (Rumo/Azimute): "/>
+				</s:HGroup>	
+				
+				<s:HGroup>		
+					<s:Button id="btnCapturar" styleName="label_popup" label="Capturar" click="CapturarPontoInicial(event)" />
+					<s:TextInput id="txtPontoInicial" width="180"/>
+					<s:DropDownList styleName="label_popup" id="ddlTipoPtInicial"  changing="ddlTipoPtInicialChanging(event)" labelField="valor" width="90" selectedIndex="0">
+						<s:ArrayList>
+							<fx:Object valor="UTM"/>
+							<fx:Object valor="GDEC"/>
+							<fx:Object valor="GMS"/>
+						</s:ArrayList>
+					</s:DropDownList>
+				</s:HGroup>	
+			</s:VGroup>				
+		</s:Group>
+		
+		<s:Group>
+			<s:TextArea id="txtCoordenadas" styleName="fundo_txtCoordenadas" width="350" height="270"/>
+		</s:Group>
+		
+		<s:BorderContainer styleName="rodape_popup" height="40" width="100%">
+			<s:HGroup verticalAlign="middle" horizontalAlign="center" height="100%" width="100%">
+				<s:Label id="lblFormato" text="Formato: "/>
+				<s:DropDownList id="ddlTipo" labelField="valor" width="90" selectedIndex="0">
+					<s:ArrayList>
+						<fx:Object valor="UTM"/>
+						<fx:Object valor="GDEC"/>
+						<fx:Object valor="GMS"/>
+						<fx:Object valor="RUMO"/>
+						<fx:Object valor="AZIMUTE"/>
+					</s:ArrayList>
+				</s:DropDownList>
+				<s:Button id="btnLancar" label="Lançar" click="LancarPontos(event)"/>
+				<s:Button id="btnCancelar" label="Cancelar" click="CancelarTudo(event)"/>
+			</s:HGroup>
+		</s:BorderContainer>			
+	</s:VGroup>		
+</s:BorderContainer>

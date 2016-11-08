@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" xmlns:resizabletitlewindow="com.tm.spark.resizabletitlewindow.*"
+		creationComplete="init()" xmlns:esri="http://www.esri.com/2008/ags" xmlns:views="views.*" xmlns:spark="com.tm.spark.*">
+	<fx:Metadata>
+		[Event(name="finalizar_geometria", type="controllers.FerramentaGeometriaControllerEvent")]
+		[Event(name="selecionou_item", type="controllers.ItemFeicaoControllerEvent")]
+		[Event(name="adicionou_item", type="controllers.ItemFeicaoControllerEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.ItemFeicaoControllerEvent;
+			import controllers.SelecionarControllerEvent;
+			
+			import models.AtributoFeicao;
+			import models.ColunaLayerFeicao;
+			import models.Esri.DesenhadorEsri;
+			import models.Feicao;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.LayerFeicao;
+			import models.Retorno;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+			import mx.controls.Alert;
+			import mx.utils.object_proxy;
+			
+			import tm.spatialReference.Coordinate;								
+			
+			[Bindable] private var layersEncontradas:IList;
+			public var isAddVarias:Boolean;
+			private var _feicaoSelecionada:Feicao;
+			private var novoItem:XML;		
+			private var _pontoInicial:Point;
+			public var coordenadas:String;
+		
+			private const OperacaoIgual:int = 1;
+			private const OperacaoDiferente:int =2;
+			
+			public function get feicaoSelecionada():Feicao
+			{
+				return _feicaoSelecionada;
+			}
+
+			public function set feicaoSelecionada(value:Feicao):void
+			{
+				_feicaoSelecionada = value;
+				if(_feicaoSelecionada && _feicaoSelecionada.layerFeicao)
+				{
+					FeicaoSelecionada.getInstance().objectId = _feicaoSelecionada.objectId;
+					FeicaoSelecionada.getInstance().geometria = DesenhadorEsri.getInstance().converterGeometryParaGeometria(feicaoSelecionada.geometry, _feicaoSelecionada.tipoGeometria);
+					FeicaoSelecionada.getInstance().geometria.idGraphic = FeicoesSelecionadas.getInstance().idGraphic;
+					FeicaoSelecionada.getInstance().isSelecionavel = _feicaoSelecionada.layerFeicao.Selecionavel && (_feicaoSelecionada.projetoId == DesenhadorEsri.getInstance().idProjeto);
+					FeicaoSelecionada.getInstance().layerFeicao = _feicaoSelecionada.layerFeicao;
+				}	
+				else
+				{
+					FeicaoSelecionada.getInstance().limpar(true);
+				}
+			}
+			
+			[Bindable]
+			public function get posicao():Point
+			{
+				return _pontoInicial;
+			}
+			
+			public function set posicao(value:Point):void
+			{
+				_pontoInicial = value;				
+			}
+
+			public function init():void
+			{	
+				
+				RecarregarFeicoes();				
+				MostrarPosicaoClique();
+				if(stage)
+				{
+					stage.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+					stage.addEventListener(KeyboardEvent.KEY_DOWN, acaoTecladoDown);
+				}
+				listaLayers.addEventListener(ItemFeicaoControllerEvent.SELECIONOU_ITEM,ReceberSelecaoFeicao);
+				listaLayers.addEventListener(ItemFeicaoControllerEvent.RECARREGAR_LISTA, RecarregarFeicoes);
+				FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.ATUALIZAR_ATRIBUTOS,salvarAtributosResult);
+				DesenhadorEsri.getInstance().map.addEventListener(SelecionarControllerEvent.RESPOSTA_CONFIRMACAO_SELECAO,ReceberSelecaoFeicaoConfirmado);
+				
+				SetModo(DesenhadorEsri.getInstance().modo);
+			} 
+						
+			private function acaoTecladoUp(ev:KeyboardEvent):void
+			{
+				if(ev.keyCode == Keyboard.CONTROL)
+				{
+					isAddVarias = false;
+				}
+			}
+			
+			private function acaoTecladoDown(ev:KeyboardEvent):void
+			{
+				if(ev.keyCode == Keyboard.CONTROL)
+				{
+					isAddVarias = true;
+				}
+			}
+			
+			public function MostrarDadosFeicao(selecionada:Feicao):void
+			{	
+			    if(listaAtributos)
+				{
+					listaAtributos.dataProvider = new ArrayList();
+					coordenadas = "";
+					carregarCoordenadas();		
+					if(selecionada)
+					{	
+						feicaoSelecionada = selecionada;	
+						
+						var isDesenahdorVisualizar:Boolean = DesenhadorEsri.getInstance().modo == 2;
+				
+						var listaAtr:ArrayList = new ArrayList();
+						var coluna:ColunaLayerFeicao;
+						
+						if(feicaoSelecionada.layerFeicao)
+						{
+							for(var k:int=0; k<feicaoSelecionada.layerFeicao.Colunas.length; k++)
+							{
+								if(feicaoSelecionada.layerFeicao.Colunas[k])
+								{
+									var colunaFeicao:ColunaLayerFeicao = feicaoSelecionada.layerFeicao.Colunas[k] as ColunaLayerFeicao;
+									
+									if(colunaFeicao.IsVisivel)
+									{
+										coluna = new ColunaLayerFeicao();
+										
+										coluna.Alias = colunaFeicao.Alias;
+										coluna.Coluna = colunaFeicao.Coluna;
+										coluna.IsEditavel = !isDesenahdorVisualizar && colunaFeicao.IsEditavel && feicaoSelecionada.layerFeicao.Selecionavel && (feicaoSelecionada.projetoId == DesenhadorEsri.getInstance().idProjeto);
+										coluna.IsObrigatorio = colunaFeicao.IsObrigatorio;
+										coluna.IdLista = listaAtr.length;
+										if(colunaFeicao.Tipo == ColunaLayerFeicao.ListaDeValores)
+										{
+											coluna.Itens = colunaFeicao.Itens;
+										}
+										else
+										{
+											coluna.Itens = new ArrayList();
+										}
+										coluna.Tipo = colunaFeicao.Tipo;
+										coluna.Tamanho = colunaFeicao.Tamanho;
+										coluna.Valor = colunaFeicao.Valor;
+										
+										listaAtr.addItem(coluna);
+										
+									}
+								}
+							}
+							if(feicaoSelecionada.geometria)
+							{
+								if( feicaoSelecionada.geometria.verticesOriginal && feicaoSelecionada.geometria.verticesOriginal.length>0)
+								{
+									for each(var ponto:Point in feicaoSelecionada.geometria.verticesOriginal)
+									{
+										coordenadas += ponto.x.toFixed(2) +";"+ponto.y.toFixed(2)+"\n";
+									}
+									coordenadas += "\n";
+								}
+								if(feicaoSelecionada.geometria.aneisOriginal)
+								{
+									for each(var anel:Vector.<Point> in feicaoSelecionada.geometria.aneisOriginal)
+									{
+										if(anel)
+										{
+											for each(var ponto:Point in anel)
+											{
+												coordenadas += ponto.x.toFixed(2) +";"+ponto.y.toFixed(2)+"\n";
+											}
+										}
+										coordenadas += "\n";
+									}
+								}
+							}
+						}
+						
+						listaAtributos.dataProvider = listaAtr;
+						carregarCoordenadas();
+						btnZoomFeicao.visible = true;					
+					}
+					else 
+						feicaoSelecionada = null;
+				}
+				//}
+				//FeicoesSelecionadas.getInstance().idGraphic = idGraphic;
+			}
+		
+			private function buscarColuna(item:Object):Boolean {
+				var searchString:String = "PROJETO".toLowerCase();
+				var itemName:String = (item.Coluna as String).toLowerCase();
+				return itemName.indexOf(searchString) > -1;
+			}
+			
+			private function ReceberSelecaoFeicao(ev:ItemFeicaoControllerEvent):void
+			{
+				isAddVarias = ev.ctrlIsLigado;
+			
+				DesenhadorEsri.getInstance().map.dispatchEvent(new SelecionarControllerEvent(SelecionarControllerEvent.PEDIR_CONFIRMACAO_SELECAO,true,	
+					function(resposta:Boolean) : void {
+						
+						if(resposta)
+						{
+							ReceberSelecaoFeicaoConfirmado(ev);
+						}
+					},true,true));	
+				 
+			}
+			
+			private function ReceberSelecaoFeicaoConfirmado(ev:ItemFeicaoControllerEvent):void
+			{
+				if(isAddVarias)
+				{
+					AdicionarFeicaoSelecao(ev.feicao, ev.itemIsSelecionado);
+				}
+				else
+				{
+					SelecionarFeicao(ev.feicao, ev.itemIsSelecionado);
+				}
+				RecarregarFeicoes();
+				listaLayers.dataProvider = layersEncontradas;
+				
+			}
+			
+			private function SelecionarFeicao(selecionada:Feicao, itemIsSelecionado:Boolean):void
+			{			
+				FeicoesSelecionadas.getInstance().limpar(true);
+				FeicaoSelecionada.getInstance().limpar(true);
+				
+				var idGraphic:String = FeicoesSelecionadas.getInstance().idGraphic;
+				var layersSelecionadas:Vector.<LayerFeicao> = FeicoesSelecionadas.getInstance().layers as Vector.<LayerFeicao>;
+				if(layersSelecionadas)
+				{
+					for each(var layer:LayerFeicao in layersSelecionadas)
+					{
+						for each(var feicao:Feicao in layer.Feicoes)
+						{
+							feicao.Selecionado = (layer.Id == selecionada.layerFeicao.Id && feicao.objectId == selecionada.objectId);
+						}
+					}
+				}
+				FeicoesSelecionadas.getInstance().feicoes.push(selecionada);
+				
+				if(selecionada.layerFeicao && selecionada.layerFeicao.Selecionavel && (selecionada.projetoId == DesenhadorEsri.getInstance().idProjeto))
+				{
+					FeicoesSelecionadas.getInstance().feicoesSelecionaveis.push(selecionada);
+					feicaoSelecionada = selecionada;
+				}	
+				if (selecionada.objectId >0) 
+				{						
+					MostrarDadosFeicao(selecionada);				
+				}
+			}	
+			
+			private function AdicionarFeicaoSelecao(selecionada:Feicao, itemIsSelecionado:Boolean):void
+			{		
+				if (selecionada.objectId && itemIsSelecionado) 
+				{	
+					if(selecionada.layerFeicao && selecionada.layerFeicao.Selecionavel && (selecionada.projetoId == DesenhadorEsri.getInstance().idProjeto))
+						FeicoesSelecionadas.getInstance().feicoesSelecionaveis.push(selecionada);
+						
+					FeicoesSelecionadas.getInstance().feicoes.push(selecionada);
+				}		
+				else 
+				{
+					FeicoesSelecionadas.getInstance().exclirSelecaoFeicao(selecionada.objectId, selecionada.layerFeicao.Id);
+				}
+				layersEncontradas = new ArrayList();
+				var layersSelecionadas:Vector.<LayerFeicao> = FeicoesSelecionadas.getInstance().layers as Vector.<LayerFeicao>;
+				if(layersSelecionadas)
+				{
+					for(var i:int=0; i< layersSelecionadas.length; i++)
+					{
+						var ly:LayerFeicao = layersSelecionadas[i] as LayerFeicao;
+					
+						if(ly.Id == selecionada.layerFeicao.Id)
+						{
+							for each(var feicao:Feicao in ly.Feicoes)
+							{							
+								if(feicao.objectId == selecionada.objectId)
+								{
+									feicao.Selecionado = itemIsSelecionado;
+									break;
+								}	
+							}
+						}
+						ly.IdLista = i;
+						layersEncontradas.addItem(ly);
+					}
+				}
+				
+				listaLayers.dataProvider = layersEncontradas;
+			}		
+			
+			private function RecarregarFeicoes(ev:ItemFeicaoControllerEvent=null):void
+			{	
+				layersEncontradas = new ArrayList();
+				FeicaoSelecionada.getInstance().limpar(false);
+				FeicoesSelecionadas.getInstance().limpar(false);
+				
+				var layersSelecionadas:Vector.<LayerFeicao> = FeicoesSelecionadas.getInstance().layers as Vector.<LayerFeicao>;
+				if(layersSelecionadas)
+				{
+					for(var i:int=0; i< layersSelecionadas.length; i++)
+					{
+						var layer:LayerFeicao = layersSelecionadas[i] as LayerFeicao;
+						layer.IdLista = i;
+						layersEncontradas.addItem(layer);
+												
+					}
+					var feicao:Feicao =null;
+					if(FeicoesSelecionadas.getInstance().feicoes && FeicoesSelecionadas.getInstance().feicoes.length ==1)
+					{
+						feicao = FeicoesSelecionadas.getInstance().feicoes[0] as Feicao;
+					}	
+					
+					MostrarDadosFeicao(feicao);
+				}
+				if(listaLayers)
+					listaLayers.dataProvider = layersEncontradas;
+				FeicoesSelecionadas.getInstance().desenhar();
+			}
+		
+			private function MostrarPosicaoClique():void
+			{
+				if(posicao)
+				{
+					txtPosicao.text = posicao.x.toString() + "; " + posicao.y.toString();
+					ddlTipoPosicao.selectedIndex = 0;
+				}
+			}
+			
+			private function ConverterTipoPosicao():void
+			{
+				var coord:Coordinate;
+				switch(ddlTipoPosicao.selectedIndex)
+				{
+					case 0:
+						txtPosicao.text = posicao.x.toString() + "; " + posicao.y.toString();
+						break;
+					case 1:
+						coord = DesenhadorEsri.getInstance().converterCoordenadaProjParaGeografico(posicao.x, posicao.y);
+						txtPosicao.text = coord.x.toString() + "; " + coord.y.toString();
+						break;
+					case 2:
+						coord = DesenhadorEsri.getInstance().converterCoordenadaProjParaGeografico(posicao.x, posicao.y);
+						
+						txtPosicao.text = DesenhadorEsri.getInstance().ConverterPontoGeograficoParaGMS(coord.x, false) 
+						+ "; " + DesenhadorEsri.getInstance().ConverterPontoGeograficoParaGMS(coord.y);
+						break;
+				}
+			}
+	
+			private function salvarAtributos():void
+			{
+				if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().layerFeicao.Colunas )
+				{
+					var listaColunas:Vector.<ColunaLayerFeicao> = FeicaoSelecionada.getInstance().layerFeicao.Colunas;
+					var atributos:Vector.<AtributoFeicao> = null;
+					
+					var mensagem:String;
+					var atributosObrigatoriosNaoPreenchidos:Vector.<AtributoFeicao> = new Vector.<AtributoFeicao>();
+					if(listaColunas && listaColunas.length >0)
+					{
+						atributos = new Vector.<AtributoFeicao>();
+						var atributo:AtributoFeicao;
+						var colunasObrigatoriasPorCondicao:Vector.<String> = new Vector.<String>();
+						for each(var coluna:ColunaLayerFeicao in  listaColunas)
+						{
+							if(coluna.IsVisivel && coluna.ColunaObrigada && coluna.ColunaObrigada.length>0 )
+							{
+								if(coluna.Operacao == OperacaoIgual && coluna.Valor.toUpperCase() == coluna.ValorCondicao.toUpperCase())
+									colunasObrigatoriasPorCondicao.push(coluna.ColunaObrigada.toUpperCase());
+								else if (coluna.Operacao == OperacaoDiferente && coluna.Valor.toUpperCase() != coluna.ValorCondicao.toUpperCase())
+									colunasObrigatoriasPorCondicao.push(coluna.ColunaObrigada.toUpperCase());
+							}
+						}
+						
+						for each(var coluna:ColunaLayerFeicao in  listaColunas)
+						{
+							if(coluna.IsVisivel)
+							{
+								if(coluna.Tipo == ColunaLayerFeicao.Numero && isNaN(Number(coluna.Valor.replace(",","."))))
+								{
+									coluna.Valor = "";
+								}
+								
+								atributo = new AtributoFeicao();
+								atributo.Nome = coluna.Coluna;
+								atributo.Alias = coluna.Alias;
+								
+								if(coluna.Valor !=null&& coluna.Valor.length>0)
+								{
+									atributo.Tipo = AtributoFeicao.Manual;
+									atributo.Valor = coluna.Valor;
+									atributos.push(atributo);
+								}
+								else if(coluna.IsEditavel )
+								{
+									if(coluna.IsObrigatorio)
+										atributosObrigatoriosNaoPreenchidos.push(atributo);
+									else
+									{
+										for each(var colunaCondicional:String in  colunasObrigatoriasPorCondicao)
+										{
+											if(colunaCondicional.toUpperCase() == coluna.Coluna)
+											{
+												atributosObrigatoriosNaoPreenchidos.push(atributo);
+												break;	
+											}
+										}
+									}
+								}
+								
+							}
+						}
+						if(atributosObrigatoriosNaoPreenchidos.length>0)
+						{
+							var unicoAtributo:Boolean = atributosObrigatoriosNaoPreenchidos.length == 1;
+							mensagem = (unicoAtributo ?"O campo ": "Os campos ");
+							for(var i:int =0; i<atributosObrigatoriosNaoPreenchidos.length; i++)
+							{
+								var  atr:AtributoFeicao = atributosObrigatoriosNaoPreenchidos[i] as AtributoFeicao;
+								if(!unicoAtributo && i+1 == atributosObrigatoriosNaoPreenchidos.length)
+									mensagem += " e ";
+								else if(i>0)
+									mensagem += ", ";
+								
+								mensagem += "'"+ atr.Alias+"'";
+							}
+							
+							mensagem += (unicoAtributo ?" não foi preenchido.": " não foram prechidos.");
+								
+							Alert.show(mensagem);
+							return;
+						}
+					}
+					if(atributos && atributos.length>0)
+					{
+						
+						FeicaoController.getInstance().AtualizarAtributos( new FeicaoObjeto(FeicaoSelecionada.getInstance().layerFeicao,
+							DesenhadorEsri.getInstance().idProjeto, null,FeicaoSelecionada.getInstance().objectId,null,atributos as Vector.<AtributoFeicao>));
+						cursorManager.setBusyCursor();
+					}
+				/*	listaAtributos.dataProvider = new ArrayList();
+					coordenadas = "";
+					carregarCoordenadas();			*/		
+				}
+			}
+							
+			protected function salvarAtributosResult(event:Event):void
+			{
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+					
+					if(!resposta.Sucesso)
+					{
+						Alert.show(resposta.Mensagem);
+					}
+					/*if(resposta.Sucesso) 
+					{
+						FeicaoSelecionada.getInstance().limpar(true);
+						FeicoesSelecionadas.getInstance().limpar(true);
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this,true,true,true));
+					}
+					else
+					{
+						Alert.show(resposta.Mensagem);
+					}*/
+					
+					cursorManager.removeBusyCursor();
+				}
+			}	
+			
+			public function carregarCoordenadas():void
+			{
+				if(txtCoordenadas)
+					txtCoordenadas.text = coordenadas;
+			}
+			
+			public function fecharJanela():void
+			{
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this,true,true,true));
+			}
+			
+			public function SetModo(modo:Number):void
+			{
+				btnSalvarAtributos.visible = modo != 2;
+				btnSalvarAtributos.includeInLayout = modo != 2;
+			}	
+			
+		]]>
+	</fx:Script> 
+	
+	<s:VGroup visible="true" id="vGrupo" width="100%" height="100%">
+		<s:BorderContainer borderVisible="false" width="100%" height="40" borderAlpha="0.4">
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+				<s:Label text="Localização:" textAlign="right" styleName="label_popup"/>
+				<s:TextInput editable="false" textAlign="center" id="txtPosicao" width="280"/>
+				<s:DropDownList styleName="label_popup" change="{ConverterTipoPosicao()}" id="ddlTipoPosicao" labelField="valor" width="100" selectedIndex="0">
+					<s:ArrayList>
+						<fx:Object valor="UTM"/>
+						<fx:Object valor="GDEC"/>
+						<fx:Object valor="GMS"/>
+					</s:ArrayList>
+				</s:DropDownList>
+			</s:HGroup >
+		</s:BorderContainer>
+		
+		<s:BorderContainer borderVisible="true" width="100%" height="100%" borderAlpha="0.4">
+			<s:HGroup id="dBox" width="100%" height="100%" >
+				<mx:Box width="215" height="100%" borderVisible="true" borderAlpha="0.4" horizontalScrollPolicy="off" minHeight="0">
+										
+					<s:List id="listaLayers"  borderVisible="false" width="100%" minHeight="0" horizontalScrollPolicy="off" >
+						<s:itemRenderer>
+							<fx:Component>
+								<views:LayerFeicaoSelecaoView  minHeight="0" minWidth="0" width="100%" />
+							</fx:Component>
+						</s:itemRenderer> 
+					</s:List>
+				</mx:Box>			
+				<mx:Box width="100%" height="100%" borderVisible="true" borderAlpha="0.4">
+					<s:VGroup  width="100%" height="100%">
+						<mx:TabNavigator width="100%" height="100%"  tabHeight="30" tabWidth="100" useHandCursor="true"   childIndexChange="carregarCoordenadas()" borderAlpha="0.4" >
+							<mx:VBox label="Atributos" width="100%" height="100%" id="vAtributos" horizontalAlign="center" borderAlpha="0.4"  >
+								<s:BorderContainer id="bdLayer" width="100%" minWidth="0" minHeight="0" 
+												   styleName="fundo_cinza_claro" borderAlpha="0.4" >
+									<s:HGroup id="hg" width="100%" height="25" paddingLeft="3" verticalAlign="bottom" >
+										<s:Label text="Campo" width="50%"/>
+										<spark:Separator width="3" height="100%" alpha="0.4"
+														 color="#8E8E8E" verticalAlign="middle" />
+										<s:Label text="Valor" width="50%"/>
+									</s:HGroup>
+								</s:BorderContainer>
+								<s:List id="listaAtributos"   width="100%" height="100%" borderAlpha="0.2" borderVisible="false" >
+									<s:itemRenderer>
+										<fx:Component>
+											<views:AtributoColunaFeicaoView  minHeight="0" minWidth="0" width="100%" height="100%" />
+										</fx:Component>
+									</s:itemRenderer> 
+								</s:List>
+								<s:BorderContainer borderVisible="false" width="100%" height="28" borderColor="#FFFFFF" styleName="rodape_branco" borderAlpha="0.1">
+									<s:HGroup width="100%" height="28"  verticalAlign="middle" >
+										<s:HGroup horizontalAlign="right"  width="98%" height="100%"   verticalAlign="middle" >
+											<s:Button visible="true" click="DesenhadorEsri.getInstance().zoomGeometryFeicao(feicaoSelecionada)"   id="btnZoomFeicao" label="Zoom"  useHandCursor="true"/>
+											<s:Button label="Salvar" click="salvarAtributos()"  useHandCursor="true" id="btnSalvarAtributos"  />
+										</s:HGroup>
+									</s:HGroup>			
+								</s:BorderContainer>	
+							</mx:VBox>
+							<mx:VBox label="Coordenadas" width="100%" height="100%" id="vCoordenadas" horizontalAlign="center" borderAlpha="0.4" >
+								<s:TextArea id="txtCoordenadas" text="{coordenadas}" styleName="fundo_txtCoordenadas" width="100%" height="100%"/>
+							</mx:VBox>
+						</mx:TabNavigator>
+						
+					</s:VGroup>
+				</mx:Box>
+			</s:HGroup>		
+		</s:BorderContainer>
+		
+		
+	</s:VGroup>		
+</s:Group>

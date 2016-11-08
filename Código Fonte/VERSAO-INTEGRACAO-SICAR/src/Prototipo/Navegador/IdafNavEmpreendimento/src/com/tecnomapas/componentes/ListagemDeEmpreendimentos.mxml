@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   creationComplete="init()">
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			
+			import mx.core.Application;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] public var mapa:Map;
+			[Bindable] public var application:Application;
+			
+			[Bindable] private var descriptionToolTip:String = "";
+			[Bindable] private var larguraWindow:Number = 0;
+			[Bindable] private var alturaWindow:Number = 0;
+			[Bindable] private var larguraWindowPai:Number = 0;
+			[Bindable] private var alturaWindowPai:Number = 0;
+			[Bindable] private var listaPropriedades:WindowListarPropriedades;
+			
+			private var heightDefault:Number = 0;
+			
+			public var urlDownloadShape:String;
+			public var urlPdfTitulo:String;
+			
+			override public function set toolTip(description:String):void 
+			{ 
+			   this.descriptionToolTip = description;
+			}
+			
+			private function init():void
+			{
+				this.listaPropriedades = WindowListarPropriedades(PopUpManager.createPopUp(parent, WindowListarPropriedades, false));
+				PopUpManager.removePopUp(this.listaPropriedades);
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent); 
+				
+				this.listaPropriedades.openAction = exibirListarPropriedades;
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar(null);
+						break;
+				}
+			}
+			
+			public function resize():void
+			{
+				if(this.listaPropriedades != null)
+				{
+					if(this.heightDefault <= 0)
+					{
+						this.heightDefault = this.listaPropriedades.height;
+					}
+					
+					if(application.height <= this.listaPropriedades.height || application.height <= this.heightDefault)
+					{
+						this.listaPropriedades.height = application.height - 30;
+					}
+					else
+					{
+						this.listaPropriedades.height = this.heightDefault;
+					}
+					
+					this.listaPropriedades.move((application.width - this.listaPropriedades.width)/2, (application.height - this.listaPropriedades.height)/2);
+				}
+			}
+		
+			public function load():void
+			{	
+				this.larguraWindow = this.listaPropriedades.width;
+				this.alturaWindow = this.listaPropriedades.height;
+				
+				this.listaPropriedades.title = "LISTAR EMPREENDIMENTOS"
+				this.listaPropriedades.mapa = this.mapa;
+				
+				this.listaPropriedades.xBack = this.x;
+				this.listaPropriedades.yBack = this.y;
+			}
+			
+			private function onLoadLovs(event:ResultEvent):void
+			{
+			}
+			
+			public function exibirListarPropriedades():void
+			{
+				PopUpManager.addPopUp(this.listaPropriedades, parent, true);
+				
+				this.larguraWindowPai = application.width;
+				this.alturaWindowPai = application.height;
+				
+				this.listaPropriedades.width = 10;
+				this.listaPropriedades.height = 10;
+				
+				this.listaPropriedades.x = this.x;
+				this.listaPropriedades.y = this.y;
+				
+				efeitoAbrir.end();
+				efeitoAbrir.play();
+				
+				setTimeout(carregarDadosListar, efeitoAbrir.duration + 100);
+			}
+			
+			private function carregarDadosListar():void
+			{
+
+			}
+			
+			public function desativar(event:Event):void
+			{
+				if(!event || this.listaPropriedades && (event.target.id != btnListarLotes.id))
+				{
+					if(listaPropriedades)
+					{
+						this.listaPropriedades.fechar();
+					}
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Parallel id="efeitoAbrir" duration="600" target="{listaPropriedades}">
+		<mx:Move duration="600" xTo="{(larguraWindowPai - larguraWindow) / 2}"
+				 yTo="{((alturaWindowPai - alturaWindow) / 2)}"/>
+		<mx:Resize id="expand1" duration="600" heightTo="{alturaWindow}" target="{listaPropriedades}"
+				   widthTo="{larguraWindow}"/>
+		<mx:Fade id="fadeOut" alphaFrom="0.0" alphaTo="1.0" duration="600"
+				 target="{listaPropriedades}"/>
+	</mx:Parallel>
+	<mx:HBox width="100%" height="100%" horizontalGap="0" verticalGap="0">
+		<mx:HBox width="0%" height="100%">
+			<mx:Button id="btnListarLotes" click="exibirListarPropriedades()"
+					   downSkin="@Embed(source='assets/img/listar_ativo.png')"
+					   overSkin="@Embed(source='assets/img/listar_ativo.png')"
+					   toolTip="{descriptionToolTip}"
+					   upSkin="@Embed(source='assets/img/listar.png')"/>
+		</mx:HBox>
+	</mx:HBox>
+</mx:Canvas>

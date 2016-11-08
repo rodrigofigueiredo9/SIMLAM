@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark"  styleName="barraFerramenta"
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="35" height="100%" xmlns:Ferramentas="views.Ferramentas.*" xmlns:local="*" 
+		   >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Metadata>
+		[Event(name="selecionou", type="controllers.IdentifyControllerEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[ 
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.IdentifyControllerEvent;
+			import controllers.SelecionarControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.FeicoesSnapSelecionadas;
+			import models.Geometria;
+			import models.LayerFeicaoSelecionada;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			[Embed( source="../assets/cursor_pan.png")]
+			private var cursorPan:Class;
+			private var ferramentaAtivada:Object;
+			private var ferramentaEvento:FerramentaGeometriaControllerEvent;
+			private var _callbackFunction:Function;
+			public var isDesativada:Boolean;
+			public var nativeMenu:ContextMenu;
+			public function init():void
+			{
+				/*nativeMenu = new ContextMenu();
+				for(var obj:Object in DesenhadorEsri.getInstance().map.contextMenu.customItems)
+				{
+					nativeMenu.customItems.push(obj);
+				}*/
+				
+				setModo(DesenhadorEsri.getInstance().modo);
+				
+				inserir.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				editar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				inserirBuraco.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				excluir.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				selecionar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				mover.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				snap.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				inundar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				copiarColar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				rotacionar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				lancarCoords.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				importar.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR, desligarTodasFerramentas);
+				
+				inserir.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				editar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				inserirBuraco.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				excluir.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				selecionar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				mover.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				snap.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				inundar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				copiarColar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				rotacionar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				lancarCoords.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				importar.addEventListener(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA, fecharJanelaSelecao);
+				
+				
+				inserir.addEventListener(FerramentaGeometriaControllerEvent.HABILITAR_SNAP, ativarBotaoSnap);
+				editar.addEventListener(FerramentaGeometriaControllerEvent.HABILITAR_SNAP, ativarBotaoSnap);
+				inserirBuraco.addEventListener(FerramentaGeometriaControllerEvent.HABILITAR_SNAP, ativarBotaoSnap);
+			//	mover.addEventListener(FerramentaGeometriaControllerEvent.HABILITAR_SNAP, ativarBotaoSnap);
+			//	rotacionar.addEventListener(FerramentaGeometriaControllerEvent.HABILITAR_SNAP, ativarBotaoSnap);
+			
+				snap.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, pausarFerramentaComSnap);
+				inserir.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, snapLigadoDesligado);
+				editar.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, snapLigadoDesligado);
+				inserirBuraco.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, snapLigadoDesligado);
+				//mover.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, snapLigadoDesligado);
+			//	rotacionar.addEventListener(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO, snapLigadoDesligado);
+				
+				DesenhadorEsri.getInstance().map.addEventListener(FerramentaGeometriaControllerEvent.ATIVAR_DESATIVAR_BOTOES, verificaBotoesAtivos);
+				DesenhadorEsri.getInstance().map.addEventListener(FerramentaGeometriaControllerEvent.DESATIVAR_TODAS_FERRAMENTAS, bloquearDesligarTodosBotoes);
+				DesenhadorEsri.getInstance().map.addEventListener(SelecionarControllerEvent.PEDIR_CONFIRMACAO_SELECAO, confirmarSelecao);
+				
+				importar.init();
+				
+				verificaBotoesAtivos();
+			}
+			
+			public function fecharJanelaSelecao(ev:FerramentaGeometriaControllerEvent=null):void
+			{
+				ferramentaAtivada = null;
+				selecionar.fecharJanela();
+				
+				cursorManager.removeAllCursors();
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = true;	
+			}
+			
+			public function desligarTodasFerramentas(ev:FerramentaGeometriaControllerEvent):void
+			{
+				ferramentaEvento = ev;
+				
+				if((inserir.ligado && ((FeicaoSelecionada.getInstance().geometria.vertices && FeicaoSelecionada.getInstance().geometria.vertices.length>0) ||
+					(FeicaoSelecionada.getInstance().geometria.aneis && FeicaoSelecionada.getInstance().geometria.aneis.length>0))) || editar.ligado || inserirBuraco.ligado)
+				{
+					Alert.yesLabel = 'Sim';
+					Alert.noLabel = 'Não';
+					Alert.show('Deseja realmente descartar as alterações deste desenho?','',Alert.NO|Alert.YES,null, desligarTodasFerramentasConfirmado, null, Alert.NO);	
+				}
+				else
+				{
+					desligarTodasFerramentasConfirmado();
+				}
+			}
+			
+			public function desligarTodasFerramentasConfirmado(ev:CloseEvent=null):void
+			{
+				if(ferramentaEvento &&(!ev || ev.detail == Alert.YES) )
+				{				
+					ferramentaAtivada = ferramentaEvento.targetObj;
+					desligar();
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR_OUTRAS_FERRAMENTAS, null, this));
+					ferramentaEvento.completeCallback();
+				}
+			}
+			
+			private function desligar():void
+			{
+				//DesenhadorEsri.getInstance().contextMenu = new ContextMenu(); 
+				
+				inserir.desligar();
+				editar.desligar();
+				inserirBuraco.desligar();
+				selecionar.desligar();
+				mover.desligar();
+				snap.desligar();
+				inundar.desligar();
+				copiarColar.desligar();
+				rotacionar.desligar();
+				lancarCoords.desligar();
+				importar.desligar();
+				FeicoesSelecionadas.getInstance().limpar(false);
+				FeicaoSelecionada.getInstance().limpar(false);
+				FeicoesSnapSelecionadas.getInstance().limpar(true);
+			}
+			
+			public function bloquearDesligarTodosBotoes(ev:FerramentaGeometriaControllerEvent):void
+			{
+				FeicoesSelecionadas.getInstance().limpar(true);
+				FeicaoSelecionada.getInstance().limpar(true);
+				FeicoesSnapSelecionadas.getInstance().limpar(true);
+				desligar();
+				fecharJanelaSelecao();
+				inserir.enabled = false;
+				selecionar.enabled = false;
+				editar.enabled = false;
+				inundar.enabled = false;
+				mover.enabled = false;
+				rotacionar.enabled = false;
+				inserirBuraco.enabled = false;
+				excluir.enabled = false;
+				lancarCoords.enabled = false;
+				snap.enabled = false;
+				copiarColar.enabled = false;
+				importar.enabled = false;
+				isDesativada = true;
+			}
+			
+			public function pausarFerramenta(ev:FerramentaGeometriaControllerEvent=null):void
+			{
+				if(!isDesativada)
+				{
+				
+					if(inserir.ligado)
+					{
+						inserir.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, inserir.pausado));
+					}
+					else if (editar.ligado)
+					{
+						editar.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, editar.pausado));
+					}
+					else if (inserirBuraco.ligado)
+					{
+						inserirBuraco.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, inserirBuraco.pausado));
+					}
+					else if(mover.ligado)
+					{
+						mover.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, mover.pausado));
+					}	
+					else if(rotacionar.ligado)
+					{
+						rotacionar.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, rotacionar.pausado));
+					}
+					else if(inundar.ligado)
+					{
+						inundar.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, inundar.pausado));
+					}
+					else if(selecionar.currentState =="ligado")
+					{
+						selecionar.pausarDespausar();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, null, this, selecionar.pausado));
+					}
+					else
+					{
+						desligar();
+					}
+				}
+			}
+			
+			public function pausarFerramentaComSnap(ev:FerramentaGeometriaControllerEvent=null):void
+			{
+				if(!isDesativada)
+				{
+					if(inserir.ligado)
+						inserir.pausarDespausar(true);
+					else if (editar.ligado)
+						editar.pausarDespausar(true);
+					else if (inserirBuraco.ligado)
+						inserirBuraco.pausarDespausar(true);
+				}
+			}
+			
+			public function confirmarSelecao(ev:SelecionarControllerEvent):void
+			{
+				_callbackFunction = ev.callbackFunction;
+				if(mover.ligado || rotacionar.ligado)
+				{
+					Alert.yesLabel = 'Sim';
+					Alert.noLabel = 'Não';
+					Alert.show('Deseja realmente descartar as alterações deste desenho?','',Alert.NO|Alert.YES,null, respostaSelecao, null, Alert.NO);		
+				}
+				else
+				{
+					_callbackFunction(true);
+				}
+			}
+			
+			public function respostaSelecao(ev:CloseEvent):void
+			{
+				if(ev)
+				{
+					if(ev.detail == Alert.YES)
+					{
+						mover.desligar();
+						rotacionar.desligar();
+						_callbackFunction(true);
+					}
+					else
+					{
+						_callbackFunction(false);
+					}
+				}
+			}
+			
+			public function verificaBotoesAtivos(ev:FerramentaGeometriaControllerEvent=null):void
+			{
+				importar.enabled = true;
+				selecionar.enabled = true;
+				isDesativada = false;
+				if(LayerFeicaoSelecionada.getInstance().layerFeicao )
+				{
+					inserir.enabled = true;
+					lancarCoords.enabled = true;
+				}
+				else
+				{
+					inserir.enabled = false;
+					lancarCoords.enabled = false;
+				}
+							
+				if(FeicaoSelecionada.getInstance().geometria && FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().objectId >0 )
+				{
+					if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().isSelecionavel )
+					{
+						editar.enabled = true;
+						mover.enabled = true;
+						rotacionar.enabled = true;
+						excluir.enabled = true;
+						inserirBuraco.enabled = FeicaoSelecionada.getInstance().geometria.tipoGeometria == Geometria.Poligono;
+					}
+					else
+					{
+						editar.enabled = false;
+						mover.enabled = false;
+						rotacionar.enabled = false;
+						excluir.enabled = false;
+						inserirBuraco.enabled = false;
+					}
+					
+					inundar.enabled = LayerFeicaoSelecionada.getInstance().layerFeicao && 
+						LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Poligono;
+					
+					copiarColar.enabled = true;
+				}
+				else
+				{
+					editar.enabled = false;
+					inserirBuraco.enabled = false;
+					if(FeicoesSelecionadas.getInstance().feicoes && FeicoesSelecionadas.getInstance().feicoes.length>0)
+					{
+						inundar.enabled = LayerFeicaoSelecionada.getInstance().layerFeicao && LayerFeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Poligono;
+						copiarColar.enabled =  copiarColar.verificaSeTodasGeometriasSelecionadasTemMesmoTipo() && copiarColar.tipoGeometria >0 ;
+					
+						if(FeicoesSelecionadas.getInstance().feicoesSelecionaveis && FeicoesSelecionadas.getInstance().feicoesSelecionaveis.length>0)
+						{
+							mover.enabled = true;
+							rotacionar.enabled = true;
+							excluir.enabled = true;
+						}
+						else
+						{
+							mover.enabled = false;
+							rotacionar.enabled = false;
+							excluir.enabled = false;
+						}
+					}
+					else
+					{
+						inundar.enabled = false;
+						mover.enabled = false;
+						rotacionar.enabled = false;						
+						excluir.enabled = false;
+						copiarColar.enabled = false;
+					}
+				}
+			}
+			
+			public function ativarBotaoSnap(ev:FerramentaGeometriaControllerEvent):void
+			{
+				if(ev)
+					snap.enabled = ev.ativar;
+			}
+			
+			public function snapLigadoDesligado(ev:FerramentaGeometriaControllerEvent):void
+			{
+				if(ev)
+				{
+					if(ev.ativar)
+						snap.ligar();
+					else
+						snap.desligar();
+				}
+			}
+			
+			private function setModo(modo:Number):void
+			{
+				switch (modo)
+				{
+					case 2:										
+						inserir.includeInLayout = false;
+						selecionar.includeInLayout = true;
+						editar.includeInLayout = false;
+						inundar.includeInLayout = false;
+						mover.includeInLayout = false;
+						rotacionar.includeInLayout = false;
+						inserirBuraco.includeInLayout = false;
+						excluir.includeInLayout = false;
+						lancarCoords.includeInLayout = false;
+						snap.includeInLayout = false;
+						copiarColar.includeInLayout = false;
+						importar.includeInLayout = false;
+						
+						inserir.visible = false;
+						selecionar.visible = true;
+						editar.visible = false;
+						inundar.visible = false;
+						mover.visible = false;
+						rotacionar.visible = false;
+						inserirBuraco.visible = false;
+						excluir.visible = false;
+						lancarCoords.visible = false;
+						snap.visible = false;
+						copiarColar.visible = false;
+						importar.visible = false;
+						break;
+					default:
+						inserir.includeInLayout = true;
+						selecionar.includeInLayout = true;
+						editar.includeInLayout = true;
+						inundar.includeInLayout = true;
+						mover.includeInLayout = true;
+						rotacionar.includeInLayout = true;
+						inserirBuraco.includeInLayout = true;
+						excluir.includeInLayout = true;
+						lancarCoords.includeInLayout = true;
+						snap.includeInLayout = true;
+						copiarColar.includeInLayout = true;
+						importar.includeInLayout = true;
+						
+						inserir.visible = true;
+						selecionar.visible = true;
+						editar.visible = true;
+						inundar.visible = true;
+						mover.visible = true;
+						rotacionar.visible = true;
+						inserirBuraco.visible = true;
+						excluir.visible = true;
+						lancarCoords.visible = true;
+						snap.visible = true;
+						copiarColar.visible = true;
+						importar.visible = true;
+						break;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:VGroup id="barraFerrvGroup" >
+		<Ferramentas:InserirFeicao id="inserir" visible="false" includeInLayout="true" />
+		<Ferramentas:SelecionarFeicao id="selecionar" visible="false" includeInLayout="true" />
+		<Ferramentas:EditarFeicao id="editar" visible="false" includeInLayout="true" />
+		<Ferramentas:InundarFeicao id="inundar" visible="false" includeInLayout="true" />
+		<Ferramentas:MoverFeicao id="mover" visible="false" includeInLayout="true"/>
+		<Ferramentas:RotacionarFeicao id="rotacionar" visible="false" includeInLayout="true"/>
+		<Ferramentas:InserirBuracoFeicao id="inserirBuraco" visible="false" includeInLayout="true"/>
+		<Ferramentas:ExcluirFeicao id="excluir" visible="false" includeInLayout="true"/>
+		<Ferramentas:LancadorCoordenadas id="lancarCoords" visible="false" includeInLayout="true"/>
+		<Ferramentas:SnapFeicao id="snap" enabled="false" visible="false" includeInLayout="true"/>
+		<Ferramentas:CopiarColarFeicao id="copiarColar" visible="false" includeInLayout="true"/>
+		<Ferramentas:ImportarFeicaoProcessada id="importar" visible="false" includeInLayout="true"/>
+	</s:VGroup>
+</s:BorderContainer>

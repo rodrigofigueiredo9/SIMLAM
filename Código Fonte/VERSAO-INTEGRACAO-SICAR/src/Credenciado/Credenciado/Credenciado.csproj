@@ -1,0 +1,1282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0443FD70-254F-4A39-93A1-9305E47FC8EB}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Credenciado</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Credenciado</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Web.Helpers" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Autenticacao">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Perfil, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Perfil.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Areas\Caracterizacoes\CaracterizacoesAreaRegistration.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\BarragemDispensaLicencaController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\ControleAcesso.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\UnidadeConsolidacaoController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\UnidadeProducaoController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\CaracterizacaoController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\DominialidadeController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\ProjetoGeograficoController.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\BarragemDispensaLicencaVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\ReservaLegalVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\DominialidadeVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\DominioVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ArquivoProcessamentoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\BaseReferenciaVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\DesenhadorVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ImportadorShapeVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ProjetoGeograficoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ProjetoImportadoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SituacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMUnidadeProducao\UnidadeProducaoItemVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMUnidadeProducao\UnidadeProducaoVM.cs" />
+    <Compile Include="Areas\Especificidades\Controllers\CertidaoController.cs" />
+    <Compile Include="Areas\Especificidades\Controllers\EspecificidadeController.cs" />
+    <Compile Include="Areas\Especificidades\EspecificidadesAreaRegistration.cs" />
+    <Compile Include="Areas\Especificidades\ViewModels\Certidao\CertidaoDispensaLicenciamentoAmbientalVM.cs" />
+    <Compile Include="Areas\Especificidades\ViewModels\Especificidade\EspecificidadeVME.cs" />
+    <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
+    <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
+    <Compile Include="Areas\GeoProcessamento\ViewModels\VMMapa\CoordenadaVM.cs" />
+    <Compile Include="Controllers\CFOCController.cs" />
+    <Compile Include="Controllers\CFOController.cs" />
+    <Compile Include="Controllers\CFOCFOCController.cs" />
+    <Compile Include="Controllers\ConfiguracaoVegetalController.cs" />
+    <Compile Include="Controllers\ArquivoController.cs" />
+    <Compile Include="Controllers\AtividadeController.cs" />
+    <Compile Include="Controllers\AutenticacaoController.cs" />
+    <Compile Include="Controllers\AgrotoxicosController.cs" />
+    <Compile Include="Controllers\HabilitarEmissaoCFOCFOCController.cs" />
+    <Compile Include="Controllers\CARSolicitacaoController.cs" />
+    <Compile Include="Controllers\ChecagemRoteiroController.cs" />
+    <Compile Include="Controllers\CredenciadoController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\EmpreendimentoController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ListaController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\PessoaController.cs" />
+    <Compile Include="Controllers\ProfissaoController.cs" />
+    <Compile Include="Controllers\ProjetoDigitalController.cs" />
+    <Compile Include="Controllers\ProtocoloController.cs" />
+    <Compile Include="Controllers\PTVController.cs" />
+    <Compile Include="Controllers\PTVOutroController.cs" />
+    <Compile Include="Controllers\RequerimentoController.cs" />
+    <Compile Include="Controllers\RoteiroController.cs" />
+    <Compile Include="Controllers\TituloController.cs" />
+    <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Controllers\TramitacaoController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\SharedVM\ArquivoVM.cs" />
+    <Compile Include="ViewModels\SharedVM\AtividadeSolicitadaVM.cs" />
+    <Compile Include="ViewModels\SharedVM\ConfirmarVM.cs" />
+    <Compile Include="ViewModels\SharedVM\ExcluirVM.cs" />
+    <Compile Include="ViewModels\SharedVM\FinalidadeVM.cs" />
+    <Compile Include="ViewModels\ViewModelHelper.cs" />
+    <Compile Include="ViewModels\VMAgrotoxicos\ListarVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\AtividadeVME.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteListarVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFOC\ListarVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFOLISTARVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFO\ListarVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFO\CFOVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\MotivoInvalidacaoVM.cs" />
+    <Compile Include="ViewModels\VMCFOCFOC\ConsutalNumeroCFOCFOCLiberadoVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\AtividadeConfiguracaoVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarAtividadesSolicitadasVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarAtividadesSolicitadasVME.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarAtividadeVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarConfiguracaoVM.cs" />
+    <Compile Include="ViewModels\VMAtividade\ListarVM.cs" />
+    <Compile Include="ViewModels\VMAutenticacao\LogonVM.cs" />
+    <Compile Include="ViewModels\VMCARSolicitacao\CARSolicitacaoVM.cs" />
+    <Compile Include="ViewModels\VMCARSolicitacao\ListarVM.cs" />
+    <Compile Include="ViewModels\VMChecagemRoteiro\SalvarCheckListRoteiroVM.cs" />
+    <Compile Include="ViewModels\VMConfiguracaoVegetal\CulturaListarVM.cs" />
+    <Compile Include="ViewModels\VMCredenciado\CredenciadoVM.cs" />
+    <Compile Include="ViewModels\VMCredenciado\ListarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\EmpreendimentoVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\LocalizarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\LocalizarVME.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ResponsavelVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\SalvarVM.cs" />
+    <Compile Include="ViewModels\VMHabilitarEmissaoCFOCFOC\ListarVM.cs" />
+    <Compile Include="ViewModels\VMMenu\MenuVM.cs" />
+    <Compile Include="ViewModels\VMPessoa\ContatoVME.cs" />
+    <Compile Include="ViewModels\VMPessoa\PessoaVM.cs" />
+    <Compile Include="ViewModels\VMPessoa\ProfissaoListarVM.cs" />
+    <Compile Include="ViewModels\VMPessoa\PessoaListarVM.cs" />
+    <Compile Include="ViewModels\VMProfissao\ProfissaoListarVM.cs" />
+    <Compile Include="ViewModels\VMProjetoDigital\DocumentosGeradosVM.cs" />
+    <Compile Include="ViewModels\VMProjetoDigital\ProjetoDigitalEnviarVM.cs" />
+    <Compile Include="ViewModels\VMProjetoDigital\ProjetoDigitalImprimirDocumentosVM.cs" />
+    <Compile Include="ViewModels\VMProjetoDigital\ProjetoDigitalListarVM.cs" />
+    <Compile Include="ViewModels\VMProjetoDigital\ProjetoDigitalVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\DocumentoVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\ListarNotificacaoPendenciaVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\ListarVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\ProcessoVM.cs" />
+    <Compile Include="ViewModels\VMProtocolo\RequerimentoVM.cs" />
+    <Compile Include="ViewModels\VMPTVOutro\PTVOutroListarVM.cs" />
+    <Compile Include="ViewModels\VMPTVOutro\PTVOutroVM.cs" />
+    <Compile Include="ViewModels\VMPTV\DestinatarioPTVListarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\DestinatarioPTVVM.cs" />
+    <Compile Include="ViewModels\VMPTV\PTVComunicadorVW.cs" />
+    <Compile Include="ViewModels\VMPTV\PTVHistoricoVM.cs" />
+    <Compile Include="ViewModels\VMPTV\PTVListarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\PTVVM.cs" />
+    <Compile Include="ViewModels\VMRequerimento\ListarVM.cs" />
+    <Compile Include="ViewModels\VMRequerimento\ListarVME.cs" />
+    <Compile Include="ViewModels\VMRequerimento\RequerimentoVM.cs" />
+    <Compile Include="ViewModels\VMRoteiro\SalvarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\AlterarSituacaoVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\AssinanteVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\ListarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\SalvarVM.cs" />
+    <Compile Include="ViewModels\VMTramitacao\HistoricoVM.cs" />
+    <Compile Include="ViewModels\VMTramitacao\HistoricoVME.cs" />
+    <Compile Include="ViewModels\VMValidacao\ValidacaoVM.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\BarragemDispensaLicencaPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Criar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\Caracterizacao\Caracterizacao.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\ReservaLegalPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominiosPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominioPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Criar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadePartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\BaseReferenciaPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ImportadorShapePartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\DesenhadorPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ProjetoGeografico.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\SobreposicoesPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeConsolidacao\Criar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeConsolidacao\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeConsolidacao\UnidadeConsolidacaoPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeConsolidacao\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\UnidadeProducaoItemPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\UnidadeProducaoPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\Criar.aspx" />
+    <Content Include="Areas\Especificidades\Views\Certidao\CertidaoDispensaLicenciamentoAmbiental.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\AreaAbrangenciaFiscPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\AreaAbrangenciaPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\CoordenadaPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\CoordenadaTela.aspx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\DesenhadorPartial.ascx" />
+    <Content Include="Areas\GeoProcessamento\Views\Mapa\DesenhadorTeste.aspx" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\1_2_06.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\2uparrow.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\3dwarro.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\anterior.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\area.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\area1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\area_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\area_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\avancar_nav.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\baixo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\base.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_avisos_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_avisos_hover.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_avisos_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_ativa_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_ativa_hover.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_ativa_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_hover.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_camada_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_cancelar_pdf.jpg" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_cancelar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_gerar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_gerar_pdf_normal.jpg" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_identificar_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_identificar_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_info_hover.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_info_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_organizar-click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_organizar-normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_organizar-over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_pdf_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_zoom.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\btn_zoom_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\camera.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\carimbo_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\centro.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\cima.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\closeButton.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\Cross_23x23_Preto.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\cursor_borda.gif" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\cursor_editar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\cursor_flood.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\cursor_flood_error.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\decreaseButton.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\dir.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\dir_baixo_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\dir_cima_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\down.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\download_geometria.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\download_geometria_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\download_shape.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\download_shape_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\down_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\down_desativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\edit.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\esq.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\esq_baixo_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\esq_cima_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\estado.GIF" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\fechar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\fechar_1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\fechar_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\fechar_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\feicoes.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\feicoes_desabilidado.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\ferramenta.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\globe.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\icone_camadas.gif" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\identificar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\identificar_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\identificar_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\increaseButton.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\info.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\informacao-ck.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\informacao-ov.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\informacao.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\information.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\info_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\lancador.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\lancador_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\legenda_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\linha.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\linha1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\linha_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\linha_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\listar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\listar_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\loading.gif" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\Logomarca-SEMASA_peq.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\logomarca.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\lupa.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\lupa_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\luz_desligada.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\luz_ligada.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\mais_1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\maximizar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\maximizar_1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\maximizar_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\maximizar_off.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\maximizar_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\minimizar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\minimizar_1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\minimizar_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\minimizar_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\next.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\norte.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\pdf.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\ponto.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\ponto1.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\ponto_click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\ponto_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\previous.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\proxima.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh-ck-click.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh-ck-normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh-ck-over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh-ck.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh-ov.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\refresh.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\resizeCursor.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\resizeHandler.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\save.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\selecionar.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\selecionar_area_down.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\selecionar_area_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\selecionar_area_up.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\selecionar_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\seta_ativa.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\seta_normal.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\seta_over.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\topo.gif" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\tpo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\transparente.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\up.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\up_ativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\up_desativo.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\voltar_nav.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\zoom-ck.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\zoom-ov.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\zoom.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\_2_06.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\assets\img\_2_25.png" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\config.xml" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\history\history.css" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\history\history.js" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\history\historyFrame.html" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\nav_baseref.html" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\nav_baseref.swf" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\playerProductInstall.swf" />
+    <Content Include="Areas\Navegadores\AreaAbrangencia\swfobject.js" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\1_2_06.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\2uparrow.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\3dwarro.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\anterior.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\area.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\area1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\area_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\area_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\avancar_nav.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\baixo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\base.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_avisos_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_avisos_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_avisos_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_ativa_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_ativa_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_ativa_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_camada_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_cancelar_pdf.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_cancelar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_gerar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_gerar_pdf_normal.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_identificar_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_identificar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_info_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_info_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_organizar-click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_organizar-normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_organizar-over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_pdf_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_zoom.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\btn_zoom_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\camera.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\carimbo_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\centro.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\cima.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\closeButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\Cross_23x23_Preto.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\cursor_borda.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\cursor_editar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\cursor_flood.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\cursor_flood_error.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\decreaseButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\dir.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\dir_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\dir_cima_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\down.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\download_geometria.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\download_geometria_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\download_shape.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\download_shape_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\down_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\down_desativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\edit.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\esq.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\esq_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\esq_cima_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\estado.GIF" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\fechar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\fechar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\fechar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\fechar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\feicoes.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\feicoes_desabilidado.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\ferramenta.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\globe.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\icone_camadas.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\identificar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\identificar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\identificar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\increaseButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\info.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\informacao-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\informacao-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\informacao.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\information.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\info_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\lancador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\lancador_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\legenda_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\linha.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\linha1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\linha_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\linha_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\listar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\listar_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\loading.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\Logomarca-SEMASA_peq.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\logomarca.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\lupa.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\lupa_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\luz_desligada.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\luz_ligada.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\mais_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\maximizar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\maximizar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\maximizar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\maximizar_off.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\maximizar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\minimizar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\minimizar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\minimizar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\minimizar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\next.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\norte.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\pdf.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\ponto.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\ponto1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\ponto_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\ponto_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\previous.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\proxima.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh-ck-click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh-ck-normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh-ck-over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\refresh.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\resizeCursor.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\resizeHandler.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\save.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\selecionar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\selecionar_area_down.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\selecionar_area_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\selecionar_area_up.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\selecionar_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\seta_ativa.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\seta_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\seta_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\topo.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\tpo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\transparente.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\up.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\up_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\up_desativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\voltar_nav.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\zoom-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\zoom-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\zoom.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\_2_06.png" />
+    <Content Include="Areas\Navegadores\Coordenada\assets\img\_2_25.png" />
+    <Content Include="Areas\Navegadores\Coordenada\config.xml" />
+    <Content Include="Areas\Navegadores\Coordenada\history\history.css" />
+    <Content Include="Areas\Navegadores\Coordenada\history\history.js" />
+    <Content Include="Areas\Navegadores\Coordenada\history\historyFrame.html" />
+    <Content Include="Areas\Navegadores\Coordenada\img\1_2_06.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\2uparrow.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\3dwarro.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\anterior.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\area.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\area1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\area_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\area_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\avancar_nav.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\baixo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\base.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_avisos_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_avisos_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_avisos_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_ativa_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_ativa_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_ativa_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_camada_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_cancelar_pdf.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_cancelar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_gerar_pdf_ativo.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_gerar_pdf_normal.jpg" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_identificar_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_identificar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_info_hover.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_info_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_organizar-click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_organizar-normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_organizar-over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_pdf_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_zoom.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\btn_zoom_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\camera.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\carimbo_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\centro.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\cima.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\closeButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\Cross_23x23_Preto.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\cursor_borda.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\img\cursor_editar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\cursor_flood.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\cursor_flood_error.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\decreaseButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\dir.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\dir_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\dir_cima_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\down.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\download_geometria.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\download_geometria_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\download_shape.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\download_shape_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\down_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\down_desativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\edit.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\esq.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\esq_baixo_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\esq_cima_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\estado.GIF" />
+    <Content Include="Areas\Navegadores\Coordenada\img\fechar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\fechar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\fechar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\fechar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\feicoes.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\feicoes_desabilidado.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\ferramenta.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\globe.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\icone_camadas.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\img\identificar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\identificar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\identificar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\increaseButton.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\info.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\informacao-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\informacao-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\informacao.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\information.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\info_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\lancador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\lancador_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\legenda_pdf_navegador.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\linha.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\linha1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\linha_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\linha_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\listar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\listar_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\loading.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\img\Logomarca-SEMASA_peq.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\logomarca.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\lupa.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\lupa_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\luz_desligada.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\luz_ligada.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\mais_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\maximizar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\maximizar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\maximizar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\maximizar_off.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\maximizar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\minimizar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\minimizar_1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\minimizar_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\minimizar_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\next.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\norte.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\pdf.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\pdf_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\ponto.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\ponto1.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\ponto_click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\ponto_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\previous.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\proxima.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh-ck-click.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh-ck-normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh-ck-over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\refresh.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\resizeCursor.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\resizeHandler.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\save.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\selecionar.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\selecionar_area_down.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\selecionar_area_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\selecionar_area_up.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\selecionar_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\seta_ativa.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\seta_normal.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\seta_over.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\topo.gif" />
+    <Content Include="Areas\Navegadores\Coordenada\img\tpo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\transparente.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\up.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\up_ativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\up_desativo.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\voltar_nav.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\zoom-ck.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\zoom-ov.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\zoom.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\_2_06.png" />
+    <Content Include="Areas\Navegadores\Coordenada\img\_2_25.png" />
+    <Content Include="Areas\Navegadores\Coordenada\loc_emp.html" />
+    <Content Include="Areas\Navegadores\Coordenada\loc_emp.swf" />
+    <Content Include="Areas\Navegadores\Coordenada\playerProductInstall.swf" />
+    <Content Include="Areas\Navegadores\Coordenada\swfobject.js" />
+    <Content Include="Areas\Navegadores\Desenhador\config.xml" />
+    <Content Include="Areas\Navegadores\Desenhador\DesenhadorCredenciado.html" />
+    <Content Include="Areas\Navegadores\Desenhador\DesenhadorCredenciado.swf" />
+    <Content Include="Areas\Navegadores\Desenhador\history\history.css" />
+    <Content Include="Areas\Navegadores\Desenhador\history\history.js" />
+    <Content Include="Areas\Navegadores\Desenhador\history\historyFrame.html" />
+    <Content Include="Areas\Navegadores\Desenhador\models\style.css" />
+    <Content Include="Areas\Navegadores\Desenhador\playerProductInstall.swf" />
+    <Content Include="Areas\Navegadores\Desenhador\swfobject.js" />
+    <Content Include="Content\_css\etramite.css" />
+    <Content Include="Content\_css\ie.css" />
+    <Content Include="Content\_css\ie7.css" />
+    <Content Include="Content\_css\jquery-ui-custom.css" />
+    <Content Include="Content\_css\jquery.fileupload-ui.css" />
+    <Content Include="Content\_css\print.css" />
+    <Content Include="Content\_css\screen.css" />
+    <Content Include="Content\_imgLogo\fundo_sobre.png" />
+    <Content Include="Content\_imgLogo\logobrasao.jpg" />
+    <Content Include="Content\_imgLogo\logoestado.png" />
+    <Content Include="Content\_imgLogo\logomarca.png" />
+    <Content Include="Content\_imgLogo\logomarcaComTexto.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_credenciado_pb.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.jpg" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_pb.png" />
+    <Content Include="Content\_imgLogo\logo_entrada.png" />
+    <Content Include="Content\_imgLogo\logo_idaf_versoes.jpg" />
+    <Content Include="Content\_imgLogo\logo_login.png" />
+    <Content Include="Content\_imgLogo\logo_topo.png" />
+    <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
+    <Content Include="Content\_img\add.png" />
+    <Content Include="Content\_img\alerta.png" />
+    <Content Include="Content\_img\base_caixa_login.png" />
+    <Content Include="Content\_img\bg_input_login.png" />
+    <Content Include="Content\_img\bg_input_pass.png" />
+    <Content Include="Content\_img\bg_menu_sec.png" />
+    <Content Include="Content\_img\bg_sis.jpg" />
+    <Content Include="Content\_img\bg_sis.png" />
+    <Content Include="Content\_img\botao_gerar_pdf.png" />
+    <Content Include="Content\_img\botao_gerar_xls.png" />
+    <Content Include="Content\_img\botao_inserir_lista.png" />
+    <Content Include="Content\_img\bt-fechar-large.png" />
+    <Content Include="Content\_img\btn_logar.png" />
+    <Content Include="Content\_img\bt_fechar_mensagem.gif" />
+    <Content Include="Content\_img\bt_info.png" />
+    <Content Include="Content\_img\bt_lista_abaixo.png" />
+    <Content Include="Content\_img\bt_lista_acima.png" />
+    <Content Include="Content\_img\bt_lista_alterar_status.png" />
+    <Content Include="Content\_img\bt_lista_analisar_item.png" />
+    <Content Include="Content\_img\bt_lista_associar.png" />
+    <Content Include="Content\_img\bt_lista_atividades_solicitadas.png" />
+    <Content Include="Content\_img\bt_lista_cancelar.png" />
+    <Content Include="Content\_img\bt_lista_chave.png" />
+    <Content Include="Content\_img\bt_lista_dispensado.png" />
+    <Content Include="Content\_img\bt_lista_download.png" />
+    <Content Include="Content\_img\bt_lista_editar.png" />
+    <Content Include="Content\_img\bt_lista_editar_processo.png" />
+    <Content Include="Content\_img\bt_lista_excluir.png" />
+    <Content Include="Content\_img\bt_lista_historico.png" />
+    <Content Include="Content\_img\bt_lista_pdf.png" />
+    <Content Include="Content\_img\bt_lista_promover_sistema.png" />
+    <Content Include="Content\_img\bt_lista_recebido.png" />
+    <Content Include="Content\_img\bt_lista_refresh.png" />
+    <Content Include="Content\_img\bt_lista_salvar.png" />
+    <Content Include="Content\_img\bt_lista_selecionar_empreendimento.png" />
+    <Content Include="Content\_img\bt_lista_visualizar.png" />
+    <Content Include="Content\_img\bt_mensagens.png" />
+    <Content Include="Content\_img\bt_principal.png" />
+    <Content Include="Content\_img\cancel.png" />
+    <Content Include="Content\_img\checked.png" />
+    <Content Include="Content\_img\csv_img.png" />
+    <Content Include="Content\_img\document-text.png" />
+    <Content Include="Content\_img\dot.png" />
+    <Content Include="Content\_img\exemp_agrup_relatorios.jpg" />
+    <Content Include="Content\_img\folder-horizontal-open.png" />
+    <Content Include="Content\_img\foto3x4.jpg" />
+    <Content Include="Content\_img\fundo_barra_indicadores.jpg" />
+    <Content Include="Content\_img\fundo_botao.png" />
+    <Content Include="Content\_img\fundo_caixa_chave.png" />
+    <Content Include="Content\_img\fundo_campo_erro.png" />
+    <Content Include="Content\_img\fundo_corpo_caixa_login.jpg" />
+    <Content Include="Content\_img\fundo_corpo_caixa_login.png" />
+    <Content Include="Content\_img\fundo_corpo_login.jpg" />
+    <Content Include="Content\_img\fundo_mais_campos.png" />
+    <Content Include="Content\_img\fundo_mensagen_alerta.gif" />
+    <Content Include="Content\_img\fundo_mensagen_erro.gif" />
+    <Content Include="Content\_img\fundo_mensagen_info.gif" />
+    <Content Include="Content\_img\fundo_mensagen_sucesso.gif" />
+    <Content Include="Content\_img\fundo_menunav_faux.gif" />
+    <Content Include="Content\_img\fundo_menunav_faux.png" />
+    <Content Include="Content\_img\fundo_modal.png" />
+    <Content Include="Content\_img\fundo_redirecionamento.jpg" />
+    <Content Include="Content\_img\fundo_timer.png" />
+    <Content Include="Content\_img\fundo_titulo_chave.png" />
+    <Content Include="Content\_img\fundo_topo.gif" />
+    <Content Include="Content\_img\fundo_topo.jpg" />
+    <Content Include="Content\_img\fundo_topo.png" />
+    <Content Include="Content\_img\fundo_topo_login.jpg" />
+    <Content Include="Content\_img\icones_checkbox.png" />
+    <Content Include="Content\_img\icones_versoes.png" />
+    <Content Include="Content\_img\icone_ajuda.png" />
+    <Content Include="Content\_img\icone_alerta.png" />
+    <Content Include="Content\_img\icone_alterar_situacao.png" />
+    <Content Include="Content\_img\icone_avancar.png" />
+    <Content Include="Content\_img\icone_dica.png" />
+    <Content Include="Content\_img\icone_download_manual.png" />
+    <Content Include="Content\_img\icone_editar.png" />
+    <Content Include="Content\_img\icone_engrenagem.png" />
+    <Content Include="Content\_img\icone_exportar.png" />
+    <Content Include="Content\_img\icone_fechar_sessao.png" />
+    <Content Include="Content\_img\icone_filtro_simples.png" />
+    <Content Include="Content\_img\icone_inline_documento.png" />
+    <Content Include="Content\_img\icone_inline_processo.png" />
+    <Content Include="Content\_img\icone_lixeira_branca.png" />
+    <Content Include="Content\_img\icone_mensagem_ajuda.png" />
+    <Content Include="Content\_img\icone_mensagem_aleta.png" />
+    <Content Include="Content\_img\icone_mensagem_erro.png" />
+    <Content Include="Content\_img\icone_mensagem_info.png" />
+    <Content Include="Content\_img\icone_mensagem_sucesso.png" />
+    <Content Include="Content\_img\icone_pdf.png" />
+    <Content Include="Content\_img\icone_pessoas.png" />
+    <Content Include="Content\_img\icone_protocolo.png" />
+    <Content Include="Content\_img\icone_realtorios_personalizados.jpg" />
+    <Content Include="Content\_img\icone_relatorios.png" />
+    <Content Include="Content\_img\icone_sobre.png" />
+    <Content Include="Content\_img\icone_usuario.png" />
+    <Content Include="Content\_img\icone_voltar.png" />
+    <Content Include="Content\_img\icone_xls.png" />
+    <Content Include="Content\_img\icon_calendar.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_c3c3c3_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e9e9e9_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_c3c3c3_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_f5f5f5_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_ffffff_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_000000_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_1f1f1f_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_222222_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_454545_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_888888_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\_img\loader_branco.gif" />
+    <Content Include="Content\_img\loader_cinza.gif" />
+    <Content Include="Content\_img\loader_pequeno.gif" />
+    <Content Include="Content\_img\logo_topo.png" />
+    <Content Include="Content\_img\lupa_busca_geral.png" />
+    <Content Include="Content\_img\lupa_localizar_valor.png" />
+    <Content Include="Content\_img\menu_ativo_exp.png" />
+    <Content Include="Content\_img\menu_ativo_rec.png" />
+    <Content Include="Content\_img\menu_hover_exp.png" />
+    <Content Include="Content\_img\menu_hover_rec.png" />
+    <Content Include="Content\_img\navCurrentBtn.png" />
+    <Content Include="Content\_img\navDoneBtn.png" />
+    <Content Include="Content\_img\navLastDoneBtn.png" />
+    <Content Include="Content\_img\paginacao_anterior.png" />
+    <Content Include="Content\_img\paginacao_primeira.png" />
+    <Content Include="Content\_img\paginacao_proxima.png" />
+    <Content Include="Content\_img\paginacao_ultima.png" />
+    <Content Include="Content\_img\pdf_img.png" />
+    <Content Include="Content\_img\png_branco.png" />
+    <Content Include="Content\_img\projdigital_01.gif" />
+    <Content Include="Content\_img\projdigital_02.gif" />
+    <Content Include="Content\_img\projdigital_03.gif" />
+    <Content Include="Content\_img\projdigital_04.gif" />
+    <Content Include="Content\_img\save.png" />
+    <Content Include="Content\_img\senha_boa.png" />
+    <Content Include="Content\_img\senha_forte.png" />
+    <Content Include="Content\_img\senha_fraca.png" />
+    <Content Include="Content\_img\senha_muitofraca.png" />
+    <Content Include="Content\_img\separador_wizbar.png" />
+    <Content Include="Content\_img\setas_cmd_menu.png" />
+    <Content Include="Content\_img\setas_ordenar.png" />
+    <Content Include="Content\_img\seta_ativo_sec_menu.png" />
+    <Content Include="Content\_img\seta_azul.png" />
+    <Content Include="Content\_img\seta_filtro.png" />
+    <Content Include="Content\_img\seta_mais_campos.png" />
+    <Content Include="Content\_img\seta_submenu.png" />
+    <Content Include="Content\_img\seta_tabela_ordem.png" />
+    <Content Include="Content\_img\seta_user_hover.png" />
+    <Content Include="Content\_img\sprite_bt_lista.png" />
+    <Content Include="Content\_img\sprite_menu_principal.png" />
+    <Content Include="Content\_img\sprite_menu_principal_hover.png" />
+    <Content Include="Content\_img\sprite_operadores.png" />
+    <Content Include="Content\_img\topo_ativacao.png" />
+    <Content Include="Content\_img\topo_login.png" />
+    <Content Include="Content\_img\unchecked.png" />
+    <Content Include="Content\_img\visualizar.png" />
+    <Content Include="Content\_img\xFechar.png" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\_pdfAspose\PTV.doc" />
+    <Content Include="Content\_pdfAspose\Pendencias_SICAR.doc" />
+    <None Include="leiame.txt" />
+    <Content Include="Scripts\Agrotoxicos\listar.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\unidadeConsolidacao.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducaoItem.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducao.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\caracterizacao.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\dominio.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\dominialidade.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\projetoGeografico.js" />
+    <Content Include="Scripts\Areas\Especificidades\Certidao\certidaoDispensaLicenciamentoAmbiental.js" />
+    <Content Include="Scripts\Areas\GeoProcessamento\coordenada.js" />
+    <Content Include="Scripts\Areas\GeoProcessamento\navegador.js" />
+    <Content Include="Scripts\arquivo.js" />
+    <Content Include="Scripts\Atividade\atividadeSolicitadaListar.js" />
+    <Content Include="Scripts\Atividade\atividadesSolicitadas.js" />
+    <Content Include="Scripts\Atividade\listar.js" />
+    <Content Include="Scripts\CFOC\loteListar.js" />
+    <Content Include="Scripts\CFOC\lote.js" />
+    <Content Include="Scripts\CFOC\emitir.js" />
+    <Content Include="Scripts\CFOC\listar.js" />
+    <Content Include="Scripts\CFOCFOC\consultarCFOCFOC.js" />
+    <Content Include="Scripts\CARSolicitacao\solicitacao.js" />
+    <Content Include="Scripts\CARSolicitacao\listar.js" />
+    <Content Include="Scripts\ConfiguracaoVegetal\Cultura\listar.js" />
+    <Content Include="Scripts\containerAcoes.js" />
+    <Content Include="Scripts\Credenciado\listar.js" />
+    <Content Include="Scripts\Credenciado\ativar.js" />
+    <Content Include="Scripts\datagrid.js" />
+    <Content Include="Scripts\Documento\documento.js" />
+    <Content Include="Scripts\CFO\emitir.js" />
+    <Content Include="Scripts\CFO\listar.js" />
+    <Content Include="Scripts\Empreendimento\associar.js" />
+    <Content Include="Scripts\Empreendimento\listar.js" />
+    <Content Include="Scripts\Empreendimento\empreendimento.js" />
+    <Content Include="Scripts\Empreendimento\inline.js" />
+    <Content Include="Scripts\HabilitarEmissaoCFOCFOC\listar.js" />
+    <Content Include="Scripts\jquery.associar-multiplo.js" />
+    <Content Include="Scripts\jquery.cb.js" />
+    <Content Include="Scripts\jquery.ddl.js" />
+    <Content Include="Scripts\jquery.listar-ajax.js" />
+    <Content Include="Scripts\jquery.listar-grid.js" />
+    <Content Include="Scripts\Lib\date-pt-BR.js" />
+    <Content Include="Scripts\Lib\FileUpload\jquery.fileupload-ui.js" />
+    <Content Include="Scripts\Lib\FileUpload\jquery.fileupload.js" />
+    <Content Include="Scripts\Lib\iehtml5.js" />
+    <Content Include="Scripts\Lib\jquery-globalize\cultures\globalize.culture.pt-BR.js" />
+    <Content Include="Scripts\Lib\jquery-globalize\globalize.js" />
+    <Content Include="Scripts\Lib\jquery-ui-1.10.3.custom.min.js" />
+    <Content Include="Scripts\Lib\jquery.flash.js" />
+    <Content Include="Scripts\Lib\jquery.json-2.2.min.js" />
+    <Content Include="Content\_pdfAspose\Requerimento_Digital.doc" />
+    <Content Include="Areas\Caracterizacoes\Views\Web.config" />
+    <Content Include="Content\_pdfAspose\Relatorio_Tecnico_Parcial.doc" />
+    <Content Include="Content\_zipModeloGeo\ModeloShape.zip" />
+    <Content Include="Content\_pdfAspose\SolicitacaoInscricaoCAR.docx" />
+    <Content Include="Content\_pdfAspose\SolicitacaoInscricaoCAR_Credenciado.docx" />
+    <Content Include="Content\_pdfAspose\Ficha_Inscricao_UP.docx" />
+    <Content Include="Content\_pdfAspose\Ficha_Inscrição_UC.docx" />
+    <Content Include="Content\_pdfAspose\CFO.doc" />
+    <Content Include="Content\_pdfAspose\CFOC.doc" />
+    <Content Include="Areas\Especificidades\Views\Web.config" />
+    <None Include="Properties\PublishProfiles\Versao-DDSIV.pubxml" />
+    <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />
+    <None Include="Scripts\Lib\JQuery\jquery-1.10.1-vsdoc.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.min.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate.js" />
+    <Content Include="Scripts\Lib\JQuery\jquery.validate.min.js" />
+    <Content Include="Scripts\Lib\json2.js" />
+    <Content Include="Scripts\Lib\mask\jquery.maskedinput.js" />
+    <Content Include="Scripts\Lib\mask\jquery.maskMoney.js" />
+    <Content Include="Scripts\Lib\mask\TextInputMask.js" />
+    <Content Include="Scripts\Lib\tooltip.js" />
+    <Content Include="Scripts\masterpage.js" />
+    <Content Include="Scripts\mensagem.js" />
+    <Content Include="Scripts\passwordmeter.js" />
+    <Content Include="Scripts\Pessoa\associar.js" />
+    <Content Include="Scripts\Pessoa\inline.js" />
+    <Content Include="Scripts\Pessoa\listar.js" />
+    <Content Include="Scripts\Pessoa\pessoa.js" />
+    <Content Include="Scripts\Pessoa\profissao.js" />
+    <Content Include="Scripts\Pessoa\representante.js" />
+    <Content Include="Scripts\Pessoa\tela.js" />
+    <Content Include="Scripts\Processo\processo.js" />
+    <Content Include="Scripts\Profissao\listar.js" />
+    <Content Include="Scripts\ProjetoDigital\imprimirDocumentos.js" />
+    <Content Include="Scripts\ProjetoDigital\documentosGerados.js" />
+    <Content Include="Scripts\ProjetoDigital\enviar.js" />
+    <Content Include="Scripts\ProjetoDigital\projetoDigital.js" />
+    <Content Include="Scripts\ProjetoDigital\listar.js" />
+    <Content Include="Scripts\Protocolo\listar.js" />
+    <Content Include="Scripts\Protocolo\listarNotificacaoPendencia.js" />
+    <Content Include="Scripts\PTVOutro\cancelar.js" />
+    <Content Include="Scripts\PTVOutro\destinatario.js" />
+    <Content Include="Scripts\PTVOutro\emitirPTVOutro.js" />
+    <Content Include="Scripts\PTVOutro\listar.js" />
+    <Content Include="Scripts\PTV\comunicadorptv.js" />
+    <Content Include="Scripts\PTV\ativar.js" />
+    <Content Include="Scripts\PTV\destinatario.js" />
+    <Content Include="Scripts\PTV\destinatarioListar.js" />
+    <Content Include="Scripts\PTV\emitirPTV.js" />
+    <Content Include="Scripts\PTV\listar.js" />
+    <Content Include="Scripts\Requerimento\atividadeSolicitadaAssociar.js" />
+    <Content Include="Scripts\Requerimento\requerimento.js" />
+    <Content Include="Scripts\Requerimento\requerimentoListar.js" />
+    <Content Include="Scripts\Requerimento\requerimentoVisualizar.js" />
+    <Content Include="Scripts\TituloDeclaratorio\alterarSituacao.js" />
+    <Content Include="Scripts\TituloDeclaratorio\listar.js" />
+    <Content Include="Scripts\TituloDeclaratorio\tituloDeclaratorio.js" />
+    <Content Include="Scripts\Titulo\listar.js" />
+    <Content Include="Views\Agrotoxicos\Index.aspx" />
+    <Content Include="Views\Agrotoxicos\ListarFiltros.ascx" />
+    <Content Include="Views\Agrotoxicos\ListarResultados.ascx" />
+    <Content Include="Views\Atividade\AsmAtividadesSolicitadas.ascx" />
+    <Content Include="Views\Atividade\AssociarAtividadeFiltros.ascx" />
+    <Content Include="Views\Atividade\AssociarAtividadeResultados.ascx" />
+    <Content Include="Views\Atividade\AtividadeEmpListarFiltros.ascx" />
+    <Content Include="Views\Atividade\AtividadeEmpListarResultados.ascx" />
+    <Content Include="Views\Atividade\AtividadesSolicitadas.aspx" />
+    <Content Include="Views\Atividade\AtividadesSolicitadasPartial.ascx" />
+    <Content Include="Views\Autenticacao\LogOn.aspx" />
+    <Content Include="Views\Autenticacao\LogOnPartial.ascx" />
+    <Content Include="Views\CARSolicitacao\SolicitacaoPartialInterno.ascx" />
+    <Content Include="Views\CARSolicitacao\Visualizar.aspx" />
+    <Content Include="Views\CARSolicitacao\Criar.aspx" />
+    <Content Include="Views\CARSolicitacao\Index.aspx" />
+    <Content Include="Views\CARSolicitacao\ListarFiltros.ascx" />
+    <Content Include="Views\CARSolicitacao\ListarResultados.ascx" />
+    <Content Include="Views\CARSolicitacao\SolicitacaoPartial.ascx" />
+    <Content Include="Views\CARSolicitacao\VisualizarMotivo.ascx" />
+    <Content Include="Views\CFOC\AtivarPartial.ascx" />
+    <Content Include="Views\CFOC\CFOCPartial.ascx" />
+    <Content Include="Views\CFOC\Criar.aspx" />
+    <Content Include="Views\CFOC\Editar.aspx" />
+    <Content Include="Views\CFOC\LoteEditar.aspx" />
+    <Content Include="Views\CFOC\LoteListarFiltros.ascx" />
+    <Content Include="Views\CFOC\LoteListarResultados.ascx" />
+    <Content Include="Views\CFOC\LoteIndex.aspx" />
+    <Content Include="Views\CFOC\Index.aspx" />
+    <Content Include="Views\CFOC\ListarFiltros.ascx" />
+    <Content Include="Views\CFOC\ListarResultados.ascx" />
+    <Content Include="Views\CFOC\LoteVisualizar.aspx" />
+    <Content Include="Views\CFOC\Visualizar.aspx" />
+    <Content Include="Views\CFO\AtivarPartial.ascx" />
+    <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\CFO\Editar.aspx" />
+    <Content Include="Views\CFO\Criar.aspx" />
+    <Content Include="Views\CFO\CFOPartial.ascx" />
+    <Content Include="Views\CFOC\LoteCriar.aspx" />
+    <Content Include="Views\CFOCFOC\MotivoInvalidacaoNumero.ascx" />
+    <Content Include="Views\CFOCFOC\ConsultarNumeroCFOCFOCLiberado.aspx" />
+    <Content Include="Views\CFOC\LotePartial.ascx" />
+    <Content Include="Views\ChecagemRoteiro\ChecagemRoteiroVisualizar.aspx" />
+    <Content Include="Views\ChecagemRoteiro\ChecagemRoteiroVisualizarPartial.ascx" />
+    <Content Include="Views\ConfiguracaoVegetal\Cultura\ListarResultados.ascx" />
+    <Content Include="Views\ConfiguracaoVegetal\Cultura\ListarFiltros.ascx" />
+    <Content Include="Views\Credenciado\ListarResultados.ascx" />
+    <Content Include="Views\Credenciado\ListarFiltros.ascx" />
+    <Content Include="Views\Credenciado\AlterarDados.aspx" />
+    <Content Include="Views\Credenciado\Ativar.aspx" />
+    <Content Include="Views\Credenciado\AtivarPartial.ascx" />
+    <Content Include="Views\Credenciado\OrgaoParceiroConveniado.ascx" />
+    <Content Include="Views\Credenciado\CredenciadoPartial.ascx" />
+    <Content Include="Views\CFO\Index.aspx" />
+    <Content Include="Views\CFO\ListarFiltros.ascx" />
+    <Content Include="Views\CFO\ListarResultados.ascx" />
+    <Content Include="Views\Empreendimento\ListarResultados.ascx" />
+    <Content Include="Views\Empreendimento\ListarFiltros.ascx" />
+    <Content Include="Views\Empreendimento\AsmResponsavel.ascx" />
+    <Content Include="Views\Empreendimento\EmpreendimentoInline.ascx" />
+    <Content Include="Views\Empreendimento\EmpreendimentoPartial.ascx" />
+    <Content Include="Views\Empreendimento\ListarResultadosLocalizar.ascx" />
+    <Content Include="Views\Empreendimento\Localizar.ascx" />
+    <Content Include="Views\Empreendimento\Salvar.ascx" />
+    <Content Include="Views\Empreendimento\VisualizarPartial.ascx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\IndexConsultarPraga.aspx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\ListarFiltrosConsultarPraga.ascx" />
+    <Content Include="Views\HabilitarEmissaoCFOCFOC\ListarResultadosConsultarPraga.ascx" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Home\IndexPartial.ascx" />
+    <Content Include="Views\Home\SistemaMensagem.aspx" />
+    <Content Include="Views\Home\Teste.aspx" />
+    <Content Include="Views\Pessoa\Fisica.ascx" />
+    <Content Include="Views\Pessoa\Juridica.ascx" />
+    <Content Include="Views\Pessoa\PessoaInline.ascx" />
+    <Content Include="Views\Pessoa\PessoaModal.ascx" />
+    <Content Include="Views\Pessoa\PessoaPartial.ascx" />
+    <Content Include="Views\Pessoa\PessoaPartialVisualizar.ascx" />
+    <Content Include="Views\Profissao\Index.aspx" />
+    <Content Include="Views\Profissao\ListarFiltros.ascx" />
+    <Content Include="Views\Profissao\ListarResultados.ascx" />
+    <Content Include="Views\ProjetoDigital\ImprimirDocumentos.aspx" />
+    <Content Include="Views\ProjetoDigital\NotificacaoCorrecao.ascx" />
+    <Content Include="Views\ProjetoDigital\DocumentosGerados.ascx" />
+    <Content Include="Views\ProjetoDigital\Enviar.aspx" />
+    <Content Include="Views\ProjetoDigital\Index.aspx" />
+    <Content Include="Views\ProjetoDigital\ListarFiltros.ascx" />
+    <Content Include="Views\ProjetoDigital\ListarResultados.ascx" />
+    <Content Include="Views\ProjetoDigital\Operar.aspx" />
+    <Content Include="Views\Protocolo\CriarRespTecnicoVisualizar.ascx" />
+    <Content Include="Views\Protocolo\DocumentoVisualizar.aspx" />
+    <Content Include="Views\Protocolo\DocumentoVisualizarPartial.ascx" />
+    <Content Include="Views\Protocolo\Index.aspx" />
+    <Content Include="Views\Protocolo\ListarFiltros.ascx" />
+    <Content Include="Views\Protocolo\ListarResultados.ascx" />
+    <Content Include="Views\Protocolo\NotificacoesPendencia.ascx" />
+    <Content Include="Views\Protocolo\ProcessoVisualizar.aspx" />
+    <Content Include="Views\Protocolo\ProcessoVisualizarModal.ascx" />
+    <Content Include="Views\Protocolo\ProcessoVisualizarPartial.ascx" />
+    <Content Include="Views\Protocolo\RequerimentoVisualizar.ascx" />
+    <Content Include="Views\PTVOutro\Cancelar.aspx" />
+    <Content Include="Views\PTVOutro\CancelarPartial.ascx" />
+    <Content Include="Views\PTVOutro\Criar.aspx" />
+    <Content Include="Views\PTVOutro\Destinatario\DestinatarioModal.ascx" />
+    <Content Include="Views\PTVOutro\Destinatario\DestinatarioPartial.ascx" />
+    <Content Include="Views\PTVOutro\Index.aspx" />
+    <Content Include="Views\PTVOutro\ListarFiltros.ascx" />
+    <Content Include="Views\PTVOutro\ListarResultados.ascx" />
+    <Content Include="Views\PTVOutro\PTVOutroPartial.ascx" />
+    <Content Include="Views\PTVOutro\Visualizar.aspx" />
+    <Content Include="Views\PTV\ComunicadorPTVPartial.ascx" />
+    <Content Include="Views\PTV\CancelarPartial.ascx" />
+    <Content Include="Views\PTV\Criar.aspx" />
+    <Content Include="Views\PTV\Destinatario\Criar.aspx" />
+    <Content Include="Views\PTV\Destinatario\DestinatarioModal.ascx" />
+    <Content Include="Views\PTV\Destinatario\DestinatarioPartial.ascx" />
+    <Content Include="Views\PTV\Destinatario\Editar.aspx" />
+    <Content Include="Views\PTV\Destinatario\Index.aspx" />
+    <Content Include="Views\PTV\Destinatario\ListarFiltros.ascx" />
+    <Content Include="Views\PTV\Destinatario\ListarResultados.ascx" />
+    <Content Include="Views\PTV\Destinatario\Visualizar.aspx" />
+    <Content Include="Views\PTV\Editar.aspx" />
+    <Content Include="Views\PTV\Index.aspx" />
+    <Content Include="Views\PTV\ListarFiltros.ascx" />
+    <Content Include="Views\PTV\PTVHistoricoPartial.ascx" />
+    <Content Include="Views\PTV\ListarResultados.ascx" />
+    <Content Include="Views\PTV\PTVPartial.ascx" />
+    <Content Include="Views\PTV\Visualizar.aspx" />
+    <Content Include="Views\Requerimento\Criar.aspx" />
+    <Content Include="Views\Requerimento\CriarRespTecnico.ascx" />
+    <Content Include="Views\Requerimento\Editar.aspx" />
+    <Content Include="Views\Requerimento\Finalizar.ascx" />
+    <Content Include="Views\Requerimento\ObjetivoPedido.ascx" />
+    <Content Include="Views\Requerimento\ObjetivoPedidoVisualizar.ascx" />
+    <Content Include="Views\Requerimento\RequerimentoPartial.ascx" />
+    <Content Include="Views\Requerimento\RequerimentoPartialVisualizar.ascx" />
+    <Content Include="Views\Requerimento\ResponsavelTecnicoVisualizar.ascx" />
+    <Content Include="Views\Requerimento\Visualizar.aspx" />
+    <Content Include="Views\Requerimento\VisualizarPartial.ascx" />
+    <Content Include="Views\Roteiro\Visualizar.aspx" />
+    <Content Include="Views\Roteiro\VisualizarPartial.ascx" />
+    <Content Include="Views\Shared\AtividadeSolicitada.ascx" />
+    <Content Include="Views\Shared\AtividadeSolicitadaVisualizar.ascx" />
+    <Content Include="Views\Shared\Confirmar.ascx" />
+    <Content Include="Views\Shared\Mensagem.ascx" />
+    <Content Include="Views\Shared\Menu.ascx" />
+    <Content Include="Views\Shared\ModalDialog.ascx" />
+    <Content Include="Views\Shared\Paginacao.ascx" />
+    <Content Include="Views\Shared\SubMenu.ascx" />
+    <Content Include="Views\Shared\TituloFinalidadePartial.ascx" />
+    <Content Include="Views\Shared\UsuarioInfo.ascx" />
+    <Content Include="Views\TituloDeclaratorio\AlterarSituacao.aspx" />
+    <Content Include="Views\TituloDeclaratorio\AlterarSituacaoPartial.ascx" />
+    <Content Include="Views\TituloDeclaratorio\Criar.aspx" />
+    <Content Include="Views\TituloDeclaratorio\Editar.aspx" />
+    <Content Include="Views\TituloDeclaratorio\Index.aspx" />
+    <Content Include="Views\TituloDeclaratorio\TituloCamposModelo.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloDeclaratorioPartial.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloDeclaratorioRequerimento.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloListarFiltros.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloListarResultados.ascx" />
+    <Content Include="Views\TituloDeclaratorio\Visualizar.aspx" />
+    <Content Include="Views\TituloDeclaratorio\VisualizarPartial.ascx" />
+    <Content Include="Views\Titulo\Index.aspx" />
+    <Content Include="Views\Titulo\TituloListarFiltros.ascx" />
+    <Content Include="Views\Titulo\TituloListarResultados.ascx" />
+    <Content Include="Views\Titulo\TituloPartial.ascx" />
+    <Content Include="Views\Tramitacao\HistoricoPartial.ascx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\Especificidades\Views\Shared\" />
+    <Folder Include="Areas\GeoProcessamento\Views\Shared\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.sitemap">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Credenciado.Master" />
+    <Content Include="Views\Shared\Login.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\GeoProcessamento\Views\Web.config" />
+    <Content Include="Content\_pdfAspose\Requerimento.doc" />
+    <Content Include="Content\_pdfAspose\Roteiro.doc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado.Model.Extensoes\Credenciado.Model.Extensoes.csproj">
+      <Project>{9c7af4af-6757-41fc-953b-5752d5f57b4c}</Project>
+      <Name>Credenciado.Model.Extensoes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado.Model.RelatorioIndividual\Credenciado.Model.RelatorioIndividual.csproj">
+      <Project>{5E0F5C2F-0105-4709-9553-48101BB78A4B}</Project>
+      <Name>Credenciado.Model.RelatorioIndividual</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado.Model\Credenciado.Model.csproj">
+      <Project>{60F1014B-FBCC-42C2-95F1-38B6C123C425}</Project>
+      <Name>Credenciado.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\versao.pubxml" />
+    <Content Include="Scripts\Lib\JQuery\jquery-1.10.1.min.map" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

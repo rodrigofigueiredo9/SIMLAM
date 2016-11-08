@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:buttonext="com.tm.spark.buttonext.*" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.IdentifyControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.FeicoesSnapSelecionadas;
+			
+			private var _ativouPeloBotao:Boolean;
+			
+			public function ligarDesligar():void 
+			{
+				if(FeicoesSnapSelecionadas.getInstance().ligado)
+					desligar();
+				else
+				{
+					FeicoesSnapSelecionadas.getInstance().limpar(false);
+					ligar(true);
+				}
+			}			
+			
+			public function ligar(ativouPeloBotao:Boolean=false):void
+			{
+				btnSnap.styleName = "snap_geo_ativado";
+				FeicoesSnapSelecionadas.getInstance().ligar();
+				FeicoesSnapSelecionadas.getInstance().ligado = true;
+				DesenhadorEsri.getInstance().addEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, desligar);
+				if(ativouPeloBotao)
+				{
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO,null, this,true));
+					_ativouPeloBotao = true;
+				}
+				else
+					_ativouPeloBotao = false;
+			}
+			
+			public function desligar(ev:IdentifyControllerEvent=null):void
+			{
+				DesenhadorEsri.getInstance().map.panEnabled = false;
+				DesenhadorEsri.getInstance().removeEventListener(IdentifyControllerEvent.IDENTIFICAR_RESULT, desligar);
+				FeicoesSnapSelecionadas.getInstance().desligar();
+				btnSnap.styleName = "snap_geo";
+				if(_ativouPeloBotao)
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO,null, this,false));
+			}
+		]]>
+	</fx:Script>
+	<buttonext:ButtonExt id="btnSnap" click="ligarDesligar()" styleName="snap_geo" toolTip="Snap"/>
+</s:Group>

@@ -1,0 +1,146 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Gerencial.ViewModels" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<head id="Head1" runat="server">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title><asp:ContentPlaceHolder ID="TitleContent" runat="server" />Etramite 2010</title>
+
+		<!-- ESTILOS CSS ============================================================= -->
+		<link href="<%= Url.Content("~/Content/_css/screen.css") %>" rel="stylesheet" type="text/css" media="screen" />
+		<link href="<%= Url.Content("~/Content/_css/print.css") %>" rel="stylesheet" type="text/css" media="print" />
+		<link href="<%= Url.Content("~/Content/_css/etramite.css") %>" rel="stylesheet" type="text/css" media="all" />
+		<link href="<%= Url.Content("~/Content/_css/jquery-ui-custom.css") %>" rel="stylesheet" type="text/css" media="all" />
+		<!--[if lte IE 8]>
+			<link href="<%= Url.Content("~/Content/_css/ie.css") %>" rel="stylesheet" type="text/css" media="all"> 
+		<![endif]-->
+		<!--[if IE 7]>
+			<link href="<%= Url.Content("~/Content/_css/ie7.css") %>" rel="stylesheet" type="text/css" media="all">
+
+		<![endif]-->
+		<!-- ========================================================================= -->
+
+		<!-- JAVASCRIPT ============================================================= -->	
+		<!-- Scrip para forçar as versões do IE, do 8 para baixo, a entenderem as tags do HTML5 --> 
+		<script src="<%= Url.Content("~/Scripts/Lib/iehtml5.js") %>" type="text/javascript"></script> 
+
+		<!-- Scrip para travar o acesso com o IE6 ou inferior -->
+		<!--[if lte IE 6]>
+			<script type="text/javascript"> 
+				window.location = 'ie6_alerta.html'
+			</script> 
+		<![endif]-->
+
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/JQuery/jquery-1.4.3.min.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery.json-2.2.min.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskedinput-1.2.2.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskMoney-1.4.1.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-ui-custom.min.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/json2.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/tooltip.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/date-pt-BR.js") %>"></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery.flash.js") %>"></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/tiny_mce/jquery.tinymce.js") %>"></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/mensagem.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/masterpage.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/jquery.ddl.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/jquery.cb.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/jquery.listar-ajax.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/jquery.associar-multiplo.js") %>" ></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+
+		<!-- Timer -->
+		<% if (HttpContext.Current.User.Identity.IsAuthenticated) { %>
+		<script type="text/javascript" language="javascript">
+			MasterPage.loginTimeOutMinutes = <%= FormsAuthentication.Timeout.Minutes %>;
+			MasterPage.urlLogin = '<%= Url.Action("LogOn", "Autenticacao", new { area = ""}) %>';
+			MasterPage.urlEnderecoMunicipio = '<%= Url.Action("Municipios", "Lista", new { area = ""}) %>';
+			Mascara.urlTinymce = '<%= Url.Content("~/Scripts/Lib/tiny_mce/") %>';
+		</script>
+		<% }%>
+		<asp:ContentPlaceHolder ID="JsHeadContent" runat="server" />
+		<!-- ========================================================================= -->
+	</head>
+
+	<body>
+		<!-- CAIXA E ANIMAÇÃO DE CARREGANDO =================================================================== -->
+		<div class="carregandoMaster fundoMaster">
+			<div class="modalCinza">
+				<img src="<%= Url.Content("~/Content/_img/loader_cinza.gif") %>" width="32" height="32" class="loaderCinza" alt="carregando" />
+				<p class="loaderTxtCinza">Carregando, por favor aguarde.</p>
+			</div>
+		</div>
+		<!-- ========================================================================= -->
+	
+		<!-- Modal Dialog ======================================================= -->
+		<% Html.RenderPartial("ModalDialog"); %>
+		<!-- Modal ======================================================= -->
+
+		<div class="container">
+		<!-- TOPO ==================================================================== -->
+			<header>
+				<!-- LOGOMARCA/IDENTIFICAÇÃO DO SISTEMA  -->
+				<div class="logoTopo">
+					<img src="<%= Url.Content("~/Content/_imgLogo/logo_topo.png") %>" alt="Etramite 2010"/>
+					<!--img src="<%= Url.Content("~/Content/_imgLogo/logo_topo.png") %>" width="38" height="35" alt="Etramite 2010"/-->
+				</div>
+				<!-- =================================== -->
+		
+				<!-- ATALHOS E STATUS DO USUARIO  -->
+				<hgroup class="cmdEsquerda">
+					<a href="<%= Url.Content("~/") %>" class="btPrincipal" title="Página Principal">Principal</a>
+			
+					<div class="usuarioCaixa">
+						<p class="sessao">
+							<span class="timer"></span>
+						</p>
+
+						<span class="usuarioNome">
+							<%= Html.Encode((HttpContext.Current.User != null) ? ViewModelHelper.StringFit(HttpContext.Current.User.Identity.Name, 25) : "") %>
+						</span>
+
+						<% Html.RenderPartial("UsuarioInfo"); %>
+					</div>
+				</hgroup>
+
+				<!-- ATALHOS DE AJUDA E PESQUISA GERAL  -->
+				<hgroup class="cmdDireita">
+					<a href="<%= Url.Content("~/Autenticacao/LogOff") %>" title="Sair do sistema"><div class="fecharSessao1"></div></a>
+				</hgroup>
+				<!-- ================================== -->
+
+				<%= (HttpContext.Current.Session != null) ? HttpContext.Current.Session.SessionID:"" %>
+				<!-- ============================ -->
+		
+				<!-- ATALHOS DE AJUDA E PESQUISA GERAL -->
+				<hgroup class="cmdDireita hide">
+					<div class="pesquisaGeralCaixa">
+						<input id="pesquisa" name="pesquisa" type="text" class="campoPesquisaGeral" title="Pesquisa Geral"/>
+					</div>
+				</hgroup>
+				<!-- ================================== -->
+			</header>
+			<!-- ========================================================================= -->
+	
+			<div id="contentwrapper" class="block margem0">	
+				<div class="centralAlinha">
+					<!-- SEÇÃO CENTRAL =========================================================== -->
+
+					<%  Html.RenderAction("SubMenu", "Menu", new { area = "" });%>
+		
+					<asp:ContentPlaceHolder ID="MainContent" runat="server">
+					</asp:ContentPlaceHolder>
+		
+					<!-- ========================================================================= -->       
+				</div><!-- .centralAlinha -->
+			</div><!-- #contentwrapper -->
+
+			<!-- MENU DE NAVEGAÇÃO ======================================================= -->		
+			<%  Html.RenderAction("Menu", "Menu", new { area = "" });%>
+			<!-- ========================================================================= -->
+
+			<form id="formUpFile" method="post" action="<%= Url.Action("arquivo", "arquivo") %>" class="hide" enctype="multipart/form-data"></form>
+		</div><!-- .container -->
+	</body>
+</html>

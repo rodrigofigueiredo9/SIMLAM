@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:buttonext="com.tm.spark.buttonext.*" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Feicao;
+			import models.FeicaoArea;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.FeicoesSnapSelecionadas;
+			import models.Geometria;
+			import models.Retorno;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+						
+			[Embed( source="../assets/cursor_desenhar.png")]
+			private var cursorMouse:Class;
+			public var ligado:Boolean = false;
+			public var pausado:Boolean = false;
+			private var pontoMouse:Point;
+			private var menuItem:ContextMenuItem = null;
+			public function ligarDesligar():void
+			{
+				if(ligado)
+				{
+					if(pausado)
+						pausarDespausar();
+					else
+					{
+						Alert.yesLabel = 'Sim';
+						Alert.noLabel = 'Não';
+						Alert.show('Deseja realmente descartar as alterações deste desenho?','',Alert.NO|Alert.YES,null, desligar, null, Alert.NO);
+					}
+				}
+				else
+					ligar();		
+			}	
+			
+			public function ligar():void
+			{
+				if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria && FeicaoSelecionada.getInstance().isSelecionavel)
+				{
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+					FeicaoSelecionada.getInstance().geometria.excluir(false);
+					FeicaoSelecionada.getInstance().reiniciarGeometria();
+					FeicaoSelecionada.getInstance().geometria.isAnelExterno = false;
+				}
+			}
+			
+			private function ligarOk(isInit:Boolean=true,deixarHabilitadoSnap:Boolean=false):void
+			{
+				
+				if(isInit)
+				{
+					FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.ATUALIZAR_GEOMETRIA ,atualizarResult);
+				}
+				if(!deixarHabilitadoSnap)
+				{
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.HABILITAR_SNAP,null, this,true));
+					FeicoesSnapSelecionadas.getInstance().desenhar();
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR_OUTRAS_FERRAMENTAS, null, this,false,true,true));
+				}
+				btnInserirBuraco.styleName = "inserir_buraco_ativado";
+				DesenhadorEsri.getInstance().map.addEventListener(MouseEvent.CLICK, desenharClickMouse);
+				this.parentApplication.addEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);	
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_DOWN, acaoTecladoDown);
+				
+				cursorManager.removeAllCursors();
+				cursorManager.setCursor(cursorMouse,1,-1, -15);
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = false;
+				ligado = true;	
+				FeicoesSnapSelecionadas.getInstance().buscarPontosProximos = true;
+			
+				menuItem = new ContextMenuItem("Finalizar desenho", false, true, true);
+				menuItem.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, menuItem_menuItemSelect);
+				DesenhadorEsri.getInstance().map.contextMenu.customItems.push(menuItem);
+			}
+			private function menuItem_menuItemSelect(evt:ContextMenuEvent):void {
+				if(FeicaoSelecionada.getInstance().geometria && 
+					((FeicaoSelecionada.getInstance().geometria.aneis && FeicaoSelecionada.getInstance().geometria.aneis.length>0 && FeicaoSelecionada.getInstance().geometria.aneis[0].length>0) || 
+						(FeicaoSelecionada.getInstance().geometria.vertices && FeicaoSelecionada.getInstance().geometria.vertices.length >0)))
+				{
+					finalizar();
+				}
+			}	
+			
+			public function desligar(ev:CloseEvent=null):void
+			{
+				if(!ev|| ( ev && ev.detail == Alert.YES))
+				{
+					if(menuItem)
+					{
+						DesenhadorEsri.getInstance().map.contextMenu.customItems.pop();
+						menuItem = null;
+					}
+					desligarSemApagarFeicao();
+					FeicoesSelecionadas.getInstance().limpar(false);
+					FeicaoSelecionada.getInstance().limpar(false);
+					FeicoesSnapSelecionadas.getInstance().limpar(true);
+					FeicaoController.getInstance().removeEventListener(FeicaoControllerEvent.ATUALIZAR_GEOMETRIA ,atualizarResult);
+				}
+			}
+			
+			public function desligarSemApagarFeicao(deixarHabilitadoSnap:Boolean=false):void
+			{	
+				DesenhadorEsri.getInstance().map.removeEventListener(MouseEvent.CLICK, desenharClickMouse);
+				this.parentApplication.removeEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_DOWN, acaoTecladoDown);
+				cursorManager.removeAllCursors();
+				ligado = false;
+				pausado = false;
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = true;
+				FeicoesSnapSelecionadas.getInstance().buscarPontosProximos = false;
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.HABILITAR_SNAP,null, this,false));
+			
+				if(!deixarHabilitadoSnap)
+				{
+					cursorManager.removeAllCursors();
+					if(DesenhadorEsri.getInstance().map)
+						DesenhadorEsri.getInstance().map.panEnabled = true;
+					FeicoesSnapSelecionadas.getInstance().limpar(false);
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.HABILITAR_SNAP,null, this,false));
+				}
+				
+				btnInserirBuraco.styleName = "inserir_buraco";
+			}
+			
+			public function pausarDespausar(deixarHabilitadoSnap:Boolean=false):void
+			{
+				if(ligado)
+				{
+					if(pausado)
+					{
+						ligarOk(false,deixarHabilitadoSnap);
+						pausado = false;
+					}
+					else
+					{
+						desligarSemApagarFeicao(deixarHabilitadoSnap);
+						ligado = true;
+						pausado = true;
+						btnInserirBuraco.styleName = "inserir_buraco_ativado";
+						FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+					}
+				}
+			}
+			
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{
+				switch(event.keyCode) 
+				{
+					case Keyboard.DELETE:
+					case Keyboard.BACKSPACE:
+						FeicaoSelecionada.getInstance().geometria.removerVertice();
+						FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);	
+						if(FeicaoSelecionada.getInstance().layerFeicao.TipoGeometria == Geometria.Ponto)
+						{
+							this.parentApplication.addEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
+						}
+						break;
+					case Keyboard.CONTROL:
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO,null, this,false));
+						DesenhadorEsri.getInstance().map.addEventListener(MouseEvent.CLICK, desenharClickMouse);
+						this.parentApplication.addEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
+						cursorManager.removeAllCursors();
+						cursorManager.setCursor(cursorMouse,1,-1, -15);		
+						if(DesenhadorEsri.getInstance().map)
+							DesenhadorEsri.getInstance().map.panEnabled = false;
+						break;
+					case Keyboard.ENTER:
+						if(FeicaoSelecionada.getInstance().geometria && 
+							((FeicaoSelecionada.getInstance().geometria.aneis && FeicaoSelecionada.getInstance().geometria.aneis.length>0 && FeicaoSelecionada.getInstance().geometria.aneis[0].length>0) || 
+								(FeicaoSelecionada.getInstance().geometria.vertices && FeicaoSelecionada.getInstance().geometria.vertices.length >0)))
+						{
+							finalizar();
+						}
+						break;
+					case Keyboard.ESCAPE:
+						Alert.yesLabel = 'Sim';
+						Alert.noLabel = 'Não';
+						Alert.show('Deseja realmente descartar as alterações deste desenho?','',Alert.NO|Alert.YES,null, desligar, null, Alert.NO);
+						break;
+				}	
+			}
+			
+			protected function acaoTecladoDown(event:KeyboardEvent):void
+			{
+				if(event.ctrlKey)
+				{
+					DesenhadorEsri.getInstance().map.removeEventListener(MouseEvent.CLICK, desenharClickMouse);
+					this.parentApplication.removeEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
+					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.SNAP_ISATIVADO,null, this,true));
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+				}
+			}
+			
+			protected function desenharClickMouse(ev:MouseEvent):void
+			{	
+				var range:Number = DesenhadorEsri.getInstance().range(2);
+				var ar:Vector.<Point> = null;
+				if(!(ev.target is ButtonExt))
+				{
+					var pt:Point = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);
+					var pontoIntersectado:Point = null;
+					if(FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0)
+					{
+						var feicoesSnap:Vector.<Feicao> = FeicoesSnapSelecionadas.getInstance().feicoes;
+						//verifica vertices
+						range = DesenhadorEsri.getInstance().range(7); 
+						for(var i:int =0; i< feicoesSnap.length; i++)
+						{  
+							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pt, range, feicoesSnap[i].geometria.vertices,
+								feicoesSnap[i].geometria.aneis, false);
+							
+							if(pontoIntersectado)
+								break;
+						}
+						
+						if(!pontoIntersectado)
+						{
+							//verifica arestas
+							range = DesenhadorEsri.getInstance().range(4); 
+							for(var i:int =0; i< feicoesSnap.length; i++)
+							{  
+								pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pt,range, feicoesSnap[i].geometria.vertices,
+									feicoesSnap[i].geometria.aneis,false);
+								
+								if(pontoIntersectado)
+									break;
+							}
+						}
+					}
+					if(pontoIntersectado)
+					{
+						FeicaoSelecionada.getInstance().geometria.adicionarPonto(pontoIntersectado);
+						FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+						return;
+					}
+					
+					if(FeicaoSelecionada.getInstance().geometria.selecionarVertice(pt,range,null,null,true))
+					{
+						FeicaoSelecionada.getInstance().geometria.removerVertice();
+						FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);	
+						return;
+					}
+					var isPoligono:Boolean = FeicaoSelecionada.getInstance().geometria.tipoGeometria == Geometria.Poligono;
+					if(FeicaoSelecionada.getInstance().geometria.verificaIntersecaoPontoNoMeioArestaMudandoIndice(pt,range,null,null,false,isPoligono,true))
+					{
+						FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+						return;
+					}
+					
+					if(FeicaoSelecionada.getInstance().geometria.indicePrimeiro ==-1)
+						FeicaoSelecionada.getInstance().geometria.indicePrimeiro =0;
+					
+					FeicaoSelecionada.getInstance().geometria.adicionarPonto(pt);
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+				}
+			}
+			
+			protected function desenharMoveMouse(ev:MouseEvent):void
+			{
+				pontoMouse = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);
+				FeicoesSnapSelecionadas.getInstance().pontoMouse = pontoMouse;
+				var range:Number = DesenhadorEsri.getInstance().range(2);
+				if(FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0)
+				{
+					var pontoIntersectado:Point = null;
+					var feicoesSnap:Vector.<Feicao> = FeicoesSnapSelecionadas.getInstance().feicoes;
+					range = DesenhadorEsri.getInstance().range(25);
+					
+					//verifica vertices
+					range = DesenhadorEsri.getInstance().range(7); 
+					for(var i:int =0; i< feicoesSnap.length; i++)
+					{  
+						
+						pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pontoMouse, range, feicoesSnap[i].geometria.vertices,
+							feicoesSnap[i].geometria.aneis, false);
+						
+						if(pontoIntersectado)
+						{
+							FeicaoSelecionada.getInstance().geometria.desenharTemporario(pontoIntersectado,true,GeometriaEsriGraphic.Desenho,true);
+							return;
+						}
+					}
+					
+					if(!pontoIntersectado)
+					{
+						//verifica arestas
+						range = DesenhadorEsri.getInstance().range(4); 
+						for(var i:int =0; i< feicoesSnap.length; i++)
+						{  
+							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pontoMouse,range, feicoesSnap[i].geometria.vertices,
+								feicoesSnap[i].geometria.aneis,false);
+							
+							if(pontoIntersectado)
+							{
+								FeicaoSelecionada.getInstance().geometria.desenharTemporario(pontoIntersectado,true,GeometriaEsriGraphic.Desenho,true);
+								return;
+							}
+						}
+					}
+				}
+				
+				pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pontoMouse,range, null,null,false,true,true);
+				
+				if(pontoIntersectado)
+				{
+					FeicaoSelecionada.getInstance().geometria.desenharTemporario(pontoIntersectado,false,GeometriaEsriGraphic.Desenho,true);
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);
+				}
+				else
+				{
+					FeicaoSelecionada.getInstance().geometria.desenharTemporario(pontoMouse,true,GeometriaEsriGraphic.Desenho,true);
+				}
+			}
+			
+			protected function finalizar(ev:Event=null):void
+			{
+				FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,true);	
+				desligarSemApagarFeicao();
+				
+				var aneis:Vector.<Vector.<Point>> = new Vector.<Vector.<Point>>();
+				var feicaoArea:FeicaoArea = new FeicaoArea();
+				var feicoesAreas:Vector.<FeicaoArea> = new Vector.<FeicaoArea>;
+				feicaoArea.vertices = FeicaoSelecionada.getInstance().geometria.vertices;
+				
+				if(feicaoArea.vertices.length >0)
+				{
+					feicaoArea.geomArea = FeicaoSelecionada.getInstance().geometria.converterVerticesParaGeomArea(feicaoArea.vertices);
+					feicoesAreas.push(feicaoArea);
+					aneis.push(feicaoArea.vertices);
+				}
+				
+				for(var i:int=0; i<FeicaoSelecionada.getInstance().geometria.aneis.length; i++)
+				{
+					feicaoArea = new FeicaoArea();
+					feicaoArea.vertices = FeicaoSelecionada.getInstance().geometria.aneis[i];
+					feicaoArea.geomArea = FeicaoSelecionada.getInstance().geometria.converterVerticesParaGeomArea(feicaoArea.vertices);
+					if(feicaoArea.vertices.length == 0)
+						continue;
+					
+					if(feicoesAreas.length > 0 && feicoesAreas[0].area < feicaoArea.area)
+					{
+						aneis.splice(0,0,feicaoArea.vertices);
+						feicoesAreas.splice(0,0,feicaoArea);
+					}
+					else
+					{
+						aneis.push(feicaoArea.vertices);
+						feicoesAreas.push(feicaoArea);
+					}
+				}
+				FeicaoSelecionada.getInstance().geometria.aneis = aneis;
+				FeicaoSelecionada.getInstance().geometria.vertices = new Vector.<Point>();
+				if(!(FeicaoSelecionada.getInstance().geometria.aneis.length > 0 && FeicaoSelecionada.getInstance().geometria.aneis[0].length >0))
+				{
+					Alert.show('É necessário possuir um anel externo na geometria!');
+					ligarOk();
+					return;
+				}
+				
+				FeicaoController.getInstance().AtualizarGeometria(new FeicaoObjeto(FeicaoSelecionada.getInstance().layerFeicao, DesenhadorEsri.getInstance().idProjeto, null,FeicaoSelecionada.getInstance().objectId,  aneis));
+			
+				cursorManager.setBusyCursor(); 
+			}
+			
+			protected function atualizarResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+					if(resposta.Sucesso)
+					{
+						FeicaoSelecionada.getInstance().limpar(true);
+						FeicoesSelecionadas.getInstance().limpar(true);
+						FeicoesSnapSelecionadas.getInstance().limpar(true);
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						desligar();
+					}
+					else 
+					{
+						Alert.show(resposta.Mensagem);
+						ligarOk();
+					}
+					cursorManager.removeBusyCursor();
+				}
+			}
+		]]>
+	</fx:Script>
+	<buttonext:ButtonExt id="btnInserirBuraco" click="ligarDesligar()" styleName="inserir_buraco" toolTip="Inserir Buraco" />
+</s:Group>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="795" minHeight="600"
+			   applicationComplete="initConfig()" xmlns:esri="http://www.esri.com/2008/ags" xmlns:com="com.*"  xmlns:componentes="tm.componentes.*" xmlns:ns="views._svn.*" xmlns:views="views.*" xmlns:Ferramentas="views.Ferramentas.*" xmlns:legenda="tm.componentes.legenda.*">
+	
+	 <fx:Style source="defaultStyle.css" /> 
+	<fx:Declarations>
+		<!--s:Transition fromState="*" toState="{categoriasLayers.ligado}">  
+			<s:Resize target="{categoriasLayers}" widthTo="180" duration="1000" /> 
+		</s:Transition>
+		<s:Transition fromState="{categoriasLayers.desligado}" toState="*"> 
+			<s:Resize target="{categoriasLayers}" widthTo="0" duration="1000" />
+		</s:Transition-->    
+	</fx:Declarations>   
+	<fx:Script>    
+		<![CDATA[ 
+			import com.gmaps.geom.Mbr;
+			
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.LegendaControllerEvent;
+			import controllers.NavegadorController;
+			import controllers.NavegadorControllerEvent;
+			import controllers.ProjetoController;
+			import controllers.ProjetoControllerEvent;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.FeicaoSelecionada;
+			import models.LayerFeicaoSelecionada;
+			import models.Navegador.Navegador;
+			import models.Projeto;
+			
+			import mx.containers.HBox;
+			import mx.containers.VBox;
+			import mx.controls.Alert;
+			import mx.controls.HSlider;
+			import mx.controls.ProgressBar;
+			import mx.events.ResizeEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.rpc.soap.LoadEvent;
+			
+			import org.osmf.events.LoaderEvent;
+			
+			import services.ConfiguracaoService;
+			import services.ProjetoService;
+			
+			import spark.components.Button;
+			import spark.components.TitleWindow; 						
+						
+			[Embed( source="../assets/seta_esq_maior.png")]
+			private var imgBtnEsquerdo:Class;
+			
+			[Embed( source="../assets/seta_dir_maior.png")]
+			private var imgBtnDireito:Class;  
+			
+			[Bindable] public var webserviceUrl:String; 
+			public var loadIsCompleto:Boolean = false;   
+			private function initConfig():void  
+			{  
+				ExternalInterface.marshallExceptions = true;				
+				var configuracoesJson:String = null;
+				try {
+					configuracoesJson = ExternalInterface.call("ObterConfiguracoes");
+				} catch (exc:Error){					
+				}				
+				ExternalInterface.marshallExceptions = false;
+				
+				if (configuracoesJson)
+				{	
+					var cnfObj:Object = JSON.parse(configuracoesJson);
+					webserviceUrl= cnfObj.webserviceURL;	
+					loadInit();
+				}
+				else
+				{
+					var configService:HTTPService = new HTTPService();				
+					configService.url = "config.xml?noCache="+Math.random();;
+					configService.resultFormat = "e4x";
+					configService.addEventListener(ResultEvent.RESULT, onConfigResult);
+					configService.addEventListener(FaultEvent.FAULT, onConfigFault);
+					configService.send();
+				}
+			}
+			 
+			protected function onConfigResult(event:ResultEvent):void
+			{
+				var configXML:XML = event.result as XML; 
+				webserviceUrl= configXML.webserviceURL;				
+				loadInit(); 
+			}
+			 
+			protected function onConfigFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString);
+			}
+			private function loadInit():void
+			{
+				ConfiguracaoService.getInstance().serviceUrl = webserviceUrl;
+				ExternalInterface.addCallback("loadDesenhador",init);		
+				ExternalInterface.addCallback("ajustarTamanho", ajustarTamanho);		
+				ExternalInterface.addCallback("setSituacaoProcessamento",ProjetoController.getInstance().buscarSituacaoProcessamento);
+				ExternalInterface.addCallback("obterAreaAbrangencia",ProjetoController.getInstance().buscarAreaAbrangencia);
+				ExternalInterface.call("initDesenhador");
+				DesenhadorEsri.getInstance().addEventListener(LegendaControllerEvent.LAYERS_SERVICOS_ATUALIZAR, atualizarLegenda);
+				
+				//#DEBUG 
+			//	init(422,1,1); 
+			//	ajustarTamanho(1000,500);
+			}  
+			private function init(projeto:Number, tipo:Number, modo:Number):void
+			{  
+				DesenhadorEsri.getInstance().map = map;  
+				DesenhadorEsri.getInstance().idProjeto = projeto;
+				FeicaoSelecionada.getInstance().idProjeto = projeto;
+				DesenhadorEsri.getInstance().addEventListener(LoadEvent.LOAD, loadComplete);
+				buscarDadosProjeto(tipo);	
+				DesenhadorEsri.getInstance().modo = modo;
+			//	var mbr:Mbr = new Mbr(383588.873478674, 7882773.2979703, 383606.46830553, 7884199.40498918);
+			//	var mbr:Mbr = new Mbr(382076.77670448, 7882710.65774085, 384735.844522616, 7884279.64004548);
+				//DesenhadorEsri.getInstance().zoomMBR(mbr);
+			//	buscarDadosProjetoComplete(null);
+			}
+			private function buscarDadosProjeto(tipo:Number):void
+			{
+				ProjetoController.getInstance().addEventListener(ProjetoControllerEvent.BUSCAR_DADOS_PROJETO,buscarDadosProjetoComplete);
+				ProjetoController.getInstance().buscarDadosProjeto(DesenhadorEsri.getInstance().idProjeto, tipo);
+			} 
+				  
+			private function buscarDadosProjetoComplete(ev:ProjetoControllerEvent):void
+			{
+				if(ev && ev.projeto)
+				{
+					DesenhadorEsri.getInstance().idNavegador = ev.projeto.TipoNavegador;
+				}
+				else 
+				{
+					DesenhadorEsri.getInstance().idNavegador = 2;
+				}
+				
+				barraMapa.init(); 
+			}
+			public function loadComplete(event:LoadEvent):void
+			{ 
+				loadIsCompleto = true; 
+				categoriasLayers.init(); 
+				categoriasQuadroAreas.init(); 
+				arquivosProcessados.init();
+				barraGeometria.init(); 
+				ExternalInterface.call("obterAreaAbrangencia");
+				
+				cursorManager.removeAllCursors(); 
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = true;
+			
+				barraGeometria.addEventListener(FerramentaGeometriaControllerEvent.DESLIGAR_OUTRAS_FERRAMENTAS, barraMapa.desligarTodasFerramentas);
+				barraMapa.addEventListener(FerramentaGeometriaControllerEvent.PAUSAR_FERRAMENTA, barraGeometria.pausarFerramenta);
+				barraGeometria.addEventListener(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN, barraMapa.ligarDesligarPan);
+				setVisibilidadeCategorias();
+			}
+			
+			public function setVisibilidadeCategorias():void 
+			{
+				if(categoriasLayers.currentState == "ligado")
+				{ 
+				  categoriasLayers.currentState = 'desligado';
+				  categoriasQuadroAreas.currentState = 'desligado';
+				  arquivosProcessados.currentState = 'desligado';
+				  
+				  btnVisibilidadeCategoria.source = imgBtnDireito;
+				  hgFeicaoSelecionada.width=280;
+				  vgCategorias.width = 0;
+				  hgFeicaoSelecionada.visible = true;
+				  lbLayerSelecionada.text = (LayerFeicaoSelecionada.getInstance().layerFeicao? LayerFeicaoSelecionada.getInstance().layerFeicao.Nome : "");
+				  
+				}
+				else 
+				{
+					categoriasLayers.currentState = 'ligado';
+					categoriasQuadroAreas.currentState = 'ligado';
+					arquivosProcessados.currentState = 'ligado';
+					
+					btnVisibilidadeCategoria.source = imgBtnEsquerdo;
+					vgCategorias.width = 280;
+					hgFeicaoSelecionada.width = 0;
+					hgFeicaoSelecionada.visible = false;
+				}  
+				//enviarJson(); 
+			}  
+			
+			private function ajustarTamanho(w:Number, h:Number):void
+			{
+				if(w<1065)
+					w=1065;
+				if(h<490)
+					h=490;
+				this.width = w;
+				this.height = h;
+				dispatchEvent(new ResizeEvent(ResizeEvent.RESIZE,false,false,width,height));
+			}
+			
+			public static function AtualizarSessao(): void 
+			{ 
+				ExternalInterface.call("atualizarSessao");
+			}	
+		 
+			public function enviarJson():void 
+			{
+				ProjetoController.getInstance().buscarSituacaoProcessamento("{\"SituacaoTexto\":\"Processado\",\"SituacaoId\":4,\"ArquivosProcessados\":[{\"ArquivoProcessamento\":{\"ProjetoId\":0,\"Mecanismo\":0,\"IdRelacionamento\":0,\"Tipo\":4,\"isValido\":true,\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Id\":278,\"Raiz\":0,\"Nome\":\"Relatório de importação\",\"Extensao\":null,\"Caminho\":null,\"Diretorio\":null,\"TemporarioNome\":null,\"TemporarioPathNome\":null,\"ContentType\":null,\"ContentLength\":0,\"Tid\":null,\"Buffer\":null,\"Apagar\":0,\"Conteudo\":null},\"Id\":278,\"IdRelacionamento\":0,\"ProjetoId\":0,\"Tipo\":4,\"Texto\":\"Croqui da propriedade (PDF)\",\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Caminho\":null,\"IsPDF\":false,\"Mecanismo\":0,\"MostarGerar\":false,\"MostarBaixar\":false,\"MostarRegerar\":false,\"MostrarReenviar\":false,\"MostrarReprocessar\":false,\"MostrarCancelar\":false}]}");
+				//ProjetoController.getInstance().buscarAreaAbrangencia("{\"MenorX\":382076.77670448,\"MenorY\":7882710.65774085,\"MaiorX\":384735.844522616,\"MaiorY\":7884279.64004548}");
+			}
+			protected function atualizarLegenda(ev:LegendaControllerEvent):void
+			{ 
+				if(ev && loadIsCompleto)  
+				{  
+					legenda.layerList = ev.idsLayersServicos;
+					legenda.load();
+				} 
+				else
+				{ 
+					setTimeout(atualizarLegenda, 2500, ev);
+				}
+			} 
+		]]>  
+	</fx:Script>
+	
+	<s:BorderContainer  width="100%" height="100%" id="principal" minHeight="0" minWidth="0" borderVisible="false" borderWeight="0">	
+		<esri:Map id="map" logoVisible="false" zoomSliderVisible="false" keyboardNavigationEnabled="true"   >				
+		</esri:Map>
+		
+		<Ferramentas:MapaNavegacao id="mapNavegacao"  top="40" right="2"/>
+		<esri:Navigation id="navToolbar" top="125"   map="{map}" left="{this.width-50}" />
+		<s:HGroup gap="0"  height="100%" width="100%">
+			<s:BorderContainer id="vgCategorias" styleName="barraFerramenta" verticalCenter="0" horizontalCenter="0" width="280" height="100%" >
+			<mx:VDividedBox id="dBox" paddingLeft="5"  width="100%" height="100%">
+				<views:ListarCategoriasLayerFeicaoView id="categoriasLayers" height="35%" minHeight="74.5" />
+				<views:ListarCategoriasQuadroDeAreasView id="categoriasQuadroAreas"  height="35%" minHeight="74.5" />
+				<views:ListarArquivosProcessadosView id="arquivosProcessados" height="30%" minHeight="74.5"/>
+			</mx:VDividedBox>
+			</s:BorderContainer> 
+			<s:VGroup left="80" gap="0" height="100%" width="100%" > 
+				<s:HGroup gap="0" width="100%"  height="35">
+					<s:BorderContainer styleName="barraFerramenta" verticalCenter="0" horizontalCenter="0" height="35" width="35"  click="setVisibilidadeCategorias()"   >
+						<s:VGroup verticalAlign= "middle" horizontalAlign="center"  height="35" width="35" >
+							<s:Image id="btnVisibilidadeCategoria" source="@Embed(source='../assets/seta_dir_maior.png')"  />
+						</s:VGroup>
+					  </s:BorderContainer>
+						<s:BorderContainer id="hgFeicaoSelecionada" width="245" visible="false" height="34.5" styleName="titulo_listar">
+							<s:HGroup>
+								<s:Label text="Feição selecionada:" height="34" paddingLeft="5" verticalAlign="middle" minHeight="0" minWidth="0"  />
+								<s:Label id="lbLayerSelecionada" text="" fontSize="13" fontWeight="bold"  height="34" verticalAlign="middle" minHeight="0" minWidth="0"   />
+							</s:HGroup>
+						</s:BorderContainer>
+					<views:BarraFerramentaMapa id="barraMapa" height="35" width="100%" />
+				</s:HGroup>	 
+				<views:BarraFerramentaGeometria id="barraGeometria"  height="100%" />
+			</s:VGroup>
+		</s:HGroup>
+	</s:BorderContainer>
+	<legenda:Legenda id="legenda" right="0" top="330" bottomDistance="190"  colunas="2" map="{map}" />
+</s:Application>

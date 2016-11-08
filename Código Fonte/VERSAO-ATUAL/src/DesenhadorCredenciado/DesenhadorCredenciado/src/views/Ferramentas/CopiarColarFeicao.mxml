@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" currentState="desligado"
+		 creationComplete="desligar()" height="30" xmlns:esri="http://www.esri.com/2008/ags" xmlns:buttonext="com.tm.spark.buttonext.*" >
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.LayerFeicaoController;
+			
+			import models.Esri.DesenhadorEsri; 
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Feicao;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.LayerFeicao;
+			import models.Retorno;
+			
+			import mx.collections.ArrayList;
+			import mx.collections.IList;
+			import mx.controls.Alert;
+			public var tipoGeometria:int;
+			public var listaLayers:Vector.<LayerFeicao>;
+			 
+			public function ligar():void
+			{
+				
+				tipoGeometria = 0;
+				if(verificaSeTodasGeometriasSelecionadasTemMesmoTipo()&& tipoGeometria >0)
+				{
+					if((FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria  )|| (FeicoesSelecionadas.getInstance().feicoes&&FeicoesSelecionadas.getInstance().feicoes.length))
+					{
+						FeicaoSelecionada.getInstance().reiniciarGeometria();
+						FeicoesSelecionadas.getInstance().reiniciarGeometria();
+						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));
+					}
+				}
+			}
+			
+			private function ligarOk():void
+			{
+				currentState = "ligado";	
+				listaLayers = LayerFeicaoController.getInstance().buscarLayersFeicoesMesmoTipoGeometria(tipoGeometria,true);	
+				
+				var ar:IList = new ArrayList();
+				if(listaLayers)
+				{
+					for(var f:int=0; f<listaLayers.length; f++)
+					{
+						ar.addItem((listaLayers[f] as LayerFeicao));
+					}
+					ddlFeicoes.dataProvider = ar;
+					if(ar.length>0)
+						ddlFeicoes.selectedIndex = 0;
+				}
+				
+				if(FeicaoSelecionada.getInstance().layerFeicao && FeicaoSelecionada.getInstance().geometria)
+					FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Selecionado,false);
+				else
+					FeicoesSelecionadas.getInstance().desenhar(GeometriaEsriGraphic.Selecionado);
+				
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.CADASTRARTODOS ,cadastrarResult);
+				FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.CADASTRAR ,cadastrarResult);
+				
+			}	
+			
+			public function desligar():void
+			{
+				desligarSemApagarFeicao();
+				listaLayers = null;
+				FeicaoController.getInstance().removeEventListener(FeicaoControllerEvent.CADASTRARTODOS ,cadastrarResult);
+				FeicaoController.getInstance().removeEventListener(FeicaoControllerEvent.CADASTRAR ,cadastrarResult);
+			}
+			
+			public function desligarSemApagarFeicao():void
+			{ 	
+				currentState = "desligado";
+			
+				if(DesenhadorEsri.getInstance().map)
+					DesenhadorEsri.getInstance().map.panEnabled = true;
+				
+				this.parentApplication.removeEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				
+			}		
+			
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{	
+				switch(event.keyCode) 
+				{
+					case Keyboard.ESCAPE:
+						desligar();
+						break;
+				}	
+			}
+			
+			public function verificaSeTodasGeometriasSelecionadasTemMesmoTipo():Boolean
+			{
+				tipoGeometria =0;
+				if(FeicaoSelecionada.getInstance().layerFeicao &&FeicaoSelecionada.getInstance().geometria)
+				{
+					tipoGeometria = FeicaoSelecionada.getInstance().geometria.tipoGeometria;
+				} 
+				else if(FeicoesSelecionadas.getInstance().feicoes && FeicoesSelecionadas.getInstance().feicoes.length>0)
+				{
+					for each (var feicao:Feicao in FeicoesSelecionadas.getInstance().feicoes) {
+						if(tipoGeometria==0)
+						  tipoGeometria = feicao.tipoGeometria;
+						else if(feicao.tipoGeometria != tipoGeometria)
+							return false;
+					}		
+				}
+				return true;
+			}
+			
+			public function colarGeometrias():void
+			{
+				if(listaLayers&& ddlFeicoes.dataProvider)
+				{
+					var layerDestino:LayerFeicao = listaLayers[ddlFeicoes.selectedIndex] as LayerFeicao;
+					
+					if(layerDestino)
+					{
+						
+						var idProjeto:int = DesenhadorEsri.getInstance().idProjeto;
+						if(FeicaoSelecionada.getInstance().geometria)
+						{
+							FeicaoSelecionada.getInstance().geometria.desenhar(null,null,GeometriaEsriGraphic.Desenho,false);
+							FeicaoController.getInstance().CadastrarFeicao(new FeicaoObjeto(layerDestino,idProjeto, FeicaoSelecionada.getInstance().geometria.vertices,0,
+								FeicaoSelecionada.getInstance().geometria.aneis));
+						}
+						else if(FeicoesSelecionadas.getInstance().feicoes && FeicoesSelecionadas.getInstance().feicoes.length >0)
+						{
+							var lista:Array = new Array();
+							
+							for(var i:int =0; i <FeicoesSelecionadas.getInstance().feicoes.length; i++)
+							{
+								var feicao:Feicao = FeicoesSelecionadas.getInstance().feicoes[i] as Feicao;
+								lista.push(new FeicaoObjeto(layerDestino, idProjeto,feicao.geometria.vertices,0, feicao.geometria.aneis));
+							}
+							FeicoesSelecionadas.getInstance().desenhar(GeometriaEsriGraphic.Desenho);
+							FeicaoController.getInstance().CadastrarGeometrias(lista);
+							cursorManager.setBusyCursor();
+						}
+						desligarSemApagarFeicao();
+					}			
+				}
+			}
+			protected function cadastrarResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					if((event as FeicaoControllerEvent).resposta)
+					{
+						var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+						if(resposta.Sucesso)
+						{						
+							FeicaoSelecionada.getInstance().limpar(true);
+							FeicoesSelecionadas.getInstance().limpar(true);
+							desligar();
+							dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						}
+						else
+							Alert.show(resposta.Mensagem);
+					}
+					else
+					{
+						var respostas:Vector.<Retorno> = (event as FeicaoControllerEvent).respostas;
+						var mensagem:String;
+						var sucesso:Boolean = true;
+						for(var i:int=0; i< respostas.length; i++)
+						{
+							var r:Retorno = respostas[i] as Retorno;
+							if(!r.Sucesso)
+							{
+								sucesso = false;
+								mensagem += r.Mensagem;
+							}
+						}
+						if(!sucesso)
+							Alert.show(mensagem);
+						else
+						{
+							desligar();
+							FeicaoSelecionada.getInstance().limpar(true);
+							FeicoesSelecionadas.getInstance().limpar(true);
+							dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						}
+					}
+				}
+				cursorManager.removeBusyCursor();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+
+	
+	<s:HGroup gap="0">
+		<buttonext:ButtonExt left="0" id="btnCopiar" includeIn="desligado"  click.ligado="desligar()" click.desligado="ligar()" styleName.desligado="copiar_colar" styleName.ligado="copiar_colar_ativado" toolTip="Copiar"/>
+		<s:BorderContainer height.desligado="0" height.ligado="35" borderAlpha="0" styleName="fundo_cinza_claro" >
+			<s:HGroup paddingLeft="2" includeIn="desligado" height.desligado="0" height.ligado="35" visible.desligado="false" visible.ligado="true" verticalAlign="middle" paddingRight="2">
+				<s:DropDownList id="ddlFeicoes"  labelField="Nome" styleName="fundo_cinza_claro"/>
+				<s:Button id="btnColar"  label="Ok" styleName="fundo_cinza_claro" click.ligado="colarGeometrias()"/>
+			</s:HGroup>
+		</s:BorderContainer>
+	</s:HGroup>
+</s:Group>

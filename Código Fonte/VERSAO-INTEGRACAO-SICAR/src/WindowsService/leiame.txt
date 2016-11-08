@@ -1,0 +1,11 @@
+﻿Pre-requisitos:
+1 - Cliente Oracle no servidor de aplicação, versão: 11G
+2 - Esquemas ETX, ETXCONSULTA com no mínimo o Papel de "Connect" 
+5 - Instalar/Verificar se o .Net Framework 4 está instalado no servidor.
+
+
+1 - Serviço de Atividade 
+	Congigurar .config - <connectionStrings>
+
+2 - Serviço de Email
+	Congigurar .config - <connectionStrings>

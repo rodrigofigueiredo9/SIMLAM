@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Credenciado.Model.Extensoes</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Credenciado.Model.Extensoes</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Words">
+      <HintPath>..\..\..\lib\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Etx">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Etx.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.EtramiteX.Configuracao">
+      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Configuracao.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Caracterizacoes\ModuloBarragemDispensaLicensa\Business\BarragemDispensaLicencaBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloBarragemDispensaLicensa\Business\BarragemDispensaLicencaInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloBarragemDispensaLicensa\Business\BarragemDispensaLicencaValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloBarragemDispensaLicensa\Data\BarragemDispensaLicencaDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloBarragemDispensaLicensa\Data\BarragemDispensaLicencaInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\CaracterizacaoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\CaracterizacaoBusFactory.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\CaracterizacaoValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\CoordenadaAtividadeValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\CaracterizacaoInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Bussiness\ICaracterizacaoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Data\CaracterizacaoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Data\CaracterizacaoInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloCaracterizacao\Data\Historico.cs" />
+    <Compile Include="Caracterizacoes\ModuloDominialidade\Business\DominialidadeBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloDominialidade\Business\DominialidadeInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloDominialidade\Business\DominialidadeValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloDominialidade\Da\DominialidadeDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloDominialidade\Da\DominialidadeInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Data\ProjetoGeograficoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Data\ProjetoGeograficoInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Business\UnidadeConsolidacaoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Business\UnidadeConsolidacaoInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Business\UnidadeConsolidacaoValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Data\UnidadeConsolidacaoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Data\UnidadeConsolidacaoInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoInternoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Data\UnidadeProducaoInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Data\UnidadeProducaoDa.cs" />
+    <Compile Include="Especificidades\ModuloCertidao\Business\CertidaoDispensaLicenciamentoAmbientalBus.cs" />
+    <Compile Include="Especificidades\ModuloCertidao\Business\CertidaoDispensaLicenciamentoAmbientalValidar.cs" />
+    <Compile Include="Especificidades\ModuloCertidao\Data\CertidaoDispensaLicenciamentoAmbientalDa.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeBusBase.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeBusDefault.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeBusFactory.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeValidarBase.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeValidarDefault.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\IEspecificiadeValidar.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Business\IEspecificidadeBus.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Data\eHistoricoArtefatoEspecificidade.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Data\EspecificidadeDa.cs" />
+    <Compile Include="Especificidades\ModuloEspecificidade\Data\Historico.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

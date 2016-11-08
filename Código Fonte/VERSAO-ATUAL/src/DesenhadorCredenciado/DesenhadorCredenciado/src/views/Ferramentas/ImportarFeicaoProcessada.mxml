@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" currentState="desligado"
+		 creationComplete="desligar()" height="30" xmlns:esri="http://www.esri.com/2008/ags" xmlns:buttonext="com.tm.spark.buttonext.*"  >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controllers.FeicaoController;
+			import controllers.FeicaoControllerEvent;
+			import controllers.FerramentaGeometriaControllerEvent;
+			import controllers.LayerFeicaoController;
+			
+			import models.Esri.DesenhadorEsri;
+			import models.Esri.GeometriaEsriGraphic;
+			import models.Feicao;
+			import models.FeicaoObjeto;
+			import models.FeicaoSelecionada;
+			import models.FeicoesSelecionadas;
+			import models.Item;
+			import models.LayerFeicao;
+			import models.Retorno;
+			
+			import mx.collections.ArrayList; 
+			import mx.collections.IList;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			public var listaTipos:IList;
+						
+			public function ligar():void
+			{
+				dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR, ligarOk, this));	
+			}
+			
+			private function ligarOk():void
+			{
+				currentState = "ligado";	
+				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
+				FeicaoController.getInstance().addEventListener(FeicaoControllerEvent.IMPORTAR_FEICOES,importarResult);
+			}	
+			
+			public function init():void
+			{
+				initTipoImportacao();
+			}
+			
+			public function initTipoImportacao():void
+			{
+				listaTipos = new ArrayList();
+				var item:Item = new Item();
+				item.Chave = "0";
+				item.Texto = "**Selecione**";
+				listaTipos.addItem(item);
+				if(DesenhadorEsri.getInstance().idNavegador !=3)
+				{
+				item = new Item();
+				item.Chave = "1";
+				item.Texto = "Projeto finalizado";
+				listaTipos.addItem(item);
+				}
+				item = new Item();
+				item.Chave = "2";
+				item.Texto = "Projeto processado";
+				listaTipos.addItem(item);
+				
+				ddlTipoImportacao.dataProvider = listaTipos;
+				ddlTipoImportacao.selectedIndex =0;
+			}
+			
+			public function desligar():void
+			{				
+				currentState = "desligado";
+				FeicaoController.getInstance().removeEventListener(FeicaoControllerEvent.IMPORTAR_FEICOES,importarResult);
+			}
+						
+			protected function acaoTecladoUp(event:KeyboardEvent):void
+			{	
+				switch(event.keyCode) 
+				{
+					case Keyboard.ESCAPE:
+						desligar();
+						break;
+				}	
+			}
+			
+			public function importar():void
+			{
+				if(ddlTipoImportacao.selectedIndex ==0)
+				{
+					Alert.show('Selecione uma fonte para importação.');
+				}
+				else
+				{
+					Alert.yesLabel = 'Sim';
+					Alert.noLabel = 'Não';
+					
+					Alert.show('O projeto geográfico atual será substituído. Deseja continuar a importação?','',Alert.NO|Alert.YES,null, importarConfirmado, null, Alert.NO);						
+				}
+			}
+			private function importarConfirmado(ev:CloseEvent):void {
+				if(ev.detail == Alert.YES)
+				{
+					var isFinalizadas:Boolean = ddlTipoImportacao.selectedIndex ==1;
+					FeicaoController.getInstance().ImportarFeicoes(DesenhadorEsri.getInstance().idNavegador, DesenhadorEsri.getInstance().idProjeto,isFinalizadas);
+					cursorManager.setBusyCursor();
+				}
+			}
+			
+			protected function importarResult(event:Event):void
+			{
+				DesenhadorEsri.getInstance().refreshMapDesenho();
+				if(event!=null && event is FeicaoControllerEvent)
+				{
+					if((event as FeicaoControllerEvent).resposta)
+					{
+						var resposta:Retorno = (event as FeicaoControllerEvent).resposta;
+						if(resposta.Sucesso)
+						{
+							desligar();
+							dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.FINALIZAR_GEOMETRIA,null, this));
+						}
+						else
+							Alert.show(resposta.Mensagem);
+					}					
+				} 
+				cursorManager.removeBusyCursor();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State id="desligado" name="desligado"/>	
+		<s:State id="ligado" name="ligado" basedOn="desligado" />
+	</s:states>
+	
+	<s:HGroup gap="0">
+		<buttonext:ButtonExt left="0" id="btnCopiar" includeIn="desligado"  click.ligado="desligar()" click.desligado="ligar()" styleName.desligado="importar" styleName.ligado="importar_ativado" toolTip="Importar"/>
+		<s:BorderContainer height.desligado="0" height.ligado="35" borderAlpha="0" styleName="fundo_cinza_claro" >
+			<s:HGroup paddingLeft="2" includeIn="desligado" height.desligado="0" height.ligado="35" visible.desligado="false" visible.ligado="true" verticalAlign="middle" paddingRight="2">
+			<s:DropDownList id="ddlTipoImportacao"  dataProvider="{listaTipos}" width="135" labelField="Texto" styleName="fundo_cinza_claro"/>
+				<s:Button id="btnOk"  label="Ok" styleName="fundo_cinza_claro" click.ligado="importar()"/>
+			</s:HGroup>
+		</s:BorderContainer>
+	</s:HGroup>
+	
+</s:Group>

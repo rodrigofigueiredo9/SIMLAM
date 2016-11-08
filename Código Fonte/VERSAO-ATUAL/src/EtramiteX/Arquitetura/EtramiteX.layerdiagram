@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="952bdbbd-a804-4635-95ff-28a6179b0027" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="7c7aae33-3568-4c3c-af3f-b166da7fec6e" name="Pessoa&#xD;&#xA;" />
+    <layer Id="4d26699e-c890-4322-a4d0-d6445fe22dc5" name="Empreendimento&#xD;&#xA;">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="841116b1-6e36-4f3c-a9df-810800523a67" direction="Forward">
+          <layerMoniker Id="7c7aae33-3568-4c3c-af3f-b166da7fec6e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="f3921cb7-9c5c-4986-b34d-dc6e95da8e84" name="Processo">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="85b6515f-58f8-4eee-9af3-c97de912acc2" direction="Forward">
+          <layerMoniker Id="4d26699e-c890-4322-a4d0-d6445fe22dc5" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="fad7ed15-f575-47d1-865a-84c17e81c1e7" direction="Forward">
+          <layerMoniker Id="7c7aae33-3568-4c3c-af3f-b166da7fec6e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="3ffaa007-c450-4b27-9c38-e2d0cc17c54d" name="Usuario / Perfil">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="285be916-8c9d-49e9-bdca-5e017730c9db" direction="Backward">
+          <layerMoniker Id="aa66a221-ca5d-42c8-b4c2-b9849e379065" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="aa66a221-ca5d-42c8-b4c2-b9849e379065" name="Funcionario" />
+    <layer Id="a7b4b056-7840-4270-9980-ba41991b4029" name="Título&#xD;&#xA;">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="4a69f68e-9685-4fee-b6a8-488bcdeb1013" direction="Forward">
+          <layerMoniker Id="4d26699e-c890-4322-a4d0-d6445fe22dc5" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="a8c8e46f-fded-4dfe-a1f1-ec3d503e2096" name="Tramitação&#xD;&#xA;">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="c928848a-1953-4e36-b0a7-c076f1567cc6" direction="Forward">
+          <layerMoniker Id="f3921cb7-9c5c-4986-b34d-dc6e95da8e84" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="bcbb9d77-24bc-4368-82d2-b530c2b40f70" direction="Forward">
+          <layerMoniker Id="a7b4b056-7840-4270-9980-ba41991b4029" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="3ce11ffa-6360-4abe-b97a-eac58dde673e" name="Caracterizações">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="56273f46-a632-4aa9-a565-e7042fab3a39" direction="Forward">
+          <layerMoniker Id="4d26699e-c890-4322-a4d0-d6445fe22dc5" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="83777671-4b03-4218-99fc-2883f9452224" name="Relatório" />
+    <layer Id="94ec245e-a0a3-4595-9d02-5e880fc5b3e7" name="Configuracao" />
+    <layer Id="258908cf-51c4-408d-a352-62ccf9d65544" name="ComponentesUI" />
+    <layer Id="492a372d-baf2-4674-adbe-2a819b33f810" name="Blocos.Autentication" />
+    <layer Id="679a080e-7c73-499b-ba13-1b1cdec8633f" name="Blocos.Intrumentation" />
+    <layer Id="560ee899-9296-4073-ac96-286a4841af8d" name="Blocos.PDF" />
+    <layer Id="18290897-b821-4608-860f-5db924a645a9" name="Blocos.Data&#xD;&#xA;&#xD;&#xA;" />
+    <layer Id="44baed53-2c02-425e-a40f-b54664486e06" name="Especificidade">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="984ded9d-2092-4e9c-a614-cd39289b1231" direction="Forward">
+          <layerMoniker Id="3ce11ffa-6360-4abe-b97a-eac58dde673e" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="8059db47-5801-42ee-b47c-bcefca4461ce" direction="Forward">
+          <layerMoniker Id="a7b4b056-7840-4270-9980-ba41991b4029" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+  </layers>
+</layerModel>

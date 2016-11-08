@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns="*"
+		   xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:esri="http://www.esri.com/2008/ags"
+		   xmlns:scripts="com.tecnomapas.scripts.*"
+		   xmlns:componentes="componentes.*"
+		   width="{pnlLocalizadorCoordenada.width + 60}"
+		   height="{pnlLocalizadorCoordenada.height + 40}">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.Extent;
+			import com.tecnomapas.utilities.TextInputMask;
+			
+			import mx.controls.Alert;
+			import mx.events.ListEvent;
+			import mx.rpc.events.FaultEvent;
+			
+			import tm.spatialReference.Coordinate;
+			import tm.spatialReference.CoordinateSystemConverter;
+			import tm.spatialReference.CoordinateSystemConverterFactory;
+			
+			private var totalHeight:Number = 0;
+			
+			[Bindable] public var mapa:Map;
+			[Bindable] private var temAdvertencia:Boolean = false;
+			[Bindable] public var title:String;
+			[Bindable] public var styleNome:String;
+			[Bindable] private var descriptionToolTip:String = "";
+			
+			public var wktSysCoord:String;
+			public var datumName:String = "sirgas2000";
+			
+			protected static var REGEX_GMS_LAT:RegExp = /^(-?(((90)|([0-8]\d)|\d)(:([0-5]?\d(:([0-5]?\d(\.\d{0,4})?)?)?)?)?)?)$/;
+			protected static var REGEX_GMS_LNG:RegExp = /^(-?(([0-9]{1,2}|1[0-7][0-9]|180)(:([0-5]?\d(:([0-5]?\d(\.\d{0,4})?)?)?)?)?)?)$/;
+			protected static var AUTOCOMPLETE_GMS:Array = [',','.','0',':',':0'];
+			
+			protected static var REGEX_GDEC_LAT:RegExp = /^(-?(((90)|([0-8]\d)|\d)(\.\d{0,7})?)?)$/;
+			protected static var REGEX_GDEC_LNG:RegExp = /^(-?((([0-9]{1,2})|(1[0-7][0-9])|(180))(\.\d{0,7})?)?)$/;
+			protected static var AUTOCOMPLETE_GDEC:Array = [',','.','0'];
+			
+			protected static var REGEX_EASTING:RegExp = /^(-?(\d{0,9}(\.\d{0,4})?)?)$/;
+			protected static var AUTOCOMPLETE_EASTING:Array = [',','.','0'];
+			
+			protected static var REGEX_NORTHING:RegExp = /^(-?(\d{0,9}(\.\d{0,4})?)?)$/;
+			protected static var AUTOCOMPLETE_NORTHING:Array = [',','.','0'];
+			
+			private var maskLongitudeEasting:TextInputMask;
+			private var maskLatitudeNorthing:TextInputMask;
+			
+			override public function set toolTip(description:String):void 
+			{
+				this.descriptionToolTip = description;
+			}
+			
+			public function load():void
+			{
+				maskLongitudeEasting = new TextInputMask(txtLongitudeEasting);
+				maskLatitudeNorthing = new TextInputMask(txtLatitudeNorthing);
+				
+				this.addEventListener(KeyboardEvent.KEY_DOWN, onKeyboardEvent);
+				configurarTipoCoordenada(null, 0); 
+			}
+			
+			private function onKeyboardEvent(event:KeyboardEvent):void
+			{
+				switch(event.keyCode)
+				{
+					case 27://Esc
+						desativar();
+						break;
+				}
+			}
+			
+			private function exibirLocalizadorCoordenada(event:Event):void
+			{
+				hbLocalizador.visible = !hbLocalizador.visible;
+				
+				if(!hbLocalizador.visible)
+				{
+					limparCampos();
+				}
+			}
+			
+			public function desativar(event:Event = null):void
+			{
+				if(!event || (event.target.id != btnExibirLocalizadorCoordenada.id))
+				{
+					hbLocalizador.visible = false;
+					limparCampos();
+				}
+			}
+			
+			public function onServiceFault(event:FaultEvent):void
+			{
+				Alert.show(event.toString());
+			}
+		
+			public function converterCoordenada(event:Event):void
+			{
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				cbFuso.errorString = "";
+				cbHemisferio.errorString = "";
+				lblMensagem.text = "Alguns campos não foram preenchidos";
+				temAdvertencia = false;
+				
+				switch(cbTipoCoordenada.selectedItem.value)
+				{
+					case 1:
+							if(txtLongitudeEasting.text == "")
+							{
+								txtLongitudeEasting.errorString = "O Easting deve ser preenchido.";
+								temAdvertencia = true;
+							}
+							
+							if(txtLatitudeNorthing.text == "")
+							{
+								txtLatitudeNorthing.errorString = "O Northing deve ser preenchido.";
+								temAdvertencia = true;
+							}
+							
+							if(cbFuso.selectedItem.value == "0")
+							{
+								cbFuso.errorString =  "O Fuso deve ser selecionado.";
+								temAdvertencia = true;
+							}
+							
+							if(cbHemisferio.selectedItem.value == "0")
+							{
+								cbHemisferio.errorString =  "O Hemisfério deve ser selecionado.";
+								temAdvertencia = true;
+							}
+							
+							if(!temAdvertencia)
+							{
+								//Como é UTM e foi travado em 23 Sul basta usar o easting e northing
+								zoomCoordenada( parseNumber(txtLongitudeEasting.text), parseNumber(txtLatitudeNorthing.text) );
+							}
+						break;
+						
+					case 2:
+					case 3:
+							if(txtLongitudeEasting.text == "")
+							{
+								txtLongitudeEasting.errorString = "A longitude deve ser preenchida.";
+								temAdvertencia = true;
+							}
+							
+							if(txtLatitudeNorthing.text == "")
+							{
+								txtLatitudeNorthing.errorString = "A longitude deve ser preenchida.";
+								temAdvertencia = true;
+							}
+							
+							if(cbTipoCoordenada.selectedItem.value == 3)
+							{
+								if( Math.abs(parseNumber(txtLongitudeEasting.text)) > 180 )
+								{
+									txtLongitudeEasting.errorString = "A Longitude está fora do intervalo permitido (-180  a  180).";
+									temAdvertencia = true;
+								}
+								
+								if( Math.abs(parseNumber(txtLatitudeNorthing.text)) > 90 )
+								{
+									txtLatitudeNorthing.errorString = "A Latitude está fora do intervalo permitido (-90  a  90).";
+									temAdvertencia = true;
+								}
+							}
+
+							if(!temAdvertencia)
+							{
+								var coord:Coordinate;
+								var converter:CoordinateSystemConverter = CoordinateSystemConverterFactory.getConverter( CoordinateSystemConverterFactory.WKT_GEO_SIRGAS2000, CoordinateSystemConverterFactory.getUtmWKT('sirgas2000',24,true));
+									
+								switch(cbTipoCoordenada.selectedItem.value)
+								{
+									case 2:
+										//GMS
+										coord = new Coordinate(	parseGMS(txtLongitudeEasting.text), parseGMS(txtLatitudeNorthing.text) );
+										break;
+										
+									case 3:
+										//GDEC
+										coord = new Coordinate(	parseNumber(txtLongitudeEasting.text), parseNumber(txtLatitudeNorthing.text) );
+										break;
+								}
+								
+								coord = converter.transform(coord);
+								zoomCoordenada(coord.x, coord.y);
+							}
+						break;
+				}
+
+			}
+			
+			private function parseNumber(str:String):Number{
+				return parseFloat(str.replace(",", "."));
+			}
+			
+			private function parseGMS(str:String):Number{
+				var array:Array = str.split(":");
+
+				for (var i:int = 0; i < array.length; i++){
+					array[i] = parseNumber(array[i]);
+				}
+
+				while (array.length<3){
+					array.push(0);
+				}
+
+				var sentido:int = (array[0]<0)?-1:1;
+				array[0] *= sentido;
+
+				return sentido * (array[0] + array[1]/60 + array[2]/3600);
+			}
+			
+			public function zoomCoordenada(x:Number, y:Number):void
+			{
+				var envelope:Extent = new Extent(x - 30, y - 30, x + 30, y + 30);
+				setTimeout(setEnvelope, 300, envelope);
+			}
+			
+			public function setEnvelope(envelope:Extent):void
+			{
+				mapa.extent = envelope;
+			}
+			
+			
+			
+			public function configurarTipoCoordenada(event:ListEvent, tipoCoordenada:int = 0):void
+			{
+				txtLongitudeEasting.text = "";
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				txtLatitudeNorthing.text = "";
+				cbFuso.errorString = "";
+				cbFuso.selectedIndex = 0;
+				cbHemisferio.errorString = "";
+				cbHemisferio.selectedIndex = 0;
+				
+				temAdvertencia = false;
+				
+				hbFusoHemisferio.visible = false;
+				
+				if(totalHeight == 0)
+				{
+					totalHeight = pnlLocalizadorCoordenada.height;
+				}
+				
+				pnlLocalizadorCoordenada.height = totalHeight;
+				
+				if(tipoCoordenada != 0)
+				{
+					cbTipoCoordenada.selectedIndex = tipoCoordenada;
+				}
+				else if (cbTipoCoordenada.selectedIndex==-1){
+					cbTipoCoordenada.selectedIndex = 0;
+				}
+				
+				switch(cbTipoCoordenada.selectedItem.value)
+				{
+					case 1:
+							lblLongitudeEasting.text = "Easting";
+							maskLongitudeEasting.mask = REGEX_EASTING;
+							maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_EASTING;
+							
+							lblLatidudeNorthing.text = "Northing";
+							maskLatitudeNorthing.mask = REGEX_NORTHING;
+							maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_NORTHING;
+							
+							hbFusoHemisferio.visible = true;
+						break;
+						
+					case 2:
+					case 3:
+							lblLongitudeEasting.text = "Longitude";
+							lblLatidudeNorthing.text = "Latidude";
+
+							if(cbTipoCoordenada.selectedItem.value == 2)
+							{
+								maskLongitudeEasting.mask = REGEX_GMS_LNG;
+								maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_GMS;
+								
+								maskLatitudeNorthing.mask = REGEX_GMS_LAT;
+								maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_GMS;
+							}
+							else
+							{
+								maskLongitudeEasting.mask = REGEX_GDEC_LNG;
+								maskLongitudeEasting.autoCompleteValues = AUTOCOMPLETE_GDEC;
+								
+								maskLatitudeNorthing.mask = REGEX_GDEC_LAT;
+								maskLatitudeNorthing.autoCompleteValues = AUTOCOMPLETE_GDEC;
+							}
+
+							pnlLocalizadorCoordenada.height = pnlLocalizadorCoordenada.height - 50;
+
+						break;
+				}
+			}
+			
+			public function limparCampos():void
+			{
+				txtLongitudeEasting.text = "";
+				txtLongitudeEasting.errorString = "";
+				txtLatitudeNorthing.errorString = "";
+				txtLatitudeNorthing.text = "";
+				cbFuso.errorString = "";
+				cbFuso.selectedIndex = 0;
+				cbHemisferio.errorString = "";
+				cbHemisferio.selectedIndex = 0;
+				
+				temAdvertencia = false;
+				
+				configurarTipoCoordenada(null, 0);
+			}
+	 	]]>
+	</mx:Script>
+			
+	<mx:HBox width="100%" height="100%" horizontalGap="0" verticalGap="0">
+		<mx:HBox width="0%" height="100%">
+			<mx:Button id="btnExibirLocalizadorCoordenada" click="exibirLocalizadorCoordenada(event)"
+					   downSkin="@Embed(source='assets/img/lancador_ativo.png')"
+					   overSkin="@Embed(source='assets/img/lancador_ativo.png')"
+					   toolTip="{descriptionToolTip}" upSkin="@Embed(source='assets/img/lancador.png')"/>
+		</mx:HBox>
+		<mx:HBox id="hbLocalizador" visible="false" width="100%" height="100%" backgroundAlpha="0.5"
+				 backgroundColor="#808285" horizontalAlign="center" verticalAlign="middle">
+			<scripts:PanelMinMax id="pnlLocalizadorCoordenada" width="350" height="240"
+									   alpha="0.8" horizontalScrollPolicy="off"
+									   isExibirFechar="false" isExibirMaxmizar="false"
+									   styleName="{styleNome}" title="{title}"
+									   verticalScrollPolicy="off">
+				<mx:VBox horizontalAlign="left">
+					<mx:Label fontWeight="bold" text="Tipo de Coordenada"/>
+					<mx:ComboBox id="cbTipoCoordenada" width="100%"
+								 change="configurarTipoCoordenada(event)">
+					  <mx:dataProvider>
+				          <mx:Object label="Projetado UTM" value="1"/>
+				          <mx:Object label="Geografico (Grau Minuto Segundo)" value="2"/>
+				          <mx:Object label="Geografico (Grau Decimal)" value="3"/>
+				       </mx:dataProvider>
+					</mx:ComboBox>
+
+					<mx:HBox>
+						<mx:VBox width="50%" horizontalAlign="left">
+							<mx:Label id="lblLongitudeEasting" fontWeight="bold" text="Longitude"/>
+							<mx:TextInput id="txtLongitudeEasting"/>
+						</mx:VBox>
+						<mx:VBox width="50%" horizontalAlign="left">
+							<mx:Label id="lblLatidudeNorthing" fontWeight="bold" text="Latidude"/>
+							<mx:TextInput id="txtLatitudeNorthing"/>
+						</mx:VBox>
+					</mx:HBox>
+
+				    <mx:HBox id="hbFusoHemisferio" width="100%">
+						<mx:VBox width="50%" horizontalAlign="left">
+							<mx:Label fontWeight="bold" text="Fuso"/>
+							<mx:ComboBox id="cbFuso" width="100%"
+										 change="if (cbFuso.selectedIndex==-1){ event.preventDefault(); cbFuso.selectedIndex=0 }"
+										 selectedIndex="0">
+							   <mx:dataProvider>
+							   	  <!--<mx:Object label="Selecione" value="0"/>
+						          <mx:Object label="21" value="21"/>
+						          <mx:Object label="22" value="22"/>
+						          <mx:Object label="23" value="23"/>-->
+							   	  <mx:Object label="24" value="24"/>
+						       </mx:dataProvider>
+							</mx:ComboBox>
+						</mx:VBox>
+						<mx:VBox width="50%" horizontalAlign="left">
+							<mx:Label fontWeight="bold" text="Hemisfério"/>
+							<mx:ComboBox id="cbHemisferio" width="100%"
+										 change="if (cbHemisferio.selectedIndex==-1){ event.preventDefault(); cbHemisferio.selectedIndex=0 }"
+										 selectedIndex="0">
+							   <mx:dataProvider>
+							      <!--<mx:Object label="Selecione" value="0"/>-->
+						          <mx:Object label="Sul" value="1"/>
+						          <!--<mx:Object label="Norte" value="2"/>-->
+						       </mx:dataProvider>
+							</mx:ComboBox>
+						</mx:VBox>
+					</mx:HBox>
+				</mx:VBox>
+				<mx:ControlBar width="100%">   
+					<mx:HBox width="70%" horizontalAlign="left">
+						<mx:Label id="lblMensagem" visible="{temAdvertencia}" color="#f1272c"
+								  fontWeight="bold" text="Alguns campos não foram preenchidos"/>
+					</mx:HBox>   
+					<mx:HBox width="30%" horizontalAlign="right">
+						<mx:Button click="converterCoordenada(event)"
+								   downSkin="@Embed(source='assets/img/btn_zoom_ativo.png')"
+								   overSkin="@Embed(source='assets/img/btn_zoom_ativo.png')"
+								   upSkin="@Embed(source='assets/img/btn_zoom.png')"/>
+					</mx:HBox>         
+			   </mx:ControlBar>
+			</scripts:PanelMinMax>
+		</mx:HBox>
+	</mx:HBox>
+</mx:Canvas>

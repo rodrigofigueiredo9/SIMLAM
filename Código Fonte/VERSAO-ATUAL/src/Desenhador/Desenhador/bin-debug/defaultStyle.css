@@ -1,0 +1,530 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace esri "http://www.esri.com/2008/ags";
+
+.barraFerramenta
+{	
+	color:#FFFFFF;
+	backgroundColor: #000000 ;
+	backgroundAlpha:0.75;
+}
+.botaoDireito
+{
+	
+	icon: Embed(source="../assets/seta_dir_maior.png");
+	disabledIcon:  Embed(source="../assets/seta_dir_maior.png");	
+	disabledSkin: Embed(source="../assets/seta_dir_maior.png");
+}
+.botaoEsquerdo
+{
+
+	icon: Embed(source="../assets/seta_esq_maior.png");
+	disabledIcon:  Embed(source="../assets/seta_esq_maior.png");	
+	disabledSkin: Embed(source="../assets/seta_esq_maior.png");
+}
+.camera
+{
+	icon: Embed(source="../assets/camera_on.png");
+}
+.checkbox
+{
+	chromeColor: #000000;	
+	symbolColor: #FFFFFF;
+	verticalCenter: 0; 
+}
+.copiar_colar 
+{
+	icon: Embed(source="../assets/copiar_colar_on.png");
+	disabledIcon:  Embed(source="../assets/copiar_colar_off.png");	
+	disabledSkin: Embed(source="../assets/copiar_colar_off.png");
+}
+.copiar_colar_ativado
+{
+	icon: Embed(source="../assets/copiar_colar_click.png");
+}
+.datagrid
+{
+	paddingTop:5;
+	headerHeight:40;
+	headerColors: #e4e4e4, #e4e4e4;
+	alternatingItemColors: #f6f6f6, #f9f9f9;	
+	rollOverColor: #d2d2d2;
+	selectionColor: #d1d1d1;
+	fontWeight:normal;
+	fontSize:10;
+	color:#666666;
+	verticalScrollPolicy:auto;
+	horizontalScrollPolicy:auto;	
+}
+.download_arquivo 
+{
+	icon: Embed(source="../assets/download_arquivo.png");
+}
+.editar_geo 
+{
+	icon: Embed(source="../assets/editar_geo_on.png");
+	disabledIcon:  Embed(source="../assets/editar_geo_off.png");	
+	disabledSkin: Embed(source="../assets/editar_geo_off.png");
+}
+.editar_geo_ativado
+{
+	icon: Embed(source="../assets/editar_geo_click.png");
+}
+.excluir_geo 
+{
+	icon: Embed(source="../assets/excluir_geo_on.png");
+	disabledIcon:  Embed(source="../assets/excluir_geo_off.png");	
+	disabledSkin: Embed(source="../assets/excluir_geo_off.png");
+}
+.excluir_geo_ativado
+{
+	icon: Embed(source="../assets/excluir_geo_click.png");
+}
+.fundo_branco
+{
+	fontWeight:bold;
+	fontSize:10;
+	color:#464646; 
+	fontStyle:normal;
+	backgroundColor: #FFFFFF;
+	chromeColor: #FFFFFF;
+	verticalAlign:middle; 
+	borderAlpha: 0.4;
+}
+.fundo_amarelo
+{
+	fontWeight:bold;
+	color:#464646; 
+	fontStyle:italic;
+	backgroundColor: #FFFBA4;
+	backgroundAlpha:0.75;
+	verticalAlign:middle; 
+}
+.fundo_cinza_claro
+{
+	fontWeight:bold;
+	fontSize:10;
+	color:#464646;
+	fontStyle:normal;
+	backgroundColor: #F2F2F2;
+	chromeColor: #F2F2F2;
+	backgroundAlpha:0.75;
+	borderSkin:0;
+	verticalAlign:middle;
+	borderThickness:0;
+	
+}
+.fundo_cinza_escuro
+{
+	color:#464646;
+	fontStyle:italic;
+	backgroundColor: #8E8E8E;
+	chromeColor: #8E8E8E;
+	verticalAlign:middle;
+	borderThickness:0;
+	
+}
+.fundo_escuro
+{
+	color:#FFFFFF;
+	backgroundColor: #000000;
+	chromeColor: #000000;	
+	selectionColor: #FFFFFF;
+	borderThickness: 0;	
+	verticalAlign:middle;
+}
+.fundo_txtCoordenadas
+{
+	backgroundColor: #dadada;
+	borderStyle:solid;
+	borderVisible:true;
+	borderColor: #d7d7d7;
+	color: black;
+}
+.importar 
+{
+	icon: Embed(source="../assets/importar_feicoes_on.png");
+	disabledIcon:  Embed(source="../assets/importar_feicoes_off.png");	
+	disabledSkin: Embed(source="../assets/importar_feicoes_off.png");
+}
+.importar_ativado
+{
+	icon: Embed(source="../assets/importar_feicoes_click.png");
+}
+.inserir_buraco
+{
+	icon: Embed(source="../assets/inserir_buraco_on.png");
+	disabledIcon:  Embed(source="../assets/inserir_buraco_off.png");	
+	disabledSkin: Embed(source="../assets/inserir_buraco_off.png");
+}
+.inserir_buraco_ativado
+{
+	icon: Embed(source="../assets/inserir_buraco_click.png");
+}
+.inserir_geo 
+{
+	icon: Embed(source="../assets/inserir_geo_on.png");
+	disabledIcon:  Embed(source="../assets/inserir_geo_off.png");	
+	disabledSkin: Embed(source="../assets/inserir_geo_off.png");
+}
+.inserir_geo_ativado
+{
+	icon: Embed(source="../assets/inserir_geo_click.png");	
+}
+.inundar_geo
+{
+	icon: Embed(source="../assets/inundar_geo_on.png");
+	disabledIcon:  Embed(source="../assets/inundar_geo_off.png");	
+	disabledSkin: Embed(source="../assets/inundar_geo_off.png");
+}
+.inundar_geo_ativado
+{
+	icon: Embed(source="../assets/inundar_geo_click.png");
+}
+.itemContainer_selecionado
+{
+	paddingRight:0;
+	paddingLeft:0;
+	paddingTop:0;
+	backgroundColor:#f4f4f4;
+	fontStyle:italic;
+	color:#666666;
+}
+.itemContainer
+{
+	paddingRight:0;
+	paddingLeft:0;
+	paddingTop:0;
+	backgroundColor:#f4f4f4;
+	color:#666666;
+}
+.item_branco
+{
+	fontSize:10;
+	color:#464646; 
+	fontStyle:normal; 
+	backgroundColor: #F7F7F7;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	borderColor: #EFEFEF;
+	borderAlpha:0.8;
+	borderThickness:-1;
+	borderWeight: -1;
+	borderStyle:inset;
+}
+.item_cinza
+{
+	fontSize:10;
+	color:#464646; 
+	fontStyle:normal; 
+	backgroundColor: #DFDFDF;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	borderColor: #EFEFEF;
+	borderAlpha:0.8;
+	borderThickness:-1;
+	borderWeight: -1;
+	borderStyle:inset;
+}
+.item_laranja_claro
+{
+	fontSize:10;
+	color:#464646;
+	fontStyle:normal;
+	backgroundColor: #FBE2BD;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	borderColor: #EFEFEF;
+	borderAlpha:0.8;
+	borderThickness:-1;
+	borderWeight: -1;
+	borderStyle:inset;
+}
+.item_laranja
+{
+	fontSize:10;
+	color:#464646;
+	fontStyle:normal;
+	
+	backgroundColor: #FF884F;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	borderColor: #EFEFEF;
+	borderAlpha:0.8;
+	borderThickness:-1;
+	borderWeight: -1;
+	borderStyle:inset;
+}
+
+.label_popup
+{
+	color:#464646;
+	fontFamily:arial;
+	horizontalAlign:center;
+}
+.layer_amarelo
+{
+	color:#464646; 
+	fontStyle:normal;
+	backgroundColor: #FFF700;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+}
+.layer_cinza_claro
+{
+	color:#464646;
+	fontStyle:normal;
+	backgroundColor: #F2F2F2;
+	backgroundAlpha:0.75;
+	borderSkin:0;
+	verticalAlign:middle;
+	borderThickness:0;
+}
+.layer_branco
+{
+	color:#464646; 
+	fontStyle:normal;
+	backgroundColor: #FFFFFF;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+}
+.lancar_coordenada
+{
+	icon: Embed(source="../assets/lancar_coordenada_on.png");
+	disabledIcon:  Embed(source="../assets/lancar_coordenada_off.png");	
+	disabledSkin: Embed(source="../assets/lancar_coordenada_off.png");
+}
+.lancar_coordenada_ativado
+{
+	icon: Embed(source="../assets/lancar_coordenada_click.png");
+}
+.mapa_scalebar
+{
+	
+	paddingLeft:600;
+}
+.medir_distancia
+{
+	icon: Embed(source="../assets/medir_distancia_on.png");
+	disabledIcon:  Embed(source="../assets/medir_distancia_off.png");	
+	disabledSkin: Embed(source="../assets/medir_distancia_off.png");
+}
+.medir_distancia_ativado
+{
+	icon: Embed(source="../assets/medir_distancia_click.png");
+}
+.medir_geo
+{
+	icon: Embed(source="../assets/medir_geo_on.png");
+	disabledIcon:  Embed(source="../assets/medir_geo_off.png");	
+	disabledSkin: Embed(source="../assets/medir_geo_off.png");
+}
+.medir_geo_ativado
+{
+	icon: Embed(source="../assets/medir_geo_click.png");
+}
+.mover_geo
+{
+	icon: Embed(source="../assets/mover_geo_on.png");
+	disabledIcon:  Embed(source="../assets/mover_geo_off.png");	
+	disabledSkin: Embed(source="../assets/mover_geo_off.png");
+}
+.mover_geo_ativado
+{
+	icon: Embed(source="../assets/mover_geo_click.png");
+}
+.navegacao_anterior
+{
+	icon: Embed(source="../assets/nav_anterior_on.png");
+	disabledIcon:  Embed(source="../assets/nav_anterior_off.png");	
+	disabledSkin: Embed(source="../assets/nav_anterior_off.png");
+}
+.navegacao_proximo
+{
+	icon: Embed(source="../assets/nav_proximo_on.png");
+	disabledIcon:  Embed(source="../assets/nav_proximo_off.png");	
+	disabledSkin: Embed(source="../assets/nav_proximo_off.png");
+}
+.pan
+{
+	icon: Embed(source="../assets/pan_on.png");
+	disabledIcon:  Embed(source="../assets/pan_off.png");	
+	disabledSkin: Embed(source="../assets/pan_off.png");
+}
+.pan_ativado
+{
+	icon: Embed(source="../assets/pan_click.png");
+}
+.posicao
+{
+	icon: Embed(source="../assets/posicao_on.png");
+	disabledIcon:  Embed(source="../assets/posicao_off.png");	
+	disabledSkin: Embed(source="../assets/posicao_off.png");
+}
+.posicao_ativado
+{
+	icon: Embed(source="../assets/posicao_click.png");
+}
+.processar
+{
+	icon: Embed(source="../assets/processar_on.png");
+}
+.processar_cancelar
+{
+	icon: Embed(source="../assets/cancelar_on.png");
+}
+.refresh
+{
+	icon: Embed(source="../assets/refresh_on.png");
+	disabledIcon:  Embed(source="../assets/refresh_off.png");	
+	disabledSkin: Embed(source="../assets/refresh_off.png");
+}
+.rodape_branco
+{	
+	color:#464646;
+	backgroundColor: #FFFFFF;	
+	borderVisible:false;
+	borderColor: #FFFFFF;
+	borderAlpha:1;
+	chromeColor: #FFFFFF;
+}
+.rodape_popup
+{	
+	color:#464646;
+	backgroundColor: #f1f1f1;	
+	borderVisible:true;
+	borderColor: #d7d7d7;
+}
+.rotacionar_geo
+{
+	icon: Embed(source="../assets/rotacionar_geo_on.png");
+	disabledIcon:  Embed(source="../assets/rotacionar_geo_off.png");	
+	disabledSkin: Embed(source="../assets/rotacionar_geo_off.png");
+}
+.rotacionar_geo_ativado
+{
+	icon: Embed(source="../assets/rotacionar_geo_click.png");
+}
+.selecionar_geo
+{
+	icon: Embed(source="../assets/selecionar_geo_on.png");
+	disabledIcon:  Embed(source="../assets/selecionar_geo_off.png");	
+	disabledSkin: Embed(source="../assets/selecionar_geo_off.png");
+}
+.selecionar_geo_ativado
+{
+	icon: Embed(source="../assets/selecionar_geo_click.png");
+}
+.snap_geo
+{
+	icon: Embed(source="../assets/snap_geo_on.png");
+	disabledIcon:  Embed(source="../assets/snap_geo_off.png");	
+	disabledSkin: Embed(source="../assets/snap_geo_off.png");
+}
+.snap_geo_ativado
+{
+	icon: Embed(source="../assets/snap_geo_click.png");
+}
+.tab_cinza_escuro
+{
+	chromeColor: #8E8E8E;
+	cornerRadius: 0;
+	color: white;
+	fontWeight:bold;
+}
+.tab_cinza_claro
+{
+	chromeColor: #C8C8C8;
+	cornerRadius: 0;
+	color: white;
+	fontWeight:bold;
+	borderAlpha: 0.4;
+}
+.titulo_categoriaSelecionada
+{
+	backgroundColor:#e9e9e9;
+	fontFamily:italic;
+	fontSize:12;
+	color:#666666;	
+	headerHeight:40;
+}
+.titulo_listar
+{
+	fontSize:12;
+	color:#FFFFFF;
+	backgroundColor: #000000 ;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	paddingLeft:5;	
+}
+.titulo_quadroArea
+{
+	fontSize:10;
+	fontWeight:bold;
+	color:#000000;
+	backgroundColor: #7F7F7F ;
+	backgroundAlpha:0.75;
+	verticalAlign:middle;
+	
+}
+.topo_popup
+{	
+	titleWindowInactiveColor:#ffffff;
+	titleWindowActiveColor:#ffffff;
+	titleWindowFontFamily:arial;
+	titleWindowActiveGradientLowerColor:#434343;
+	titleWindowActiveGradientUpperColor:#313131;
+	titleWindowInactiveGradientLowerColor:#434343;
+	titleWindowInactiveGradientUpperColor:#313131;
+}
+.zoom_area_abrangencia
+{
+	icon: Embed(source="../assets/zoom_area_abrang_on.png");
+}
+.zoom_area_abrangencia_ativado
+{
+	icon: Embed(source="../assets/zoom_area_abrang_click.png");
+}
+.zoom_mais
+{
+	icon: Embed(source="../assets/zoom_mais_on.png");
+	disabledIcon:  Embed(source="../assets/zoom_mais_off.png");	
+	disabledSkin: Embed(source="../assets/zoom_mais_off.png");
+	
+}
+.zoom_menos
+{
+	icon: Embed(source="../assets/zoom_menos_on.png");
+	disabledIcon:  Embed(source="../assets/zoom_menos_off.png");	
+	disabledSkin: Embed(source="../assets/zoom_menos_off.png");
+	
+}
+.zoom_coordenada
+{
+	icon: Embed(source="../assets/zoom_coordenada_on.png");
+	disabledIcon:  Embed(source="../assets/zoom_coordenada_off.png");	
+	disabledSkin: Embed(source="../assets/zoom_coordenada_off.png");
+	
+}
+
+global
+{
+	chrome-color: #DCDCDC;
+	content-background-color: #FFFFFF;
+}
+esri|ScaleBar
+{
+	horizontalCenter: 0;
+}
+mx|TabNavigator
+{
+	chromeColor: #8E8E8E;
+	borderAlpha: 0.4;
+	cornerRadius: 0;
+	color: white;
+	fontWeight:bold;
+	textRollOverColor: white;
+	selectedTabTextStyleName: "tab_cinza_claro";
+	
+}

@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{60F1014B-FBCC-42C2-95F1-38B6C123C425}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Credenciado.Model</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Credenciado.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\lib\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Words, Version=9.7.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Autenticacao">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ModuloAgrotoxico\Business\AgrotoxicoBus.cs" />
+    <Compile Include="ModuloAgrotoxico\Data\AgrotoxicoDa.cs" />
+    <Compile Include="ModuloAtividade\Business\AtividadeConfiguracaoInternoBus.cs" />
+    <Compile Include="ModuloAtividade\Business\AtividadeCredenciadoBus.cs" />
+    <Compile Include="ModuloAtividade\Business\AtividadeInternoBus.cs" />
+    <Compile Include="ModuloAtividade\Business\AtividadeInternoValidar.cs" />
+    <Compile Include="ModuloAtividade\Data\AtividadeConfiguracaoInternoDa.cs" />
+    <Compile Include="ModuloAtividade\Data\AtividadeCredenciadoDa.cs" />
+    <Compile Include="ModuloAtividade\Data\AtividadeEmpreendimentoInternoDa.cs" />
+    <Compile Include="ModuloAtividade\Data\AtividadeInternoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Business\CARSolicitacaoBus.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Business\CARSolicitacaoValidar.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Business\CARSolicitacaoInternoBus.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoInternoDa.cs" />
+    <Compile Include="ModuloCFOCFOC\Business\CFOCFOCInternoValidar.cs" />
+    <Compile Include="ModuloCFOCFOC\Business\LoteBus.cs" />
+    <Compile Include="ModuloCFOCFOC\Business\LoteValidar.cs" />
+    <Compile Include="ModuloCFOCFOC\Data\LoteDa.cs" />
+    <Compile Include="ModuloChecagemRoteiro\Business\ChecagemRoteiroInternoBus.cs" />
+    <Compile Include="ModuloChecagemRoteiro\Data\ChecagemRoteiroInternoDa.cs" />
+    <Compile Include="ModuloCredenciado\Business\CredenciadoIntBus.cs" />
+    <Compile Include="ModuloCredenciado\Business\CredenciadoIntValidar.cs" />
+    <Compile Include="ModuloCredenciado\Data\CredenciadoIntDa.cs" />
+    <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCBus.cs" />
+    <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCValidar.cs" />
+    <Compile Include="ModuloEmissaoCFOC\Data\EmissaoCFOCDa.cs" />
+    <Compile Include="ModuloEmissaoCFO\Business\EmissaoCFOBus.cs" />
+    <Compile Include="ModuloEmissaoCFO\Business\EmissaoCFOValidar.cs" />
+    <Compile Include="ModuloEmissaoCFO\Data\EmissaoCFODa.cs" />
+    <Compile Include="ModuloCFOCFOC\Business\CFOCFOCInternoBus.cs" />
+    <Compile Include="ModuloCFOCFOC\Data\CFOCFOCInternoDa.cs" />
+    <Compile Include="ModuloHabilitarEmissaoCFOCFOC\Business\HabilitarEmissaoCFOCFOCBus.cs" />
+    <Compile Include="ModuloCredenciado\Business\CredenciadoBus.cs" />
+    <Compile Include="ModuloCredenciado\Business\CredenciadoValidar.cs" />
+    <Compile Include="ModuloCredenciado\Business\ICredenciadoValidar.cs" />
+    <Compile Include="ModuloCredenciado\Data\CredenciadoDa.cs" />
+    <Compile Include="ModuloAtividade\Business\AtividadeEmpreendimentoInternoBus.cs" />
+    <Compile Include="ModuloEmpreendimento\Business\EmpreendimentoCredenciadoBus.cs" />
+    <Compile Include="ModuloEmpreendimento\Business\EmpreendimentoCredenciadoValidar.cs" />
+    <Compile Include="ModuloEmpreendimento\Business\EmpreendimentoInternoBus.cs" />
+    <Compile Include="ModuloEmpreendimento\Data\EmpreendimentoCredenciadoDa.cs" />
+    <Compile Include="ModuloEmpreendimento\Data\EmpreendimentoInternoDa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Business\MapaCoordenadaInternoBus.cs" />
+    <Compile Include="ModuloGeoProcessamento\Data\MapaCoordenadaInternoDa.cs" />
+    <Compile Include="ModuloHabilitarEmissaoCFOCFOC\Data\HabilitarEmissaoCFOCFOCDa.cs" />
+    <Compile Include="ModuloLista\Business\ListaCredenciadoBus.cs" />
+    <Compile Include="ModuloOrgaoParceiroConveniado\Business\OrgaoParceiroConveniadoBus.cs" />
+    <Compile Include="ModuloOrgaoParceiroConveniado\Data\OrgaoParceiroConveniadoDa.cs" />
+    <Compile Include="ModuloPessoa\Business\IPessoaCredenciadoValidar.cs" />
+    <Compile Include="ModuloPessoa\Business\IPessoaInternoValidar.cs" />
+    <Compile Include="ModuloPessoa\Business\PessoaBus.cs" />
+    <Compile Include="ModuloPessoa\Business\PessoaCredenciadoBus.cs" />
+    <Compile Include="ModuloPessoa\Business\PessoaCredenciadoValidar.cs" />
+    <Compile Include="ModuloPessoa\Business\PessoaInternoBus.cs" />
+    <Compile Include="ModuloPessoa\Data\PessoaCredenciadoDa.cs" />
+    <Compile Include="ModuloPessoa\Data\PessoaInternoDa.cs" />
+    <Compile Include="ModuloProfissao\Business\ProfissaoCredenciadoBus.cs" />
+    <Compile Include="ModuloProfissao\Data\ProfissaoCredenciadoDa.cs" />
+    <Compile Include="ModuloProjetoDigital\Business\ProjetoDigitalCredenciadoBus.cs" />
+    <Compile Include="ModuloProjetoDigital\Business\ProjetoDigitalCredenciadoValidar.cs" />
+    <Compile Include="ModuloProjetoDigital\Data\ProjetoDigitalCredenciadoDa.cs" />
+    <Compile Include="ModuloProtocolo\Business\ProtocoloCredenciadoBus.cs" />
+    <Compile Include="ModuloProtocolo\Business\ProtocoloCredenciadoValidar.cs" />
+    <Compile Include="ModuloProtocolo\Business\ProtocoloInternoBus.cs" />
+    <Compile Include="ModuloProtocolo\Business\ProtocoloInternoValidar.cs" />
+    <Compile Include="ModuloProtocolo\Data\ProtocoloCredenciadoDa.cs" />
+    <Compile Include="ModuloProtocolo\Data\ProtocoloInternoDa.cs" />
+    <Compile Include="ModuloPTVOutro\Business\PTVOutroBus.cs" />
+    <Compile Include="ModuloPTVOutro\Business\PTVOutroValidar.cs" />
+    <Compile Include="ModuloPTVOutro\Data\PTVOutroDa.cs" />
+    <Compile Include="ModuloPTV\Business\DestinatarioPTVBus.cs" />
+    <Compile Include="ModuloPTV\Business\DestinatarioPTVValidar.cs" />
+    <Compile Include="ModuloPTV\Business\PTVInternoBus.cs" />
+    <Compile Include="ModuloPTV\Business\PTVBus.cs" />
+    <Compile Include="ModuloPTV\Business\PTVValidar.cs" />
+    <Compile Include="ModuloPTV\Data\DestinatarioPTVDa.cs" />
+    <Compile Include="ModuloPTV\Data\PTVInternoDa.cs" />
+    <Compile Include="ModuloPTV\Data\PTVDa.cs" />
+    <Compile Include="ModuloRequerimento\Business\RequerimentoCredenciadoBus.cs" />
+    <Compile Include="ModuloRequerimento\Business\RequerimentoCredenciadoValidar.cs" />
+    <Compile Include="ModuloRequerimento\Business\RequerimentoInternoBus.cs" />
+    <Compile Include="ModuloRequerimento\Business\RequerimentoInternoValidar.cs" />
+    <Compile Include="ModuloRequerimento\Data\RequerimentoCredenciadoDa.cs" />
+    <Compile Include="ModuloRequerimento\Data\RequerimentoInternoDa.cs" />
+    <Compile Include="ModuloRoteiro\Business\RoteiroInternoBus.cs" />
+    <Compile Include="ModuloRoteiro\Business\RoteiroInternoValidar.cs" />
+    <Compile Include="ModuloRoteiro\Data\RoteiroInternoDa.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloCredenciadoBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloDeclaratorioBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloDeclaratorioValidar.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloExtencoes.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloInternoBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloModeloInternoBus.cs" />
+    <Compile Include="ModuloTitulo\Data\CondicionanteDa.cs" />
+    <Compile Include="ModuloTitulo\Data\TituloInternoDa.cs" />
+    <Compile Include="ModuloTitulo\Data\TituloModeloInternoDa.cs" />
+    <Compile Include="ModuloTramitacao\Business\ArquivarInternoBus.cs" />
+    <Compile Include="ModuloTramitacao\Business\TramitacaoCredenciadoBus.cs" />
+    <Compile Include="ModuloTramitacao\Business\TramitacaoInternoBus.cs" />
+    <Compile Include="ModuloTramitacao\Data\ArquivarInternoDa.cs" />
+    <Compile Include="ModuloTramitacao\Data\TramitacaoCredenciadoDa.cs" />
+    <Compile Include="ModuloTramitacao\Data\TramitacaoInternoDa.cs" />
+    <Compile Include="ModuloVegetal\Business\CulturaInternoBus.cs" />
+    <Compile Include="ModuloVegetal\Business\PragaInternoBus.cs" />
+    <Compile Include="ModuloVegetal\Data\CulturaInternoDa.cs" />
+    <Compile Include="ModuloVegetal\Data\PragaInternoDa.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\GerenciarAutenticacao.cs" />
+    <Compile Include="Security\PermissaoDa.cs" />
+    <Compile Include="Security\PermissaoValidar.cs" />
+    <Compile Include="Security\PermiteAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado.Model.Extensoes\Credenciado.Model.Extensoes.csproj">
+      <Project>{9c7af4af-6757-41fc-953b-5752d5f57b4c}</Project>
+      <Name>Credenciado.Model.Extensoes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado.Model.WebService\Credenciado.Model.WebService.csproj">
+      <Project>{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}</Project>
+      <Name>Credenciado.Model.WebService</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

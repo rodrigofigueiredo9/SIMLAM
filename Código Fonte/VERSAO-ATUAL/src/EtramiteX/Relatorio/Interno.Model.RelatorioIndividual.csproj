@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7F7481CD-3199-43DA-BCB5-1C1C9797BFCE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual</RootNamespace>
+    <AssemblyName>Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\lib\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Aspose.Words, Version=9.7.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\..\..\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Utilitarios.Numero, Version=1.0.3681.19986, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ThoughtWorks.QRCode, Version=1.0.4778.30637, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\ThoughtWorks.QRCode.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\DaHelper.cs" />
+    <Compile Include="ModuloAnalise\Data\AnaliseDa.cs" />
+    <Compile Include="ModuloAnalise\Data\PecaTecnicaDa.cs" />
+    <Compile Include="ModuloAnalise\Pdf\PdfAnalise.cs" />
+    <Compile Include="ModuloAnalise\Pdf\PdfPecaTecnica.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Data\CARSolicitacaoDa.cs" />
+    <Compile Include="ModuloCadastroAmbientalRural\Pdf\PdfCARSolicitacao.cs" />
+    <Compile Include="ModuloCaracterizacoes\Data\DominialidadeDa.cs" />
+    <Compile Include="ModuloChecagemPendencia\Data\ChecagemPendenciaDa.cs" />
+    <Compile Include="ModuloChecagemPendencia\Pdf\PdfChecagemPendencia.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Data\EmissaoPTVDa.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Data\HabilitacaoEmissaoPTVDa.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Pdf\PdfEmissaoPTV.cs" />
+    <Compile Include="ModuloHabilitacaoEmissaoPTV\Pdf\PdfTermoHabilitacaoEmissaoPTV.cs" />
+    <Compile Include="ModuloLiberacaoNumeroCFOCFOC\Data\LiberacaoNumeroCFOCFOCDa.cs" />
+    <Compile Include="ModuloLiberacaoNumeroCFOCFOC\Pdf\PdfComprovanteLiberacaoNumeroCFOCFOC.cs" />
+    <Compile Include="ModuloCredenciado\Data\RelatorioHabilitarEmissaoCFOCFOCDa.cs" />
+    <Compile Include="ModuloCredenciado\Pdf\PdfHabilitarEmissaoCFOCFOC.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\AcompanhamentoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\ComplementacaoDadosDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\ConsideracoesFinaisDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\InfracaoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\LocalInfracaoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\MaterialApreendidoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\ObjetoInfracaoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\FiscalizacaoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Pdf\PdfFiscalizacao.cs" />
+    <Compile Include="ModuloFuncionario\Data\FuncionarioDa.cs" />
+    <Compile Include="ModuloGeoProcessamento\Pdf\PdfAnaliseGeografica.cs" />
+    <Compile Include="ModuloIndicador\Bus\RelatorioIndicadorBus.cs" />
+    <Compile Include="ModuloIndicador\Data\RelatorioIndicadorDa.cs" />
+    <Compile Include="ModuloLista\Business\ListaBus.cs" />
+    <Compile Include="ModuloProtocolo\Data\ProtocoloDa.cs" />
+    <Compile Include="ModuloProtocolo\Data\RelatorioRecebimentoDa.cs" />
+    <Compile Include="ModuloProtocolo\Pdf\PdfProtocoloAssociado.cs" />
+    <Compile Include="ModuloChecagemRoteiro\Data\ChecagemRoteiroDa.cs" />
+    <Compile Include="ModuloProtocolo\Pdf\PdfProtocoloRecebimento.cs" />
+    <Compile Include="ModuloRequerimento\Data\IRelatorioRequerimentoDa.cs" />
+    <Compile Include="ModuloRequerimento\Data\RelatorioRequerimentoDa.cs" />
+    <Compile Include="ModuloRequerimento\Pdf\PdfRequerimentoDigital.cs" />
+    <Compile Include="ModuloRoteiro\Data\IRoteiroDa.cs" />
+    <Compile Include="ModuloRoteiro\Data\RoteiroDa.cs" />
+    <Compile Include="ModuloTitulo\Data\RelatorioEntregaDa.cs" />
+    <Compile Include="ModuloTitulo\Pdf\PdfEntrega.cs" />
+    <Compile Include="ModuloTramitacao\Data\TramitacaoDa.cs" />
+    <Compile Include="ModuloTramitacao\Pdf\PdfTramitacao.cs" />
+    <Compile Include="ModuloTramitacao\Pdf\PdfTramitacaoArquivamento.cs" />
+    <Compile Include="ModuloRequerimento\Pdf\PdfRequerimentoPadrao.cs" />
+    <Compile Include="ModuloChecagemRoteiro\Pdf\PdfChecagemRoteiro.cs" />
+    <Compile Include="ModuloRoteiro\Pdf\PdfRoteiroOrientativo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Business\RelatorioMapaBus.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Data\RelatorioMapaDa.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Pdf\PdfRelatorioMapaCFOCFOC.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Pdf\PdfRelatorioMapaPTV.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Xlsx\XlsxRelatorioMapaCFOCFOC.cs" />
+    <Compile Include="ModuloRelatorioEspecifico\Xlsx\XlsxRelatorioMapaPTV.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
+      <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
