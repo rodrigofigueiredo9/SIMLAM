@@ -1,0 +1,9 @@
+
+Implantação do SIMLAM IDAF na Pentago
+(Informações auxiliares para histórico)
+
+- Foi preciso configurar o Instant Client (conector jdbc) do Oracle na Máquina de Dev para executar o debug das aplicações do IDAF (soluções).
+
+- Precisamos corrigir os valores correntes de SEQUENCE, pois ao criar novos registros . 
+	Sequencias como IDAFCREDENCIADO.SEQ_PESSOA, entre outras, estavam com o último sequencial menor do que o registrado na tabela a que ele se referencia (no caso do exemplo, o último código da tabela IDAFCREDENCIADO.TAB_PESSOA. 
+	Então é necessário ou "recriar" a SEQUENCE, ou usar comandos para atualizar o valor corrente.
