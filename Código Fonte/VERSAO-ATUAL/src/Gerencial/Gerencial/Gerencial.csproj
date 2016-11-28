@@ -673,6 +673,7 @@
     <Content Include="Content\_pdfAspose\RelatorioPaisagem.doc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\PublishProfiles\Publish.pubxml" />
     <None Include="Properties\PublishProfiles\versao.pubxml" />
   </ItemGroup>
   <PropertyGroup>

@@ -2718,6 +2718,7 @@
     <Content Include="Content\_pdfAspose\CFO.doc" />
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
+    <None Include="Properties\PublishProfiles\Publish.pubxml" />
     <None Include="Properties\PublishProfiles\versao 2.pubxml" />
     <None Include="Properties\PublishProfiles\versao-ddsiv.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />

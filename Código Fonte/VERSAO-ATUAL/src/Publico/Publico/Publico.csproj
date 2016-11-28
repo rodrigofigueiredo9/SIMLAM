@@ -416,6 +416,7 @@
     <Content Include="Scripts\Documento\documento.js" />
     <Content Include="Scripts\Empreendimento\listar.js" />
     <Content Include="Content\_pdfAspose\SolicitacaoInscricaoCAR_Credenciado.docx" />
+    <None Include="Properties\PublishProfiles\Publish.pubxml" />
     <None Include="Scripts\Lib\JQuery\jquery-1.10.1-vsdoc.js" />
     <Content Include="Scripts\HabilitarEmissaoCFOCFOC\habilitarEmissaoCFOCFOCListar.js" />
     <Content Include="Scripts\jquery.cb.js" />

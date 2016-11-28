@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado", "Credenciado\Credenciado.csproj", "{0443FD70-254F-4A39-93A1-9305E47FC8EB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5E0F5C2F-0105-4709-9553-48101BB78A4B} = {5E0F5C2F-0105-4709-9553-48101BB78A4B}
@@ -48,11 +46,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.Extensoes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.WebService", "Credenciado.Model.WebService\Credenciado.Model.WebService.csproj", "{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Autenticacao", "..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj", "{722BEFCA-5026-44E7-B158-C9DA30D20C3F}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -90,8 +86,16 @@ Global
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
