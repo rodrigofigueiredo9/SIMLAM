@@ -45,19 +45,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialObrigatorio(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
 			}
-			else if (intervalo.NumeroInicial.ToString().Length != 10)
+			else if (intervalo.NumeroInicial.ToString().Length != 10 
+                && intervalo.TipoDocumentoTexto == "PTV")
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
-			}
+            }
+            else if (intervalo.NumeroInicial.ToString().Length != 8
+                && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
+            }
 
 			if (intervalo.NumeroFinal <= 0)
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalObrigatorio(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
 			}
-			else if (intervalo.NumeroFinal.ToString().Length != 10)
+            else if (intervalo.NumeroFinal.ToString().Length != 10
+                && intervalo.TipoDocumentoTexto == "PTV")
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
-			}
+            }
+            else if (intervalo.NumeroFinal.ToString().Length != 8
+                && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
+            }
 			else if (intervalo.NumeroFinal % 25 != 0)
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalMultiplo25(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
