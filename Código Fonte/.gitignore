@@ -4,15 +4,22 @@ obj/
 bin/
 packages/
 publishProfiles/
-VERSAO-ATUAL/lib/Interno.Model.WebService.dll
-VERSAO-ATUAL/lib/Tecnomapas.Blocos.Autenticacao.dll
-VERSAO-ATUAL/lib/Tecnomapas.Blocos.Entities.dll	
-VERSAO-ATUAL/lib/Tecnomapas.Blocos.Etx.dll
-VERSAO-ATUAL/lib/Tecnomapas.EtramiteX.Configuracao.dll
-VERSAO-ATUAL/lib/Tecnomapas.EtramiteX.Interno.Model.dll
-VERSAO-ATUAL/lib/Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll
-VERSAO-ATUAL/lib/Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll
-VERSAO-ATUAL/lib/Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll		
+Interno.Model.WebService.dll
+Tecnomapas.Blocos.Autenticacao.dll	
+Tecnomapas.Blocos.Etx.dll
+Tecnomapas.Blocos.Autenticacao.dll
+Tecnomapas.EtramiteX.Configuracao.dll
+Tecnomapas.EtramiteX.Interno.Model.dll
+Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll
+Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll
+Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll	
+Tecnomapas.Blocos.Entities.dll
+Tecnomapas.EtramiteX.Credenciado.Model.dll
+Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll
+Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll
+Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll
+
+	
 
 
 
