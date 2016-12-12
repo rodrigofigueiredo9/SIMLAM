@@ -1,0 +1,58 @@
+
+oracle how to update sequence NextVal:
+
+http://stackoverflow.com/questions/6099108/best-way-to-reset-an-oracle-sequence-to-the-next-value-in-an-existing-column
+
+http://stackoverflow.com/questions/6057191/sequence-creation-in-oracle/6057249#6057249
+
+http://www.gokhanatil.com/2011/01/how-to-set-current-value-of-a-sequence-without-droppingrecreating.html
+
+
+------------------------------------------------------------
+
+alter sequence PS_LOG_SEQ restart start with 20071;
+
+------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE SET_SEQ_TO(p_name IN VARCHAR2, p_val IN NUMBER)
+AS
+   l_num   NUMBER;
+BEGIN
+   EXECUTE IMMEDIATE 'select ' || p_name || '.nextval from dual' INTO l_num;
+
+   -- Added check for 0 to avoid "ORA-04002: INCREMENT must be a non-zero integer"
+   IF (p_val - l_num - 1) != 0
+   THEN
+      EXECUTE IMMEDIATE 'alter sequence ' || p_name || ' increment by ' || (p_val - l_num - 1) || ' minvalue 0';
+   END IF;
+
+   EXECUTE IMMEDIATE 'select ' || p_name || '.nextval from dual' INTO l_num;
+
+   EXECUTE IMMEDIATE 'alter sequence ' || p_name || ' increment by 1 ';
+
+   DBMS_OUTPUT.put_line('Sequence ' || p_name || ' is now at ' || p_val);
+END;
+
+CREATE OR REPLACE PROCEDURE SET_SEQ_TO_DATA(seq_name IN VARCHAR2, table_name IN VARCHAR2, col_name IN VARCHAR2)
+AS
+   nextnum   NUMBER;
+BEGIN
+   EXECUTE IMMEDIATE 'SELECT MAX(' || col_name || ') + 1 AS n FROM ' || table_name INTO nextnum;
+
+   SET_SEQ_TO(seq_name, nextnum);
+END;
+
+------------------------------------------------------------
+
+DECLARE
+  last_used  NUMBER;
+  curr_seq   NUMBER;
+BEGIN
+  SELECT MAX(pk_val) INTO last_used FROM your_table;
+
+  LOOP
+    SELECT your_seq.NEXTVAL INTO curr_seq FROM dual;
+    IF curr_seq >= last_used THEN EXIT;
+    END IF;
+  END LOOP;
+END;

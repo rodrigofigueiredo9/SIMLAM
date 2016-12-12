@@ -26,9 +26,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interno.Model.WebService", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Entities", "..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj", "{707F196A-8A05-4B96-92E1-E60335DDC933}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlterarSenhas", "AlterarSenhas\AlterarSenhas.csproj", "{3D2857F6-6576-49B5-8288-96216A93AECE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Autenticacao", "..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj", "{722BEFCA-5026-44E7-B158-C9DA30D20C3F}"
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Arquivo", "..\..\lib\src\Blocos.Arquivo\Blocos.Arquivo.csproj", "{F38DAC7C-37E2-4FB9-9F56-48CC7A6980F2}"
+>>>>>>> thiago
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +72,7 @@ Global
 		{707F196A-8A05-4B96-92E1-E60335DDC933}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{3D2857F6-6576-49B5-8288-96216A93AECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D2857F6-6576-49B5-8288-96216A93AECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D2857F6-6576-49B5-8288-96216A93AECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -76,6 +81,12 @@ Global
 		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+		{F38DAC7C-37E2-4FB9-9F56-48CC7A6980F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F38DAC7C-37E2-4FB9-9F56-48CC7A6980F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F38DAC7C-37E2-4FB9-9F56-48CC7A6980F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F38DAC7C-37E2-4FB9-9F56-48CC7A6980F2}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> thiago
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

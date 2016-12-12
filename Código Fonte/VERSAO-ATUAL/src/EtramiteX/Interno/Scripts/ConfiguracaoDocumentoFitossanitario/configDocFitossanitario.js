@@ -15,12 +15,13 @@ ConfigDocFitossanitario = {
 	container: null,
 
 	load: function (container, options) {
-
+        
 		if (options) { $.extend(ConfigDocFitossanitario.settings, options); }
 		ConfigDocFitossanitario.container = MasterPage.getContent(container);
 
 		container.delegate('.btnAdicionarNumero', 'click', ConfigDocFitossanitario.adicionarIntervalo);
 		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.abrirModalConfirmarSalvar);
+		container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
 
 		Aux.setarFoco(container);
 	},
@@ -122,5 +123,44 @@ ConfigDocFitossanitario = {
 		});
 
 		return objeto;
+	},
+
+	toggleMask: function (evt) {
+        function toggleClass(element, txt) {
+	        switch (txt) {
+	            case "CFO":
+	            case "CFOC":
+	                element.classList.remove("maskNum10");
+	                element.classList.add("maskNum8");
+	                break;
+
+	            default:
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
+	        }
+	    }
+
+        var target = evt.target
+        var txt = target.selectedOptions[0].text
+
+	    var isBloco = target.classList.contains("ddlBloco")
+	    var isDigital = target.classList.contains("ddlDigital")
+	    var complemento = isBloco ? ".txtBloco" : ".txtDigital"
+
+	    var campoInicial = document.querySelector(".txtNumeroInicial" + complemento)
+	    var campoFinal = document.querySelector(".txtNumeroFinal" + complemento)
+
+	    toggleClass(campoInicial, txt)
+	    toggleClass(campoFinal, txt)
+
+	    $(".maskNum8" + complemento)
+            .unmask()
+            .mask("99999999")
+            .val("");
+
+	    $(".maskNum10" + complemento)
+            .unmask()
+            .mask("9999999999")
+            .val("");
 	}
 }

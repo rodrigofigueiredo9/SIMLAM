@@ -157,7 +157,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOCObrigatorio);
 			}
-			else if (liberacao.NumeroInicialCFOC.ToString().Length != 10)
+			else if (liberacao.NumeroInicialCFOC.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.InicialQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFOC.ToString()));
 			}
@@ -166,7 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOCObrigatorio);
 			}
-			else if (liberacao.NumeroFinalCFOC.ToString().Length != 10)
+			else if (liberacao.NumeroFinalCFOC.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.FinalQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFOC.ToString()));
 			}
@@ -211,7 +211,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOObrigatorio);
 			}
-			else if (liberacao.NumeroInicialCFO.ToString().Length != 10)
+			else if (liberacao.NumeroInicialCFO.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.InicialQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFO.ToString()));
 			}
@@ -220,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroFinalCFOObrigatorio);
 			}
-			else if (liberacao.NumeroFinalCFO.ToString().Length != 10)
+			else if (liberacao.NumeroFinalCFO.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.FinalQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFO.ToString()));
 			}
