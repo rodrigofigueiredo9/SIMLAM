@@ -43,7 +43,7 @@
 		</div>
 		<div class="coluna22 prepend1 divNumeroEnter">
 			<label>Número CFOC *</label>
-			<%=Html.TextBox("CFOC.Numero", Model.CFOC.Numero, ViewModelHelper.SetaDisabled(Model.CFOC.Id > 0 || Model.CFOC.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="10" }))%>
+			<%=Html.TextBox("CFOC.Numero", Model.CFOC.Numero, ViewModelHelper.SetaDisabled(Model.CFOC.Id > 0 || Model.CFOC.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="8" }))%>
 		</div>
 
 		<% if (Model.CFOC.Id <= 0) { %>
@@ -222,39 +222,6 @@
 
 	<fieldset class="block box">
 		<div class="block">
-			<div class="coluna20">
-				<label>Possui laudo laboratorial? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiLaudoLaboratorial", 0, !Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiLaudoLaboratorial", 1, Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoSim"}))%>
-					Sim
-				</label>
-			</div>
-
-			<div class="coluna75 prepend1 laudo <%=Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-				<label>Nome do laboratório *</label>
-				<%=Html.TextBox("CFOC.NomeLaboratorio", Model.CFOC.NomeLaboratorio, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNomeLaboratorio", @maxlength="100" }))%>
-			</div>
-		</div>
-		<div class="block divEndereco laudo <%=Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-			<div class="coluna45">
-				<label>Número do laudo com resultado da análise *</label>
-				<%=Html.TextBox("CFOC.NumeroLaudoResultadoAnalise", Model.CFOC.NumeroLaudoResultadoAnalise, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroLaudoResultadoAnalise", @maxlength="15" }))%>
-			</div>
-			<div class="coluna18 prepend1">
-				<label>UF *</label>
-				<%=Html.DropDownList("CFOC.EstadoId", Model.Estados, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlEstado"}))%>
-			</div>
-			<div class="coluna30 prepend1">
-				<label>Município *</label>
-				<%=Html.DropDownList("CFOC.MunicipioId", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipio"}))%>
-			</div>
-		</div>
-
-		<div class="block">
 			<label>
 				Certifico que, mediante reinspeção, acompanhamento do recebimento e conferência do CFO e CFOC, PTV ou CFR das cargas que compuseram o(s) lote(s) acima especificado(s), este(s) se apresenta(m):
 			</label>
@@ -272,101 +239,6 @@
 	</fieldset>
 
 	<fieldset class="block box">
-		<legend>Tratamento Fitossanitário com Fins Quarentenários</legend>
-		<% if (!Model.IsVisualizar) { %>
-		<div class="block">
-			<div class="coluna45">
-				<label>Possui tratamento fitossanitário com fins quarentenários? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiTratamentoFinsQuarentenario", 0, !Model.CFOC.PossuiTratamentoFinsQuarentenario.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiTratamento rbPossuiTratamentoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiTratamentoFinsQuarentenario", 1, Model.CFOC.PossuiTratamentoFinsQuarentenario.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiTratamento rbPossuiTratamentoSim"}))%>
-					Sim
-				</label>
-			</div>
-			<div class="coluna52 prepend1 tratamento <%=Model.CFOC.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-				<label>Nome do produto comercial *</label>
-				<%=Html.TextBox("CFOC.TratamentoFitossanitario.NomeProduto", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoNomeProduto", @maxlength="100" }))%>
-			</div>
-		</div>
-
-		<div class="block tratamento <%=Model.CFOC.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-			<div class="coluna45">
-				<label>Ingrediente ativo *</label>
-				<%=Html.TextBox("CFOC.TratamentoFitossanitario.IngredienteAtivo", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoIngredienteAtivo", @maxlength="100" }))%>
-			</div>
-
-			<div class="coluna52 prepend1">
-				<label>Dose *</label>
-				<%=Html.TextBox("CFOC.TratamentoFitossanitario.Dose", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoDose maskDecimalPonto4", @maxlength = "12"}))%>
-			</div>
-		</div>
-
-		<div class="block tratamento <%=Model.CFOC.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-			<div class="coluna45">
-				<label>Praga / Produto *</label><br />
-				<%=Html.TextBox("CFOC.TratamentoFitossanitario.PragaProduto", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoPragaProduto", @maxlength="100" }))%>
-			</div>
-
-			<div class="coluna39 prepend1">
-				<label>Modo de aplicação *</label>
-				<%=Html.TextBox("CFOC.TratamentoFitossanitario.ModoAplicacao", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoModoAplicacao", @maxlength="100" }))%>
-			</div>
-			<div class="coluna10 prepend1">
-				<button type="button" class="inlineBotao btnAddTratamento">Adicionar</button>
-			</div>
-		</div>
-		<% } %>
-
-		<div class="block">
-			<table class="dataGridTable gridTratamento">
-				<thead>
-					<tr>
-						<th>Nome do produto comercial</th>
-						<th style="width: 20%">Ingrediente ativo</th>
-						<th style="width: 10%">Dose</th>
-						<th style="width: 20%">Produto / Praga</th>
-						<th style="width: 20%">Modo de aplicação</th>
-						<% if (!Model.IsVisualizar) { %><th style="width: 7%">Ação</th>
-						<% } %>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.CFOC.TratamentosFitossanitarios) { %>
-					<tr>
-						<td class="nome_produto" title="<%=item.ProdutoComercial %>"><%=item.ProdutoComercial%></td>
-						<td class="ingrediente" title="<%=item.IngredienteAtivo%>"><%=item.IngredienteAtivo%> </td>
-						<td class="dose" title="<%=item.Dose%>"><%=item.Dose%> </td>
-						<td class="produto_praga" title="<%=item.PragaProduto%>"><%=item.PragaProduto%> </td>
-						<td class="modo_aplicacao" title="<%=item.ModoAplicacao%>"><%=item.ModoAplicacao%> </td>
-						<%if(!Model.IsVisualizar){ %>
-						<td>
-							<a class="icone excluir btnExcluir"></a>
-							<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
-						</td>
-						<% } %>
-					</tr>
-					<%  } %>
-					<%if (!Model.IsVisualizar)
-	   { %>
-					<tr class="trTemplate hide">
-						<td class="nome_produto">Nome do produto comercial</td>
-						<td class="ingrediente">Ingrediente ativo</td>
-						<td class="dose">Dose</td>
-						<td class="produto_praga">Produto / Praga</td>
-						<td class="modo_aplicacao">Modo de aplicação</td>
-						<td>
-							<a class="icone excluir btnExcluir"></a>
-							<input type="hidden" value="0" class="hdnItemJson" />
-						</td>
-					</tr>
-					<%} %>
-				</tbody>
-			</table>
-		</div>
-	</fieldset>
 
 	<fieldset class="block box">
 		<div class="block">

@@ -975,6 +975,7 @@
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Areas\Especificidades\Views\Web.config" />
     <None Include="Properties\PublishProfiles\Publish-Profile.pubxml" />
+    <None Include="Properties\PublishProfiles\PublishLocal.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-DDSIV.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />
     <None Include="Scripts\Lib\JQuery\jquery-1.10.1-vsdoc.js" />
@@ -1232,7 +1233,7 @@
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
-      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
       <Name>Blocos.Etx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">

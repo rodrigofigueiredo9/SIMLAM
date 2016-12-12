@@ -47,7 +47,7 @@
 		</div>
 		<div class="coluna22 prepend1 divNumeroEnter">
 			<label>Número CFO *</label>
-			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="10" }))%>
+			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="8" }))%>
 		</div>
 
 		<% if (Model.CFO.Id <= 0) { %>
@@ -230,39 +230,6 @@
 
 	<fieldset class="block box">
 		<div class="block">
-			<div class="coluna20">
-				<label>Possui laudo laboratorial? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFO.PossuiLaudoLaboratorial", 0, !Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFO.PossuiLaudoLaboratorial", 1, Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoSim"}))%>
-					Sim
-				</label>
-			</div>
-
-			<div class="coluna75 prepend1 laudo <%=Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-				<label>Nome do laboratório *</label>
-				<%=Html.TextBox("CFO.NomeLaboratorio", Model.CFO.NomeLaboratorio, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNomeLaboratorio", @maxlength="100" }))%>
-			</div>
-		</div>
-		<div class="block divEndereco laudo <%=Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-			<div class="coluna45">
-				<label>Número do laudo com resultado da análise *</label>
-				<%=Html.TextBox("CFO.NumeroLaudoResultadoAnalise", Model.CFO.NumeroLaudoResultadoAnalise, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroLaudoResultadoAnalise", @maxlength="15" }))%>
-			</div>
-			<div class="coluna18 prepend1">
-				<label>UF *</label>
-				<%=Html.DropDownList("CFO.EstadoId", Model.Estados, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlEstado"}))%>
-			</div>
-			<div class="coluna30 prepend1">
-				<label>Município *</label>
-				<%=Html.DropDownList("CFO.MunicipioId", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipio"}))%>
-			</div>
-		</div>
-
-		<div class="block">
 			<label>
 				Certifico que, mediante acompanhamento técnico, o(s) produto(s) acima especificado(s) se apresenta(m):
 			</label>
@@ -276,101 +243,6 @@
 				</label>
 			</div>
 		<%} %>
-		</div>
-	</fieldset>
-
-	<fieldset class="block box">
-		<legend>Tratamento Fitossanitário com Fins Quarentenários</legend>
-		<% if (!Model.IsVisualizar) { %>
-		<div class="block">
-			<div class="coluna45">
-				<label>Possui tratamento fitossanitário com fins quarentenários? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFO.PossuiTratamentoFinsQuarentenario", 0, !Model.CFO.PossuiTratamentoFinsQuarentenario.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiTratamento rbPossuiTratamentoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFO.PossuiTratamentoFinsQuarentenario", 1, Model.CFO.PossuiTratamentoFinsQuarentenario.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiTratamento rbPossuiTratamentoSim"}))%>
-					Sim
-				</label>
-			</div>
-			<div class="coluna52 prepend1 tratamento <%=Model.CFO.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-				<label>Nome do produto comercial *</label>
-				<%=Html.TextBox("CFO.TratamentoFitossanitario.NomeProduto", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoNomeProduto", @maxlength="100" }))%>
-			</div>
-		</div>
-
-		<div class="block tratamento <%=Model.CFO.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-			<div class="coluna45">
-				<label>Ingrediente ativo *</label>
-				<%=Html.TextBox("CFO.TratamentoFitossanitario.IngredienteAtivo", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoIngredienteAtivo", @maxlength="100" }))%>
-			</div>
-
-			<div class="coluna52 prepend1">
-				<label>Dose *</label>
-				<%=Html.TextBox("CFO.TratamentoFitossanitario.Dose", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoDose maskDecimalPonto4", @maxlength = "12"}))%>
-			</div>
-		</div>
-
-		<div class="block tratamento <%=Model.CFO.PossuiTratamentoFinsQuarentenario.GetValueOrDefault()? "":"hide" %>">
-			<div class="coluna45">
-				<label>Praga / Produto *</label><br />
-				<%=Html.TextBox("CFO.TratamentoFitossanitario.PragaProduto", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoPragaProduto", @maxlength="100" }))%>
-			</div>
-
-			<div class="coluna39 prepend1">
-				<label>Modo de aplicação *</label>
-				<%=Html.TextBox("CFO.TratamentoFitossanitario.ModoAplicacao", null, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtTratamentoModoAplicacao", @maxlength="100" }))%>
-			</div>
-			<div class="coluna10 prepend1">
-				<button type="button" class="inlineBotao btnAddTratamento">Adicionar</button>
-			</div>
-		</div>
-		<% } %>
-
-		<div class="block">
-			<table class="dataGridTable gridTratamento">
-				<thead>
-					<tr>
-						<th>Nome do produto comercial</th>
-						<th style="width:20%">Ingrediente ativo</th>
-						<th style="width:10%">Dose</th>
-						<th style="width:20%">Produto / Praga</th>
-						<th style="width:20%">Modo de aplicação</th>
-						<% if (!Model.IsVisualizar) { %><th style="width:7%">Ação</th><% } %>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.CFO.TratamentosFitossanitarios) { %>
-						<tr>
-							<td class="nome_produto" title="<%=item.ProdutoComercial %>"><%=item.ProdutoComercial%></td>
-							<td class="ingrediente" title="<%=item.IngredienteAtivo%>"> <%=item.IngredienteAtivo%> </td>
-							<td class="dose" title="<%=item.Dose%>"> <%=item.Dose%> </td>
-							<td class="produto_praga" title="<%=item.PragaProduto%>"> <%=item.PragaProduto%> </td>
-							<td class="modo_aplicacao" title="<%=item.ModoAplicacao%>"> <%=item.ModoAplicacao%> </td>
-							<%if(!Model.IsVisualizar){ %> 
-							<td>
-								<a class="icone excluir btnExcluir"></a>
-								<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
-							</td>
-							<% } %>
-						</tr>
-					<%  } %>
-					<%if(!Model.IsVisualizar){ %>
-						<tr class="trTemplate hide">
-							<td class="nome_produto">Nome do produto comercial</td>
-							<td class="ingrediente">Ingrediente ativo</td>
-							<td class="dose">Dose</td>
-							<td class="produto_praga">Produto / Praga</td>
-							<td class="modo_aplicacao">Modo de aplicação</td>
-							<td>
-								<a class="icone excluir btnExcluir"></a>
-								<input type="hidden" value="0" class="hdnItemJson" />
-							</td>
-						</tr>
-					<%} %>
-				</tbody>
-			</table>
 		</div>
 	</fieldset>
 

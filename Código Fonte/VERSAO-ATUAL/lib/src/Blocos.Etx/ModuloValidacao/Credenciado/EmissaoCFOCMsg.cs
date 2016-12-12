@@ -35,7 +35,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem EditarSituacaoInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A situação do CFOC deve ser \"Em elaboração\"." }; } }
 
 		public Mensagem TipoNumeroObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Nº Bloco ou Nº Digital é obrigatório." }; } }
-		public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC já existe no sistema." }; } }
+        public Mensagem AnoCFOCInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+        public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC já existe no sistema." }; } }
 		public Mensagem NumeroNaoLiberado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC não está liberado para o responsável técnico." }; } }
 		public Mensagem NumeroObrigatorio { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC é obrigatório." }; } }
 		public Mensagem NumeroInvalido { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC está inválido." }; } }

@@ -347,6 +347,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 		{
 			try
 			{
+
 				if (tipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Digital && tipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco)
 				{
 					Validacao.Add(Mensagem.EmissaoCFO.TipoNumeroObrigatorio);
@@ -370,6 +371,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 						numero = ObterNumeroDigital();
 					}
 				}
+
+                if (Validacao.EhValido && numero.Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+                {
+                    Validacao.Add(Mensagem.EmissaoCFO.AnoCFOInvalido);
+                    return numero;
+                }
 
 				return numero;
 			}

@@ -28,6 +28,10 @@
 
 			<div class="block hide">
 				<div class="block">
+                    <div class="coluna88">
+					    <label for="Filtros_Empreendimento">Empreendimento</label>
+					    <%= Html.TextBox("Filtros.NomeEmpreendimento", null, new { @class = "text", @maxlength = "80" }) %>
+				    </div>
 					<div class="coluna15">
 						<label for="Filtros_ProdutorTexto">Data de criação</label>
 						<%= Html.TextBox("Filtros.DataCriacao.DataTexto", null, new { @class = "text maskData" })%>

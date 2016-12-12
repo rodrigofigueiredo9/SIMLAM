@@ -124,55 +124,55 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				});
 			}
 
-			if (!entidade.PossuiLaudoLaboratorial.HasValue)
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.PossuiLaudoLaboratorialObrigatorio);
-			}
-			else
-			{
-				if (entidade.PossuiLaudoLaboratorial.Value)
-				{
-					if (string.IsNullOrEmpty(entidade.NomeLaboratorio))
-					{
-						Validacao.Add(Mensagem.EmissaoCFO.NomeLaboratorioObrigatorio);
-					}
+            //if (!entidade.PossuiLaudoLaboratorial.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.PossuiLaudoLaboratorialObrigatorio);
+            //}
+            //else
+            //{
+            //    if (entidade.PossuiLaudoLaboratorial.Value)
+            //    {
+            //        if (string.IsNullOrEmpty(entidade.NomeLaboratorio))
+            //        {
+            //            Validacao.Add(Mensagem.EmissaoCFO.NomeLaboratorioObrigatorio);
+            //        }
 
-					if (string.IsNullOrEmpty(entidade.NumeroLaudoResultadoAnalise))
-					{
-						Validacao.Add(Mensagem.EmissaoCFO.NumeroLaudoResultadoAnaliseObrigatorio);
-					}
+            //        if (string.IsNullOrEmpty(entidade.NumeroLaudoResultadoAnalise))
+            //        {
+            //            Validacao.Add(Mensagem.EmissaoCFO.NumeroLaudoResultadoAnaliseObrigatorio);
+            //        }
 
-					if (entidade.EstadoId <= 0)
-					{
-						Validacao.Add(Mensagem.EmissaoCFO.EstadoObrigatorio);
-					}
+            //        if (entidade.EstadoId <= 0)
+            //        {
+            //            Validacao.Add(Mensagem.EmissaoCFO.EstadoObrigatorio);
+            //        }
 
-					if (entidade.MunicipioId <= 0)
-					{
-						Validacao.Add(Mensagem.EmissaoCFO.MunicipioObrigatorio);
-					}
-				}
-			}
+            //        if (entidade.MunicipioId <= 0)
+            //        {
+            //            Validacao.Add(Mensagem.EmissaoCFO.MunicipioObrigatorio);
+            //        }
+            //    }
+            //}
 
 			if (entidade.ProdutoEspecificacao <= 0)
 			{
 				Validacao.Add(Mensagem.EmissaoCFO.ProdutoEspecificacaoObrigatorio);
 			}
 
-			if (!entidade.PossuiTratamentoFinsQuarentenario.HasValue)
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.PossuiTratamentoFinsQuarentenarioObrigatorio);
-			}
-			else
-			{
-				if (entidade.PossuiTratamentoFinsQuarentenario.Value)
-				{
-					entidade.TratamentosFitossanitarios.ForEach(tratamento =>
-					{
-						ValidarTratamento(tratamento);
-					});
-				}
-			}
+            //if (!entidade.PossuiTratamentoFinsQuarentenario.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.PossuiTratamentoFinsQuarentenarioObrigatorio);
+            //}
+            //else
+            //{
+            //    if (entidade.PossuiTratamentoFinsQuarentenario.Value)
+            //    {
+            //        entidade.TratamentosFitossanitarios.ForEach(tratamento =>
+            //        {
+            //            ValidarTratamento(tratamento);
+            //        });
+            //    }
+            //}
 
 			if (entidade.PartidaLacradaOrigem && string.IsNullOrEmpty(entidade.NumeroLacre) && string.IsNullOrEmpty(entidade.NumeroPorao) && string.IsNullOrEmpty(entidade.NumeroContainer))
 			{
@@ -204,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				return false;
 			}
 
-			if (numero.Length != 10)
+			if (numero.Length != 8)
 			{
 				Validacao.Add(Mensagem.EmissaoCFO.NumeroInvalido);
 				return false;

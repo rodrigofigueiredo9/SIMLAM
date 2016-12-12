@@ -103,39 +103,6 @@
 
 	<fieldset class="block box">
 		<div class="block">
-			<div class="coluna20">
-				<label>Possui laudo laboratorial? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiLaudoLaboratorial", 0, !Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFOC.PossuiLaudoLaboratorial", 1, Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoSim"}))%>
-					Sim
-				</label>
-			</div>
-
-			<div class="coluna75 prepend1 laudo <%=Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-				<label>Nome do laboratório *</label>
-				<%=Html.TextBox("CFOC.NomeLaboratorio", Model.CFOC.NomeLaboratorio, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNomeLaboratorio", @maxlength="100" }))%>
-			</div>
-		</div>
-		<div class="block divEndereco laudo <%=Model.CFOC.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-			<div class="coluna45">
-				<label>Número do laudo com resultado da análise *</label>
-				<%=Html.TextBox("CFOC.NumeroLaudoResultadoAnalise", Model.CFOC.NumeroLaudoResultadoAnalise, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroLaudoResultadoAnalise", @maxlength="15" }))%>
-			</div>
-			<div class="coluna18 prepend1">
-				<label>UF *</label>
-				<%=Html.DropDownList("CFOC.EstadoId", Model.Estados, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlEstado"}))%>
-			</div>
-			<div class="coluna30 prepend1">
-				<label>Município *</label>
-				<%=Html.DropDownList("CFOC.MunicipioId", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipio"}))%>
-			</div>
-		</div>
-
-		<div class="block">
 			<label>
 				Certifico que, mediante reinspeção, acompanhamento do recebimento e conferência do CFO e CFOC, PTV ou CFR das cargas que compuseram o(s) lote(s) acima especificado(s), este(s) se apresenta(m):
 			</label>
@@ -149,35 +116,6 @@
 				</label>
 			</div>
 		<%} %>
-		</div>
-	</fieldset>
-
-	<fieldset class="block box">
-		<legend>Tratamento Fitossanitário com Fins Quarentenários</legend>
-
-		<div class="block">
-			<table class="dataGridTable gridTratamento">
-				<thead>
-					<tr>
-						<th>Nome do produto comercial</th>
-						<th style="width:20%">Ingrediente ativo</th>
-						<th style="width:10%">Dose</th>
-						<th style="width:20%">Produto / Praga</th>
-						<th style="width:20%">Modo de aplicação</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.CFOC.TratamentosFitossanitarios) { %>
-						<tr>
-							<td class="nome_produto" title="<%=item.ProdutoComercial %>"><%=item.ProdutoComercial%></td>
-							<td class="ingrediente" title="<%=item.IngredienteAtivo%>"> <%=item.IngredienteAtivo%> </td>
-							<td class="dose" title="<%=item.Dose%>"> <%=item.Dose%> </td>
-							<td class="produto_praga" title="<%=item.PragaProduto%>"> <%=item.PragaProduto%> </td>
-							<td class="modo_aplicacao" title="<%=item.ModoAplicacao%>"> <%=item.ModoAplicacao%> </td>
-						</tr>
-					<% } %>
-				</tbody>
-			</table>
 		</div>
 	</fieldset>
 

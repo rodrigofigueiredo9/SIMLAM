@@ -82,9 +82,6 @@
     <Reference Include="Tecnomapas.Blocos.Arquivo">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Autenticacao">
-      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
@@ -2630,12 +2627,16 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj">
+      <Project>{722befca-5026-44e7-b158-c9da30d20c3f}</Project>
+      <Name>Blocos.Autenticacao</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
       <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
-      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
       <Name>Blocos.Etx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
