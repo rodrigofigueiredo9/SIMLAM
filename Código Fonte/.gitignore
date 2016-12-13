@@ -7,6 +7,7 @@ publishProfiles/
 Interno.Model.WebService.dll
 Tecnomapas.Blocos.Autenticacao.dll	
 Tecnomapas.Blocos.Etx.dll
+Tecnomapas.Blocos.Arquivo.dll
 Tecnomapas.Blocos.Autenticacao.dll
 Tecnomapas.EtramiteX.Configuracao.dll
 Tecnomapas.EtramiteX.Interno.Model.dll
