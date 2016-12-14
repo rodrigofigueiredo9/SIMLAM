@@ -23,6 +23,9 @@
 # Dlls da TecnoMapas
 VERSAO-ATUAL/lib/*.dll
 
+# Dlls da TecnoMapas
+VERSAO-ATUAL/lib/*.dll.config
+
 # Arquivo de XML do System.Net.Http (Gerado toda vez que o build é feito)
 VERSAO-ATUAL/lib/System.Net.Http.xml
 
