@@ -60,7 +60,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
                 GerenciadorTransacao.ObterIDAtual();
                 using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
                 {
+                    bancoDeDados.IniciarTransacao();
                     _da.Salvar(declaracao, bancoDeDados);
+                    bancoDeDados.Commit();
                     Validacao.Add(Mensagem.Declaracao.DeclaracaoSalvaComSucesso);
                 }
             }
