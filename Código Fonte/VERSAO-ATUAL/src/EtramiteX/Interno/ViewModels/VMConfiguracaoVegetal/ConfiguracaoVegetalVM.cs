@@ -74,6 +74,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal
 				case eConfiguracaoVegetalItemTipo.IngredienteAtivo:
 					Titulo += " Ingrediente Ativo";
 					break;
+                case eConfiguracaoVegetalItemTipo.DeclaracaoAdicional:
+                    Titulo += " Declaração Adicional";
+                    break;
 			}
 
 			Label = Titulo.Substring(Titulo.IndexOf(' ')).Trim();
