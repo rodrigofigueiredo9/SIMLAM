@@ -203,8 +203,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
                 #region Adicionando Filtros
 
-                comandtxt = comando.FiltroAndLike("p.texto", "texto", filtros.Dados.Texto, true, true);
-                comandtxt += comando.FiltroAndLike("p.texto_formatado", "texto_formatado", filtros.Dados.TextoFormatado, true, true);
+                comandtxt = comando.FiltroAndLike("p.texto", "texto", filtros.Dados.Texto , true, true);
+               // comandtxt += comando.FiltroAndLike("p.texto_formatado", "texto_formatado", filtros.Dados.TextoFormatado, true, true);
                 comandtxt += comando.FiltroAnd("p.outro_estado", "outro_estado", filtros.Dados.OutroEstado);
 
                 List<String> ordenar = new List<String>();
