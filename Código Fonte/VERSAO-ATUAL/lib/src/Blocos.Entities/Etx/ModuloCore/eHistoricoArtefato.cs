@@ -71,6 +71,7 @@
 		emitirptv = 140,
 		emitirptvoutro = 141,
         localvistoria = 144,
-        ptvcomunicador = 145
+        ptvcomunicador = 145,
+        declaracaoadicional = 146
 	}
 }
