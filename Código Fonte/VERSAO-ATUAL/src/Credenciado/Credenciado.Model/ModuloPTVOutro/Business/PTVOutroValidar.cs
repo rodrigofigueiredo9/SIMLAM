@@ -167,11 +167,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 			}
 			else
 			{
-				if (item.OrigemTipo <= 3 && item.OrigemNumero.Length != 10)
+                if (item.OrigemTipo < 3 && !(item.OrigemNumero.Length >= 8 && item.OrigemNumero.Length <= 12)) //CFO e CFOC
 				{
 					Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoCFOCFOC(item.OrigemTipoTexto));
 				}
-
+                else if (item.OrigemTipo == 3 && item.OrigemNumero.Length != 10) //PTV
+                {
+                    Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoPTV(item.OrigemTipoTexto));
+                }
 				if (item.OrigemTipo > 4 && item.OrigemNumero.Length != 20)
 				{
 					Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoCFCFRTF(item.OrigemTipoTexto));

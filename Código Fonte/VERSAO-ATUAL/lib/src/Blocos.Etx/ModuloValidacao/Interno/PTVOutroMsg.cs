@@ -43,8 +43,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem QuantidadeMaximoCFOCFOC(string documentoOrigem)
 		{
-			return new Mensagem() { Texto = string.Format("{0} deve conter 10 números.", documentoOrigem), Tipo = eTipoMensagem.Advertencia };
+			return new Mensagem() { Texto = string.Format("{0} deve conter entre 8 e 12 números.", documentoOrigem), Tipo = eTipoMensagem.Advertencia };
 		}
+
+        public Mensagem QuantidadeMaximoPTV(string documentoOrigem)
+        {
+            return new Mensagem() { Texto = string.Format("{0} deve conter 10 números.", documentoOrigem), Tipo = eTipoMensagem.Advertencia };
+        }
 
 		public Mensagem QuantidadeMaximoCFCFRTF(string documentoOrigem)
 		{
