@@ -96,7 +96,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
                 #region Histórico
 
-                Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.atualizar, bancoDeDados);
+                //Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.atualizar, bancoDeDados);
 
                 #endregion Histórico
 
