@@ -85,7 +85,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem TratamentoModoAplicacao { get { return new Mensagem() { Campo = "CFOC_TratamentoFitossanitario_ModoAplicacao", Texto = "Modo de aplicação é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ValidadeCertificadoObrigatorio { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "Validade do certificado é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
-		public Mensagem ValidadeCertificadoMaxima { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "A data de validade deve ser menor ou igual a 15 dias.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem ValidadeCertificadoMaxima { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "A data de validade deve ser menor ou igual a 30 dias.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem MunicipioEmissaoObrigatorio { get { return new Mensagem() { Campo = "CFOC_MunicipioEmissaoId", Texto = "Município da emissão é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ResponsavelTecnicoNaoHabilitado { get { return new Mensagem() { Texto = "O responsável técnico deve estar habilitado para emissão de CFOC.", Tipo = eTipoMensagem.Advertencia }; } }

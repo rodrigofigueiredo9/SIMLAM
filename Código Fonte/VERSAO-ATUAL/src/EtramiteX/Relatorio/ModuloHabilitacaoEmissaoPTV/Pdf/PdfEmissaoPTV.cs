@@ -36,15 +36,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 			EmissaoPTVRelatorio dataSource = new EmissaoPTVRelatorio();
 
-			if (situacao != (int)ePTVSituacao.EmElaboracao)
-			{
-				dataSource = _da.ObterHistorico(id, tid);
-			}
-			else
-			{
-				dataSource = _da.Obter(id);
-				dataSource.DataAtivacao = "--/--/--";
-			}
+            if (situacao != (int)ePTVSituacao.EmElaboracao)
+            {
+                dataSource = _da.ObterHistorico(id, tid);
+            }
+            else
+            {
+                dataSource = _da.Obter(id);
+                dataSource.DataAtivacao = "--/--/--";
+            }
 
 			#region Imagem Vazia
 
@@ -126,6 +126,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				case 4: dataSource.IsRod = AsposeData.Empty; dataSource.IsAer = AsposeData.Empty; dataSource.IsFer = AsposeData.Empty; dataSource.IsHid = "X"; dataSource.IsOut = AsposeData.Empty; break;
 				case 5: dataSource.IsRod = AsposeData.Empty; dataSource.IsAer = AsposeData.Empty; dataSource.IsFer = AsposeData.Empty; dataSource.IsHid = AsposeData.Empty; dataSource.IsOut = "X"; break;
 			}
+
+            if (dataSource.FuncionarioHabilitado.UFHablitacao != 8)
+            {
+                dataSource.FuncionarioHabilitado.Registro = dataSource.FuncionarioHabilitado.NumeroVistoCrea;
+            }
 
 			#endregion
 

@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.ValidadeCertificadoObrigatorio);
 			}
-			else if (entidade.ValidadeCertificado > 15)
+			else if (entidade.ValidadeCertificado > 30)
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.ValidadeCertificadoMaxima);
 			}

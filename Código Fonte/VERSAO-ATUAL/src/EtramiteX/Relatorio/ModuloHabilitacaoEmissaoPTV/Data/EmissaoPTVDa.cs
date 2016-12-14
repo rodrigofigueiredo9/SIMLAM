@@ -187,7 +187,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
-			    select f.nome, h.numero_habilitacao, h.numero_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
+			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.numero_visto_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
 			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
@@ -200,6 +200,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = reader.GetValue<string>("numero_visto_crea");
 					}
 					reader.Close();
 				}
@@ -421,8 +424,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				comando = bancoDeDados.CriarComando(@"   select x.nome,
                                                                 y.numero_habilitacao,
                                                                 y.numero_crea,
+                                                                y.uf_habilitacao, 
+                                                                y.numero_visto_crea
                                                                 nvl(x.arquivo_id, y.arquivo_id) arquivo_id
-                                                            from (select hf.funcionario_id, hf.nome, hf.arquivo_id
+                                                            from (select hf.funcionario_id, hf.nome, hf.arquivo_id,
                                                                     from hst_funcionario hf
                                                                     where hf.id in (select max(f.id)
                                                                                     from hst_funcionario f
@@ -431,7 +436,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                                                 (select h2.funcionario_id,
                                                                         h2.numero_habilitacao,
                                                                         h2.numero_crea,
-                                                                        h2.arquivo_id
+                                                                        h2.arquivo_id,
+                                                                        h2.uf_habilitacao, 
+                                                                        h2.numero_visto_crea
                                                                     from hst_hab_emi_ptv h2
                                                                     where h2.funcionario_id = :FuncId
                                                                     and h2.data_execucao =
@@ -453,6 +460,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = reader.GetValue<string>("numero_visto_crea");
 					}
 
 					reader.Close();

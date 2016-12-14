@@ -17,7 +17,7 @@ namespace AlterarSenhas
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("default"))
             {
 
-                Comando comando = bancoDeDados.CriarComando(@"Select * from tab_usuario");
+                Comando comando = bancoDeDados.CriarComando(@"Select * from tab_usuario where login = 'livia.almeida'");
                 string senhaHash = "", id = "";
                 ArrayList alterar = new ArrayList();
 
