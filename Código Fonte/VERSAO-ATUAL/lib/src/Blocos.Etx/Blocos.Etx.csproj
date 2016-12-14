@@ -225,6 +225,7 @@
     <Compile Include="ModuloValidacao\Interno\ConsideracaoFinalMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\AcompanhamentoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ClassificacaoToxicologicaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\DeclaracaoAdicionalMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\DestinatarioPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitacaoEmissaoPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitarEmissaoCFOCFOCMsg.cs" />
