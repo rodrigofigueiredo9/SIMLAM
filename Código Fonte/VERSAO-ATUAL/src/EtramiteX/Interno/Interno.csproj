@@ -2638,14 +2638,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj">
-      <Project>{722befca-5026-44e7-b158-c9da30d20c3f}</Project>
-      <Name>Blocos.Autenticacao</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\lib\src\Blocos.Arquivo\Blocos.Arquivo.csproj">
-      <Project>{f38dac7c-37e2-4fb9-9f56-48cc7a6980f2}</Project>
-      <Name>Blocos.Arquivo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
       <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
