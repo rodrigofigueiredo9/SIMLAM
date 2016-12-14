@@ -53,7 +53,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             else if (intervalo.NumeroInicial.ToString().Length != 8
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))
             {
-                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
 
 			if (intervalo.NumeroFinal <= 0)
@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             else if (intervalo.NumeroFinal.ToString().Length != 8
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))
             {
-                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
 			else if (intervalo.NumeroFinal % 25 != 0)
 			{
