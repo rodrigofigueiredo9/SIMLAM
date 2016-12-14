@@ -10,10 +10,6 @@
             <%=Html.TextArea("DeclaracaoAdicional.Texto", Model.DeclaracaoAdicional.Texto, new { @class="txtTexto text limpar", @maxlength="200" }) %>
         </div>
         <div class="coluna98">
-            <label>Texto Formatado</label>
-            <%=Html.TextArea("DeclaracaoAdicional.TextoFormatado",  Model.DeclaracaoAdicional.TextoFormatado, new { @class="txtTextoFormatado text limpar", @maxlength="500" }) %>
-        </div>
-        <div class="coluna98">
 		    <label for="OutroEstado">Outro Estado? </label><br />
 		    <label>
 			    <%=Html.RadioButton("DeclaracaoAdicional.OutroEstado", (int)ConfiguracaoSistema.NAO,  Model.DeclaracaoAdicional.OutroEstado==0 , new { @class = "rdbOutroEstado radio"})%>
