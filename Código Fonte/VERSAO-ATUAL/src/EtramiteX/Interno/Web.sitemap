@@ -395,13 +395,15 @@
 			<siteMapNode url="~/Profissao/Criar" title="Cadastrar Profissão" description="linkMenu" roles="ProfissaoCriar"></siteMapNode>
 		</siteMapNode>
 
-		<siteMapNode url="~/ConfiguracaoVegetal/" title="Configuração Vegetal" description="linkMenu config-vegetal" roles="ModalidadeAplicacao,FormaApresentacao,ClassificacaoToxicologica,PericulosidadeAmbiental,ClasseUso,GrupoQuimico,Cultura,IngredienteAtivo,Praga">
+		<siteMapNode url="~/ConfiguracaoVegetal/" title="Configuração Vegetal" description="linkMenu config-vegetal" roles="ModalidadeAplicacao,FormaApresentacao,ClassificacaoToxicologica,PericulosidadeAmbiental,ClasseUso,GrupoQuimico,Cultura,IngredienteAtivo,Praga,DeclaracaoAdicional">
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarModalidadeAplicacao" title="Modalidade de Aplicação" description="linkMenu" roles="ModalidadeAplicacao" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarFormasApresentacao" title="Forma de Apresentação" description="linkMenu" roles="FormaApresentacao" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarClassificacaoToxicologica" title="Classificação Toxicológica" description="linkMenu" roles="ClassificacaoToxicologica" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarPericulosidadeAmbiental" title="Periculosidade Ambiental" description="linkMenu" roles="PericulosidadeAmbiental" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarClasseUso" title="Classe de Uso" description="linkMenu" roles="ClasseUso" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarGrupoQuimico" title="Grupo Químico" description="linkMenu" roles="GrupoQuimico" />
+      <siteMapNode url="~/ConfiguracaoVegetal/CadastrarDeclaracaoAdicional" title="Cadastrar Declaração Adicional" description="linkMenu" roles="DeclaracaoAdicional" />
+      <siteMapNode url="~/ConfiguracaoVegetal/Declaracoes" title="Declarações" description="linkMenu" roles="DeclaracaoAdicional" />
 
 			<siteMapNode url="~/ConfiguracaoVegetal/Culturas" title="Culturas" description="linkMenu" roles="Cultura">
 				<siteMapNode url="~/ConfiguracaoVegetal/EditarCultura" roles="Cultura" />

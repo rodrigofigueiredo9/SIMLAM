@@ -250,6 +250,8 @@
     <Compile Include="ModuloVegetal\Business\ClasseUsoValidar.cs" />
     <Compile Include="ModuloVegetal\Business\ClassificacaoToxicologicaBus.cs" />
     <Compile Include="ModuloVegetal\Business\ClassificacaoToxicologicaValidar.cs" />
+    <Compile Include="ModuloVegetal\Business\DeclaracaoAdicionalBus.cs" />
+    <Compile Include="ModuloVegetal\Business\DeclaracaoAdicionalValidar.cs" />
     <Compile Include="ModuloVegetal\Business\PragaValidar.cs" />
     <Compile Include="ModuloVegetal\Business\PragaBus.cs" />
     <Compile Include="ModuloVegetal\Business\CulturaBus.cs" />
@@ -266,6 +268,7 @@
     <Compile Include="ModuloVegetal\Business\GrupoQuimicoValidar.cs" />
     <Compile Include="ModuloVegetal\Data\ClasseUsoDa.cs" />
     <Compile Include="ModuloVegetal\Data\ClassificacaoToxicologicaDa.cs" />
+    <Compile Include="ModuloVegetal\Data\DeclaracaoAdicionalDa.cs" />
     <Compile Include="ModuloVegetal\Data\PragaDa.cs" />
     <Compile Include="ModuloVegetal\Data\CulturaDa.cs" />
     <Compile Include="ModuloVegetal\Data\FormaApresentacaoDa.cs" />
