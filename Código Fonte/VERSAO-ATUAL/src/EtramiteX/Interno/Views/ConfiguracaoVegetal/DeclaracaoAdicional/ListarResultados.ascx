@@ -12,7 +12,6 @@
 		<thead>
 			<tr>
 				<th width="40%">Texto</th>
-				<th>Texto Formatado</th>
 				<th class="semOrdenacao" width="10%">Outro Estado?</th>
                 <th class="semOrdenacao" width="13%">Ações</th>
 			</tr>
@@ -22,7 +21,6 @@
 		<% foreach (var item in Model.Resultados) { %>
 			<tr>
 				<td title="<%= Html.Encode(item.Texto)%>"><%= Html.Encode(item.Texto)%></td>
-				<td title="<%= Html.Encode(item.TextoFormatado)%>"><%= Html.Encode(item.TextoFormatado)%></td>
                 <td title="<%= Html.Encode(item.OutroEstado==1 ? "Sim" : "Não")%>"><%= Html.Encode(item.OutroEstado==1 ? "Sim" : "Não")%></td>
 				<td>
 					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, Texto = item.Texto, TextoFormatado = item.TextoFormatado, OutroEstado = item.OutroEstado }) %>" />
