@@ -158,7 +158,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 						emissaoPTV.NumeroNotaFiscal = reader.GetValue<string>("numero_nota_fiscal");
 						emissaoPTV.VeiculoNumero = reader.GetValue<string>("veiculo_identificacao_numero");
 						emissaoPTV.Itinerario = reader.GetValue<string>("itinerario");
-						emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
+                        if (reader.GetValue<DateTime?>("data_ativacao") != null)
+                            emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
+                        else
+                            emissaoPTV.DataAtivacao = "--/--/----";
+						//emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
 						emissaoPTV.DataValidade = reader.GetValue<DateTime>("valido_ate").ToShortDateString();
 
 						emissaoPTV.Destinatario.Nome = reader.GetValue<string>("destinatario_nome");

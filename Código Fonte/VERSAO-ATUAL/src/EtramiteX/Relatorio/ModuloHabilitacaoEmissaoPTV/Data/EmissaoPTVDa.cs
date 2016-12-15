@@ -393,9 +393,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.NumeroNotaFiscal = reader.GetValue<string>("numero_nota_fiscal");
 						emissaoPTV.VeiculoNumero = reader.GetValue<string>("veiculo_identificacao_numero");
 						emissaoPTV.Itinerario = reader.GetValue<string>("itinerario");
-						emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
-						emissaoPTV.DataValidade = reader.GetValue<DateTime>("valido_ate").ToShortDateString();
+                        if (reader.GetValue<DateTime?>("data_ativacao") != null)
+                            emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
+                        else
+                            emissaoPTV.DataAtivacao = "--/--/----";
 
+						emissaoPTV.DataValidade = reader.GetValue<DateTime>("valido_ate").ToShortDateString();
 						emissaoPTV.Destinatario.Nome = reader.GetValue<string>("destinatario_nome");
 						emissaoPTV.Destinatario.Endereco = reader.GetValue<string>("destinatario_endereco");
 						emissaoPTV.Destinatario.UF = reader.GetValue<string>("destinatario_uf");
