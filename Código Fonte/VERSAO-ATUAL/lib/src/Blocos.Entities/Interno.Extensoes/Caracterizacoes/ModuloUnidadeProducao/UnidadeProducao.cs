@@ -11,7 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 		public String Tid { get; set; }
 		public String LocalLivroDisponivel { get; set; }
 		public Boolean PossuiCodigoPropriedade { get; set; }
-		public Int32 CodigoPropriedade { get; set; }
+		public Int64 CodigoPropriedade { get; set; }
 		public int InternoID { get; set; }
 		public string InternoTID { get; set; }
 		public int CredenciadoID { get; set; }

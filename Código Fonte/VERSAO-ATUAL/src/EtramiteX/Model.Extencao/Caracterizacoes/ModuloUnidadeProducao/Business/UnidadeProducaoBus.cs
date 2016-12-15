@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -49,7 +51,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
 		#region Comandos DML
 
-		public bool Salvar(UnidadeProducao caracterizacao)
+        public String GetGeoInfo(Coordenada coordenada)
+        {
+            RequestJson requestJson = new RequestJson();
+            ResponseJsonData<dynamic> resposta = new ResponseJsonData<dynamic>();
+
+            String webServiceHost = _configCoord.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada);
+            String webServiceUri = new StringBuilder()
+                .Append(webServiceHost)
+                .Append("?easting=")
+                .Append(coordenada.EastingUtm)
+                .Append("&northing=")
+                .Append(coordenada.NorthingUtm)
+                .ToString();
+
+            resposta = requestJson.Executar<dynamic>(webServiceUri);
+
+            return resposta.Data;
+        }
+
+        public bool Salvar(UnidadeProducao caracterizacao)
 		{
 			try
 			{
@@ -64,10 +85,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 				{
 					if (caracterizacao.Id < 1)
 					{
-						caracterizacao.CodigoPropriedade = _da.ObterSequenciaCodigoPropriedade();
+                        caracterizacao.CodigoPropriedade = _da.ObterSequenciaCodigoPropriedade();
 					}
 					else
-					{
+					 {
 						caracterizacao.CodigoPropriedade = ObterPorEmpreendimento(caracterizacao.Empreendimento.Id, true).CodigoPropriedade;
 					}
 				}
@@ -124,11 +145,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 						{
 							ultimoCodigoUP++;
 
-							item.CodigoUP = Convert.ToInt64(
-								item.Municipio.Ibge.ToString() +
-								caracterizacao.CodigoPropriedade.ToString("D4") +
-								item.AnoAbertura +
-								ultimoCodigoUP.ToString("D2"));
+                            item.CodigoUP = UnidadeProducaoGenerator.GerarCodigoUnidadeProducao(
+                                item.Municipio.Ibge
+                            ,   caracterizacao.CodigoPropriedade
+                            ,   item.AnoAbertura
+                            ,   ultimoCodigoUP
+                            );
 						}
 						else
 						{

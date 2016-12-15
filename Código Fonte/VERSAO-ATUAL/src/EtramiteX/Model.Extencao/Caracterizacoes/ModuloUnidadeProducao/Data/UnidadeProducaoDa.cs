@@ -667,7 +667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+                        caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int>("empreendimento_codigo");
 						caracterizacao.LocalLivroDisponivel = reader.GetValue<string>("local_livro");
@@ -950,7 +950,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 			}
 		}
 
-		internal bool CodigoPropriedadeExistente(int unidadeId, int codigoPropriedade, BancoDeDados banco = null)
+        internal bool CodigoPropriedadeExistente(int unidadeId, Int64 codigoPropriedade, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
