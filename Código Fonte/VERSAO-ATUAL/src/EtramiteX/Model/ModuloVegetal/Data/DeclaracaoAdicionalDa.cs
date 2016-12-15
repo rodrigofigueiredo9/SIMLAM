@@ -205,7 +205,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
                 comandtxt = comando.FiltroAndLike("p.texto", "texto", filtros.Dados.Texto , true, true);
                // comandtxt += comando.FiltroAndLike("p.texto_formatado", "texto_formatado", filtros.Dados.TextoFormatado, true, true);
-                comandtxt += comando.FiltroAnd("p.outro_estado", "outro_estado", filtros.Dados.OutroEstado);
+                comandtxt += comando.FiltroAnd("p.outro_estado", "outro_estado", filtros.Dados.OutroEstado.HasValue ? filtros.Dados.OutroEstado.ToString() : null );
 
                 List<String> ordenar = new List<String>();
                 List<String> colunas = new List<String>() { "texto", "texto_formatado", "outro_estado" };
