@@ -7,6 +7,9 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.DeclaracaoAdicional;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using System.Data;
+using Tecnomapas.EtramiteX.Configuracao.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
 {
@@ -25,6 +28,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
         }
 
         #region DML
+
+        public List<ListaValor> ObterListaDeclaracao(int  OutroEstado = 0)
+        {
+            return _da.ObterListaDeclaracao(OutroEstado);
+        }
 
         public bool Excluir(int id)
         {

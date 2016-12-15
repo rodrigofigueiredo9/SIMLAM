@@ -9,6 +9,7 @@ Cultura = {
 		urls: {
 			salvar: '',
 			obter: '',
+            outro_estado : '',
 			urlDeclaracaoAdicional:null
 		},
 		Mensagens: null
@@ -27,10 +28,40 @@ Cultura = {
 		Cultura.container.delegate('.btnAdicionar', 'click', Cultura.onAdicionarCultivar);
 		Cultura.container.delegate('.btnEditar', 'click', Cultura.editar);
 		Cultura.container.delegate('.btnItemEditar', 'click', Cultura.onItemEditar);
+		Cultura.container.delegate('.rdbOutroEstado', 'click', Cultura.onOutroEstado);
 
 		Cultura.container.delegate('.btnConfigurar', 'click', Cultura.configurarDeclaracaoAdicional);
 		Aux.setarFoco(Cultura.container);
 	},	
+
+
+	onOutroEstado: function () {
+
+	    $.ajax({
+	        url: Cultura.settings.urls.outro_estado,
+	        data: JSON.stringify(Cultura.obter()),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, Cultura.container);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (response.EhValido) {
+	                if (response.Url) {
+	                    MasterPage.redireciona(response.Url);
+	                }
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(Cultura.container, response.Msg);
+	            }
+	        }
+	    });
+
+	},
 
 	onAdicionarCultivar: function () {
 		Mensagem.limpar(Cultura.container);

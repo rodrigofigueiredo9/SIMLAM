@@ -5,7 +5,8 @@
 <h1 class="titTela"></h1>
 <br />
 <script type="text/javascript">
-	DeclaracaoAdicional.settings.urls.validarDeclaracaoAdicional = '<%= Url.Action("ValidarDeclaracaoAdicional", "ConfiguracaoVegetal") %>';
+    DeclaracaoAdicional.settings.urls.validarDeclaracaoAdicional = '<%= Url.Action("ValidarDeclaracaoAdicional", "ConfiguracaoVegetal") %>';
+    DeclaracaoAdicional.settings.urls.urlOutroEstado = '<%= Url.Action("ObterDeclaracaoOutroEstado", "ConfiguracaoVegetal") %>';
 </script>
 
 <fieldset ID="configuracaoAdicional" class="block box">
@@ -31,6 +32,19 @@
 			<%= Html.DropDownList("TipoProducao", Model.TipoProducao, new { @class="ddlTipoProducao text"}) %>
 		</div>
 	</div>
+    <div class="block">
+		<div class="block coluna80">
+			<label>Declaração de outro estado? *</label>
+			  <%=Html.RadioButton("OutroEstado", 0, true , new { @class = "rdbOutroEstado radio"})%>
+             Não
+           
+			  <%=Html.RadioButton("OutroEstado", 1, false , new { @class = "rdbOutroEstado radio"})%>
+             Sim
+            
+		</div>
+		
+	</div>
+
 	<div class="block">
 		<div class="block coluna80">
 			<label>Declaração Adicional *</label>

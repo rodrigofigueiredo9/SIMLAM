@@ -9,7 +9,9 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.DeclaracaoAdicional;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
-
+using System.Data;
+using Tecnomapas.EtramiteX.Configuracao.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 {
@@ -41,6 +43,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
             {
                 Editar(declaracao, banco);
             }
+        }
+
+        internal List<ListaValor> ObterListaDeclaracao(int OutroEstado)
+        {
+            List<ListaValor> lst = new List<ListaValor>();
+            string Consulta = string.Format(@"select d.id, d.texto from lov_cultivar_declara_adicional d where d.outro_estado='{0}' ", OutroEstado);
+            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(Consulta);
+            foreach (var item in daReader)
+            {
+                lst.Add(new ListaValor()
+                {
+                    Id =Convert.ToInt32(item["id"]),
+                    Texto = item["texto"].ToString(),
+                    IsAtivo = true
+                });
+            }
+
+            return lst;
         }
 
         private void Criar(DeclaracaoAdicional declaracao, BancoDeDados banco = null)

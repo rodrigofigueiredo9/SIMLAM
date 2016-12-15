@@ -626,6 +626,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return View("DeclaracaoAdicional/Criar", vm);
         }
 
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult ObterDeclaracaoOutroEstado(int valOutroEstado)
+        {
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Declaracoes = _declaracao.ObterListaDeclaracao(valOutroEstado)
+            },
+            JsonRequestBehavior.AllowGet);
+        }
+
         [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
         public ActionResult FiltrarDeclaracao(DeclaracaoAdicionalListarVM vm, Paginacao paginacao)
         {

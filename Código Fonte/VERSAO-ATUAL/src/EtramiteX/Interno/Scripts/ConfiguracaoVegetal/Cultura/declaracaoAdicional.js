@@ -7,7 +7,8 @@
 DeclaracaoAdicional = {
 	settings: {
 		urls: {
-			validarDeclaracaoAdicional: null
+		    validarDeclaracaoAdicional: null,
+            urlOutroEstado : null
 		},
 		associarFuncao: null,
 		Mensagens: null
@@ -24,7 +25,36 @@ DeclaracaoAdicional = {
 		DeclaracaoAdicional.container = container;
 		DeclaracaoAdicional.container.delegate('.btnAdicionar', 'click', DeclaracaoAdicional.adicionarCultivarConfiguracao);
 		DeclaracaoAdicional.container.delegate('.btnItemExcluir', 'click', DeclaracaoAdicional.excluir);
-	},	
+		DeclaracaoAdicional.container.delegate('.rdbOutroEstado', 'change', DeclaracaoAdicional.onOutroEstado);
+
+		$('.rdbOutroEstado').change();
+	},
+
+	onOutroEstado: function () {
+	   
+	   
+	    var val_outro_estado = $('.rdbOutroEstado:visible:checked', DeclaracaoAdicional.container).val();
+	
+
+	    $.ajax({
+	        url: DeclaracaoAdicional.settings.urls.urlOutroEstado,
+	        data: JSON.stringify({ valOutroEstado: val_outro_estado }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, Cultura.container);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (response.Declaracoes) {
+	                $('.ddlDeclaracaoAdicional', DeclaracaoAdicional.container).ddlLoad(response.Declaracoes, { disabled: false });
+	            }
+	        }
+	    });
+
+	},
 	
 	adicionarCultivarConfiguracao: function () {
 		Mensagem.limpar(DeclaracaoAdicional.container);
