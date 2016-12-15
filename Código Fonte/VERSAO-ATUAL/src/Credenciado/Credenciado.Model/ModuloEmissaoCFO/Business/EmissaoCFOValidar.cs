@@ -227,6 +227,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				Validacao.Add(Mensagem.EmissaoCFO.NumeroCancelado);
 			}
 
+            if (numero.Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.EmissaoCFO.AnoCFOInvalido);
+            }
+
 			return Validacao.EhValido;
 		}
 

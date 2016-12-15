@@ -95,11 +95,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.DestinatarioObrigatorio);
 			}
 
-			if (!ptv.PossuiLaudoLaboratorial.HasValue)
-			{
-				Validacao.Add(Mensagem.PTV.PossuiLaudoLab_Obrigatorio);
-			}
-
 			if (ptv.TransporteTipo <= 0)
 			{
 				Validacao.Add(Mensagem.PTV.TipoTransporteObrigatorio);

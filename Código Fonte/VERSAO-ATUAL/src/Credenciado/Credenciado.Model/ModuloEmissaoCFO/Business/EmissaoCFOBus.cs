@@ -372,12 +372,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 					}
 				}
 
-                if (Validacao.EhValido && numero.Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
-                {
-                    Validacao.Add(Mensagem.EmissaoCFO.AnoCFOInvalido);
-                    return numero;
-                }
-
+               
 				return numero;
 			}
 			catch (Exception exc)
