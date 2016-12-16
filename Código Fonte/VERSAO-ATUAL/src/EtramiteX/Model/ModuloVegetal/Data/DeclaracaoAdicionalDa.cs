@@ -9,7 +9,6 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.DeclaracaoAdicional;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
-using System.Data;
 using Tecnomapas.EtramiteX.Configuracao.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 
