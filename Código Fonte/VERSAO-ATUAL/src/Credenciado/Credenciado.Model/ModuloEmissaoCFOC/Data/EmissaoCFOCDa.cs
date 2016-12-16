@@ -680,7 +680,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				where l.id = t.liberacao and t.tipo_documento = 2 and t.tipo_numero = 2
 				and not exists(select null from cre_cfoc c where c.numero = t.numero)
 				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
-                and to_char(numero) like '__'|| to_char(to_char(sysdate, 'yy') -1) ||'%' ");
+                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
@@ -905,7 +905,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				where l.id = n.liberacao and n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
 				and not exists (select null from cre_cfoc c where c.numero = n.numero) 
 				and l.responsavel_tecnico = :credenciado 
-                and to_char(n.numero) like '__'|| to_char(to_char(sysdate, 'yy') -1) ||'%' ");
+                and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
