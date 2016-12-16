@@ -759,7 +759,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				comandtxt += comando.FiltroAndLike("pt.dua_numero", "dua_numero", filtro.Dados.DUANumero);
 
-				comandtxt += comando.FiltroAndLike("p.dua_cpf_cnpj", "dua_cpf_cnpj", filtro.Dados.DUACPFCNPJ);
+				comandtxt += comando.FiltroAndLike("pt.dua_cpf_cnpj", "dua_cpf_cnpj", filtro.Dados.DUACPFCNPJ);
 
 				if (!String.IsNullOrEmpty(filtro.Dados.Empreendimento))
 				{

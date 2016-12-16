@@ -1601,7 +1601,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				comandtxt += comando.FiltroAndLike("pt.dua_numero", "dua_numero", filtro.Dados.DUANumero);
 
-				comandtxt += comando.FiltroAndLike("p.dua_cpf_cnpj", "dua_cpf_cnpj", filtro.Dados.DUACPFCNPJ);
+				comandtxt += comando.FiltroAndLike("pt.dua_cpf_cnpj", "dua_cpf_cnpj", filtro.Dados.DUACPFCNPJ);
 
 
 				if (filtro.Dados.FuncionarioId > 0)
