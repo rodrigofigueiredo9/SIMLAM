@@ -54,5 +54,17 @@ namespace Tests
             Assert.AreEqual("0111", UnidadeProducaoGenerator.GetSequencialFromCodigoPropriedade(111));
             Assert.AreEqual("1111", UnidadeProducaoGenerator.GetSequencialFromCodigoPropriedade(1111));
         }
+
+        [TestMethod]
+        public void DeveRetornarTrueSeCodigoDaPropriedadeEstiverNoCodigoUp()
+        {
+            Assert.IsTrue(UnidadeProducaoGenerator.CodigoUpHasCodigoPropriedade(32052000033, 32052000033160001));
+        }
+
+        [TestMethod]
+        public void DeveRetornarFalseSeCodigoDaPropriedadeNaoEstiverNoCodigoUp()
+        {
+            Assert.IsFalse(UnidadeProducaoGenerator.CodigoUpHasCodigoPropriedade(32052000003, 32052000033160001));
+        }
     }
 }

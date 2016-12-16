@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="ePermissaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AsposeEtxTest.cs" />
     <Compile Include="UnidadeProducaoGeneratorTest.cs" />
   </ItemGroup>
   <ItemGroup>
