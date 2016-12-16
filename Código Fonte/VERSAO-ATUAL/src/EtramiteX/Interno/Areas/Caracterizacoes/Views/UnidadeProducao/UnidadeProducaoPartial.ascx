@@ -43,7 +43,7 @@
 		<table class="dataGridTable gridUnidadeProducao" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<thead>
 				<tr>
-					<th width="16%">Código da UP</th>
+					<th width="20%">Código da UP</th>
 					<th width="12%">Área(ha)</th>
 					<th>Cultivar</th>
 					<th width="14%">Quantidade/Ano</th>
