@@ -52,5 +52,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
             return codigoPropriedadeAsString.Substring(startIndex, sequencialLength);
         }
+
+        public static bool CodigoUpHasCodigoPropriedade(Int64 codigoPropriedade, Int64 codigoUp)
+        {
+            String sequencial = GetSequencialFromCodigoPropriedade(codigoPropriedade);
+
+            return (codigoUp.ToString().Substring(7, 4) == sequencial);
+        }
     }
 }
