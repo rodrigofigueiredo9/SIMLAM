@@ -13,7 +13,10 @@ PTVOutroEmitir = {
             urlObterDestinarioCodigoUc: null,
             urlAssociarDestinatario: null,
             urlObterDestinatario: null,
-            urlSalvar: null
+            urlSalvar: null,
+            urlObterPragas: null,
+            urlObterDeclaracaoAdicional: null,
+            urlValidarPraga : null
         }
     },
     container: null,
@@ -61,6 +64,8 @@ PTVOutroEmitir = {
         PTVOutroEmitir.container.delegate('.btnAssociarCultura', 'click', PTVOutroEmitir.associarCultura);
         PTVOutroEmitir.container.delegate('.btnVerificarDestinatario', 'click', PTVOutroEmitir.onValidarDocumento);
         PTVOutroEmitir.container.delegate('.btnLimparDestinatario', 'click', PTVOutroEmitir.onLimparDestinatario);
+
+        PTVOutroEmitir.container.delegate('.btnAddPraga', 'click', PTVOutroEmitir.addPraga);
 
         PTVOutroEmitir.container.delegate('.rbTipoProducao ', 'change', function(item) {
 
@@ -115,6 +120,8 @@ PTVOutroEmitir = {
             txtInteressadoCpfCnpj.unmask().mask("99.999.999/9999-99");
         }
     },
+
+   
 
     onObterMunicipioInteressado: function() {
         var ddl = PTVOutroEmitir.container.find('.ddlEstadosInteressado');
@@ -254,6 +261,7 @@ PTVOutroEmitir = {
         $('input[type=text]', container).val("");
 
         Listar.atualizarEstiloTable(tabela);
+        PTVOutroEmitir.carregarPragas();
     },
 
     onObterMunicipio: function() {
@@ -273,6 +281,124 @@ PTVOutroEmitir = {
             $('.block', PTVOutroEmitir.container).removeClass('hide');
             $('.rbTipoDocumento', PTVOutroEmitir.container).attr('disabled', 'disabled');
         }
+    },
+
+    obterIdentificacoes: function () {
+        var retorno = [];
+        $('.gridProdutos tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    carregarPragas: function () {
+        $('.ddlPragas', PTVOutroEmitir.container).ddlClear();
+        var produtos = PTVOutroEmitir.obterIdentificacoes();
+
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterPragas,
+            data: JSON.stringify({ produtos: produtos }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: Aux.error,
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.ddlPragas', PTVOutroEmitir.container).ddlLoad(response.Lista);
+                } else {
+                    Mensagem.gerar(PTVOutroEmitir.container, response.Msg);
+                }
+            }
+        });
+
+        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            var item = JSON.parse($('.hdnItemJson', this).val());
+
+            var possui = false;
+            $('.ddlPragas option', PTVOutroEmitir.container).each(function () {
+                if ($(this).val() == item.Id) {
+                    possui = true;
+                }
+            });
+
+            if (!possui) {
+                $(this).remove();
+            }
+        });
+    },
+
+    addPraga: function () {
+        Mensagem.limpar(PTVOutroEmitir.container);
+     
+        var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
+        var lista = PTVOutroEmitir.obterPragas();
+        var item = {
+            Id: praga.Id,
+            NomeCientifico: praga.Texto.split('-')[0],
+            NomeComum: praga.Texto.split('-')[1]
+        };
+
+        var retorno = MasterPage.validarAjax(PTVOutroEmitir.settings.urls.urlValidarPraga, { item: item, lista: lista }, null, false);
+
+        if (!retorno.EhValido && retorno.Msg) {
+            Mensagem.gerar(PTVOutroEmitir.container, retorno.Msg);
+            return;
+        }
+
+   
+
+        var tabela = $('.gridPragas', PTVOutroEmitir.container);
+        var linha = $('.trTemplate', tabela).clone();
+
+        $('.nome_cientifico', linha).text(item.NomeCientifico);
+        $('.nome_comum', linha).text(item.NomeComum);
+        $('.hdnItemJson', linha).val(JSON.stringify(item));
+
+        $('tbody', tabela).append(linha);
+        $(linha).removeClass('hide').removeClass('trTemplate');
+
+        Listar.atualizarEstiloTable(tabela);
+        $('.ddlPragas', PTVOutroEmitir.container).ddlFirst();
+        PTVOutroEmitir.obterDeclaracaoAdicional();
+    },
+
+    obterPragas: function () {
+        var retorno = [];
+        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    obterDeclaracaoAdicional: function () {
+        var produtos = PTVOutroEmitir.obterIdentificacoes();
+        var pragas = PTVOutroEmitir.obterPragas();
+
+        MasterPage.carregando(true);
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoAdicional,
+            data: JSON.stringify({ produtos: produtos, pragas: pragas }),
+            cache: false,
+            async: true,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: Aux.error,
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).html(response.DeclaracoesAdicionais);
+                }
+
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(PTVOutroEmitir.container, response.Msg);
+                }
+            }
+        });
+        MasterPage.carregando(false);
     },
 
     onExcluirIdentificacaoProduto: function() {

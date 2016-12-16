@@ -174,6 +174,63 @@
 	</div>
 </fieldset>
 
+<fieldset id="Container_Praga" class="block box">
+	<legend>Pragas associadas à cultura</legend>
+	<% if (!Model.IsVisualizar) { %>
+	<div class="block">
+		<div class="coluna58">
+			<label>Pragas *</label>
+			<%=Html.DropDownList("PragaId", Model.Pragas ?? new List<SelectListItem>(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new{ @class="ddlPragas text"})) %>
+		</div>
+		<div class="coluna10 prepend1">
+			<button type="button" class="inlineBotao btnAddPraga">Adicionar</button>
+		</div>
+	</div>
+	<% } %>
+
+	<div class="block">
+		<table class="dataGridTable gridPragas">
+			<thead>
+				<tr>
+					<th>Nome científico</th>
+					<th>Nome comum</th>
+					<% if (!Model.IsVisualizar) { %><th style="width:7%">Ação</th><% } %>
+				</tr>
+			</thead>
+			<tbody>
+				<% foreach (var item in Model.PTV.Pragas) { %>
+					<tr>
+						<td class="nome_cientifico" title="<%=item.NomeCientifico %>"><%=item.NomeCientifico%></td>
+						<td class="nome_comum" title="<%=item.NomeComum%>"> <%=item.NomeComum%></td>
+						<%if(!Model.IsVisualizar){ %> 
+						<td>
+							<a class="icone excluir btnExcluir"></a>
+							<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+						</td>
+						<%} %>
+					</tr>
+				<%  } %>
+				<%if(!Model.IsVisualizar){ %>
+					<tr class="trTemplate hide">
+						<td class="nome_cientifico"></td>
+						<td class="nome_comum"></td>
+						<td>
+							<a class="icone excluir btnExcluir"></a>
+							<input type="hidden" value="0" class="hdnItemJson" />
+						</td>
+					</tr>
+				<%} %>
+			</tbody>
+		</table>
+	</div>
+    <div class="block">
+		<label>Informações complementares</label>
+		<div class="textareaFake txtDeclaracaoAdicional">
+			<%= Model.PTV.DeclaracaoAdicionalHtml %>
+        </div>
+    </div>
+</fieldset>
+
 
 <fieldset class="block box destinatario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Destinatário</legend>
