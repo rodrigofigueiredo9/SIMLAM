@@ -330,7 +330,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 					{
 						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
                             ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
-                            and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
+                            and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '0' and cfo.id = tcp.cfo and tcp.praga = cconf.praga
                             and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID", EsquemaBancoCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfoId", origem, DbType.Int32);

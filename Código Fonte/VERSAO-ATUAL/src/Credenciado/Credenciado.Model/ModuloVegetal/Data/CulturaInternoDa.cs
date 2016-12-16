@@ -59,7 +59,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id", EsquemaBanco);
+				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = '0' and t.cultivar = :id", EsquemaBanco);
 
 				cultura.LstCultivar.ForEach(x =>
 				{
@@ -155,7 +155,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id", EsquemaBanco);
+				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = '0' and t.cultivar = :id", EsquemaBanco);
 
 				lstCultivar.ForEach(x =>
 				{
