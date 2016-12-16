@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao;
@@ -913,6 +914,79 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
+
+        public Municipio ObterMunicipio(int MunicipioId, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Municipio municipio = new Municipio();
+                Comando comando = bancoDeDados.CriarComando(@"select m.id, m.texto, m.estado, m.cep, m.ibge from {0}lov_municipio m where m.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", MunicipioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        municipio.Id = Convert.ToInt32(reader["id"]);
+                        municipio.Estado.Id = Convert.ToInt32(reader["estado"]);
+                        municipio.Ibge = Convert.IsDBNull(reader["ibge"]) ? 0 : Convert.ToInt32(reader["ibge"]);
+                        municipio.Texto = reader["texto"].ToString();
+                        municipio.Cep = reader["texto"].ToString();
+                        municipio.IsAtivo = true;
+                    }
+
+                    reader.Close();
+                }
+
+                return municipio;
+            }
+        }
+
+        public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
+        {
+            Endereco retorno = new Endereco();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Endereços
+
+                Comando comando = bancoDeDados.CriarComando(@"
+				select te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto, 
+				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid 
+				from {0}tab_empreendimento_endereco te, {0}lov_estado le, {0}lov_municipio lm 
+				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = :empreendimento and te.correspondencia = 0", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        retorno.Id = reader.GetValue<int>("id");
+                        retorno.Tid = reader.GetValue<string>("tid");
+                        retorno.ZonaLocalizacaoId = reader.GetValue<int>("zona");
+                        retorno.Cep = reader.GetValue<string>("cep");
+                        retorno.Logradouro = reader.GetValue<string>("logradouro");
+                        retorno.Bairro = reader.GetValue<string>("bairro");
+                        retorno.EstadoId = reader.GetValue<int>("estado_id");
+                        retorno.EstadoTexto = reader.GetValue<string>("estado_texto");
+                        retorno.MunicipioId = reader.GetValue<int>("municipio_id");
+                        retorno.MunicipioTexto = reader.GetValue<string>("municipio_texto");
+                        retorno.Numero = reader.GetValue<string>("numero");
+                        retorno.DistritoLocalizacao = reader.GetValue<string>("distrito");
+                        retorno.Corrego = reader.GetValue<string>("corrego");
+                        retorno.CaixaPostal = reader.GetValue<string>("caixa_postal");
+                        retorno.Complemento = reader.GetValue<string>("complemento");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return retorno;
+        }
 
 		#endregion
 
