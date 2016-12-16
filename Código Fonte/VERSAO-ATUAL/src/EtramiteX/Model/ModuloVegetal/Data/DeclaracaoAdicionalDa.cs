@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 				(seq_declaracao_adicional.nextval, :texto, :texto_formatado, :outro_estado) returning id into :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("texto", declaracao.Texto, DbType.String);
-                comando.AdicionarParametroEntrada("texto_formatado", declaracao.TextoFormatado, DbType.String);
+                comando.AdicionarParametroEntrada("texto_formatado", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("outro_estado", declaracao.OutroEstado, DbType.String);
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -106,7 +106,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 				 outro_estado = :outro_estado where id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("texto", declaracao.Texto, DbType.String);
-                comando.AdicionarParametroEntrada("texto_formatado", declaracao.TextoFormatado, DbType.String);
+                comando.AdicionarParametroEntrada("texto_formatado", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("outro_estado", declaracao.OutroEstado, DbType.String);
                 comando.AdicionarParametroEntrada("id", declaracao.Id, DbType.Int32);
 
