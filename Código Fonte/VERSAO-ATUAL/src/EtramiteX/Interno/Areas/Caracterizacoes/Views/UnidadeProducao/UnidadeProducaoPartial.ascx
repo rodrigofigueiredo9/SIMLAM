@@ -14,7 +14,27 @@
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="Codigo_Propriedade">Código da propriedade *</label>
-			<%= Html.TextBox("UnidadeProducao.CodigoPropriedade", (Model.UnidadeProducao.CodigoPropriedade > 0 ? Model.UnidadeProducao.CodigoPropriedade.ToString("D4") : "Gerado automaticamente"), ViewModelHelper.SetaDisabled(Model.IsVisualizar || !Model.UnidadeProducao.PossuiCodigoPropriedade, new { @class = "text txtCodigoPropriedade maskNum4", @maxlength = "4" }))%>
+            <%
+                var codigoPropriedadeLabel = (Model.UnidadeProducao.CodigoPropriedade > 0)
+                    ? Model.UnidadeProducao.CodigoPropriedade.ToString() 
+                    : "Gerado automaticamente";
+
+                bool isCreating = !(Model.UnidadeProducao.Id > 0);
+                bool isEditing = !isCreating;
+                    
+                var codigoPropriedadeMustBeDisabled =
+                    Model.IsVisualizar 
+                    || (isCreating && !Model.UnidadeProducao.PossuiCodigoPropriedade) 
+                    || (isEditing && Model.UnidadeProducao.PossuiCodigoPropriedade);
+                
+                var codigoPropriedadeAttributes = ViewModelHelper
+                    .SetaDisabled(codigoPropriedadeMustBeDisabled,  new { 
+                        @class = "text txtCodigoPropriedade maskNumInt"
+                      , @maxlength = "11" 
+                    });
+            %>
+
+			<%= Html.TextBox("UnidadeProducao.CodigoPropriedade", codigoPropriedadeLabel, codigoPropriedadeAttributes) %>
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="Codigo_Empreendimento">Código do empreendimento *</label>
@@ -40,14 +60,14 @@
 	</div>
 	<%} %>
 	<div class="block">
-		<table class="dataGridTable gridUnidadeProducao" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table class="dataGridTable gridUnidadeProducao" style="width: 100%;" border="0" cellspacing="0" cellpadding="0">
 			<thead>
 				<tr>
-					<th width="20%">Código da UP</th>
-					<th width="12%">Área(ha)</th>
 					<th>Cultivar</th>
-					<th width="14%">Quantidade/Ano</th>
-					<th width="10%">Ações</th>
+                    <th style="width:20%;">Código da UP</th>
+					<th style="width:12%;">Área(ha)</th>
+					<th style="width:14%;">Quantidade/Ano</th>
+					<th style="width:10%;">Ações</th>
 				</tr>
 			</thead>
 			<tbody>
