@@ -120,7 +120,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 			return retorno;
 		}
 
-		internal List<Cultivar> ObterCultivares(List<int> culturas, BancoDeDados banco = null)
+		internal List<Cultivar> ObterCultivares(List<int> culturas, int OutroEstado = 0, BancoDeDados banco = null)
 		{
 			List<Cultivar> lstCultivar = new List<Cultivar>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -155,11 +155,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = '0' and t.cultivar = :id", EsquemaBanco);
+				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = :outro_estado and t.cultivar = :id", EsquemaBanco);
 
 				lstCultivar.ForEach(x =>
 				{
 					comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("outro_estado", OutroEstado, DbType.String);
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
 						while (reader.Read())

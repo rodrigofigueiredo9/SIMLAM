@@ -13,6 +13,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 {
@@ -237,6 +238,46 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 			return retorno;
 		}
+
+        internal List<Lista> ObterPragasLista(List<PTVOutroProduto> produtos)
+        {
+            List<Lista> retorno = new List<Lista>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando("");
+
+                int count = 0;
+                string aux = string.Empty;
+                foreach (var item in produtos.GroupBy(p => new { p.Cultivar, p.UnidadeMedida }).Select(g => g.First()))
+                {
+                    ++count;
+                    aux += string.Format("p.id in (select c.praga from tab_cultivar_configuracao c where c.cultivar = :cultivar{0} and c.tipo_producao = :tipo_producao{0}) or ", count);
+                    comando.AdicionarParametroEntrada("cultivar" + count, item.Cultivar, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_producao" + count, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), DbType.Int32);
+                }
+
+                aux = aux.Substring(0, aux.Length - 4);
+                comando.DbCommand.CommandText = string.Format(@"select distinct p.* from tab_hab_emi_cfo_cfoc h, tab_hab_emi_cfo_cfoc_praga hp, tab_praga p, 
+				tab_praga_cultura pc where pc.praga = p.id and p.id = hp.praga and h.id = hp.habilitar_emi_id and h.responsavel = :credenciado and({0})", aux);
+                comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista()
+                        {
+                            Id = reader.GetValue<int>("id").ToString(),
+                            Texto = reader.GetValue<string>("nome_cientifico") + (string.IsNullOrEmpty(reader.GetValue<string>("nome_comum")) ? "" : " - " + reader.GetValue<string>("nome_comum"))
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
 
 		internal PTVOutro Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
