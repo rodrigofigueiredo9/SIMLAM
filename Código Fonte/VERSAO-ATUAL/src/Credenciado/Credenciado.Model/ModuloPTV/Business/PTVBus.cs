@@ -102,6 +102,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						}
 						#endregion
 
+                        ptv.PossuiLaudoLaboratorial = 0;
+
 						_da.Salvar(ptv, bancoDeDados);
 
 						bancoDeDados.Commit();
