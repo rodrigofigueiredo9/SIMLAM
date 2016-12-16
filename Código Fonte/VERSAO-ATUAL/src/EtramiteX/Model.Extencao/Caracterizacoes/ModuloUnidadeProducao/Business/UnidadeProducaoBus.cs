@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -74,18 +76,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 		{
 			try
 			{
-				if (!_validar.Salvar(caracterizacao))
-				{
-					return Validacao.EhValido;
-				}
+                if (!_validar.Salvar(caracterizacao))
+                {
+                    return Validacao.EhValido;
+                }
 
 				#region Configurar Salvar
+
+                Endereco endereco = _da.ObterEndereco(caracterizacao.Empreendimento.Id);
+                Municipio municipio = _da.ObterMunicipio(endereco.MunicipioId);
 
 				if (!caracterizacao.PossuiCodigoPropriedade)
 				{
 					if (caracterizacao.Id < 1)
 					{
-                        caracterizacao.CodigoPropriedade = _da.ObterSequenciaCodigoPropriedade();
+                        int sequencial = _da.ObterSequenciaCodigoPropriedade();
+
+                        caracterizacao.CodigoPropriedade = UnidadeProducaoGenerator.GerarCodigoPropriedade(municipio.Ibge, sequencial);
 					}
 					else
 					 {
@@ -178,7 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
 				foreach (var item in caracterizacao.UnidadesProducao)
 				{
-					if (item.CodigoUP.ToString().Substring(7, 4) != caracterizacao.CodigoPropriedade.ToString("D4"))
+                    if (!UnidadeProducaoGenerator.CodigoUpHasCodigoPropriedade(caracterizacao.CodigoPropriedade, item.CodigoUP))
 					{
 						Validacao.Add(Mensagem.UnidadeProducao.CodigoUPNaoContemCodPropriedade(item.CodigoUP));
 						return false;
