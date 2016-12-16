@@ -69,6 +69,7 @@
     <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Business\UnidadeConsolidacaoValidar.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Data\UnidadeConsolidacaoDa.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoGenerator.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoValidar.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Data\UnidadeProducaoDa.cs" />
     <Compile Include="Caracterizacoes\ModuloCadastroAmbientalRural\Business\CadastroAmbientalRuralBus.cs" />
