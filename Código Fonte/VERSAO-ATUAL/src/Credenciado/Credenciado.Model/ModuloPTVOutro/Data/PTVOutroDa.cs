@@ -84,7 +84,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 					resp_tecnico_num_hab,
 					estado,
 					municipio,
-					credenciado)
+					credenciado,
+                    declaracao_adicional,
+                    declaracao_adicional_formatado)
 				values
 					(seq_tab_ptv_outrouf.nextval,
 					:tid,
@@ -104,7 +106,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 					:resp_tecnico_num_hab,
 					:estado,
 					:municipio,
-					:credenciado) returning id into :id", Esquema);
+					:credenciado,
+                    :declaracao_adicional,
+                    :declaracao_adicional_formatado) returning id into :id", Esquema);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -125,6 +129,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("estado", PTV.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", PTV.CredenciadoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicionalHtml, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
