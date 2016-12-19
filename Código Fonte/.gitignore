@@ -1,24 +1,3 @@
-# VERSAO-ATUAL/src/Gerencial/Gerencial.Model/FakesAssemblies
-# *.pdb
-# obj/
-# bin/
-# packages/
-# publishProfiles/
-# Interno.Model.WebService.dll
-# Tecnomapas.Blocos.Autenticacao.dll	
-# Tecnomapas.Blocos.Etx.dll
-# Tecnomapas.Blocos.Arquivo.dll
-# Tecnomapas.Blocos.Autenticacao.dll
-# Tecnomapas.EtramiteX.Configuracao.dll
-# Tecnomapas.EtramiteX.Interno.Model.dll
-# Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll
-# Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll
-# Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll	
-# Tecnomapas.Blocos.Entities.dll
-# Tecnomapas.EtramiteX.Credenciado.Model.dll
-# Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll
-# Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll
-# Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll
 
 # Dlls da TecnoMapas
 VERSAO-ATUAL/lib/*.dll
