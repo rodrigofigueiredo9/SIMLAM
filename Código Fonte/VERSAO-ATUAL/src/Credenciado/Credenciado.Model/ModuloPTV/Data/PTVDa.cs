@@ -949,8 +949,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					v_aux   number := 0;
 					v_maior number := 0;
 				begin
-					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2),
-						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2))
+					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2
+									and to_char(d.numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2
+									and to_char(c.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 					into v_maior from dual;
 
 					v_maior := v_maior + 1;
@@ -990,8 +992,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					v_aux   number := 0;
 					v_maior number := 0;
 				begin
-					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2),
-						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2))
+					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2
+									and to_char(d.numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2
+									and to_char(c.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 					into v_maior from dual;
 
 					v_maior := v_maior + 1;

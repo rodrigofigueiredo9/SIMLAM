@@ -196,7 +196,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				{
 					Validacao.Add(Mensagem.PTV.NumeroPtvNaoConfigurado);
 					return "";
-				}
+                }
+
+                if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+                {
+                    Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
+                }
+
 			}
 
 			if (tipoNumero == (int)eDocumentoFitossanitarioTipoNumero.Digital)
