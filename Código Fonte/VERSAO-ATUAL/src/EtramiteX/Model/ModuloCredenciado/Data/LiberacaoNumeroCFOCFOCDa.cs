@@ -133,15 +133,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						v_maior          number := 0;
 						v_quantidade_lib number := :quantidade_lib;
 					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero))
+						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 						into v_maior from dual;
 
 						for j in 1..v_quantidade_lib loop 
 							v_maior := v_maior + 1;
 
 							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final);
+							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
+							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 							if (v_aux > 0) then
 								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
@@ -150,7 +153,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 								v_aux := v_maior;
 
 								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior;
+								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 								if(v_maior is null or v_aux = v_maior) then 
 									--Tratamento de exceção
@@ -200,15 +204,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						v_maior          number := 0;
 						v_quantidade_lib number := :quantidade_lib;
 					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero))
+						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 						into v_maior from dual;
 
 						for j in 1..v_quantidade_lib loop 
 							v_maior := v_maior + 1;
 
 							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final);
+							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
+							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 							if (v_aux > 0) then
 								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
@@ -217,7 +224,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 								v_aux := v_maior;
 
 								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior;
+								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 								if(v_maior is null or v_aux = v_maior) then 
 									--Tratamento de exceção
@@ -736,7 +744,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"select count(t.id) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l, tab_credenciado c where l.id = t.liberacao and c.id = l.responsavel_tecnico
-				and t.tipo_documento = 1 and t.tipo_numero = 2 and t.situacao = 1 and t.utilizado = 0 and c.id = :credenciado_id");
+				and t.tipo_documento = 1 and t.tipo_numero = 2 and t.situacao = 1 and t.utilizado = 0 and c.id = :credenciado_id
+				and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado_id", liberacao.CredenciadoId, DbType.Int32);
 
