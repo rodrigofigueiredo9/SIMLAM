@@ -94,7 +94,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
                        :resp_tecnico,
                        :resp_tecnico_num_hab,
                        :estado,
-                       :municipio) returning id into :id", Esquema);
+                       :municipio,
+                       :declaracao_adicional,
+                       :declaracao_adicional_formatado) returning id into :id", Esquema);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -114,6 +116,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("resp_tecnico_num_hab", DbType.String, 8, PTV.RespTecnicoNumHab);
 				comando.AdicionarParametroEntrada("estado", PTV.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicionalHtml, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
