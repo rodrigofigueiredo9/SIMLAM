@@ -65,6 +65,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
         {
             try
             {
+                if (string.IsNullOrEmpty(declaracao.Texto))
+                {
+                    Validacao.Add(Mensagem.Declaracao.TextoObrigatorio);
+                    return;
+                }
+
+                if (!declaracao.OutroEstado.HasValue)
+                {
+                    Validacao.Add(Mensagem.Declaracao.OutroEstadoObrigatorio);
+                    return;
+                }
+
+
+
                 GerenciadorTransacao.ObterIDAtual();
                 using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
                 {
