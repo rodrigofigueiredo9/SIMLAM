@@ -174,7 +174,7 @@
 	</div>
 </fieldset>
 
-<fieldset id="Container_Praga" class="block box">
+<fieldset id="Container_Praga" class="block box destinatario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Pragas associadas à cultura</legend>
 	<% if (!Model.IsVisualizar) { %>
 	<div class="block">
