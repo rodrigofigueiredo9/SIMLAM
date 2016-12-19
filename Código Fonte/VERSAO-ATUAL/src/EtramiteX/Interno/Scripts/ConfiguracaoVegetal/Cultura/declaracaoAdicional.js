@@ -67,7 +67,8 @@ DeclaracaoAdicional = {
 			TipoProducaoId: $('.ddlTipoProducao option:selected', DeclaracaoAdicional.container).val(),
 			TipoProducaoTexto: $('.ddlTipoProducao option:selected', DeclaracaoAdicional.container).text(),
 			DeclaracaoAdicionalId: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).val(),
-			DeclaracaoAdicionalTexto: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text()
+			DeclaracaoAdicionalTexto: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text(),
+			OutroEstado: $('.rdbOutroEstado:checked', DeclaracaoAdicional.container).val()
 		};
 
 		var retorno = MasterPage.validarAjax(
