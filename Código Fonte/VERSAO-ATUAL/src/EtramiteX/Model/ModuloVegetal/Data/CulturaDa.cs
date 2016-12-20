@@ -248,7 +248,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
 				comando = bancoDeDados.CriarComando(@"
 				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto
+				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.outro_estado as OutroEstado
 				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
 				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id", EsquemaBanco);
 
@@ -269,7 +269,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 								TipoProducaoId = reader.GetValue<int>("TipoProducaoId"),
 								TipoProducaoTexto = reader.GetValue<string>("TipoProducaoTexto"),
 								DeclaracaoAdicionalId = reader.GetValue<int>("DeclaracaoAdicionalId"),
-								DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto")
+								DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto"),
+                                OutroEstado = reader.GetValue<int>("OutroEstado")
 							});
 						}
 
