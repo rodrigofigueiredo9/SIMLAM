@@ -38,8 +38,8 @@
 		</div>
 
 		<div class="coluna18 prepend1">
-			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Fisica, Model.PTV.InteressadoCnpjCpf.Length <= 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaFisicaPF" } ) ) %>CPF</label>
-			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Juridica, Model.PTV.InteressadoCnpjCpf.Length > 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaJuridicaPJ" } ) ) %>CNPJ</label>
+			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Fisica, Model.PTV.InteressadoCnpjCpf.Length <= 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaFisicaPF" } ) ) %>CPF *</label>
+			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Juridica, Model.PTV.InteressadoCnpjCpf.Length > 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaJuridicaPJ" } ) ) %>CNPJ *</label>
 			<%= Html.TextBox("InteressadoCnpjCpf",Model.PTV.InteressadoCnpjCpf, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtInteressadoCpfCnpj maskCpfParcial" } ) ) %>
 		</div>
 	</div>
