@@ -97,7 +97,7 @@ PTVOutroEmitir = {
             $('.ddlOrigemTipo', PTVOutroEmitir.container).val(2);
             $('.labelOrigem', PTVOutroEmitir.container).text('CFOC');
         }
-        Aux.setarFoco(container);
+        Aux.setarFoco(PTVOutroEmitir.container);
     },
 
     onLoadMunicipio: function(element, estadoId) {
@@ -528,11 +528,14 @@ PTVOutroEmitir = {
 			InteressadoMunicipioId: $('.ddlMunicipiosInteressado', PTVOutroEmitir.container).val(),
 			InteressadoMunicipioTexto: $('.ddlMunicipiosInteressado option:selected', PTVOutroEmitir.container).text(),
 			RespTecnico: $('.txtTecnico', PTVOutroEmitir.container).val(),
-			RespTecnicoNumHab: $('.txtNumHab', PTVOutroEmitir.container).val(),
+			RespTecnicoNumHab: $('.txtNumHab', PTVOutroEmitir.container).val(), 
 			Estado: $('.ddlEstados', PTVOutroEmitir.container).val(),
 			Municipio: $('.ddlMunicipios', PTVOutroEmitir.container).val(),
+			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).text(),
 			Produtos: []
 		}
+
+		alert('val' + $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).text());
 
 		objeto.Destinatario = PTVOutroEmitir.obterDestinatario();
 
