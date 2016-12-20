@@ -63,6 +63,7 @@
 						<th width="18%">Pragas</th>
 						<th width="24%">Tipo de Produção</th>
 						<th>Declaração adicional</th>
+                        <th>Outro Estado?</th>
 						<th class="semOrdenacao" width="10%">Ações</th>
 					</tr>
 				</thead>
@@ -77,6 +78,9 @@
 						</td>
 						<td>
 							<label class="lblDeclaracaoAdicional" title="<%= item.DeclaracaoAdicionalTexto %>"><%= item.DeclaracaoAdicionalTexto %> </label>
+						</td>
+                        <td>
+							<label class="lblOutroEstado" title="<%= item.OutroEstado==1 ? "Sim" : "Não" %>"><%= item.OutroEstado==1 ? "Sim" : "Não"  %> </label>
 						</td>
 						<td>
 							<a class="icone excluir btnItemExcluir" title="Excluir"></a>
@@ -93,6 +97,9 @@
 						</td>
 						<td>
 							<label class="lblDeclaracaoAdicional"></label>
+						</td>
+                        <td>
+							<label class="lblOutroEstado"></label>
 						</td>
 						<td>
 							<a class="icone excluir btnItemExcluir" title="Excluir"></a>
