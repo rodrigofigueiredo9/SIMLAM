@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 {
@@ -130,7 +131,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", PTV.CredenciadoId, DbType.Int32);
                 comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
-                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicionalHtml, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicional, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -285,6 +286,47 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
             return retorno;
         }
 
+        internal List<Praga> ObterPragasLista2(List<PTVOutroProduto> produtos)
+        {
+            List<Praga> retorno = new List<Praga>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando("");
+
+                int count = 0;
+                string aux = string.Empty;
+                foreach (var item in produtos.GroupBy(p => new { p.Cultivar, p.UnidadeMedida }).Select(g => g.First()))
+                {
+                    ++count;
+                    aux += string.Format("p.id in (select c.praga from tab_cultivar_configuracao c where c.cultivar = :cultivar{0} and c.tipo_producao = :tipo_producao{0}) or ", count);
+                    comando.AdicionarParametroEntrada("cultivar" + count, item.Cultivar, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_producao" + count, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), DbType.Int32);
+                }
+
+                aux = aux.Substring(0, aux.Length - 4);
+                comando.DbCommand.CommandText = string.Format(@"select distinct p.* from tab_hab_emi_cfo_cfoc h, tab_hab_emi_cfo_cfoc_praga hp, tab_praga p, 
+				tab_praga_cultura pc where pc.praga = p.id and p.id = hp.praga and h.id = hp.habilitar_emi_id and h.responsavel = :credenciado and({0})", aux);
+                comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Praga()
+                        {
+                            Id = reader.GetValue<int>("id"),
+                            NomeCientifico = reader.GetValue<string>("nome_cientifico"),
+                            NomeComum = reader.GetValue<string>("nome_comum")
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		internal PTVOutro Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
@@ -315,7 +357,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 						le.texto                EstadoTexto,
 						p.municipio             Municipio,
 						lm.texto                MunicipioTexto,
-						p.credenciado           CredenciadoId
+						p.credenciado           CredenciadoId,
+                        p.declaracao_adicional  DeclaracaoAdicional,
+                        p.declaracao_adicional_formatado    DeclaracaoAdicionalHtml
 					from tab_ptv_outrouf               p,
 						lov_ptv_situacao              ls,
 						lov_estado                    le,
@@ -373,6 +417,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 
 				PTV.Produtos = bancoDeDados.ObterEntityList<PTVOutroProduto>(comando);
+
+                PTV.Pragas = ObterPragasLista2(PTV.Produtos);
+
+
 
 				#endregion
 
