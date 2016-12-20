@@ -337,6 +337,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
+                @DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}

@@ -153,7 +153,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => entidade.Produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
-				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => entidade.Produtos.Count(z => z.CultivarId == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)) > 0))
+				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => entidade.Produtos.Count(z => z.CultivarId == y.Cultivar /*&& y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)*/) > 0))
 				.Where(x => entidade.Pragas.Any(y => y.Id == x.PragaId))
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();
@@ -332,12 +332,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = string.Empty });
 			}
 
+
+            
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
 			List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
 
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
-				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => produtos.Count(z => z.CultivarId == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)) > 0))
+				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => produtos.Count(z => z.CultivarId == y.Cultivar /*&& y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)*/) > 0))
 				.Where(x => pragas.Any(y => y.Id == x.PragaId))
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();
