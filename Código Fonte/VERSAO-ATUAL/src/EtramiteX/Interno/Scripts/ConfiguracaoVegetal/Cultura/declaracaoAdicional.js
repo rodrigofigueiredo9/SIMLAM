@@ -59,6 +59,8 @@ DeclaracaoAdicional = {
 	adicionarCultivarConfiguracao: function () {
 		Mensagem.limpar(DeclaracaoAdicional.container);
 		
+		var val_outro_estado = $('.rdbOutroEstado:visible:checked', DeclaracaoAdicional.container).val();
+
 		var lista = DeclaracaoAdicional.obter();
 		var item = {
 			Cultivar: $('.hdnItemId', DeclaracaoAdicional.container).val(),
@@ -84,10 +86,17 @@ DeclaracaoAdicional = {
 
 		var linha = $('.trTemplate', DeclaracaoAdicional.container).clone();//clona linha
 
+		var texto_outro = "";
+		if (val_outro_estado)
+		    texto_outro = "Sim";
+		else
+		    texto_outro = "Não";
+
 		$('.hdnItemJSON', linha).val(JSON.stringify(item));
 		$('.lblPragas', linha).html(item.PragaTexto);
 		$('.lblTipoProducao', linha).html(item.TipoProducaoTexto);
-		$('.lblDeclaracaoAdicional', linha).html(item.DeclaracaoAdicionalTexto);		
+		$('.lblDeclaracaoAdicional', linha).html(item.DeclaracaoAdicionalTexto);
+		$('.lblOutroEstado', linha).html(texto_outro);
 
 		$(linha).removeClass('hide').removeClass('trTemplate');
 		$('.gridDeclaracaoAdicional tbody', DeclaracaoAdicional.container).append($(linha));
