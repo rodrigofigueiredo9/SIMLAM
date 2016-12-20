@@ -535,7 +535,7 @@ PTVOutroEmitir = {
 			Produtos: []
 		}
 
-		alert('val' + $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).text());
+		
 
 		objeto.Destinatario = PTVOutroEmitir.obterDestinatario();
 
