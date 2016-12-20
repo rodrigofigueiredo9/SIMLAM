@@ -224,7 +224,7 @@
 		</table>
 	</div>
     <div class="block">
-		<label>Informações complementares</label>
+		<label>Declaração Adicional</label>
 		<div class="textareaFake txtDeclaracaoAdicional">
 			<%= Model.PTV.DeclaracaoAdicionalHtml %>
         </div>
