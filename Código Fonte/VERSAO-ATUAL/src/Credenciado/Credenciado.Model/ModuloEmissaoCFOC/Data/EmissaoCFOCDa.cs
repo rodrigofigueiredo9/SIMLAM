@@ -826,7 +826,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 				select nvl((select sum(li.quantidade) from tab_cfoc c, tab_cfoc_produto cp, tab_lote l, tab_lote_item li 
-				where cp.cfoc = c.id and l.id = cp.lote and li.lote = l.id and li.cultivar = :cultivar and c.empreendimento = :empreendimento and c.id != :cfoc), 0) from dual");
+				where c.situacao != 4 and cp.cfoc = c.id and l.id = cp.lote and li.lote = l.id and li.cultivar = :cultivar and c.empreendimento = :empreendimento and c.id != :cfoc), 0) from dual");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("cultivar", cultivar, DbType.Int32);
