@@ -150,7 +150,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_bus.ObterPragasLista(entidade.Produtos), ListaCredenciadoBus.CFOCLoteEspecificacao, ListaCredenciadoBus.DocFitossanitarioSituacao, ListaCredenciadoBus.Municipios(entidade.EstadoEmissaoId));
 
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
-			List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+			List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList(), entidade.Produtos.Select(z => z.LoteId).ToList()) ?? new List<Cultivar>();
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => entidade.Produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
 				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => entidade.Produtos.Count(z => z.CultivarId == y.Cultivar /*&& y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)*/) > 0))
@@ -335,11 +335,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
             
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
-			List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+			List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.CulturaId).ToList(), produtos.Select(y => y.LoteId).ToList()) ?? new List<Cultivar>();
 
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
-				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => produtos.Count(z => z.CultivarId == y.Cultivar /*&& y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)*/) > 0))
+				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => produtos.Count(z => z.CultivarId == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)) > 0))
 				.Where(x => pragas.Any(y => y.Id == x.PragaId))
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();

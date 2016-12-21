@@ -189,7 +189,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             }
 
             CulturaInternoBus culturaBus = new CulturaInternoBus();
-            List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.Cultura).ToList(), 1) ?? new List<Cultivar>();
+            List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.Cultura).ToList(), null, 1 ) ?? new List<Cultivar>();
 
             List<string> declaracoesAdicionais = cultivares
             .Where(x => produtos.Select(y => y.Cultivar).ToList().Any(y => y == x.Id))

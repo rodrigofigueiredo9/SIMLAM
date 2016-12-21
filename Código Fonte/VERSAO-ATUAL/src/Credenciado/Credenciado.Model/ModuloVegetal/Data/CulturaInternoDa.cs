@@ -4,9 +4,13 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data;
+using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC.Lote;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using System.Linq;
 using System;
+using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
+
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 {
@@ -120,9 +124,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 			return retorno;
 		}
 
-		internal List<Cultivar> ObterCultivares(List<int> culturas, int OutroEstado = 0, BancoDeDados banco = null)
+		internal List<Cultivar> ObterCultivares(List<int> culturas, List<int> lotes= null, int OutroEstado = 0,  BancoDeDados banco = null)
 		{
 			List<Cultivar> lstCultivar = new List<Cultivar>();
+            LoteDa _loteDa = new LoteDa();
+
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Cultivar
@@ -151,16 +157,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 				#region Cultivar_Configurações
 
-				comando = bancoDeDados.CriarComando(@"
-				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
-				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = :outro_estado and t.cultivar = :id", EsquemaBanco);
 
+                string strOutroEstado = "";
+                if (lotes != null)
+                {
+                     strOutroEstado = "('0')";
+                    foreach (int idLot in lotes)
+                    {
+                        Lote lot = _loteDa.Obter(idLot);
+                        if (lot.Lotes.Any(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado))
+                        {
+                            strOutroEstado = "('1','0')";
+                            break;
+                        }
+                        else
+                            strOutroEstado = "('0')";
+                    }
+                }
+                else if (OutroEstado == 1)
+                    strOutroEstado = "('1')";
+                else
+                    strOutroEstado = "('0')";
+
+
+                string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado in {1} and t.cultivar = :id", EsquemaBanco, strOutroEstado);
+
+				comando = bancoDeDados.CriarComando(cmdSql, EsquemaBanco);
+
+                int c = 0;
 				lstCultivar.ForEach(x =>
 				{
 					comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("outro_estado", OutroEstado, DbType.String);
+
+                
+                   
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
 						while (reader.Read())

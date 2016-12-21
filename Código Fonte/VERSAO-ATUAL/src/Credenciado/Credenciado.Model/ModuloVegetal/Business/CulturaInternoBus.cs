@@ -50,11 +50,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Business
 			return null;
 		}
 
-		public List<Cultivar> ObterCultivares(List<int> culturas, int OutroEstado = 0)
+        public List<Cultivar> ObterCultivares(List<int> culturas, List<int> lotes = null, int OutroEstado = 0)
 		{
 			try
 			{
-				return _da.ObterCultivares(culturas, OutroEstado);
+                return _da.ObterCultivares(culturas, lotes, OutroEstado);
 			}
 			catch (Exception exc)
 			{
