@@ -33,6 +33,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloHabilitac
 
 		public string DeclaracaoAdicional { get; set; }
 
+        public string DeclaracaoAdicionalHtml { get; set; }
+
         public int Origem { get; set; }
 
         public string OrigemTid { get; set; }
