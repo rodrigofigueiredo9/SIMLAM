@@ -167,6 +167,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOCEditar })]
 		public ActionResult Editar(EmissaoCFOC entidade)
 		{
+            entidade.PossuiLaudoLaboratorial = false;
+            entidade.PossuiTratamentoFinsQuarentenario = false;
 			_bus.Salvar(entidade);
 
 			string UrlRedirecionar = Url.Action("Index", "CFOC") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + entidade.Id.ToString();
