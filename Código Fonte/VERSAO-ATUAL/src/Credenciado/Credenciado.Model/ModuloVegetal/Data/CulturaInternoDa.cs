@@ -165,13 +165,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                     foreach (int idLot in lotes)
                     {
                         Lote lot = _loteDa.Obter(idLot);
-                        if (lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count == 
-                            lot.Lotes.Count)
+                        int totaloutro = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count;
+                        if (totaloutro > 0 && totaloutro == lot.Lotes.Count)
                         {
                             strOutroEstado = "('1')";
                         }
-                        else if (lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count != 
-                            lot.Lotes.Count )
+                        else if (totaloutro > 0 && totaloutro != lot.Lotes.Count )
                             strOutroEstado = "('1','0')";
                         else
                             strOutroEstado = "('0')";
