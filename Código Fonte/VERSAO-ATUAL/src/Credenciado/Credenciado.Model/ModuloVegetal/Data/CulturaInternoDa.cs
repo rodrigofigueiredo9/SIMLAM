@@ -189,7 +189,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 				comando = bancoDeDados.CriarComando(cmdSql, EsquemaBanco);
 
-                int c = 0;
 				lstCultivar.ForEach(x =>
 				{
 					comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
