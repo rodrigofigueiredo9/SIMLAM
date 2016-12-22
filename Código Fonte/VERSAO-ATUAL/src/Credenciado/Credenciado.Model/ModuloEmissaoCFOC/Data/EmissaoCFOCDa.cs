@@ -498,7 +498,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 					li.unidade_medida, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
 					where l.id = cp.lote and li.lote = l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d 
-					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida", EsquemaBanco);
+					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida,d.unidade_medida_texto", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 
