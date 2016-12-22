@@ -59,6 +59,8 @@ DeclaracaoAdicional = {
 	adicionarCultivarConfiguracao: function () {
 		Mensagem.limpar(DeclaracaoAdicional.container);
 		
+		var val_outro_estado = $('.rdbOutroEstado:checked', DeclaracaoAdicional.container).val();
+
 		var lista = DeclaracaoAdicional.obter();
 		var item = {
 			Cultivar: $('.hdnItemId', DeclaracaoAdicional.container).val(),
@@ -67,8 +69,11 @@ DeclaracaoAdicional = {
 			TipoProducaoId: $('.ddlTipoProducao option:selected', DeclaracaoAdicional.container).val(),
 			TipoProducaoTexto: $('.ddlTipoProducao option:selected', DeclaracaoAdicional.container).text(),
 			DeclaracaoAdicionalId: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).val(),
-			DeclaracaoAdicionalTexto: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text()
+			DeclaracaoAdicionalTexto: $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text(),
+			OutroEstado: $('.rdbOutroEstado:checked', DeclaracaoAdicional.container).val()
 		};
+
+		//alert('outro' + $('.rdbOutroEstado:checked', DeclaracaoAdicional.container).val());
 
 		var retorno = MasterPage.validarAjax(
 			DeclaracaoAdicional.settings.urls.validarDeclaracaoAdicional, {
@@ -83,10 +88,20 @@ DeclaracaoAdicional = {
 
 		var linha = $('.trTemplate', DeclaracaoAdicional.container).clone();//clona linha
 
+		var texto_outro = "";
+		if (val_outro_estado==1)
+		    texto_outro = "Sim";
+		else
+		    texto_outro = "Não";
+
+		//alert('val' + val_outro_estado);
+		//alert('texto' + texto_outro);
+
 		$('.hdnItemJSON', linha).val(JSON.stringify(item));
 		$('.lblPragas', linha).html(item.PragaTexto);
 		$('.lblTipoProducao', linha).html(item.TipoProducaoTexto);
-		$('.lblDeclaracaoAdicional', linha).html(item.DeclaracaoAdicionalTexto);		
+		$('.lblDeclaracaoAdicional', linha).html(item.DeclaracaoAdicionalTexto);
+		$('.lblOutroEstado', linha).html(texto_outro);
 
 		$(linha).removeClass('hide').removeClass('trTemplate');
 		$('.gridDeclaracaoAdicional tbody', DeclaracaoAdicional.container).append($(linha));

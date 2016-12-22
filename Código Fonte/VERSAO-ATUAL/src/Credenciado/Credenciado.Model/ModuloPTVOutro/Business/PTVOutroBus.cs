@@ -130,6 +130,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 			return null;
 		}
 
+        public List<Lista> ObterPragasLista(List<PTVOutroProduto> produtos)
+        {
+            try
+            {
+                return _da.ObterPragasLista(produtos);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+            return null;
+        }
+
 		public PTVOutro ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true)
 		{
 			try
@@ -143,6 +156,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
 			return null;
 		}
+
+     
 
 		public List<Lista> ObterCultivar(eDocumentoFitossanitarioTipo origemTipo, int culturaID)
 		{
@@ -172,6 +187,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
 			return null;
 		}
+
+
 
 		public List<ListaValor> ObterResponsavelTecnico(int id)
 		{

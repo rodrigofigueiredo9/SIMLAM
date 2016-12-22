@@ -62,6 +62,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
 		public List<Anexo> Anexos { get; set; }
 
+        public string DeclaracaoAdicional { get; set; } 
+
 		public PTV()
 		{
 			DataEmissao = new DateTecno();

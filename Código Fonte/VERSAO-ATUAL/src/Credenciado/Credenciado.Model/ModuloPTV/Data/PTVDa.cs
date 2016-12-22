@@ -78,11 +78,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				insert into {0}tab_ptv
 					(id, tid, situacao, situacao_data, tipo_numero, numero, dua_numero, dua_cpf_cnpj, data_emissao, empreendimento, partida_lacrada_origem, numero_lacre, numero_porao, 
 					numero_container, destinatario, possui_laudo_laboratorial, tipo_transporte, veiculo_identificacao_numero, 
-					rota_transito_definida, itinerario, apresentacao_nota_fiscal, numero_nota_fiscal, responsavel_emp, local_vistoria, credenciado, data_hora_vistoria, dua_tipo_pessoa)
+					rota_transito_definida, itinerario, apresentacao_nota_fiscal, numero_nota_fiscal, responsavel_emp, local_vistoria, credenciado, data_hora_vistoria, dua_tipo_pessoa, declaracaoadicional)
 				values
 					(seq_tab_ptv.nextval, :tid, :situacao, sysdate, :tipo_numero,:numero, :dua_numero, :dua_cpf_cnpj,:data_emissao,:empreendimento,:partida_lacrada_origem,:numero_lacre,:numero_porao,
 					:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,
-					:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,:numero_nota_fiscal,:responsavel_emp, :local_vistoria, :credenciado, :data_hora_vistoria, :dua_tipo_pessoa) returning id into :id", UsuarioCredenciado);
+					:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,:numero_nota_fiscal,:responsavel_emp, :local_vistoria, :credenciado, :data_hora_vistoria, :dua_tipo_pessoa, :declaracaoadicional) returning id into :id", UsuarioCredenciado);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -110,6 +110,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("data_hora_vistoria", PTV.DataHoraVistoriaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dua_tipo_pessoa", PTV.TipoPessoa, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracaoadicional", PTV.DeclaracaoAdicional , DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -868,6 +869,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
+        internal string ObterDeclaracaoAdicional(int numero)
+        {
+            string ret = " ";
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select declaracao_adicional
+																from {0}tab_ptv_outrouf tt
+															  where tt.id = :id 
+																 ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", numero, DbType.Int32);
+
+                ret = bancoDeDados.ExecutarScalar<string>(comando);
+            }
+
+            return string.IsNullOrEmpty(ret) ? " " : ret ;
+
+        }
+
 		internal bool VerificarNumeroPTV(Int64 ptvNumero)
 		{
 			bool retorno = false;
@@ -949,8 +969,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					v_aux   number := 0;
 					v_maior number := 0;
 				begin
-					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2),
-						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2))
+					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2
+									and to_char(d.numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2
+									and to_char(c.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 					into v_maior from dual;
 
 					v_maior := v_maior + 1;
@@ -990,8 +1012,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					v_aux   number := 0;
 					v_maior number := 0;
 				begin
-					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2),
-						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2))
+					select nvl((select max(d.numero) from tab_ptv d where d.tipo_numero = 2
+									and to_char(d.numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+						(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = 3 and c.tipo = 2
+									and to_char(c.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
 					into v_maior from dual;
 
 					v_maior := v_maior + 1;

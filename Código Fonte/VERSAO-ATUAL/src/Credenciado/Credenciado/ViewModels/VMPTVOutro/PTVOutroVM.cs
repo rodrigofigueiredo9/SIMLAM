@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
 
 namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro
 {
@@ -22,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro
 		public List<SelectListItem> EstadosInteressado { get; set; }
 		public List<SelectListItem> MunicipiosInteressado { get; set; }
 		public List<SelectListItem> UnidadeMedida { get; set; }
+        public List<SelectListItem> Pragas { get; set; }
 
 		public PTVOutroVM() { }
 
@@ -33,6 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro
 			List<Municipio> municipios,
 			List<Estado> estadosInteressado,
 			List<Municipio> municipiosInteressado,
+            List<Lista> pragas,
 			bool isVisualizar = false)
 		{
 			this.PTV = ptv ?? new PTVOutro();
@@ -45,6 +48,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro
 			this.Municipios = ViewModelHelper.CriarSelectList(municipios, true, true, ptv.Municipio.ToString());
 
 			this.Situacoes = ViewModelHelper.CriarSelectList(lstSituacoes, true, true, ptv.Situacao.ToString());
+
+            this.Pragas = ViewModelHelper.CriarSelectList(pragas, true, true, ptv.Situacao.ToString());
 
 			OrigemTipoList = ViewModelHelper.CriarSelectList(lsOrigem.OrderBy(x => x.Id).ToList(), true, true);
 		}

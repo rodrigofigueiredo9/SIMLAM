@@ -118,7 +118,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem PtvJaExistente { get { return new Mensagem() { Campo = "Numero", Texto = "O número do PTV já foi utilizado.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NumeroPtvNaoConfigurado { get { return new Mensagem() { Campo = "Numero", Texto = "Número de PTV não configurado no sistema.", Tipo = eTipoMensagem.Advertencia }; } }
-		public Mensagem NumeroDocumentoOrigemObrigatorio { get { return new Mensagem() { Campo = "NumeroOrigem", Texto = "Número do documento de origem é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
+        public Mensagem AnoPTVInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+        public Mensagem NumeroDocumentoOrigemObrigatorio { get { return new Mensagem() { Campo = "NumeroOrigem", Texto = "Número do documento de origem é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem CpfInvalido { get { return new Mensagem() { Campo = "DestinararioID", Texto = "CPF inválido.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem CnpjInvalido { get { return new Mensagem() { Campo = "DestinararioID", Texto = "CNPJ inválido.", Tipo = eTipoMensagem.Advertencia }; } }
 

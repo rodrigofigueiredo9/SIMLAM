@@ -18,6 +18,11 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro;
+using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Business;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -97,7 +102,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				ListaCredenciadoBus.Estados,
 				new List<Municipio>(),
 				ListaCredenciadoBus.Estados,
-				ListaCredenciadoBus.Municipios(ptv.InteressadoMunicipioId));
+				ListaCredenciadoBus.Municipios(ptv.InteressadoMunicipioId),
+                new List<Lista>());
 
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.PTVUnidadeMedida);
 
@@ -137,7 +143,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				ListaCredenciadoBus.Estados,
 				ListaCredenciadoBus.Municipios(ptv.Estado),
 				ListaCredenciadoBus.Estados,
-				ListaCredenciadoBus.Municipios(ptv.InteressadoEstadoId));
+				ListaCredenciadoBus.Municipios(ptv.InteressadoEstadoId),
+                _bus.ObterPragasLista(ptv.Produtos));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -160,6 +167,39 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			},
 			JsonRequestBehavior.AllowGet);
 		}
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
+        public ActionResult ObterPragas(List<PTVOutroProduto> produtos)
+        {
+            if (produtos == null || produtos.Count <= 0)
+            {
+                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Lista = new List<Lista>() });
+            }
+
+            List<Lista> lista = _bus.ObterPragasLista(produtos);
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Lista = lista });
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
+        public ActionResult ObterDeclaracaoAdicional(List<PTVOutroProduto> produtos, List<Praga> pragas)
+        {
+            if (produtos == null || produtos.Count <= 0 || pragas == null || pragas.Count <= 0)
+            {
+                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = string.Empty });
+            }
+
+            CulturaInternoBus culturaBus = new CulturaInternoBus();
+            List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.Cultura).ToList(), null, 1 ) ?? new List<Cultivar>();
+
+            List<string> declaracoesAdicionais = cultivares
+            .Where(x => produtos.Select(y => y.Cultivar).ToList().Any(y => y == x.Id))
+            .SelectMany(x => x.LsCultivarConfiguracao.Where(y => produtos.Count(z => z.Cultivar == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedida)) > 0))
+            .Where(x => pragas.Any(y => y.Id == x.PragaId))
+            .Select(x => x.DeclaracaoAdicionalTextoHtml)
+            .Distinct().ToList();
+
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = String.Join(" ", declaracoesAdicionais) });
+        }
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
 		public ActionResult ObterCultivar(eDocumentoFitossanitarioTipo origemTipo, int culturaID = 0)
@@ -189,6 +229,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			_validar.ValidarProduto(item, lista);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
 		}
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
+        public ActionResult ValidarPraga(Praga item, List<Praga> lista)
+        {
+            _validar.ValidarPraga(item, lista);
+
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+        }
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
 		public ActionResult ObterDestinatario(int destinatarioId)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV.Destinatario;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 {
@@ -40,6 +41,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 		public string MunicipioTexto { get; set; }
 		public List<PTVOutroProduto> Produtos { get; set; }
         public int? CredenciadoId { get; set; }
+        public string DeclaracaoAdicional { get; set; }
+        public string DeclaracaoAdicionalHtml { get; set; }
+        public List<Praga> Pragas { get; set; }
 
 		public PTVOutro()
 		{
@@ -49,17 +53,20 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 			ValidoAte = new DateTecno();
 			Produtos = new List<PTVOutroProduto>();
 			Destinatario = new DestinatarioPTV();
+            Pragas = new List<Praga>();
 
-			Tid =
-			SituacaoTexto =
-			Interessado =
-			InteressadoCnpjCpf =
-			InteressadoEstadoTexto =
-			InteressadoMunicipioTexto =
-			RespTecnico =
-			RespTecnicoNumHab =
-			EstadoTexto =
-			MunicipioTexto = "";
+            Tid =
+            SituacaoTexto =
+            Interessado =
+            InteressadoCnpjCpf =
+            InteressadoEstadoTexto =
+            InteressadoMunicipioTexto =
+            RespTecnico =
+            RespTecnicoNumHab =
+            EstadoTexto =
+            MunicipioTexto =
+            DeclaracaoAdicional =
+            DeclaracaoAdicionalHtml = "";
 		}
 	}
 }

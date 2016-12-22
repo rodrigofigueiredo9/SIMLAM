@@ -196,6 +196,7 @@
 					Não
 				</label>
 			</div>
+            
 			<div class="partida_lacrada <%= Model.PTV.PartidaLacradaOrigem.GetValueOrDefault() == (int)ePartidaLacradaOrigem.Sim ?"":"hide" %>">
 				<div class="coluna15">
 					<label for="LacreNumero">Nº do lacre</label>
@@ -212,6 +213,13 @@
 			</div>
 		</div>
 	</div>
+
+    <div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+		<label>Declaração Adicional</label>
+		<div class="textareaFake txtDeclaracaoAdicional">
+				<%= Model.PTV.DeclaracaoAdicional %>
+		</div>
+    </div>
 
 	<fieldset class="block box destinatario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<legend>Destinatário</legend>

@@ -266,7 +266,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				emissaoPTV.LaboratorioMunicipio = Mensagem.Concatenar(laudoLaboratoriais.Select(x => x.MunicipioTexto).ToList());
 				emissaoPTV.LaboratorioUF = Mensagem.Concatenar(laudoLaboratoriais.Select(x => x.EstadoTexto).ToList());
 
-				foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)).ToList())
+                foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)).ToList())
 				{
 					List<String> listDeclaracoesAdicionaisAux = ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.CultivarId);
 					item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
@@ -534,7 +534,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				if (String.IsNullOrEmpty(emissaoPTV.DeclaracaoAdicionalHtml))
 				{
-					foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)).ToList())
+					foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)).ToList())
 					{
 						List<String> listDeclaracoesAdicionaisAux = ObterDeclaracaoAdicionalHistorico(item.Origem, item.OrigemTid, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.OrigemTipo, item.CultivarId);
 						item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
@@ -662,6 +662,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					}
 					#endregion
 					break;
+
+                case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                    #region Buscar tratamento PTV Outro Estado
+                    using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
+                    {
+                        comando = bancoDeDados.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_produto cp, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda
+                            where cp.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '1' 
+                            and cconf.tipo_producao = :tipoProducaoID and cp.cultivar = :cultivarID ", EsquemaBanco);
+
+                        //comando.AdicionarParametroEntrada("idPtvOutro", origem, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                        using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
+                        {
+                            while (reader.Read())
+                            {
+                                retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                            }
+                            reader.Close();
+                        }
+                    }
+                    #endregion
+                    break;
 			}
 			return retorno;
 		}
@@ -765,6 +791,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					}
 					#endregion
 					break;
+                case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                    #region Buscar tratamento PTV Outro Estado
+                    using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
+                    {
+                        comando = bancoDeDados.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_produto cp, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda
+                            where cp.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '1' 
+                            and cconf.tipo_producao = :tipoProducaoID and cp.cultivar = :cultivarID ", EsquemaBanco);
+
+                        //comando.AdicionarParametroEntrada("idPtvOutro", origem, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                        using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
+                        {
+                            while (reader.Read())
+                            {
+                                retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                            }
+                            reader.Close();
+                        }
+                    }
+                    #endregion
+                    break;
 			}
 			return retorno;
 		}

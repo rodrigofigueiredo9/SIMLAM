@@ -21,8 +21,11 @@
 				    urlObterDestinarioCodigoUc: '<%= Url.Action("ObterDestinarioCodigoUc","PTVOutro") %>',
 					urlAssociarDestinatario: '<%= Url.Action("DestinatarioModal","PTVOutro") %>',
 					urlObterDestinatario: '<%= Url.Action("ObterDestinatario","PTVOutro") %>',
-					urlSalvar: '<%= Url.Action("Salvar", "PTVOutro") %>'
-				},
+				    urlSalvar: '<%= Url.Action("Salvar", "PTVOutro") %>',
+				    urlObterPragas: '<%= Url.Action("ObterPragas", "PTVOutro") %>',
+				    urlObterDeclaracaoAdicional: '<%= Url.Action("ObterDeclaracaoAdicional", "PTVOutro") %>',
+				    urlValidarPraga: '<%= Url.Action("ValidarPraga", "PTVOutro") %>'
+				}
 			});
 			
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"]))  { %>

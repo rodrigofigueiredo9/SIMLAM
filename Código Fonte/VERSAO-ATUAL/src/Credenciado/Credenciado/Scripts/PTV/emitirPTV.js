@@ -395,6 +395,7 @@ PTVEmitir = {
 					$('.hdnNumeroOrigem', PTVEmitir.container).val(response.OrigemID);
 					$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(response.EmpreendimentoID);
 					$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val(response.EmpreendimentoDenominador);
+					$('.txtDeclaracaoAdicional', PTVEmitir.container).html(response.DeclaracaoAdicional);
 
 					if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 						PTVEmitir.onChangeCultura();
@@ -1077,6 +1078,7 @@ PTVEmitir = {
 			LocalVistoriaId: $('.ddlLocalVistoria', PTVEmitir.container).val(),
 			DataHoraVistoriaId: $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).val(),
 			TipoPessoa: $('.rdbPessaoTipo:checked', PTVEmitir.container).val(),
+			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVEmitir.container).html(),
 			Produtos: [],
 			Anexos: []
 		}

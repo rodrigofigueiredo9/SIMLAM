@@ -19,6 +19,8 @@
 # Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll
 # Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll
 # Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll
+bin-debug/
+
 
 # Dlls da TecnoMapas
 VERSAO-ATUAL/lib/*.dll

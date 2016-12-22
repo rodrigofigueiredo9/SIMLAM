@@ -41,6 +41,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MunicipioObrigatorio { get { return new Mensagem() { Campo = "MunicipioId", Texto = "Selecione o Município.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem TipoOrigemObrigatorio { get { return new Mensagem() { Campo = "OrigemTipo", Texto = "Origem é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
+        public Mensagem PragaJaAdicionada { get { return new Mensagem() { Campo = "OrigemTipo", Texto = "Praga já adicionada.", Tipo = eTipoMensagem.Advertencia }; } }
+        public Mensagem PragaObrigatorio { get { return new Mensagem() { Campo = "OrigemTipo", Texto = "Praga é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
+
 		public Mensagem QuantidadeMaximoCFOCFOC(string documentoOrigem)
 		{
 			return new Mensagem() { Texto = string.Format("{0} deve conter entre 8 e 12 números.", documentoOrigem), Tipo = eTipoMensagem.Advertencia };
