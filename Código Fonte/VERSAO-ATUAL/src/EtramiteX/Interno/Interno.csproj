@@ -2654,6 +2654,10 @@
       <Project>{5038a24c-72ac-4aab-8559-02b6c9243ca4}</Project>
       <Name>Perfil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model.Extencao\Interno.Model.Extensoes.csproj">
       <Project>{F7BAF119-128E-4151-89B3-35F1367ADD15}</Project>
       <Name>Interno.Model.Extensoes</Name>

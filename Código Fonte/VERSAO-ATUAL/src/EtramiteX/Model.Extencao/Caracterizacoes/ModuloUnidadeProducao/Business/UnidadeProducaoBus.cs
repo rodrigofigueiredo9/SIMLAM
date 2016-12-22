@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Pentago.Utilities;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;

@@ -69,7 +69,6 @@
     <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Business\UnidadeConsolidacaoValidar.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeConsolidacao\Data\UnidadeConsolidacaoDa.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoBus.cs" />
-    <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoGenerator.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Business\UnidadeProducaoValidar.cs" />
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Data\UnidadeProducaoDa.cs" />
     <Compile Include="Caracterizacoes\ModuloCadastroAmbientalRural\Business\CadastroAmbientalRuralBus.cs" />
@@ -316,6 +315,10 @@
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorio\Interno.Model.RelatorioIndividual.csproj">
       <Project>{7f7481cd-3199-43da-bcb5-1c1c9797bfce}</Project>
