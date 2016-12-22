@@ -59,10 +59,6 @@
       <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EtramiteX\Model.Extencao\Interno.Model.Extensoes.csproj">
-      <Project>{f7baf119-128e-4151-89b3-35f1367add15}</Project>
-      <Name>Interno.Model.Extensoes</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
       <Name>Utilities</Name>

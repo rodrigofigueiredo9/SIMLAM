@@ -14,6 +14,11 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
+using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloUnidadeProducao.Data
@@ -72,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("possui_cod_propriedade", caracterizacao.PossuiCodigoPropriedade, DbType.Int32);
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+                comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
@@ -474,7 +479,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
 
 				comando.AdicionarParametroEntrada("possui_cod_propriedade", caracterizacao.PossuiCodigoPropriedade, DbType.Int32);
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+                comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -651,6 +656,78 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		#endregion
 
 		#region Obter/Filtrar
+        public Municipio ObterMunicipio(int MunicipioId, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Municipio municipio = new Municipio();
+                Comando comando = bancoDeDados.CriarComando(@"select m.id, m.texto, m.estado, m.cep, m.ibge from {0}lov_municipio m where m.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", MunicipioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        municipio.Id = Convert.ToInt32(reader["id"]);
+                        municipio.Estado.Id = Convert.ToInt32(reader["estado"]);
+                        municipio.Ibge = Convert.IsDBNull(reader["ibge"]) ? 0 : Convert.ToInt32(reader["ibge"]);
+                        municipio.Texto = reader["texto"].ToString();
+                        municipio.Cep = reader["texto"].ToString();
+                        municipio.IsAtivo = true;
+                    }
+
+                    reader.Close();
+                }
+
+                return municipio;
+            }
+        }
+
+        public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
+        {
+            Endereco retorno = new Endereco();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Endereços
+
+                Comando comando = bancoDeDados.CriarComando(@"
+				select te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto, 
+				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid 
+				from {0}tab_empreendimento_endereco te, {0}lov_estado le, {0}lov_municipio lm 
+				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = :empreendimento and te.correspondencia = 0", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        retorno.Id = reader.GetValue<int>("id");
+                        retorno.Tid = reader.GetValue<string>("tid");
+                        retorno.ZonaLocalizacaoId = reader.GetValue<int>("zona");
+                        retorno.Cep = reader.GetValue<string>("cep");
+                        retorno.Logradouro = reader.GetValue<string>("logradouro");
+                        retorno.Bairro = reader.GetValue<string>("bairro");
+                        retorno.EstadoId = reader.GetValue<int>("estado_id");
+                        retorno.EstadoTexto = reader.GetValue<string>("estado_texto");
+                        retorno.MunicipioId = reader.GetValue<int>("municipio_id");
+                        retorno.MunicipioTexto = reader.GetValue<string>("municipio_texto");
+                        retorno.Numero = reader.GetValue<string>("numero");
+                        retorno.DistritoLocalizacao = reader.GetValue<string>("distrito");
+                        retorno.Corrego = reader.GetValue<string>("corrego");
+                        retorno.CaixaPostal = reader.GetValue<string>("caixa_postal");
+                        retorno.Complemento = reader.GetValue<string>("complemento");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return retorno;
+        }
 
 		internal UnidadeProducao ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -696,7 +773,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+						caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 						caracterizacao.Empreendimento.InternoID = reader.GetValue<int>("emp_interno_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
@@ -904,7 +981,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+                        caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 						caracterizacao.Empreendimento.InternoID = reader.GetValue<int>("emp_interno_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
