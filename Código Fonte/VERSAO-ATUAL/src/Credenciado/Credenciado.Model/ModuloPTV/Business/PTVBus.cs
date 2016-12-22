@@ -322,7 +322,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					retorno.Add("empreendimento_id", 0);
 					retorno.Add("empreendimento_denominador", string.Empty);
 					retorno.Add("listaCulturas", new List<Lista>());
-                    retorno.Add("declaracao_adicional", string.Empty);
+                    retorno.Add("declaracao_adicional", " ");
 				}
 				else
 				{

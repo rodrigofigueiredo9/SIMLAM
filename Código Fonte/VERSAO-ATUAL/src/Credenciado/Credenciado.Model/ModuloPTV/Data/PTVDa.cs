@@ -871,7 +871,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
         internal string ObterDeclaracaoAdicional(int numero)
         {
-            string ret = string.Empty;
+            string ret = " ";
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
                 Comando comando = bancoDeDados.CriarComando(@"select declaracao_adicional
@@ -884,7 +884,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                 ret = bancoDeDados.ExecutarScalar<string>(comando);
             }
 
-            return ret;
+            return string.IsNullOrEmpty(ret) ? " " : ret ;
 
         }
 
