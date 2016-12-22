@@ -112,6 +112,10 @@
       <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
