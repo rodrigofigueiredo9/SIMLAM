@@ -10,6 +10,7 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using System.Linq;
 using System;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
+using System.Text;
 
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
@@ -124,6 +125,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 			return retorno;
 		}
 
+        internal string ObterDeclaracaoAdicionalPTVOutroEstado(int numero)
+        {
+            string ret = " ";
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select replace(declaracao_adicional,'|','')
+																from {0}tab_ptv_outrouf tt
+															  where tt.id = :id 
+																 ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", numero, DbType.Int32);
+
+                ret = bancoDeDados.ExecutarScalar<string>(comando);
+            }
+
+            return string.IsNullOrEmpty(ret) ? " " : ret;
+
+        }
+
 		internal List<Cultivar> ObterCultivares(List<int> culturas, List<int> lotes= null, int OutroEstado = 0,  BancoDeDados banco = null)
 		{
 			List<Cultivar> lstCultivar = new List<Cultivar>();
@@ -156,21 +176,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				#endregion
 
 				#region Cultivar_Configurações
-
-
+                StringBuilder sbDecAdd = new StringBuilder();
+                List<LoteItem> lstLotes = null;
                 string strOutroEstado = "";
                 if (lotes != null)
                 {
-                     strOutroEstado = "('0')";
+                    // strOutroEstado = "('0')";
                     foreach (int idLot in lotes)
                     {
                         Lote lot = _loteDa.Obter(idLot);
-                        int totaloutro = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count;
-                        if (totaloutro > 0 && totaloutro == lot.Lotes.Count)
+                        // totaloutro = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count;
+                        lstLotes = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList();
+
+                       
+                        foreach (LoteItem item in lstLotes)
+                        {
+                            sbDecAdd.Append(ObterDeclaracaoAdicionalPTVOutroEstado(item.Origem));
+                        }
+
+                        if (lstLotes.Count > 0 && lstLotes.Count == lot.Lotes.Count)
                         {
                             strOutroEstado = "('1')";
                         }
-                        else if (totaloutro > 0 && totaloutro != lot.Lotes.Count )
+                        else if (lstLotes.Count > 0 && lstLotes.Count != lot.Lotes.Count)
                             strOutroEstado = "('1','0')";
                         else
                             strOutroEstado = "('0')";

@@ -233,9 +233,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
         public ActionResult ValidarPraga(Praga item, List<Praga> lista)
         {
-            _validar.ValidarPraga(item, lista);
+            //_validar.ValidarPraga(item, lista);
 
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
+        public ActionResult ObterDeclaracoes(int pragaId )
+        {
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Declaracoes = _bus.ObterListaDeclaracao(pragaId)
+            },
+            JsonRequestBehavior.AllowGet);
         }
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]

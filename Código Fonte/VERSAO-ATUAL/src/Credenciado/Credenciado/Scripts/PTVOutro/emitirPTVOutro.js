@@ -16,7 +16,8 @@ PTVOutroEmitir = {
             urlSalvar: null,
             urlObterPragas: null,
             urlObterDeclaracaoAdicional: null,
-            urlValidarPraga : null
+            urlValidarPraga: null,
+            urlObterDeclaracaoCombo: null
         }
     },
     container: null,
@@ -89,6 +90,8 @@ PTVOutroEmitir = {
 
         PTVOutroEmitir.container.delegate('input[name="CnpjCpf"]', 'click', PTVOutroEmitir.onClickRadioCnpjCpf);
         PTVOutroEmitir.container.delegate('.ddlEstadosInteressado', 'change', PTVOutroEmitir.onObterMunicipioInteressado);
+
+        PTVOutroEmitir.container.delegate('.ddlPragas', 'change', PTVOutroEmitir.onSelPragra);
 
         if (parseInt($('.hdnID', PTVOutroEmitir.container).val()) > 0) {
             PTVOutroEmitir.habilitarCampos(false);
@@ -262,6 +265,8 @@ PTVOutroEmitir = {
 
         Listar.atualizarEstiloTable(tabela);
         PTVOutroEmitir.carregarPragas();
+
+        $('.ddlPragas').change();
     },
 
     onObterMunicipio: function() {
@@ -335,10 +340,16 @@ PTVOutroEmitir = {
      
         var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
         var lista = PTVOutroEmitir.obterPragas();
+
+        var declaracao = $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text();
+
+     
+
         var item = {
             Id: praga.Id,
             NomeCientifico: praga.Texto.split('-')[0],
-            NomeComum: praga.Texto.split('-')[1]
+            NomeComum: praga.Texto.split('-')[1],
+            DeclaracaoAdicional: declaracao
         };
 
         var retorno = MasterPage.validarAjax(PTVOutroEmitir.settings.urls.urlValidarPraga, { item: item, lista: lista }, null, false);
@@ -346,6 +357,7 @@ PTVOutroEmitir = {
         if (!retorno.EhValido && retorno.Msg) {
             Mensagem.gerar(PTVOutroEmitir.container, retorno.Msg);
             return;
+
         }
 
    
@@ -355,6 +367,7 @@ PTVOutroEmitir = {
 
         $('.nome_cientifico', linha).text(item.NomeCientifico);
         $('.nome_comum', linha).text(item.NomeComum);
+        $('.declaracao_adicional', linha).text(item.DeclaracaoAdicional);
         $('.hdnItemJson', linha).val(JSON.stringify(item));
 
         $('tbody', tabela).append(linha);
@@ -362,7 +375,10 @@ PTVOutroEmitir = {
 
         Listar.atualizarEstiloTable(tabela);
         $('.ddlPragas', PTVOutroEmitir.container).ddlFirst();
-        PTVOutroEmitir.obterDeclaracaoAdicional();
+        $('.ddlDeclaracaoAdicional', PTVOutroEmitir.container).ddlFirst();
+
+
+       // PTVOutroEmitir.obterDeclaracaoAdicional();
     },
 
     obterPragas: function () {
@@ -372,6 +388,30 @@ PTVOutroEmitir = {
         });
 
         return retorno;
+    },
+
+    onSelPragra: function () {
+
+        var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
+
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoCombo,
+            data: JSON.stringify({ pragaId: praga.Id }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, Cultura.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.Declaracoes) {
+                    $('.ddlDeclaracaoAdicional', DeclaracaoAdicional.container).ddlLoad(response.Declaracoes, { disabled: false });
+                }
+            }
+        });
+
     },
 
     obterDeclaracaoAdicional: function () {
@@ -508,6 +548,21 @@ PTVOutroEmitir = {
 
 	obter: function () {
 
+	    var declaracoes = "";
+	    /*$('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+	        $('.declaracao_adicional', PTVOutroEmitir.container).each(function () {
+	            declaracoes += $('.declaracao_adicional', PTVOutroEmitir.container).text().trim() + "|";
+	        });
+	    });*/
+
+	    $($('.gridPragas tbody tr:not(.trTemplate) .declaracao_adicional', PTVOutroEmitir.container)).each(function () {
+	        declaracoes += $(this).text().trim() + "|";
+	    });
+
+
+	    alert(declaracoes);
+
+
 		var objeto = {
 
 			Id: $('.hdnEmissaoId', PTVOutroEmitir.container).val(),
@@ -531,7 +586,7 @@ PTVOutroEmitir = {
 			RespTecnicoNumHab: $('.txtNumHab', PTVOutroEmitir.container).val(), 
 			Estado: $('.ddlEstados', PTVOutroEmitir.container).val(),
 			Municipio: $('.ddlMunicipios', PTVOutroEmitir.container).val(),
-			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).text(),
+			DeclaracaoAdicional: declaracoes,
 			Produtos: []
 		}
 

@@ -178,10 +178,15 @@
 	<legend>Pragas associadas à cultura</legend>
 	<% if (!Model.IsVisualizar) { %>
 	<div class="block">
-		<div class="coluna58">
+		<div class="coluna25">
 			<label>Pragas *</label>
 			<%=Html.DropDownList("PragaId", Model.Pragas ?? new List<SelectListItem>(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new{ @class="ddlPragas text"})) %>
 		</div>
+		<div class="coluna25">
+			<label>Declaração Adicional </label>
+			<%= Html.DropDownList("DeclaracaoAdicional", new List<SelectListItem>(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new{ @class="ddlDeclaracaoAdicional text"}))  %>
+		</div>
+		
 		<div class="coluna10 prepend1">
 			<button type="button" class="inlineBotao btnAddPraga">Adicionar</button>
 		</div>
@@ -194,14 +199,20 @@
 				<tr>
 					<th>Nome científico</th>
 					<th>Nome comum</th>
+                    <th>Declaração adicional</th>
 					<% if (!Model.IsVisualizar) { %><th style="width:7%">Ação</th><% } %>
 				</tr>
 			</thead>
 			<tbody>
+                <%
+                    string[] vec_dec = Model.PTV.DeclaracaoAdicional.Split('|');
+                    int c = 0;
+                %>
 				<% foreach (var item in Model.PTV.Pragas) { %>
 					<tr>
 						<td class="nome_cientifico" title="<%=item.NomeCientifico %>"><%=item.NomeCientifico%></td>
 						<td class="nome_comum" title="<%=item.NomeComum%>"> <%=item.NomeComum%></td>
+                        <td class="declaracao_adicional" title="<%=vec_dec[c]%>"><%=vec_dec[c]%> </td>
 						<%if(!Model.IsVisualizar){ %> 
 						<td>
 							<a class="icone excluir btnExcluir"></a>
@@ -209,11 +220,12 @@
 						</td>
 						<%} %>
 					</tr>
-				<%  } %>
+				<% c++; } %>
 				<%if(!Model.IsVisualizar){ %>
 					<tr class="trTemplate hide">
 						<td class="nome_cientifico"></td>
 						<td class="nome_comum"></td>
+                        <td class="declaracao_adicional" title=""> </td>
 						<td>
 							<a class="icone excluir btnExcluir"></a>
 							<input type="hidden" value="0" class="hdnItemJson" />
@@ -223,12 +235,7 @@
 			</tbody>
 		</table>
 	</div>
-    <div class="block">
-		<label>Declaração Adicional</label>
-		<div class="textareaFake txtDeclaracaoAdicional">
-			<%= Model.PTV.DeclaracaoAdicionalHtml %>
-        </div>
-    </div>
+    
 </fieldset>
 
 
