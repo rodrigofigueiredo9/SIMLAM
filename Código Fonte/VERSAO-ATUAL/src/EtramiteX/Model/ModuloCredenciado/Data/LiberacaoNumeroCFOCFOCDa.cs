@@ -644,8 +644,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"
-				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 1 and t.tipo_numero = 2), 
-				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 1 and t.tipo = 2)) from dual");
+				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 1 and t.tipo_numero = 2
+									and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%'), 
+				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 1 and t.tipo = 2
+									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%')) from dual");
 
 				object objeto = banco.ExecutarScalar(comando);
 
@@ -665,7 +667,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 						if v_aux = 0 then
 							select nvl(min(t.numero_inicial), 0) into proximo from cnf_doc_fito_intervalo t 
-							where t.tipo_documento = 1 and t.tipo = 2 and t.numero_inicial > proximo;
+							where t.tipo_documento = 1 and t.tipo = 2 and t.numero_inicial > proximo
+									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 							if proximo = 0 then
 								v_saida := 1;/*Possui 1 não configurado*/
@@ -694,8 +697,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"
-				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 2 and t.tipo_numero = 2), 
-				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 2 and t.tipo = 2)) from dual");
+				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 2 and t.tipo_numero = 2
+									and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%'), 
+				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 2 and t.tipo = 2
+									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%')) from dual");
 
 				object objeto = banco.ExecutarScalar(comando);
 
@@ -715,7 +720,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 						if v_aux = 0 then
 							select nvl(min(t.numero_inicial), 0) into proximo from cnf_doc_fito_intervalo t 
-							where t.tipo_documento = 2 and t.tipo = 2 and t.numero_inicial > proximo;
+							where t.tipo_documento = 2 and t.tipo = 2 and t.numero_inicial > proximo
+									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
 							if proximo = 0 then
 								v_saida := 1;/*Possui 1 não configurado*/
@@ -760,7 +766,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"select count(t.id) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l, tab_credenciado c where l.id = t.liberacao and c.id = l.responsavel_tecnico
-				and t.tipo_documento = 2 and t.tipo_numero = 2 and t.situacao = 1 and t.utilizado = 0 and c.id = :credenciado_id");
+				and t.tipo_documento = 2 and t.tipo_numero = 2 and t.situacao = 1 and t.utilizado = 0 and c.id = :credenciado_id
+				and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado_id", liberacao.CredenciadoId, DbType.Int32);
 

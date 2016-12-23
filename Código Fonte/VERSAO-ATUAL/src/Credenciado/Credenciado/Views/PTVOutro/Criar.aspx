@@ -24,7 +24,8 @@
 				    urlSalvar: '<%= Url.Action("Salvar", "PTVOutro") %>',
 				    urlObterPragas: '<%= Url.Action("ObterPragas", "PTVOutro") %>',
 				    urlObterDeclaracaoAdicional: '<%= Url.Action("ObterDeclaracaoAdicional", "PTVOutro") %>',
-				    urlValidarPraga: '<%= Url.Action("ValidarPraga", "PTVOutro") %>'
+				    urlValidarPraga: '<%= Url.Action("ValidarPraga", "PTVOutro") %>',
+				    urlObterDeclaracaoCombo: '<%= Url.Action("ObterDeclaracoes", "PTVOutro") %>'
 				}
 			});
 			

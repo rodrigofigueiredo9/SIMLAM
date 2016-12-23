@@ -37,6 +37,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
 		#region DML
 
+        public List<ListaValor> ObterListaDeclaracao(int pragaId )
+        {
+            return _da.ObterListaDeclaracao(pragaId);
+        }
+
 		public bool Salvar(PTVOutro ptv)
 		{
 			try

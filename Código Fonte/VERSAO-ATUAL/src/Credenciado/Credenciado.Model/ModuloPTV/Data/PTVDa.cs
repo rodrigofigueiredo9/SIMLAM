@@ -874,7 +874,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
             string ret = " ";
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
-                Comando comando = bancoDeDados.CriarComando(@"select declaracao_adicional
+                Comando comando = bancoDeDados.CriarComando(@"select replace(declaracao_adicional,'|','')
 																from {0}tab_ptv_outrouf tt
 															  where tt.id = :id 
 																 ", EsquemaBanco);
