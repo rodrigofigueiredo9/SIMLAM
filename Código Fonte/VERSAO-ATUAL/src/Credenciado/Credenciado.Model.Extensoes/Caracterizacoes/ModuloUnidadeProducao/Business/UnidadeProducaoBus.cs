@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -407,7 +407,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			foreach (var item in caracterizacao.UnidadesProducao)
 			{
-				if (item.CodigoUP.ToString().Substring(7, 4) != caracterizacao.CodigoPropriedade.ToString("D4"))
+				if (!UnidadeProducaoGenerator.CodigoUpHasCodigoPropriedade(caracterizacao.CodigoPropriedade, item.CodigoUP))
 				{
 					Validacao.Add(Mensagem.UnidadeProducao.CodigoUPNaoContemCodPropriedade(item.CodigoUP));
 				}
