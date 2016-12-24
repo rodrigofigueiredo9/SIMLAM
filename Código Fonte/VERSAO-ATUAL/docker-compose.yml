@@ -1,0 +1,7 @@
+service:
+  build: .
+  command: "xsp4 --port=9000 --nonstop"
+  ports:
+    - 9000:9000
+  environment:
+    - MONO_OPTIONS=--debug

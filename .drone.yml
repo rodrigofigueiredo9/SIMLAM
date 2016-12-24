@@ -1,0 +1,35 @@
+build:
+  test:
+    image: armand1m/mono-oracle:latest
+    pull: true
+    commands:
+      - cd "./Código Fonte/VERSAO-ATUAL/src/EtramiteX"
+      - xbuild IDAF.mono.sln
+
+branches:
+  - feature/docker-mono-build
+
+notify:
+  slack:
+    webhook_url: https://hooks.slack.com/services/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
+    channel: devops
+    username: Drone CI
+    template: >
+      *Build #{{ build.number }}: {{ build.status }}*
+
+
+
+      *Duration*: {{ duration build.started_at build.finished_at }}
+
+      *Repository*: {{ repo.full_name }}
+
+      *Branch*: {{ build.branch }}
+
+      *Message*: {{ build.message }}
+
+      *Commit*: <{{ build.link_url }}|{{ truncate build.commit 8 }}>
+
+      *Author*: {{ build.author }} <{{ build.author_email }}>
+    when:
+      success: true
+      failure: true
