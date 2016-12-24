@@ -7,6 +7,7 @@ build:
       - xbuild IDAF.mono.sln
 
 branches:
+  - master
   - feature/docker-mono-build
 
 notify:
