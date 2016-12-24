@@ -3,7 +3,9 @@ build:
     image: armand1m/mono-oracle:latest
     pull: true
     commands:
-      - cd "./Código Fonte/VERSAO-ATUAL/src/EtramiteX"
+      - cd "./Código Fonte/VERSAO-ATUAL/lib/src"
+      - xbuild EtramiteXLib.sln
+      - cd ../../src/EtramiteX
       - xbuild IDAF.mono.sln
 
 branches:
