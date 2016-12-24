@@ -5,7 +5,9 @@ build:
     commands:
       - cd "./Código Fonte/VERSAO-ATUAL/lib/src"
       - xbuild EtramiteXLib.sln
-      - cd ../../src/EtramiteX
+      - cd ../../src/Credenciado
+      - xbuild Credenciado.mono.sln
+      - cd ../EtramiteX
       - xbuild IDAF.mono.sln
 
 branches:
