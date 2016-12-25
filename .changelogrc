@@ -1,0 +1,50 @@
+{
+	"app_name": "SIMLAM",
+	"logo": "http://local.pentago.com.br:9995/avatars/13?s=140",
+	"intro": "SIMLAM PROJECT",
+	"branch" : "develop",
+	"version_name" : "v1.0.0",
+	"file": "CHANGELOG.md",
+	"sections": [
+		{
+			"title": "Bug Fixes",
+			"grep": "^fix"
+		},
+		{
+			"title": "Features",
+			"grep": "^feat"
+		},
+		{
+			"title": "Documentation",
+			"grep": "^docs"
+		},
+		{
+			"title": "Breaking changes",
+			"grep": "BREAKING"
+		},
+		{
+			"title": "Refactor",
+			"grep": "^refactor"
+		},
+		{
+			"title": "Style",
+			"grep": "^style"
+		},
+		{
+			"title": "Test",
+			"grep": "^test"
+		},
+		{
+			"title": "Chore",
+			"grep": "^chore"
+		},
+		{
+			"title": "Branchs merged",
+			"grep": "^Merge branch"
+		},
+		{
+			"title" : "Pull requests merged",
+			"grep": "^Merge pull request"
+		}
+	]
+}
