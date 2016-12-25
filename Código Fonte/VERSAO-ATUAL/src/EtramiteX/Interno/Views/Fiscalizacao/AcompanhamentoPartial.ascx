@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AcompanhamentoVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+<script>
 	Acompanhamento.TiposArquivo = <%= Model.TiposArquivoValido %>;
 </script>
 
@@ -19,17 +19,17 @@
 		<div class="block">
 			<div class="coluna25 append2">
 				<label for="Acompanhamento_NumeroSufixo">Nº acompanhamento</label><br />
-				<%= Html.TextBox("Acompanhamento.NumeroSufixo", Model.Acompanhamento.Numero, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroSufixo" }))%> 
+				<%= Html.TextBox("Acompanhamento.NumeroSufixo", Model.Acompanhamento.Numero, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroSufixo" }))%>
 			</div>
 
 			<div class="coluna25 append2">
 				<label for="Acompanhamento_DataVistoria.DataTexto">Data da vistoria *</label><br />
-				<%= Html.TextBox("Acompanhamento.DataVistoria.DataTexto", Model.Acompanhamento.DataVistoria.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDataVistoria setarFoco maskData" }))%> 
+				<%= Html.TextBox("Acompanhamento.DataVistoria.DataTexto", Model.Acompanhamento.DataVistoria.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDataVistoria setarFoco maskData" }))%>
 			</div>
 
 			<div class="coluna20">
 				<label for="Acompanhamento_SituacaoTexto">Situação do cadastro</label><br />
-				<%= Html.TextBox("Acompanhamento.SituacaoTexto", (Model.Acompanhamento.Id <= 0) ? "Em Cadastro" : Model.Acompanhamento.SituacaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtSituacao" }))%> 
+				<%= Html.TextBox("Acompanhamento.SituacaoTexto", (Model.Acompanhamento.Id <= 0) ? "Em Cadastro" : Model.Acompanhamento.SituacaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtSituacao" }))%>
 			</div>
 		</div>
 
@@ -37,7 +37,7 @@
 		<div class="block">
 			<div class="coluna76">
 				<label for="MotivoSituacao">Motivo do cancelamento</label>
-				<%= Html.TextArea("MotivoSituacao", Model.Acompanhamento.Motivo, ViewModelHelper.SetaDisabled(true, new { @class = "text media txtMotivoSituacao" }))%> 
+				<%= Html.TextArea("MotivoSituacao", Model.Acompanhamento.Motivo, ViewModelHelper.SetaDisabled(true, new { @class = "text media txtMotivoSituacao" }))%>
 			</div>
 		</div>
 		<% } %>
@@ -46,14 +46,14 @@
 			<div class="coluna76">
 				<label for="Acompanhamento_AgenteNome">Agente fiscal *</label><br />
 				<%=Html.Hidden("Acompanhamento_AgenteId", Model.Acompanhamento.AgenteId, new { @class = "hdnAgenteId"}) %>
-				<%= Html.TextBox("Acompanhamento.AgenteNome", Model.Acompanhamento.AgenteNome, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlSetores" }))%> 
+				<%= Html.TextBox("Acompanhamento.AgenteNome", Model.Acompanhamento.AgenteNome, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlSetores" }))%>
 			</div>
 		</div>
 
 		<div class="block">
 			<div class="coluna76">
 				<label for="Acompanhamento_Setor">Setor de cadastro *</label><br />
-				<%= Html.DropDownList("Acompanhamento.Setor", Model.SetoresLst, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlSetores" }))%> 
+				<%= Html.DropDownList("Acompanhamento.Setor", Model.SetoresLst, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlSetores" }))%>
 			</div>
 		</div>
 		<br />
@@ -86,7 +86,7 @@
 					<%= reserva.Texto%>
 				</label>
 			<% } %>
-		</div>	
+		</div>
 
 	</fieldset>
 
@@ -170,7 +170,7 @@
 		<div class="block">
 			<div class="ultima">
 				<label>
-					Opinar pelo destino (permanência no local, doação, uso pela instituição, entre outros) do material e/ou bens apreendidos, levando-se em 
+					Opinar pelo destino (permanência no local, doação, uso pela instituição, entre outros) do material e/ou bens apreendidos, levando-se em
 					consideração os seguintes itens: localização e sua dispersão no local, potencial impacto que a retirada do material possa causar à área, valor
 					econômico, diâmetro médio das espécies, entre outros.
 				</label>

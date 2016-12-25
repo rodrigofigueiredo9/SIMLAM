@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<AlterarSituacaoVM>" %>
@@ -6,8 +6,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Alterar Situação</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoAlterarSituacao.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoAlterarSituacao.js") %>" ></script>
+	<script>
 		$(function () {
 			FiscalizacaoAlterarSituacao.load($('#central'), {
 				urls: {

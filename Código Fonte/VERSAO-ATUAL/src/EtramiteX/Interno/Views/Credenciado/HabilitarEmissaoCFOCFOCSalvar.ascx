@@ -1,21 +1,21 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<HabilitarEmissaoCFOCFOCVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/habilitarEmissaoCFOCFOC.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/renovarDataHabilitacaoCFO.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Credenciado/habilitarEmissaoCFOCFOC.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Credenciado/renovarDataHabilitacaoCFO.js") %>"></script>
 
 <% if (Model.IsAjaxRequest) { %>
-<script type="text/javascript">
-	HabilitarEmissaoCFOCFOC.load($('.modalSalvarHabilitarEmissaoCFOCFOC'), 
+<script>
+	HabilitarEmissaoCFOCFOC.load($('.modalSalvarHabilitarEmissaoCFOCFOC'),
 	{
-		urls: 
+		urls:
 		{
 			salvar: '<%= Url.Action("SalvarHabilitarEmissao", "Credenciado") %>',
 			visualizarResponsavel: '<%= Url.Action("Visualizar", "Credenciado") %>',
@@ -33,7 +33,7 @@
 </script>
 <% } %>
 
-<div class="modalSalvarHabilitarEmissaoCFOCFOC">	
+<div class="modalSalvarHabilitarEmissaoCFOCFOC">
 	<%= Html.Hidden("HabilitarEmissao.Id", Model.HabilitarEmissao.Id, new { @class = "hdnHabilitarId" })%>
 	<%= Html.Hidden("HabilitarEmissao.Tid", Model.HabilitarEmissao.Tid, new { @class = "hdnHabilitarTid" })%>
 	<%= Html.Hidden("HabilitarEmissao.IsEditar", Model.IsEditar, new {@class = "hdnIsEditar"})%>
@@ -95,7 +95,7 @@
 
 	<fieldset class="divregistro block box">
 		<legend>Registro e Habilitações</legend>
-		
+
 		<!-- Linha 1 -->
 		<div class="block">
 			<div class="coluna30">
@@ -149,7 +149,7 @@
 
 			<div class="coluna30 prepend2">
 				<label for="Model.HabilitarEmissao.UF">UF*</label>
-				<%= Html.DropDownList("HabilitarEmissao.UF", Model.Estados, ViewModelHelper.SetaDisabled(true, new { @class = "ddlUf text" }))%> 
+				<%= Html.DropDownList("HabilitarEmissao.UF", Model.Estados, ViewModelHelper.SetaDisabled(true, new { @class = "ddlUf text" }))%>
 			</div>
 
 			<div class="coluna30 prepend2 divRegistroCrea <%= (Model.HabilitarEmissao.UF != 8) ? "" : "hide" %> ">
@@ -179,7 +179,7 @@
 		<div class="block">
 			<div class="coluna30">
 				<label for="Model.HabilitarEmissao.Pragas.DataInicial">Data inicial da habilitação *</label>
-				<%= Html.TextBox("HabilitarEmissao.Pragas.DataInicialHabilitacao", null, ViewModelHelper.SetaDisabled(true, new { @maxlength = "10", @class = "txtDataInicialHabilitacao text maskData" }))%> 
+				<%= Html.TextBox("HabilitarEmissao.Pragas.DataInicialHabilitacao", null, ViewModelHelper.SetaDisabled(true, new { @maxlength = "10", @class = "txtDataInicialHabilitacao text maskData" }))%>
 			</div>
 
 			<div class="coluna30 prepend2">

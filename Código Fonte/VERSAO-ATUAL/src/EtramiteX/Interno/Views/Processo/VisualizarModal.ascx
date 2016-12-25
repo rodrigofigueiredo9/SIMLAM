@@ -1,22 +1,22 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProcesso" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProcesso" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
 <!-- DEPENDENCIAS DE PESSOA -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE PESSOA -->
 
 <!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		AtividadeSolicitadaAssociar.load($('.processoPartial'));
 		Processo.load($('.processoPartial'), {

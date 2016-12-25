@@ -1,16 +1,16 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certidao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certidao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertidaoAnuenciaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoAnuencia.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoAnuencia.js") %>"></script>
 
 <fieldset class="block box">
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
 	<br />
-	
+
 	<% Html.RenderPartial("DestinatarioEspecificidade", Model.DestinatariosVM); %>
 
 	<div class="block">

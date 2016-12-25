@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Cadastro" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Cadastro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CadastroAmbientalRuralTituloVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Cadastro/cadastroAmbientalRuralTitulo.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Cadastro/cadastroAmbientalRuralTitulo.js") %>"></script>
+<script>
 	CadastroAmbientalRuralTitulo.urlObterDadosCadastroAmbientalRuralTitulo = '<%= Url.Action("ObterDadosCadastro", "Cadastro", new {area="Especificidades"}) %>';
 </script>
 
@@ -12,7 +12,7 @@
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
 	<br />
-	
+
 	<div class="block">
 		<div class="coluna75">
 			<label for="CadastroAmbientalRuralTitulo_Destinatario">Destinatário *</label>

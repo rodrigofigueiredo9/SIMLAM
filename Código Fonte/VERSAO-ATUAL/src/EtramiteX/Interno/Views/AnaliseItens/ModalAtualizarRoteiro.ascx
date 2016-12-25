@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAnaliseItens" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAnaliseItens" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ResultadoMergeItemVM>" %>
 
-<script type="text/javascript">
+<script>
 	ModalAtualizarRoteiro.itensJSON = <%= ViewModelHelper.JsSerializer.Serialize(Model.MergeItens.Itens) %>;
 	ModalAtualizarRoteiro.roteirosJSON = <%= ViewModelHelper.JsSerializer.Serialize(Model.ObterRoteirosSimplificado()) %>;
 </script>
@@ -27,10 +27,10 @@
 					</thead>
 					<tbody>
 						<%
-							foreach (var item in Model.MergeItens.ItensAtualizados.OrderBy(x => x.StatusId)) 
+							foreach (var item in Model.MergeItens.ItensAtualizados.OrderBy(x => x.StatusId))
 						{ %>
 						<tr>
-						
+
 							<% string nomeItem = string.Empty;
 
 							foreach (var itemAtuais in Model.MergeItens.ItensAtuais)
@@ -54,7 +54,7 @@
 							</td>
 						</tr>
 						<%} %>
-					
+
 					</tbody>
 				</table>
 			</div>

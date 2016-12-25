@@ -1,7 +1,7 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<HabilitarEmissaoCFOCFOCVM>" %>
 
-<script type="text/javascript">
+<script>
 	$.extend(RenovarDataHabilitacaoCFO.settings, {
 		urls: {
 			renovarData: '<%= Url.Action("RenovarDataHabilitacaoCFO", "Credenciado") %>'

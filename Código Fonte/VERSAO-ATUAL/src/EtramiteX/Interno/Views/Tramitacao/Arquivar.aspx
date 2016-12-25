@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ArquivarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Arquivar Processo/Documento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/arquivar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Tramitacao/arquivar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		Arquivar.load($('#central'), {
 			urls: {

@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteSituacaoProrrogarVM>" %>
 
 
-<script type="text/javascript">
+<script>
 	CondicionanteProrrogar.settings.urls = {
 		prorrogar: '<%= Url.Action("CondicionanteProrrogarSalvar", "Titulo") %>'
 	}

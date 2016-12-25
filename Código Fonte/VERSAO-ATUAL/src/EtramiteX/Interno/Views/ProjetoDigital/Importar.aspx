@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProjetoDigital" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProjetoDigital" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ProjetoDigitalVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Importar Requerimento Digital</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ProjetoDigital/projetoDigital.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ProjetoDigital/projetoDigital.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		ProjetoDigital.urlObterPessoa = '<%= Url.Action("ObterPessoa", "ProjetoDigital") %>';
 		ProjetoDigitalObjetivoPedido.urlObterObjetivoPedido = '<%= Url.Action("ObterObjetivoPedido", "ProjetoDigital") %>';
 		ProjetoDigitalObjetivoPedido.urlPdfRoteiro = '<%= Url.Action("RelatorioRoteiro", "Roteiro") %>';

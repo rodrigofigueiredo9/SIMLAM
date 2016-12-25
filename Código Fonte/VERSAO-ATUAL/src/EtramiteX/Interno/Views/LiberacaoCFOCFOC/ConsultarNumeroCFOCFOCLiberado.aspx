@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMLiberacaoCFOCFOC" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ConsultarNumeroCFOCFOCLiberadoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Consultar Número de CFO e CFOC Liberados</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/LiberacaoCFOCFOC/consultarNumeroCFOCFOCLiberado.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/LiberacaoCFOCFOC/consultarNumeroCFOCFOCLiberado.js") %>"></script>
+	<script>
 		$(function () {
 			ConsultarNumeroCFOCFOCLiberado.load($('#central'),
 			{
@@ -74,12 +74,12 @@
 					<label for="DataFinalBloco">Data final da emissão</label>
 					<%= Html.TextBox("DataFinalBloco", null, new { @class = "text maskData txtDataFinalEmissao" })%>
 				</div>
-				
+
 				<div class="coluna10 prepend1">
 					<button type="button" class="inlineBotao esquerda bloco btnBuscar">Buscar</button>
 				</div>
 			</div>
-			
+
 			<div class="block">
 				<div class="coluna80">
 					<div class="block">
@@ -123,7 +123,7 @@
 				</div>
 			</div>
 		</fieldset>
-		
+
 		<fieldset class="block box mostrar hide bloco">
 			<legend>Nº Digital</legend>
 			<div class="block">

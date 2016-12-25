@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<DesarquivarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Desarquivar Processo/Documento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/desarquivar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/desarquivar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 			$(function () {
 				Desarquivar.load($('#central'), {
 					urls: {

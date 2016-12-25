@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SilviculturaATVCaracteristicaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <%if(!Model.IsVisualizar) {%>
-<script type="text/javascript">	
+<script>	
 	SilviculturaATVCaracteristica.settings.mensagens = <%= Model.Mensagens %>;
 </script>
 <%} %>

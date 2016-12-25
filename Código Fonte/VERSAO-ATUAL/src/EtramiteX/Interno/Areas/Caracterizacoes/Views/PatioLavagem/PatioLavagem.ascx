@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PatioLavagemVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.PatioLavagem%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	PatioLavagem.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	PatioLavagem.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	PatioLavagem.settings.textoMerge = '<%= Model.TextoMerge %>';

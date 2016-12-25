@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Especificidade" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Especificidade" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DestinatarioEspecificidadeVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript">
+<script>
 	DestinatarioEspecificidade.settings.urls.obterDadosDestinatarioEspecificadade = '<%= Url.Action("ObterDestinatarioEspecificidade", "Titulo", new {area=""}) %>';
 	DestinatarioEspecificidade.settings.mensagens = <%= Model.Mensagens %>;
 </script>

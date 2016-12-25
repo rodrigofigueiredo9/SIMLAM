@@ -1,22 +1,22 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAtividade" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAtividade" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<AtividadeConfiguracaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	Visualizar Configuração de Atividade Solicitada
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeConfiguracao.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/atividadeConfiguracao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 
 		$(function () {
 			AtividadeConfiguracao.urlObterAtividade = '<%= Url.Action("AssociarAtividade", "Atividade") %>';
 			AtividadeConfiguracao.Mensagens = <%= Model.Mensagens %>;
-			
+
 			AtividadeConfiguracao.urlValidarAtividadeConfigurada = '<%= Url.Action("ValidarAtividadeConfigurada", "Atividade") %>';
 			AtividadeConfiguracao.urlConfiguracaoSalvar = '<%= Url.Action("ConfigurarCriar", "Atividade") %>';
-			
+
 			AtividadeConfiguracao.load($('#central'));
 		});
 

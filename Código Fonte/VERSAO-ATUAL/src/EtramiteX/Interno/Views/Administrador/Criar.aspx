@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAdministrador" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAdministrador" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CriarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
@@ -7,14 +7,14 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		$('[name="Cpf"]').focus();
 	});
 </script>
 
 <div id="central">
-	
+
 	<% if (Model.Administrador != null && Model.Administrador.Id > 0)
 	{%>
 	<h1 class="titTela">Editar Administrador</h1>
@@ -81,7 +81,7 @@
 
 				<div class="caixaAbas">
 				<div id="abasNav">
-				
+
 					<ul class="ui-tabs-nav">
 						<li class="ui-tabs-nav-item ui-tabs-selected" id="nav-fragment-1">
 							<a href="#fragment-1" class="primeira"> Papéis </a>
@@ -97,12 +97,12 @@
 									<% for (int i = 0; i < Model.Papeis.Count; i++)
 									   {%>
 										<%= Html.HiddenFor(x => x.Papeis[i].Papel.Id)%>
-											
+
 											<tr class="<%= ((Model.Papeis[i].IsAtivo)?"linhaSelecionada":string.Empty) %>" >
 												<td class="celulaSeletorLinha" width="12%"><%= Html.CheckBoxFor(x => x.Papeis[i].IsAtivo, new { @type = "checkbox", tabindex="24"})%></td>
 												<td class="celulaSeletorLinha" width="92%"><span title="<%= Html.Encode(Model.Papeis[i].Papel.Nome)%>"><%= Html.Encode(Model.Papeis[i].Papel.Nome)%></span> </td>
 											</tr>
-											
+
 									<% } %>
 									</tbody>
 									</table>
@@ -149,8 +149,8 @@
 						</div>
 
 						<div class="coluna50 prepend2">
-						
-						</div>  
+
+						</div>
 					</div>
 
 		</div>
@@ -162,22 +162,18 @@
 
 		<% }  %>
 
-	<script type="text/javascript" >
-	<!--
+	<script>
 		$("#login").focus();
 		var urlPermissao = '<%= Url.Content("~/Administrador/TextoPermissoes") %>';
-	//-->
 	</script>
-		
+
 	<% } %>
 
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Administrador/salvar.js") %>" ></script>
-<script type="text/javascript" >
-	<!--
-	//Administrador.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Administrador") %>';
-	//-->
+<script src="<%= Url.Content("~/Scripts/Administrador/salvar.js") %>" ></script>
+<script>
+	Administrador.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Administrador") %>';
 </script>
 
 </asp:Content>

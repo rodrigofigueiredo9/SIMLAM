@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<EmpreendimentoVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+<script>
 	$.extend(EmpreendimentoAssociar.settings, {
 		urls: {
 			avancar: '<%= Url.Action("Salvar", "Empreendimento") %>',
@@ -39,7 +39,7 @@
 	<input class="btnEmpAssociar floatLeft hide" type="button" value="Associar" />
 	<span style="float: left">&nbsp;&nbsp;</span>
 	<input class="floatLeft btnEmpSalvar" type="button" value="Salvar" />
-	<span style="float: left">&nbsp;&nbsp;</span>	
+	<span style="float: left">&nbsp;&nbsp;</span>
 	<input class="floatLeft btnEmpVoltar" type="button" value="Voltar" />
 	<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar">Cancelar</a></span>
 </div>

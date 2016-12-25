@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRequerimento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRequerimento" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Requerimentos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>" ></script>
+	<script>
 		$(function () {
 			RequerimentoListar.ExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Requerimento") %>';
 			RequerimentoListar.urlExcluir = '<%= Url.Action("Excluir", "Requerimento") %>';

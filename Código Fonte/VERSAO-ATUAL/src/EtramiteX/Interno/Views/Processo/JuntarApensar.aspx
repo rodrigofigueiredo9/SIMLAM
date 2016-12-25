@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProcesso" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProcesso" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<JuntarApensarVM>" %>
 
 <asp:Content ContentPlaceHolderID="TitleContent" runat="server">Juntar e Apensar em Processo</asp:Content>
 
 <asp:Content ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/juntarapensar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Processo/juntarapensar.js") %>"></script>
+	<script>
 		$(function () {
 			JuntarApensar.urlSalvar = '<%= Url.Action("JuntarApensarSalvar", "Processo") %>';
 			JuntarApensar.urlVerificar = '<%= Url.Action("JuntarApensarVerificar", "Processo") %>';
@@ -25,7 +25,7 @@
 	<div id="central">
 		<h1 class="titTela">Juntar Documento/Apensar Processo</h1>
 		<br />
-		
+
 		<div class="juntarApensarPartialContainer">
 			<% Html.RenderPartial("JuntarApensarPartial", Model); %>
 		</div>

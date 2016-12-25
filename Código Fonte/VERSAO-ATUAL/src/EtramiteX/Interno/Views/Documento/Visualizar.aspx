@@ -1,28 +1,28 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Documento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<!-- DEPENDENCIAS DE PESSOA -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE PESSOA -->
 
 	<!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			AtividadeSolicitadaAssociar.load($('#central'));
-			
+
 			var DocumentoVisObj = new Documento();
 
 			DocumentoVisObj.load($('#central'), {

@@ -11,8 +11,17 @@ build:
       - xbuild IDAF.mono.sln
 
 branches:
-  - master
   - feature/docker-mono-build
+
+deploy:
+  rsync:
+    user: drone
+    host: 192.168.2.129
+    port: 22
+    source: ./Código Fonte/VERSAO-ATUAL/src/EtramiteX/Interno/bin/_PublishedWebsites/Interno
+    target: /cygwin/c/inetpub/wwwroot/simlam-develop
+    delete: false
+    recursive: true
 
 notify:
   slack:
@@ -21,8 +30,6 @@ notify:
     username: Drone CI
     template: >
       *Build #{{ build.number }}: {{ build.status }}*
-
-
 
       *Duration*: {{ duration build.started_at build.finished_at }}
 
@@ -33,8 +40,6 @@ notify:
       *Message*: {{ build.message }}
 
       *Commit*: <{{ build.link_url }}|{{ truncate build.commit 8 }}>
-
-      *Author*: {{ build.author }} <{{ build.author_email }}>
     when:
       success: true
       failure: true

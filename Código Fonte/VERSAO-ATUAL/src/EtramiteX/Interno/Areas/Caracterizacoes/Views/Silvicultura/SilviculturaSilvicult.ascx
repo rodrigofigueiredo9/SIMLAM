@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SilviculturaSilvicultVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <%if(!Model.IsVisualizar) {%>
-<script type="text/javascript">
+<script>
 	SilviculturaSilvicult.settings.mensagens = <%= Model.Mensagens %>;
 	SilviculturaSilvicult.settings.idsTela = <%= Model.IdsTela %>;
 </script>

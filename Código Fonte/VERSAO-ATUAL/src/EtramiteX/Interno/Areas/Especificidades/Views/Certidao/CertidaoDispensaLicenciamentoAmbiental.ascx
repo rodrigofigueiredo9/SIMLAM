@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertidao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertidao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certidao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertidaoDispensaLicenciamentoAmbientalVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoDispensaLicenciamentoAmbiental.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoDispensaLicenciamentoAmbiental.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		CertidaoDispensaLicenciamentoAmbiental.urlObterDadosRequerimento = '<%= Url.Action("ObterDadosRequerimeto", "TituloDeclaratorio", new {area=""}) %>';
 	});

@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -13,31 +13,31 @@
 		<link href="<%= Url.Content("~/Content/_css/etramite.css") %>" rel="stylesheet" type="text/css" media="all" />
 		<link href="<%= Url.Content("~/Content/_css/jquery-ui-custom.css") %>" rel="stylesheet" type="text/css" media="all" />
 		<!--[if lte IE 8]>
-			<link href="<%= Url.Content("~/Content/_css/ie.css") %>" rel="stylesheet" type="text/css" media="all"> 
+			<link href="<%= Url.Content("~/Content/_css/ie.css") %>" rel="stylesheet" type="text/css" media="all">
 		<![endif]-->
 		<!--[if IE 7]>
 			<link href="<%= Url.Content("~/Content/_css/ie7.css") %>" rel="stylesheet" type="text/css" media="all">
-		
+
 		<![endif]-->
 		<!-- ========================================================================= -->
-	
-		<!-- JAVASCRIPT ============================================================= -->	
-		<!-- Scrip para forçar as versões do IE, do 8 para baixo, a entenderem as tags do HTML5 --> 
-		<script src="<%= Url.Content("~/Scripts/Lib/iehtml5.js") %>" type="text/javascript"></script> 
-	
+
+		<!-- JAVASCRIPT ============================================================= -->
+		<!-- Scrip para forçar as versões do IE, do 8 para baixo, a entenderem as tags do HTML5 -->
+		<script src="<%= Url.Content("~/Scripts/Lib/iehtml5.js") %>" type="text/javascript"></script>
+
 		<!-- Scrip para travar o acesso com o IE6 ou inferior -->
 		<!--[if lte IE 6]>
-			<script type="text/javascript"> 
+			<script>
 				window.location = 'ie6_alerta.html'
-			</script> 
+			</script>
 		<![endif]-->
 
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/JQuery/jquery-1.4.3.min.js") %>"></script>
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-ui-custom.min.js") %>"></script>
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery.json-2.2.min.js") %>" ></script>
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/json2.js") %>"></script>
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/mensagem.js") %>"></script>
-		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
+		<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/JQuery/jquery-1.4.3.min.js") %>"></script>
+		<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-ui-custom.min.js") %>"></script>
+		<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery.json-2.2.min.js") %>" ></script>
+		<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/json2.js") %>"></script>
+		<script language="javascript" src="<%= Url.Content("~/Scripts/mensagem.js") %>"></script>
+		<%--<script language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
 </head>
 
 	<body class="corpoLogin">

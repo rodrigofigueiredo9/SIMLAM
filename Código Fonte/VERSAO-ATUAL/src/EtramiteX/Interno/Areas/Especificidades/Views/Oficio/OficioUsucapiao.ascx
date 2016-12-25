@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Oficio" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<OficioUsucapiaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Oficio/oficioUsucapiao.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Oficio/oficioUsucapiao.js") %>"></script>
+<script>
 	OficioUsucapiao.urlObterDadosOficioUsucapiao = '<%= Url.Action("ObterDadosOficioUsucapiao", "Oficio", new {area="Especificidades"}) %>';
 </script>
 

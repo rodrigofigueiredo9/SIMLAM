@@ -1,16 +1,16 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<UnidadeProducaoItemVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/Credenciadolistar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Credenciado/Credenciadolistar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	UnidadeProducaoItem.idsTelaTipoProducao = <%= Model.IdsTelaTipoProducao %>;
 	UnidadeProducaoItem.mensagens = <%= Model.Mensagens%>;
-	
+
 	UnidadeProducaoItem.settings.urls.coordenadaGeo = '<%= Url.Action("CoordenadaPartial", "Mapa", new {area="GeoProcessamento" })%>';
 	UnidadeProducaoItem.settings.urls.listarCulturas = '<%= Url.Action("AssociarCultura", "ConfiguracaoVegetal")%>';
 	UnidadeProducaoItem.settings.urls.listarCredenciados = '<%= Url.Action("CredenciadoAssociar", "Credenciado" )%>';
@@ -52,7 +52,7 @@
 				<label for="RENASEM_NUMERO">RENASEM Nº *</label>
 				<%=Html.TextBox("UnidadeProducaoItem.RenasemNumero", Model.UnidadeProducaoItem.RenasemNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.UnidadeProducaoItem.TipoProducao != (int)eUnidadeProducaoTipoProducao.MaterialPropagacao, new { @class = "text txtRenasemNumero", @maxlength = "30"}))%>
 			</div>
-			
+
 			<div class="coluna15 prepend1">
 				<label for="Data_Validade">Data de validade *</label>
 				<%=Html.TextBox("UnidadeProducaoItem.DataValidadeRenasem", Model.UnidadeProducaoItem.DataValidadeRenasem, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.UnidadeProducaoItem.TipoProducao != (int)eUnidadeProducaoTipoProducao.MaterialPropagacao, new { @class = "text txtDataValidadeRenasem maskData", @maxlength = "11"}))%>

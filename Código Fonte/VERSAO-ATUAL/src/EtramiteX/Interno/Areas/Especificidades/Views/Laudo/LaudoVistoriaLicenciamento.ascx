@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoVistoriaLicenciamentoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaLicenciamento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaLicenciamento.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoVistoriaLicenciamento.urlEspecificidade = '<%= Url.Action("LaudoVistoriaLicenciamento", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaLicenciamento.urlObterDadosLaudoVistoriaLicenciamento = '<%= Url.Action("ObterDadosLaudoVistoriaLicenciamento", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaLicenciamento.idsTela = <%= Model.IdsTela %>;
@@ -39,21 +39,21 @@
 			<%= Html.DropDownList("Laudo.ResponsaveisTecnico", Model.ResponsaveisTecnico, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ResponsaveisTecnico.Count <= 1, new { @class = "text ddlResponsaveisTecnico" }))%>
 		</div>
 	</div>
-    
+
 	<div class="block">
 		<div class="ultima">
 			<label for="Laudo_Consideracao">Considerações *</label><br />
 			<%= Html.TextArea("Laudo.Consideracao", Model.Laudo.Consideracao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "textarea media text txtConsideracao" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="coluna30">
 			<label for="Laudo_Conclusao">Conclusão *</label><br />

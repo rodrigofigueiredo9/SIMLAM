@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMLocalVistoria" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMLocalVistoria" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<LocalVistoriaListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Locais de Vistoria</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/LocalVistoria/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/LocalVistoria/listar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 	    $(function () {
 	        LocalVistoriaListar.urlEditar = '<%= Url.Action("OperarLocalVistoria", "LocalVistoria") %>';
 	        LocalVistoriaListar.urlVisualizar = '<%= Url.Action("VisualizarLocalVistoria", "LocalVistoria") %>';

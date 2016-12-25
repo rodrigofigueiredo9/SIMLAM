@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<EnviarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Enviar Processo/Documento</asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/telaRegistro.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/enviarRegistro.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Tramitacao/telaRegistro.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Tramitacao/enviarRegistro.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 		$(function () {
 			EnviarRegistroTela.load($('#central'), {
 				urls: {
@@ -29,7 +29,7 @@
 
 <div id="central">
 <div class="divEnviarRegistro">
-		
+
 		<%  Html.RenderPartial("EnviarRegistroPartial", Model);
 			bool desativarEnviar = Model.Tramitacoes.Count <= 0 && (Model.Enviar.Remetente != null && Model.Enviar.Remetente.Id > 0);%>
 

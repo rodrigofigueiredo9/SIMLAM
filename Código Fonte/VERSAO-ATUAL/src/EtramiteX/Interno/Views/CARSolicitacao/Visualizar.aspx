@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CARSolicitacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Solicitação de Inscrição no CAR/ES</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Protocolo/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/CARSolicitacao/solicitacao.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Protocolo/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/CARSolicitacao/solicitacao.js") %>"></script>
+	<script>
 		$(function () {
 			Solicitacao.load($('#central'), {
 				urls: {

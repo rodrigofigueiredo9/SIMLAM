@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ReceberRegistroVM>" %>
 
 
@@ -8,21 +8,21 @@
 
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/receberRegistro.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/receberRegistro.js") %>"></script>
+	<script>
 	$(function() {
 		ReceberRegistro.load(
-			$('.partialTramitacaoReceber'), 
+			$('.partialTramitacaoReceber'),
 			{
 				urls: {
 					receberFiltrar: '<%= Url.Action("ReceberRegistroFiltrar") %>',
 					receberSalvar: '<%= Url.Action("ReceberRegistroSalvar", "Tramitacao")%>',
 					receberSucesso: '<%= Url.Action("ReceberRegistro")%>',
 					visualizarHistorico: '<%= Url.Action("Historico", "Tramitacao") %>',
-					
+
 					abrirPdf: '<%= Url.Action("GerarPdf", "Tramitacao") %>'
 				},
-				msgs: <%= Model.Mensagens %> 
+				msgs: <%= Model.Mensagens %>
 			}
 		);
 	});
@@ -31,12 +31,12 @@
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-	
+
 	<div id="central" class="partialTramitacaoReceber">
 		<h1 class="titTela">Receber Processo/Documento por Registro</h1>
 		<br />
 
-		<% Html.RenderPartial("ReceberRegistroPartial", Model); 
+		<% Html.RenderPartial("ReceberRegistroPartial", Model);
 			bool desativarReceber = Model.NumeroTramitacoes <= 0 && Model.SetorDestinatario.Id > 0;%>
 
 		<div class="block box btnSalvarContainer">

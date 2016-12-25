@@ -1,15 +1,15 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script>
 
 	var modalPessoaResp = new PessoaAssociar();
-	
+
 	$(function () {
 		$('.divResponsaveis', $('.modalVisualizarEmpreendimento')).associarMultiplo({
 			'editarModalObject': modalPessoaResp,
@@ -87,7 +87,7 @@
 				<label for="Empreendimento.AtividadeNome">Atividade principal</label>
 				<%= Html.TextBox("Empreendimento.Atividade.Atividade", Model.Empreendimento.Atividade.Atividade, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
-		</div> 
+		</div>
 	</fieldset>
 
 	<fieldset class="divResponsaveis block box">
@@ -153,7 +153,7 @@
 
 				<div class="coluna46 prepend2">
 					<label for="Empreendimento.Enderecos[0].MunicipioId">Município *</label>
-					<%= Html.DropDownList("Empreendimento.Enderecos[0].MunicipioId", Model.MunicipiosLocalizacao, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Enderecos[0].MunicipioId", Model.MunicipiosLocalizacao, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
 
@@ -170,7 +170,7 @@
 					<%= Html.TextArea("Empreendimento.Enderecos[0].Complemento", Model.Empreendimento.Enderecos[0].Complemento, new { @class = "textarea media disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
-			
+
 			<div class="block">
 				<div class="coluna25">
 					<label for="Empreendimento_Coordenada_LocalColetaPontoId">Local de coleta do ponto *</label>
@@ -178,41 +178,41 @@
 				</div>
 				<div class="coluna25 prepend2">
 					<label for="Empreendimento_Coordenada_FormaColetaPontoId">Forma de coleta do ponto *</label>
-					<%= Html.DropDownList("Empreendimento.Coordenada.FormaColetaPontoId", Model.FormasColetaPonto, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Coordenada.FormaColetaPontoId", Model.FormasColetaPonto, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
 
 			<div class="block divCamposCoordenadas">
 				<div class="coluna25">
 					<label for="Empreendimento_Coordenada_Tipo_Id">Sistema de coordenada *</label>
-					<%= Html.DropDownList("Empreendimento.Coordenada.Tipo.Id", Model.TiposCoordenada, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Coordenada.Tipo.Id", Model.TiposCoordenada, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna25 prepend2">
 					<label for="Empreendimento_Coordenada_Datum_Id">Datum *</label>
-					<%= Html.DropDownList("Empreendimento.Coordenada.Datum.Id", Model.Datuns, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Coordenada.Datum.Id", Model.Datuns, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna25 prepend2">
 					<label for="Empreendimento_Coordenada_FusoUtm">Fuso *</label>
-					<%= Html.DropDownList("Empreendimento.Coordenada.FusoUtm", Model.Fusos, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Coordenada.FusoUtm", Model.Fusos, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
 
 			<div class="block divCamposCoordenadas">
 				<div class="coluna25">
 					<label for="Empreendimento_Coordenada_EastingUtmTexto">Easting *</label>
-					<%= Html.TextBox("Empreendimento.Coordenada.EastingUtmTexto", Model.Empreendimento.Coordenada.EastingUtmTexto, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.TextBox("Empreendimento.Coordenada.EastingUtmTexto", Model.Empreendimento.Coordenada.EastingUtmTexto, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna25 prepend2">
 					<label for="Empreendimento_Coordenada_NorthingUtmTexto">Northing *</label>
-					<%= Html.TextBox("Empreendimento.Coordenada.NorthingUtmTexto", Model.Empreendimento.Coordenada.NorthingUtmTexto, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.TextBox("Empreendimento.Coordenada.NorthingUtmTexto", Model.Empreendimento.Coordenada.NorthingUtmTexto, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna25 prepend2">
 					<label for="Empreendimento_Coordenada_HemisferioUtm">Hemisfério *</label>
-					<%= Html.DropDownList("Empreendimento.Coordenada.HemisferioUtm", Model.Hemisferios, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Coordenada.HemisferioUtm", Model.Hemisferios, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
 		</div>
@@ -258,7 +258,7 @@
 
 				<div class="coluna49 prepend2">
 					<label for="Empreendimento.Enderecos[1].MunicipioId">Município *</label>
-					<%= Html.DropDownList("Empreendimento.Enderecos[1].MunicipioId", Model.MunicipiosCorrespondencia, new { @class = "text disabled", @disabled = "disabled" })%> 
+					<%= Html.DropDownList("Empreendimento.Enderecos[1].MunicipioId", Model.MunicipiosCorrespondencia, new { @class = "text disabled", @disabled = "disabled" })%>
 				</div>
 			</div>
 

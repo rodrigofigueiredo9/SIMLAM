@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteVM>" %>
 
 
 <%= Html.Hidden("Condicionante.tituloId", Model.Condicionante.tituloId, new { @class = "hdnTituloId" })%>
 
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoListar.js") %>" ></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoListar.js") %>" ></script>
+<script>
 	CondicionanteSalvar.settings.urls = {
 		salvar: '<%= Url.Action("CondicionanteCriarValidar", "Titulo") %>',
 		buscarDescricao: '<%= Url.Action("CondicionanteDescricaoFiltrar", "Titulo") %>'
@@ -30,10 +30,10 @@
 
 	<div class="block">
 		<div class="coluna100">
-			<label for="Descricao">Descrição *</label>	
+			<label for="Descricao">Descrição *</label>
 		</div>
 		<div class="coluna90">
-			<%= Html.TextArea("Condicionante.Descricao", null, new { @maxlength = "4000", @class = "text textareaPequeno txtDescricao" })%> 
+			<%= Html.TextArea("Condicionante.Descricao", null, new { @maxlength = "4000", @class = "text textareaPequeno txtDescricao" })%>
 		</div>
 		<div class="coluna8">
 			<button type="button" class="btnBuscarDescricoes">Buscar</button>

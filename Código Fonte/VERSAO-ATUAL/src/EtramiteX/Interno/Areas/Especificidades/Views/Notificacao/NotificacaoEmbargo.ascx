@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Notificacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Notificacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<NotificacaoEmbargoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Notificacao/notificacaoEmbargo.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Notificacao/notificacaoEmbargo.js") %>"></script>
+<script>
 	NotificacaoEmbargo.settings.urls.obterDadosNotificacao = '<%= Url.Action("ObterDadosNotificacao", "Notificacao", new {area="Especificidades"}) %>';
 </script>
 

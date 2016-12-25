@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LicencaPorteUsoMotosserraVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Licenca/licencaPorteUsoMotosserra.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Motosserra/motosserraListar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Motosserra/motosserra.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Licenca/licencaPorteUsoMotosserra.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Motosserra/motosserraListar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Motosserra/motosserra.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LicencaPorteUsoMotosserra.settings.urls.obterDadosLicencaPorteUsoMotosserra = '<%= Url.Action("ObterDadosLicencaPorteUsoMotosserra", "Licenca", new {area="Especificidades"}) %>';
 	LicencaPorteUsoMotosserra.settings.urls.associarMotosserra = '<%= Url.Action("Associar", "../Motosserra") %>';
 	LicencaPorteUsoMotosserra.settings.urls.obterMotosserra = '<%= Url.Action("ObterMotosserra", "Licenca", new {area="Especificidades"}) %>';

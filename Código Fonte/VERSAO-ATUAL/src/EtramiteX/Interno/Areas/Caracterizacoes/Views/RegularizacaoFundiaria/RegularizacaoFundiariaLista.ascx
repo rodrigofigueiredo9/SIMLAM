@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<RegularizacaoFundiariaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript">
+<script>
 	RegularizacaoFundiaria.settings.zona = <%: Model.Caracterizacao.Posse.Zona %>;
 	RegularizacaoFundiaria.settings.empreendimentoID = <%: Model.Caracterizacao.EmpreendimentoId %>;
 	RegularizacaoFundiaria.settings.caracterizacaoID = <%: Model.Caracterizacao.Id %>;

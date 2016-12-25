@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Escritura" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Escritura" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<EscrituraPublicaCompraVendaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Escritura/escrituraPublicaCompraVenda.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Escritura/escrituraPublicaCompraVenda.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	EscrituraPublicaCompraVenda.urlEspecificidade = '<%= Url.Action("EscrituraPublicaCompraVenda", "Escritura", new {area="Especificidades"}) %>';
 	EscrituraPublicaCompraVenda.urlObterDadosEscrituraPublicaCompraVenda = '<%= Url.Action("ObterDadosEscrituraPublicaCompraVenda", "Escritura", new {area="Especificidades"}) %>';
 </script>
@@ -24,7 +24,7 @@
 			<%= Html.TextBox("Escritura.Folhas", Model.Escritura.Folhas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFolhas", @maxlength = "10" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="coluna75">
 			<label for="Escritura_Destinatario">Destinatário *</label>

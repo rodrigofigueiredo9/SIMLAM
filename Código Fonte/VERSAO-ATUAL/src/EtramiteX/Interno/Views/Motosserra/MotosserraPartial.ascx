@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMMotosserra" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<MotosserraVM>" %>
 
-<script type="text/javascript">
+<script>
 	Motosserra.settings.possuiRegistro = <%= Model.Motosserra.PossuiRegistro.ToString().ToLower() %>;
 	Motosserra.settings.registroNumero = <%= Model.Motosserra.RegistroNumero %>;
 </script>
@@ -51,7 +51,7 @@
 
 		<div class="coluna20">
 			<label for="Proprietario_CPFCNPJ">CPF/CNPJ *</label>
-			<%= Html.TextBox("Proprietario.CPFCNPJ", Model.Motosserra.Proprietario.CPFCNPJ, new { @class = "text disabled txtPessoaCPFCNPJ", @disabled = "disabled" })%> 
+			<%= Html.TextBox("Proprietario.CPFCNPJ", Model.Motosserra.Proprietario.CPFCNPJ, new { @class = "text disabled txtPessoaCPFCNPJ", @disabled = "disabled" })%>
 		</div>
 
 		<div class="coluna15">

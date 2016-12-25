@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAgrotoxico" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<AgrotoxicoVM>" %>
@@ -6,10 +6,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Agrotóxico</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxico.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxicoCultura.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxico.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxicoCultura.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Agrotoxico.load($("#central"), {
 				urls: {

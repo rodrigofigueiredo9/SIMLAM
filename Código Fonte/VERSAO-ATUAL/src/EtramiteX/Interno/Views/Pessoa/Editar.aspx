@@ -1,18 +1,18 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Pessoa</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script>
 		$(function () {
-			
+
 			var pessoaTelaObj = new PessoaTela();
 
 			pessoaTelaObj.load($('#central'), {
@@ -31,7 +31,7 @@
 				},
 				msgs: <%= Model.Mensagens %>
 			});
-		}); 
+		});
 	</script>
 </asp:Content>
 

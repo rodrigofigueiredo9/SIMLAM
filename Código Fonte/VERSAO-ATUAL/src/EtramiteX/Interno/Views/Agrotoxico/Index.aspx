@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAgrotoxico" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
@@ -7,8 +7,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Agrotóxicos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Agrotoxico/listar.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Agrotoxico/listar.js") %>" ></script>
+	<script>
 		$(function () {
 			AgrotoxicoListar.load($('#central'));
 			AgrotoxicoListar.urlExcluir = '<%= Url.Action("Excluir", "Agrotoxico") %>';
