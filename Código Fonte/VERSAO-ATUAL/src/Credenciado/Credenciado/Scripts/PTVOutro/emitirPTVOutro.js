@@ -560,7 +560,7 @@ PTVOutroEmitir = {
 	    });
 
 
-	    alert(declaracoes);
+	   
 
 
 		var objeto = {

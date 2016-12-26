@@ -211,7 +211,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 
                 string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml, ld.outro_estado as OutroEstado
 				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
 				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado in {1} and t.cultivar = :id", EsquemaBanco, strOutroEstado);
 
@@ -227,8 +227,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 					{
 						while (reader.Read())
 						{
+                            string Declaracao = "";
+                            if (lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
+                                Declaracao = sbDecAdd.ToString();
+                            else
+                                Declaracao = reader.GetValue<string>("DeclaracaoAdicionalTexto");
+
 							x.LsCultivarConfiguracao.Add(new CultivarConfiguracao()
 							{
+
+
 								Id = reader.GetValue<int>("id"),
 								Tid = reader.GetValue<string>("tid"),
 								Cultivar = reader.GetValue<int>("cultivar"),
@@ -237,8 +245,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 								TipoProducaoId = reader.GetValue<int>("TipoProducaoId"),
 								TipoProducaoTexto = reader.GetValue<string>("TipoProducaoTexto"),
 								DeclaracaoAdicionalId = reader.GetValue<int>("DeclaracaoAdicionalId"),
-								DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto"),
-								DeclaracaoAdicionalTextoHtml = reader.GetValue<string>("DeclaracaoAdicionalTextoHtml"),
+								DeclaracaoAdicionalTexto = Declaracao,
+                                DeclaracaoAdicionalTextoHtml = Declaracao,
 							});
 						}
 
