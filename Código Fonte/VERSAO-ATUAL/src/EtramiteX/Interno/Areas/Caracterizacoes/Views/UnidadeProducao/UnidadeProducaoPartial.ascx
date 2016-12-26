@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<UnidadeProducaoVM>" %>
 
@@ -16,21 +16,21 @@
 			<label for="Codigo_Propriedade">Código da propriedade *</label>
             <%
                 var codigoPropriedadeLabel = (Model.UnidadeProducao.CodigoPropriedade > 0)
-                    ? Model.UnidadeProducao.CodigoPropriedade.ToString() 
+                    ? Model.UnidadeProducao.CodigoPropriedade.ToString()
                     : "Gerado automaticamente";
 
                 bool isCreating = !(Model.UnidadeProducao.Id > 0);
                 bool isEditing = !isCreating;
-                    
+
                 var codigoPropriedadeMustBeDisabled =
-                    Model.IsVisualizar 
-                    || (isCreating && !Model.UnidadeProducao.PossuiCodigoPropriedade) 
+                    Model.IsVisualizar
+                    || (isCreating && !Model.UnidadeProducao.PossuiCodigoPropriedade)
                     || (isEditing && Model.UnidadeProducao.PossuiCodigoPropriedade);
-                
+
                 var codigoPropriedadeAttributes = ViewModelHelper
-                    .SetaDisabled(codigoPropriedadeMustBeDisabled,  new { 
+                    .SetaDisabled(codigoPropriedadeMustBeDisabled,  new {
                         @class = "text txtCodigoPropriedade maskNumInt"
-                      , @maxlength = "11" 
+                      , @maxlength = "11"
                     });
             %>
 
@@ -63,9 +63,9 @@
 		<table class="dataGridTable gridUnidadeProducao" style="width: 100%;" border="0" cellspacing="0" cellpadding="0">
 			<thead>
 				<tr>
-					<th>Cultivar</th>
                     <th style="width:20%;">Código da UP</th>
 					<th style="width:12%;">Área(ha)</th>
+					<th style="width:12%;">Cultivar</th>
 					<th style="width:14%;">Quantidade/Ano</th>
 					<th style="width:10%;">Ações</th>
 				</tr>
@@ -82,13 +82,13 @@
 					<td>
 						<label class="lblCultura" title="<%=item.CulturaTexto %>"><%=item.CulturaTexto%>
 						<%if(!string.IsNullOrEmpty(item.CultivarTexto)){ %>
-							<%=" " + item.CultivarTexto%> 
+							<%=" " + item.CultivarTexto%>
 						<%} %>
 						</label>
 					</td>
 					<td>
 						<label class="lblEstimativaQuantidadeAno" title="<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + item.EstimativaProducaoUnidadeMedida %>">
-							<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + " " +item.EstimativaProducaoUnidadeMedida%> 
+							<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + " " +item.EstimativaProducaoUnidadeMedida%>
 						</label>
 					</td>
 					<td>

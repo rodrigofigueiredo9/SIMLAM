@@ -1,5 +1,10 @@
-# My app - Changelog
+<img width="300px" src="http://local.pentago.com.br:9995/avatars/13?s=140" />
 
+# SIMLAM
+
+_SIMLAM PROJECT_
+
+##v1.0.0  ( Mon Dec 26 2016 02:10:21 GMT-0200 (BRST) )
 
 
 ## Breaking changes
@@ -25,11 +30,9 @@ tabela CRT_UNIDADE_PRODUCAO na coluna PROPRIEDADE_CODIGO não se comporte como d
     - UnidadeProducaoBus
   ([01c1441a](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/01c1441a533f33c90c96e44713b2dcb30958ebf9))
 
-  - **ci**
-    - Credenciado.mono.sln
-  ([ca859b66](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/ca859b66488d185fa86af717d080e90a8b880be7))
-
   - **data-access**
+    - EmissaoCFODa
+  ([c2283d66](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/c2283d669b924d3e8777383a5fc021fbff9dfc4e))
     - UnidadeProducaoDa/Institucional
   ([3f7de76e](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/3f7de76e83fb354bdae1f7f6cd33922990e560a1))
     - UnidadeProducaoDa
@@ -43,6 +46,10 @@ tabela CRT_UNIDADE_PRODUCAO na coluna PROPRIEDADE_CODIGO não se comporte como d
   - **input-length**
     - Length do input de CodigoUP
   ([f520a116](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/f520a116f71772e85fece4e19bf25d4e55530639))
+
+  - **partial/unidade-producao**
+    - Corrige tabela de unidade de producao
+  ([8ecc6a72](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/8ecc6a72de1f9c8c2dcc00c8af535eaf70080ee1))
 
   - **proj idaf**
     - Colocando o Web.Config de novo para o banco Oracle 12c (amb dev).
@@ -235,6 +242,27 @@ tabela CRT_UNIDADE_PRODUCAO na coluna PROPRIEDADE_CODIGO não se comporte como d
   - **web.config**
     - Conexões com banco de homologação
   ([6d91e00a](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/6d91e00a8a6d3423c6aeebe8d87af18e7b0a6f53))
+
+
+
+
+## Branchs merged
+  - Merge branch 'develop' of http://local.pentago.com.br:9995/idaf/SIMLAM into develop
+  ([07f31a17](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/07f31a17f4eb3550970cef4ca8702a78cd00bb76))
+  - Merge branch 'develop' of http://local.pentago.com.br:9995/idaf/SIMLAM into develop
+  ([63ff96da](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/63ff96da1a28505e0a03008ca5876b3bdbfd5695))
+  - Merge branch 'develop' of http://local.pentago.com.br:9995/idaf/SIMLAM into develop
+  ([9748c9c4](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/9748c9c4d936b2944cf2de9bd43c91ccb1deadb6))
+  - Merge branch 'feature/rqf-21' into develop
+  ([0010f706](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/0010f706889a129ab1683e676158550e8ef151d4))
+  - Merge branch 'develop' of http://local.pentago.com.br:9995/idaf/SIMLAM into develop
+  ([d62ebe78](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/d62ebe7822b1555c293c254405fa4d0f417383f1))
+  - Merge branch 'feature/gitignore' into develop
+  ([2eb99ca4](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/2eb99ca4be0d945fd80942ab58440f7a97f47fb3))
+  - Merge branch 'develop' of http://local.pentago.com.br:9995/idaf/SIMLAM into develop
+  ([b1953646](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/b195364691fbf73f0a2bcc609a49f470a964bd05))
+  - Merge branch 'backup/thiago'
+  ([c15595f8](http://local.pentago.com.br:9995/idaf/SIMLAM/commits/c15595f8c816693f1e51b953b727d33e5476ea69))
 
 
 
