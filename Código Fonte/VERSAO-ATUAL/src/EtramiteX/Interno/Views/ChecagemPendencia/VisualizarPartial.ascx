@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemPendencia" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemPendencia" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	ChecagemPendencia.settings.urls.pdfTitulo = '<%= Url.Action("GerarPdf", "Titulo") %>';
 	$(function () { ChecagemPendencia.load($('.divVisualizarPartial')); });
 </script>

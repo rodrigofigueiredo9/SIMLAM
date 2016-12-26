@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<UnidadeProducaoVM>" %>
 
@@ -65,7 +65,7 @@
 				<tr>
 					<th style="width:20%;">Código da UP</th>
 					<th style="width:12%;">Área(ha)</th>
-					<th>Cultivar</th>
+					<th style="width:12%;">Cultivar</th>
 					<th style="width:14%;">Quantidade/Ano</th>
 					<th style="width:10%;">Ações</th>
 				</tr>

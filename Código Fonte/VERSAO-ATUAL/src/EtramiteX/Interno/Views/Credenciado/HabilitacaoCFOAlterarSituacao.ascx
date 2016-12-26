@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<HabilitarEmissaoCFOCFOCVM>" %>
 
-<script type="text/javascript">
+<script>
 	$.extend(HabilitacaoCFOAlterarSituacao.settings, {
 		urls: {
 			alterarSituacao: '<%= Url.Action("AlterarSituacaoHabilitacaoCFO", "Credenciado") %>'
@@ -44,12 +44,12 @@
 	<div class="block">
 		<div class="coluna30 append1">
 			<label for="Situacao.Novo">Nova Situação *</label>
-			<%= Html.DropDownList("Situacao.Novo", Model.Situacoes, new { @class = "text ddlSituacao" })%> 
+			<%= Html.DropDownList("Situacao.Novo", Model.Situacoes, new { @class = "text ddlSituacao" })%>
 		</div>
 
 		<div class="coluna30 hide divMotivo append1">
 			<label for="Motivo.Novo">Novo motivo *</label>
-			<%= Html.DropDownList("Motivo.Novo", Model.SituacaoMotivos, new { @class = "text ddlMotivo" })%> 
+			<%= Html.DropDownList("Motivo.Novo", Model.SituacaoMotivos, new { @class = "text ddlMotivo" })%>
 		</div>
 
 		<div class="coluna30">

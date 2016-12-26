@@ -1,15 +1,15 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Relatorios.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Relatorios.ViewModels" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PersonalizadoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Relatório Personalizado</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizado.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizado.js") %>"></script>
 
-    <script type="text/javascript">
+    <script>
 		$(function () {
 			Personalizado.load($('#central'), {
-			    mensagens: <%= Model.Mensagens %>, 
+			    mensagens: <%= Model.Mensagens %>,
 
 				stepUrls: ['<%= Url.Action("ObterOpcoes", "Personalizado") %>', '<%= Url.Action("ObterOrdenarColunas", "Personalizado") %>',
 				'<%= Url.Action("ObterOrdenarValores", "Personalizado") %>', '<%= Url.Action("ObterFiltros", "Personalizado") %>',

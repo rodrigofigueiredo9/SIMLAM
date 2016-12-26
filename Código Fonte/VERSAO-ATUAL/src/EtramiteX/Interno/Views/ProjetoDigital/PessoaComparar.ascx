@@ -1,7 +1,7 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/comparar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/comparar.js") %>"></script>
 
 <div class="block">
 	<div class="ultima">

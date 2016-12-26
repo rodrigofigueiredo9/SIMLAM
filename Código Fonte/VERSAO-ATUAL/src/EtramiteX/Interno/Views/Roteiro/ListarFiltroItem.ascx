@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarItemVM>" %>
 
 <h1 class="titTela">Itens de Roteiro</h1>
 <br />
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		ItemListar.urlCriarItem = '<%= Url.Action("ItemModal", "Roteiro") %>';
 		ItemListar.urlEditar = '<%= Url.Action("EditarItem", "Roteiro") %>';

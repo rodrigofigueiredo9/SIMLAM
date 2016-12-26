@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRequerimento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRequerimento" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<RequerimentoVM>" %>
 
@@ -15,40 +15,40 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
 
 <!-- DEPENDENCIAS DE PESSOA -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/inline.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/inline.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE PESSOA -->
 <!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/inline.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/inline.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Requerimento/requerimento.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 
 	Requerimento.urlIndex = '<%= Url.Action("Index", "Requerimento") %>';
 	Requerimento.urlAvancar = '<%= Url.Action("Salvar", "Requerimento") %>';
 	Requerimento.urlVoltar = '<%= Url.Action("LocalizarMontar", "Requerimento") %>';
-	
-	RequerimentoObjetivoPedido.AddRoteiroLink = '<%= Url.Action("AssociarRoteiro", "Roteiro") %>';	
-	RequerimentoObjetivoPedido.visualizarRoteiroModalLink = '<%= Url.Action("Visualizar", "Roteiro") %>';	
-	RequerimentoObjetivoPedido.urlAtividadeSolicitada = '<%= Url.Action("AssociarAtividade", "Atividade") %>';	
+
+	RequerimentoObjetivoPedido.AddRoteiroLink = '<%= Url.Action("AssociarRoteiro", "Roteiro") %>';
+	RequerimentoObjetivoPedido.visualizarRoteiroModalLink = '<%= Url.Action("Visualizar", "Roteiro") %>';
+	RequerimentoObjetivoPedido.urlAtividadeSolicitada = '<%= Url.Action("AssociarAtividade", "Atividade") %>';
 	RequerimentoObjetivoPedido.atividadeSolicitadaLink = '<%= Url.Action("CriarAtividadeSolicitada", "Requerimento") %>';
 	RequerimentoObjetivoPedido.urlCriarObjetivoPedido = '<%= Url.Action("CriarObjetivoPedido", "Requerimento") %>';
-	
-	RequerimentoObjetivoPedido.urlObterObjetivoPedido = '<%= Url.Action("ObterObjetivoPedido", "Requerimento") %>';	
-	RequerimentoObjetivoPedido.urlObterObjetivoPedidoVisualizar = '<%= Url.Action("ObterObjetivoPedidoVisualizar", "Requerimento") %>';	
+
+	RequerimentoObjetivoPedido.urlObterObjetivoPedido = '<%= Url.Action("ObterObjetivoPedido", "Requerimento") %>';
+	RequerimentoObjetivoPedido.urlObterObjetivoPedidoVisualizar = '<%= Url.Action("ObterObjetivoPedidoVisualizar", "Requerimento") %>';
 
 	RequerimentoObjetivoPedido.urlObterRoteirosAtividade = '<%= Url.Action("ObterRoteirosAtividade", "Requerimento") %>';
 	RequerimentoObjetivoPedido.urlBaixarPdf = '<%= Url.Action("RelatorioRoteiro", "Roteiro") %>';
@@ -71,7 +71,7 @@
 
 	RequerimentoEmpreendimento.urlObterEmpreendimento = '<%= Url.Action("EmpreendimentoInline", "Empreendimento") %>';
 	RequerimentoEmpreendimento.urlAssociarEmpreendimento = '<%= Url.Action("AssociarEmpreendimento", "Requerimento") %>';
-	
+
 	AtividadeSolicitadaAssociar.urlAbriModalAtividade = '<%= Url.Action("ObterFinalidade", "Atividade") %>';
 
 	RequerimentoFinalizar.urlObterFinalizar = '<%= Url.Action("ObterFinalizar", "Requerimento") %>';

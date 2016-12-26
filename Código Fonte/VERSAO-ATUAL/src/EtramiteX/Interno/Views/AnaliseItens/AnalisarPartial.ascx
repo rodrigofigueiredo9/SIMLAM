@@ -1,4 +1,7 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
+﻿<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAnaliseItens" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AnaliseItemVM>" %>
@@ -6,7 +9,7 @@
 <input type="hidden" class="hdnItemAtualizado" value="false" />
 <% Requerimento requerimento = Model.Requerimentos.FirstOrDefault(x => x.Id == Model.RequerimentoSelecionado); %>
 
-<script type="text/javascript">
+<script>
 	Analise.settings.urls.caracterizacoes = <%=Model.UrlsCaracterizacoes%>
 </script>
 
@@ -62,7 +65,7 @@
 		<div class="coluna15">
 			<label>Número *</label>
 			<%= Html.TextBox("txtNumeroChecagem", Model.CheckListId, new { @class = "text disabled txtNumeroChecagem", @disabled = "disabled" })%>
-		</div>	
+		</div>
 
 		<div class="coluna20 ultima">
 			<button type="button" class="icone visualizar inlineBotao btnVisChecagem" title="Visualizar checagem"></button>

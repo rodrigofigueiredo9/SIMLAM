@@ -1,14 +1,14 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTVOutro" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTVOutro" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PTVOutroVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar PTV de Outro Estado</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTVOutro/emitirPTVOutro.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTVOutro/emitirPTVOutro.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PTVOutroEmitir.load($("#central"), {
 				urls: {
@@ -23,7 +23,7 @@
 					urlSalvar: '<%= Url.Action("Salvar", "PTVOutro") %>'
 				},
 			});
-			
+
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"]))  { %>
 			ContainerAcoes.load($(".containerAcoes"), {
 				botoes: [

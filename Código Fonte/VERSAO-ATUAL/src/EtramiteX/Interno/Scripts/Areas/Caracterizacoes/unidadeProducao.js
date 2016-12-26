@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../jquery.ddl.js" />
 /// <reference path="unidadeProducaoItem.js" />
@@ -97,7 +97,9 @@ UnidadeProducao = {
 		$('.itemEdicao', UnidadeProducao.container).removeClass('itemEdicao');
 		$(this).closest('tr').addClass('itemEdicao');
 
-		var objeto = JSON.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
+		var JsonParser = JsonBigint()
+
+		var objeto = JsonParser.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
 		var empreendimento = +$('.hdnEmpreendimentoId', UnidadeProducao.container).val();
 
 		Modal.abrir(UnidadeProducao.settings.urls.AdicionarUnidadeProducao, { empreendimento: empreendimento, unidade: objeto },

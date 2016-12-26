@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMOrgaosParceirosConveniados" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMOrgaosParceirosConveniados" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Órgãos Parceiros/ Conveniados</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			OrgaoParceiroConveniadoListar.urlEditar = '<%= Url.Action("Editar", "OrgaosParceirosConveniados") %>';
 			OrgaoParceiroConveniadoListar.urlVisualizar = '<%= Url.Action("Visualizar", "OrgaosParceirosConveniados") %>';
@@ -14,7 +14,7 @@
 			OrgaoParceiroConveniadoListar.urlAlterarSituacao = '<%= Url.Action("AlterarSituacao", "OrgaosParceirosConveniados") %>';
 			OrgaoParceiroConveniadoListar.Mensagens = <%=Model.Mensagens%>;
 			OrgaoParceiroConveniadoListar.load($('#central'));
-			
+
 			<% if (!string.IsNullOrEmpty(Request.Params["acaoId"])){%>
 				ContainerAcoes.load($(".containerAcoes"), {
 					urls: {

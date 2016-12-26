@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Configuracao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Configuracao" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BarragemDispensaLicencaVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+<script>
 	BarragemDispensaLicenca.settings.mensagens = <%= Model.Mensagens %>;
 	BarragemDispensaLicenca.settings.idsTela = <%= Model.IdsTela %>;
 </script>

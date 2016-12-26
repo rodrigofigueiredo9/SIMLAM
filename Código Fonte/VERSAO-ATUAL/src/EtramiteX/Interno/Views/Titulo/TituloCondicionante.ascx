@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="System.Security" %>
+<%@ Import Namespace="System.Security" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloTitulo" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TituloCondicionanteVM>" %>
 
-<script type="text/javascript">
+<script>
 	TituloCondicionante.settings.urls = {
 		adicionar: '<%= Url.Action("CondicionanteCriar", "Titulo", new { area = "" }) %>',
 		editar: '<%= Url.Action("CondicionanteEditar", "Titulo", new { area = "" }) %>',

@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AlterarSituacaoVM>" %>
 
 <div class="credAlterarSituacao">
@@ -39,9 +39,9 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/alterarSituacao.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Credenciado/alterarSituacao.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		$('#NovaSituacao').focus();
 	});

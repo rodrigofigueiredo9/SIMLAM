@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloSilviculturaATV" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloSilviculturaATV" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SilviculturaATVVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
@@ -6,7 +6,7 @@
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 
-<script type="text/javascript">
+<script>
 	SilviculturaATV.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	SilviculturaATV.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	SilviculturaATV.settings.textoMerge = '<%= Model.TextoMerge %>';

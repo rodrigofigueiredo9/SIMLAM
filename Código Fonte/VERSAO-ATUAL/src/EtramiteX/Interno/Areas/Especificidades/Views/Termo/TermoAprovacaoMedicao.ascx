@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Termo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Termo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoAprovacaoMedicaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoAprovacaoMedicao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoAprovacaoMedicao.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	TermoAprovacaoMedicao.settings.urls.urlObterDadosTermoAprovacaoMedicao = '<%= Url.Action("ObterDadosTermoAprovacaoMedicao", "Termo", new {area="Especificidades"}) %>';
 </script>
 

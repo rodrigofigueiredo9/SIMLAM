@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFuncionario" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFuncionario" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<AlterarSituacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
@@ -57,7 +57,7 @@
 				<%} %>
 			</div>
 		</div>
-			
+
 	</div>
 
 	<div class="block box">
@@ -69,9 +69,9 @@
 
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/alterarSituacao.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Funcionario/alterarSituacao.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		$('#NovaSituacao').focus();
 	});

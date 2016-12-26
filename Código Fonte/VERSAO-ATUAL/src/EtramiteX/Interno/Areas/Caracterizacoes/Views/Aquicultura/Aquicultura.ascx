@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AquiculturaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
@@ -9,7 +9,7 @@
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 <input type="hidden" class="hdnQtdAtividade" value="<%: Model.QtdAtividade %>" />
 
-<script type="text/javascript">
+<script>
 	Aquicultura.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Aquicultura.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	Aquicultura.settings.textoMerge = '<%= Model.TextoMerge %>';

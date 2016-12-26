@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Unidade de Produção</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducao.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducaoItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducaoItem.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			UnidadeProducao.load($('#central'), {
 				urls: {

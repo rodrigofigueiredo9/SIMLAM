@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFuncionario" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFuncionario" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CriarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
@@ -7,7 +7,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		$('[name="Cpf"]').focus();
 	});
@@ -107,8 +107,8 @@
 
 					<div class="caixaScroll coluna100">
 						<table id="tableCargo" class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<% for (int i = 0; i < Model.Funcionario.Cargos.Count; i++) 
-							{ %> 
+						<% for (int i = 0; i < Model.Funcionario.Cargos.Count; i++)
+							{ %>
 								<tr>
 									<td width="90%"><%= Html.Label(Model.Funcionario.Cargos[i].Nome)%></td>
 									<td width="10%">
@@ -147,8 +147,8 @@
 					</table>
 					<div class="caixaScroll coluna100">
 						<table id="tableSetor" class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<% for (int i = 0; i < Model.Funcionario.Setores.Count; i++) 
-							{ %> 
+						<% for (int i = 0; i < Model.Funcionario.Setores.Count; i++)
+							{ %>
 								<tr>
 									<td width="60%"><%= Html.Label(Model.Funcionario.Setores[i].Nome)%></td>
 									<td width="30%" class="celSetorResp handclick">
@@ -165,7 +165,7 @@
 						<% } %>
 						</table>
 					</div>
-					
+
 				</div>
 
 		</div>
@@ -175,7 +175,7 @@
 
 				<div class="caixaAbas">
 				<div id="abasNav">
-				
+
 					<ul class="ui-tabs-nav">
 						<li class="ui-tabs-nav-item ui-tabs-selected" id="nav-fragment-1">
 							<a href="#fragment-1" class="primeira"> Papéis </a>
@@ -191,12 +191,12 @@
 									<% for (int i = 0; i < Model.Papeis.Count; i++)
 									   {%>
 										<%= Html.HiddenFor(x => x.Papeis[i].Papel.Id)%>
-											
+
 											<tr class="<%= ((Model.Papeis[i].IsAtivo)?"linhaSelecionada":string.Empty) %>" >
 												<td class="celulaSeletorLinha" width="8%"><%= Html.CheckBoxFor(x => x.Papeis[i].IsAtivo, new { @type = "checkbox", tabindex="24"})%></td>
 												<td class="celulaSeletorLinha" width="92%"><%= Html.Encode(Model.Papeis[i].Papel.Nome)%> </td>
 											</tr>
-											
+
 									<% } %>
 									</tbody>
 									</table>
@@ -222,7 +222,7 @@
 		</div>
 
 
-            <div class="block box">		
+            <div class="block box">
                     <div class="block">
 			        <div class="coluna80 inputFileDiv">
 				        <label for="ArquivoTexto">Assinatura Digitalizada</label>
@@ -237,7 +237,7 @@
                         <span class="spanInputFile <%= string.IsNullOrEmpty(Model.Funcionario.Arquivo.Nome) ? "" : "hide" %>">
 				        <input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" /></span>
 				        <input type="hidden" class="hdnAnexoArquivoJson" name="hdnAnexoArquivoJson" value="<%= Model.ObterJSon(Model.Funcionario.Arquivo) %>" />
-                        
+
                         <input type="hidden" class="hdnArquivoContentType" id="ArquivoContentType" name="ArquivoContentType" value="<%= Model.Funcionario.Arquivo.ContentType %>" />
                         <input type="hidden" class="hdnArquivoExtensao" id="ArquivoExtensao" name="ArquivoExtensao" value="<%= Model.Funcionario.Arquivo.Extensao %>" />
                         <input type="hidden" class="hdnArquivoId" id="ArquivoId" name="ArquivoId" value="<%= Model.Funcionario.Arquivo.Id %>" />
@@ -276,8 +276,8 @@
 						</div>
 
 						<div class="coluna50 prepend2">
-						
-						</div>  
+
+						</div>
 					</div>
 
 
@@ -290,22 +290,18 @@
 
 		<% }  %>
 
-	<script type="text/javascript" >
-	<!--
+	<script>
 		$("#login").focus();
 		var urlPermissao = '<%= Url.Content("~/Funcionario/TextoPermissoes") %>';
-	//-->
 	</script>
-		
+
 	<% } %>
 
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/funcionario.js") %>" ></script>
-<script type="text/javascript" >
-	<!--
+<script src="<%= Url.Content("~/Scripts/Funcionario/funcionario.js") %>" ></script>
+<script>
 	Funcionario.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Funcionario") %>';
-	//-->
 	Funcionario.settings.mensagens = <%=Model.Mensagens%>;
 </script>
 

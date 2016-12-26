@@ -1,18 +1,18 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Roteiro Orientativo</asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
+	<script>
 		RoteiroSalvar.urlListarItem = '<%= Url.Action("ListarItem", "Roteiro") %>';
 		RoteiroSalvar.urlAssociarRoteiroCopiar = '<%= Url.Action("Associar", "Roteiro") %>';
-		RoteiroSalvar.urlRoteiroCopiar = '<%= Url.Action("CopiarRoteiro", "Roteiro") %>';	
-		RoteiroSalvar.urlPdfRoteiro = '<%= Url.Action("RelatorioRoteiro","Roteiro") %>';	
+		RoteiroSalvar.urlRoteiroCopiar = '<%= Url.Action("CopiarRoteiro", "Roteiro") %>';
+		RoteiroSalvar.urlPdfRoteiro = '<%= Url.Action("RelatorioRoteiro","Roteiro") %>';
 		RoteiroSalvar.urlValidarAssociarAtividade = '<%= Url.Action("ValidarAssociarAtividade", "Roteiro") %>';
 		RoteiroSalvar.urlListarAtividade  = '<%= Url.Action("AssociarAtividade", "Atividade") %>';
 		RoteiroSalvar.urlObterModelosAtividades= '<%= Url.Action("ObterModelosAtividades", "Roteiro") %>';
@@ -39,7 +39,7 @@
 						<%= Html.TextBox("Roteiro.Numero", Model.Roteiro.Numero, new { @disabled = "disabled", @class = "text disabled RoteiroNumEditar txtNumero" })%>
 					</div>
 					<div class="coluna23 prepend1">
-						<label for="Roteiro.Versao">Versão *</label> 
+						<label for="Roteiro.Versao">Versão *</label>
 						<%= Html.TextBox("Roteiro.Versao", Model.Roteiro.Versao, new { @disabled = "disabled", @class = "text disabled txtVersao" })%>
 					</div>
 				</div>

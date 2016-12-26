@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMSetor" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
@@ -7,8 +7,8 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Setor/salvar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Setor/salvar.js") %>"></script>
+	<script>
 		$(function () {
 			SetorSalvar.load($('#central'));
 			SetorSalvar.settings.urls.salvar = '<%= Url.Action("Editar", "Setor") %>';
@@ -118,7 +118,7 @@
 			<span class="cancelarCaixa">ou <a class="linkCancelar" title="Cancelar" href="<%= Url.Action("") %>">Cancelar</a></span>
 		</div>
 	</div>
-		
+
 </div>
 
 </asp:Content>

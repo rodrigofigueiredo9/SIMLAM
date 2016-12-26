@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -76,14 +76,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 					{
 						if (item.Id > 0)
 						{
-							comando = bancoDeDados.CriarComando(@"update {0}crt_dependencia d set d.dependencia_tipo = :dependencia_tipo, d.dependente_caracterizacao = :dependente_caracterizacao, 
+							comando = bancoDeDados.CriarComando(@"update {0}crt_dependencia d set d.dependencia_tipo = :dependencia_tipo, d.dependente_caracterizacao = :dependente_caracterizacao,
 							d.dependencia_id = :dependencia_id, d.dependencia_tid = :dependencia_tid, d.tid = :tid where d.id = :id", EsquemaBanco);
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						}
 						else
 						{
-							comando = bancoDeDados.CriarComando(@"insert into {0}crt_dependencia d (id, dependente_tipo, dependente_caracterizacao, dependente_id, dependencia_tipo, 
-							dependencia_caracterizacao, dependencia_id, dependencia_tid, tid) values ({0}seq_crt_dependencia.nextval, :dependente_tipo, :dependente_caracterizacao, 
+							comando = bancoDeDados.CriarComando(@"insert into {0}crt_dependencia d (id, dependente_tipo, dependente_caracterizacao, dependente_id, dependencia_tipo,
+							dependencia_caracterizacao, dependencia_id, dependencia_tid, tid) values ({0}seq_crt_dependencia.nextval, :dependente_tipo, :dependente_caracterizacao,
 							:dependente_id, :dependencia_tipo, :dependencia_caracterizacao, :dependencia_id, :dependencia_tid, :tid) returning id into :id_dep", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("dependente_tipo", (int)caracterizacao.DependenteTipo, DbType.Int32);
@@ -122,7 +122,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update crt_dependencia c set c.dependencia_tid = :dependencia_tid, c.tid = :tid 
+				Comando comando = bancoDeDados.CriarComando(@"update crt_dependencia c set c.dependencia_tid = :dependencia_tid, c.tid = :tid
 				where c.dependencia_id = :dependencia_id and c.dependencia_tipo = :dependencia_tipo and c.dependencia_caracterizacao = :dependencia_caracterizacao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)caracterizacaoTipo, DbType.Int32);
@@ -147,9 +147,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 			{
 				#region Empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select 
+				Comando comando = bancoDeDados.CriarComando(@"select
 				e.id, e.codigo, ls.texto segmento_texto, ls.denominador, e.cnpj, e.denominador denominador_nome, e.tid, ee.zona, ee.municipio municipio_id,
-				(select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio, (select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge, 
+				(select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio, (select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
 				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto
 				from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls, {0}tab_empreendimento_endereco ee, {0}cnf_municipio_mod_fiscal cm
@@ -196,7 +196,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 				#region Lista das caracterizações do empreendimento
 
 				Comando comando = bancoDeDados.CriarComando(@"select 'select '||t.id||' tipo,
-				a.id caracterizacao_id, a.tid caracterizacao_tid from {0}'||t.tabela||' a where a.empreendimento =:empreendimento and rownum = 1 union all ' campo 
+				a.id caracterizacao_id, a.tid caracterizacao_tid from {0}'||t.tabela||' a where a.empreendimento =:empreendimento and rownum = 1 union all ' campo
 				from {0}lov_caracterizacao_tipo t where t.id != :caracterizacao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("caracterizacao", (int)eCaracterizacao.CadastroAmbientalRural, DbType.Int32);
@@ -213,9 +213,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 
 				#region CAR
 
-				select += @"(select :caracterizacao tipo, t.caracterizacao_id, nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id), 
-				(select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid 
-				from (select a.id caracterizacao_id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento union 
+				select += @"(select TO_NUMBER(:caracterizacao) tipo, t.caracterizacao_id, nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id),
+				(select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid
+				from (select a.id caracterizacao_id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento union
 				select a.id caracterizacao_id from crt_cad_ambiental_rural a where a.empreendimento = :empreendimento) t) union all ";
 
 				#endregion
@@ -306,17 +306,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 				select case
 						 when c.tipo = 1 then /*Projeto Geográfico*/
 						  'select ' || t.id || ' caracterizacao, ' || c.tipo ||
-						  ' tipo, 
+						  ' tipo,
 						a.id dependencia_id, a.tid dependencia_tid from {0}crt_projeto_geo a where a.empreendimento = :empreendimento and a.caracterizacao = ' || t.id ||
 						  ' union '
 						 when c.tipo = 2 then /*Caracterização*/
 						  'select ' || t.id || ' caracterizacao, ' || c.tipo ||
-						  ' tipo, a.id dependencia_id, 
+						  ' tipo, a.id dependencia_id,
 						a.tid dependencia_tid from {0}' || t.tabela ||
 						  ' a where a.empreendimento = :empreendimento union '
 						 when c.tipo = 3 then /*Descrição de Licenciamento de Atividade*/
 						  'select ' || t.id || ' caracterizacao, ' || c.tipo ||
-						  ' tipo, 
+						  ' tipo,
 						a.id dependencia_id, a.tid dependencia_tid from {0}crt_dsc_lc_atividade a where a.empreendimento = :empreendimento and a.caracterizacao = ' || t.id ||
 						  ' union '
 					   end campo
@@ -380,7 +380,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 			{
 				#region Lista das caracterizações do empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select d.dependencia_tipo, d.dependencia_caracterizacao, d.dependencia_id, d.dependencia_tid 
+				Comando comando = bancoDeDados.CriarComando(@"select d.dependencia_tipo, d.dependencia_caracterizacao, d.dependencia_id, d.dependencia_tid
 				from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_caracterizacao = :dependente_caracterizacao and d.dependente_id = :dependente_id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("dependente_tipo", (int)tipo, DbType.Int32);
@@ -463,9 +463,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 					parametro = comando.FiltroAnd("d.dependente_caracterizacao", "dependente_caracterizacao", (int)caracterizacaoTipo, isDiferente: true);
 				}
 
-				comando = bancoDeDados.CriarComando(@"select 'select * from (select d.dependente_tipo, d.dependente_caracterizacao from {0}crt_dependencia d, 
-				{0}crt_projeto_geo g where d.dependencia_caracterizacao = 1 and d.dependencia_id = g.id and d.dependencia_tipo = :caracterizacao and g.caracterizacao = :caracterizacao 
-				and g.empreendimento = :empreendimento " + parametro + @" union all select d.dependente_tipo, d.dependente_caracterizacao from {0}crt_dependencia d, {0}'|| lc.tabela ||' c 
+				comando = bancoDeDados.CriarComando(@"select 'select * from (select d.dependente_tipo, d.dependente_caracterizacao from {0}crt_dependencia d,
+				{0}crt_projeto_geo g where d.dependencia_caracterizacao = 1 and d.dependencia_id = g.id and d.dependencia_tipo = :caracterizacao and g.caracterizacao = :caracterizacao
+				and g.empreendimento = :empreendimento " + parametro + @" union all select d.dependente_tipo, d.dependente_caracterizacao from {0}crt_dependencia d, {0}'|| lc.tabela ||' c
 				where d.dependencia_id = c.id and d.dependencia_caracterizacao = :caracterizacao and d.dependencia_tipo = :empreendimento and c.empreendimento = :empreendimento " +
 				parametro + @") t group by dependente_tipo, dependente_caracterizacao' retorno from lov_caracterizacao_tipo lc where lc.id = :caracterizacao", EsquemaBanco);
 
@@ -644,10 +644,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select (select(select count(*) from {0}tab_protocolo p where p.empreendimento = :empreendimento 
+				Comando comando = bancoDeDados.CriarComando(@"select (select(select count(*) from {0}tab_protocolo p where p.empreendimento = :empreendimento
 				and p.emposse = :funcionario and not exists (select 1 from {0}tab_tramitacao t where t.protocolo = p.id))
-				+ (select count(*) from {0}tab_protocolo_associado pa, {0}tab_protocolo p, {0}tab_protocolo a where pa.protocolo = p.id and 
-				p.emposse = :funcionario and pa.associado = a.id and a.empreendimento = :empreendimento and not exists (select 1 from {0}tab_tramitacao t where t.protocolo = p.id)            
+				+ (select count(*) from {0}tab_protocolo_associado pa, {0}tab_protocolo p, {0}tab_protocolo a where pa.protocolo = p.id and
+				p.emposse = :funcionario and pa.associado = a.id and a.empreendimento = :empreendimento and not exists (select 1 from {0}tab_tramitacao t where t.protocolo = p.id)
 				) valor from dual) emposse,(select count(*) from {0}tab_protocolo t where t.empreendimento = :empreendimento) existe from dual", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);

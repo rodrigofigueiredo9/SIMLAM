@@ -1,4 +1,4 @@
-﻿/// <reference path="../../Lib/JQuery/jquery-1.4.3.min.js" />
+/// <reference path="../../Lib/JQuery/jquery-1.4.3.min.js" />
 /// <reference path="../../Lib/JQuery/jquery.json - 2.2.min.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
@@ -8,8 +8,8 @@
 
 /* EXEMPLO DE USO:
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+<script>
 	$(function () {
 		var container = $('#central');
 		var mensagens = <%= Model.Mensagens %>;
@@ -32,7 +32,7 @@
 
 </div>
 
-<script type="text/javascript">
+<script>
 	// pega arquivos da tabela
 	var arquivos = $('.arquivoContianer').arquivo('obterObjeto');
 </script>

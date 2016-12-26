@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autorizacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autorizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AutorizacaoExploracaoFlorestalVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Autorizacao/AutorizacaoExploracaoFlorestal.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Autorizacao/AutorizacaoExploracaoFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script>
 	AutorizacaoExploracaoFlorestal.settings.urls.obterDadosAutorizacaoExploracaoFlorestal = '<%= Url.Action("ObterDadosAutorizacaoDestinatarios", "Autorizacao", new {area="Especificidades"}) %>';
 	AutorizacaoExploracaoFlorestal.settings.urls.obterLaudoVistoria = '<%= Url.Action("Associar","Titulo", new {area=""}) %>';
 	AutorizacaoExploracaoFlorestal.settings.urls.validarAssociarVistoria = '<%= Url.Action("ValidarAssociarLaudoVistoria","Autorizacao", new {area="Especificidades"}) %>';

@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ConsideracaoFinalVM>" %>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+<script>
 
 	FiscalizacaoConsideracaoFinal.settings.urls.salvar = '<%: Url.Action("SalvarConsideracaoFinal", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obter = '<%: Url.Action("ConsideracaoFinal", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterSetores = '<%: Url.Action("ObterSetores", "Fiscalizacao") %>';
-	FiscalizacaoConsideracaoFinal.settings.urls.obterEnderecoSetor = '<%: Url.Action("ObterEnderecoSetor", "Fiscalizacao") %>';	
+	FiscalizacaoConsideracaoFinal.settings.urls.obterEnderecoSetor = '<%: Url.Action("ObterEnderecoSetor", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.enviarArquivo = '<%= Url.Action("Arquivo", "Arquivo") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteCargos = '<%= Url.Action("ObterAssinanteCargos", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteFuncionarios = '<%= Url.Action("ObterAssinanteFuncionarios", "Fiscalizacao") %>';
@@ -34,7 +34,7 @@
 		<div class="block">
 			<div class="coluna42">
 				<label for="">Há necessidade de reparação do dano ambiental? *</label><br />
-				 
+
 				<span style="border-style: solid; border-width: 1px; border-color: transparent;" class="text" id="rblOpinar">
 					<label><%= Html.RadioButton("rblOpinar", 1, Model.ConsideracaoFinal.HaReparacao.HasValue && Model.ConsideracaoFinal.HaReparacao.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar prepend2" }))%>Sim</label>
 					<label><%= Html.RadioButton("rblOpinar", 0, Model.ConsideracaoFinal.HaReparacao.HasValue && !Model.ConsideracaoFinal.HaReparacao.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar" }))%>Não</label>
@@ -57,7 +57,7 @@
 					</span>
 				</div>
 			</div>
-			
+
 			<div class="block divArquivo<%= Model.ConsideracaoFinal.HaTermoCompromisso.GetValueOrDefault() ? "" : " hide" %>">
 				<div class="coluna40 inputFileDiv">
 					<label>PDF do termo</label>
@@ -76,7 +76,7 @@
 				</div>
 				<% } %>
 			</div>
-		
+
 			<div class="block divTermoJustificar<%= Model.ConsideracaoFinal.HaTermoCompromisso.HasValue && !Model.ConsideracaoFinal.HaTermoCompromisso.Value ? "" : " hide"%>">
 				<div class="ultima">
 					<label for="ConsideracaoFinal_TermoCompromissoJustificar">Justificar *</label>
@@ -88,15 +88,15 @@
 	</div>
 
 	<fieldset class="block box">
-		<legend>Testemunhas</legend>		
+		<legend>Testemunhas</legend>
 		<%foreach (var item in Model.ConsideracaoFinalTestemunhaVM) { %>
 			<fieldset class="block box boxBranca fdsTestemunhas">
 				<legend><%= item.Testemunha.Colocacao %>ª Testemunha</legend>
 				<% Html.RenderPartial("ConsideracaoFinalTestemunha", item); %>
-			</fieldset>	   
+			</fieldset>
 	   <% } %>
    </fieldset>
-   
+
    <% Html.RenderPartial("Assinantes", Model.AssinantesVM); %>
 
 	<fieldset class="block box fsArquivos">

@@ -1,37 +1,37 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Documento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<!-- DEPENDENCIAS DE PESSOA -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE PESSOA -->
 
 	<!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
 	<!-- DEPENDENCIAS DE ASSOCIAR -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemPendencia/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemRoteiro/listarChecagemRoteiro.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Documento/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Processo/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ChecagemPendencia/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ChecagemRoteiro/listarChecagemRoteiro.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE ASSOCIAR -->
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 
 		AtividadeSolicitadaAssociar.urlAbriModalAtividade = '<%= Url.Action("ObterFinalidade", "Atividade") %>';

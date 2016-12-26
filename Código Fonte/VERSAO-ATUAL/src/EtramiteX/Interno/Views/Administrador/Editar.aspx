@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAdministrador" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAdministrador" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<EditarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
@@ -21,7 +21,7 @@
 					<label for="CpfAdministrador">CPF *</label>
 					<%= Html.TextBox("Cpf", Model.Administrador.Cpf, new { @class = "text disabled", readOnly= true, tabindex="1" })%>
 				</div>
-				<div class="coluna15">                        
+				<div class="coluna15">
 				</div>
 			</div>
 
@@ -119,19 +119,15 @@
 		<% } %>
 		<% } %>
 
-	<script type="text/javascript" >
-	<!--
+	<script>
 		$("#login").focus();
 		var urlPermissao = '<%= Url.Content("~/Administrador/TextoPermissoes") %>';
-	//-->
 	</script>
 
 </div>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Administrador/salvar.js") %>" ></script>
-<script type="text/javascript" >
-	<!--
-	//Administrador.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Administrador") %>';
-	//-->
+<script src="<%= Url.Content("~/Scripts/Administrador/salvar.js") %>" ></script>
+<script>
+	Administrador.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Administrador") %>';
 </script>
 
 </asp:Content>

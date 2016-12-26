@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ItemRoteiroVM>" %>
 
@@ -6,7 +6,7 @@
 <br />
 
 <% if(Model.IsModal) { %>
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			ItemSalvar.urlSalvarItem  = '<%= Url.Action("SalvarItemModal", "Roteiro") %>';
 			ItemSalvar.urlModalConfirmar = '<%= Url.Action("ItemConfirmar", "Roteiro") %>';
@@ -15,7 +15,7 @@
 		});
 	</script>
 <% } else { %>
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			ItemSalvar.urlSalvarItem = '<%= Url.Action("SalvarItem", "Roteiro") %>';
 			ItemSalvar.urlModalConfirmar = '<%= Url.Action("ItemConfirmar", "Roteiro") %>';

@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SuinoculturaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Suinocultura</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/suinocultura.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/coordenadaAtividade.js") %>"></script>
-	
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/suinocultura.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/coordenadaAtividade.js") %>"></script>
+
+	<script>
 	    $(function () {
 	        Suinocultura.load($('#central'), {
 	            urls: {

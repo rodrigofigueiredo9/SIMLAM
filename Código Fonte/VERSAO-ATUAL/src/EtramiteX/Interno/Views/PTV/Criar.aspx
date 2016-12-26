@@ -1,17 +1,17 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PTVVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Emitir PTV</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/mensagem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducao.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducaoItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/emitirPTV.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/mensagem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/unidadeProducaoItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTV/emitirPTV.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script>
 		$(function () {
 			PTVEmitir.settings.idsTela = <%= Model.IdsTela %>;
 			PTVEmitir.settings.idsOrigem = <%= Model.IdsOrigem %>;

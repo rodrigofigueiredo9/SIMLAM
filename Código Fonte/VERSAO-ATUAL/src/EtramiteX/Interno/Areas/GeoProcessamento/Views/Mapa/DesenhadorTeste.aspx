@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.GeoProcessamento.ViewModels.VMMapa" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.GeoProcessamento.ViewModels.VMMapa" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CoordenadaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
@@ -6,14 +6,14 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/navegador.js") %>"></script>
-<%--	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>--%>
+    <script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/navegador.js") %>"></script>
+<%--	<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>--%>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<script type="text/javascript" language="javascript">
-    
+<script language="javascript">
+
     var _Obter = function myfunction() {
 
         var objeto = {
@@ -44,7 +44,7 @@
 
         return $.toJSON(objeto);
     };
-    
+
     Navegador.load($('#central'), {
         id: 793,
         modo: 2,
@@ -61,7 +61,7 @@
 <h2>DesenhadorTeste</h2>
 
 <div id="central">
-    
+
     <div style="height:80%; width:80%;">
         <% Html.RenderPartial("DesenhadorPartial"); %>
     </div>

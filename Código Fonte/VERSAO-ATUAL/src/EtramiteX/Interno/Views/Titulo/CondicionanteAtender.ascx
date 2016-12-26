@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteSituacaoAtenderVM>" %>
 
 
-<script type="text/javascript">
+<script>
 	CondicionanteAtender.settings.urls = {
 		atender: '<%= Url.Action("CondicionanteAtenderSalvar", "Titulo") %>'
 	}

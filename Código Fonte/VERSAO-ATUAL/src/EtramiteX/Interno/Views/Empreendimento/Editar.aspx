@@ -1,23 +1,23 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<EmpreendimentoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Empreendimento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/tela.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/tela.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
 
 <!-- DEPENDENCIAS DE MODAL PESSOA -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE MODAL PESSOA -->
 
-<script type="text/javascript">
+<script>
 		$(function () {
 			EmpreendimentoTela.load($('#central'), {
 				urls: {
@@ -47,13 +47,13 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 <div id="central" class="empreendimentoCriar">
-	
+
 	<% Html.RenderPartial("EmpreendimentoPartial", Model); %>
 	<div class="block box btnEmpContainer">
 		<input class="floatLeft btnEmpAvancar " type="button" value="Novo" />
 		<span style="float: left">&nbsp;&nbsp;</span>
 		<input class="floatLeft btnEmpSalvar" type="button" value="Salvar" />
-		<span style="float: left">&nbsp;&nbsp;</span>	
+		<span style="float: left">&nbsp;&nbsp;</span>
 		<input class="floatLeft btnEmpVoltar" type="button" value="Voltar" />
 		<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="<%= Url.Action("") %>">Cancelar</a></span>
 	</div>

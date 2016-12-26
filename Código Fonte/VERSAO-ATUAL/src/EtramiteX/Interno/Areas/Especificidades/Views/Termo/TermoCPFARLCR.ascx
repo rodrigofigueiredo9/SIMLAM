@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Termo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Termo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoCPFARLCRVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLCR.js") %>"></script>
-<script type="text/javascript">	
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLCR.js") %>"></script>
+<script>
 	TermoCPFARLCR.settings.urls.obterDadosTermoCPFARLCR = '<%= Url.Action("ObterDadosTermoCPFARLCR", "Termo", new { area = "Especificidades" }) %>';
 	TermoCPFARLCR.settings.urls.obterARL = '<%= Url.Action("ObterArl", "Termo", new { area = "Especificidades" }) %>';
 	TermoCPFARLCR.settings.urls.obterDadosEmpreendimentoReceptor = '<%= Url.Action("ObterDadosEmpreendimentoReceptor", "Termo", new { area = "Especificidades" }) %>';
@@ -198,7 +198,7 @@
 			</div>
 		</div>
 	</fieldset>
-	
+
 	<fieldset class="block boxBranca">
 		<legend>Título Anterior</legend>
 

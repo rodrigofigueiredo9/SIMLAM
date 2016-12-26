@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<QueimaControladaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Queima Controlada</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/queimaControlada.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/queimaControladaQueima.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/queimaControlada.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/queimaControladaQueima.js") %>"></script>
 	
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			QueimaControlada.load($('#central'));
 		});

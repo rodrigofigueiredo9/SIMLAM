@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAnaliseItens" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<AnaliseItemVM>" %>
@@ -6,15 +6,15 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Análise de Itens de Processo/Documento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/AnaliseItens/analiseItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/AnaliseItens/analise.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/AnaliseItens/analiseItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/AnaliseItens/analise.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemRoteiro/salvarChecagemRoteiro.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadesSolicitadas.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/ChecagemRoteiro/salvarChecagemRoteiro.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Atividade/atividadesSolicitadas.js") %>"></script>
+	<script>
 
 		$(function () {
 			Analise.load($('#central'), {
@@ -54,11 +54,11 @@
 			AtividadesSolicitadas.urlVisualizarPdf = '<%= Url.Action("GerarPdf", "Requerimento") %>';
 		    ChecagemRoteiroSalvar.visualizarRoteiroModalLink = '<%= Url.Action("Visualizar", "Roteiro") %>';
 
-            <% 
-			
+            <%
+
 			if (!String.IsNullOrEmpty(Request.Params["acaoId"]))
 			{%>
-			
+
 		    ContainerAcoes.load($(".containerAcoes"), {
 		        botoes: [{label: 'Gerar PDF da análise', url:'<%= Url.Action("GerarPdf", "AnaliseItens", new {id = Request.Params["acaoId"].ToString() })%>'},
 		                 {label: 'Listar Empreendimentos', url:'<%= Url.Action("Index", "Empreendimento")%>'}],
@@ -114,7 +114,7 @@
 
 			<input class="btnSalvarAnalise floatLeft <%=Model.Requerimentos.Count > 0 && !Model.IsPendente ? "" : "hide" %>" type="button" value="Salvar" />
 			<span class="cancelarCaixa"><span class="btnModalOu <%=Model.Requerimentos.Count > 0 ? "" : "hide" %>">ou </span> <a class="linkCancelar" title="Cancelar" href="<%= Url.Action("") %>">Cancelar</a></span>
-			
+
 			<div class="floatRight">
 				<span class="cancelarCaixa <%=Model.AnaliseId > 0 ? "" : "hide" %> spanGerarPdfAnalise">
 					<input type="button" value="Gerar PDF da análise" class="btnGerarPdfAnalise" />

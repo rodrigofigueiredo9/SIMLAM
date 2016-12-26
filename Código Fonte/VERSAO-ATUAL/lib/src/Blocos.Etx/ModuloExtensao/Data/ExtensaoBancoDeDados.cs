@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -20,6 +20,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloExtensao.Data
 			}
 
 			IEnumerable<string> lstsChemas = schemas.Select(x => ((!string.IsNullOrEmpty(x)) ? String.Concat(x, ".") : String.Concat(x, "")));
+
+			Console.WriteLine(String.Format(sql, lstsChemas.ToArray()));
 
 			return bancoDeDados.CriarComando(String.Format(sql, lstsChemas.ToArray()));
 		}

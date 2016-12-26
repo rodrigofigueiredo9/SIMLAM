@@ -1,8 +1,8 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMProcesso" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ConsultarInformacaoVM>" %>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		ConsultarInformacoes.urlGerarEntregaPdf = '<%= Url.Action("GerarPdfEntrega", "Titulo") %>';
 		ConsultarInformacoes.urlGerarRecebimentoPdf = '<%= Url.Action("GerarPdfDocRegistroRecebimento", "Processo") %>';

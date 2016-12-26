@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LicencaAmbientalRegularizacaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Licenca/LicencaAmbientalRegularizacao.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Licenca/LicencaAmbientalRegularizacao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script>
 	LicencaAmbientalRegularizacao.settings.urls.obterDadosLicencaAmbientalRegularizacao = '<%= Url.Action("ObterDadosLicencaPorteUsoMotosserra", "Licenca", new {area="Especificidades"}) %>';
 	AtividadeEspecificidade.Barragem.settings.urls.urlEspBarragem = '<%= Url.Action("AtividadeCaracterizacao", "AtividadeEspecificidade", new {area="Especificidades"}) %>';
 </script>

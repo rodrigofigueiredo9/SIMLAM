@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PragaVM>" %>
@@ -8,10 +8,10 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/associarCulturas.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/associarCulturas.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
+	<script>
 		$(function () {
 			AssociarCulturas.load($('#central'), {
 				urls: {

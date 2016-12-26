@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DominialidadeVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/dominio.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/dominio.js") %>"></script>
+<script>
 	Dominios.settings.idsTela = <%= Model.IdsTela %>;
 	Dominios.settings.urls.editar = '<%= Url.Action("Dominio", "Dominialidade") %>';
 	Dominios.settings.urls.visualizar = '<%= Url.Action("DominioVisualizar", "Dominialidade") %>';

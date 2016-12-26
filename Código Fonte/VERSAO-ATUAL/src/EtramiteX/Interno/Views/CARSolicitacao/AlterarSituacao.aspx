@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CARSolicitacaoAlterarSituacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Alterar Situação da Solicitação de Inscrição</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/CARSolicitacao/alterarSituacao.js") %>" ></script>
-	
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/CARSolicitacao/alterarSituacao.js") %>" ></script>
+
+	<script>
 		$(function () {
 			CARSolicitacaoAlterarSituacao.load($('#central'), {
 				urls: {
@@ -62,12 +62,12 @@
 					<%= Html.TextBox("Situacao.DataNova", DateTime.Now.Date.ToShortDateString(), new { @class = "disabled text txtDataSituacaoNova", @disabled="disabled" })%>
 				</div>
 			</div>
-			
+
 			<div class="ultima divMotivo <%= Model.Solicitacao.SituacaoId == 4? "" : " hide" %> ">
 				<label for="AlterarSituacao_Motivo">Motivo*</label>
 				<%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.Motivo, new { @class = "media text txtSituacaoMotivo", @maxlength="300"})%>
 			</div>
-		
+
 		</fieldset>
 
 		<div class="block box botoesSalvarCancelar">

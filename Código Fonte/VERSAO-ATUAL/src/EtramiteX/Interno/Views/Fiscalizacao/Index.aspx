@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Fiscalizações</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			FiscalizacaoListar.ExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Fiscalizacao") %>';
 			FiscalizacaoListar.urlExcluir = '<%= Url.Action("Excluir", "Fiscalizacao") %>';

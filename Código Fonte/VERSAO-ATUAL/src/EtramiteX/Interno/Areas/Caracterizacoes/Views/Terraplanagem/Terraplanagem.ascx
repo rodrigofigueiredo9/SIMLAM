@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TerraplanagemVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.Terraplanagem%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	Terraplanagem.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Terraplanagem.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	Terraplanagem.settings.textoMerge = '<%= Model.TextoMerge %>';

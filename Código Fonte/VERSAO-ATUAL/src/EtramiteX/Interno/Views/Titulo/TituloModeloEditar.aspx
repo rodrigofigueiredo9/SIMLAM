@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloTitulo" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloTitulo" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<TituloModeloVM>" %>
@@ -6,8 +6,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Modelo Título</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/tituloModelo.js") %>" ></script>
-	<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Titulo/tituloModelo.js") %>" ></script>
+	<script>
 		$(function () {
 			TituloModelo.urlObterUltimoNumero = '<%= Url.Action("ObterUltimoNumeroGerado", "Titulo") %>';
 			TituloModelo.urlObterAssinantes = '<%= Url.Action("ObterFuncionariosSetor", "Titulo") %>';
@@ -64,7 +64,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="block dataGrid">
 			<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tbody>
@@ -173,10 +173,10 @@
 						</td>
 						<td>
 							<input type="hidden" class="hdnNumeroSincronizadoId" value="<%= Model.NumeroSincronizado.Id %>" />
-                            <% 
+                            <%
                                object objAttr = null;
                                object objAttrN = null;
-                               
+
                                if (Convert.ToBoolean(Model.CredenciadoEmite.Valor))
 	                           {
 		                           objAttr =  new { @class = "radio radNumeroSincronizado" };
@@ -186,7 +186,7 @@
                                {
                                    objAttr = new { @class = "radio radNumeroSincronizado disabled", @disabled = "disabled" };
                                    objAttrN = new { @class = "radio radNumeroSincronizadoN disabled", @disabled = "disabled" };
-                               }                               
+                               }
                             %>
 							<label class="prepend6"><%= Html.RadioButton("NumeroSincronizado", 1, Convert.ToBoolean(Model.NumeroSincronizado.Valor), objAttr)%> Sim</label>
 							<label class="prepend6"><%= Html.RadioButton("NumeroSincronizado", 0, !Convert.ToBoolean(Model.NumeroSincronizado.Valor), objAttrN)%> Não</label>
@@ -196,7 +196,7 @@
 				</tbody>
 			</table>
 		</div>
-		
+
 		<div class="block divPossuiPrazo hide">
 			<fieldset class="block box">
 				<legend>Configurar Prazo</legend>
@@ -212,7 +212,7 @@
 				</div>
 			</fieldset>
 		</div>
-		
+
 		<div class="block divFaseAnteriror">
 			<fieldset class="block box">
 				<legend>Configurar Título da Fase Anterior</legend>
@@ -268,7 +268,7 @@
 			</div>
 			</fieldset>
 		</div>
-		
+
 		<div class="block divEnviarEmail hide">
 			<fieldset class="block box">
 				<legend>Configurar Envio de E-mail</legend>
@@ -281,7 +281,7 @@
 						<label>Texto do e-mail *</label>
 						<input type="hidden" class="hdnTextoEmailId" value="<%= Model.TextoEmail.Id %>" />
 						<%= Html.TextArea("TextoEmail.Valor", Convert.ToString(Model.TextoEmail.Valor), new { @class = "textareaPequeno txtEmail", @Maxlength = "500" })%>
-						<label style="font-style:italic; color:Silver">* As opções entre colchetes serão preenchidas automaticamente pelo sistema no envio do e-mail. 
+						<label style="font-style:italic; color:Silver">* As opções entre colchetes serão preenchidas automaticamente pelo sistema no envio do e-mail.
 						Caso algumas dessas formatações sejam modificadas ou removidas a informação não será preenchida.</label>
 					</div>
 				</div>
@@ -293,7 +293,7 @@
 				</div>
 			</fieldset>
 		</div>
-		
+
 		<fieldset class="block box filtroExpansivoAberto">
 			<legend class="titFiltros">Setor de Cadastro</legend>
 			<div class="block filtroCorpo">
@@ -310,7 +310,7 @@
 						<button type="button" style="width:35px" class="btnAddSetor inlineBotao botaoAdicionarIcone" title="Adicionar Setor">Adicionar</button>
 					</div>
 				</div>
-			
+
 				<div class="block dataGrid">
 					<table class="dataGridTable tabSetores <%= Model.Modelo.Setores.Count == 0 ?"hide" : ""%>" width="100%" border="0" cellspacing="0" cellpadding="0">
 						<thead>
@@ -358,8 +358,8 @@
 				</div>
 			</div>
 		</fieldset>
-		
-		
+
+
 		<fieldset class="block box filtroExpansivoAberto">
 			<legend class="titFiltros">Assinante</legend>
 				<div class="block filtroCorpo">
@@ -376,7 +376,7 @@
 							<button type="button" style="width:35px" class="btnAddAssinante inlineBotao botaoAdicionarIcone" title="Adicionar Assinante">Adicionar</button>
 						</div>
 					</div>
-				
+
 					<div class="block dataGrid">
 						<table class="dataGridTable tabAssinantes" width="100%" border="0" cellspacing="0" cellpadding="0">
 							<thead>

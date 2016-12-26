@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoConstatacaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoConstatacao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoConstatacao.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoConstatacao.urlObterDadosLaudoConstatacao = '<%= Url.Action("ObterDadosLaudoConstatacao", "Laudo", new {area="Especificidades"}) %>';
 </script>
 

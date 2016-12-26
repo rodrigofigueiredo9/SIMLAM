@@ -1,11 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoVistoriaFomentoFlorestalVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFomentoFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFomentoFlorestal.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoVistoriaFomentoFlorestal.urlEspecificidade = '<%= Url.Action("LaudoVistoriaFomentoFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFomentoFlorestal.urlObterDadosLaudoVistoriaFomentoFlorestal = '<%= Url.Action("ObterDadosLaudoVistoriaFomentoFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFomentoFlorestal.idsTela = <%= Model.IdsTela %>;
@@ -61,7 +61,7 @@
 			<%= Html.TextArea("Laudo.Restricoes", Model.Laudo.Restricoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "textarea media text txtRestricoes", @maxlength = "1000" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="ultima">
 			<label for="Laudo_Observacoes">Observações</label><br />

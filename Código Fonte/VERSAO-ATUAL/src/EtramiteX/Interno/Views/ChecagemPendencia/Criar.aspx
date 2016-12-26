@@ -1,20 +1,20 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemPendencia" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemPendencia" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content4" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar Checagem de Pendência</asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="JsHeadContent" runat="server">
-	
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ChecagemPendencia/salvar.js") %>"></script>
+
+	<script>
 		ChecagemPendencia.settings.urls.pdfTitulo = '<%= Url.Action("GerarPdf", "Titulo") %>';
 		ChecagemPendencia.settings.urls.pdfPendencia = '<%= Url.Action("ChecagemPendenciaPdfObj", "ChecagemPendencia") %>';
 		ChecagemPendencia.settings.urls.salvar = '<%= Url.Action("Salvar", "ChecagemPendencia") %>';
 		ChecagemPendencia.settings.urls.associarTituloModal = '<%= Url.Action("Associar", "Titulo", new { modelosCodigos = Model.ModelosListarTitulo }) %>';
 		ChecagemPendencia.settings.urls.associarTitulo = '<%= Url.Action("AssociarTitulo", "ChecagemPendencia") %>';
 		ChecagemPendencia.settings.mensagens = <%= Model.Mensagens %>;
-		
+
 		$(function() { ChecagemPendencia.load($('#central')); });
 	</script>
 </asp:Content>
@@ -24,7 +24,7 @@
 		<h1 class="titTela">Cadastrar Checagem de Pendência</h1>
 		<br />
 
-		<% Html.RenderPartial("ChecagemPendenciaPartial"); %> 
+		<% Html.RenderPartial("ChecagemPendenciaPartial"); %>
 
 		<div class="block box">
 			<button type="button" value="Salvar" class="floatLeft btnSalvar disabled" disabled="disabled">Salvar</button>

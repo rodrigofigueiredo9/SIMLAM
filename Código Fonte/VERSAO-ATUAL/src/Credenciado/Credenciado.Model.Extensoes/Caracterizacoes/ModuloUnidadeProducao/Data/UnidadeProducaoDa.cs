@@ -207,7 +207,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				Comando comando = bancoDeDados.CriarComando(@"update crt_unidade_producao set propriedade_codigo = :propriedade_codigo, local_livro = :local_livro, tid = :tid where id = :id", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);

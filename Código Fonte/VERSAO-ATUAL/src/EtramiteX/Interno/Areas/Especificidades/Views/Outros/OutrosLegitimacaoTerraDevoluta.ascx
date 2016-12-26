@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<OutrosLegitimacaoTerraDevolutaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/OutrosLegitimacaoTerraDevoluta.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/OutrosLegitimacaoTerraDevoluta.js") %>"></script>
+<script>
 	OutrosLegitimacaoTerraDevoluta.settings.urls.urlObterDadosOutrosLegitimacaoTerraDevoluta = '<%= Url.Action("ObterDadosOutrosLegitimacaoTerraDevoluta", "Outros", new {area="Especificidades"}) %>';
 	OutrosLegitimacaoTerraDevoluta.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
@@ -11,7 +11,7 @@
 <fieldset class="block box">
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
-	
+
 	<div class="block divDestinatarios">
 		<%if(!Model.IsVisualizar) {%>
 		<div class="block">

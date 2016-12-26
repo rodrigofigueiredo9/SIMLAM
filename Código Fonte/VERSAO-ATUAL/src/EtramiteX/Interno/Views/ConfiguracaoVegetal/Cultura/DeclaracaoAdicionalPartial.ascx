@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CulturaVM>" %>
 
 <h1 class="titTela"></h1>
 <br />
-<script type="text/javascript">
+<script>
     DeclaracaoAdicional.settings.urls.validarDeclaracaoAdicional = '<%= Url.Action("ValidarDeclaracaoAdicional", "ConfiguracaoVegetal") %>';
     DeclaracaoAdicional.settings.urls.urlOutroEstado = '<%= Url.Action("ObterDeclaracaoOutroEstado", "ConfiguracaoVegetal") %>';
 </script>
@@ -20,8 +20,8 @@
 			<%=Html.TextBox("DeclaracaoAdicionalCultivar", Model.Cultura.NomeCultivar, ViewModelHelper.SetaDisabled(true,  new { @class="txtCultivar text", @maxlength="100" })) %>
 			<input type="hidden" value="<%=Model.Cultura.Id %>" class="hdnItemId"/>
 		</div>
-	</div>		
-		
+	</div>
+
 	<div class="block">
 		<div class="block coluna40">
 			<label>Praga *</label>
@@ -37,12 +37,12 @@
 			<label>Declaração de outro estado? *</label>
 			  <%=Html.RadioButton("OutroEstado", 0, true , new { @class = "rdbOutroEstado radio"})%>
              Não
-           
+
 			  <%=Html.RadioButton("OutroEstado", 1, false , new { @class = "rdbOutroEstado radio"})%>
              Sim
-            
+
 		</div>
-		
+
 	</div>
 
 	<div class="block">
@@ -50,16 +50,16 @@
 			<label>Declaração Adicional *</label>
 			<%= Html.DropDownList("DeclaracaoAdicional", Model.DeclaracaoAdicional, new { @class="ddlDeclaracaoAdicional text"}) %>
 		</div>
-		<div class="block coluna10">			
+		<div class="block coluna10">
 			<button class="inlineBotao btnAdicionar"> <span class="ui-button-icon-primary ui-icon ui-icon-plusthick"></span></button>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="gridContainer">
 			<table class="dataGridTable gridDeclaracaoAdicional" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<thead>
-					<tr>						
+					<tr>
 						<th width="18%">Pragas</th>
 						<th width="24%">Tipo de Produção</th>
 						<th>Declaração adicional</th>

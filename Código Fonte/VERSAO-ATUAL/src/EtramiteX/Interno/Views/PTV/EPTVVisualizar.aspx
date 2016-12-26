@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PTVVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar EPTV</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/EPTVAnalisar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTV/EPTVAnalisar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		EPTVAnalisar.settings.idsTela = <%=Model.IdsTelaAnalisar%>;
 
 		$(function () {

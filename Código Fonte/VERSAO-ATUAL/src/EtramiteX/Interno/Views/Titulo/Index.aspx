@@ -1,12 +1,12 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Titulos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteSituacaoAlterar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteSituacaoAlterar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			TituloListar.urlExcluir = '<%= Url.Action("Excluir", "Titulo") %>';
 			TituloListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Titulo") %>';
@@ -21,7 +21,7 @@
 			TituloListar.load($('#central'));
 
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>
-			
+
 				ContainerAcoes.load($(".containerAcoes"), {
 					urls:{
 						urlGerarPdf: '<%= Url.Action("GerarPdf", "Titulo", new {id = Request.Params["acaoId"].ToString() }) %>',
@@ -32,7 +32,7 @@
 
 			<%}%>
 		});
-		
+
 	</script>
 </asp:Content>
 

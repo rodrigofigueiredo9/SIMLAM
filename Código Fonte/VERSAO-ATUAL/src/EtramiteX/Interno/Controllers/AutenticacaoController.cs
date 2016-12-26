@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -69,8 +69,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				FormsAuthentication.SetAuthCookie(login, true);
 
 				FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, login, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout), true, strSessionId);
-				HttpCookie cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-				cookie.Value = FormsAuthentication.Encrypt(ticket);
+				HttpCookie cookie = null;
+
+				if (FormsAuthentication.FormsCookieName != null) {
+					cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+				}
+
+				if (cookie != null) {
+					cookie.Value = FormsAuthentication.Encrypt(ticket);
+				}
 
 				GerenciarAutenticacao.CarregarUser(login);
 

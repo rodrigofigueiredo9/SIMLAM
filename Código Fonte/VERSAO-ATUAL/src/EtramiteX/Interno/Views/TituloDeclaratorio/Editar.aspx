@@ -1,15 +1,15 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Título Declaratório</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/TituloDeclaratorio/tituloDeclaratorio.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/TituloDeclaratorio/tituloDeclaratorio.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			TituloDeclaratorio.load($('#central'), {
 				urls: {

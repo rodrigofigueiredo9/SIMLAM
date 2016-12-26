@@ -1,13 +1,13 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CredenciadoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Dados de Credenciado</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			CredenciadoTela.load($('#central'), {
 				urls: {
@@ -18,7 +18,7 @@
 				},
 				msgs: <%= Model.PessoaVM.Mensagens %>
 			});
-		}); 
+		});
 	</script>
 </asp:Content>
 

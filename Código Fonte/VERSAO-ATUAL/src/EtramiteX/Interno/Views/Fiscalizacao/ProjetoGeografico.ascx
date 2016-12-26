@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<FiscalizacaoVM>" %>
 
 
-<script type="text/javascript">	
+<script>
 	$(function () {
 		ProjetoGeografico.mensagens = <%= Model.ProjetoGeoVM.Mensagens %>;
 		EnviarProjeto.mensagens =  <%= Model.ProjetoGeoVM.MensagensImportador %>;
@@ -27,10 +27,10 @@
 
 		BaseReferencia.settings.urls.atualizarArqVetoriais = '<%= Url.Action("ObterSituacao", "Fiscalizacao") %>';
 		BaseReferencia.settings.urls.gerarArquivoVetorial = '<%= Url.Action("GerarArquivoVetorial", "Fiscalizacao") %>';
-		BaseReferencia.settings.urls.gerarArquivoMosaio = '<%= Url.Action("ObterOrtoFotoMosaico", "Fiscalizacao") %>';			
+		BaseReferencia.settings.urls.gerarArquivoMosaio = '<%= Url.Action("ObterOrtoFotoMosaico", "Fiscalizacao") %>';
 		BaseReferencia.settings.urls.baixarArquivoModelo = '<%= Url.Action("BaixarArquivoModelo", "Fiscalizacao") %>';
-		BaseReferencia.settings.urls.baixarArquivoVetorial = '<%= Url.Action("Baixar", "Arquivo", new {area=""}) %>';			
-		BaseReferencia.settings.urls.baixarArquivos = '<%= Url.Action("Baixar", "Arquivo", new {area=""}) %>';			
+		BaseReferencia.settings.urls.baixarArquivoVetorial = '<%= Url.Action("Baixar", "Arquivo", new {area=""}) %>';
+		BaseReferencia.settings.urls.baixarArquivos = '<%= Url.Action("Baixar", "Arquivo", new {area=""}) %>';
 
 	    BaseReferencia.settings.urls.baixarArquivoOrtoMosaico = '<%= Model.ProjetoGeoVM.UrlBaixarOrtofoto %>';
 	    BaseReferencia.settings.urls.salvarArquivoOrtoMosaico = '<%: Url.Action("SalvarOrtofoto","Fiscalizacao") %>';
@@ -60,9 +60,9 @@
 		ProjetoGeografico.settings.urls.obterMerge = '<%: Url.Action("ObterMerge", "Fiscalizacao") %>';
 
 		ProjetoGeografico.settings.fiscalizacaoEstaDentroAreaAbrangencia = <%= Model.ProjetoGeoVM.Projeto.FiscalizacaoEstaDentroAreaAbrangencia.ToString().ToLower() %>;
-		
+
 		FiscalizacaoProjetoGeografico.urlObter = '<%= Url.Action("ProjetoGeografico","Fiscalizacao") %>';
-		
+
 	});
 </script>
 
@@ -102,7 +102,7 @@
 			<div class="coluna45 prepend3">
 				<label>Máximo Y*</label>
 				<%= Html.TextBox("txtMaiorY", Model.ProjetoGeoVM.MaiorY, new { @disabled = "disabled", @class = "text txtMaiorY disabled" })%>
-			</div> 
+			</div>
 		</fieldset>
 
 		<fieldset class="boxBranca coluna43 prepend2">
@@ -152,7 +152,7 @@
 		<legend>Desenhador</legend>
 		<% Html.RenderPartial("ProjetoGeoDesenhadorPartial", Model.ProjetoGeoVM.Desenhador); %>
 	</fieldset>
-			
+
 </div>
 
 </div>

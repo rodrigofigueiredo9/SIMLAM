@@ -1,10 +1,10 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certidao" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certidao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertidaoDebitoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoDebito.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoDebito.js") %>"></script>
+<script>
 	CertidaoDebito.urlObterDadosCertidaoDebito = '<%= Url.Action("ObterDestinatarios", "Certidao", new {area="Especificidades"}) %>';
 	CertidaoDebito.urlObterFiscalizacoesPorAutuado = '<%= Url.Action("ObterFiscalizacoesPorAutuado", "Certidao", new {area="Especificidades"}) %>';
 	CertidaoDebito.urlVisualizarFiscalizacao = '<%= Url.Action("VisualizarFiscalizacaoModal", "../Fiscalizacao") %>';

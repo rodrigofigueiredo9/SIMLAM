@@ -1,12 +1,12 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemRoteiro" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemRoteiro" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarCheckListRoteiroVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Checagens de Itens de Roteiro</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemRoteiro/listarChecagemRoteiro.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/ChecagemRoteiro/listarChecagemRoteiro.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			ChecagemRoteirotListar.urlExcluirConfirm = '<%= Url.Action("ChecagemRoteiroExcluirConfirm", "ChecagemRoteiro") %>';
 			ChecagemRoteirotListar.urlExcluir = '<%= Url.Action("ChecagemRoteiroExcluir", "ChecagemRoteiro") %>';
