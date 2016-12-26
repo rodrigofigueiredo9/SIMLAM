@@ -1,3 +1,6 @@
+﻿<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAnaliseItens" %>
