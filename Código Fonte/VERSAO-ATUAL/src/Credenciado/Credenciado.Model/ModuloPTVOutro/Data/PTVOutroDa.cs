@@ -184,7 +184,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
         internal List<ListaValor> ObterListaDeclaracao(int pragaId)
         {
             List<ListaValor> lst = new List<ListaValor>();
-            string Consulta = string.Format(@"select d.id as id, d.texto as texto from lov_cultivar_declara_adicional d,tab_cultivar_configuracao c 
+            string Consulta = string.Format(@"select distinct d.id as id, d.texto as texto from lov_cultivar_declara_adicional d,tab_cultivar_configuracao c 
                                                 where c.declaracao_adicional = d.id and d.outro_estado='1' and c.praga={0} ", pragaId);
             IEnumerable<IDataReader> daReader = DaHelper.ObterLista(Consulta);
             foreach (var item in daReader)
