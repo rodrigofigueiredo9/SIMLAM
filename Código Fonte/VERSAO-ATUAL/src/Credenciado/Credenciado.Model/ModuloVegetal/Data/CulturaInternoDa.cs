@@ -228,7 +228,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 						while (reader.Read())
 						{
                             string Declaracao = "";
-                            if (lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
+
+                            if (lstLotes != null && lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
                                 Declaracao = sbDecAdd.ToString();
                             else
                                 Declaracao = reader.GetValue<string>("DeclaracaoAdicionalTexto");

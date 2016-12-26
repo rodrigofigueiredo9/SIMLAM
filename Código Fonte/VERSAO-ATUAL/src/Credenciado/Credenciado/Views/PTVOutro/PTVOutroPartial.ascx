@@ -208,7 +208,7 @@
                     string[] vec_dec = Model.PTV.DeclaracaoAdicional.Split('|');
                     int c = 0;
                 %>
-				<% foreach (var item in Model.PTV.Pragas) { %>
+				<% foreach (var item in Model.PTV.Pragas) { if(string.IsNullOrEmpty(vec_dec[c])) continue;  %>
 					<tr>
 						<td class="nome_cientifico" title="<%=item.NomeCientifico %>"><%=item.NomeCientifico%></td>
 						<td class="nome_comum" title="<%=item.NomeComum%>"> <%=item.NomeComum%></td>
