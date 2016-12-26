@@ -1,0 +1,16 @@
+FROM mono-oracle
+
+RUN apt-get install -y git
+
+RUN cd / && \
+    git clone https://github.com/erikzaadi/MonoRazorScripts.git
+
+ENV NLS_LANG="BRAZILIAN PORTUGUESE_BRAZIL.WE8MSWIN1252"
+
+VOLUME /volumes
+WORKDIR /volumes
+
+EXPOSE 9000
+
+ENTRYPOINT ["xsp4"]
+CMD ["--port=9000", "--nonstop"]

@@ -1,7 +1,26 @@
-service:
-  build: .
-  command: "xsp4 --port=9000 --nonstop"
-  ports:
-    - 9000:9000
-  environment:
-    - MONO_OPTIONS=--debug
+version: '2'
+services:
+  application:
+    build: .
+    command: "xsp4 --port=9000 --nonstop"
+    ports:
+      - 9000:9000
+    environment:
+      - MONO_OPTIONS=--debug
+
+  watch:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    working_dir: /volumes/code/src/EtramiteX/Interno
+    entrypoint:
+     - sh
+     - -c
+     -  "cp /MonoRazorScripts/libs/*.dll ./bin && xsp4 --port=9000 --nonstop"
+    volumes:
+      - ./lib:/volumes/code/lib
+      - ./src:/volumes/code/src
+    ports:
+      - 9000:9000
+    environment:
+      - MONO_OPTIONS=--debug
