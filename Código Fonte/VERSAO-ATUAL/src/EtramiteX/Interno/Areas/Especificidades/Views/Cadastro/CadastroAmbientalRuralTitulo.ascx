@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Cadastro" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Cadastro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CadastroAmbientalRuralTituloVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 

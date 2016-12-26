@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DestinatarioPTVVM>" %>

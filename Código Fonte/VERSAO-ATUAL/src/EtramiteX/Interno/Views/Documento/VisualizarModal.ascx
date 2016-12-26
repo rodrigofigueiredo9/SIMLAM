@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
 <!-- DEPENDENCIAS DE PESSOA -->

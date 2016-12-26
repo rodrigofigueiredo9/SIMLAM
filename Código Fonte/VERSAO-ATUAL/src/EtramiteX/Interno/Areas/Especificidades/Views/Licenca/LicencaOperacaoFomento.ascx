@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Licenca" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LicencaOperacaoFomentoVM>" %>
 
 <script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Licenca/licencaOperacaoFomento.js") %>"></script>

@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<HabilitarEmissaoCFOCFOCVM>" %>

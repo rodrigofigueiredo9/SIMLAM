@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarCheckListRoteiroVM>" %>
+﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarCheckListRoteiroVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemRoteiro" %>
 

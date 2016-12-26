@@ -1,4 +1,4 @@
-<%@ Import Namespace="System.Web.Script.Serialization" %>
+﻿<%@ Import Namespace="System.Web.Script.Serialization" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloArquivo" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ArquivoVM>" %>

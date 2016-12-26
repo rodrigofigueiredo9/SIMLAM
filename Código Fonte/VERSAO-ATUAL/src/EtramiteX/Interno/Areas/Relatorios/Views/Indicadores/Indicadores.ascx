@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<Tecnomapas.EtramiteX.Interno.Areas.Relatorios.ViewModels.IndicadoresVM>" %>
+﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<Tecnomapas.EtramiteX.Interno.Areas.Relatorios.ViewModels.IndicadoresVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloSecurity" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Security" %>
 <div id="central">

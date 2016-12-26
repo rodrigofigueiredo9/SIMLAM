@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ItemRoteiroVM>" %>
 

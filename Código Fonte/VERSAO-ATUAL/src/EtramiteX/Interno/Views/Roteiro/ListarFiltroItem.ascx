@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMRoteiro" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarItemVM>" %>
 
 <h1 class="titTela">Itens de Roteiro</h1>

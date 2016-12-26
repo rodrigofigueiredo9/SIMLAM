@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteVM>" %>
 
 <%= Html.Hidden("Condicionante.Id", Model.Condicionante.Id, new { @class = "hdnCondicionanteId" }) %>

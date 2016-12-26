@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloProcesso" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloProcesso" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMAtividade" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarAtividadesSolicitadasVM>" %>

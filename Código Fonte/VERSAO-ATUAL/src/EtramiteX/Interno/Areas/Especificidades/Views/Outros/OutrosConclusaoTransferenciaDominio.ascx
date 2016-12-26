@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<OutrosConclusaoTransferenciaDominioVM>" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>

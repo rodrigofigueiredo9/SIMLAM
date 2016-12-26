@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMValidacao" %>
 <%@ Import Namespace="System.Collections.Generic" %>

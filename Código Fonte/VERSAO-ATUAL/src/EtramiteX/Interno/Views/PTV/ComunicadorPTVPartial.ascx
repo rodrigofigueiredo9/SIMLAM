@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>

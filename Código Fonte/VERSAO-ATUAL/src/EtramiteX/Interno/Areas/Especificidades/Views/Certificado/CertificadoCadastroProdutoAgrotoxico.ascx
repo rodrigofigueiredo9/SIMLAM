@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certificado" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Certificado" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertificadoCadastroProdutoAgrotoxicoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>

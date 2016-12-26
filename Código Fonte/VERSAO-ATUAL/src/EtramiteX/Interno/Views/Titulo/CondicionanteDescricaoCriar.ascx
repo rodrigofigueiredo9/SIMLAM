@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<Tecnomapas.Blocos.Entities.Interno.ModuloTitulo.TituloCondicionanteDescricao>" %>
+﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<Tecnomapas.Blocos.Entities.Interno.ModuloTitulo.TituloCondicionanteDescricao>" %>
 
 <script>
 	CondicionanteDescricaoSalvar.settings.urls = {
