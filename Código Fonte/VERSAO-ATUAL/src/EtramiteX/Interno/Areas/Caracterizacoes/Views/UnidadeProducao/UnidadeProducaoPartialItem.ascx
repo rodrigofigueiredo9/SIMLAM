@@ -30,18 +30,18 @@
 
 	<div class="block">
 		<div class="coluna20">
-			<label for="Possui_Codigo_Propriedade">Já possui código da UP ?</label><br />
+			<label for="Possui_Codigo_UP">Já possui código da UP ?</label><br />
 			<label><%=Html.RadioButton("UnidadeProducaoItem.PossuiCodigoPropriedade", true, Model.UnidadeProducaoItem.PossuiCodigoUP, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.UnidadeProducaoItem.Id > 0), new { @class = "radio RadioPossuiCodigoUP rbCodigoSim" }))%>Sim</label>
 			<label><%=Html.RadioButton("UnidadeProducaoItem.PossuiCodigoPropriedade", false, !Model.UnidadeProducaoItem.PossuiCodigoUP, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.UnidadeProducaoItem.Id > 0), new { @class = "radio RadioPossuiCodigoUP rbCodigoNao" }))%>Não</label>
 		</div>
 		<div class="coluna20 prepend1">
-			<label for="Codigo_Propriedade">Código da UP *</label>
-			<%=Html.TextBox("UnidadeProducaoItem.CodigoUP", Model.UnidadeProducaoItem.CodigoUP > 0 ? Model.UnidadeProducaoItem.CodigoUP.ToString() : "Gerado automaticamente",  ViewModelHelper.SetaDisabled((Model.IsVisualizar || !Model.UnidadeProducaoItem.PossuiCodigoUP), new { @class = "text txtCodigoUP maskNumInt", @maxlength = "17"}))%>
+			<label for="CodigoUP">Código da UP *</label>
+			<%=Html.TextBox("UnidadeProducaoItem.CodigoUP", Model.UnidadeProducaoItem.CodigoUP > 0 ? Model.UnidadeProducaoItem.CodigoUP.ToString() : "Gerado automaticamente",  ViewModelHelper.SetaDisabled((Model.IsVisualizar || !Model.UnidadeProducaoItem.PossuiCodigoUP), new { @class = "text txtCodigoUP maskNumInt", @maxlength = "19"}))%>
 		</div>
 	</div>
 	<div class="block">
 		<div class="coluna38">
-			<label for="Possui_Codigo_Propriedade">Tipo de produção *</label><br />
+			<label for="tipo_producao">Tipo de produção *</label><br />
 			<label><%=Html.RadioButton("UnidadeProducaoItem.TipoProducao", (int)eUnidadeProducaoTipoProducao.Frutos, Model.UnidadeProducaoItem.TipoProducao == (int)eUnidadeProducaoTipoProducao.Frutos || Model.UnidadeProducaoItem.TipoProducao == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio RadioTipoProducao rbTPFrutos" }))%>Frutos</label>
 			<label><%=Html.RadioButton("UnidadeProducaoItem.TipoProducao", (int)eUnidadeProducaoTipoProducao.MaterialPropagacao, Model.UnidadeProducaoItem.TipoProducao == (int)eUnidadeProducaoTipoProducao.MaterialPropagacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio RadioTipoProducao rbTPMudas" }))%>Material de Propagação</label>
 			<label><%=Html.RadioButton("UnidadeProducaoItem.TipoProducao", (int)eUnidadeProducaoTipoProducao.Madeira, Model.UnidadeProducaoItem.TipoProducao == (int)eUnidadeProducaoTipoProducao.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio RadioTipoProducao rbTPMadeira" }))%>Madeiras</label>
