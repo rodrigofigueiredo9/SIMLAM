@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloOrgaoParceiroConveniado" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloOrgaoParceiroConveniado" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMOrgaosParceirosConveniados" %>
 

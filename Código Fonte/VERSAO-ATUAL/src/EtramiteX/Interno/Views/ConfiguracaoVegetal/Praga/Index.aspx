@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PragaListarVM>" %>
 

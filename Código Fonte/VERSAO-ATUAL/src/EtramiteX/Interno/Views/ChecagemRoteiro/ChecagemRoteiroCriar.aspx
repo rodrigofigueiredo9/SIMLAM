@@ -1,4 +1,4 @@
-<%@ Import Namespace="System.Web.Script.Serialization" %>
+﻿<%@ Import Namespace="System.Web.Script.Serialization" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemRoteiro" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarCheckListRoteiroVM>" %>

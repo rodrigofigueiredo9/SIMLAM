@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Import  Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<MotivoTramitacaoVM>" %>
 

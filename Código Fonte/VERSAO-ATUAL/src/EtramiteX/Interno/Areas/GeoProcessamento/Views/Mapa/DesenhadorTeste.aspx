@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.GeoProcessamento.ViewModels.VMMapa" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.GeoProcessamento.ViewModels.VMMapa" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CoordenadaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">

@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.RelatorioPersonalizado.Entities" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.RelatorioPersonalizado.Entities" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Relatorios.ViewModels" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<PersonalizadoExecutarVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>

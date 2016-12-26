@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.Blocos.RelatorioPersonalizado.Entities" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.RelatorioPersonalizado.Entities" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<Relatorio>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Atribuir Executor Relatório</asp:Content>
