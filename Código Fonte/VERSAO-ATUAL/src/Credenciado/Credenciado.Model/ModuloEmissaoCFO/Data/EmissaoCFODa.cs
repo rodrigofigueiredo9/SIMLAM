@@ -999,7 +999,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 						caracterizacao.CredenciadoID = id;
 						caracterizacao.Tid = reader.GetValue<string>("tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+						caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
 						caracterizacao.LocalLivroDisponivel = reader.GetValue<string>("local_livro");
