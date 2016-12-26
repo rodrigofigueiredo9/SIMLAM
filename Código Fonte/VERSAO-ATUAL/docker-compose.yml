@@ -1,6 +1,6 @@
 version: '2'
 services:
-  application:
+  interno:
     build: .
     command: "xsp4 --port=9000 --nonstop"
     ports:
@@ -8,7 +8,7 @@ services:
     environment:
       - MONO_OPTIONS=--debug
 
-  watch:
+  watch_interno:
     build:
       context: .
       dockerfile: Dockerfile.development
@@ -24,3 +24,20 @@ services:
       - 9000:9000
     environment:
       - MONO_OPTIONS=--debug
+
+  watch_credenciado:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    working_dir: /volumes/code/src/Credenciado/Credenciado
+    entrypoint:
+     - sh
+     - -c
+     -  "cp /MonoRazorScripts/libs/*.dll ./bin && xsp4 --port=9000 --nonstop"
+    volumes:
+      - ./lib:/volumes/code/lib
+      - ./src:/volumes/code/src
+    ports:
+      - 9000:9000
+    environment:
+      - MONO_OPTIONS=--debug --optimize=gshared
