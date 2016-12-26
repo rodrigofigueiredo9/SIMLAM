@@ -17,8 +17,6 @@ using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
-using Tecnomapas.EtramiteX.Configuracao;
-using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloUnidadeProducao.Data
