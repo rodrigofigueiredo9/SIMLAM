@@ -1,4 +1,4 @@
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CaracterizacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento</asp:Content>
@@ -38,21 +38,21 @@
 					<label><%=Model.DenominadorTexto%> *</label>
 					<%= Html.TextBox("DenominadorValor", Model.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
 				</div>
-				
+
 			</div>
 
 			<div class="block">
 				<div class="coluna20 append1">
 					<label>Zona de localização *</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
 				<div class="coluna7 append1">
 					<label>UF</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Uf, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Uf, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
 				<div class="coluna45 append1">
 					<label>Município</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Municipio, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Municipio, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
                 <div class="coluna20 ">
 					<label>CNPJ</label>
