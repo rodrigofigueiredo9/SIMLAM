@@ -954,6 +954,7 @@
     <Content Include="Scripts\jquery.ddl.js" />
     <Content Include="Scripts\jquery.listar-ajax.js" />
     <Content Include="Scripts\jquery.listar-grid.js" />
+    <Content Include="Scripts\json-bigint.js" />
     <Content Include="Scripts\Lib\date-pt-BR.js" />
     <Content Include="Scripts\Lib\FileUpload\jquery.fileupload-ui.js" />
     <Content Include="Scripts\Lib\FileUpload\jquery.fileupload.js" />
