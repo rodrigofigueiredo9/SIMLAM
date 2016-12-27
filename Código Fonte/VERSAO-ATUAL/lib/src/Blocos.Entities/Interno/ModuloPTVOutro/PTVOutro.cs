@@ -45,6 +45,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
         public string DeclaracaoAdicionalHtml { get; set; }
         public List<Praga> Pragas { get; set; }
 
+        public List<PTVOutroDeclaracao> Declaracoes { get; set; }
+
 		public PTVOutro()
 		{
 			DataEmissao = new DateTecno();
@@ -54,6 +56,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 			Produtos = new List<PTVOutroProduto>();
 			Destinatario = new DestinatarioPTV();
             Pragas = new List<Praga>();
+            Declaracoes = new List<PTVOutroDeclaracao>();
 
             Tid =
             SituacaoTexto =

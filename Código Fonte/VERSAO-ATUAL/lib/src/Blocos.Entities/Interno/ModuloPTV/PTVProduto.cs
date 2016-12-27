@@ -48,4 +48,5 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
         public string EmpreendimentoDeclaratorio { get; set; }
 	}
+
 }
