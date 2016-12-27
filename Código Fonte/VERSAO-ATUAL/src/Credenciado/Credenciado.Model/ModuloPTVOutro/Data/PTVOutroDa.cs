@@ -175,7 +175,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 				#endregion
 
-				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptvoutro, eHistoricoAcao.criar, bancoDeDados);
+                #region Declaracao PTV
+
+                comando = bancoDeDados.CriarComando(@"
+				insert into tab_ptv_outrouf_declaracao
+					(id, tid, ptv, declaracao_adicional, cultivar, praga)
+				values 
+					(seq_tab_ptv_outrouf_declaracao.nextval, :tid, :ptv, :declaracao, :cultivar, :praga)", Esquema);
+
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao",  DbType.Int32);
+                comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
+                comando.AdicionarParametroEntrada("praga", DbType.Int32);
+		       
+                PTV.Declaracoes.ForEach(item =>
+                {
+                    comando.SetarValorParametro("declaracao", item.IdDeclaracao);
+                    comando.SetarValorParametro("cultivar", item.IdCultivar);
+                    comando.SetarValorParametro("praga", item.IdPraga);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+            
+
+                #endregion
+
+                Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptvoutro, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -439,11 +465,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 PTV.Pragas = ObterPragasLista2(PTV.Produtos);
 
-
-
 				#endregion
 
-				return PTV;
+                #region PTV Declaracoes
+
+
+                comando = bancoDeDados.CriarComando(@"
+				select d.praga              IdPraga,
+                       p.nome_cientifico    NomeCientifico,
+                       p.nome_comum         NomeComum,
+                       c.Texto              DeclaracaoAdicional,
+                       c.id                 IdDeclaracao,
+                       d.cultivar           IdCultivar            
+				from 
+					tab_ptv_outrouf_declaracao	d,
+					lov_cultivar_declara_adicional	c,
+                    tab_praga p
+				where d.declaracao_adicional = c.id
+                    and d.praga = p.id
+					and d.ptv = :ptv", Esquema);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+
+                PTV.Declaracoes = bancoDeDados.ObterEntityList<PTVOutroDeclaracao>(comando);
+
+                #endregion
+
+                return PTV;
 			}
 		}
 

@@ -401,13 +401,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
                     #region Buscar tratamento PTV Outro Estado
                     using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
                     {
-                        comando = bancoDeDados.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
-                            from tab_ptv_outrouf_produto cp, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda
-                            where cp.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '1' 
-                            and cconf.tipo_producao = :tipoProducaoID and cp.cultivar = :cultivarID ", EsquemaBanco);
+                        comando = bancoDeDados.CriarComando(@"select lcda.texto DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_declaracao t, lov_cultivar_declara_adicional lcda
+                            where t.declaracao_adicional = lcda.id
+                            and t.ptv = :origem and t.cultivar = :cultivarID ", EsquemaBanco);
 
                        // comando.AdicionarParametroEntrada("idPtvOutro", origem, DbType.Int32);
-                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("origem", origem, DbType.Int32);
                         comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
                         using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))

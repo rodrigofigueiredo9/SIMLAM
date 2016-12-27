@@ -210,10 +210,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                     strOutroEstado = "('0')";
 
 
-                string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml, ld.outro_estado as OutroEstado
-				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado in {1} and t.cultivar = :id", EsquemaBanco, strOutroEstado);
+//                string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+//				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+//				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+//				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional(+)", EsquemaBanco, strOutroEstado);
+
+                string cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                 lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                 from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                                 where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
+                                                 ld.outro_estado = '0'", EsquemaBanco);
+
+                if (lstLotes != null && lstLotes.Count > 0)
+                {
+
+                    string strLotes = string.Join(",", lstLotes
+                                            .Select(x => string.Format("'{0}'", x)));
+
+                    cmdSql += string.Format(@" union all select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional
+                                                and ot.id in ({1})", EsquemaBanco, strLotes);
+
+                }
+
+                //ld.outro_estado in {1}
 
 				comando = bancoDeDados.CriarComando(cmdSql, EsquemaBanco);
 
@@ -227,16 +249,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 					{
 						while (reader.Read())
 						{
-                            string Declaracao = "";
+                            //string Declaracao = "";
 
-                            if (lstLotes != null && lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
-                                Declaracao = sbDecAdd.ToString();
-                            else
-                                Declaracao = reader.GetValue<string>("DeclaracaoAdicionalTexto");
+                            //if (lstLotes != null && lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
+                            //    Declaracao = sbDecAdd.ToString();
+                            //else
+                            //    Declaracao = reader.GetValue<string>("DeclaracaoAdicionalTexto");
 
 							x.LsCultivarConfiguracao.Add(new CultivarConfiguracao()
 							{
-
 
 								Id = reader.GetValue<int>("id"),
 								Tid = reader.GetValue<string>("tid"),
@@ -246,8 +267,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 								TipoProducaoId = reader.GetValue<int>("TipoProducaoId"),
 								TipoProducaoTexto = reader.GetValue<string>("TipoProducaoTexto"),
 								DeclaracaoAdicionalId = reader.GetValue<int>("DeclaracaoAdicionalId"),
-								DeclaracaoAdicionalTexto = Declaracao,
-                                DeclaracaoAdicionalTextoHtml = Declaracao,
+                                DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto"),
+                                DeclaracaoAdicionalTextoHtml = reader.GetValue<string>("DeclaracaoAdicionalTextoHtml")
 							});
 						}
 
