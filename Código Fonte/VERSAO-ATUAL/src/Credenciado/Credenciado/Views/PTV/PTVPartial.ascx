@@ -214,13 +214,6 @@
 		</div>
 	</div>
 
-    <div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<label>Declaração Adicional</label>
-		<div class="textareaFake txtDeclaracaoAdicional">
-				<%= Model.PTV.DeclaracaoAdicional %>
-		</div>
-    </div>
-
 	<fieldset class="block box destinatario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<legend>Destinatário</legend>
 		<div class="asmItens">

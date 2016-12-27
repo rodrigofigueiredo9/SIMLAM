@@ -204,15 +204,12 @@
 				</tr>
 			</thead>
 			<tbody>
-                <%
-                    string[] vec_dec = Model.PTV.DeclaracaoAdicional.Split('|');
-                    int c = 0;
-                %>
-				<% foreach (var item in Model.PTV.Pragas) { if(string.IsNullOrEmpty(vec_dec[c])) continue;  %>
+               
+				<% foreach (var item in Model.PTV.Declaracoes) {   %>
 					<tr>
 						<td class="nome_cientifico" title="<%=item.NomeCientifico %>"><%=item.NomeCientifico%></td>
 						<td class="nome_comum" title="<%=item.NomeComum%>"> <%=item.NomeComum%></td>
-                        <td class="declaracao_adicional" title="<%=vec_dec[c]%>"><%=vec_dec[c]%> </td>
+                        <td class="declaracao_adicional" title="<%=item.DeclaracaoAdicional%>"><%=item.DeclaracaoAdicional%> </td>
 						<%if(!Model.IsVisualizar){ %> 
 						<td>
 							<a class="icone excluir btnExcluir"></a>
@@ -220,7 +217,7 @@
 						</td>
 						<%} %>
 					</tr>
-				<% c++; } %>
+				<%} %>
 				<%if(!Model.IsVisualizar){ %>
 					<tr class="trTemplate hide">
 						<td class="nome_cientifico"></td>

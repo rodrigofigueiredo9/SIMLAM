@@ -25,7 +25,8 @@ PTVEmitir = {
 			urlObterItinerario: null,
 			urlVerificarDocumentoOrigem: null,
 			urlObterLaboratorio: null,
-			urlObterDiasHorasVistoria: null
+			urlObterDiasHorasVistoria: null,
+		    urlObterDeclaracaoAdicional: null
 		},
 		Mensagens: null,
 		idsTela: null,

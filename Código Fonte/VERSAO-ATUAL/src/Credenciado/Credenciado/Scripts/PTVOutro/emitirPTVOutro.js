@@ -341,24 +341,31 @@ PTVOutroEmitir = {
         var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
         var lista = PTVOutroEmitir.obterPragas();
 
-        var declaracao = $('.ddlDeclaracaoAdicional option:selected', DeclaracaoAdicional.container).text();
+        var declaracao = $('.ddlDeclaracaoAdicional', PTVOutroEmitir.container).ddlSelecionado();
 
-     
+        var produto;
+        $('.gridProdutos tbody tr:last .hdnItemJson', PTVOutroEmitir.container).each(function () {
+            produto = (JSON.parse($(this).val()));
+        });
+
+        
 
         var item = {
-            Id: praga.Id,
+            IdPraga: praga.Id,
             NomeCientifico: praga.Texto.split('-')[0],
             NomeComum: praga.Texto.split('-')[1],
-            DeclaracaoAdicional: declaracao
+            DeclaracaoAdicional: declaracao.Texto,
+            IdDeclaracao: declaracao.Id,
+            IdCultivar: produto.Cultivar
         };
 
-        var retorno = MasterPage.validarAjax(PTVOutroEmitir.settings.urls.urlValidarPraga, { item: item, lista: lista }, null, false);
+        //var retorno = MasterPage.validarAjax(PTVOutroEmitir.settings.urls.urlValidarPraga, { item: item, lista: lista }, null, false);
 
-        if (!retorno.EhValido && retorno.Msg) {
-            Mensagem.gerar(PTVOutroEmitir.container, retorno.Msg);
-            return;
+        //if (!retorno.EhValido && retorno.Msg) {
+        //    Mensagem.gerar(PTVOutroEmitir.container, retorno.Msg);
+        //    return;
 
-        }
+        //}
 
    
 
@@ -382,6 +389,15 @@ PTVOutroEmitir = {
     },
 
     obterPragas: function () {
+        var retorno = [];
+        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    obterDeclaracoes: function () {
         var retorno = [];
         $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
             retorno.push(JSON.parse($('.hdnItemJson', this).val()));
@@ -587,12 +603,15 @@ PTVOutroEmitir = {
 			Estado: $('.ddlEstados', PTVOutroEmitir.container).val(),
 			Municipio: $('.ddlMunicipios', PTVOutroEmitir.container).val(),
 			DeclaracaoAdicional: declaracoes,
-			Produtos: []
+			Produtos: [],
+            Declaracoes: []
 		}
 
 		
 
 		objeto.Destinatario = PTVOutroEmitir.obterDestinatario();
+
+		objeto.Declaracoes = PTVOutroEmitir.obterDeclaracoes();
 
 		var retorno = [];
 
