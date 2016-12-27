@@ -225,7 +225,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                 {
 
                     string strLotes = string.Join(",", lstLotes
-                                            .Select(x => string.Format("'{0}'", x)));
+                                            .Select(x => string.Format("'{0}'", x.Id.ToString())));
 
                     cmdSql += string.Format(@" union all select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
