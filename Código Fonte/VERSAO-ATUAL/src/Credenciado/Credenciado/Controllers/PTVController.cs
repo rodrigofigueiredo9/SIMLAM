@@ -636,6 +636,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
 		public ActionResult VerificarConsultaDUA(int filaID, string numero, string cpfCnpj, string tipo, int ptvId)
 		{
