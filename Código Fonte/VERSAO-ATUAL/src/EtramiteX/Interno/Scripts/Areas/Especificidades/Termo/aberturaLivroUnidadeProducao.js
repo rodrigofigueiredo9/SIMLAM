@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../../masterpage.js" />
 /// <reference path="../../../jquery.ddl.js" />
 
@@ -56,8 +56,10 @@ AberturaLivroUnidadeProducao = {
 			mensagens.push(jQuery.extend(true, {}, AberturaLivroUnidadeProducao.settings.Mensagens.UnidadeProducaoObrigatorio));
 		}
 
+		var JsonParser = JsonBigint();
+
 		$('tbody tr:not(.trTemplateRow) .hdnItemJSon', tabela).each(function () {
-			var itemAdd = JSON.parse($(this).val());
+			var itemAdd = JsonParser.parse($(this).val());
 			if (item.Id == itemAdd.Id) {
 				mensagens.push(jQuery.extend(true, {}, AberturaLivroUnidadeProducao.settings.Mensagens.UnidadeProducaoJaAdicionada));
 			}
@@ -80,15 +82,17 @@ AberturaLivroUnidadeProducao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Titulo.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					item = response.Item;
+				var validResponse = JsonParser.parse(XMLHttpRequest.responseText)
+
+				if (validResponse.EhValido) {
+					item = validResponse.Item;
 				}
 			}
 		});
 
 		var linha = $('.trTemplateRow', tabela).clone().removeClass('trTemplateRow hide');
-		linha.find('.hdnItemJSon').val(JSON.stringify(item));
-		linha.find('.UnidadeProducao').html(item.CodigoUP).attr('title', item.CodigoUP);
+		linha.find('.hdnItemJSon').val(JsonParser.stringify(item));
+		linha.find('.UnidadeProducao').html(item.CodigoUP.toString()).attr('title', item.CodigoUP.toString());
 		linha.find('.CulturaCultivar').html(item.CulturaTexto + ' ' + item.CultivarTexto).attr('title', item.CulturaTexto + ' ' + item.CultivarTexto);
 		linha.find('.QuantidadeAno').html(String(item.EstimativaProducaoQuantidadeAno).replace('.', ',')).attr('title', String(item.EstimativaProducaoQuantidadeAno).replace('.', ','));
 
@@ -116,9 +120,11 @@ AberturaLivroUnidadeProducao = {
 			Unidades: []
 		};
 
+		var JsonParser = JsonBigint();
+
 		//Unidades
 		$('.tbUnidade tbody tr:not(.trTemplateRow) .hdnItemJSon', AberturaLivroUnidadeProducao.container).each(function () {
-			especificidade.Unidades.push(JSON.parse($(this).val()));
+			especificidade.Unidades.push(JsonParser.parse($(this).val()));
 		});
 
 		return especificidade;
