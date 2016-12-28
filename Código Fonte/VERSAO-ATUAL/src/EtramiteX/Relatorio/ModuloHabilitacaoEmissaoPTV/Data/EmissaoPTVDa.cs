@@ -773,7 +773,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                         where pp.id_hst = p.id and p.ptv_id = :origemId and p.tid = :origemTid and pp.cultivar_id = :cultivarID", EsquemaBanco);
 					comando.AdicionarParametroEntrada("origemId", origemId, DbType.Int32);
 					comando.AdicionarParametroEntrada("origemTid", origemTid, DbType.String);
-					comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+					comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
