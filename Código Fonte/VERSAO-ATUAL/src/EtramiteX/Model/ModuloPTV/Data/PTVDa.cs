@@ -1757,7 +1757,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda."+colunaDeclaracaoAdicional+@" DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
                             ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
                             and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
-                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID", UsuarioCredenciado);
+                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and lcda.outro_estado='0' and i.cultivar = :cultivarID", UsuarioCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfoId", origem, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
@@ -1783,7 +1783,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda." + colunaDeclaracaoAdicional + @" DeclaracaoAdicionalTexto 
                             from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
                             where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
-                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID", UsuarioCredenciado);
+                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado='0' ", UsuarioCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfocId", origem, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
@@ -1823,6 +1823,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					}
 					#endregion
 					break;
+
+                case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                    #region Buscar tratamento PTV Outro Estado
+                    using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
+                    {
+
+                        comando = bancoDeDados.CriarComando(@"select lcda.texto DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_declaracao t, lov_cultivar_declara_adicional lcda
+                            where t.declaracao_adicional = lcda.id
+                            and t.ptv = :origem and t.cultivar = :cultivarID ", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("origem", origem, DbType.Int32);
+                        //comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                        using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
+                        {
+                            while (reader.Read())
+                            {
+                                retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                            }
+                            reader.Close();
+                        }
+                    }
+                    #endregion
+                    break;
 			}
 			return retorno;
 		}
