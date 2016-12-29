@@ -231,7 +231,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
 				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional
-                                                and ot.id in ({1})", EsquemaBanco, strLotes);
+                                                and ot.ptv in ({1})", EsquemaBanco, strLotes);
 
                 }
 

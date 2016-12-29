@@ -18,6 +18,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem ObjetoNulo { get { return new Mensagem() { Tipo = eTipoMensagem.Erro, Texto = "Objeto está nulo." }; } }
         public Mensagem DeclaracaoSalvaComSucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Declaração salva com sucesso." }; } }
         public Mensagem DeclaracaoExcluidaComSucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Declaração excluída com sucesso." }; } }
+        public Mensagem DeclaracaoExcluidaComErro { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Não foi possível excluir a  declaração pois a mesma está vinculada a um cultivar." }; } }
 
         public Mensagem MensagemExcluir(string numero)
         {

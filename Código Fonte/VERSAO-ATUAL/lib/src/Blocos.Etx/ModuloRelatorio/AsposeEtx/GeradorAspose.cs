@@ -226,8 +226,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 		public static void Autorizacao()
 		{
-			//License license = new License();
-			//license.SetLicense("Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.Aspose.Words.lic");
+			License license = new License();
+			license.SetLicense("Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.Aspose.Words.lic");
 		}
 	}
 }

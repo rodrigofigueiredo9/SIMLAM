@@ -409,10 +409,15 @@ PTVOutroEmitir = {
     onSelPragra: function () {
 
         var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
+        
+        var produto;
+        $('.gridProdutos tbody tr:last .hdnItemJson', PTVOutroEmitir.container).each(function () {
+            produto = (JSON.parse($(this).val()));
+        });
 
         $.ajax({
             url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoCombo,
-            data: JSON.stringify({ pragaId: praga.Id }),
+            data: JSON.stringify({ pragaId: praga.Id, cultivarId : produto.Cultivar }),
             cache: false,
             async: false,
             type: 'POST',

@@ -596,7 +596,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
                             ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
                             and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
-                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID", EsquemaBancoCredenciado);
+                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID and lcda.outro_estado = '0' ", EsquemaBancoCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfoId", origem, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
@@ -619,10 +619,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 					using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
 					{
-						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
+                        comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct DBMS_LOB.substr(cfoc.informacoes_complementares, 4000) as DeclaracaoAdicionalTexto
                             from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
                             where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
-                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID", EsquemaBancoCredenciado);
+                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado = '0' ", EsquemaBancoCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfocId", origem, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
@@ -667,13 +667,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                     #region Buscar tratamento PTV Outro Estado
                     using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
                     {
-                        comando = bancoDeDados.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
-                            from tab_ptv_outrouf_produto cp, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda
-                            where cp.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '1' 
-                            and cconf.tipo_producao = :tipoProducaoID and cp.cultivar = :cultivarID ", EsquemaBanco);
 
-                        //comando.AdicionarParametroEntrada("idPtvOutro", origem, DbType.Int32);
-                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando = bancoDeDados.CriarComando(@"select lcda.texto DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_declaracao t, lov_cultivar_declara_adicional lcda
+                            where t.declaracao_adicional = lcda.id
+                            and t.ptv = :origem and t.cultivar = :cultivarID ", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("origem", origem, DbType.Int32);
+                        //comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
                         comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
                         using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))

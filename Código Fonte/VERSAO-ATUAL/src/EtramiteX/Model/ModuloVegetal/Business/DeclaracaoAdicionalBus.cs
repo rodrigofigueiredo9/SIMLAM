@@ -53,7 +53,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
             }
             catch (Exception exc)
             {
-                Validacao.AddErro(exc);
+                //Validacao.AddErro(exc);
+                //retErros = false;
+                Validacao.Add(Mensagem.Declaracao.DeclaracaoExcluidaComErro);
+
                 retErros = false;
             }
 

@@ -207,11 +207,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 			}
 		}
 
-        internal List<ListaValor> ObterListaDeclaracao(int pragaId)
+        internal List<ListaValor> ObterListaDeclaracao(int pragaId, int cultivarId)
         {
             List<ListaValor> lst = new List<ListaValor>();
             string Consulta = string.Format(@"select distinct d.id as id, d.texto as texto from lov_cultivar_declara_adicional d,tab_cultivar_configuracao c 
-                                                where c.declaracao_adicional = d.id and d.outro_estado='1' and c.praga={0} ", pragaId);
+                                                where c.declaracao_adicional = d.id and d.outro_estado='1' and c.praga={0} and c.cultivar={1}", pragaId, cultivarId);
             IEnumerable<IDataReader> daReader = DaHelper.ObterLista(Consulta);
             foreach (var item in daReader)
             {

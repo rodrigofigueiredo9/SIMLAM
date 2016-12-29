@@ -302,7 +302,11 @@
     <EmbeddedResource Include="ModuloRelatorio\ITextSharpEtx\Fontes\ARIALN.TTF" />
     <EmbeddedResource Include="ModuloRelatorio\ITextSharpEtx\Fontes\ariblk.ttf" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="ModuloRelatorio\AsposeEtx\Aspose.Words.lic">
+      <CustomToolNamespace>Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

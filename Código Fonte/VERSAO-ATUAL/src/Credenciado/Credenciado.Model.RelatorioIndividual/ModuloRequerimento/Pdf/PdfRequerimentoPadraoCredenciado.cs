@@ -77,9 +77,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloReque
 			{
 				List<Table> tabelas = new List<Table>();
 
-				doc.FindTable("OBJETIVO DO PEDIDO").RemoverParagrafos();
+				//doc.FindTable("OBJETIVO DO PEDIDO").RemoverParagrafos();
 
-				doc.FindTable("IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO").RemoverParagrafos();
+				//doc.FindTable("IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO").RemoverParagrafos();
 
 				if (dataSource.Interessado.Id == 0)
 				{
