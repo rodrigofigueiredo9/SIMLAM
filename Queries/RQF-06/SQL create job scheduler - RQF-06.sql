@@ -1,6 +1,6 @@
 BEGIN
 DBMS_SCHEDULER.CREATE_JOB (
-   job_name             => 'job_cancelar_CFOCFOCPTV_anual',
+   job_name             => 'IDAF.job_cancelar_CFOCFOCPTV_anual',
    job_type             => 'STORED_PROCEDURE',
    job_action           => 'cancelar_CFOCFOCPTV_anual',
    start_date           => TO_TIMESTAMP('2017/01/01 00:01:00', 'YYYY/MM/DD HH24:MI:SS'),
@@ -14,4 +14,4 @@ END;
 
 -- Formato TimeStamp => select TO_TIMESTAMP('2017/01/01 00:01:00', 'YYYY/MM/DD HH24:MI:SS'), SYSTIMESTAMP AT LOCAL ZONE from dual;
 
--- Apagar JOB => BEGIN DBMS_SCHEDULER.drop_job (job_name => upper('job_cancelar_CFOCFOCPTV_anual')); END;
+-- Apagar JOB => BEGIN DBMS_SCHEDULER.drop_job (job_name => upper('IDAF.job_cancelar_CFOCFOCPTV_anual')); END;

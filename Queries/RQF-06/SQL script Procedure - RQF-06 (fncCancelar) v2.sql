@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE cancelar_CFOCFOCPTV_anual AS
+CREATE OR REPLACE PROCEDURE IDAF.cancelar_CFOCFOCPTV_anual AS
 BEGIN
 /*
   RQF-06	Cancelar Documentos em Elaboração e Nº de Blocos e Digitais não utilizados
