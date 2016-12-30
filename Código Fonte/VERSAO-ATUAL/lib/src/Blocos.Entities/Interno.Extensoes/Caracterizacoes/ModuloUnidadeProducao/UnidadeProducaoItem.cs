@@ -14,7 +14,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 		public String Tid { get; set; }
 		public Int32 IdRelacionamento { get; set; }
 		public bool PossuiCodigoUP { get; set; }
-		public long CodigoUP { get; set; }
+		public Int64 CodigoUP { get; set; }
+        public string CodigoUPStr
+       {
+           get { return CodigoUP.ToString(); }
+        }
 		public int TipoProducao { get; set; }
 		public string RenasemNumero { get; set; }
 		public string DataValidadeRenasem { get; set; }
