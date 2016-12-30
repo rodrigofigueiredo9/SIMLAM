@@ -127,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloTer
 
 				if (caracterizacao != null)
 				{
-					caracterizacao.UnidadesProducao.RemoveAll(x => !termo.UnidadeProducao.Unidades.Any(y => y.CodigoUP == x.CodigoUP));
+					caracterizacao.UnidadesProducao.RemoveAll(x => !termo.UnidadeProducao.Unidades.Any(y => y.CodigoUP == x.CodigoUPStr));
 					termo.UnidadeProducao = new UnidadeProducaoPDF(caracterizacao);
 				}
 				else
