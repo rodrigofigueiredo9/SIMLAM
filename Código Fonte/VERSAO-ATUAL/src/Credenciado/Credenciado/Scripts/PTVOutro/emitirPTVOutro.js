@@ -300,6 +300,7 @@ PTVOutroEmitir = {
     carregarPragas: function () {
         $('.ddlPragas', PTVOutroEmitir.container).ddlClear();
         var produtos = PTVOutroEmitir.obterIdentificacoes();
+        
 
         $.ajax({
             url: PTVOutroEmitir.settings.urls.urlObterPragas,
@@ -319,7 +320,7 @@ PTVOutroEmitir = {
             }
         });
 
-        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+        /*$('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
             var item = JSON.parse($('.hdnItemJson', this).val());
 
             var possui = false;
@@ -332,7 +333,7 @@ PTVOutroEmitir = {
             if (!possui) {
                 $(this).remove();
             }
-        });
+        });*/
     },
 
     addPraga: function () {
@@ -410,14 +411,27 @@ PTVOutroEmitir = {
 
         var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
         
-        var produto;
-        $('.gridProdutos tbody tr:last .hdnItemJson', PTVOutroEmitir.container).each(function () {
-            produto = (JSON.parse($(this).val()));
+      
+
+        var produto = [];
+        $('.gridProdutos tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            produto.push(JSON.parse($('.hdnItemJson', this).val()));
         });
 
+
+        var produtoIds = [];
+
+        for(var i = 0; i < produto.length; i++)
+        {
+         
+            produtoIds.push(produto[i].Cultivar);
+        }
+
+       
+            
         $.ajax({
             url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoCombo,
-            data: JSON.stringify({ pragaId: praga.Id, cultivarId : produto.Cultivar }),
+            data: JSON.stringify({ pragaId: praga.Id, cultivarId : produtoIds }),
             cache: false,
             async: false,
             type: 'POST',
@@ -462,13 +476,25 @@ PTVOutroEmitir = {
         MasterPage.carregando(false);
     },
 
-    onExcluirIdentificacaoProduto: function() {
+    onExcluirIdentificacaoProduto: function () {
+
+        var produto = JSON.parse($(this).closest('tr').find('.hdnItemJson').val());
+      
+
         Mensagem.limpar(PTVOutroEmitir.container);
         var container = $(this).closest('.gridIdentificacaoProdutos');
+
+      
+       
+
         $(this).closest('tr').toggle(
-            function() {
+            function () {
+                
                 $(this).remove();
             });
+
+     
+
         Listar.atualizarEstiloTable(container);
     },
 
