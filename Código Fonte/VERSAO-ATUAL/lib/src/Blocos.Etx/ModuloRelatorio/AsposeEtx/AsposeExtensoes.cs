@@ -43,7 +43,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 					continue;
 				}
 
-				string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 				if (String.IsNullOrEmpty(valor))
 				{
 					continue;
@@ -81,7 +81,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 				{
 					return false;
 				}
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -115,7 +115,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 			T retorno = nodes.OfType<T>().LastOrDefault(item =>
 			{
-                string valor = (item as Node).ToString();
+                string valor = (item as Node).ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -148,7 +148,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 					continue;
 				}
 
-                string valor = atual.ToString();
+                string valor = atual.ToString(SaveFormat.Text); 
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -181,7 +181,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 					continue;
 				}
 
-                string valor = atual.ToString();
+                string valor = atual.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -206,7 +206,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 		{
 			foreach (Shape item in doc.GetChildNodes(NodeType.Shape, true))
 			{
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor) && item.TextPath != null)
 				{
@@ -228,7 +228,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 			foreach (Shape item in doc.GetChildNodes(NodeType.Shape, true))
 			{
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor) && item.TextPath != null)
 				{
@@ -249,7 +249,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 		{
 			foreach (Table item in doc.GetChildNodes(NodeType.Table, true))
 			{
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -274,7 +274,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 			Node retorno = nodes.LastOrDefault(x =>
 			{
 				Table item = x as Table;
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -298,7 +298,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 		{
 			foreach (Table item in table.GetChildNodes(NodeType.Table, true))
 			{
-                string valor = item.ToString();
+                string valor = item.ToString(SaveFormat.Text);
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -323,9 +323,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 				return false;
 			}
 
-            if (node.ToString() == null ||
-                node.ToString() == String.Empty ||
-                node.ToString() == "\r\n")
+
+            if (node.ToString(SaveFormat.Text) == null ||
+                node.ToString(SaveFormat.Text) == String.Empty ||
+                node.ToString(SaveFormat.Text) == "\r\n")
 			{
 				return true;
 			}
@@ -340,8 +341,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 				return false;
 			}
 
-            if (node.ToString() == null ||
-                node.ToString().Trim() == String.Empty)
+            if (node.ToString(SaveFormat.Text) == null ||
+                node.ToString(SaveFormat.Text).Trim() == String.Empty)
 			{
 				return true;
 			}
