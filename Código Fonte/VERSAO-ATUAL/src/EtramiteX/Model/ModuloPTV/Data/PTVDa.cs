@@ -274,14 +274,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				#region [ Declaracao Adicional ]
 
 				var listDeclaracoesAdicionais = new List<string>();
-				foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)))
+                foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
 				{
 					listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, true));
 				}
 				var declaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
 
 				listDeclaracoesAdicionais.Clear();
-				foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)))
+                foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
 				{
 					listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, false));
 				}
@@ -1835,7 +1835,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                             and t.ptv = :origem and t.cultivar = :cultivarID ", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("origem", origem, DbType.Int32);
-                        //comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
                         comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
                         using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
