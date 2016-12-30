@@ -1,0 +1,325 @@
+
+----------------------------------------------------------------------------------------------------------------------------
+
+
+--------------> CREDENCIADO:
+
+                    ANTES_CRT_UNID_PROD
+---------------------------------------
+                                   1308
+                                   2019
+                                   1591
+                                   1771
+                                   1804
+                                   1770
+                                   1722
+                                   1224
+                                   1350
+                                    781
+
+ 10 linhas selecionadas 
+
+Erro a partir da linha : 3 no comando -
+alter table 
+   CRT_UNIDADE_PRODUCAO
+modify 
+( 
+   PROPRIEDADE_CODIGO Number(19,0)
+)
+Relatório de erros -
+Erro de SQL: ORA-01440: column to be modified must be empty to decrease precision or scale
+01440. 00000 -  "column to be modified must be empty to decrease precision or scale"
+*Cause:    
+*Action:
+
+                   DEPOIS_CRT_UNID_PROD
+---------------------------------------
+                                   1308
+                                   2019
+                                   1591
+                                   1771
+                                   1804
+                                   1770
+                                   1722
+                                   1224
+                                   1350
+                                    781
+
+ 10 linhas selecionadas 
+
+                    ANTES_HST_UNID_PROD
+---------------------------------------
+                                    501
+                                    521
+                                    522
+                                    541
+                                    542
+                                    543
+                                    544
+                                    544
+                                    561
+                                    562
+
+ 10 linhas selecionadas 
+
+Erro a partir da linha : 13 no comando -
+alter table 
+   HST_CRT_UNIDADE_PRODUCAO
+modify 
+( 
+   PROPRIEDADE_CODIGO Number(19,0)
+)
+Relatório de erros -
+Erro de SQL: ORA-01440: column to be modified must be empty to decrease precision or scale
+01440. 00000 -  "column to be modified must be empty to decrease precision or scale"
+*Cause:    
+*Action:
+
+                   DEPOIS_HST_UNID_PROD
+---------------------------------------
+                                    501
+                                    521
+                                    522
+                                    541
+                                    542
+                                    543
+                                    544
+                                    544
+                                    561
+                                    562
+
+ 10 linhas selecionadas 
+
+
+   ANTES_CRT_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+Table CRT_UNIDADE_PRODUCAO_UNIDADE alterado.
+
+
+  DEPOIS_CRT_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+   ANTES_HST_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+
+Table HST_CRT_UNIDADE_PROD_UNIDADE alterado.
+
+
+  DEPOIS_HST_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+--------------> INSTITUCIONAL:
+
+                    ANTES_CRT_UNID_PROD
+---------------------------------------
+                                   2249
+                                   1784
+                                   2387
+                                   2390
+                                   2389
+                                   2401
+                                   2039
+                                   2038
+                                   2083
+                                   1596
+
+ 10 linhas selecionadas 
+
+Erro a partir da linha : 3 no comando -
+alter table 
+   CRT_UNIDADE_PRODUCAO
+modify 
+( 
+   PROPRIEDADE_CODIGO Number(19,0)
+)
+Relatório de erros -
+Erro de SQL: ORA-01440: column to be modified must be empty to decrease precision or scale
+01440. 00000 -  "column to be modified must be empty to decrease precision or scale"
+*Cause:    
+*Action:
+
+                   DEPOIS_CRT_UNID_PROD
+---------------------------------------
+                                   2249
+                                   1784
+                                   2387
+                                   2390
+                                   2389
+                                   2401
+                                   2039
+                                   2038
+                                   2083
+                                   1596
+
+ 10 linhas selecionadas 
+
+
+                    ANTES_HST_UNID_PROD
+---------------------------------------
+                                    621
+                                    621
+                                    861
+                                    861
+                                   1691
+                                    621
+                                    901
+                                    901
+                                    902
+                                    902
+
+ 10 linhas selecionadas 
+
+Erro a partir da linha : 13 no comando -
+alter table 
+   HST_CRT_UNIDADE_PRODUCAO
+modify 
+( 
+   PROPRIEDADE_CODIGO Number(19,0)
+)
+Relatório de erros -
+Erro de SQL: ORA-01440: column to be modified must be empty to decrease precision or scale
+01440. 00000 -  "column to be modified must be empty to decrease precision or scale"
+*Cause:    
+*Action:
+                   DEPOIS_HST_UNID_PROD
+---------------------------------------
+                                    621
+                                    621
+                                    861
+                                    861
+                                   1691
+                                    621
+                                    901
+                                    901
+                                    902
+                                    902
+
+ 10 linhas selecionadas 
+
+
+   ANTES_CRT_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+
+Table CRT_UNIDADE_PRODUCAO_UNIDADE alterado.
+
+
+  DEPOIS_CRT_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+
+   ANTES_HST_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
+Table HST_CRT_UNIDADE_PROD_UNIDADE alterado.
+
+
+  DEPOIS_HST_UP_UNID
+--------------------
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+             3.2E+14
+
+ 10 linhas selecionadas 
+
