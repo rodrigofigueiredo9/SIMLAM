@@ -239,7 +239,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         }
 
         [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
-        public ActionResult ObterDeclaracoes(int pragaId, int cultivarId )
+        public ActionResult ObterDeclaracoes(int pragaId, int[] cultivarId )
         {
             return Json(new
             {
