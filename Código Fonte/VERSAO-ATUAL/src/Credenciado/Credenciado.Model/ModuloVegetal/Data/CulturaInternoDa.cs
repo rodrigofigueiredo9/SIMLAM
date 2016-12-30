@@ -177,8 +177,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 				#region Cultivar_Configurações
                 StringBuilder sbDecAdd = new StringBuilder();
-                List<LoteItem> lstLotes = null;
-                string strOutroEstado = "";
+                List<LoteItem> lstLotesPtvOutro = new List<LoteItem>();
+                List<LoteItem> lstLotesCfo = new List<LoteItem>();
+                List<LoteItem> lstLotesCfoc = new List<LoteItem>();
+                string cmdSql = "";
+               // string strOutroEstado = "";
                 if (lotes != null)
                 {
                     // strOutroEstado = "('0')";
@@ -186,28 +189,39 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                     {
                         Lote lot = _loteDa.Obter(idLot);
                         // totaloutro = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count;
-                        lstLotes = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList();
+                        lstLotesPtvOutro.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList());
 
-                       
-                        foreach (LoteItem item in lstLotes)
-                        {
-                            sbDecAdd.Append(ObterDeclaracaoAdicionalPTVOutroEstado(item.Origem));
-                        }
+                        lstLotesCfo.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO).ToList());
 
-                        if (lstLotes.Count > 0 && lstLotes.Count == lot.Lotes.Count)
-                        {
-                            strOutroEstado = "('1')";
-                        }
-                        else if (lstLotes.Count > 0 && lstLotes.Count != lot.Lotes.Count)
-                            strOutroEstado = "('1','0')";
-                        else
-                            strOutroEstado = "('0')";
+                        lstLotesCfoc.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC).ToList());
+                        //foreach (LoteItem item in lstLotes)
+                        //{
+                        //    sbDecAdd.Append(ObterDeclaracaoAdicionalPTVOutroEstado(item.Origem));
+                        //}
+
+                        //if (lstLotes.Count > 0 && lstLotes.Count == lot.Lotes.Count)
+                        //{
+                        //    strOutroEstado = "('1')";
+                        //}
+                        //else if (lstLotes.Count > 0 && lstLotes.Count != lot.Lotes.Count)
+                        //    strOutroEstado = "('1','0')";
+                        //else
+                        //    strOutroEstado = "('0')";
                     }
                 }
-                else if (OutroEstado == 1)
-                    strOutroEstado = "('1')";
                 else
-                    strOutroEstado = "('0')";
+                {
+                    cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                                where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
+                                                ld.outro_estado = '0'", EsquemaBanco);
+                }
+
+                //else if (OutroEstado == 1)
+                //    strOutroEstado = "('1')";
+                //else
+                //    strOutroEstado = "('0')";
 
 
 //                string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
@@ -215,19 +229,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 //				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
 //				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional(+)", EsquemaBanco, strOutroEstado);
 
-                string cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				                                 lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
-				                                 from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				                                 where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
-                                                 ld.outro_estado = '0'", EsquemaBanco);
 
-                if (lstLotes != null && lstLotes.Count > 0)
+
+                
+                string strLotes = "";
+                if ( (lstLotesCfo != null && lstLotesCfo.Count > 0) ||
+                    (lstLotesCfoc != null && lstLotesCfoc.Count > 0))
+                {
+                    string strCultivares = string.Join(",", lstLotesCfo
+                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+                    cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                              from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                              where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar in ({1}) and
+                                              ld.outro_estado = '0'", EsquemaBanco,strCultivares);
+                    
+
+                }
+
+                if (lstLotesPtvOutro != null && lstLotesPtvOutro.Count > 0)
                 {
 
-                    string strLotes = string.Join(",", lstLotes
+                    strLotes = string.Join(",", lstLotesPtvOutro
                                             .Select(x => string.Format("'{0}'", x.Origem.ToString())));
 
-                    cmdSql += string.Format(@" union all select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+                    if (!string.IsNullOrEmpty(cmdSql))
+                        cmdSql += " union all ";
+
+                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
 				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional

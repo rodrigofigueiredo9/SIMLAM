@@ -36,6 +36,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Business
 			return retorno;
 		}
 
+
+
 		public List<Cultivar> ObterCultivares(int culturaId)
 		{
 			try
