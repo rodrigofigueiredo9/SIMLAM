@@ -346,6 +346,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();
 
+
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = String.Join(" ", declaracoesAdicionais) });
 		}
 
