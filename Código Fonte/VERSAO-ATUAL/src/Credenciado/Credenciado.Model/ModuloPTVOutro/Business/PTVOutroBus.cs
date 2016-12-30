@@ -37,7 +37,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
 		#region DML
 
-        public List<ListaValor> ObterListaDeclaracao(int pragaId, int cultivarId )
+        public List<ListaValor> ObterListaDeclaracao(int pragaId, int[] cultivarId )
         {
             return _da.ObterListaDeclaracao(pragaId, cultivarId);
         }
