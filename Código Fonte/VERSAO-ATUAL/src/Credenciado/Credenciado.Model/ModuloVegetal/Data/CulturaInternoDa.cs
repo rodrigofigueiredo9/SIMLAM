@@ -182,7 +182,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                 List<LoteItem> lstLotesCfoc = new List<LoteItem>();
                 string cmdSql = "";
                // string strOutroEstado = "";
-                if (lotes != null)
+                if (lotes != null && lotes.Count > 0 && lotes[0] != 0)
                 {
                     // strOutroEstado = "('0')";
                     foreach (int idLot in lotes)
@@ -217,6 +217,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				                                where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
                                                 ld.outro_estado = '0'", EsquemaBanco);
                 }
+
+
+               
 
                 //else if (OutroEstado == 1)
                 //    strOutroEstado = "('1')";
@@ -271,7 +274,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 				lstCultivar.ForEach(x =>
 				{
-					comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
+
+                    if ( lstLotesCfo.Count == 0 && lstLotesCfoc.Count == 0  ) 
+					    comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
 
                 
                    
