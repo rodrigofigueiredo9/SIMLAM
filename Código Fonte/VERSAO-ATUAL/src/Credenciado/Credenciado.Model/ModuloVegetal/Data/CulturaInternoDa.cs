@@ -270,12 +270,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
                 //ld.outro_estado in {1}
 
+                if (string.IsNullOrEmpty(cmdSql))
+                    return lstCultivar;
+
 				comando = bancoDeDados.CriarComando(cmdSql, EsquemaBanco);
 
 				lstCultivar.ForEach(x =>
 				{
 
-                    if ( lstLotesCfo.Count == 0 && lstLotesCfoc.Count == 0  ) 
+                    if (cmdSql.Contains(":")) 
 					    comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
 
                 
