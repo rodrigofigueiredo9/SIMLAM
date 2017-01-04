@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMAutenticacao;
-using Moq;
+using Tests.TestHelpers;
 
 namespace Tests
 {
@@ -14,38 +14,25 @@ namespace Tests
     {
         public AutenticacaoController testController = new AutenticacaoController();
 
-        /**
-         * Método Initialize()
-         * 
-         * É chamado na construção do teste. 
-         * Cria um objeto de mock para os requests Http do framework MVC no inicio dos testes,
-         * de forma que possamos usar a variavel testController para realizar asserções.
-         * 
-         **/
-        [TestInitialize()]
-        public void Initialize()
+        [TestMethod]
+        public void DeveRetornarViewResultDeLogOn()
         {
-            var request = new Mock<HttpRequestBase>();
+            ControllerContextMock.SetupNormalContext(testController);
 
-            request
-                .SetupGet(x => x.Headers)
-                .Returns(new System.Net.WebHeaderCollection());
+            var result = testController.LogOn(null) as ViewResult;
 
-            var context = new Mock<HttpContextBase>();
-
-            context
-                .SetupGet(x => x.Request)
-                .Returns(request.Object);
-
-            testController.ControllerContext = new ControllerContext(context.Object, new RouteData(), testController);
+            Assert.IsInstanceOfType(result.Model, typeof(LogonVM));
         }
 
         [TestMethod]
-        public void DeveRetornarViewModelDeLogOn()
+        public void DeveRetornarPartialViewResultDeLogOn()
         {
-            var view = testController.LogOn(null) as ViewResult;
+            ControllerContextMock.SetupAjaxContext(testController);
 
-            Assert.IsInstanceOfType(view.Model, typeof(LogonVM));
+            var result = testController.LogOn(null) as PartialViewResult;
+
+            Assert.IsInstanceOfType(result.Model, typeof(LogonVM));
+            Assert.AreEqual("LogOnPartial", result.ViewName);
         }
     }
 }
