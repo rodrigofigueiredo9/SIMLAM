@@ -619,7 +619,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 					using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
 					{
-                        comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct DBMS_LOB.substr(cfoc.informacoes_complementares, 4000) as DeclaracaoAdicionalTexto
+                        comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.Texto as DeclaracaoAdicionalTexto
                             from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
                             where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
                             and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado = '0' ", EsquemaBancoCredenciado);
