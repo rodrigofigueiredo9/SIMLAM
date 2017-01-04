@@ -34,5 +34,16 @@ namespace Tests
             Assert.IsInstanceOfType(result.Model, typeof(LogonVM));
             Assert.AreEqual("LogOnPartial", result.ViewName);
         }
+
+        [TestMethod]
+        public void DeveLogarComSucesso()
+        {
+            ControllerContextMock.SetupNormalContext(testController);
+
+            var result = testController.LogOn("antonio", "123456", null, null, null, null) as RedirectToRouteResult;
+
+            Assert.AreEqual("Index", result.RouteValues["action"]);
+            Assert.AreEqual("Home", result.RouteValues["controller"]);
+        }
     }
 }
