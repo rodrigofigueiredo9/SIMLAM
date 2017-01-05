@@ -42,14 +42,35 @@ namespace Tests
         }
 
         [TestMethod]
-        public void DeveLogarComSucesso()
+        public void DeveConseguirLogarComSucesso()
         {
             ControllerContextMock.SetupNormalContext(testController);
 
-            var result = testController.LogOn("antonio", "123456", null, null, null, null) as RedirectToRouteResult;
+            var firstResult = testController.LogOn("antonio", "123456", null, null, null, null) as RedirectToRouteResult;
 
-            Assert.AreEqual("Index", result.RouteValues["action"]);
-            Assert.AreEqual("Home", result.RouteValues["controller"]);
+            Assert.AreEqual("Index", firstResult.RouteValues["action"]);
+            Assert.AreEqual("Home", firstResult.RouteValues["controller"]);
+        }
+
+        [TestMethod]
+        public void DeveRetornarAPaginaDeLogonQuandoLogarComErros()
+        {
+            ControllerContextMock.SetupNormalContext(testController);
+
+            var result = testController.LogOn("Antônio", "1234567", null, null, null, null) as ViewResult;
+
+            Assert.IsInstanceOfType(result.Model, typeof(LogonVM));
+        }
+
+        [TestMethod]
+        public void DeveRedirecionarAoLogarQuandoHouverReturnUrl()
+        {
+            ControllerContextMock.SetupNormalContext(testController);
+            String url = "Caracterizacoes/Caracterizacao/Index/54512";
+
+            var result = testController.LogOn("antonio", "123456", null, null, null, url) as RedirectResult;
+
+            Assert.AreEqual(url, result.Url);
         }
     }
 }
