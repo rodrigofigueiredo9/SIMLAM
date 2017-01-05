@@ -14,10 +14,11 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.Security.Interfaces;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
 {
-	public class GerenciarAutenticacao
+	public class GerenciarAutenticacao : IGerenciarAutenticacao
 	{
 		#region Propriedades
 
@@ -57,6 +58,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
 
 			return string.Join("", byteHash.Select(bin => bin.ToString("X2")).ToArray());
 		}
+
+        public bool ValidarLogin(string login, string senha, out string sessionId)
+        {
+            return GerenciarAutenticacao.ValidarLogOn(login, senha, out sessionId);
+        }
 
 		public static bool ValidarLogOn(string login, string senha, out string sessionId)
 		{

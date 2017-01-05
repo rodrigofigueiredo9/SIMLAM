@@ -5,13 +5,27 @@ using System.Web.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
+using Tecnomapas.EtramiteX.Credenciado.Model.Security.Interfaces;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
+using Tecnomapas.EtramiteX.Credenciado.Services;
+using Tecnomapas.EtramiteX.Credenciado.Interfaces;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
 	public class AutenticacaoController : DefaultController
 	{
+        private IFormsAuthenticationService formsAuthenticationService;
+
+        public AutenticacaoController() : this(new FormsAuthenticationService())
+        {
+        }
+
+        public AutenticacaoController(IFormsAuthenticationService formsAuthenticationService)
+        {
+            this.formsAuthenticationService = formsAuthenticationService;
+        }
+
 		public ActionResult LogOn(string msg)
 		{
 			if (Request.IsAjaxRequest())
@@ -33,7 +47,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			try
 			{
 				string strSessionId = null;
-				if (!GerenciarAutenticacao.ValidarLogOn(login, senha, out strSessionId))
+                if (!GerenciarAutenticacao.ValidarLogOn(login, senha, out strSessionId))
 				{
 					if (Request.IsAjaxRequest())
 					{
@@ -67,7 +81,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					}
 				}
 
-				FormsAuthentication.SetAuthCookie(login, true);
+                this.formsAuthenticationService.SetAuthCookie(login, true);
 
 				FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, login, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout), true, strSessionId);
 				HttpCookie cookie = null;
@@ -77,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				}
 
 				if (cookie != null) {
-					cookie.Value = FormsAuthentication.Encrypt(ticket);
+                    cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
 
 				GerenciarAutenticacao.CarregarUser(login);
@@ -94,7 +108,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				}
 				else
 				{
-					return RedirectToAction("Index", "Home", Validacao.QueryParamSerializer());
+                    var result = RedirectToAction("Index", "Home", Validacao.QueryParamSerializer()) as RedirectToRouteResult;
+
+					return result;
 				}
 			}
 			catch (Exception exc)

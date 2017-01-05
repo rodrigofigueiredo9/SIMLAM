@@ -1,18 +1,24 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.QualityTools.Testing.Fakes;
 using Tecnomapas.EtramiteX.Credenciado.Controllers;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMAutenticacao;
 using Tests.TestHelpers;
+using Moq;
+using Tecnomapas.EtramiteX.Credenciado.Model.Security;
+using Tecnomapas.EtramiteX.Credenciado.Model.Security.Interfaces;
+using Tecnomapas.EtramiteX.Credenciado.Model.Security.Fakes;
+using Tests.Fakes;
 
 namespace Tests
 {
     [TestClass]
     public class AutenticacaoControllerTest
     {
-        public AutenticacaoController testController = new AutenticacaoController();
+        public AutenticacaoController testController = new AutenticacaoController(new FakeFormsAuthenticationService());
 
         [TestMethod]
         public void DeveRetornarViewResultDeLogOn()
