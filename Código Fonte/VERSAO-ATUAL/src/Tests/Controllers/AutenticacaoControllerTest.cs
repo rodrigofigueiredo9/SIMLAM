@@ -114,6 +114,8 @@ namespace Tests
         {
             this.assertLoginSession("Antônio");
             this.assertLoginSession("antonio");
+            this.assertLoginSession("andressa");
+            this.assertLoginSession("Anderson");
         }
     }
 }
