@@ -13,42 +13,29 @@ namespace Tests.TestHelpers
 {
     class ControllerContextMock
     {
-        public static void SetupAjaxContext(Controller controller)
+        private static Mock<HttpRequestBase> getRequestMock(bool isAjaxContext)
         {
-            var request = new Mock<HttpRequestBase>();
-
-            request
-                .SetupGet(x => x.Headers)
-                .Returns(new System.Net.WebHeaderCollection {
-                    {"X-Requested-With", "XMLHttpRequest"},
-                    {"Set-Cookie", new HttpCookieCollection().ToString() }
-                });
-
-            var context = new Mock<HttpContextBase>();
+            Mock<HttpRequestBase> request = new Mock<HttpRequestBase>();
 
             request
                 .SetupGet(x => x.Cookies)
                 .Returns(new HttpCookieCollection());
 
-            context
-                .SetupGet(x => x.Request)
-                .Returns(request.Object);
+            if (isAjaxContext) {
+                request
+                    .SetupGet(x => x.Headers)
+                    .Returns(new System.Net.WebHeaderCollection {
+                        {"X-Requested-With", "XMLHttpRequest"}
+                    });
+            }
 
-            context
-                .SetupGet(x => x.Cache)
-                .Returns(new Cache());
-
-            controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
+            return request;
         }
 
-        public static void SetupNormalContext(Controller controller)
+        private static Mock<HttpContextBase> getContextMock(bool isAjaxContext)
         {
-            var request = new Mock<HttpRequestBase>();
-            var context = new Mock<HttpContextBase>();
-
-            request
-                .SetupGet(x => x.Cookies)
-                .Returns(new HttpCookieCollection());
+            Mock<HttpRequestBase> request = ControllerContextMock.getRequestMock(isAjaxContext);
+            Mock<HttpContextBase> context = new Mock<HttpContextBase>();
 
             context
                 .SetupGet(x => x.Request)
@@ -59,9 +46,23 @@ namespace Tests.TestHelpers
                 .Returns(new Cache());
 
             HttpContext.Current = new HttpContext(
-                new HttpRequest(null, "http://tempuri.org", null), 
-                new HttpResponse(null)
-            );
+               new HttpRequest(null, "http://tempuri.org", null),
+               new HttpResponse(null)
+            );   
+
+            return context;
+        }
+
+        public static void SetupAjaxContext(Controller controller)
+        {
+            var context = ControllerContextMock.getContextMock(true);
+
+            controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
+        }
+
+        public static void SetupNormalContext(Controller controller)
+        {
+            var context = ControllerContextMock.getContextMock(false);
 
             controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
         }
