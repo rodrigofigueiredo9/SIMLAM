@@ -15,53 +15,65 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
 	public class AutenticacaoController : DefaultController
 	{
-        private IFormsAuthenticationService formsAuthenticationService;
+		public IFormsAuthenticationService formsAuthenticationService;
 
-        public AutenticacaoController() : this(new FormsAuthenticationService())
-        {
-        }
+		public AutenticacaoController() : this(new FormsAuthenticationService()) { }
 
-        public AutenticacaoController(IFormsAuthenticationService formsAuthenticationService)
-        {
-            this.formsAuthenticationService = formsAuthenticationService;
-        }
+		public AutenticacaoController(IFormsAuthenticationService formsAuthenticationService)
+		{
+			this.formsAuthenticationService = formsAuthenticationService;
+		}
 
 		public ActionResult LogOn(string msg)
 		{
 			if (Request.IsAjaxRequest())
-			{
 				return PartialView("LogOnPartial", new LogonVM() { IsAjaxRequest = Request.IsAjaxRequest() });
-			}
-			else
-			{
-				return View(new LogonVM() { });
-			}
+
+			return View(new LogonVM());
+		}
+
+		public String getAlterarSenhaMsg(String login)
+		{
+			CredenciadoBus credenciadoBus = new CredenciadoBus(new CredenciadoValidar());
+
+			return credenciadoBus.AlterarSenhaMensagem(login);
+		}
+
+		public bool HasToAlterarSenha(String login)
+		{
+			return this.getAlterarSenhaMsg(login) != String.Empty;
+		}
+
+		private PartialViewResult getAjaxLogOnPartial()
+		{
+			return PartialView("LogOnPartial", new LogonVM() {
+				IsAjaxRequest = Request.IsAjaxRequest()
+			});
 		}
 
 		[HttpPost]
 		public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl)
 		{
 			LogonVM viewModel = new LogonVM() { AlterarSenha = alterarSenha ?? false };
+
 			viewModel.IsAjaxRequest = Request.IsAjaxRequest();
 
 			try
 			{
 				string strSessionId = null;
-                if (!GerenciarAutenticacao.ValidarLogOn(login, senha, out strSessionId))
+
+				if (!GerenciarAutenticacao.ValidarLogOn(login, senha, out strSessionId))
 				{
 					if (Request.IsAjaxRequest())
-					{
-						return PartialView("LogOnPartial", new LogonVM() { IsAjaxRequest = Request.IsAjaxRequest() });
-					}
-					else
-					{
-						return View(viewModel);
-					}
+						return this.getAjaxLogOnPartial();
+
+					return View(viewModel);
 				}
 
 				CredenciadoBus credenciadoBus = new CredenciadoBus(new CredenciadoValidar());
 
 				string alterarSenhaMsg = credenciadoBus.AlterarSenhaMensagem(login);
+
 				if (!String.IsNullOrEmpty(alterarSenhaMsg))
 				{
 					Validacao.Erros.Clear();
@@ -71,27 +83,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 						viewModel = new LogonVM() { AlterarSenha = true, AlterarSenhaMsg = alterarSenhaMsg };
 
 						if (Request.IsAjaxRequest())
-						{
-							return PartialView("LogOnPartial", new LogonVM() { IsAjaxRequest = Request.IsAjaxRequest() });
-						}
-						else
-						{
-							return View(viewModel);
-						}
+							return this.getAjaxLogOnPartial();
+
+						return View(viewModel);
 					}
 				}
 
-                this.formsAuthenticationService.SetAuthCookie(login, true);
+				this.formsAuthenticationService.SetAuthCookie(login, true);
 
-				FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, login, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout), true, strSessionId);
+				FormsAuthenticationTicket ticket =
+					new FormsAuthenticationTicket(1, login, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout), true, strSessionId);
+
 				HttpCookie cookie = null;
+				String cookieName = this.formsAuthenticationService.FormsCookieName;
 
-				if (FormsAuthentication.FormsCookieName != null) {
-					cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+				if (cookieName != null) {
+					cookie = Request.Cookies[cookieName];
 				}
 
 				if (cookie != null) {
-                    cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
+					cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
 
 				GerenciarAutenticacao.CarregarUser(login);
@@ -99,19 +110,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				BusMenu.Menu = null;
 
 				if (Request.IsAjaxRequest())
-				{
 					return PartialView("LogOnPartial", new LogonVM() { IsAjaxRequest = Request.IsAjaxRequest() });
-				}
-				else if (!String.IsNullOrEmpty(returnUrl))
-				{
-					return Redirect(Validacao.QueryParamSerializer(HttpUtility.UrlDecode(returnUrl)));
-				}
-				else
-				{
-                    var result = RedirectToAction("Index", "Home", Validacao.QueryParamSerializer()) as RedirectToRouteResult;
 
-					return result;
-				}
+				if (!String.IsNullOrEmpty(returnUrl))
+					return Redirect(Validacao.QueryParamSerializer(HttpUtility.UrlDecode(returnUrl)));
+
+				return RedirectToAction("Index", "Home", Validacao.QueryParamSerializer()) as RedirectToRouteResult;;
 			}
 			catch (Exception exc)
 			{
@@ -119,13 +123,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			}
 
 			if (Request.IsAjaxRequest())
-			{
 				return RedirectToAction("Index", "Home", Validacao.QueryParamSerializer());
-			}
-			else
-			{
-				return View(viewModel);
-			}
+
+			return View(viewModel);
 		}
 
 		public ActionResult LogOff(string msg)

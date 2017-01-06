@@ -48,7 +48,7 @@ namespace Tests.TestHelpers
             HttpContext.Current = new HttpContext(
                new HttpRequest(null, "http://tempuri.org", null),
                new HttpResponse(null)
-            );   
+            );
 
             return context;
         }
@@ -62,7 +62,7 @@ namespace Tests.TestHelpers
 
         public static void SetupNormalContext(Controller controller)
         {
-            var context = ControllerContextMock.getContextMock(false);
+			var context = ControllerContextMock.getContextMock(false);
 
             controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
         }

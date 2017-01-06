@@ -6,9 +6,10 @@ using System.Text;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Interfaces
 {
-    public interface IFormsAuthenticationService
-    {
-        void SetAuthCookie(string value, bool isPersistent);
-        string Encrypt(FormsAuthenticationTicket ticket);
-    }
+	public interface IFormsAuthenticationService
+	{
+		void SetAuthCookie(string value, bool isPersistent);
+		string Encrypt(FormsAuthenticationTicket ticket);
+		string FormsCookieName { get; }
+	}
 }

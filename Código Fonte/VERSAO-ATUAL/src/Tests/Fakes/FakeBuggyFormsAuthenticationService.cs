@@ -8,16 +8,17 @@ using Tecnomapas.EtramiteX.Credenciado.Interfaces;
 
 namespace Tests.Fakes
 {
-	public class FakeFormsAuthenticationService : IFormsAuthenticationService
+	public class FakeBuggyFormsAuthenticationService : IFormsAuthenticationService
 	{
 		public void SetAuthCookie(string value, bool isPersistent)
 		{
 			Console.Write("Set AuthCookie Called with value: " + value);
+			throw new Exception("Erro proposital.");
 		}
 
 		public string Encrypt(FormsAuthenticationTicket ticket)
 		{
-			return "would-be-a-encrypted-value";
+			return "any-text";
 		}
 
 		public string FormsCookieName
