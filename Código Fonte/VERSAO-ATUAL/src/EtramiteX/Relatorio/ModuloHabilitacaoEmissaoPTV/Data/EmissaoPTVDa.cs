@@ -187,8 +187,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
-			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.numero_visto_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
-			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
+			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.numero_visto_crea, h.orgao_classe, h.registro_orgao_classe,  f.arquivo arquivo_id, le.sigla from {0}tab_hab_emi_ptv h, {0}tab_funcionario f, {0}lov_estado le
+			    where f.id = h.funcionario and h.uf_habilitacao = le.id and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
 
@@ -201,8 +201,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
 
+                        int orgaoClasse = reader.GetValue<int>("orgao_classe");
+
                         emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao");
-                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = reader.GetValue<string>("numero_visto_crea");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse==9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
 					}
 					reader.Close();
 				}
