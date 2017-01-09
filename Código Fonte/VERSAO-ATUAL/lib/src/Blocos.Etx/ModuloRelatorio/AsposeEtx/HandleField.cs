@@ -10,11 +10,24 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 	{
 		public void FieldMerging(FieldMergingArgs args)
 		{
+            DocumentBuilder builder = new DocumentBuilder(args.Document);
+
+            if (builder.CurrentNode.NodeType != NodeType.Run)
+            {
+                builder.MoveToMergeField(args.DocumentFieldName);
+                Run run2 = new Run(args.Document);
+                run2.Font.Bold = true;
+                run2.Text = args.FieldValue.ToString();
+                builder.InsertNode(run2);
+            }
+
+            
+          
+
 			if (args.DocumentFieldName.EndsWith("Html"))
 			{
 				// Insert the text for this merge field as HTML data, using DocumentBuilder.
-				DocumentBuilder builder = new DocumentBuilder(args.Document);
-				builder.MoveToMergeField(args.DocumentFieldName);
+				
 				builder.InsertHtml((string)args.FieldValue);
 
 				while (!builder.CurrentParagraph.HasChildNodes)
