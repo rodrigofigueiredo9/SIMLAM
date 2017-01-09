@@ -239,8 +239,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                 if ( (lstLotesCfo != null && lstLotesCfo.Count > 0) ||
                     (lstLotesCfoc != null && lstLotesCfoc.Count > 0))
                 {
-                    string strCultivares = string.Join(",", lstLotesCfo
+                    string strCultivares = "";
+                    if (lstLotesCfo != null && lstLotesCfo.Count > 0)
+                        strCultivares = string.Join(",", lstLotesCfo
                                          .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+                    else if (lstLotesCfoc != null && lstLotesCfoc.Count > 0)
+                        strCultivares = string.Join(",", lstLotesCfoc
+                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+
 
                     cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
