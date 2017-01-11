@@ -330,10 +330,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                                     if (!string.IsNullOrEmpty(cmdSql))
                                         cmdSql += " union all ";
 
-                                    cmdSql += string.Format(@" select distinct lcda.texto_formatado DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
-                                ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
-                                and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
-                                and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID and lcda.outro_estado = '0'", EsquemaBanco, ltItem.Cultivar);
+                                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                              from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                              where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
+                                              ld.outro_estado = '0'", EsquemaBanco);
                                 }
                             }
 
