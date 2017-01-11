@@ -1741,6 +1741,46 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 			return retorno;
 		}
+
+        private Dictionary<int, int> BuscaTipoDocOrigemCFOC(int origem, int Cultivar, BancoDeDados bancoDeDados = null)
+        {
+            int OrigemTipo = 0;
+            Dictionary<int, int> lstTipoDocOrigem = new Dictionary<int, int>();
+
+            using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+            {
+
+                do
+                {
+                    string cmdSql = @"select distinct origem_tipo, origem
+                                      from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli
+                                       where cfoc.id = cp.cfoc and cp.lote = hli.lote and cfoc.id = {0} and hli.cultivar = {1} ";
+
+                    cmdSql = string.Format(cmdSql, origem, Cultivar);
+
+                    Comando comandoCred = bancoDeDadosCredenciado.CriarComando(cmdSql);
+
+
+                    using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comandoCred))
+                    {
+                        while (reader.Read())
+                        {
+                            OrigemTipo = reader.GetValue<int>("origem_tipo");
+                            origem = reader.GetValue<int>("origem");
+                            lstTipoDocOrigem.Add(OrigemTipo, origem);
+                        }
+
+                        reader.Close();
+                    }
+
+                } while (OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC);
+
+            }
+
+            return lstTipoDocOrigem;
+
+        }
+
 		private List<String> ObterDeclaracaoAdicional(int origem, int origemTipo, int tipoProducaoID, int cultivarID, bool isFormatado, BancoDeDados bancoDeDados)
 		{
 			Comando comando = null;
@@ -1778,27 +1818,62 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				case (int)eDocumentoFitossanitarioTipo.CFOC:
 					#region Buscar tratamento CFOC
 
-					using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(UsuarioCredenciado))
-					{
-						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda." + colunaDeclaracaoAdicional + @" DeclaracaoAdicionalTexto 
-                            from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
-                            where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
-                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado='0' ", UsuarioCredenciado);
+					 Dictionary<int,int> lstTipoDocOrigem = BuscaTipoDocOrigemCFOC(origem,cultivarID, bancoDeDados);
 
-						comandoCred.AdicionarParametroEntrada("cfocId", origem, DbType.Int32);
-						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
-						comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
-						using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comandoCred))
-						{
-							while (reader.Read())
-							{
-								retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+                    foreach (KeyValuePair<int, int> kv in lstTipoDocOrigem)
+                    {
+                        if (kv.Key == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)
+                        {
+                            using (BancoDeDados bancoDeDadosCred = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+                            {
+                                string cmdSql = string.Format(@"select distinct ld.Texto as DeclaracaoAdicionalTexto 
+                                                                from tab_cultivar_configuracao t, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot, tab_cfoc_praga cfpraga
+                                                                where t.cultivar = {1} and ld.id = ot.declaracao_adicional and ot.ptv = {0} and cfpraga.praga = ot.praga and t.tipo_producao = {2}
+                                                                and cfpraga.cfoc = {3} ", kv.Value, cultivarID, tipoProducaoID, origem);
 
-							}
-							reader.Close();
-						}
-					}
+                                comandoCred = bancoDeDadosCred.CriarComando(cmdSql, UsuarioCredenciado);
+
+
+                                using (IDataReader reader = bancoDeDadosCred.ExecutarReader(comandoCred))
+                                {
+                                    while (reader.Read())
+                                    {
+                                        retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                                    }
+                                    reader.Close();
+                                }
+                            }
+                        }
+
+                        if (kv.Key == (int)eDocumentoFitossanitarioTipo.CFO)
+                        {
+                            using (BancoDeDados bancoDeDadosInst = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+                            {
+
+                                comando = bancoDeDadosInst.CriarComando(@"select distinct lcda.Texto  DeclaracaoAdicionalTexto 
+                                                                            from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
+                                                                            where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
+                                                                            and tcp.praga = cconf.praga and cfoc.id = :cfoc and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado='0' ", UsuarioCredenciado);
+
+
+                                comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                                comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                                comando.AdicionarParametroEntrada("cfoc", origem, DbType.Int32);
+
+                                using (IDataReader reader = bancoDeDadosInst.ExecutarReader(comando))
+                                {
+                                    while (reader.Read())
+                                    {
+                                        retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                                    }
+                                    reader.Close();
+                                }
+                            }
+                        }
+                    }			
 
 					#endregion
 					break;

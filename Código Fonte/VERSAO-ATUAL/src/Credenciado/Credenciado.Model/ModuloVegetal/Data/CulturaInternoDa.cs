@@ -11,6 +11,8 @@ using System.Linq;
 using System;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using System.Text;
+using System.Collections;
+using Tecnomapas.EtramiteX.Configuracao;
 
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
@@ -18,6 +20,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 	public class CulturaInternoDa
 	{
 		#region Propriedades
+
+        GerenciadorConfiguracao<ConfiguracaoSistema> _configSis = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
 		private string EsquemaBanco { get; set; }
 
@@ -124,6 +128,50 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 
 			return retorno;
 		}
+
+        private string EsquemaCredenciado
+        {
+            get { return _configSis.Obter<string>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
+        }
+
+        private Dictionary<int, int> BuscaTipoDocOrigemCFOC(int origem, int Cultivar, BancoDeDados bancoDeDados = null)
+        {
+            int OrigemTipo = 0;
+            Dictionary<int, int> lstTipoDocOrigem = new Dictionary<int, int>();
+
+            using (BancoDeDados dbCon = BancoDeDados.ObterInstancia(EsquemaCredenciado))
+            {
+
+                do
+                {
+                    string cmdSql = @"select distinct origem_tipo, origem
+                                      from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli
+                                       where cfoc.id = cp.cfoc and cp.lote = hli.lote and cfoc.id = {0} and hli.cultivar = {1} ";
+
+                    cmdSql = string.Format(cmdSql, origem, Cultivar);
+
+                    Comando comandoCred = dbCon.CriarComando(cmdSql);
+
+
+                    using (IDataReader reader = dbCon.ExecutarReader(comandoCred))
+                    {
+                        while (reader.Read())
+                        {
+                            OrigemTipo = reader.GetValue<int>("origem_tipo");
+                            origem = reader.GetValue<int>("origem");
+                            lstTipoDocOrigem.Add(OrigemTipo, origem); 
+                        }
+
+                        reader.Close();
+                    }
+
+                } while (OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC);
+
+            }
+
+            return lstTipoDocOrigem;
+
+        }
 
         internal string ObterDeclaracaoAdicionalPTVOutroEstado(int numero)
         {
@@ -241,20 +289,58 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
                 {
                     string strCultivares = "";
                     if (lstLotesCfo != null && lstLotesCfo.Count > 0)
+                    {
                         strCultivares = string.Join(",", lstLotesCfo
                                          .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
 
-                    else if (lstLotesCfoc != null && lstLotesCfoc.Count > 0)
-                        strCultivares = string.Join(",", lstLotesCfoc
-                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
-
-
-
-                    cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+                        cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				                              from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
 				                              where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar in ({1}) and
-                                              ld.outro_estado = '0'", EsquemaBanco,strCultivares);
+                                              ld.outro_estado = '0'", EsquemaBanco, strCultivares);
+                    
+                    }
+                    else if (lstLotesCfoc != null && lstLotesCfoc.Count > 0)
+                    {
+                        strCultivares = string.Join(",", lstLotesCfoc
+                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+                       
+                        foreach (LoteItem ltItem in lstLotesCfoc)
+                        {
+                            Dictionary<int,int> lstTipoDocOrigem = BuscaTipoDocOrigemCFOC(ltItem.Origem, ltItem.Cultivar, bancoDeDados);
+
+
+                            foreach (KeyValuePair<int, int> kv in lstTipoDocOrigem)
+                            {
+                                if (kv.Key == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)
+                                {
+                                    if (!string.IsNullOrEmpty(cmdSql))
+                                        cmdSql += " union all ";
+
+                                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional
+                                                        and ot.ptv = {1} ", EsquemaBanco, kv.Value );
+                                }
+
+                                if (kv.Key == (int)eDocumentoFitossanitarioTipo.CFO)
+                                {
+                                    if (!string.IsNullOrEmpty(cmdSql))
+                                        cmdSql += " union all ";
+
+                                    cmdSql += string.Format(@" select distinct lcda.texto_formatado DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
+                                ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
+                                and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
+                                and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID and lcda.outro_estado = '0'", EsquemaBanco, ltItem.Cultivar);
+                                }
+                            }
+
+                        }
+
+                    }
+
                     
 
                 }
