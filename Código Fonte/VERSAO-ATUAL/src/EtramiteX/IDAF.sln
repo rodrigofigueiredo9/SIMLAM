@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perfil", "..\..\lib\src\Per
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\Utilities\Utilities.csproj", "{A280C318-2D35-475C-B358-5FA69BF9601E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{C4C3264F-FFE7-4CD0-ADC7-01C3D88B5037}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsInstitucional", "..\TestsInstitucional\TestsInstitucional.csproj", "{C4C3264F-FFE7-4CD0-ADC7-01C3D88B5037}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

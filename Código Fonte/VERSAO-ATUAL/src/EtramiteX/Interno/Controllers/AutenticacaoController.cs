@@ -5,6 +5,8 @@ using System.Web.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
+using Tecnomapas.EtramiteX.Interno.Interfaces;
+using Tecnomapas.EtramiteX.Interno.Servicos;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
 
@@ -12,6 +14,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
 	public class AutenticacaoController : DefaultController
 	{
+		public IFormsAuthenticationService formsAuthenticationService;
+
+		public AutenticacaoController() : this(new FormsAuthenticationService()) { }
+
+		public AutenticacaoController(IFormsAuthenticationService formsAuthenticationService)
+		{
+			this.formsAuthenticationService = formsAuthenticationService;
+		}
+
+		public String getAlterarSenhaMsg(String login)
+		{
+			FuncionarioBus credenciadoBus = new FuncionarioBus(new FuncionarioValidar());
+
+			return credenciadoBus.AlterarSenhaMensagem(login);
+		}
+
+		public bool HasToAlterarSenha(String login)
+		{
+			return this.getAlterarSenhaMsg(login) != String.Empty;
+		}
+
 		public ActionResult LogOn(string msg)
 		{
 			if (Request.IsAjaxRequest())
@@ -66,17 +89,21 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					}
 				}
 
-				FormsAuthentication.SetAuthCookie(login, true);
+				this.formsAuthenticationService.SetAuthCookie(login, true);
 
 				FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, login, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout), true, strSessionId);
+
 				HttpCookie cookie = null;
 
-				if (FormsAuthentication.FormsCookieName != null) {
-					cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+				String cookieName = this.formsAuthenticationService.FormsCookieName;
+
+				if (cookieName != null)
+				{
+					cookie = Request.Cookies[cookieName];
 				}
 
 				if (cookie != null) {
-					cookie.Value = FormsAuthentication.Encrypt(ticket);
+					cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
 
 				GerenciarAutenticacao.CarregarUser(login);

@@ -270,6 +270,8 @@
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Servicos\FormsAuthenticationService.cs" />
+    <Compile Include="Interfaces\IFormsAuthenticationService.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\ListarVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteVM.cs" />
