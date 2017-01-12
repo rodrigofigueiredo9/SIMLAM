@@ -609,7 +609,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                         {
                             OrigemTipo = reader.GetValue<int>("origem_tipo");
                             origem = reader.GetValue<int>("origem");
-                            lstTipoDocOrigem.Add(OrigemTipo, origem);
+                            if (!lstTipoDocOrigem.ContainsKey(OrigemTipo))
+                                lstTipoDocOrigem.Add(OrigemTipo, origem);
                         }
 
                         reader.Close();
