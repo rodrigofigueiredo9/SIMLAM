@@ -58,7 +58,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 				}
 				else
 				{
-					if (caracterizacao.CodigoPropriedade > Convert.ToInt32(_configSys.Obter<String>(ConfiguracaoSistema.KeyUnidadeProducaoMaxCodigoPropriedade)))
+					if (caracterizacao.CodigoPropriedade > Convert.ToInt64(_configSys.Obter<String>(ConfiguracaoSistema.KeyUnidadeProducaoMaxCodigoPropriedade)))
 					{
 						Validacao.Add(Mensagem.UnidadeProducao.CodigoPropriedadeSuperiorMaximo);
 					}
