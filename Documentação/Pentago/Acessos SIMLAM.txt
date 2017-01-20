@@ -2,7 +2,7 @@ Prodest SIMLAM:
 SWWEBGIS01 (WEB ArcGIS): 201.62.46.152
 SWARCSDE01 (ArcSDE): 10.243.142.2
 SWSERV01 (Serviços): 10.243.142.3
-==pentago/P3nt@g0iD@f
+==pentago : iD@fP3nt@g0 /  P3nt@g0iD@f
 -------------------------------------
 Pentago DB:
 Host: 192.168.2.128
