@@ -604,7 +604,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			if (!_loteValidar.AcessarTela(lote))
 			{
-				return RedirectToAction("LoteIndexx", "CFOC");
+				return RedirectToAction("LoteIndex", "CFOC");
 			}
 
 			LoteVM vm = new LoteVM(_loteBus.ObterEmpreendimentosResponsaveis(), origemTipo, lote);
