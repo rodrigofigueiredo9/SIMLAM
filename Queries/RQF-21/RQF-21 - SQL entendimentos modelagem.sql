@@ -76,5 +76,37 @@ order by hst_unid.CODIGO_UP asc
 ;
 
 
- 
- 
+----------------------------------------------------------------------------------------------------------
+-- Conferindo UPs com Municípios diferentes dos Empreendimentos:
+-- Obs.: tem que conferir o subtstr() dos códigos, e também os municípios cadastrados para identificarmos erros.
+select 
+  '--- EMPRENDIMENTO: ---' AS SEPARADOR,
+  emp.CODIGO, 
+  --emp.CNPJ, 
+  emp.DENOMINADOR,
+  --emp.NOME_FANTASIA,
+  '--- PROPRIEDADE: ---' AS SEPARADOR,
+  crt.PROPRIEDADE_CODIGO, (select m.TEXTO from LOV_MUNICIPIO where IBGE = substr(crt.PROPRIEDADE_CODIGO, 1, 7)) as Mun_Substr_Prop,
+  m.TEXTO as Mun_CADAST_PRO, m.IBGE as IBGE_CADAST_PROP,
+  '--- UP: ---' AS SEPARADOR,
+  unid.CODIGO_UP, (select m.TEXTO from LOV_MUNICIPIO where IBGE = substr(unid.CODIGO_UP, 1, 7)) as Mun_Substr_UP,
+  m2.TEXTO as Mun_CADAST_UP, m2.IBGE as IBGE_CADAST_UP
+from
+  CRT_UNIDADE_PRODUCAO crt
+    inner join TAB_EMPREENDIMENTO emp
+      on crt.EMPREENDIMENTO = emp.ID
+    inner join TAB_EMPREENDIMENTO_ENDERECO en
+      on en.EMPREENDIMENTO = emp.ID
+    inner join LOV_MUNICIPIO m
+      on m.ID = en.MUNICIPIO
+    inner join CRT_UNIDADE_PRODUCAO_UNIDADE unid
+      on unid.UNIDADE_PRODUCAO = crt.ID
+    inner join CRT_UNIDADE_PRODUCAO_UN_COORD coord
+      on unid.ID = coord.UNIDADE_PRODUCAO_UNIDADE
+    inner join LOV_MUNICIPIO m2
+      on coord.MUNICIPIO = m2.ID
+where en.CORRESPONDENCIA = 0
+--and crt.PROPRIEDADE_CODIGO in(32019022929, 32031301712)
+and substr(crt.PROPRIEDADE_CODIGO, 1, 7) <> substr(unid.CODIGO_UP, 1, 7)
+order by crt.PROPRIEDADE_CODIGO asc, unid.CODIGO_UP
+;
