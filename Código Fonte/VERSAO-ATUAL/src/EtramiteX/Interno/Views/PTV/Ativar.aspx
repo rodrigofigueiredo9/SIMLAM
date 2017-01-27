@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Ativar PTV</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/ativar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTV/ativar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PTVAtivar.load($("#central"), {
 				urls: {

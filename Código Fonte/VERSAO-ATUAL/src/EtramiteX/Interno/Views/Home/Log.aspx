@@ -69,13 +69,13 @@
 		</table>
 	</div>
 
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/masterpage.js") %>" ></script>
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js") %>"></script>
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js") %>"></script>
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/tiny_mce/jquery.tinymce.js") %>"></script>
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskedinput-1.2.2.js") %>" ></script>
-	<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskMoney-1.4.1.js") %>" ></script>	
-	<script type="text/javascript">
+	<script language="javascript" src="<%= Url.Content("~/Scripts/masterpage.js") %>" ></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js") %>"></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js") %>"></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/tiny_mce/jquery.tinymce.js") %>"></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskedinput-1.2.2.js") %>" ></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskMoney-1.4.1.js") %>" ></script>
+	<script>
 		$(function () {
 			var container = $('#central');
 			container.delegate('.filtroSerializarAjax', 'keyup', function (e) {

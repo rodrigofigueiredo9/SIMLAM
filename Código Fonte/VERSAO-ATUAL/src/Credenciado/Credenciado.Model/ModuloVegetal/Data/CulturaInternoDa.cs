@@ -4,15 +4,24 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data;
+using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC.Lote;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using System.Linq;
 using System;
+using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
+using System.Text;
+using System.Collections;
+using Tecnomapas.EtramiteX.Configuracao;
+
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 {
 	public class CulturaInternoDa
 	{
 		#region Propriedades
+
+        GerenciadorConfiguracao<ConfiguracaoSistema> _configSis = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
 		private string EsquemaBanco { get; set; }
 
@@ -59,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
 				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
 				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id", EsquemaBanco);
+				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and ld.outro_estado = '0' and t.cultivar = :id", EsquemaBanco);
 
 				cultura.LstCultivar.ForEach(x =>
 				{
@@ -120,9 +129,75 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 			return retorno;
 		}
 
-		internal List<Cultivar> ObterCultivares(List<int> culturas, BancoDeDados banco = null)
+        private string EsquemaCredenciado
+        {
+            get { return _configSis.Obter<string>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
+        }
+
+        private Dictionary<int, int> BuscaTipoDocOrigemCFOC(int origem, int Cultivar, BancoDeDados bancoDeDados = null)
+        {
+            int OrigemTipo = 0;
+            Dictionary<int, int> lstTipoDocOrigem = new Dictionary<int, int>();
+
+            using (BancoDeDados dbCon = BancoDeDados.ObterInstancia(EsquemaCredenciado))
+            {
+
+                do
+                {
+                    string cmdSql = @"select distinct origem_tipo, origem
+                                      from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli
+                                       where cfoc.id = cp.cfoc and cp.lote = hli.lote and cfoc.id = {0} and hli.cultivar = {1} ";
+
+                    cmdSql = string.Format(cmdSql, origem, Cultivar);
+
+                    Comando comandoCred = dbCon.CriarComando(cmdSql);
+
+
+                    using (IDataReader reader = dbCon.ExecutarReader(comandoCred))
+                    {
+                        while (reader.Read())
+                        {
+                            OrigemTipo = reader.GetValue<int>("origem_tipo");
+                            origem = reader.GetValue<int>("origem");
+                            if (!lstTipoDocOrigem.ContainsKey(OrigemTipo))
+                                lstTipoDocOrigem.Add(OrigemTipo, origem); 
+                        }
+
+                        reader.Close();
+                    }
+
+                } while (OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC);
+
+            }
+
+            return lstTipoDocOrigem;
+
+        }
+
+        internal string ObterDeclaracaoAdicionalPTVOutroEstado(int numero)
+        {
+            string ret = " ";
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select replace(declaracao_adicional,'|','')
+																from {0}tab_ptv_outrouf tt
+															  where tt.id = :id 
+																 ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", numero, DbType.Int32);
+
+                ret = bancoDeDados.ExecutarScalar<string>(comando);
+            }
+
+            return string.IsNullOrEmpty(ret) ? " " : ret;
+
+        }
+
+		internal List<Cultivar> ObterCultivares(List<int> culturas, List<int> lotes= null, int OutroEstado = 0,  BancoDeDados banco = null)
 		{
 			List<Cultivar> lstCultivar = new List<Cultivar>();
+            LoteDa _loteDa = new LoteDa();
+
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Cultivar
@@ -150,22 +225,174 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 				#endregion
 
 				#region Cultivar_Configurações
+                StringBuilder sbDecAdd = new StringBuilder();
+                List<LoteItem> lstLotesPtvOutro = new List<LoteItem>();
+                List<LoteItem> lstLotesCfo = new List<LoteItem>();
+                List<LoteItem> lstLotesCfoc = new List<LoteItem>();
+                string cmdSql = "";
+               // string strOutroEstado = "";
+                if (lotes != null && lotes.Count > 0 && lotes[0] != 0)
+                {
+                    // strOutroEstado = "('0')";
+                    foreach (int idLot in lotes)
+                    {
+                        Lote lot = _loteDa.Obter(idLot);
+                        // totaloutro = lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList().Count;
+                        lstLotesPtvOutro.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado).ToList());
 
-				comando = bancoDeDados.CriarComando(@"
-				select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
-				lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
-				from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
-				where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id", EsquemaBanco);
+                        lstLotesCfo.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO).ToList());
+
+                        lstLotesCfoc.AddRange(lot.Lotes.Where(z => z.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC).ToList());
+                        //foreach (LoteItem item in lstLotes)
+                        //{
+                        //    sbDecAdd.Append(ObterDeclaracaoAdicionalPTVOutroEstado(item.Origem));
+                        //}
+
+                        //if (lstLotes.Count > 0 && lstLotes.Count == lot.Lotes.Count)
+                        //{
+                        //    strOutroEstado = "('1')";
+                        //}
+                        //else if (lstLotes.Count > 0 && lstLotes.Count != lot.Lotes.Count)
+                        //    strOutroEstado = "('1','0')";
+                        //else
+                        //    strOutroEstado = "('0')";
+                    }
+                }
+                else
+                {
+                    cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                                where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
+                                                ld.outro_estado = '0'", EsquemaBanco);
+                }
+
+
+               
+
+                //else if (OutroEstado == 1)
+                //    strOutroEstado = "('1')";
+                //else
+                //    strOutroEstado = "('0')";
+
+
+//                string cmdSql = string.Format(@"select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+//				            lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+//				            from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+//				            where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional(+)", EsquemaBanco, strOutroEstado);
+
+
+
+                
+                string strLotes = "";
+                if ( (lstLotesCfo != null && lstLotesCfo.Count > 0) ||
+                    (lstLotesCfoc != null && lstLotesCfoc.Count > 0))
+                {
+                    string strCultivares = "";
+                    if (lstLotesCfo != null && lstLotesCfo.Count > 0)
+                    {
+                        strCultivares = string.Join(",", lstLotesCfo
+                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+                        cmdSql = string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                              from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                              where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar in ({1}) and
+                                              ld.outro_estado = '0'", EsquemaBanco, strCultivares);
+                    
+                    }
+                    else if (lstLotesCfoc != null && lstLotesCfoc.Count > 0)
+                    {
+                        strCultivares = string.Join(",", lstLotesCfoc
+                                         .Select(x => string.Format("'{0}'", x.Cultivar.ToString())));
+
+                       
+                        foreach (LoteItem ltItem in lstLotesCfoc)
+                        {
+                            Dictionary<int,int> lstTipoDocOrigem = BuscaTipoDocOrigemCFOC(ltItem.Origem, ltItem.Cultivar, bancoDeDados);
+
+
+                            foreach (KeyValuePair<int, int> kv in lstTipoDocOrigem)
+                            {
+                                if (kv.Key == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)
+                                {
+                                    if (!string.IsNullOrEmpty(cmdSql))
+                                        cmdSql += " union all ";
+
+                                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional
+                                                        and ot.ptv = {1} ", EsquemaBanco, kv.Value );
+                                }
+
+                                if (kv.Key == (int)eDocumentoFitossanitarioTipo.CFO)
+                                {
+                                    if (!string.IsNullOrEmpty(cmdSql))
+                                        cmdSql += " union all ";
+
+                                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                              lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                              from {0}tab_cultivar_configuracao t, {0}tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld
+				                              where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and
+                                              ld.outro_estado = '0'", EsquemaBanco);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    
+
+                }
+
+                if (lstLotesPtvOutro != null && lstLotesPtvOutro.Count > 0)
+                {
+
+                    strLotes = string.Join(",", lstLotesPtvOutro
+                                            .Select(x => string.Format("'{0}'", x.Origem.ToString())));
+
+                    if (!string.IsNullOrEmpty(cmdSql))
+                        cmdSql += " union all ";
+
+                    cmdSql += string.Format(@" select t.id, t.tid, t.cultivar, t.praga PragaId, p.nome_cientifico || nvl2(p.nome_comum,' - '||p.nome_comum,'') as PragaTexto, t.tipo_producao TipoProducaoId,
+				                                        lt.texto as TipoProducaoTexto, t.declaracao_adicional DeclaracaoAdicionalId, ld.texto as DeclaracaoAdicionalTexto, ld.texto_formatado as DeclaracaoAdicionalTextoHtml
+				                                        from tab_cultivar_configuracao t, tab_praga p, lov_cultivar_tipo_producao lt, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot
+				                                        where p.id = t.praga and lt.id = t.tipo_producao and ld.id = t.declaracao_adicional and t.cultivar = :id and ld.id = ot.declaracao_adicional
+                                                and ot.ptv in ({1})", EsquemaBanco, strLotes);
+
+                }
+
+                //ld.outro_estado in {1}
+
+                if (string.IsNullOrEmpty(cmdSql))
+                    return lstCultivar;
+
+				comando = bancoDeDados.CriarComando(cmdSql, EsquemaBanco);
 
 				lstCultivar.ForEach(x =>
 				{
-					comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
+
+                    if (cmdSql.Contains(":")) 
+					    comando.AdicionarParametroEntrada("id", x.Id, DbType.Int32);
+
+                
+                   
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
 						while (reader.Read())
 						{
+                            //string Declaracao = "";
+
+                            //if (lstLotes != null && lstLotes.Any(z => z.Cultivar == reader.GetValue<int>("cultivar")))
+                            //    Declaracao = sbDecAdd.ToString();
+                            //else
+                            //    Declaracao = reader.GetValue<string>("DeclaracaoAdicionalTexto");
+
 							x.LsCultivarConfiguracao.Add(new CultivarConfiguracao()
 							{
+
 								Id = reader.GetValue<int>("id"),
 								Tid = reader.GetValue<string>("tid"),
 								Cultivar = reader.GetValue<int>("cultivar"),
@@ -174,8 +401,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloVegetal.Data
 								TipoProducaoId = reader.GetValue<int>("TipoProducaoId"),
 								TipoProducaoTexto = reader.GetValue<string>("TipoProducaoTexto"),
 								DeclaracaoAdicionalId = reader.GetValue<int>("DeclaracaoAdicionalId"),
-								DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto"),
-								DeclaracaoAdicionalTextoHtml = reader.GetValue<string>("DeclaracaoAdicionalTextoHtml"),
+                                DeclaracaoAdicionalTexto = reader.GetValue<string>("DeclaracaoAdicionalTexto"),
+                                DeclaracaoAdicionalTextoHtml = reader.GetValue<string>("DeclaracaoAdicionalTextoHtml")
 							});
 						}
 

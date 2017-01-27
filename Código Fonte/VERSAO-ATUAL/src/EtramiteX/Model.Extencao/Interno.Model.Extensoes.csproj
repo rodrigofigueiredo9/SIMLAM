@@ -316,6 +316,10 @@
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Relatorio\Interno.Model.RelatorioIndividual.csproj">
       <Project>{7f7481cd-3199-43da-bcb5-1c1c9797bfce}</Project>
       <Name>Interno.Model.RelatorioIndividual</Name>

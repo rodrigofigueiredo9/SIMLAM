@@ -6,10 +6,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Agrotóxico</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxico.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxicoCultura.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxico.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Agrotoxico/agrotoxicoCultura.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Agrotoxico.load($("#central"), {
 				urls: {

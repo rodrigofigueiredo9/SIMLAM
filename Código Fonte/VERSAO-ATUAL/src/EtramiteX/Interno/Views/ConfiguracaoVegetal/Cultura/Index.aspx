@@ -5,9 +5,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Culturas</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 	    $(function () {
 	        CulturaListar.urlEditar = '<%= Url.Action("EditarCultura", "ConfiguracaoVegetal") %>';
 	        CulturaListar.load($('#central'));

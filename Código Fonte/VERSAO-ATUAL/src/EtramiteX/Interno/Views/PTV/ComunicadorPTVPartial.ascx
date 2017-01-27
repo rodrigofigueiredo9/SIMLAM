@@ -4,7 +4,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVComunicadorVW>" %>
 
-<script type="text/javascript">
+<script>
 	ComunicadorPTV.settings.urls.urlEnviar = '<%= Url.Action("EnviarComunicadorPTV", "PTV") %>';
 	ComunicadorPTV.settings.Mensagens = <%= Model.Mensagens %>;
 </script>

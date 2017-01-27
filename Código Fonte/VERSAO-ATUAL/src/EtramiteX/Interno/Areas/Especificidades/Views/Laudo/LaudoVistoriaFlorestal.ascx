@@ -2,9 +2,9 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoVistoriaFlorestalVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFlorestal.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoVistoriaFlorestal.urlEspecificidade = '<%= Url.Action("LaudoVistoriaFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFlorestal.urlObterDadosLaudoVistoriaFlorestal = '<%= Url.Action("ObterDadosLaudoVistoriaFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFlorestal.idsTela = <%= Model.IdsTela %>;
@@ -53,14 +53,14 @@
 			<%= Html.TextArea("Laudo.Consideracao", Model.Laudo.Consideracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtConsideracao" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="coluna30">
 			<label for="Laudo_Conclusao">Conclusão *</label><br />

@@ -7,7 +7,7 @@
 	{ %>
 	<div class="hide indicadoreBotoes">
 		<p class="floatLeft append1"><button class="botaoGerarXLS" title="Gerar Excel">Gerar Excel</button></p>
-		<p class="floatLeft"><button class="botaoGerarPDF" title="Gerar PDF">Gerar PDF</button></p>		
+		<p class="floatLeft"><button class="botaoGerarPDF" title="Gerar PDF">Gerar PDF</button></p>
 	</div>
 
 	<%= Html.Hidden("periodoIndice", Model.Periodo, new { @class = "indicadorPeriodo" })%>
@@ -17,4 +17,4 @@
 	<%} %>
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/IndicadoresModal.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/IndicadoresModal.js") %>" ></script>

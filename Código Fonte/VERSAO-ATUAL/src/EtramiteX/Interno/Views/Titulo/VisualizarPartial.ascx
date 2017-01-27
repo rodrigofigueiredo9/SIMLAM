@@ -2,14 +2,14 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/titulo.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteSalvar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoSalvar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/titulo.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteSalvar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoSalvar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Titulo.load($('.divVisualizarTitulo'), {
 				urls: {
@@ -55,32 +55,32 @@
 			<div class="coluna18 prepend2">
 				<label for="DataCriacao">Data de criação *</label>
 				<%= Html.TextBox("DataCriacao", Model.Titulo.DataCriacao.DataTexto, new { @maxlength = "80", @class = "disabled text txtDataCriacao", @disabled = "disabled" })%>
-			</div>	
+			</div>
 		</div>
 
 		<div class="block">
 			<div class="coluna75">
 				<label for="SetorCadastro">Setor de cadastro *</label>
 				<%= Html.DropDownList("SetorCadastro", Model.LstSetores, new { @class = "disabled text ddlSetores", @disabled = "disabled" })%>
-			</div>	
+			</div>
 			<div class="coluna18 prepend2">
 				<label for="SituacaoTexto">Situação *</label>
 				<%= Html.TextBox("SituacaoTexto", Model.Titulo.Situacao.Texto, new { @maxlength = "80", @class = "disabled text txtSituacao", @disabled = "disabled" })%>
-			</div>	
+			</div>
 		</div>
-	
+
 		<div class="block">
 			<div class="coluna75">
 				<label for="LocalEmissao">Local da emissão *</label>
 				<%= Html.DropDownList("LocalEmissao", Model.LstLocalEmissao, new { @class = "disabled text ddlLocal", @disabled = "disabled" })%>
-			</div>	
+			</div>
 		</div>
 
 		<div class="block">
 			<div class="coluna75">
 				<label for="Modelos">Modelo *</label>
 				<%= Html.DropDownList("Modelos", Model.LstModelos, new { @class = "disabled text ddlModelos", @disabled = "disabled" })%>
-			</div>	
+			</div>
 		</div>
 	</div>
 
@@ -89,7 +89,7 @@
 		<% Html.RenderPartial("TituloProtocolo"); %>
 	</div>
 
-	<% if ((Model.Titulo.Prazo > 0 || Model.Titulo.DataEmissao.Data != null || Model.Titulo.DataAssinatura.Data != null || 
+	<% if ((Model.Titulo.Prazo > 0 || Model.Titulo.DataEmissao.Data != null || Model.Titulo.DataAssinatura.Data != null ||
 			Model.Titulo.DataEntrega.Data != null || Model.Titulo.DataVencimento.Data != null || Model.Titulo.DiasProrrogados > 0 || Model.Titulo.DataEncerramento.Data != null)) { %>
 	<div class="block box">
 		<% if(!string.IsNullOrEmpty(Model.LabelTipoPrazo)) { %>
@@ -148,5 +148,5 @@
 
 	<div class="tituloValoresModelo">
 		<% Html.RenderPartial("TituloCamposModelo"); %>
-	</div>	
+	</div>
 </div>

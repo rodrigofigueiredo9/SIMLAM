@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Alterar Situação do Acompanhamento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/acompanhamentoAlterarSituacao.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/acompanhamentoAlterarSituacao.js") %>" ></script>
+	<script>
 		$(function () {
 			AcompanhamentoAlterarSituacao.load($('#central'), {
 				situacaoCancelado: '<%= Model.SituacaoCancelado %>',

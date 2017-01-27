@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Salvar Avicultura</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/avicultura.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/coordenadaAtividade.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/avicultura.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/coordenadaAtividade.js") %>"></script>
 	
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Avicultura.load($('#central'), {
 				urls: {

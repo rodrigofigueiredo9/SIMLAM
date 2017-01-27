@@ -3,10 +3,10 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AberturaLivroUnidadeProducaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/aberturaLivroUnidadeProducao.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/aberturaLivroUnidadeProducao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	AberturaLivroUnidadeProducao.settings.urls.obterDadosAberturaLivroUnidadeProducao = '<%= Url.Action("ObterDadosAberturaLivroUnidadeProducao", "Termo", new {area="Especificidades"}) %>';
 	AberturaLivroUnidadeProducao.settings.urls.obterUnidadeProducaoItem = '<%= Url.Action("ObterUnidadeProducaoItem", "Termo", new {area="Especificidades"}) %>';
 	AberturaLivroUnidadeProducao.settings.Mensagens = <%= Model.Mensagens %>;

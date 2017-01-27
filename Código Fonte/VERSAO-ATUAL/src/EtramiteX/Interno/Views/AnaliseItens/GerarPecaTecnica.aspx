@@ -8,7 +8,7 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<script src="<%: Url.Content("~/Scripts/AnaliseItens/pecaTecnica.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PecaTecnica.load($('#central'), {
 				urls: {

@@ -6,7 +6,7 @@
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 
-<script type="text/javascript">
+<script>
 	Silvicultura.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Silvicultura.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	Silvicultura.settings.textoMerge = '<%= Model.TextoMerge %>';

@@ -40,7 +40,8 @@
 					urlObterTratamentoFisso: '<%= Url.Action("ObterTratamentoFitossanitario","PTV") %>',
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
 					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
-					urlObterDiasHorasVistoria: '<%= Url.Action("ObterDiasHorasVistoria","PTV") %>'
+				    urlObterDiasHorasVistoria: '<%= Url.Action("ObterDiasHorasVistoria","PTV") %>',
+				    urlObterDeclaracaoAdicional: '<%=Url.Action("ObterDeclaracaoAdicional", "PTV")%>'
 				},
 			});
 

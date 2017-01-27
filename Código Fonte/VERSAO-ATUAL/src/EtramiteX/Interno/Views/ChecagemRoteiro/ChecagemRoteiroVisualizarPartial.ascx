@@ -2,17 +2,17 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMChecagemRoteiro" %>
 
-<script type="text/javascript">
+<script>
 	function visualizarRoteiro(id, tid) {
 		var urlVisualizar = '<%= Url.Action("Visualizar", "Roteiro") %>';
-		urlVisualizar += '?id=' + id +'&tid=' + tid;		
+		urlVisualizar += '?id=' + id +'&tid=' + tid;
 		Modal.abrir(urlVisualizar, null, function (container) {Modal.defaultButtons(container);}, Modal.tamanhoModalGrande);
 	}
 </script>
 
 <h1 class="titTela">Visualizar Checagem de Itens de Roteiro</h1>
 <br />
-<div class="block box">	
+<div class="block box">
 	<div class="block">
 		<div class="coluna10">
 			<label for="ChecagemRoteiro.Id">Número *</label>
@@ -92,4 +92,3 @@
 		</div>
 	</div>
 </fieldset>
-		

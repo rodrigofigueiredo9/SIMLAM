@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				}
 
 				CulturaInternoBus culturaBus = new CulturaInternoBus();
-				List<Cultivar> cultivares = culturaBus.ObterCultivares(cfo.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+				List<Cultivar> cultivares = culturaBus.ObterCultivares(cfo.Produtos.Select(x => x.CulturaId).ToList(), cfo.Produtos.Select(z => z.LoteId).ToList()) ?? new List<Cultivar>();
 
 				var declaracoesAdicionais = cultivares
 					.Where(x => cfo.Produtos.Any(y => y.CultivarId == x.Id))
@@ -347,6 +347,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 		{
 			try
 			{
+
 				if (tipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Digital && tipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco)
 				{
 					Validacao.Add(Mensagem.EmissaoCFO.TipoNumeroObrigatorio);
@@ -371,6 +372,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 					}
 				}
 
+               
 				return numero;
 			}
 			catch (Exception exc)

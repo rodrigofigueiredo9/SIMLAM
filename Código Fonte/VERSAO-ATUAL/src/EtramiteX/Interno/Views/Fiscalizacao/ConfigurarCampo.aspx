@@ -5,8 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Campos da fiscalização</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoConfiguracao.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoConfiguracao.js") %>" ></script>
+	<script>
 		$(function () {
 			ConfigurarCampoInfracao.load($('#central'), {
 				urls: {
@@ -26,7 +26,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		
+
 		<h1 class="titTela">Campos da fiscalização</h1><br />
 
 		<fieldset class="box">

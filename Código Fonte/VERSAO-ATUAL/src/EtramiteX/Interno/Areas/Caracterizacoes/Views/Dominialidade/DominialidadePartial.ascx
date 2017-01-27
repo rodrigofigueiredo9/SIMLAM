@@ -4,7 +4,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DominialidadeVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript">
+<script>
 	Dominialidade.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Dominialidade.settings.textoMerge = '<%= Model.TextoMerge %>';
 	Dominialidade.settings.atualizarDependenciasModalTitulo = '<%= Model.AtualizarDependenciasModalTitulo %>';

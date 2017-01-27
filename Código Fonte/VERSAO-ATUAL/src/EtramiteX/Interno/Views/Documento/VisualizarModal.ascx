@@ -2,27 +2,27 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
 <!-- DEPENDENCIAS DE PESSOA -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE PESSOA -->
 
 <!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Documento/documento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
 
-<script type="text/javascript">
-	
+<script>
+
 	var modalDocVisObj = new Documento();
-	
+
 	$(function () {
 		AtividadeSolicitadaAssociar.load($('.divDocVisualizar'));
-		
+
 		modalDocVisObj.load($('.divDocVisualizar'), {
 			urls: {
 				editarInteressado: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
@@ -44,7 +44,7 @@
 
 	<h1 class="titTela">Visualizar Documento</h1>
 	<br />
-	
+
 	<% Html.RenderPartial("VisualizarPartial"); %>
 
 </div>

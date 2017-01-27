@@ -4,7 +4,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<HabilitarEmissaoCFOCFOCVM>" %>
 
 <% if (Model.IsAjaxRequest) { %>
-<script type="text/javascript">
+<script>
 	$.extend(HabilitarEmissaoCFOCFOC.settings, {
 		urls: {
 			voltar: '<%= Url.Action("CriarHabilitarEmissaoCFOCFOC", "Credenciado") %>',
@@ -111,12 +111,12 @@
 		<div class="block">
 			<div class="coluna30">
 				<label for="HabilitarEmissao.NumeroHabilitacao">Registro no CREA</label>
-				<%= Html.TextBox("HabilitarEmissao.RegistroCrea",  Model.HabilitarEmissao.RegistroCrea, new { @maxlength = "30", @class = "txtRegistroCrea text disabled", @disabled = "disabled" })%>				
+				<%= Html.TextBox("HabilitarEmissao.RegistroCrea",  Model.HabilitarEmissao.RegistroCrea, new { @maxlength = "30", @class = "txtRegistroCrea text disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna30 prepend2">
 				<label for="HabilitarEmissao.UF">UF</label>
-				<%= Html.DropDownList("HabilitarEmissao.UF", Model.Estados, new { @class = "text ddlUf disabled", @disabled = "disabled" })%> 
+				<%= Html.DropDownList("HabilitarEmissao.UF", Model.Estados, new { @class = "text ddlUf disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna30 prepend2 divRegistroCrea <%= (Model.HabilitarEmissao.UF == 8 ? "hide" : "") %>">

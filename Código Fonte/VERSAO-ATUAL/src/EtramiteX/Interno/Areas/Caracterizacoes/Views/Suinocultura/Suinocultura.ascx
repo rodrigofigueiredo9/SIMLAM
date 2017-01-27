@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.Suinocultura%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	Suinocultura.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Suinocultura.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	Suinocultura.settings.textoMerge = '<%= Model.TextoMerge %>';

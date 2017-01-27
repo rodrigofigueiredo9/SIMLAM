@@ -107,6 +107,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOEmitir })]
 		public ActionResult Criar(EmissaoCFO entidade)
 		{
+            entidade.PossuiLaudoLaboratorial = false;
+            entidade.PossuiTratamentoFinsQuarentenario = false;
 			_bus.Salvar(entidade);
 
 			string UrlRedirecionar = Url.Action("Criar", "CFO") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + entidade.Id.ToString();
@@ -142,7 +144,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			ListaCredenciadoBus.CFOProdutoEspecificacao, ListaCredenciadoBus.DocFitossanitarioSituacao, _bus.ObterUnidadesProducaoLista(cfo.EmpreendimentoId, cfo.ProdutorId), ListaCredenciadoBus.Municipios(cfo.EstadoEmissaoId));
 
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
-			List<Cultivar> cultivares = culturaBus.ObterCultivares(cfo.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+			List<Cultivar> cultivares = culturaBus.ObterCultivares(cfo.Produtos.Select(x => x.CulturaId).ToList(), cfo.Produtos.Select(x => x.LoteId).ToList()) ?? new List<Cultivar>();
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => cfo.Produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
 				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => cfo.Produtos.Count(z => z.CultivarId == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)) > 0))
@@ -159,6 +161,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOEditar })]
 		public ActionResult Editar(EmissaoCFO entidade)
 		{
+            entidade.PossuiLaudoLaboratorial = false;
+            entidade.PossuiTratamentoFinsQuarentenario = false;
 			_bus.Salvar(entidade);
 
 			string UrlRedirecionar = Url.Action("Index", "CFO") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + entidade.Id.ToString();

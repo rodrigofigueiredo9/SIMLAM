@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Beneficiamento e Tratamento de Madeira</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/beneficiamentoMadeira.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/beneficiamentoMadeiraBeneficiamento.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/beneficiamentoMadeira.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/beneficiamentoMadeiraBeneficiamento.js") %>"></script>
+	<script>
 		$(function () {
 			BeneficiamentoMadeira.load($('#central'), {
 				urls: {

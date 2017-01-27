@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Modelo Título</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/tituloModeloVisualizar.js") %>" ></script>
-	<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Titulo/tituloModeloVisualizar.js") %>" ></script>
+	<script>
 		$(function () {
 			TituloModeloVisualizar.urlObterAssinantes = '<%= Url.Action("ObterFuncionariosSetor", "Titulo") %>';
 			TituloModeloVisualizar.load($('#central'));
@@ -223,7 +223,7 @@
 						<label>Texto do e-mail *</label>
 						<input type="hidden" class="hdnTextoEmailId" value="<%= Model.TextoEmail.Id %>" />
 						<%= Html.TextArea("TextoEmail.Valor", Convert.ToString(Model.TextoEmail.Valor), new { @class = "textareaPequeno txtEmail disabled", @disabled = "disabled" })%>
-						<label style="font-style:italic; color:Silver">* As opções entre colchetes serão preenchidas automaticamente pelo sistema no envio do e-mail. 
+						<label style="font-style:italic; color:Silver">* As opções entre colchetes serão preenchidas automaticamente pelo sistema no envio do e-mail.
 						Caso algumas dessas formatações sejam modificadas ou removidas a informação não será preenchida.</label>
 					</div>
 				</div>

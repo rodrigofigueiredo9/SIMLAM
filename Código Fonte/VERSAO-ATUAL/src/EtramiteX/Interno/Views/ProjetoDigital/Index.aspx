@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Requerimentos Digitais</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ProjetoDigital/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/ProjetoDigital/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			ProjetoDigitalListar.urlImportar = '<%= Url.Action("Importar", "ProjetoDigital") %>';
 			ProjetoDigitalListar.urlPdfRequerimento = '<%= Url.Action("GerarPdfRequerimento", "ProjetoDigital") %>';

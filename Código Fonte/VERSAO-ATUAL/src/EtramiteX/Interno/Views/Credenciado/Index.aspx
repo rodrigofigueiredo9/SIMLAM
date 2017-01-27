@@ -6,11 +6,11 @@
 	Credenciados
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<%--<script type="text/javascript" src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>--%>
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/CredenciadoListar.js") %>"></script>
+	<%--<script src="<%= Url.Content("~/Scripts/jquery.listar-grid.js") %>"></script>--%>
+    <script src="<%= Url.Content("~/Scripts/Credenciado/CredenciadoListar.js") %>"></script>
 
-	<script type="text/javascript">
-		
+	<script>
+
 		$(function () {
 			CredenciadoListar.Mensagens = <%= Model.Mensagens %>;
 			CredenciadoListar.visualizarLink = '<%= Url.Action("Visualizar", "Credenciado") %>';
@@ -25,6 +25,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		<% Html.RenderPartial("ListarFiltros", Model); %>				
+		<% Html.RenderPartial("ListarFiltros", Model); %>
 	</div>
 </asp:Content>

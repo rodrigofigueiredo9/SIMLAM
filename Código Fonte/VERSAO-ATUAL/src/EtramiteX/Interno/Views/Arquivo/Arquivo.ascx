@@ -3,7 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ArquivoVM>" %>
 
-<script type="text/javascript">
+<script>
 	var mensagensArquivo = <%= Model.Mensagens %>;
 	ComponenteArquivoDefaultSettings = {
 		urlDownload: '<%: Url.Action("Baixar", "Arquivo", new {Area ="" }) %>',
@@ -47,7 +47,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<% 
+			<%
 			JavaScriptSerializer _jsSerializer = new JavaScriptSerializer();
 			foreach (Anexo anexo in Model.Anexos) { %>
 			<tr>
@@ -71,7 +71,7 @@
 				<% } %>
 			</tr>
 			<% } %>
-			
+
 			<!-- LINHA MOSTRADA QUANDO NÃO HÁ ANEXOS -->
 			<tr class="trSemItens <%= Model.Anexos.Count > 0 ? "hide" : "" %>">
 				<td colspan="<%= (Model.IsVisualizar ? "2" : "3") %>">

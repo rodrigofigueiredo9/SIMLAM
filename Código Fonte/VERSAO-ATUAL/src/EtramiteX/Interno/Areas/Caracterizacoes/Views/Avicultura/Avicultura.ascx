@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.Avicultura%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	Avicultura.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	Avicultura.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	Avicultura.settings.textoMerge = '<%= Model.TextoMerge %>';

@@ -3,10 +3,10 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Enviar Processo/Documento</asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/tela.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/enviar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Tramitacao/tela.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Tramitacao/enviar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 		$(function () {
 			EnviarTela.load($('#central'), {
 				urls: {

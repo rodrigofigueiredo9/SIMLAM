@@ -1,0 +1,54 @@
+Prodest SIMLAM:
+SWWEBGIS01 (WEB ArcGIS): 201.62.46.152
+SWARCSDE01 (ArcSDE): 10.243.142.2
+SWSERV01 (Serviços): 10.243.142.3
+==pentago : iD@fP3nt@g0 /  P3nt@g0iD@f
+-------------------------------------
+Pentago DB:
+Host: 192.168.2.128
+Porta: 1521
+SID: SIMLAM
+
+Senhas:
+
+Login: IDAF
+Senha: et2qud5w
+
+Login: IDAFCONSULTA
+Senha: djww201j
+
+Login: IDAFCREDENCIADO
+Senha: kqb53mse
+
+Login: IDAFCREDENCIADOGEO
+Senha: kiq02w3c
+
+Login: IDAFGEO
+Senha: lkqbcsw3
+
+Login: IDAFGEOPROTOTIPO
+Senha: tg20mwe4
+
+Login: IDAFPUBLICOGEO
+Senha: ws82cxx5
+
+Login: IDAFRELATORIO
+Senha: lpmw5621
+
+Login: IDAF_GEOBASES
+Senha: e92ncwza
+
+Login: IDAF_S_GEOBASES
+Senha: lgqmdr56
+
+Login: VIDAF
+Senha: yy86vd34
+
+Login: SDE
+Senha: lq3f78va
+
+Login: NET
+Senha: jjw4cf7q
+
+Login: SVG
+Senha: bts238n3

@@ -22,6 +22,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTVOutro
 		public List<SelectListItem> EstadosInteressado { get; set; }
 		public List<SelectListItem> MunicipiosInteressado { get; set; }
 		public List<SelectListItem> UnidadeMedida { get; set; }
+        public List<SelectListItem> Pragas { get; set; }
 
 		public PTVOutroVM() { }
 
@@ -45,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTVOutro
 			this.Municipios = ViewModelHelper.CriarSelectList(municipios, true, true, ptv.Municipio.ToString());
 
 			this.Situacoes = ViewModelHelper.CriarSelectList(lstSituacoes, true, true, ptv.Situacao.ToString());
+
 
 			OrigemTipoList = ViewModelHelper.CriarSelectList(lsOrigem.OrderBy(x => x.Id).ToList(), true, true);
 		}

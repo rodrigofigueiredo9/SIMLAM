@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.DespolpamentoCafe%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	DespolpamentoCafe.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	DespolpamentoCafe.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	DespolpamentoCafe.settings.textoMerge = '<%= Model.TextoMerge %>';

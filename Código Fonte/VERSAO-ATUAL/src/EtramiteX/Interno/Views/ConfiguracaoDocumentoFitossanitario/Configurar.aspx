@@ -6,9 +6,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Configurar Numeração de CFO/CFOC/PTV</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/configDocFitossanitario.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/configDocFitossanitario.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			ConfigDocFitossanitario.load($("#central"), {
 				urls: {

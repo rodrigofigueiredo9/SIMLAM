@@ -35,7 +35,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem EditarSituacaoInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A situação do CFOC deve ser \"Em elaboração\"." }; } }
 
 		public Mensagem TipoNumeroObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Nº Bloco ou Nº Digital é obrigatório." }; } }
-		public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC já existe no sistema." }; } }
+        public Mensagem AnoCFOCInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+        public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC já existe no sistema." }; } }
 		public Mensagem NumeroNaoLiberado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC não está liberado para o responsável técnico." }; } }
 		public Mensagem NumeroObrigatorio { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC é obrigatório." }; } }
 		public Mensagem NumeroInvalido { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC está inválido." }; } }
@@ -84,7 +85,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem TratamentoModoAplicacao { get { return new Mensagem() { Campo = "CFOC_TratamentoFitossanitario_ModoAplicacao", Texto = "Modo de aplicação é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ValidadeCertificadoObrigatorio { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "Validade do certificado é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
-		public Mensagem ValidadeCertificadoMaxima { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "A data de validade deve ser menor ou igual a 15 dias.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem ValidadeCertificadoMaxima { get { return new Mensagem() { Campo = "CFOC_ValidadeCertificado", Texto = "A data de validade deve ser menor ou igual a 30 dias.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem MunicipioEmissaoObrigatorio { get { return new Mensagem() { Campo = "CFOC_MunicipioEmissaoId", Texto = "Município da emissão é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ResponsavelTecnicoNaoHabilitado { get { return new Mensagem() { Texto = "O responsável técnico deve estar habilitado para emissão de CFOC.", Tipo = eTipoMensagem.Advertencia }; } }

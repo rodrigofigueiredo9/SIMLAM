@@ -2,9 +2,9 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertificadoRegistroAtividadeFlorestalVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certificado/certificadoRegistroAtividadeFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certificado/certificadoRegistroAtividadeFlorestal.js") %>"></script>
 
-<script type="text/javascript">
+<script>
     CertificadoRegistroAtividadeFlorestal.settings.urls.obterDadosCertificadoRegistroAtividadeFlorestal = '<%= Url.Action("ObterDadosCertificadoDestinatarios", "Certificado", new {area="Especificidades"}) %>';
 </script>
 
@@ -18,8 +18,8 @@
 			<label>Destinatário *</label>
 			<%: Html.DropDownList("Certificado.Destinatario", Model.Destinatarios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Destinatarios.Count <= 1, new { @class = "text ddlDestinatarios" }))%>
 		</div>
-	</div>	
-    
+	</div>
+
     <div class="block">
 		<div class="coluna15">
 			<label for="">Vias *</label>

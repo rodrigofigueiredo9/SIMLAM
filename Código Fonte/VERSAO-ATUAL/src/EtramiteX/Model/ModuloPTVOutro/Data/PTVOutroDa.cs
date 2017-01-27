@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 {
@@ -94,7 +95,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
                        :resp_tecnico,
                        :resp_tecnico_num_hab,
                        :estado,
-                       :municipio) returning id into :id", Esquema);
+                       :municipio,
+                       :declaracao_adicional,
+                       :declaracao_adicional_formatado) returning id into :id", Esquema);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -114,6 +117,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("resp_tecnico_num_hab", DbType.String, 8, PTV.RespTecnicoNumHab);
 				comando.AdicionarParametroEntrada("estado", PTV.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicionalHtml, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -289,7 +294,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 
 				PTV.Produtos = bancoDeDados.ObterEntityList<PTVOutroProduto>(comando);
 
-				#endregion
+                #endregion
+
+                #region PTV Declaracoes
+
+
+                comando = bancoDeDados.CriarComando(@"
+				select d.praga              IdPraga,
+                       p.nome_cientifico    NomeCientifico,
+                       p.nome_comum         NomeComum,
+                       c.Texto              DeclaracaoAdicional,
+                       c.id                 IdDeclaracao,
+                       d.cultivar           IdCultivar            
+				from 
+					tab_ptv_outrouf_declaracao	d,
+					lov_cultivar_declara_adicional	c,
+                    tab_praga p
+				where d.declaracao_adicional = c.id
+                    and d.praga = p.id
+					and d.ptv = :ptv", Esquema);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+
+                PTV.Declaracoes = bancoDeDados.ObterEntityList<PTVOutroDeclaracao>(comando);
+
+                #endregion
+
+				
 
 				return PTV;
 			}
@@ -306,6 +337,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
 			}
 		}
+
+       
 
 		internal List<Lista> ObterCultivar(eDocumentoFitossanitarioTipo origemTipo, int culturaID)
 		{

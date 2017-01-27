@@ -200,7 +200,7 @@ namespace Tecnomapas.Blocos.Arquivo
 
 				if (!File.Exists(strNovoCaminho))
 				{
-					throw new Exception("Arquivo não encontrado");
+					throw new Exception("Arquivo não encontrado. Caminho: " + strNovoCaminho);
 				}
 				else
 				{
@@ -231,8 +231,10 @@ namespace Tecnomapas.Blocos.Arquivo
 					throw new Exception("Diretório temporário não encontrado");
 			}
 
-			if (!File.Exists(String.Format("{0}\\{1}", arquivo.TemporarioPathNome, arquivo.TemporarioNome)))
-				throw new Exception("Arquivo não encontrado");
+            string tempFilePath = String.Format("{0}\\{1}", arquivo.TemporarioPathNome, arquivo.TemporarioNome);
+
+			if (!File.Exists(tempFilePath))
+				throw new Exception("Arquivo não encontrado. Caminho: " + tempFilePath);
 
 			arquivo.Buffer = File.Open(String.Format("{0}\\{1}", arquivo.TemporarioPathNome, arquivo.TemporarioNome), FileMode.Open, FileAccess.Read, FileShare.Read);
 			return arquivo;

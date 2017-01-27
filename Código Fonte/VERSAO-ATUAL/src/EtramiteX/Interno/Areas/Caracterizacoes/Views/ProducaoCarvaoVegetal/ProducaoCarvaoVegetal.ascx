@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.ProducaoCarvaoVegetal%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	ProducaoCarvaoVegetal.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	ProducaoCarvaoVegetal.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	ProducaoCarvaoVegetal.settings.textoMerge = '<%= Model.TextoMerge %>';

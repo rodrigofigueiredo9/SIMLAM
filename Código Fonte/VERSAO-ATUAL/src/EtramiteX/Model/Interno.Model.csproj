@@ -250,6 +250,8 @@
     <Compile Include="ModuloVegetal\Business\ClasseUsoValidar.cs" />
     <Compile Include="ModuloVegetal\Business\ClassificacaoToxicologicaBus.cs" />
     <Compile Include="ModuloVegetal\Business\ClassificacaoToxicologicaValidar.cs" />
+    <Compile Include="ModuloVegetal\Business\DeclaracaoAdicionalBus.cs" />
+    <Compile Include="ModuloVegetal\Business\DeclaracaoAdicionalValidar.cs" />
     <Compile Include="ModuloVegetal\Business\PragaValidar.cs" />
     <Compile Include="ModuloVegetal\Business\PragaBus.cs" />
     <Compile Include="ModuloVegetal\Business\CulturaBus.cs" />
@@ -266,6 +268,7 @@
     <Compile Include="ModuloVegetal\Business\GrupoQuimicoValidar.cs" />
     <Compile Include="ModuloVegetal\Data\ClasseUsoDa.cs" />
     <Compile Include="ModuloVegetal\Data\ClassificacaoToxicologicaDa.cs" />
+    <Compile Include="ModuloVegetal\Data\DeclaracaoAdicionalDa.cs" />
     <Compile Include="ModuloVegetal\Data\PragaDa.cs" />
     <Compile Include="ModuloVegetal\Data\CulturaDa.cs" />
     <Compile Include="ModuloVegetal\Data\FormaApresentacaoDa.cs" />
@@ -296,6 +299,10 @@
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model.Extencao\Interno.Model.Extensoes.csproj">
       <Project>{f7baf119-128e-4151-89b3-35f1367add15}</Project>

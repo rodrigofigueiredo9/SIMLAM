@@ -5,13 +5,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar Checagem de Itens de Roteiro</asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemRoteiro/salvarChecagemRoteiro.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/ChecagemRoteiro/salvarChecagemRoteiro.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		ChecagemRoteiroSalvar.visualizarRoteiroModalLink = '<%= Url.Action("Visualizar", "Roteiro") %>';
 		ChecagemRoteiroSalvar.associarItemRoteiroModalLink = '<%= Url.Action("ListarItem", "Roteiro") %>';
 		ChecagemRoteiroSalvar.urlObterItensRoteiro = '<%= Url.Action("ObterItensRoteiro","ChecagemRoteiro") %>';
@@ -19,8 +19,8 @@
 		ChecagemRoteiroSalvar.urlValidarAssociarRoteiro = '<%= Url.Action("ValidarAssociarRoteiro","ChecagemRoteiro") %>';
 		ChecagemRoteiroSalvar.urlCheckListRoteiroPdfObj = '<%= Url.Action("ChecagemRoteiroPdfObj","ChecagemRoteiro") %>';
 		ChecagemRoteiroSalvar.urlCheckListRoteiroPdfObjValidar = '<%= Url.Action("ChecagemRoteiroPdfObjValidar","ChecagemRoteiro") %>';
-		
-		
+
+
 		ChecagemRoteiroSalvar.Mensagens = <%= Model.Mensagens %>;
 
 		$(function() {
@@ -81,7 +81,7 @@
 						</thead>
 						<tbody>
 						<% int count = 0;
-							JavaScriptSerializer _jsSerializer = new JavaScriptSerializer();			
+							JavaScriptSerializer _jsSerializer = new JavaScriptSerializer();
 							foreach (var roteiro in Model.ChecagemRoteiro.Roteiros) { %>
 							<tr>
 								<td>
@@ -114,7 +114,7 @@
 
 		<fieldset class="block box">
 			<legend>Itens de Roteiro</legend>
-			
+
 			<div class="block">
 				<div class="dataGrid">
 					<table class="tabItensRoteiro dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -127,7 +127,7 @@
 							</tr>
 						</thead>
 						<tbody>
-						<%  
+						<%
 							count = 0;
 							foreach (Item item in Model.ChecagemRoteiro.Itens) {%>
 							<tr>
@@ -143,11 +143,11 @@
 								<td>
 									<span class="trItemRoteiroSituacaoTexto" title="<%= Html.Encode(item.SituacaoTexto) %>"><%= Html.Encode(item.SituacaoTexto) %></span>
 								</td>
-								<td>									
+								<td>
 									<input title="Conferir" type="button" class="icone recebido btnConferirItemRoteiro" value="" />
 									<input title="Dispensar" type="button" class="icone dispensado btnDispensarItemRoteiro" value="" />
 									<input title="Cancelar conferência ou dispensa" type="button" class="icone cancelar btnCancelarItemRoteiro" value="" />
-									<input title="Excluir" type="button" class="icone excluir btnExcluirItemRoteiro" value="" />									
+									<input title="Excluir" type="button" class="icone excluir btnExcluirItemRoteiro" value="" />
 								</td>
 							</tr>
 						<% count++; } %>
@@ -221,11 +221,11 @@
 					<input title="Conferir" type="button" class="icone recebido btnConferirItemRoteiro" value="" />
 					<input title="Dispensar" type="button" class="icone dispensado btnDispensarItemRoteiro" value="" />
 					<input title="Cancelar conferência ou dispensa" type="button" class="icone cancelar btnCancelarItemRoteiro" value="" />
-					<input title="Excluir" type="button" class="icone excluir btnExcluirItemRoteiro" value="" />					
+					<input title="Excluir" type="button" class="icone excluir btnExcluirItemRoteiro" value="" />
 				</td>
 			</tr>
 		</tbody>
 	</table>
 
-	
+
 </asp:Content>

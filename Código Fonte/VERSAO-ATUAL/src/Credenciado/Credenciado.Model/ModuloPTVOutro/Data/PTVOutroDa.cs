@@ -13,6 +13,8 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 {
@@ -83,7 +85,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 					resp_tecnico_num_hab,
 					estado,
 					municipio,
-					credenciado)
+					credenciado,
+                    declaracao_adicional,
+                    declaracao_adicional_formatado)
 				values
 					(seq_tab_ptv_outrouf.nextval,
 					:tid,
@@ -103,7 +107,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 					:resp_tecnico_num_hab,
 					:estado,
 					:municipio,
-					:credenciado) returning id into :id", Esquema);
+					:credenciado,
+                    :declaracao_adicional,
+                    :declaracao_adicional_formatado) returning id into :id", Esquema);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -124,6 +130,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("estado", PTV.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", PTV.CredenciadoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicional, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -167,11 +175,60 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 				#endregion
 
-				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptvoutro, eHistoricoAcao.criar, bancoDeDados);
+                #region Declaracao PTV
+
+                comando = bancoDeDados.CriarComando(@"
+				insert into tab_ptv_outrouf_declaracao
+					(id, tid, ptv, declaracao_adicional, cultivar, praga)
+				values 
+					(seq_tab_ptv_outrouf_declaracao.nextval, :tid, :ptv, :declaracao, :cultivar, :praga)", Esquema);
+
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao",  DbType.Int32);
+                comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
+                comando.AdicionarParametroEntrada("praga", DbType.Int32);
+		       
+                PTV.Declaracoes.ForEach(item =>
+                {
+                    comando.SetarValorParametro("declaracao", item.IdDeclaracao);
+                    comando.SetarValorParametro("cultivar", item.IdCultivar);
+                    comando.SetarValorParametro("praga", item.IdPraga);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+            
+
+                #endregion
+
+                Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptvoutro, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
 		}
+
+        internal List<ListaValor> ObterListaDeclaracao(int pragaId, int[] cultivarId)
+        {
+            List<ListaValor> lst = new List<ListaValor>();
+
+            string strCultivares = string.Join(",", cultivarId
+                                           .Select(x => string.Format("'{0}'", x.ToString())));
+
+            string Consulta = string.Format(@"select distinct d.id as id, d.texto as texto from lov_cultivar_declara_adicional d,tab_cultivar_configuracao c 
+                                                where c.declaracao_adicional = d.id and d.outro_estado='1' and c.praga={0} and c.cultivar in ({1}) ", pragaId, strCultivares);
+            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(Consulta);
+            foreach (var item in daReader)
+            {
+                lst.Add(new ListaValor()
+                {
+                    Id = Convert.ToInt32(item["id"]),
+                    Texto = item["texto"].ToString(),
+                    IsAtivo = true
+                });
+            }
+
+            return lst;
+        }
 
 		internal void PTVCancelar(PTVOutro PTV, BancoDeDados banco)
 		{
@@ -238,6 +295,87 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 			return retorno;
 		}
 
+        internal List<Lista> ObterPragasLista(List<PTVOutroProduto> produtos)
+        {
+            List<Lista> retorno = new List<Lista>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando("");
+
+                int count = 0;
+                string aux = string.Empty;
+                foreach (var item in produtos.GroupBy(p => new { p.Cultivar, p.UnidadeMedida }).Select(g => g.First()))
+                {
+                    ++count;
+                    aux += string.Format("p.id in (select c.praga from tab_cultivar_configuracao c where c.cultivar = :cultivar{0} and c.tipo_producao = :tipo_producao{0}) or ", count);
+                    comando.AdicionarParametroEntrada("cultivar" + count, item.Cultivar, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_producao" + count, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), DbType.Int32);
+                }
+
+                aux = aux.Substring(0, aux.Length - 4);
+                comando.DbCommand.CommandText = string.Format(@"select distinct p.* from tab_hab_emi_cfo_cfoc h, tab_hab_emi_cfo_cfoc_praga hp, tab_praga p, 
+				tab_praga_cultura pc where pc.praga = p.id and p.id = hp.praga and h.id = hp.habilitar_emi_id and h.responsavel = :credenciado and({0})", aux);
+                comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista()
+                        {
+                            Id = reader.GetValue<int>("id").ToString(),
+                            Texto = reader.GetValue<string>("nome_cientifico") + (string.IsNullOrEmpty(reader.GetValue<string>("nome_comum")) ? "" : " - " + reader.GetValue<string>("nome_comum"))
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
+        internal List<Praga> ObterPragasLista2(List<PTVOutroProduto> produtos)
+        {
+            List<Praga> retorno = new List<Praga>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando("");
+
+                int count = 0;
+                string aux = string.Empty;
+                foreach (var item in produtos.GroupBy(p => new { p.Cultivar, p.UnidadeMedida }).Select(g => g.First()))
+                {
+                    ++count;
+                    aux += string.Format("p.id in (select c.praga from tab_cultivar_configuracao c where c.cultivar = :cultivar{0} and c.tipo_producao = :tipo_producao{0}) or ", count);
+                    comando.AdicionarParametroEntrada("cultivar" + count, item.Cultivar, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_producao" + count, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), DbType.Int32);
+                }
+
+                aux = aux.Substring(0, aux.Length - 4);
+                comando.DbCommand.CommandText = string.Format(@"select distinct p.* from tab_hab_emi_cfo_cfoc h, tab_hab_emi_cfo_cfoc_praga hp, tab_praga p, 
+				tab_praga_cultura pc where pc.praga = p.id and p.id = hp.praga and h.id = hp.habilitar_emi_id and h.responsavel = :credenciado and({0})", aux);
+                comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Praga()
+                        {
+                            Id = reader.GetValue<int>("id"),
+                            NomeCientifico = reader.GetValue<string>("nome_cientifico"),
+                            NomeComum = reader.GetValue<string>("nome_comum")
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		internal PTVOutro Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
@@ -268,7 +406,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 						le.texto                EstadoTexto,
 						p.municipio             Municipio,
 						lm.texto                MunicipioTexto,
-						p.credenciado           CredenciadoId
+						p.credenciado           CredenciadoId,
+                        p.declaracao_adicional  DeclaracaoAdicional,
+                        p.declaracao_adicional_formatado    DeclaracaoAdicionalHtml
 					from tab_ptv_outrouf               p,
 						lov_ptv_situacao              ls,
 						lov_estado                    le,
@@ -327,9 +467,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 				PTV.Produtos = bancoDeDados.ObterEntityList<PTVOutroProduto>(comando);
 
+                PTV.Pragas = ObterPragasLista2(PTV.Produtos);
+
 				#endregion
 
-				return PTV;
+                #region PTV Declaracoes
+
+
+                comando = bancoDeDados.CriarComando(@"
+				select d.praga              IdPraga,
+                       p.nome_cientifico    NomeCientifico,
+                       p.nome_comum         NomeComum,
+                       c.Texto              DeclaracaoAdicional,
+                       c.id                 IdDeclaracao,
+                       d.cultivar           IdCultivar            
+				from 
+					tab_ptv_outrouf_declaracao	d,
+					lov_cultivar_declara_adicional	c,
+                    tab_praga p
+				where d.declaracao_adicional = c.id
+                    and d.praga = p.id
+					and d.ptv = :ptv", Esquema);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+
+                PTV.Declaracoes = bancoDeDados.ObterEntityList<PTVOutroDeclaracao>(comando);
+
+                #endregion
+
+                return PTV;
 			}
 		}
 

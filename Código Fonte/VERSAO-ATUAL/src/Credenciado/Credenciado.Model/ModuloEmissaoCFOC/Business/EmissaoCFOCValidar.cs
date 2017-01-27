@@ -114,54 +114,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				});
 			}
 
-			if (!entidade.PossuiLaudoLaboratorial.HasValue)
-			{
-				Validacao.Add(Mensagem.EmissaoCFOC.PossuiLaudoLaboratorialObrigatorio);
-			}
-			else
-			{
-				if (entidade.PossuiLaudoLaboratorial.Value)
-				{
-					if (string.IsNullOrEmpty(entidade.NomeLaboratorio))
-					{
-						Validacao.Add(Mensagem.EmissaoCFOC.NomeLaboratorioObrigatorio);
-					}
-
-					if (string.IsNullOrEmpty(entidade.NumeroLaudoResultadoAnalise))
-					{
-						Validacao.Add(Mensagem.EmissaoCFOC.NumeroLaudoResultadoAnaliseObrigatorio);
-					}
-
-					if (entidade.EstadoId <= 0)
-					{
-						Validacao.Add(Mensagem.EmissaoCFOC.EstadoObrigatorio);
-					}
-
-					if (entidade.MunicipioId <= 0)
-					{
-						Validacao.Add(Mensagem.EmissaoCFOC.MunicipioObrigatorio);
-					}
-				}
-			}
-
 			if (entidade.ProdutoEspecificacao <= 0)
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.ProdutoEspecificacaoObrigatorio);
-			}
-
-			if (!entidade.PossuiTratamentoFinsQuarentenario.HasValue)
-			{
-				Validacao.Add(Mensagem.EmissaoCFOC.PossuiTratamentoFinsQuarentenarioObrigatorio);
-			}
-			else
-			{
-				if (entidade.PossuiTratamentoFinsQuarentenario.Value)
-				{
-					entidade.TratamentosFitossanitarios.ForEach(tratamento =>
-					{
-						ValidarTratamento(tratamento);
-					});
-				}
 			}
 
 			if (entidade.PartidaLacradaOrigem && string.IsNullOrEmpty(entidade.NumeroLacre) && string.IsNullOrEmpty(entidade.NumeroPorao) && string.IsNullOrEmpty(entidade.NumeroContainer))
@@ -173,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.ValidadeCertificadoObrigatorio);
 			}
-			else if (entidade.ValidadeCertificado > 15)
+			else if (entidade.ValidadeCertificado > 30)
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.ValidadeCertificadoMaxima);
 			}
@@ -194,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				return false;
 			}
 
-			if (numero.Length != 10)
+			if (numero.Length != 8)
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.NumeroInvalido);
 				return false;
@@ -216,6 +171,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.NumeroCancelado);
 			}
+
+            if (numero.Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.EmissaoCFOC.AnoCFOCInvalido);
+            }
 
 			return Validacao.EhValido;
 		}

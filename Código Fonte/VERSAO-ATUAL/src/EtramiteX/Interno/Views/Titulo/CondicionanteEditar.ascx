@@ -5,8 +5,8 @@
 <%= Html.Hidden("Condicionante.tituloId", Model.Condicionante.tituloId, new { @class = "hdnTituloId" })%>
 <%= Html.Hidden("Condicionante.Situacao.Id", Model.Condicionante.Situacao.Id, new { @class = "hdnSituacao" })%>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoListar.js") %>" ></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoListar.js") %>" ></script>
+<script>
 	CondicionanteSalvar.settings.urls = {
 		salvar: '<%= Url.Action("CondicionanteEditarValidar", "Titulo") %>',
 		buscarDescricao: '<%= Url.Action("CondicionanteDescricaoFiltrar", "Titulo") %>'
@@ -29,10 +29,10 @@
 
 	<div class="block">
 		<div class="coluna100">
-			<label for="Descricao">Descrição *</label>	
+			<label for="Descricao">Descrição *</label>
 		</div>
-		<div class="coluna90">				
-			<%= Html.TextArea("Condicionante.Descricao", null, new { @maxlength = "4000", @class = "text textareaPequeno txtDescricao" })%> 
+		<div class="coluna90">
+			<%= Html.TextArea("Condicionante.Descricao", null, new { @maxlength = "4000", @class = "text textareaPequeno txtDescricao" })%>
 		</div>
 		<div class="coluna8">
 			<button type="button" class="btnBuscarDescricoes">Buscar</button>
@@ -64,7 +64,7 @@
 				<%= Html.RadioButton("Condicionante.PeriodicidadeTipo.Id", false, !Model.Condicionante.PossuiPeriodicidade, new { @class = "radio radPossuiPeriodicidade" })%><label>Não</label>
 			</div>
 		</div>
-	
+
 		<div class="coluna20 <%= Model.Condicionante.PossuiPeriodicidade ? "" : "hide" %> containerParaPeriodicidade">
 			<label for="Condicionante_Prazo">Período *</label>
 			<%= Html.TextBox("Condicionante.PeriodicidadeValor", null, new { @maxlength = "5", @class = "text txtPeriodicidade" })%>

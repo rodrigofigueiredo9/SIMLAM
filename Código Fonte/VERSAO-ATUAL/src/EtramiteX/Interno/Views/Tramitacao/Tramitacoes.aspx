@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Tramitações</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/tramitacoes.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/tramitacoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			Tramitacoes.urlObterFuncionarios = '<%= Url.Action("ObterFuncionariosDoSetor", "Tramitacao")%>';
 			Tramitacoes.urlObterTramitacaoSetor = '<%= Url.Action("ObterTramitacaoSetor", "Tramitacao")%>';

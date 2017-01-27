@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Processos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Processo/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
 			ProcessoListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Processo") %>';
 			ProcessoListar.urlExcluir = '<%= Url.Action("Excluir", "Processo") %>';
@@ -17,7 +17,7 @@
 
 			ProcessoListar.urlExisteProcessoAtividade = '<%= Url.Action("ExisteProcessoAtividade", "Processo") %>';
 			ProcessoListar.urlAtividadesSolicitadas = '<%= Url.Action("AtividadesSolicitadas", "Processo") %>';
-			
+
 			ProcessoListar.urlEditarApensadosJuntados = '<%= Url.Action("EditarApensadosJuntados") %>';
 			ProcessoListar.urlValidarEditarApensadosJuntados = '<%= Url.Action("ValidarEditarApensadosJuntados", "Processo") %>';
 			ProcessoListar.load($('#central'));

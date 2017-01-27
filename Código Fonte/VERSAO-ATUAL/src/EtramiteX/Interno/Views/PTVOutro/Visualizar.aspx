@@ -6,8 +6,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar PTV de Outro Estado</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTVOutro/emitirPTVOutro.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/PTVOutro/emitirPTVOutro.js") %>"></script>
+	<script>
 		$(function () {
 			PTVOutroEmitir.load($("#central"));
 		});

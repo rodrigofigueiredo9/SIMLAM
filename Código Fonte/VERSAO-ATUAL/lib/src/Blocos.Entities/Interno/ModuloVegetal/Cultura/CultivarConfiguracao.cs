@@ -14,5 +14,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura
 		public string DeclaracaoAdicionalTexto { get; set; }
 		
 		public string DeclaracaoAdicionalTextoHtml { get; set; }
+
+        public int OutroEstado { get; set; }
 	}
 }

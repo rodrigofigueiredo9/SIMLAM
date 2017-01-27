@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Funcionários</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>" ></script>
+	<script>
 		$(function () {
 			FuncionarioListar.urlAlterarSituacao = '<%= Url.Action("AlterarSituacao", "Funcionario") %>';
 			FuncionarioListar.urlEditar = '<%= Url.Action("Editar", "Funcionario") %>';

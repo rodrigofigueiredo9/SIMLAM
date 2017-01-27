@@ -4,7 +4,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Acompanhamento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			$('.fsArquivos', $('#central')).arquivo();
 		});

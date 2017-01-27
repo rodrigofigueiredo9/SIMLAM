@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/caracterizacao.js") %>"></script>
-	<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/caracterizacao.js") %>"></script>
+	<script>
 		$(function () {
 			Caracterizacao.load($('#central'), {
 				urls: {
@@ -38,21 +38,21 @@
 					<label><%=Model.DenominadorTexto%> *</label>
 					<%= Html.TextBox("DenominadorValor", Model.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
 				</div>
-				
+
 			</div>
 
 			<div class="block">
 				<div class="coluna20 append1">
 					<label>Zona de localização *</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
 				<div class="coluna7 append1">
 					<label>UF</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Uf, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Uf, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
 				<div class="coluna45 append1">
 					<label>Município</label>
-					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Municipio, new { disabled = "disabled", @class = "text disabled" })%> 
+					<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Municipio, new { disabled = "disabled", @class = "text disabled" })%>
 				</div>
                 <div class="coluna20 ">
 					<label>CNPJ</label>

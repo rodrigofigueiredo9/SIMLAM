@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.PulverizacaoProduto%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	PulverizacaoProduto.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	PulverizacaoProduto.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	PulverizacaoProduto.settings.textoMerge = '<%= Model.TextoMerge %>';

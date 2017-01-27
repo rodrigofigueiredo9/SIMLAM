@@ -3,10 +3,10 @@
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AgrotoxicoCulturaVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	AgrotoxicoCultura.settings.urls.listarCulturas = '<%= Url.Action("AssociarCultura", "ConfiguracaoVegetal", new { straggCultivar = true })%>';
 	AgrotoxicoCultura.settings.urls.listarPragas = '<%= Url.Action("AssociarPraga", "ConfiguracaoVegetal")%>';
 	AgrotoxicoCultura.settings.mensagens = <%=Model.Mensagens%>;

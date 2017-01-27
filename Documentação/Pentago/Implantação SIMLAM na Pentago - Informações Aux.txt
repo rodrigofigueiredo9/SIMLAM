@@ -2,8 +2,27 @@
 Implantação do SIMLAM IDAF na Pentago
 (Informações auxiliares para histórico)
 
-- Foi preciso configurar o Instant Client (conector jdbc) do Oracle na Máquina de Dev para executar o debug das aplicações do IDAF (soluções).
-
 - Precisamos corrigir os valores correntes de SEQUENCE, pois ao criar novos registros . 
 	Sequencias como IDAFCREDENCIADO.SEQ_PESSOA, entre outras, estavam com o último sequencial menor do que o registrado na tabela a que ele se referencia (no caso do exemplo, o último código da tabela IDAFCREDENCIADO.TAB_PESSOA. 
 	Então é necessário ou "recriar" a SEQUENCE, ou usar comandos para atualizar o valor corrente.
+
+# Máquina DEV:
+	
+- Foi preciso instalar e configurar o Instant Client (conector jdbc) do Oracle na Máquina de Dev para executar o debug das aplicações do IDAF (soluções).
+	Usamos na máquina de dev o "ODTwithODAC121024.zip"
+
+- Precisamos colocar a variável NLS_LANG COM O VALOR "BRAZILIAN PORTUGUESE_BRAZIL.WE8MSWIN1252".
+
+Para gerar arquivos PDF:
+
+- Precisamos dar build na solução EtramiteXLib.sln, localizada em "\SIMLAM\Código Fonte\VERSAO-ATUAL\lib\src\"
+
+- Tivemos que alterar o caminho do servidor de arquivos na tabela CNF_ARQUIVO.
+	update cnf_arquivo set raiz = replace(raiz, '10.243.142.1', 'arcgis-pentago');
+	commit;
+	
+- Ao testar um arquivo, tivemos que alterar o caminho onde ele foi gerado, vide exemplo:
+	 update tab_arquivo set caminho = replace(caminho, '10.243.142.1', 'arcgis-pentago')
+	 where id = 745966;
+	 commit;
+	Além disso, tivemos que copiar o arquivo no servidor de produção. No exemplo acima o arquivo era uma assinatura em formato .PNG.

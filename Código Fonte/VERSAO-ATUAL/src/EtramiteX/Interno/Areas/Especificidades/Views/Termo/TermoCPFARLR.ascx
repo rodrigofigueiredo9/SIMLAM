@@ -2,10 +2,10 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoCPFARLRVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLR.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLR.js") %>"></script>
+<script>
 	TermoCPFARLR.settings.urls.urlObterDadosTermoCPFARLR = '<%= Url.Action("ObterDadosTermoCPFARL", "Termo", new {area="Especificidades"}) %>';
-	TermoCPFARLR.settings.urls.urlObterTituloAnterior = '<%= Url.Action("ObterDadosTermoCPFARLTituloAntigo", "Termo", new {area="Especificidades"}) %>';	
+	TermoCPFARLR.settings.urls.urlObterTituloAnterior = '<%= Url.Action("ObterDadosTermoCPFARLTituloAntigo", "Termo", new {area="Especificidades"}) %>';
 	TermoCPFARLR.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
 

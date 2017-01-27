@@ -39,6 +39,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial deve ser composto de 10 caracteres.", Campo = tipo + "NumeroInicial" };
 		}
 
+        public Mensagem NumeroInicialInvalidoCFOeCFOC(string tipo)
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial deve ser composto de 8 caracteres.", Campo = tipo + "NumeroInicial" };
+        }
+
 		public Mensagem NumeroFinalObrigatorio(string tipo)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número final é obrigatório.", Campo = tipo + "NumeroFinal" };
@@ -48,6 +53,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número final deve ser composto de 10 caracteres.", Campo = tipo + "NumeroFinal" };
 		}
+
+        public Mensagem NumeroFinalInvalidoCFOeCFOC(string tipo)
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número final deve ser composto de 8 caracteres.", Campo = tipo + "NumeroFinal" };
+        }
 
 		public Mensagem NumeroFinalMaiorInicial(string tipo)
 		{

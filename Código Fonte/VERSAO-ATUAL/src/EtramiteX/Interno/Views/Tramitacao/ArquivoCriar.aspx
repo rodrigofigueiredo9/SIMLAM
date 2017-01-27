@@ -5,8 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar Arquivo</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/arquivo.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/arquivo.js") %>"></script>
+	<script>
 		$(function () {
 			TramitacaoArquivo.load($('#central'), {
 				urls: {

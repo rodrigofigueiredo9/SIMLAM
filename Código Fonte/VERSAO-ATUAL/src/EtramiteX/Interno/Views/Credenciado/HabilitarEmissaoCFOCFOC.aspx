@@ -3,20 +3,20 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Habilitar Emissão de CFO e CFOC</asp:Content>
 
-<asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">	
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/habilitarEmissaoCFOCFOC.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Credenciado/renovarDataHabilitacaoCFO.js") %>"></script>
+<asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
+	<script src="<%= Url.Content("~/Scripts/Pessoa/tela.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Praga/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Credenciado/habilitarEmissaoCFOCFOC.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Credenciado/renovarDataHabilitacaoCFO.js") %>"></script>
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>	
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		$(function () {
-			HabilitarEmissaoCFOCFOC.load($('#central'), 
+			HabilitarEmissaoCFOCFOC.load($('#central'),
 			{
-				urls: 
+				urls:
 				{
 					salvar: '<%= Url.Action("SalvarHabilitarEmissao", "Credenciado") %>',
 					visualizarResponsavel: '<%= Url.Action("Visualizar", "Credenciado") %>',

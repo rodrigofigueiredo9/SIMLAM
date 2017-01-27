@@ -28,7 +28,7 @@
 	<% if (Model.IsAjaxRequest ){ %>
 		<div class="block box coluna95 ">
 	<% } %>
-	
+
 	<br />
 
 	<% using (Html.BeginForm("LogOn", "Autenticacao", FormMethod.Post, new { @Class="formLogon"})) { %>
@@ -38,7 +38,7 @@
 	<% } %>
 
 	<div id="loginCaixa">
-			
+
 			<div class="corpoCaixaLogin">
 				<div class="holderFundo">
 					<div class="block">
@@ -63,9 +63,9 @@
 							<%} %>
 
 							<% if (Model != null && Model.AlterarSenha) { %>
-				
+
 							<%= Html.Hidden("alterarSenha", Model.AlterarSenha)%>
-				
+
 							<div class="msgSis">
 								<p>
 									<%= Model.AlterarSenhaMsg %>
@@ -96,7 +96,6 @@
 	<% } %>
 
 	<script type="text/javascript" >
-		<!--
 			$('#login').focus();
 
 			$('#loginCaixa').keypress(function (e) {
@@ -150,6 +149,5 @@
 				$('#login').addClass('disabled').attr('readOnly', 'true');
 				$('#senha').focus();
 			}
-		//-->
 	</script>
 <% } %>

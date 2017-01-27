@@ -5,14 +5,14 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<!-- DEPENDENCIAS DE PESSOA -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE PESSOA -->
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Motosserra/motosserra.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Motosserra/motosserra.js") %>"></script>
+	<script>
 		$(function () {
 			MotosserraVerificar.load($('#central'), {
 				urls: {

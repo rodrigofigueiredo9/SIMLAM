@@ -187,8 +187,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
-			    select f.nome, h.numero_habilitacao, h.numero_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
-			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
+			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.numero_visto_crea, h.orgao_classe, h.registro_orgao_classe,  f.arquivo arquivo_id, le.sigla from {0}tab_hab_emi_ptv h, {0}tab_funcionario f, {0}lov_estado le
+			    where f.id = h.funcionario and h.uf_habilitacao = le.id and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
 
@@ -200,6 +200,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        int orgaoClasse = reader.GetValue<int>("orgao_classe");
+
+                        emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse==9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
 					}
 					reader.Close();
 				}
@@ -263,7 +268,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				emissaoPTV.LaboratorioMunicipio = Mensagem.Concatenar(laudoLaboratoriais.Select(x => x.MunicipioTexto).ToList());
 				emissaoPTV.LaboratorioUF = Mensagem.Concatenar(laudoLaboratoriais.Select(x => x.EstadoTexto).ToList());
 
-				foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)).ToList())
+                foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)).ToList())
 				{
 					List<String> listDeclaracoesAdicionaisAux = ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.CultivarId);
 					item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
@@ -390,9 +395,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.NumeroNotaFiscal = reader.GetValue<string>("numero_nota_fiscal");
 						emissaoPTV.VeiculoNumero = reader.GetValue<string>("veiculo_identificacao_numero");
 						emissaoPTV.Itinerario = reader.GetValue<string>("itinerario");
-						emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
-						emissaoPTV.DataValidade = reader.GetValue<DateTime>("valido_ate").ToShortDateString();
+                        if (reader.GetValue<DateTime?>("data_ativacao") != null)
+                            emissaoPTV.DataAtivacao = reader.GetValue<DateTime>("data_ativacao").ToString("dd/MM/yyyy");
+                        else
+                            emissaoPTV.DataAtivacao = "--/--/----";
 
+						emissaoPTV.DataValidade = reader.GetValue<DateTime>("valido_ate").ToShortDateString();
 						emissaoPTV.Destinatario.Nome = reader.GetValue<string>("destinatario_nome");
 						emissaoPTV.Destinatario.Endereco = reader.GetValue<string>("destinatario_endereco");
 						emissaoPTV.Destinatario.UF = reader.GetValue<string>("destinatario_uf");
@@ -421,6 +429,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				comando = bancoDeDados.CriarComando(@"   select x.nome,
                                                                 y.numero_habilitacao,
                                                                 y.numero_crea,
+                                                                y.uf_habilitacao_id, 
+                                                                y.numero_visto_crea,
                                                                 nvl(x.arquivo_id, y.arquivo_id) arquivo_id
                                                             from (select hf.funcionario_id, hf.nome, hf.arquivo_id
                                                                     from hst_funcionario hf
@@ -431,7 +441,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                                                 (select h2.funcionario_id,
                                                                         h2.numero_habilitacao,
                                                                         h2.numero_crea,
-                                                                        h2.arquivo_id
+                                                                        h2.arquivo_id,
+                                                                        h2.uf_habilitacao_id, 
+                                                                        h2.numero_visto_crea
                                                                     from hst_hab_emi_ptv h2
                                                                     where h2.funcionario_id = :FuncId
                                                                     and h2.data_execucao =
@@ -453,6 +465,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao_id");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = reader.GetValue<string>("numero_visto_crea");
 					}
 
 					reader.Close();
@@ -521,7 +536,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				if (String.IsNullOrEmpty(emissaoPTV.DeclaracaoAdicionalHtml))
 				{
-					foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV)).ToList())
+					foreach (var item in emissaoPTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)).ToList())
 					{
 						List<String> listDeclaracoesAdicionaisAux = ObterDeclaracaoAdicionalHistorico(item.Origem, item.OrigemTid, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.OrigemTipo, item.CultivarId);
 						item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
@@ -567,6 +582,51 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 			}
 			return retorno;
 		}
+
+
+        private Dictionary<int, int> BuscaTipoDocOrigemCFOC(int origem, int Cultivar, BancoDeDados bancoDeDados = null)
+        {
+            int OrigemTipo = 0;
+            Dictionary<int, int> lstTipoDocOrigem = new Dictionary<int, int>();
+
+            using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+            {
+
+                do
+                {
+                    string cmdSql = @"select distinct origem_tipo, origem
+                                      from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli
+                                       where cfoc.id = cp.cfoc and cp.lote = hli.lote and cfoc.id = {0} and hli.cultivar = {1} ";
+
+                    cmdSql = string.Format(cmdSql, origem, Cultivar);
+
+                    Comando comandoCred = bancoDeDadosCredenciado.CriarComando(cmdSql);
+
+
+                    using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comandoCred))
+                    {
+                        while (reader.Read())
+                        {
+                            OrigemTipo = reader.GetValue<int>("origem_tipo");
+                            origem = reader.GetValue<int>("origem");
+                            if (!lstTipoDocOrigem.ContainsKey(OrigemTipo))
+                                lstTipoDocOrigem.Add(OrigemTipo, origem);
+                        }
+
+                        reader.Close();
+                    }
+
+                } while (OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC);
+
+            }
+
+            return lstTipoDocOrigem;
+
+        }
+
+  
+
+
 		private List<String> ObterDeclaracaoAdicional(int origem, int origemTipo, int tipoProducaoID, int cultivarID, BancoDeDados bancoDeDados)
 		{
 			Comando comando = null;
@@ -583,7 +643,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto from tab_cfo cfo, tab_cfo_produto cp,       
                             ins_crt_unidade_prod_unidade i, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfo_praga tcp where cfo.id = cp.cfo 
                             and cp.unidade_producao = i.id and i.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfo.id = tcp.cfo and tcp.praga = cconf.praga
-                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID", EsquemaBancoCredenciado);
+                            and cfo.id = :cfoId and cconf.tipo_producao = :tipoProducaoID and i.cultivar = :cultivarID and lcda.outro_estado = '0' ", EsquemaBancoCredenciado);
 
 						comandoCred.AdicionarParametroEntrada("cfoId", origem, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
@@ -604,27 +664,65 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				case (int)eDocumentoFitossanitarioTipo.CFOC:
 					#region Buscar tratamento CFOC
 
-					using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
-					{
-						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
-                            from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
-                            where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
-                            and tcp.praga = cconf.praga and cfoc.id = :cfocId and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID", EsquemaBancoCredenciado);
+                    Dictionary<int,int> lstTipoDocOrigem = BuscaTipoDocOrigemCFOC(origem,cultivarID, bancoDeDados);
 
-						comandoCred.AdicionarParametroEntrada("cfocId", origem, DbType.Int32);
-						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
-						comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
-						using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comandoCred))
-						{
-							while (reader.Read())
-							{
-								retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+                    foreach (KeyValuePair<int, int> kv in lstTipoDocOrigem)
+                    {
+                        if (kv.Key == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)
+                        {
+                            using (BancoDeDados bancoDeDadosCred = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+                            {
+                                string cmdSql = string.Format(@"select distinct ld.Texto as DeclaracaoAdicionalTexto 
+                                                                from tab_cultivar_configuracao t, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot, tab_cfoc_praga cfpraga
+                                                                where t.cultivar = {1} and ld.id = ot.declaracao_adicional and ot.ptv = {0} and cfpraga.praga = ot.praga and t.tipo_producao = {2}
+                                                                and cfpraga.cfoc = {3} ", kv.Value, cultivarID, tipoProducaoID, origem);
 
-							}
-							reader.Close();
-						}
-					}
+                                comandoCred = bancoDeDadosCred.CriarComando(cmdSql, EsquemaBancoCredenciado);
+
+
+                                using (IDataReader reader = bancoDeDadosCred.ExecutarReader(comandoCred))
+                                {
+                                    while (reader.Read())
+                                    {
+                                        retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                                    }
+                                    reader.Close();
+                                }
+                            }
+                        }
+
+                        if (kv.Key == (int)eDocumentoFitossanitarioTipo.CFO)
+                        {
+                            using (BancoDeDados bancoDeDadosInst = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+                            {
+
+                                comando = bancoDeDadosInst.CriarComando(@"select distinct lcda.Texto  DeclaracaoAdicionalTexto 
+                                                                            from tab_cfoc cfoc, tab_cfoc_produto cp, tab_lote_item hli, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, tab_cfoc_praga tcp
+                                                                            where cfoc.id = cp.cfoc and cp.lote = hli.lote and hli.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and cfoc.id = tcp.cfoc
+                                                                            and tcp.praga = cconf.praga and cfoc.id = :cfoc and cconf.tipo_producao = :tipoProducaoID and hli.cultivar = :cultivarID and lcda.outro_estado='0' ", EsquemaBancoCredenciado);
+
+
+                                comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                                comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                                comando.AdicionarParametroEntrada("cfoc", origem, DbType.Int32);
+
+                                using (IDataReader reader = bancoDeDadosInst.ExecutarReader(comando))
+                                {
+                                    while (reader.Read())
+                                    {
+                                        retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                                    }
+                                    reader.Close();
+                                }
+                            }
+                        }
+                    }			
+
+						
+				
 
 					#endregion
 					break;
@@ -633,7 +731,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 					comando = bancoDeDados.CriarComando(@"select pp.origem, pp.origem_tipo, pp.unidade_medida from tab_ptv_produto pp where pp.ptv = :origemId and pp.cultivar = :cultivarID", EsquemaBanco);
 					comando.AdicionarParametroEntrada("origemId", origem, DbType.Int32);
-					comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
@@ -649,6 +747,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					}
 					#endregion
 					break;
+
+                case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                    #region Buscar tratamento PTV Outro Estado
+                    using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
+                    {
+
+                        comando = bancoDeDados.CriarComando(@"select lcda.texto DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_declaracao t, lov_cultivar_declara_adicional lcda
+                            where t.declaracao_adicional = lcda.id
+                            and t.ptv = :origem and t.cultivar = :cultivarID ", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("origem", origem, DbType.Int32);
+                        //comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                        using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
+                        {
+                            while (reader.Read())
+                            {
+                                retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                            }
+                            reader.Close();
+                        }
+                    }
+                    #endregion
+                    break;
 			}
 			return retorno;
 		}
@@ -734,7 +859,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                         where pp.id_hst = p.id and p.ptv_id = :origemId and p.tid = :origemTid and pp.cultivar_id = :cultivarID", EsquemaBanco);
 					comando.AdicionarParametroEntrada("origemId", origemId, DbType.Int32);
 					comando.AdicionarParametroEntrada("origemTid", origemTid, DbType.String);
-					comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+					comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
@@ -752,6 +877,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					}
 					#endregion
 					break;
+                case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                    #region Buscar tratamento PTV Outro Estado
+                    using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBanco))
+                    {
+                        comando = bancoDeDados.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto 
+                            from tab_ptv_outrouf_produto cp, tab_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda
+                            where cp.cultivar = cconf.cultivar and cconf.declaracao_adicional = lcda.id and lcda.outro_estado = '1' 
+                            and cconf.tipo_producao = :tipoProducaoID and cp.cultivar = :cultivarID ", EsquemaBanco);
+
+                        //comando.AdicionarParametroEntrada("idPtvOutro", origem, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
+                        comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                        using (IDataReader reader = bancoDeDadosCredenciado.ExecutarReader(comando))
+                        {
+                            while (reader.Read())
+                            {
+                                retorno.Add(reader.GetValue<string>("DeclaracaoAdicionalTexto"));
+
+                            }
+                            reader.Close();
+                        }
+                    }
+                    #endregion
+                    break;
 			}
 			return retorno;
 		}

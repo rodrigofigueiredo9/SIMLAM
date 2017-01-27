@@ -353,6 +353,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 				comandtxt += comando.FiltroAndLike("d.cultura_cultivar", "cultura_cultivar", filtros.Dados.CulturaCultivar, upper: true, likeInicio: true);
 
+                comandtxt += comando.FiltroAndLike("d.denominador", "denominador", filtros.Dados.NomeEmpreendimento, upper: true, likeInicio: true);
+
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero", "data_criacao", "cultivar", "situacao" };
 
@@ -369,30 +371,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 				#region Quantidade de registro do resultado
 
-				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
-					l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
-					l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, c.unidade_medida_texto
-				from tab_lote l, lov_lote_situacao ls,
-					(select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
-						i.unidade_medida, (select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
-						from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
-						where c.id = i.cultura and cc.id = i.cultivar group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
-				where ls.id = l.situacao and c.lote = l.id) d where d.id > 0 " + comandtxt, esquemaBanco);
+                comando.DbCommand.CommandText = String.Format(@"select COUNT(*) from 
+                (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
+					    l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
+					    l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, 
+                c.unidade_medida_texto, emp.denominador
+				    from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
+					    (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
+						    i.unidade_medida, (
+                select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
+						    from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
+						    where c.id = i.cultura and cc.id = i.cultivar 
+                group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
+				    where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0" + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
 				comando.AdicionarParametroEntrada("menor", filtros.Menor);
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-				comandtxt = String.Format(@"select * from (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
-					l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
-					l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, c.unidade_medida_texto
-				from tab_lote l, lov_lote_situacao ls,
-					(select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
-						i.unidade_medida, (select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
-						from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
-						where c.id = i.cultura and cc.id = i.cultivar group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
-				where ls.id = l.situacao and c.lote = l.id) d where d.id > 0 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+                comandtxt = String.Format(@"select * from 
+                    (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
+					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
+					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, 
+                  c.unidade_medida_texto, emp.denominador
+				        from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
+					        (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
+						        i.unidade_medida, (
+                    select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
+						        from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
+						        where c.id = i.cultura and cc.id = i.cultivar 
+                    group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
+				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 

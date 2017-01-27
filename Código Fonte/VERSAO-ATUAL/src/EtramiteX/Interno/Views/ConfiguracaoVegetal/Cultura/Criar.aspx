@@ -6,10 +6,10 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/cultura.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/declaracaoAdicional.js") %>"></script>
-    <script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/cultura.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoVegetal/Cultura/declaracaoAdicional.js") %>"></script>
+    <script>
         $(function () {
         	Cultura.load($('#central'),
 			{

@@ -112,6 +112,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOCEmitir })]
 		public ActionResult Criar(EmissaoCFOC entidade)
 		{
+            entidade.PossuiLaudoLaboratorial = false;
+            entidade.PossuiTratamentoFinsQuarentenario = false;
+
 			_bus.Salvar(entidade);
 
 			string UrlRedirecionar = Url.Action("Criar", "CFOC") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + entidade.Id.ToString();
@@ -147,10 +150,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_bus.ObterPragasLista(entidade.Produtos), ListaCredenciadoBus.CFOCLoteEspecificacao, ListaCredenciadoBus.DocFitossanitarioSituacao, ListaCredenciadoBus.Municipios(entidade.EstadoEmissaoId));
 
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
-			List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+			List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList(), entidade.Produtos.Select(z => z.LoteId).ToList()) ?? new List<Cultivar>();
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => entidade.Produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
-				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => entidade.Produtos.Count(z => z.CultivarId == y.Cultivar && y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)) > 0))
+				.SelectMany(x => x.LsCultivarConfiguracao.Where(y => entidade.Produtos.Count(z => z.CultivarId == y.Cultivar /*&& y.TipoProducaoId == (int)ValidacoesGenericasBus.ObterTipoProducao(z.UnidadeMedidaId)*/) > 0))
 				.Where(x => entidade.Pragas.Any(y => y.Id == x.PragaId))
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();
@@ -164,6 +167,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOCEditar })]
 		public ActionResult Editar(EmissaoCFOC entidade)
 		{
+            entidade.PossuiLaudoLaboratorial = false;
+            entidade.PossuiTratamentoFinsQuarentenario = false;
 			_bus.Salvar(entidade);
 
 			string UrlRedirecionar = Url.Action("Index", "CFOC") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + entidade.Id.ToString();
@@ -329,8 +334,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = string.Empty });
 			}
 
+
+            
 			CulturaInternoBus culturaBus = new CulturaInternoBus();
-			List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+			List<Cultivar> cultivares = culturaBus.ObterCultivares(produtos.Select(x => x.CulturaId).ToList(), produtos.Select(y => y.LoteId).ToList()) ?? new List<Cultivar>();
 
 			List<string> declaracoesAdicionais = cultivares
 				.Where(x => produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))
@@ -338,6 +345,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				.Where(x => pragas.Any(y => y.Id == x.PragaId))
 				.Select(x => x.DeclaracaoAdicionalTextoHtml)
 				.Distinct().ToList();
+
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @DeclaracoesAdicionais = String.Join(" ", declaracoesAdicionais) });
 		}
@@ -596,7 +604,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			if (!_loteValidar.AcessarTela(lote))
 			{
-				return RedirectToAction("LoteIndexx", "CFOC");
+				return RedirectToAction("LoteIndex", "CFOC");
 			}
 
 			LoteVM vm = new LoteVM(_loteBus.ObterEmpreendimentosResponsaveis(), origemTipo, lote);

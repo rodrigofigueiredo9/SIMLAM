@@ -1,4 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+﻿<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
@@ -6,7 +7,7 @@
 
 <% if (Model.IsAjaxRequest)
    { %>
-<script type="text/javascript">
+<script>
 	$.extend(EmpreendimentoAssociar.settings, {
 		urls: {
 			avancar: '<%= Url.Action("Salvar", "Empreendimento") %>',
@@ -25,7 +26,7 @@
 			obterListaResponsaveis: '<%= Url.Action("ObterListaResponsaveis", "Empreendimento") %>',
 			obterListaPessoasAssociada: '<%= Url.Action("ObterListaPessoasAssociada", "Empreendimento") %>',
 			verificarLocalizaoEmpreendimento: '<%= Url.Action("VerificarLocalizacaoEmpreendimento", "Empreendimento") %>'
-		},		
+		},
 		msgs: <%= Model.Mensagens %>,
 		idsTela: <%= Model.IdsTela%>,
 		denominadoresSegmentos: '<%= Model.DenominadoresSegmentos %>'

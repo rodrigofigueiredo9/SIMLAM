@@ -3,9 +3,9 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoVistoriaFundiariaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFundiaria.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFundiaria.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoVistoriaFundiaria.urlObterDadosLaudoVistoriaFundiaria = '<%= Url.Action("ObterDadosLaudoVistoriaFundiaria", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFundiaria.mensagens = <%=Model.Mensagens%>
 </script>

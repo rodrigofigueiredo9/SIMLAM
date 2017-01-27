@@ -3,7 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <%if(!Model.IsVisualizar) {%>
-<script type="text/javascript">	
+<script>	
 	SilviculturaATVCaracteristica.settings.mensagens = <%= Model.Mensagens %>;
 </script>
 <%} %>

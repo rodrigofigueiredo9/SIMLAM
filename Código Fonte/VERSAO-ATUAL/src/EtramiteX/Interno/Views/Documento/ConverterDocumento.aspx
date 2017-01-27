@@ -3,23 +3,23 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Converter Documento em Processo</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<!-- DEPENDENCIAS DE PESSOA -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE PESSOA -->
 
 	<!-- DEPENDENCIAS DE EMPREENDIMENTO -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE EMPREENDIMENTO -->
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/converterDocumento.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Documento/converterDocumento.js") %>"></script>
+	<script>
 		$(function () {
 
 			Processo.settings.urls.editarInteressado = '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>';
@@ -63,7 +63,7 @@
 		</fieldset>
 
 		<div class="divDocumentoCovert">
-			
+
 		</div>
 
 		<div class="block box">

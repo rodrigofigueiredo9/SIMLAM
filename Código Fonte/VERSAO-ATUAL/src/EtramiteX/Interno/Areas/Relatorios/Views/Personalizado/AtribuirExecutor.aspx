@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Atribuir Executor Relatório</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizadoAtribuirExecutor.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizadoAtribuirExecutor.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PersonalizadoAtribuirExecutor.load($('#central'), {
 				urls: {
@@ -21,7 +21,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		<h1 class="titTela">Atribuir Executor Relatório</h1>		<br />		<input type="hidden" class="relatorioId" value="<%= Model.Id %>" />
+		<h1 class="titTela">Atribuir Executor Relatório</h1>
+		<br />
+
+		<input type="hidden" class="relatorioId" value="<%= Model.Id %>" />
+
 		<div class="block">
 			<div class="coluna60 relatorioOpcoes">
 				<img src="<%= Url.Content("~/Content/_img/icone_realtorios_personalizados.jpg") %>" width="58" height="62" alt="Relatório Personalizado" />
@@ -29,7 +33,9 @@
 				<p><%: Model.Descricao %></p>
 				<p class="quiet small">Criado em: <%: Model.DataCriacao.DataTexto.Replace('/', '-') %></p>
 			</div>
-		</div>		<div class="block">
+		</div>
+
+		<div class="block">
 			<div class="ultima">
 				<button type="button" class="floatRight inlineBotao botaoBuscar btnAssociar">Buscar</button>
 			</div>

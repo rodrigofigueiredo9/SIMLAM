@@ -12,6 +12,7 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC.Lote
 		public string Tid { get; set; }
 		public int SituacaoId { get; set; }
 		public string SituacaoTexto { get; set; }
+        public string NomeEmpreendimento { get; set; }
 		public int EmpreendimentoId { get; set; }
 		public long CodigoUC { get; set; }
 		public int Ano { get; set; }

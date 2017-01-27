@@ -5,17 +5,17 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar Roteiro Orientativo</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/salvar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listarItem.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/salvar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Roteiro/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script>
 		RoteiroSalvar.urlCriarRoteiro = '<%= Url.Action("Criar", "Roteiro") %>';
 		RoteiroSalvar.urlListarItem  = '<%= Url.Action("ListarItem", "Roteiro") %>';
 		RoteiroSalvar.urlAssociarRoteiroCopiar = '<%= Url.Action("Associar", "Roteiro") %>';
-		RoteiroSalvar.urlRoteiroCopiar = '<%= Url.Action("CopiarRoteiro", "Roteiro") %>';		
+		RoteiroSalvar.urlRoteiroCopiar = '<%= Url.Action("CopiarRoteiro", "Roteiro") %>';
 		RoteiroSalvar.urlPdfRoteiro = '<%= Url.Action("RelatorioRoteiro","Roteiro") %>';
 		RoteiroSalvar.urlValidarAssociarAtividade = '<%= Url.Action("ValidarAssociarAtividade", "Roteiro") %>';
 		RoteiroSalvar.urlListarAtividade  = '<%= Url.Action("AssociarAtividade", "Atividade") %>';
@@ -23,7 +23,7 @@
 		RoteiroSalvar.Mensagens = <%= Model.Mensagens %>;
 	</script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>
 				ContainerAcoes.load($(".containerAcoes"), {

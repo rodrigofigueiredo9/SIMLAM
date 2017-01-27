@@ -6,9 +6,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Gerar Relatório Personalizado</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizadoExecutar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizadoExecutar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PersonalizadoExecutar.load($('#central'), {
 				urls: {
@@ -22,7 +22,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		<h1 class="titTela">Gerar Relatório Personalizado</h1>		<br />		<input type="hidden" class="relatorioId" value="<%= Model.Relatorio.Id %>" />
+		<h1 class="titTela">Gerar Relatório Personalizado</h1>
+		<br />
+
+		<input type="hidden" class="relatorioId" value="<%= Model.Relatorio.Id %>" />
+
 		<div class="block">
 			<div class="coluna60 relatorioOpcoes">
 				<img src="../../../Content/_img/icone_realtorios_personalizados.jpg" width="58" height="62" alt="Relatório Personalizado" />
@@ -30,7 +34,8 @@
 				<p><%: Model.Relatorio.Descricao %></p>
 				<p class="quiet small">Criado em: <%: Model.Relatorio.DataCriacao.DataTexto.Replace('/', '-') %></p>
 			</div>
-		</div>
+		</div>
+
 		<fieldset class="block box">
 			<legend>Setor</legend>
 
@@ -45,7 +50,7 @@
 		<% if (Model.TermosExecucao.Count > 0) { %>
 		<fieldset class="block box">
 			<legend>Dados</legend>
-			<% int i = 0; 
+			<% int i = 0;
 				foreach (var item in Model.TermosExecucao) {
 				i++; %>
 				<div class="block margem0 divTermo">
@@ -75,9 +80,12 @@
 					</div>
 				</div>
 			<% } %>
-		</fieldset>		<% } %>
+		</fieldset>
+		<% } %>
+
 		<fieldset class="block box">
-			<legend>Opções</legend>
+			<legend>Opções</legend>
+
 			<div class="coluna25">
 				<p>Tipo de Arquivo</p>
 				<p>
@@ -85,7 +93,8 @@
 					<label class="floatLeft margemEsq" title="XLS"><input type="radio" name="tipoArquivo" value="2" />XLS</label>
 				</p>
 			</div>
-		</fieldset>
+		</fieldset>
+
 		<div class="block box margemDTop">
 			<input type="button" class="btnExecutar floatLeft" value="Gerar Relatório" />
 			<span class="cancelarCaixa">ou <a class="linkCancelar" title="Cancelar" href="<%= Url.Action("") %>">Cancelar</a></span>

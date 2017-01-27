@@ -2,7 +2,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteSituacaoProrrogarVM>" %>
 
 
-<script type="text/javascript">
+<script>
 	CondicionanteProrrogar.settings.urls = {
 		prorrogar: '<%= Url.Action("CondicionanteProrrogarSalvar", "Titulo") %>'
 	}

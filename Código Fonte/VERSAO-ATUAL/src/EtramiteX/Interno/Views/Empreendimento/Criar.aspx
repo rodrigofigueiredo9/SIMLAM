@@ -5,21 +5,21 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/tela.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/tela.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/empreendimento.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Empreendimento/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Atividade/listar.js") %>"></script>
 
 <!-- DEPENDENCIAS DE MODAL PESSOA -->
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/representante.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
 <!-- FIM DEPENDENCIAS DE MODAL PESSOA -->
 
-<script type="text/javascript">
+<script>
 		$(function () {
 			EmpreendimentoTela.load($('#central'), {
 				urls: {
@@ -50,7 +50,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 <div id="central" class="empreendimentoCriar">
-	
+
 	<% Html.RenderPartial("EmpreendimentoPartial", Model); %>
 	<div class="block box btnEmpContainer">
 		<input class="floatLeft btnEmpAvancar " type="button" value="Novo" />

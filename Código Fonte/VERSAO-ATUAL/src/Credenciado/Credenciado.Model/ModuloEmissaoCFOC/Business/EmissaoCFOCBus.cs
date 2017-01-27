@@ -68,7 +68,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				}
 
 				CulturaInternoBus culturaBus = new CulturaInternoBus();
-				List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList()) ?? new List<Cultivar>();
+
+
+				List<Cultivar> cultivares = culturaBus.ObterCultivares(entidade.Produtos.Select(x => x.CulturaId).ToList(), entidade.Produtos.Select(y => y.LoteId).ToList()) ?? new List<Cultivar>();
 
 				var declaracoesAdicionais = cultivares
 					.Where(x => entidade.Produtos.Select(y => y.CultivarId).ToList().Any(y => y == x.Id))

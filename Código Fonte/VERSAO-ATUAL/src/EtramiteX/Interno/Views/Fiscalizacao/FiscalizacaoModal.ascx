@@ -1,14 +1,14 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<FiscalizacaoVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacao.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacao.js") %>"></script>
+<script>
 	Fiscalizacao.salvarEdicao = false;
 	$(function () {
 		Fiscalizacao.load($('.fiscalizacaoModalContainer'));
 		FiscalizacaoFinalizar.callBackObterFiscalizacaoFinalizar();
 	});
-	
+
 	Fiscalizacao.modo = 3;//Visualizar
 </script>
 

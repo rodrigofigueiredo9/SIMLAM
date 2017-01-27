@@ -10,7 +10,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloUnidadePr
 	public class UnidadeProducaoItemRelatorio
 	{
 		public int Id { get; set; }
-		public string CodigoUP { get; set; }
+		public string CodigoUP 
+        { 
+            get; 
+            set; 
+        }
 		public string Latitude { get; set; }
 		public string Longitude { get; set; }
 

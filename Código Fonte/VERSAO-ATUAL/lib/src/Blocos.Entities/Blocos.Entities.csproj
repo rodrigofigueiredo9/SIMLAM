@@ -283,6 +283,7 @@
     <Compile Include="Interno\ModuloPessoa\ePessoaTipo.cs" />
     <Compile Include="Interno\ModuloPTVOutro\ePTVSituacao.cs" />
     <Compile Include="Interno\ModuloPTVOutro\ePTVTipoProducao.cs" />
+    <Compile Include="Interno\ModuloPTVOutro\PTVOutroDeclaracao.cs" />
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioListarResultado.cs" />
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioPTV.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="Interno\ModuloTitulo\eTituloMotivoEncerramento.cs" />
     <Compile Include="Interno\ModuloVegetal\ConfiguracaoVegetalItem.cs" />
     <Compile Include="Interno\ModuloVegetal\Cultura\CultivarConfiguracao.cs" />
+    <Compile Include="Interno\ModuloVegetal\DeclaracaoAdicional\DeclaracaoAdicional.cs" />
     <Compile Include="Interno\ModuloVegetal\Praga\Praga.cs" />
     <Compile Include="Interno\ModuloVegetal\Cultura\CulturaListarResultado.cs" />
     <Compile Include="Interno\ModuloVegetal\Cultura\Cultivar.cs" />

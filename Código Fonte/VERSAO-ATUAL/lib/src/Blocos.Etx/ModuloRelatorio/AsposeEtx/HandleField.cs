@@ -1,19 +1,56 @@
 ﻿using Aspose.Words;
+using Aspose.Words.Fields;
 using Aspose.Words.MailMerging;
 using System;
 using System.IO;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
+using System.Collections;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 {
 	public class HandleField : IFieldMergingCallback
 	{
+
+        public ArrayList camposBold;
+
+        private bool IsBold(string FieldName)
+        {
+            foreach (string str in camposBold)
+            {
+                string tmp = str;
+                tmp = tmp.Replace("«", "");
+                tmp = tmp.Replace("»","");
+                if (FieldName.IndexOf(tmp) >= 0)
+                    return true; 
+            }
+
+            return false;
+        }
+
 		public void FieldMerging(FieldMergingArgs args)
 		{
+
+             DocumentBuilder builder = new DocumentBuilder(args.Document);
+
+           
+             builder.MoveToMergeField(args.FieldName);
+             builder.Font.StyleIdentifier = StyleIdentifier.DefaultParagraphFont;
+
+             Run run = new Run(builder.Document);
+             run.Text = args.FieldValue.ToString();
+
+             Aspose.Words.Font font = run.Font;
+
+             font.Bold = IsBold(args.FieldName);
+             
+
+             builder.InsertNode(run);
+
+            
 			if (args.DocumentFieldName.EndsWith("Html"))
 			{
 				// Insert the text for this merge field as HTML data, using DocumentBuilder.
-				DocumentBuilder builder = new DocumentBuilder(args.Document);
+				
 				builder.MoveToMergeField(args.DocumentFieldName);
 				builder.InsertHtml((string)args.FieldValue);
 

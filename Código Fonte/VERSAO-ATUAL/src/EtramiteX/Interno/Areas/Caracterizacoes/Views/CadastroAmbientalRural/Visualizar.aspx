@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento - Cadastro Ambiental Rural</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/navegador.js") %>"></script>
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/cadastroAmbientalRural.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/navegador.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/cadastroAmbientalRural.js") %>"></script>
+	<script>
 		$(function () {
 			CadastroAmbientalRural.load($('#central'), {
 				urls: {

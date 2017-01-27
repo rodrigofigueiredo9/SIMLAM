@@ -19,7 +19,7 @@
 		</div>
 		<div class="coluna22 prepend1">
 			<label>Número CFO *</label>
-			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="10" }))%>
+			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="8" }))%>
 		</div>
 
 		<div class="campoTela <%= Model.CFO.Id > 0 ? "" : "hide" %>">
@@ -105,39 +105,6 @@
 
 	<fieldset class="block box">
 		<div class="block">
-			<div class="coluna20">
-				<label>Possui laudo laboratorial? *</label><br />
-				<label>
-					<%=Html.RadioButton("CFO.PossuiLaudoLaboratorial", 0, !Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoNao"}))%>
-					Não
-				</label>
-				<label>
-					<%=Html.RadioButton("CFO.PossuiLaudoLaboratorial", 1, Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPossuiLaudo rbPossuiLaudoSim"}))%>
-					Sim
-				</label>
-			</div>
-
-			<div class="coluna75 prepend1 laudo <%=Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-				<label>Nome do laboratório *</label>
-				<%=Html.TextBox("CFO.NomeLaboratorio", Model.CFO.NomeLaboratorio, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNomeLaboratorio", @maxlength="100" }))%>
-			</div>
-		</div>
-		<div class="block divEndereco laudo <%=Model.CFO.PossuiLaudoLaboratorial.GetValueOrDefault()?"":"hide" %>">
-			<div class="coluna45">
-				<label>Número do laudo com resultado da análise *</label>
-				<%=Html.TextBox("CFO.NumeroLaudoResultadoAnalise", Model.CFO.NumeroLaudoResultadoAnalise, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroLaudoResultadoAnalise", @maxlength="15" }))%>
-			</div>
-			<div class="coluna18 prepend1">
-				<label>UF *</label>
-				<%=Html.DropDownList("CFO.EstadoId", Model.Estados, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlEstado"}))%>
-			</div>
-			<div class="coluna30 prepend1">
-				<label>Município *</label>
-				<%=Html.DropDownList("CFO.MunicipioId", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipio"}))%>
-			</div>
-		</div>
-
-		<div class="block">
 			<label>
 				Certifico que, mediante acompanhamento técnico, o(s) produto(s) acima especificado(s) se apresenta(m):
 			</label>
@@ -151,35 +118,6 @@
 				</label>
 			</div>
 		<%} %>
-		</div>
-	</fieldset>
-
-	<fieldset class="block box">
-		<legend>Tratamento Fitossanitário com Fins Quarentenários</legend>
-
-		<div class="block">
-			<table class="dataGridTable gridTratamento">
-				<thead>
-					<tr>
-						<th>Nome do produto comercial</th>
-						<th style="width:20%">Ingrediente ativo</th>
-						<th style="width:10%">Dose</th>
-						<th style="width:20%">Produto / Praga</th>
-						<th style="width:20%">Modo de aplicação</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.CFO.TratamentosFitossanitarios) { %>
-						<tr>
-							<td class="nome_produto" title="<%=item.ProdutoComercial %>"><%=item.ProdutoComercial%></td>
-							<td class="ingrediente" title="<%=item.IngredienteAtivo%>"> <%=item.IngredienteAtivo%> </td>
-							<td class="dose" title="<%=item.Dose%>"> <%=item.Dose%> </td>
-							<td class="produto_praga" title="<%=item.PragaProduto%>"> <%=item.PragaProduto%> </td>
-							<td class="modo_aplicacao" title="<%=item.ModoAplicacao%>"> <%=item.ModoAplicacao%> </td>
-						</tr>
-					<% } %>
-				</tbody>
-			</table>
 		</div>
 	</fieldset>
 

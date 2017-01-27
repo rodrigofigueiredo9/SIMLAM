@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Gerenciar</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaoParceiroGerenciar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaoParceiroGerenciar.js") %>"></script>
+	<script>
 		$(function () {
 			OrgaoParceiroGerenciar.load($('#central'), {
 				urls: {
@@ -53,7 +53,7 @@
 	</div>
 
 	<div class="block">
-		<fieldset class="<%=Model.CredenciadosAguardandoAtivacao.Credenciados.Count < 1? "hide " :"" %> fsCredenciadosAguardandoAtivacao fieldExpansivo box">  
+		<fieldset class="<%=Model.CredenciadosAguardandoAtivacao.Credenciados.Count < 1? "hide " :"" %> fsCredenciadosAguardandoAtivacao fieldExpansivo box">
 			<legend class="fAberto">Credenciados Parceiros/ Conveniados aguardando ativação</legend>
 			<br />
 			<div class="expandirRetrair">
@@ -71,13 +71,13 @@
 			<br />
 			<div class="expandirRetrair">
 				<div class="divAtivos coluna99 prepend1"></div>
-			
+
 				<div class="coluna15 prepend1">
 					<button class="inlineBotao btnBloquear">Bloquear</button>
 				</div>
 			</div>
 		</fieldset>
-		
+
 	</div>
 
 	<div class="block">

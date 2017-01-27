@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Modelos de Títulos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/tituloModeloListar.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Titulo/tituloModeloListar.js") %>" ></script>
+	<script>
 		$(function () {
 			TituloModeloListar.urlEditar = '<%= Url.Action("TituloModeloEditar", "Titulo") %>';
 			TituloModeloListar.urlDesativarComfirm = '<%= Url.Action("DesativarConfirm", "Titulo") %>';

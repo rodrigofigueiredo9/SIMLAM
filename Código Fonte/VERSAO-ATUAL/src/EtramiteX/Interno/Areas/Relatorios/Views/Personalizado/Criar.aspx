@@ -4,12 +4,12 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Criar Relatório Personalizado</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizado.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/personalizado.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Personalizado.load($('#central'), {
-			    mensagens: <%= Model.Mensagens %>, 
+			    mensagens: <%= Model.Mensagens %>,
 
 				stepUrls: ['<%= Url.Action("ObterOpcoes", "Personalizado") %>', '<%= Url.Action("ObterOrdenarColunas", "Personalizado") %>',
 				'<%= Url.Action("ObterOrdenarValores", "Personalizado") %>', '<%= Url.Action("ObterFiltros", "Personalizado") %>',

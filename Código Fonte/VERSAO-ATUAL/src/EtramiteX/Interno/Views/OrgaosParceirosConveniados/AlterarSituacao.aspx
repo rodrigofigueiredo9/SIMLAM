@@ -7,9 +7,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Alterar Situação</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaoParceiroAlterarSituacao.js") %>" ></script> 
-	
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaoParceiroAlterarSituacao.js") %>" ></script>
+
+	<script>
 	    $(function () {
 	        OrgaoParceiroAlterarSituacao.load($('#central'), {
 	            urls: {
@@ -65,12 +65,12 @@
 					<%= Html.TextBox("Situacao.DataNova", DateTime.Now.Date.ToShortDateString(), new { @class = "disabled text txtDataSituacaoNova", @disabled="disabled" })%>
 				</div>
 			</div>
-			
+
 			<div class="ultima divMotivo <%= Model.OrgaoParceiroConveniado.SituacaoId == (int)eOrgaoParceiroConveniadoSituacao.Bloqueado? "" : " hide" %> ">
 				<label for="AlterarSituacao_Motivo">Motivo*</label>
 				<%= Html.TextArea("Situacao.Motivo", Model.OrgaoParceiroConveniado.SituacaoMotivo, ViewModelHelper.SetaDisabled(!string.IsNullOrEmpty(Model.OrgaoParceiroConveniado.SituacaoMotivo), new { @class = "media text txtSituacaoMotivo", @maxlength="300"}))%>
 			</div>
-		
+
 		</fieldset>
 
 		<div class="block box botoesSalvarCancelar">

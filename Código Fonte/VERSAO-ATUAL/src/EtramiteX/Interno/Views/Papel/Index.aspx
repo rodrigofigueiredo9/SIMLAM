@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Papéis</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Papel/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Papel/listar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			PapelListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Papel") %>';
 			PapelListar.urlExcluir = '<%= Url.Action("Excluir", "Papel") %>';

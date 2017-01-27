@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Enviar Processo/Documento para Órgão Externo</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/telaExterno.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/enviarExterno.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/telaExterno.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/enviarExterno.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 			$(function () {
 				EnviarTelaExterno.load($('#central'), {
 					urls: {
@@ -29,8 +29,8 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		
-		<%  Html.RenderPartial("EnviarExternoPartial", Model); 
+
+		<%  Html.RenderPartial("EnviarExternoPartial", Model);
 			bool desativarEnviar = Model.Tramitacoes.Count <= 0 && Model.Enviar.RemetenteSetor.Id > 0; %>
 
 		<div class="block box btnEnviarContainer">

@@ -22,7 +22,7 @@
 						<label for="CpfFuncionario">CPF*</label>
 						<%= Html.TextBox("Cpf", Model.Funcionario.Cpf, new { @class = "text disabled", readOnly= true, tabindex="1" })%>
 					</div>
-					<div class="coluna15">                        
+					<div class="coluna15">
 					</div>
 				</div>
 
@@ -65,13 +65,13 @@
 
 					<div class="caixaScroll coluna100">
 						<table id="tableCargo" class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<% for (int i = 0; i < Model.Funcionario.Cargos.Count; i++) 
-							{ %> 
+						<% for (int i = 0; i < Model.Funcionario.Cargos.Count; i++)
+							{ %>
 								<tr>
 									<td width="90%"><%= Html.Label(Model.Funcionario.Cargos[i].Nome)%></td>
 									<td width="10%">
 										<input type="hidden" name="ListaCargos" class="hdnCargoId" value="<%= Html.Encode(Model.Funcionario.Cargos[i].Id)%>" />
-										<input type="button" class="icone excluir" onclick="Funcionario.onExcluirLinha(this);" title="Excluir" tabindex = "6" />                                            
+										<input type="button" class="icone excluir" onclick="Funcionario.onExcluirLinha(this);" title="Excluir" tabindex = "6" />
 									</td>
 								</tr>
 						<% } %>
@@ -104,8 +104,8 @@
 					</table>
 					<div class="caixaScroll coluna100">
 						<table id="tableSetor" class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<% for (int i = 0; i < Model.Funcionario.Setores.Count; i++) 
-							{ %> 
+						<% for (int i = 0; i < Model.Funcionario.Setores.Count; i++)
+							{ %>
 								<tr>
 									<td width="60%"><%= Html.Label( Model.Funcionario.Setores[i].SiglaComNome )%></td>
 									<td width="30%" class="celSetorResp handclick">
@@ -131,7 +131,7 @@
 
 				<div class="caixaAbas">
 				<div id="abasNav">
-				
+
 					<ul class="ui-tabs-nav">
 						<li class="ui-tabs-nav-item ui-tabs-selected" id="nav-fragment-1">
 							<a href="#fragment-1" class="primeira"> Papéis </a>
@@ -147,12 +147,12 @@
 									<% for (int i = 0; i < Model.Papeis.Count; i++)
 									   {%>
 										<%= Html.HiddenFor(x => x.Papeis[i].Papel.Id)%>
-											
+
 											<tr class="<%= ((Model.Papeis[i].IsAtivo)?"linhaSelecionada":string.Empty) %>" >
 												<td class="celulaSeletorLinha" width="8%"><%= Html.CheckBoxFor(x => x.Papeis[i].IsAtivo, new { @type = "checkbox", tabindex="12" })%></td>
 												<td class="celulaSeletorLinha" width="92%"><%= Html.Encode(Model.Papeis[i].Papel.Nome)%> </td>
 											</tr>
-											
+
 									<% } %>
 									</tbody>
 									</table>
@@ -174,8 +174,8 @@
 				</div>
 			</div>
 		</div>
-		
-        <div class="block box">		
+
+        <div class="block box">
                     <div class="block">
 			        <div class="coluna80 inputFileDiv">
 				        <label for="ArquivoTexto">Assinatura Digitalizada</label>
@@ -194,7 +194,7 @@
                         <span class="spanInputFile <%= string.IsNullOrEmpty(Model.Funcionario.Arquivo.Nome) ? "" : "hide" %>">
 				        <input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" /></span>
 				        <input type="hidden" class="hdnAnexoArquivoJson" name="hdnAnexoArquivoJson" value="<%= Model.ObterJSon(Model.Funcionario.Arquivo) %>" />
-                        
+
                         <input type="hidden" class="hdnArquivoContentType" id="ArquivoContentType" name="ArquivoContentType" value="<%= Model.Funcionario.Arquivo.ContentType %>" />
                         <input type="hidden" class="hdnArquivoExtensao" id="ArquivoExtensao" name="ArquivoExtensao" value="<%= Model.Funcionario.Arquivo.Extensao %>" />
                         <input type="hidden" class="hdnArquivoId" id="ArquivoId" name="ArquivoId" value="<%= Model.Funcionario.Arquivo.Id %>" />
@@ -210,19 +210,19 @@
         </div>
 
 
-		<div class="block box">											
+		<div class="block box">
 			<div class="block">
 				<div class="coluna20">
 					<label for="login">Login*</label>
 					<%= Html.TextBox("Login", Model.Funcionario.Usuario.Login, new { maxlength = "30", @class = "text disabled", readOnly = true, tabindex = "14" })%>
-					<%= Html.ValidationMessage("login")%>																
+					<%= Html.ValidationMessage("login")%>
 				</div>
 				<div class="coluna15">
 					<%=Html.CheckBox("AlterarSenha", Model.Funcionario.AlterarSenha, new { tabindex = "15", style = "margin-top: 21px;" })%>
 					<label for="AlterarSenha">Alterar Senha</label>
 				</div>
-			</div>			
-			
+			</div>
+
 			<div id="divAlterarSenha" class="block <%= ((Model.Funcionario.AlterarSenha)?string.Empty:"hide") %>">
 				<div class="coluna20">
 					<p>
@@ -252,19 +252,15 @@
 		<% } %>
 		<% } %>
 
-	<script type="text/javascript" >
-	<!--
+	<script>
 		$("#login").focus();
 		var urlPermissao = '<%= Url.Content("~/Funcionario/TextoPermissoes") %>';
-	//-->
 	</script>
 
 </div>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/funcionario.js") %>" ></script>
-<script type="text/javascript" >
-	<!--
+<script src="<%= Url.Content("~/Scripts/Funcionario/funcionario.js") %>" ></script>
+<script>
 	Funcionario.urlVerificarResponsavelSetor = '<%= Url.Action("VerificarResponsavelSetor","Funcionario") %>';
-	//-->
     Funcionario.settings.mensagens = <%= Model.Mensagens %>;
 
 </script>

@@ -37,7 +37,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem NumeroFinalCFOCObrigatorio { get { return new Mensagem() { Campo = "Liberacao_NumeroFinalBlocoCFOC", Texto = "Nº final do bloco CFOC é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
-		public Mensagem QuantidadeDigitalCFOCObrigatorio { get { return new Mensagem() { Campo = "Liberacao_QuantidadeNumeroDigitalCFOC", Texto = "Quantidade de Nº CFOC é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
+        public Mensagem AnoCFOInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+        public Mensagem AnoCFOCInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+
+        public Mensagem QuantidadeDigitalCFOCObrigatorio { get { return new Mensagem() { Campo = "Liberacao_QuantidadeNumeroDigitalCFOC", Texto = "Quantidade de Nº CFOC é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem QuantidadeDigitalCFOObrigatorio { get { return new Mensagem() { Campo = "Liberacao_QuantidadeNumeroCFO", Texto = "Quantidade de Nº CFO é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem IntervaloCFONaoConfigurado { get { return new Mensagem() { Campo = "", Texto = "Existe nº de bloco no intervalo do CFO que não está configurado no sistema.", Tipo = eTipoMensagem.Advertencia }; } }
@@ -95,12 +98,12 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem InicialQuantidadeInvalida(string tipo)
 		{
-			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Liberacao_NumeroInicialBloco" + tipo, Texto = String.Format("O número inicial do bloco {0} deve possuir o tamanho igual a 10 caracteres.", tipo) };
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Liberacao_NumeroInicialBloco" + tipo, Texto = String.Format("O número inicial do bloco {0} deve possuir o tamanho igual a 8 caracteres.", tipo) };
 		}
 
 		public Mensagem FinalQuantidadeInvalida(string tipo)
 		{
-			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Liberacao_NumeroFinalBloco" + tipo, Texto = String.Format("O número final do bloco {0} deve possuir o tamanho igual a 10 caracteres.", tipo) };
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Liberacao_NumeroFinalBloco" + tipo, Texto = String.Format("O número final do bloco {0} deve possuir o tamanho igual a 8 caracteres.", tipo) };
 		}
 
 		public Mensagem NumeroNaoEncontrado { get { return new Mensagem() { Texto = "Número não encontrado.", Tipo = eTipoMensagem.Advertencia }; } }

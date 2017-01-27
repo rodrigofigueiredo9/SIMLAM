@@ -5,7 +5,7 @@
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 
-<script type="text/javascript">
+<script>
 	QueimaControlada.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	QueimaControlada.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	QueimaControlada.settings.textoMerge = '<%= Model.TextoMerge %>';

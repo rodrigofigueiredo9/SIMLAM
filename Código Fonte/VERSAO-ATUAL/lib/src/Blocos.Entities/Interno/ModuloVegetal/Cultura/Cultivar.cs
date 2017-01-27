@@ -18,6 +18,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura
 		public string TipoProducaoTexto { get; set; }
 		public int DeclaracaoAdicional { get; set; }
 		public string DeclaracaoAdicionalTexto { get; set; }
+        public int OutroEstado { get; set; }
+
 
 		private List<CultivarConfiguracao> _lsCultivarConfiguracao = new List<CultivarConfiguracao>();
 		public List<CultivarConfiguracao> LsCultivarConfiguracao

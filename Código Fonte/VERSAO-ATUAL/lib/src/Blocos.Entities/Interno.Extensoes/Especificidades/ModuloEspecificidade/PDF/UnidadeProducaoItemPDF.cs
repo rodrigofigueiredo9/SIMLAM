@@ -7,7 +7,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 {
 	public class UnidadeProducaoItemPDF
 	{
-		public Int64 CodigoUP { get; set; }
+		public string CodigoUP { get; set; }
 		public CultivarPDF Cultivar { get; set; }
 		public String AreaHa { get; set; }
 		public String QuantidadeAno { get; set; }
@@ -17,7 +17,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		public UnidadeProducaoItemPDF(UnidadeProducaoItem item)
 		{
-			CodigoUP = item.CodigoUP;
+			CodigoUP = item.CodigoUPStr;
 			AreaHa = item.AreaHA.ToStringTrunc(4);
 			QuantidadeAno = item.EstimativaProducaoQuantidadeAno.ToString();
 			UnidadeMedida = item.EstimativaProducaoUnidadeMedida;

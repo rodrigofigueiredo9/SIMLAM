@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Lote</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/CFOC/lote.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/CFOC/lote.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			LoteListar.load($('#central'));
 		});

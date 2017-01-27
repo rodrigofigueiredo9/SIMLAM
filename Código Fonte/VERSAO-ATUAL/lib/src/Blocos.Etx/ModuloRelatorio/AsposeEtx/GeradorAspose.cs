@@ -3,10 +3,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using Aspose.Words;
+using Aspose.Words.Fields;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Collections;
 using Document = Aspose.Words.Document;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
@@ -114,9 +116,42 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 				ObjectMailMerge objDataSourceCabecalhoRodape = new ObjectMailMerge(_configuracao.CabecalhoRodape);
 
+                ArrayList mfs = new ArrayList();
+
+                foreach (Field field in _doc.Range.Fields)
+                {
+                    if (field.Type.Equals(FieldType.FieldMergeField))
+                    {
+                        Node currentNode = field.Start;
+                        bool isContinue = true;
+                        while (currentNode != null && isContinue)
+                        {
+                            if (currentNode.NodeType.Equals(NodeType.FieldEnd))
+                                isContinue = false;
+
+                            if (currentNode.NodeType.Equals(NodeType.Run))
+                            {
+                                if (((Run)currentNode).Font.Bold)
+                                {
+                                    mfs.Add(((Run)currentNode).ToString(SaveFormat.Text));
+                                    break;
+                                }
+
+                            }
+
+                            Node nextNode = currentNode.NextPreOrder(currentNode.Document);
+                            currentNode = nextNode;
+                        }
+                    }
+                }
+
+                ((HandleField)_doc.MailMerge.FieldMergingCallback).camposBold = mfs;
+
+
 				_doc.MailMerge.Execute(objDataSourceCabecalhoRodape);
 
 				dataSource = Assinantes(_configuracao.Assinantes, dataSource);
+
 
 				if (dataSource is DataSet)
 				{
@@ -127,6 +162,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 					ObjectMailMerge objDataSource = new ObjectMailMerge(dataSource); 
 					_doc.MailMerge.ExecuteWithRegions(objDataSource);
 				}
+
+
+             
 
 				_configuracao.Executed(_doc, dataSource);
 
@@ -226,8 +264,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 		public static void Autorizacao()
 		{
-			//License license = new License();
-			//license.SetLicense("Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.Aspose.Words.lic");
+			License license = new License();
+			license.SetLicense("Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.Aspose.Words.lic");
 		}
 	}
 }

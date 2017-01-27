@@ -2,8 +2,8 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoCPFARLCVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLC.js") %>"></script>
-<script type="text/javascript">	
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARLC.js") %>"></script>
+<script>
 	TermoCPFARLC.settings.urls.obterDadosTermoCPFARLC = '<%= Url.Action("ObterDadosTermoCPFARLC", "Termo", new { area = "Especificidades" }) %>';
 	TermoCPFARLC.settings.urls.obterARL = '<%= Url.Action("ObterArl", "Termo", new { area = "Especificidades" }) %>';
 	TermoCPFARLC.settings.urls.obterDadosEmpreendimentoReceptor = '<%= Url.Action("ObterDadosEmpreendimentoReceptor", "Termo", new { area = "Especificidades" }) %>';

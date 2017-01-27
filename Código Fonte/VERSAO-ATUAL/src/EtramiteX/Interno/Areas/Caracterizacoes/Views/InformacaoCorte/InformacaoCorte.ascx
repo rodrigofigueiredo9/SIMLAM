@@ -7,7 +7,7 @@
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.InformacaoCorte%>" />
 
-<script type="text/javascript">
+<script>
 	
 		InformacaoCorte.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 		InformacaoCorte.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';

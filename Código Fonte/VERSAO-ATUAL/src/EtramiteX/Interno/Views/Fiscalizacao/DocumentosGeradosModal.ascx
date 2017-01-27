@@ -2,8 +2,8 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<FiscalizacaoVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoDocumentosGerados.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoDocumentosGerados.js") %>"></script>
+<script>
 	$(function () {
 		FiscalizacaoDocumentosGerados.load($('.documentosGeradosContainer'), {
 			urls: {
@@ -22,7 +22,7 @@
 	<br />
 
 	<input type="hidden" class="hdnFiscalizacaoId" value="<%:Model.Fiscalizacao.Id%>" />
-	
+
 	<div class="box">
 		<fieldset class="boxBranca">
 			<legend>Documentos gerados</legend>

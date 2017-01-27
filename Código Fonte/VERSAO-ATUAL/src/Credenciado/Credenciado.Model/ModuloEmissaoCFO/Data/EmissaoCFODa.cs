@@ -695,7 +695,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				select min(numero) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l
 				where l.id = t.liberacao and t.tipo_documento = 1 and t.tipo_numero = 2
 				and not exists (select null from cre_cfo c where c.numero = t.numero)
-				and t.situacao = 1 and l.responsavel_tecnico = :credenciado");
+				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
+                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
@@ -998,7 +999,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 						caracterizacao.CredenciadoID = id;
 						caracterizacao.Tid = reader.GetValue<string>("tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+						caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
 						caracterizacao.LocalLivroDisponivel = reader.GetValue<string>("local_livro");
@@ -1155,7 +1156,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l 
 				where l.id = n.liberacao and n.tipo_documento = 1 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
 				and not exists (select null from cre_cfo c where c.numero = n.numero) 
-				and l.responsavel_tecnico = :credenciado ");
+				and l.responsavel_tecnico = :credenciado 
+                and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;

@@ -3,9 +3,9 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Descrição de Atividade</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/descricaoLicenciamentoAtividade.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/descricaoLicenciamentoAtividade.js") %>"></script>
+	<script>
 		$(function () {
 			DescricaoLicenciamentoAtividade.load($('#central'), {
 				urls: {

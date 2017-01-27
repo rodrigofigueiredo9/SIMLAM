@@ -6,8 +6,8 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/FichaFundiaria/fichaFundiaria.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/FichaFundiaria/fichaFundiaria.js") %>"></script>
+	<script>
 		$(function () {
 			FichaFundiaria.load($('#central'), {
 				urls: {

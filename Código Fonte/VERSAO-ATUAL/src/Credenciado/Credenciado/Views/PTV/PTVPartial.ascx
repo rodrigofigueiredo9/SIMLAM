@@ -196,6 +196,7 @@
 					Não
 				</label>
 			</div>
+            
 			<div class="partida_lacrada <%= Model.PTV.PartidaLacradaOrigem.GetValueOrDefault() == (int)ePartidaLacradaOrigem.Sim ?"":"hide" %>">
 				<div class="coluna15">
 					<label for="LacreNumero">Nº do lacre</label>
@@ -270,100 +271,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	</fieldset>
-
-	<div class="block box possuiLaudoLaboratorial campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="block">
-			<div class="coluna30">
-				<label>Possui laudo laboratorial? *</label><br />
-				<label for="PossuiLaudoLaboratorial">
-					<%=Html.RadioButton("PossuiLaudoLaboratorial", (int)eLaudoLaboratorial.Sim, Model.PTV.PossuiLaudoLaboratorial == (int)eLaudoLaboratorial.Sim, ViewModelHelper.SetaDisabled(true, new { @class="rbPossuiLaudo rbPossuiLaudoSim" }))%>
-					Sim
-				</label>
-				<label>
-					<%=Html.RadioButton("PossuiLaudoLaboratorial", (int)eLaudoLaboratorial.Nao, Model.PTV.PossuiLaudoLaboratorial.GetValueOrDefault() == (int)eLaudoLaboratorial.Nao, ViewModelHelper.SetaDisabled(true, new { @class="rbPossuiLaudo rbPossuiLaudoNao" }))%>
-					Não
-				</label>
-			</div>
-		</div>
-		<div class="block laudo <%= Model.PTV.PossuiLaudoLaboratorial == (int)eLaudoLaboratorial.Sim ? "":"hide"%>">
-			<table class="dataGridTable gridLaudoLaboratorial">
-				<thead>
-					<tr>
-						<th>Nome do laboratório</th>
-						<th style="width: 29%">Nº do laudo com resultado da análise</th>
-						<th style="width: 5%">UF</th>
-						<th style="width: 20%">Municipio</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.LsLaudoLaboratorial) { %>
-					<tr>
-						<td class="loboratorioNome" title="<%= item.Nome %>"><%=item.Nome %></td>
-						<td class="laboratorioNumero" title="<%=item.LaudoResultadoAnalise %>"><%=item.LaudoResultadoAnalise %></td>
-						<td class="laboratorioUF" title="<%=item.EstadoTexto %>"><%=item.EstadoTexto %></td>
-						<td class="laboratorioMunicipio" title="<%= item.MunicipioTexto %>"><%=item.MunicipioTexto %></td>
-					</tr>
-					<% } %>
-				
-					<tr class="trTemplate hide">
-						<td class="loboratorioNome"></td>
-						<td class="laboratorioNumero"></td>
-						<td class="laboratorioUF"></td>
-						<td class="laboratorioMunicipio"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<fieldset class="block box tratamentoFitossanitario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<legend>Tratamento Fitossanitário com Fins Quarentenários</legend>
-		<div class="block">
-			<table class="dataGridTable gridTratamentoFitossa">
-				<thead>
-					<tr>
-						<th>Nome do produto comercial</th>
-						<th style="width: 20%">Igrediente ativo</th>
-						<th style="width: 10%">Dose</th>
-						<th style="width: 20%">Praga/Produto</th>
-						<th style="width: 20%">Modo de aplicação</th>
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.LsTratamentoFitossanitario) { %>
-					<tr>
-						<td class="produtoComercial" title="<%= item.ProdutoComercial %>"><%=item.ProdutoComercial %></td>
-						<td class="ingrediente_ativo" title="<%=item.IngredienteAtivo %>"><%=item.IngredienteAtivo %></td>
-						<td class="dose" title="<%=item.Dose %>"><%=item.Dose %></td>
-						<td class="praga_produto" title="<%= item.PragaProduto %>"><%=item.PragaProduto %></td>
-						<td class="modo_aplicacao" title="<%=item.ModoAplicacao%>">
-							<%=item.ModoAplicacao%>
-							<input type="hidden" class="hdnItemJsonFitossanitario" value='<%= ViewModelHelper.Json(item) %>' />
-						</td>
-					</tr>
-					<% } %>
-					<tr class="trTemplate hide">
-						<td class="produtoComercial">
-							<label class="lblProdutoComercial"></label>
-						</td>
-						<td class="ingrediente_ativo">
-							<label class="lblIngrediente_ativo"></label>
-						</td>
-						<td class="dose">
-							<label class="lblDose"></label>
-						</td>
-						<td class="praga_produto">
-							<label class="lblPraga_produto"></label>
-						</td>
-						<td class="modo_aplicacao">
-							<label class="lblModo_aplicacao"></label>
-							<input type="hidden" class="hdnItemJsonFitossanitario" value='0' />
-						</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
 	</fieldset>
 

@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Pentago.Utilities;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -49,25 +54,49 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
 		#region Comandos DML
 
-		public bool Salvar(UnidadeProducao caracterizacao)
+        public String GetGeoInfo(Coordenada coordenada)
+        {
+            RequestJson requestJson = new RequestJson();
+            ResponseJsonData<dynamic> resposta = new ResponseJsonData<dynamic>();
+
+            String webServiceHost = _configCoord.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada);
+            String webServiceUri = new StringBuilder()
+                .Append(webServiceHost)
+                .Append("?easting=")
+                .Append(coordenada.EastingUtm)
+                .Append("&northing=")
+                .Append(coordenada.NorthingUtm)
+                .ToString();
+
+            resposta = requestJson.Executar<dynamic>(webServiceUri);
+
+            return resposta.Data;
+        }
+
+        public bool Salvar(UnidadeProducao caracterizacao)
 		{
 			try
 			{
-				if (!_validar.Salvar(caracterizacao))
-				{
-					return Validacao.EhValido;
-				}
+                if (!_validar.Salvar(caracterizacao))
+                {
+                    return Validacao.EhValido;
+                }
 
 				#region Configurar Salvar
+
+                Endereco endereco = _da.ObterEndereco(caracterizacao.Empreendimento.Id);
+                Municipio municipio = _da.ObterMunicipio(endereco.MunicipioId);
 
 				if (!caracterizacao.PossuiCodigoPropriedade)
 				{
 					if (caracterizacao.Id < 1)
 					{
-						caracterizacao.CodigoPropriedade = _da.ObterSequenciaCodigoPropriedade();
+                        int sequencial = _da.ObterSequenciaCodigoPropriedade();
+
+                        caracterizacao.CodigoPropriedade = UnidadeProducaoGenerator.GerarCodigoPropriedade(municipio.Ibge, sequencial);
 					}
 					else
-					{
+					 {
 						caracterizacao.CodigoPropriedade = ObterPorEmpreendimento(caracterizacao.Empreendimento.Id, true).CodigoPropriedade;
 					}
 				}
@@ -124,11 +153,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 						{
 							ultimoCodigoUP++;
 
-							item.CodigoUP = Convert.ToInt64(
-								item.Municipio.Ibge.ToString() +
-								caracterizacao.CodigoPropriedade.ToString("D4") +
-								item.AnoAbertura +
-								ultimoCodigoUP.ToString("D2"));
+                            item.CodigoUP = UnidadeProducaoGenerator.GerarCodigoUnidadeProducao(
+                                item.Municipio.Ibge
+                            ,   caracterizacao.CodigoPropriedade
+                            ,   item.AnoAbertura
+                            ,   ultimoCodigoUP
+                            );
 						}
 						else
 						{
@@ -156,7 +186,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
 				foreach (var item in caracterizacao.UnidadesProducao)
 				{
-					if (item.CodigoUP.ToString().Substring(7, 4) != caracterizacao.CodigoPropriedade.ToString("D4"))
+                    if (!UnidadeProducaoGenerator.CodigoUpHasCodigoPropriedade(caracterizacao.CodigoPropriedade, item.CodigoUP))
 					{
 						Validacao.Add(Mensagem.UnidadeProducao.CodigoUPNaoContemCodPropriedade(item.CodigoUP));
 						return false;

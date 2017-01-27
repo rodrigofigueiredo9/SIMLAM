@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar EPTV</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/EPTVAnalisar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTV/EPTVAnalisar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		EPTVAnalisar.settings.idsTela = <%=Model.IdsTelaAnalisar%>;
 
 		$(function () {

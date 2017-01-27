@@ -3,10 +3,10 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CertificadoCadastroProdutoAgrotoxicoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certificado/certificadoCadastroProdutoAgrotoxico.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certificado/certificadoCadastroProdutoAgrotoxico.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	CertificadoCadastroProdutoAgrotoxico.settings.urls.obterDadosCertificadoCadastroProdutoAgrotoxico = '<%= Url.Action("ObterDadosCertificadoCadastroProdutoAgrotoxico", "Certificado", new {area="Especificidades"}) %>';
 	CertificadoCadastroProdutoAgrotoxico.settings.urls.obterDadosAgrotoxico = '<%= Url.Action("ObterDadosAgrotoxico", "Certificado", new {area="Especificidades"}) %>';
 </script>

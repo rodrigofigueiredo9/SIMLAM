@@ -47,7 +47,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 			IEnumerable valueAsList = value as IEnumerable;
 
-			return new ObjectMailMerge(valueAsList, tableName);
+            if (valueAsList != null)
+                return new ObjectMailMerge(valueAsList, tableName);
+            else
+                return null;
 		}
 
 		public bool GetValue(string fieldName, out object fieldValue)

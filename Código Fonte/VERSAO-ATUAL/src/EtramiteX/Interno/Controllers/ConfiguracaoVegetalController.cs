@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.DeclaracaoAdicional;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
@@ -32,6 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		PragaBus _pragaBus = new PragaBus();
 		ListaBus _busLista = new ListaBus();
 		CulturaValidar _validar = new CulturaValidar();
+        DeclaracaoAdicionalBus _declaracao = new DeclaracaoAdicionalBus();
 
 		#endregion
 
@@ -569,5 +571,106 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
-	}
+
+        #region Declaração Adicional
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult SalvarDeclaracaoAdicional(DeclaracaoAdicional declaracao)
+        {
+            string urlRetorno = declaracao.Id < 1 ? Url.Action("CadastrarDeclaracaoAdicional", "ConfiguracaoVegetal") : Url.Action("Declaracoes", "ConfiguracaoVegetal");
+            _declaracao.Salvar(declaracao);
+            urlRetorno += "?Msg=" + Validacao.QueryParam();
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Url = urlRetorno });
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult CadastrarDeclaracaoAdicional(DeclaracaoAdicional declaracao)
+        {
+            DeclaracaoAdicionalVM vm = new DeclaracaoAdicionalVM();
+            ViewBag.Titulo = "Cadastrar Declaração Adicional";
+            return View("DeclaracaoAdicional/Criar", vm);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult Declaracoes()
+        {
+            DeclaracaoAdicionalListarVM vm = new DeclaracaoAdicionalListarVM(_busLista.QuantPaginacao);
+            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            return View("DeclaracaoAdicional/Index", vm);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult ExcluirConfirm(int id)
+        {
+            ExcluirVM vm = new ExcluirVM();
+            vm.Id = id;
+            vm.Mensagem = Mensagem.Declaracao.MensagemExcluir(id.ToString());
+            vm.Titulo = "Excluir Declaração Adicional";
+            return PartialView("Excluir", vm);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult Excluir(int id)
+        {
+            bool excluido = _declaracao.Excluir(id);
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Excluido = excluido }, JsonRequestBehavior.AllowGet);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.Praga })]
+        public ActionResult EditarDeclaracaoAdicional(int id)
+        {
+            DeclaracaoAdicionalVM vm = new DeclaracaoAdicionalVM();
+
+            vm.DeclaracaoAdicional = _declaracao.Obter(id);
+            ViewBag.Titulo = "Editar Declaração Adicional";
+            return View("DeclaracaoAdicional/Criar", vm);
+        }
+
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult ObterDeclaracaoOutroEstado(int valOutroEstado)
+        {
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Declaracoes = _declaracao.ObterListaDeclaracao(valOutroEstado)
+            },
+            JsonRequestBehavior.AllowGet);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.DeclaracaoAdicional })]
+        public ActionResult FiltrarDeclaracao(DeclaracaoAdicionalListarVM vm, Paginacao paginacao)
+        {
+            if (!String.IsNullOrEmpty(vm.UltimaBusca))
+            {
+                vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<DeclaracaoAdicionalListarVM>(vm.UltimaBusca).Filtros;
+            }
+
+            vm.Paginacao = paginacao;
+            vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            vm.SetListItens(_busLista.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+            Resultados<DeclaracaoAdicional> resultados = _declaracao.Filtrar(vm.Filtros, vm.Paginacao);
+            if (resultados == null)
+            {
+                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+            }
+
+
+            vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+            vm.Paginacao.EfetuarPaginacao();
+            vm.Resultados = resultados.Itens;
+
+            return Json(new
+            {
+                @Msg = Validacao.Erros,
+                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DeclaracaoAdicional/ListarResultados", vm)
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+    }
 }

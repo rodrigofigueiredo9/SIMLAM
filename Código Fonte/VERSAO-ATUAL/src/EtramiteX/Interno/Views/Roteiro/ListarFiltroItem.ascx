@@ -4,7 +4,7 @@
 <h1 class="titTela">Itens de Roteiro</h1>
 <br />
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		ItemListar.urlCriarItem = '<%= Url.Action("ItemModal", "Roteiro") %>';
 		ItemListar.urlEditar = '<%= Url.Action("EditarItem", "Roteiro") %>';

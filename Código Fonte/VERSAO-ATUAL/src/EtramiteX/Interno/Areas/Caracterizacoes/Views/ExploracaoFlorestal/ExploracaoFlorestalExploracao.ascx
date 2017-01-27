@@ -3,7 +3,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalExploracaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript">
+<script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
 </script>
 

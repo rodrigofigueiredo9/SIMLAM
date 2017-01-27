@@ -35,7 +35,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem EditarSituacaoInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A situação do CFO deve ser \"Em elaboração\"." }; } }
 
 		public Mensagem TipoNumeroObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Nº Bloco ou Nº Digital é obrigatório." }; } }
-		public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO já foi utilizado." }; } }
+        public Mensagem AnoCFOInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }
+        public Mensagem NumeroExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO já foi utilizado." }; } }
 		public Mensagem NumeroNaoLiberado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO não está liberado para o responsável técnico." }; } }
 		public Mensagem NumeroObrigatorio { get { return new Mensagem() { Campo = "CFO_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO é obrigatório." }; } }
 		public Mensagem NumeroCancelado { get { return new Mensagem() { Campo = "CFO_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO está cancelado." }; } }

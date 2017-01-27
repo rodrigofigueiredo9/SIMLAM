@@ -16,6 +16,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloHabilitac
 
         public int? ArquivoId { get; set; }
 
-        
+        public int UFHablitacao { get; set; }
+
+        public string NumeroVistoCrea { get; set; }
 	}
 }

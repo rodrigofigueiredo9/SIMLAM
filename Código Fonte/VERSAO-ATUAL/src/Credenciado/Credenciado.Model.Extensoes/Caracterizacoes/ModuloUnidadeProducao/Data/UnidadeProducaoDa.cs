@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -14,6 +14,9 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloUnidadeProducao.Data
@@ -56,7 +59,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Editar(caracterizacao, banco);
 			}
 		}
-		
+
 		private int Criar(UnidadeProducao caracterizacao, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
@@ -65,14 +68,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Unidade de Produção
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_unidade_producao 
-				(id, tid, empreendimento, possui_codigo_propriedade, propriedade_codigo, local_livro, interno_id, interno_tid) values 
-				(seq_crt_unidade_producao.nextval, :tid, :empreendimento_id, :possui_cod_propriedade, :propriedade_codigo, :local_livro, :interno_id, :interno_tid) 
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_unidade_producao
+				(id, tid, empreendimento, possui_codigo_propriedade, propriedade_codigo, local_livro, interno_id, interno_tid) values
+				(seq_crt_unidade_producao.nextval, :tid, :empreendimento_id, :possui_cod_propriedade, :propriedade_codigo, :local_livro, :interno_id, :interno_tid)
 				returning id into :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("possui_cod_propriedade", caracterizacao.PossuiCodigoPropriedade, DbType.Int32);
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+                comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
@@ -90,10 +93,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (UnidadeProducaoItem item in caracterizacao.UnidadesProducao)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem, 
-					renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values 
-					(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem, 
-					:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura) 
+					insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem,
+					renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values
+					(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem,
+					:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura)
 					returning id into :unidade_id", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
@@ -119,8 +122,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Coordenadas
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into {0}crt_unidade_producao_un_coord 
-					(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values 
+					insert into {0}crt_unidade_producao_un_coord
+					(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values
 					(seq_crt_unida_prod_un_coord.nextval, :tid, :unidade_producao_unidade, :tipo_coordenada, :datum, :easting_utm, :northing_utm, :fuso_utm, :hemisferio_utm, :municipio)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -139,7 +142,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Produtores
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values 
+					insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values
 					(seq_crt_unidade_prod_un_produt.nextval, :tid, :unidade_producao_unidade, :produtor)");
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -157,8 +160,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Responsaveis Técnicos Habilitados CFO / CFOC
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into {0}crt_unidade_prod_un_resp_tec 
-					(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values 
+					insert into {0}crt_unidade_prod_un_resp_tec
+					(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values
 					(seq_crt_unid_prod_un_resp_tec.nextval, :tid, :unidade_producao_unidade, :responsavel_tecnico, :numero_hab_cfo_cfoc, :numero_art, :art_cargo_funcao, :data_validade_art)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -202,7 +205,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				Comando comando = bancoDeDados.CriarComando(@"update crt_unidade_producao set propriedade_codigo = :propriedade_codigo, local_livro = :local_livro, tid = :tid where id = :id", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
@@ -214,21 +217,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Deletando dados das tabelas filhas
 
 				//Coordenada
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_producao_un_coord c where c.unidade_producao_unidade in 
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_producao_un_coord c where c.unidade_producao_unidade in
 				(select t.id from {0}crt_unidade_producao_unidade t where t.unidade_producao = :unidade_producao)", EsquemaCredenciadoBanco);
 				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.UnidadesProducao.Select(x => x.Coordenada).Select(y => y.Id).ToList());
 				comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Produtores
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_prod_un_produtor c where c.unidade_producao_unidade in 
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_prod_un_produtor c where c.unidade_producao_unidade in
 				(select t.id from {0}crt_unidade_producao_unidade t where t.unidade_producao = :unidade_producao)", EsquemaBanco);
 				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.UnidadesProducao.SelectMany(x => x.Produtores).Select(y => y.IdRelacionamento).ToList());
 				comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Responsaveis Técnicos
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_prod_un_resp_tec c where c.unidade_producao_unidade in 
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_unidade_prod_un_resp_tec c where c.unidade_producao_unidade in
 				(select t.id from {0}crt_unidade_producao_unidade t where t.unidade_producao = :unidade_producao)", EsquemaCredenciadoBanco);
 				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.UnidadesProducao.SelectMany(x => x.ResponsaveisTecnicos).Select(y => y.IdRelacionamento).ToList());
 				comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
@@ -249,8 +252,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id > 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						update {0}crt_unidade_producao_unidade set cultura =:cultura,  tid = :tid, codigo_up = :codigo_up, tipo_producao = :tipo_producao, renasem =:renasem, 
-						renasem_data_validade = :renasem_data_validade, area = :area, cultivar = :cultivar, data_plantio_ano_producao = :data_plantio_ano_producao, 
+						update {0}crt_unidade_producao_unidade set cultura =:cultura,  tid = :tid, codigo_up = :codigo_up, tipo_producao = :tipo_producao, renasem =:renasem,
+						renasem_data_validade = :renasem_data_validade, area = :area, cultivar = :cultivar, data_plantio_ano_producao = :data_plantio_ano_producao,
 						estimativa_quant_ano = :estimativa_quant_ano, estimativa_unid_medida = :estimativa_unid_medida, ano_abertura = :ano_abertura where id = :id", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
@@ -258,10 +261,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem, 
-						renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values 
-						(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem, 
-						:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura) 
+						insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem,
+						renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values
+						(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem,
+						:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura)
 						returning id into :unidade_id", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
@@ -293,15 +296,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Coordenada.Id > 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						update {0}crt_unidade_producao_un_coord set tid = :tid, tipo_coordenada = :tipo_coordenada, datum = :datum, easting_utm = :easting_utm, 
-						northing_utm = :northing_utm, fuso_utm = :fuso_utm, hemisferio_utm = :hemisferio_utm, municipio = :municipio 
+						update {0}crt_unidade_producao_un_coord set tid = :tid, tipo_coordenada = :tipo_coordenada, datum = :datum, easting_utm = :easting_utm,
+						northing_utm = :northing_utm, fuso_utm = :fuso_utm, hemisferio_utm = :hemisferio_utm, municipio = :municipio
 						where unidade_producao_unidade = :unidade_producao_unidade", EsquemaCredenciadoBanco);
 					}
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into {0}crt_unidade_producao_un_coord 
-						(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values 
+						insert into {0}crt_unidade_producao_un_coord
+						(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values
 						(seq_crt_unida_prod_un_coord.nextval, :tid, :unidade_producao_unidade, :tipo_coordenada, :datum, :easting_utm, :northing_utm, :fuso_utm, :hemisferio_utm, :municipio)", EsquemaCredenciadoBanco);
 					}
 
@@ -331,7 +334,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						else
 						{
 							comando = bancoDeDados.CriarComando(@"
-							insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values 
+							insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values
 							(seq_crt_unidade_prod_un_produt.nextval, :tid, :unidade_producao_unidade, :produtor)");
 							comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
 						}
@@ -350,7 +353,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (responsavel.IdRelacionamento > 0)
 						{
 							comando = bancoDeDados.CriarComando(@"
-							update crt_unidade_prod_un_resp_tec set tid =:tid, responsavel_tecnico =: responsavel_tecnico, numero_hab_cfo_cfoc =: numero_hab_cfo_cfoc, 
+							update crt_unidade_prod_un_resp_tec set tid =:tid, responsavel_tecnico =: responsavel_tecnico, numero_hab_cfo_cfoc =: numero_hab_cfo_cfoc,
 							numero_art =:numero_art, art_cargo_funcao =: art_cargo_funcao, data_validade_art =: data_validade_art where id = :id_rel", EsquemaCredenciadoBanco);
 
 							comando.AdicionarParametroEntrada("id_rel", responsavel.IdRelacionamento, DbType.Int32);
@@ -358,8 +361,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						else
 						{
 							comando = bancoDeDados.CriarComando(@"
-							insert into {0}crt_unidade_prod_un_resp_tec 
-							(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values 
+							insert into {0}crt_unidade_prod_un_resp_tec
+							(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values
 							(seq_crt_unid_prod_un_resp_tec.nextval, :tid, :unidade_producao_unidade, :responsavel_tecnico, :numero_hab_cfo_cfoc, :numero_art, :art_cargo_funcao, :data_validade_art)", EsquemaCredenciadoBanco);
 
 							comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -410,7 +413,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				//Atualizar o tid para a nova ação
 				comando = bancoDeDados.CriarComandoPlSql(@"
-				begin 
+				begin
 					update {0}crt_unidade_producao c set c.tid = :tid where c.id = :id;
 					update {0}crt_unidade_producao_unidade c set c.tid = :tid where c.unidade_producao = :id;
 				end;", EsquemaCredenciadoBanco);
@@ -426,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Apaga os dados da caracterização
 
 				comando = bancoDeDados.CriarComandoPlSql(
-				@"begin 
+				@"begin
 					delete from crt_unidade_prod_un_resp_tec where unidade_producao_unidade in((select id from crt_unidade_producao_unidade where unidade_producao = :unidade_producao));
 					delete from crt_unidade_prod_un_produtor where unidade_producao_unidade in((select id from crt_unidade_producao_unidade where unidade_producao = :unidade_producao));
 					delete from crt_unidade_producao_un_coord where unidade_producao_unidade in((select id from crt_unidade_producao_unidade where unidade_producao = :unidade_producao));
@@ -454,8 +457,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				if (caracterizacao.Id <= 0)
 				{
-					comando = bancoDeDados.CriarComando(@"insert into {0}crt_unidade_producao (id, tid, empreendimento, possui_codigo_propriedade, propriedade_codigo, local_livro, 
-					interno_id, interno_tid) values (seq_crt_unidade_producao.nextval, :tid, :empreendimento_id, :possui_cod_propriedade, :propriedade_codigo, :local_livro, 
+					comando = bancoDeDados.CriarComando(@"insert into {0}crt_unidade_producao (id, tid, empreendimento, possui_codigo_propriedade, propriedade_codigo, local_livro,
+					interno_id, interno_tid) values (seq_crt_unidade_producao.nextval, :tid, :empreendimento_id, :possui_cod_propriedade, :propriedade_codigo, :local_livro,
 					:interno_id, :interno_tid) returning id into :id",
 					EsquemaCredenciadoBanco);
 
@@ -474,7 +477,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
 
 				comando.AdicionarParametroEntrada("possui_cod_propriedade", caracterizacao.PossuiCodigoPropriedade, DbType.Int32);
-				comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+                comando.AdicionarParametroEntrada("propriedade_codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("local_livro", caracterizacao.LocalLivroDisponivel, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -490,7 +493,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Limpar os dados do banco
 
 				comando = bancoDeDados.CriarComandoPlSql(@"
-				begin 
+				begin
 					delete from crt_unidade_prod_un_resp_tec r where r.unidade_producao_unidade in (select id from crt_unidade_producao_unidade cc where cc.unidade_producao = :unidade_producao);
 					delete from crt_unidade_prod_un_produtor p where p.unidade_producao_unidade in (select id from crt_unidade_producao_unidade cc where cc.unidade_producao = :unidade_producao);
 					delete from crt_unidade_producao_un_coord c where c.unidade_producao_unidade in (select id from crt_unidade_producao_unidade cc where cc.unidade_producao = :unidade_producao);
@@ -508,10 +511,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (UnidadeProducaoItem item in caracterizacao.UnidadesProducao)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem, 
-					renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values 
-					(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem, 
-					:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura) 
+					insert into crt_unidade_producao_unidade (id, tid, unidade_producao, possui_cod_up, codigo_up, tipo_producao, renasem,
+					renasem_data_validade, area, cultivar, data_plantio_ano_producao, estimativa_quant_ano, estimativa_unid_medida, ano_abertura, cultura) values
+					(seq_crt_unida_prod_unidade.nextval, :tid, :unidade_producao, :possui_cod_up, :codigo_up, :tipo_producao, :renasem,
+					:renasem_data_validade, :area, :cultivar, :data_plantio_ano_producao, :estimativa_quant_ano, :estimativa_unid_medida, :ano_abertura, :cultura)
 					returning id into :unidade_id", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
@@ -537,8 +540,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Coordenadas
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into {0}crt_unidade_producao_un_coord 
-					(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values 
+					insert into {0}crt_unidade_producao_un_coord
+					(id, tid, unidade_producao_unidade, tipo_coordenada, datum, easting_utm, northing_utm, fuso_utm, hemisferio_utm, municipio) values
 					(seq_crt_unida_prod_un_coord.nextval, :tid, :unidade_producao_unidade, :tipo_coordenada, :datum, :easting_utm, :northing_utm, :fuso_utm, :hemisferio_utm, :municipio)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -556,7 +559,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					#region Produtores
 
-					comando = bancoDeDados.CriarComando(@"select id from {0}tab_pessoa p where p.credenciado = :credenciado 
+					comando = bancoDeDados.CriarComando(@"select id from {0}tab_pessoa p where p.credenciado = :credenciado
 					and p.id in (select er.responsavel from {0}tab_empreendimento_responsavel er where er.empreendimento = :empreendimento)", EsquemaCredenciadoBanco);
 					comando.DbCommand.CommandText += String.Format(comando.AdicionarIn("and", "p.interno", DbType.Int32, item.Produtores.Select(x => x.Id).ToList()));
 
@@ -566,7 +569,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					List<int> produtoresCrendenciadoIds = bancoDeDados.ExecutarList<int>(comando);
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values 
+					insert into crt_unidade_prod_un_produtor (id, tid, unidade_producao_unidade, produtor) values
 					(seq_crt_unidade_prod_un_produt.nextval, :tid, :unidade_producao_unidade, :produtor)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -584,8 +587,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Responsaveis Técnicos Habilitados CFO / CFOC
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into {0}crt_unidade_prod_un_resp_tec 
-					(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values 
+					insert into {0}crt_unidade_prod_un_resp_tec
+					(id, tid, unidade_producao_unidade, responsavel_tecnico, numero_hab_cfo_cfoc, numero_art, art_cargo_funcao, data_validade_art) values
 					(seq_crt_unid_prod_un_resp_tec.nextval, :tid, :unidade_producao_unidade, :responsavel_tecnico, :numero_hab_cfo_cfoc, :numero_art, :art_cargo_funcao, :data_validade_art)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -651,6 +654,78 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		#endregion
 
 		#region Obter/Filtrar
+        public Municipio ObterMunicipio(int MunicipioId, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Municipio municipio = new Municipio();
+                Comando comando = bancoDeDados.CriarComando(@"select m.id, m.texto, m.estado, m.cep, m.ibge from {0}lov_municipio m where m.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", MunicipioId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        municipio.Id = Convert.ToInt32(reader["id"]);
+                        municipio.Estado.Id = Convert.ToInt32(reader["estado"]);
+                        municipio.Ibge = Convert.IsDBNull(reader["ibge"]) ? 0 : Convert.ToInt32(reader["ibge"]);
+                        municipio.Texto = reader["texto"].ToString();
+                        municipio.Cep = reader["texto"].ToString();
+                        municipio.IsAtivo = true;
+                    }
+
+                    reader.Close();
+                }
+
+                return municipio;
+            }
+        }
+
+        public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
+        {
+            Endereco retorno = new Endereco();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Endereços
+
+                Comando comando = bancoDeDados.CriarComando(@"
+				select te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto,
+				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid
+				from {0}tab_empreendimento_endereco te, {0}lov_estado le, {0}lov_municipio lm
+				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = :empreendimento and te.correspondencia = 0", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        retorno.Id = reader.GetValue<int>("id");
+                        retorno.Tid = reader.GetValue<string>("tid");
+                        retorno.ZonaLocalizacaoId = reader.GetValue<int>("zona");
+                        retorno.Cep = reader.GetValue<string>("cep");
+                        retorno.Logradouro = reader.GetValue<string>("logradouro");
+                        retorno.Bairro = reader.GetValue<string>("bairro");
+                        retorno.EstadoId = reader.GetValue<int>("estado_id");
+                        retorno.EstadoTexto = reader.GetValue<string>("estado_texto");
+                        retorno.MunicipioId = reader.GetValue<int>("municipio_id");
+                        retorno.MunicipioTexto = reader.GetValue<string>("municipio_texto");
+                        retorno.Numero = reader.GetValue<string>("numero");
+                        retorno.DistritoLocalizacao = reader.GetValue<string>("distrito");
+                        retorno.Corrego = reader.GetValue<string>("corrego");
+                        retorno.CaixaPostal = reader.GetValue<string>("caixa_postal");
+                        retorno.Complemento = reader.GetValue<string>("complemento");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return retorno;
+        }
 
 		internal UnidadeProducao ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -681,7 +756,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Unidade de Produção
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.possui_codigo_propriedade, c.propriedade_codigo, e.codigo empreendimento_codigo, 
+				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.possui_codigo_propriedade, c.propriedade_codigo, e.codigo empreendimento_codigo,
 				e.interno emp_interno_id, c.local_livro from {0}crt_unidade_producao c, tab_empreendimento e where c.empreendimento = e.id and c.id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -696,7 +771,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+						caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 						caracterizacao.Empreendimento.InternoID = reader.GetValue<int>("emp_interno_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
@@ -720,8 +795,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComando(@"
 				select c.id, c.tid, c.unidade_producao, c.possui_cod_up, c.codigo_up, c.tipo_producao, c.renasem, c.renasem_data_validade, c.area, c.ano_abertura,
-				c.cultura, c.cultivar, tc.texto cultura_texto, cc.cultivar cultivar_nome, c.data_plantio_ano_producao, c.estimativa_quant_ano, c.estimativa_unid_medida 
-				from {0}crt_unidade_producao_unidade c, {1}tab_cultura_cultivar cc, {1}tab_cultura tc 
+				c.cultura, c.cultivar, tc.texto cultura_texto, cc.cultivar cultivar_nome, c.data_plantio_ano_producao, c.estimativa_quant_ano, c.estimativa_unid_medida
+				from {0}crt_unidade_producao_unidade c, {1}tab_cultura_cultivar cc, {1}tab_cultura tc
 				where cc.id(+) = c.cultivar and tc.id = c.cultura and c.unidade_producao = :unidade_producao", EsquemaCredenciadoBanco, EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("unidade_producao", caracterizacao.Id, DbType.Int32);
@@ -791,7 +866,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Produtores
 
 					comando = bancoDeDados.CriarComando(@"
-					select c.id, c.tid, c.produtor, nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, p.tipo, p.interno 
+					select c.id, c.tid, c.produtor, nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, p.tipo, p.interno
 					from crt_unidade_prod_un_produtor c, tab_pessoa p where p.id = c.produtor and unidade_producao_unidade = :unidade_producao_unidade", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("unidade_producao_unidade", item.Id, DbType.Int32);
@@ -820,11 +895,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					#region Responsáveis Técnicos
 
 					comando = bancoDeDados.CriarComando(@"
-					select c.id, c.tid, c.unidade_producao_unidade, c.responsavel_tecnico, nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, 
-					pf.texto profissao, oc.orgao_sigla, pp.registro, c.numero_hab_cfo_cfoc, c.numero_art, c.art_cargo_funcao, c.data_validade_art, 
-					(select h.extensao_habilitacao from tab_hab_emi_cfo_cfoc h where h.responsavel = c.responsavel_tecnico) extensao_habilitacao 
-					from {1}crt_unidade_prod_un_resp_tec c, {0}tab_credenciado tc, {1}tab_pessoa p, {1}tab_pessoa_profissao pp, {0}tab_profissao pf, {0}tab_orgao_classe oc 
-					where tc.id = c.responsavel_tecnico and p.id = tc.pessoa and pp.pessoa(+) = p.id and pf.id(+)  = pp.profissao and oc.id(+) = pp.orgao_classe 
+					select c.id, c.tid, c.unidade_producao_unidade, c.responsavel_tecnico, nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj,
+					pf.texto profissao, oc.orgao_sigla, pp.registro, c.numero_hab_cfo_cfoc, c.numero_art, c.art_cargo_funcao, c.data_validade_art,
+					(select h.extensao_habilitacao from tab_hab_emi_cfo_cfoc h where h.responsavel = c.responsavel_tecnico) extensao_habilitacao
+					from {1}crt_unidade_prod_un_resp_tec c, {0}tab_credenciado tc, {1}tab_pessoa p, {1}tab_pessoa_profissao pp, {0}tab_profissao pf, {0}tab_orgao_classe oc
+					where tc.id = c.responsavel_tecnico and p.id = tc.pessoa and pp.pessoa(+) = p.id and pf.id(+)  = pp.profissao and oc.id(+) = pp.orgao_classe
 					and c.unidade_producao_unidade = :id", EsquemaBanco, EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", item.Id, DbType.String);
@@ -884,9 +959,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Unidade de Produção
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id id_hst, c.tid, c.interno_id, c.interno_tid, c.empreendimento_id empreendimento, c.possui_cod_propriedade, 
-				c.propriedade_codigo, e.codigo empreendimento_codigo, e.interno_id  emp_interno_id, c.local_livro 
-				from {0}hst_crt_unidade_producao c, {0}hst_empreendimento e where  e.empreendimento_id = c.empreendimento_id 
+				select c.id id_hst, c.tid, c.interno_id, c.interno_tid, c.empreendimento_id empreendimento, c.possui_cod_propriedade,
+				c.propriedade_codigo, e.codigo empreendimento_codigo, e.interno_id  emp_interno_id, c.local_livro
+				from {0}hst_crt_unidade_producao c, {0}hst_empreendimento e where  e.empreendimento_id = c.empreendimento_id
 				and e.tid = c.empreendimento_tid and c.unidade_producao_id = :id and c.tid = :tid", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -904,7 +979,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
-						caracterizacao.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo");
+                        caracterizacao.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo");
 						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 						caracterizacao.Empreendimento.InternoID = reader.GetValue<int>("emp_interno_id");
 						caracterizacao.Empreendimento.Codigo = reader.GetValue<int?>("empreendimento_codigo");
@@ -924,9 +999,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Unidades de produção
 
-				comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.unidade_producao_id, c.unidade_producao_unidade_id, c.possui_cod_up, c.codigo_up, c.tipo_producao_id, c.renasem, c.renasem_data_validade, 
-				c.area, c.ano_abertura, c.cultura_id, tc.texto cultura_texto, c.cultivar_id, cc.cultivar cultivar_nome, c.data_plantio_ano_producao, c.estimativa_quant_ano, 
-				c.estimativa_unid_medida_id  from {0}hst_crt_unidade_prod_unidade c, {1}tab_cultura_cultivar cc, {1}hst_cultura tc where cc.id(+) = c.cultivar_id 
+				comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.unidade_producao_id, c.unidade_producao_unidade_id, c.possui_cod_up, c.codigo_up, c.tipo_producao_id, c.renasem, c.renasem_data_validade,
+				c.area, c.ano_abertura, c.cultura_id, tc.texto cultura_texto, c.cultivar_id, cc.cultivar cultivar_nome, c.data_plantio_ano_producao, c.estimativa_quant_ano,
+				c.estimativa_unid_medida_id  from {0}hst_crt_unidade_prod_unidade c, {1}tab_cultura_cultivar cc, {1}hst_cultura tc where cc.id(+) = c.cultivar_id
 				and  tc.cultura_id = c.cultura_id and tc.tid = c.cultura_tid and c.id_hst = :id_hst", EsquemaCredenciadoBanco, EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id_hst", id_hst, DbType.Int32);
@@ -957,8 +1032,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Coordenadas
 
 						comando = bancoDeDados.CriarComando(@"
-						select h.id, h.tid, h.unidade_producao_unidade_id unidade_producao_unidade, h.tipo_coordenada_id tipo_coordenada, h.datum_id datum, 
-						h.easting_utm easting_utm, h.northing_utm, h.fuso_utm, h.hemisferio_utm_id hemisferio_utm, h.municipio_id, h.municipio_texto 
+						select h.id, h.tid, h.unidade_producao_unidade_id unidade_producao_unidade, h.tipo_coordenada_id tipo_coordenada, h.datum_id datum,
+						h.easting_utm easting_utm, h.northing_utm, h.fuso_utm, h.hemisferio_utm_id hemisferio_utm, h.municipio_id, h.municipio_texto
 						from {0}hst_crt_unidade_prod_un_coord h where h.id_hst = :id_hst", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("id_hst", id_hst, DbType.Int32);
@@ -992,7 +1067,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Produtores
 
 						comando = bancoDeDados.CriarComando(@"
-						select h.id, h.tid, h.unidade_prod_produtor_id id_rel, h.produtor_id, nvl(hp.nome, hp.razao_social) nome_razao, nvl(hp.cpf, hp.cnpj) cpf_cnpj, hp.tipo, hp.interno_id 
+						select h.id, h.tid, h.unidade_prod_produtor_id id_rel, h.produtor_id, nvl(hp.nome, hp.razao_social) nome_razao, nvl(hp.cpf, hp.cnpj) cpf_cnpj, hp.tipo, hp.interno_id
 						from {0}hst_crt_unid_prod_un_produtor h, {0}hst_pessoa hp where h.produtor_id = hp.pessoa_id and h.produtor_tid = hp.tid and h.id_hst = :id_hst", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("id_hst", id_hst, DbType.Int32);
@@ -1044,7 +1119,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 										from {0}hst_hab_emi_cfo_cfoc hh
 										where hh.responsavel_id = h.responsavel_id
 										and hh.responsavel_tid = h.responsavel_tid
-										and hh.data_execucao <= (select hc.data_execucao from hst_crt_unidade_producao hc 
+										and hh.data_execucao <= (select hc.data_execucao from hst_crt_unidade_producao hc
 										where hc.id = (select hu.id_hst from hst_crt_unidade_prod_unidade hu where hu.id = c.id_hst)))) extensao_habilitacao
 						from {1}hst_crt_un_prod_un_resp_tec c,
 							{1}hst_credenciado              hc,
@@ -1128,7 +1203,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select nvl(d.maior, 0) ultimo from (select max(to_number(substr(c.codigo_up, 14))) maior from crt_unidade_producao_unidade c 
+				select nvl(d.maior, 0) ultimo from (select max(to_number(substr(c.codigo_up, 14))) maior from crt_unidade_producao_unidade c
 				where c.unidade_producao = (select u.id from crt_unidade_producao u where u.empreendimento = :empreendimento)) d", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -1148,7 +1223,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo =: codigo and id <> :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("id", caracterizacao.InternoID, DbType.Int32);
 
 				existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
@@ -1162,10 +1237,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select count(c.id) from {0}crt_unidade_producao c, {0}tab_empreendimento e 
+				select count(c.id) from {0}crt_unidade_producao c, {0}tab_empreendimento e
 				where e.id = c.empreendimento and c.propriedade_codigo =: codigo and c.id <> :id and e.credenciado = :credenciado", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int32);
+				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
@@ -1202,7 +1277,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e 
+				Comando comando = bancoDeDados.CriarComando(@"select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e
 				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("codigo", unidade.CodigoUP, DbType.Int64);
@@ -1219,8 +1294,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e 
-				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and i.id <> :id 
+				select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e
+				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and i.id <> :id
 				and e.credenciado = :credenciado", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("codigo", unidade.CodigoUP, DbType.Int64);
@@ -1236,7 +1311,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select count(1) from {0}hst_crt_unidade_producao h, {0}lov_historico_artefatos_acoes aa 
+				select count(1) from {0}hst_crt_unidade_producao h, {0}lov_historico_artefatos_acoes aa
 				where h.acao_executada = aa.id and aa.acao = 38 and h.unidade_producao_id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", caracterizacao, DbType.Int32);

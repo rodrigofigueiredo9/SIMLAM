@@ -383,6 +383,8 @@
 		LocalVistoriaListar,
 		LocalVistoriaVisualizar,
 
-		RelatorioMapa
+		RelatorioMapa,
+
+        DeclaracaoAdicional
 	}
 }

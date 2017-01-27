@@ -1,7 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SalvarVM>" %>
 
-<script type="text/javascript">
+<script>
 	if (typeof PessoaAssociar != 'undefined') {
 
 		PessoaAssociar.settings = {

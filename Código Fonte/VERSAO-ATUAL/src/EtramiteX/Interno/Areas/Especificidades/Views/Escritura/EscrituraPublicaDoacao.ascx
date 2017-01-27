@@ -2,9 +2,9 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<EscrituraPublicaDoacaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Escritura/escrituraPublicaDoacao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Escritura/escrituraPublicaDoacao.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	EscrituraPublicaDoacao.urlEspecificidade = '<%= Url.Action("EscrituraPublicaDoacao", "Escritura", new {area="Especificidades"}) %>';
 	EscrituraPublicaDoacao.urlObterDadosEscrituraPublicaDoacao = '<%= Url.Action("ObterDadosEscrituraPublicaDoacao", "Escritura", new {area="Especificidades"}) %>';
 </script>
@@ -24,7 +24,7 @@
 			<%= Html.TextBox("Escritura.Folhas", Model.Escritura.Folhas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFolhas", @maxlength = "10" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="coluna75">
 			<label for="Escritura_Destinatario">Destinatário *</label>

@@ -14,7 +14,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 		public DuaEService(string arquivoCertificado, string senhaCertificado, string urlProxy = "")
 		{
 			//Requisições feitas para o ambiente de Produção do DuaE
-			_webRequest = (HttpWebRequest)WebRequest.Create(@"https://app.sefaz.es.gov.br/WsDua/DuaService.asmx");
+            _webRequest = (HttpWebRequest)WebRequest.Create(@"https://homologacao.sefaz.es.gov.br/WsDua/DuaService.asmx");
 			_webRequest.Headers.Add(@"SOAP:Action");
 			_webRequest.ContentType = "text/xml;charset=\"utf-8\"";
 			_webRequest.Accept = "text/xml";

@@ -157,19 +157,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOCObrigatorio);
 			}
-			else if (liberacao.NumeroInicialCFOC.ToString().Length != 10)
+			else if (liberacao.NumeroInicialCFOC.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.InicialQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFOC.ToString()));
-			}
+            }
+
+            if (liberacao.NumeroInicialCFOC.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.AnoCFOCInvalido);
+            }
 
 			if (liberacao.NumeroFinalCFOC <= 0)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOCObrigatorio);
 			}
-			else if (liberacao.NumeroFinalCFOC.ToString().Length != 10)
+			else if (liberacao.NumeroFinalCFOC.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.FinalQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFOC.ToString()));
-			}
+            }
+
+            if (liberacao.NumeroFinalCFOC.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.AnoCFOCInvalido);
+            }
 
 			if (liberacao.NumeroFinalCFOC < liberacao.NumeroInicialCFOC)
 			{
@@ -211,19 +221,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroInicialCFOObrigatorio);
 			}
-			else if (liberacao.NumeroInicialCFO.ToString().Length != 10)
+			else if (liberacao.NumeroInicialCFO.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.InicialQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFO.ToString()));
-			}
+            }
+
+            if (liberacao.NumeroInicialCFO.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.AnoCFOInvalido);
+            }
 
 			if (liberacao.NumeroFinalCFO <= 0)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroFinalCFOObrigatorio);
 			}
-			else if (liberacao.NumeroFinalCFO.ToString().Length != 10)
+			else if (liberacao.NumeroFinalCFO.ToString().Length != 8)
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.FinalQuantidadeInvalida(eDocumentoFitossanitarioTipo.CFO.ToString()));
-			}
+            }
+
+            if (liberacao.NumeroFinalCFO.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+            {
+                Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.AnoCFOInvalido);
+            }
 
 			if (liberacao.NumeroFinalCFO < liberacao.NumeroInicialCFO)
 			{

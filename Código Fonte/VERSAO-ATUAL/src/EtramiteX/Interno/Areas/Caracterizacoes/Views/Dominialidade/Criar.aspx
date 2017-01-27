@@ -4,11 +4,11 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento -  Dominialidade</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/dominialidade.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/dominialidade.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
 
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Dominialidade.load($('#central'), {
 				urls: {

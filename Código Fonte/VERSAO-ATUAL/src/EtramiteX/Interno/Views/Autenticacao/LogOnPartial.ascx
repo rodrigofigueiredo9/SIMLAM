@@ -16,7 +16,7 @@
 				   Validacao.QueryParamDeserializer(Request.Params["msg"]);
 			   }%>
 
-			 
+
 			<% foreach (var item in Validacao.Erros)
 				{%>
 					<p><%= Html.Encode(item.Texto)%></p>
@@ -30,7 +30,7 @@
 	<% if (Model.IsAjaxRequest ){ %>
 	<div class="block box coluna95 ">
 	<% } %>
-	
+
 	<br />
 
 	<% using (Html.BeginForm("LogOn", "Autenticacao", FormMethod.Post, new { @Class="formLogon"}))	{ %>
@@ -40,7 +40,7 @@
 	<% } %>
 
 	<div id="loginCaixa">
-			
+
 			<div class="corpoCaixaLogin">
 				<div class="holderFundo">
 					<div class="block">
@@ -65,9 +65,9 @@
 							<%} %>
 
 							<% if (Model != null && Model.AlterarSenha) { %>
-				
+
 							<%= Html.Hidden("alterarSenha", Model.AlterarSenha)%>
-				
+
 							<div class="msgSis">
 								<p>
 									<%= Model.AlterarSenhaMsg %>
@@ -84,7 +84,7 @@
 							<p>
 								<input type="button" value="Alterar a senha" class="btnEntrarLogin" />
 							</p>
-				
+
 							<%} %>
 						</div>
 					</div>
@@ -97,8 +97,7 @@
 		<% } %>
 	<% } %>
 
-	<script type="text/javascript" >
-		<!--
+	<script>
 			$('#login').focus();
 
 			$('#loginCaixa').keypress(function (e) {
@@ -119,7 +118,7 @@
 
 			$('.btnEntrarLogin').click(function () {
 				$('.camposExtrasLogin').slideDown('normal');
-				
+
 				<% if ( Model == null || !Model.IsAjaxRequest ){ %>
 					$('.formLogon').submit();
 
@@ -151,6 +150,5 @@
 				$('#login').addClass('disabled').attr('readOnly', 'true');
 				$('#senha').focus();
 			}
-		//-->
 	</script>
 <% } %>

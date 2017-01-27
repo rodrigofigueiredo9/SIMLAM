@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitar
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business;
+using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 {
@@ -153,6 +154,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 			return PTVNumero;
 		}
 
+        public void ValidarPraga(Praga item, List<Praga> lista = null)
+        {
+            if (item.Id <= 0)
+            {
+                Validacao.Add(Mensagem.PTVOutro.PragaObrigatorio);
+            }
+
+            if (lista != null)
+            {
+                if (lista.Any(x => x.Id == item.Id))
+                {
+                    Validacao.Add(Mensagem.PTVOutro.PragaJaAdicionada);
+                }
+            }
+        }
+
 		public bool ValidarProduto(PTVOutroProduto item, List<PTVOutroProduto> lista)
 		{
 			if (item.OrigemTipo <= 0)
@@ -167,11 +184,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 			}
 			else
 			{
-				if (item.OrigemTipo <= 3 && item.OrigemNumero.Length != 10)
+                if (item.OrigemTipo < 3 && !(item.OrigemNumero.Length >= 8 && item.OrigemNumero.Length <= 12)) //CFO e CFOC
 				{
 					Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoCFOCFOC(item.OrigemTipoTexto));
 				}
-
+                else if (item.OrigemTipo == 3 && item.OrigemNumero.Length != 10) //PTV
+                {
+                    Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoPTV(item.OrigemTipoTexto));
+                }
 				if (item.OrigemTipo > 4 && item.OrigemNumero.Length != 20)
 				{
 					Validacao.Add(Mensagem.PTVOutro.QuantidadeMaximoCFCFRTF(item.OrigemTipoTexto));

@@ -1,7 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteDescricaoListarVM>" %>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		CondicionanteDescricaoListar.settings.urls = {
 			criar: '<%= Url.Action("CondicionanteDescricaoCriar", "Titulo") %>',
@@ -25,7 +25,7 @@
 		<div class="coluna98">
 			<div class="block fixado">
 				<div class="coluna85">
-					<label for="Filtro_Descricao">Descrição</label>	
+					<label for="Filtro_Descricao">Descrição</label>
 					<%= Html.TextBox("Filtros.Descricao", null, new { @class = "text setarFoco" })%>
 				</div>
 				<div class="coluna10">

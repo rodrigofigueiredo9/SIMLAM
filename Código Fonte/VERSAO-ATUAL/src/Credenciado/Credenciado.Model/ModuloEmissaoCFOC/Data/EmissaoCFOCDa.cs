@@ -498,7 +498,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 					li.unidade_medida, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
 					where l.id = cp.lote and li.lote = l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d 
-					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida", EsquemaBanco);
+					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida,d.unidade_medida_texto", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 
@@ -679,7 +679,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				select min(numero) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l
 				where l.id = t.liberacao and t.tipo_documento = 2 and t.tipo_numero = 2
 				and not exists(select null from cre_cfoc c where c.numero = t.numero)
-				and t.situacao = 1 and l.responsavel_tecnico = :credenciado");
+				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
+                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
@@ -825,7 +826,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 				select nvl((select sum(li.quantidade) from tab_cfoc c, tab_cfoc_produto cp, tab_lote l, tab_lote_item li 
-				where cp.cfoc = c.id and l.id = cp.lote and li.lote = l.id and li.cultivar = :cultivar and c.empreendimento = :empreendimento and c.id != :cfoc), 0) from dual");
+				where c.situacao != 4 and cp.cfoc = c.id and l.id = cp.lote and li.lote = l.id and li.cultivar = :cultivar and c.empreendimento = :empreendimento and c.id != :cfoc), 0) from dual");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("cultivar", cultivar, DbType.Int32);
@@ -903,7 +904,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l 
 				where l.id = n.liberacao and n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
 				and not exists (select null from cre_cfoc c where c.numero = n.numero) 
-				and l.responsavel_tecnico = :credenciado ");
+				and l.responsavel_tecnico = :credenciado 
+                and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;

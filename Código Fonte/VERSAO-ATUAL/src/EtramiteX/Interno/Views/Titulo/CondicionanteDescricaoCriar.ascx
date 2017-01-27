@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<Tecnomapas.Blocos.Entities.Interno.ModuloTitulo.TituloCondicionanteDescricao>" %>
 
-<script type="text/javascript">
+<script>
 	CondicionanteDescricaoSalvar.settings.urls = {
 		salvar: '<%= Url.Action("CondicionanteDescricaoSalvar", "Titulo") %>'
 	}

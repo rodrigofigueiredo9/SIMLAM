@@ -6,9 +6,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cadastrar Destinatario PTV</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/destinatario.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/PTV/destinatario.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			DestinatarioPTV.load($("#central"), {
 				urls: {

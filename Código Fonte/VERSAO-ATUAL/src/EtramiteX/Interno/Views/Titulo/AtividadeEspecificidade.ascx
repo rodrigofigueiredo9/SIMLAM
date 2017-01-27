@@ -2,7 +2,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AtividadeEspecificidadeVM>" %>
 
-<script type="text/javascript">
+<script>
 	AtividadeEspecificidade.settings.urls.obterProcessosDocumentos = '<%= Url.Action("ObterProcessosDocumentos", "Titulo", new {area=""}) %>';
 	AtividadeEspecificidade.settings.urls.obterAtividades = '<%= Url.Action("ObterAtividades", "Titulo", new {area=""}) %>';
 	AtividadeEspecificidade.settings.urls.pdfRequerimento = '<%= Url.Action("GerarPdf", "Requerimento", new {area=""}) %>';

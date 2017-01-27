@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Configurar Atividade Solicitada</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeConfiguracao.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Atividade/atividadeConfiguracao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Atividade/atividadeSolicitadaListar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			AtividadeConfiguracao.urlObterAtividade = '<%= Url.Action("AssociarAtividade", "Atividade") %>';
 			AtividadeConfiguracao.urlValidarAtividadeConfigurada = '<%= Url.Action("ValidarAtividadeConfigurada", "Atividade") %>';
@@ -17,7 +17,7 @@
 		});
 	</script>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">	
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
 		<h1 class="titTela">Configurar Atividade Solicitada</h1>
 		<br />

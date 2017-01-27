@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Protocolos</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Protocolo/listar.js") %>" ></script>
-	<%--<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>--%>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Protocolo/listar.js") %>" ></script>
+	<%--<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>--%>
+	<script>
 		$(function () {
 			ProtocoloListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "Protocolo") %>';
 			ProtocoloListar.urlExcluir = '<%= Url.Action("Excluir", "Protocolo") %>';
@@ -19,7 +19,7 @@
 			ProtocoloListar.urlAtividadesSolicitadas = '<%= Url.Action("AtividadesSolicitadas", "Protocolo") %>';
 
 			ProtocoloListar.urlHistoricoTramitacao = '<%= Url.Action("Historico", "Tramitacao") %>';
-			
+
 			ProtocoloListar.urlEditarApensadosJuntados = '<%= Url.Action("EditarApensadosJuntados") %>';
 			ProtocoloListar.urlValidarEditarApensadosJuntados = '<%= Url.Action("ValidarEditarApensadosJuntados", "Protocolo") %>';
 			ProtocoloListar.load($('#central'));

@@ -3,21 +3,21 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoCartaAnuencia.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/destinatarioEspecificidade.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Certidao/certidaoCartaAnuencia.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	CertidaoCartaAnuencia.urlObterDadosCertidaoCartaAnuencia = '<%= Url.Action("ObterDadosCertidaoDestinatarios", "Certidao", new {area="Especificidades"}) %>';
 </script>
 
 <fieldset class="block box">
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
-	
-	
+
+
 	<% Html.RenderPartial("DestinatarioEspecificidade", Model.DestinatariosVM); %>
-	
-	
+
+
 	<div class="block">
 		<div class="coluna75">
 			<label for="Certidao_Dominio">Matrícula *</label>

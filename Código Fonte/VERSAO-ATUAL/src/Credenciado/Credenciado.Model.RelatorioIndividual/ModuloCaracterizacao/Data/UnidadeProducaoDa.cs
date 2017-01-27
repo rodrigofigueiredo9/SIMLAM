@@ -47,7 +47,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCarac
 					{
 						unidade = new UnidadeProducaoRelatorio();
 						unidade.Id = reader.GetValue<int>("id");
-						unidade.CodigoPropriedade = reader.GetValue<int>("propriedade_codigo").ToString("D4");
+						unidade.CodigoPropriedade = reader.GetValue<Int64>("propriedade_codigo").ToString("D4");
 						unidade.LocalLivro = reader.GetValue<string>("local_livro");
 						unidade.Empreendimento.Denominador = reader.GetValue<string>("denominador");
 						unidade.Empreendimento.CNPJ = reader.GetValue<string>("cnpj");

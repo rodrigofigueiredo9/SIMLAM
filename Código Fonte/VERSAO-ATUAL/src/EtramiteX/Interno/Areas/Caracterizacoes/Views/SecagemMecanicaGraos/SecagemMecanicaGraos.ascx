@@ -8,7 +8,7 @@
 <input type="hidden" class="hdnCaracterizacaoTipo" value="<%:(int)eCaracterizacao.SecagemMecanicaGraos%>" />
 <input type="hidden" class="hdnIsEditar" value="<%:Model.IsEditar.ToString().ToLower()%>" />
 
-<script type="text/javascript">
+<script>
 	SecagemMecanicaGraos.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	SecagemMecanicaGraos.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	SecagemMecanicaGraos.settings.textoMerge = '<%= Model.TextoMerge %>';

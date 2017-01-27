@@ -4,7 +4,7 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<RegistroAtividadeFlorestalVM>" %>
 
-<script type="text/javascript">
+<script>
 	RegistroAtividadeFlorestal.settings.caracterizacaoID = '<%: Model.Caracterizacao.Id %>';
 	RegistroAtividadeFlorestal.settings.empreendimentoID = '<%: Model.Caracterizacao.EmpreendimentoId %>';
 	RegistroAtividadeFlorestal.settings.idsTela = <%= Model.IdsTela %>;

@@ -6,12 +6,12 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Habilitar Emissão de PTV</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/HabilitacaoEmissaoPTV/habilitacaoEmissaoPTV.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/HabilitacaoEmissaoPTV/habilitacaoEmissaoPTV.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/profissao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			HabilitacaoEmissaoPTV.load($("#central"), {
 				urls: {

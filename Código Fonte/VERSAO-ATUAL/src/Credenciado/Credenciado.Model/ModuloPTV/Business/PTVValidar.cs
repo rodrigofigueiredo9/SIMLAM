@@ -103,10 +103,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.DestinatarioObrigatorio);
 			}
 
-			if (!ptv.PossuiLaudoLaboratorial.HasValue)
-			{
-				Validacao.Add(Mensagem.PTV.PossuiLaudoLab_Obrigatorio);
-			}
+            //if (!ptv.PossuiLaudoLaboratorial.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.PTV.PossuiLaudoLab_Obrigatorio);
+            //}
 
 			if (ptv.TransporteTipo <= 0)
 			{
@@ -196,7 +196,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				{
 					Validacao.Add(Mensagem.PTV.NumeroPtvNaoConfigurado);
 					return "";
-				}
+                }
+
+                if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+                {
+                    Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
+                }
+
 			}
 
 			if (tipoNumero == (int)eDocumentoFitossanitarioTipoNumero.Digital)

@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Cancelar PTV de Outro Estado</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTVOutro/cancelar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/PTVOutro/cancelar.js") %>"></script>
+	<script>
 		$(function () {
 			PTVCancelar.load($("#central"), {
 				urls: {

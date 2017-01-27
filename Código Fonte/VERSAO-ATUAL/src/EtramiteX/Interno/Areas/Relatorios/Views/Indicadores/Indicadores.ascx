@@ -17,8 +17,8 @@
 	<% } %>
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Relatorios/Indicadores.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Relatorios/Indicadores.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	Indicadores.urlModalIndicadores = '<%= Url.Action("InidicadoresModal", "Indicadores", new {area="Relatorios"})%>';
 </script>

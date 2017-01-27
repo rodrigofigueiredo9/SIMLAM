@@ -3,10 +3,10 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoCompromissoAmbientalVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCompromissoAmbiental.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCompromissoAmbiental.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	TermoCompromissoAmbiental.settings.urls.obterDadosTermoCompromissoAmbiental = '<%= Url.Action("ObterDadosTermoCompromissoAmbiental", "Termo", new {area="Especificidades"}) %>';
 	TermoCompromissoAmbiental.settings.urls.obterDadosTermoCompromissoAmbientalRepresentantes = '<%= Url.Action("ObterDadosTermoCompromissoAmbientalRepresentantes", "Termo", new {area="Especificidades"}) %>';
 	TermoCompromissoAmbiental.settings.urls.associarTitulo = '<%= Url.Action("Associar", "Titulo") %>';
@@ -24,7 +24,7 @@
 				<%=Html.Hidden("Termo.Licenca", Model.Termo.Licenca, new { @class = "hdnLicencaId" })%>
 				<%= Html.TextBox("Termo.LicencaNumero", Model.Termo.LicencaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtLicencaNumero" }))%>
 			</div>
-			
+
 			<div class="ultima">
 			<% if (!Model.IsVisualizar){ %>
 				<button type="button" class="floatLeft inlineBotao <%= (Model.Termo.Licenca > 0) ? "hide" : ""%> btnBuscarTitulo">Buscar</button>

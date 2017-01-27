@@ -13,7 +13,11 @@ PTVOutroEmitir = {
             urlObterDestinarioCodigoUc: null,
             urlAssociarDestinatario: null,
             urlObterDestinatario: null,
-            urlSalvar: null
+            urlSalvar: null,
+            urlObterPragas: null,
+            urlObterDeclaracaoAdicional: null,
+            urlValidarPraga: null,
+            urlObterDeclaracaoCombo: null
         }
     },
     container: null,
@@ -62,6 +66,8 @@ PTVOutroEmitir = {
         PTVOutroEmitir.container.delegate('.btnVerificarDestinatario', 'click', PTVOutroEmitir.onValidarDocumento);
         PTVOutroEmitir.container.delegate('.btnLimparDestinatario', 'click', PTVOutroEmitir.onLimparDestinatario);
 
+        PTVOutroEmitir.container.delegate('.btnAddPraga', 'click', PTVOutroEmitir.addPraga);
+
         PTVOutroEmitir.container.delegate('.rbTipoProducao ', 'change', function(item) {
 
             switch ($('.rbTipoProducao:checked', PTVOutroEmitir.container).val()) {
@@ -85,6 +91,8 @@ PTVOutroEmitir = {
         PTVOutroEmitir.container.delegate('input[name="CnpjCpf"]', 'click', PTVOutroEmitir.onClickRadioCnpjCpf);
         PTVOutroEmitir.container.delegate('.ddlEstadosInteressado', 'change', PTVOutroEmitir.onObterMunicipioInteressado);
 
+        PTVOutroEmitir.container.delegate('.ddlPragas', 'change', PTVOutroEmitir.onSelPragra);
+
         if (parseInt($('.hdnID', PTVOutroEmitir.container).val()) > 0) {
             PTVOutroEmitir.habilitarCampos(false);
             $('.btnLimparPTV', PTVOutroEmitir.container).hide();
@@ -92,7 +100,7 @@ PTVOutroEmitir = {
             $('.ddlOrigemTipo', PTVOutroEmitir.container).val(2);
             $('.labelOrigem', PTVOutroEmitir.container).text('CFOC');
         }
-        Aux.setarFoco(container);
+        Aux.setarFoco(PTVOutroEmitir.container);
     },
 
     onLoadMunicipio: function(element, estadoId) {
@@ -115,6 +123,8 @@ PTVOutroEmitir = {
             txtInteressadoCpfCnpj.unmask().mask("99.999.999/9999-99");
         }
     },
+
+   
 
     onObterMunicipioInteressado: function() {
         var ddl = PTVOutroEmitir.container.find('.ddlEstadosInteressado');
@@ -254,6 +264,9 @@ PTVOutroEmitir = {
         $('input[type=text]', container).val("");
 
         Listar.atualizarEstiloTable(tabela);
+        PTVOutroEmitir.carregarPragas();
+
+        $('.ddlPragas').change();
     },
 
     onObterMunicipio: function() {
@@ -275,13 +288,213 @@ PTVOutroEmitir = {
         }
     },
 
-    onExcluirIdentificacaoProduto: function() {
+    obterIdentificacoes: function () {
+        var retorno = [];
+        $('.gridProdutos tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    carregarPragas: function () {
+        $('.ddlPragas', PTVOutroEmitir.container).ddlClear();
+        var produtos = PTVOutroEmitir.obterIdentificacoes();
+        
+
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterPragas,
+            data: JSON.stringify({ produtos: produtos }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: Aux.error,
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.ddlPragas', PTVOutroEmitir.container).ddlLoad(response.Lista);
+                } else {
+                    Mensagem.gerar(PTVOutroEmitir.container, response.Msg);
+                }
+            }
+        });
+
+        /*$('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            var item = JSON.parse($('.hdnItemJson', this).val());
+
+            var possui = false;
+            $('.ddlPragas option', PTVOutroEmitir.container).each(function () {
+                if ($(this).val() == item.Id) {
+                    possui = true;
+                }
+            });
+
+            if (!possui) {
+                $(this).remove();
+            }
+        });*/
+    },
+
+    addPraga: function () {
+        Mensagem.limpar(PTVOutroEmitir.container);
+     
+        var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
+        var lista = PTVOutroEmitir.obterPragas();
+
+        var declaracao = $('.ddlDeclaracaoAdicional', PTVOutroEmitir.container).ddlSelecionado();
+
+        var produto;
+        $('.gridProdutos tbody tr:last .hdnItemJson', PTVOutroEmitir.container).each(function () {
+            produto = (JSON.parse($(this).val()));
+        });
+
+        
+
+        var item = {
+            IdPraga: praga.Id,
+            NomeCientifico: praga.Texto.split('-')[0],
+            NomeComum: praga.Texto.split('-')[1],
+            DeclaracaoAdicional: declaracao.Texto,
+            IdDeclaracao: declaracao.Id,
+            IdCultivar: produto.Cultivar
+        };
+
+        //var retorno = MasterPage.validarAjax(PTVOutroEmitir.settings.urls.urlValidarPraga, { item: item, lista: lista }, null, false);
+
+        //if (!retorno.EhValido && retorno.Msg) {
+        //    Mensagem.gerar(PTVOutroEmitir.container, retorno.Msg);
+        //    return;
+
+        //}
+
+   
+
+        var tabela = $('.gridPragas', PTVOutroEmitir.container);
+        var linha = $('.trTemplate', tabela).clone();
+
+        $('.nome_cientifico', linha).text(item.NomeCientifico);
+        $('.nome_comum', linha).text(item.NomeComum);
+        $('.declaracao_adicional', linha).text(item.DeclaracaoAdicional);
+        $('.hdnItemJson', linha).val(JSON.stringify(item));
+
+        $('tbody', tabela).append(linha);
+        $(linha).removeClass('hide').removeClass('trTemplate');
+
+        Listar.atualizarEstiloTable(tabela);
+        $('.ddlPragas', PTVOutroEmitir.container).ddlFirst();
+        $('.ddlDeclaracaoAdicional', PTVOutroEmitir.container).ddlFirst();
+
+
+       // PTVOutroEmitir.obterDeclaracaoAdicional();
+    },
+
+    obterPragas: function () {
+        var retorno = [];
+        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    obterDeclaracoes: function () {
+        var retorno = [];
+        $('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            retorno.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+        return retorno;
+    },
+
+    onSelPragra: function () {
+
+        var praga = $('.ddlPragas', PTVOutroEmitir.container).ddlSelecionado();
+        
+      
+
+        var produto = [];
+        $('.gridProdutos tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+            produto.push(JSON.parse($('.hdnItemJson', this).val()));
+        });
+
+
+        var produtoIds = [];
+
+        for(var i = 0; i < produto.length; i++)
+        {
+         
+            produtoIds.push(produto[i].Cultivar);
+        }
+
+       
+            
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoCombo,
+            data: JSON.stringify({ pragaId: praga.Id, cultivarId : produtoIds }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, Cultura.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.Declaracoes) {
+                    $('.ddlDeclaracaoAdicional', DeclaracaoAdicional.container).ddlLoad(response.Declaracoes, { disabled: false });
+                }
+            }
+        });
+
+    },
+
+    obterDeclaracaoAdicional: function () {
+        var produtos = PTVOutroEmitir.obterIdentificacoes();
+        var pragas = PTVOutroEmitir.obterPragas();
+
+        MasterPage.carregando(true);
+        $.ajax({
+            url: PTVOutroEmitir.settings.urls.urlObterDeclaracaoAdicional,
+            data: JSON.stringify({ produtos: produtos, pragas: pragas }),
+            cache: false,
+            async: true,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: Aux.error,
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.txtDeclaracaoAdicional', PTVOutroEmitir.container).html(response.DeclaracoesAdicionais);
+                }
+
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(PTVOutroEmitir.container, response.Msg);
+                }
+            }
+        });
+        MasterPage.carregando(false);
+    },
+
+    onExcluirIdentificacaoProduto: function () {
+
+        var produto = JSON.parse($(this).closest('tr').find('.hdnItemJson').val());
+      
+
         Mensagem.limpar(PTVOutroEmitir.container);
         var container = $(this).closest('.gridIdentificacaoProdutos');
+
+      
+       
+
         $(this).closest('tr').toggle(
-            function() {
+            function () {
+                
                 $(this).remove();
             });
+
+     
+
         Listar.atualizarEstiloTable(container);
     },
 
@@ -382,6 +595,21 @@ PTVOutroEmitir = {
 
 	obter: function () {
 
+	    var declaracoes = "";
+	    /*$('.gridPragas tbody tr:not(.trTemplate)', PTVOutroEmitir.container).each(function () {
+	        $('.declaracao_adicional', PTVOutroEmitir.container).each(function () {
+	            declaracoes += $('.declaracao_adicional', PTVOutroEmitir.container).text().trim() + "|";
+	        });
+	    });*/
+
+	    $($('.gridPragas tbody tr:not(.trTemplate) .declaracao_adicional', PTVOutroEmitir.container)).each(function () {
+	        declaracoes += $(this).text().trim() + "|";
+	    });
+
+
+	   
+
+
 		var objeto = {
 
 			Id: $('.hdnEmissaoId', PTVOutroEmitir.container).val(),
@@ -402,13 +630,19 @@ PTVOutroEmitir = {
 			InteressadoMunicipioId: $('.ddlMunicipiosInteressado', PTVOutroEmitir.container).val(),
 			InteressadoMunicipioTexto: $('.ddlMunicipiosInteressado option:selected', PTVOutroEmitir.container).text(),
 			RespTecnico: $('.txtTecnico', PTVOutroEmitir.container).val(),
-			RespTecnicoNumHab: $('.txtNumHab', PTVOutroEmitir.container).val(),
+			RespTecnicoNumHab: $('.txtNumHab', PTVOutroEmitir.container).val(), 
 			Estado: $('.ddlEstados', PTVOutroEmitir.container).val(),
 			Municipio: $('.ddlMunicipios', PTVOutroEmitir.container).val(),
-			Produtos: []
+			DeclaracaoAdicional: declaracoes,
+			Produtos: [],
+            Declaracoes: []
 		}
 
+		
+
 		objeto.Destinatario = PTVOutroEmitir.obterDestinatario();
+
+		objeto.Declaracoes = PTVOutroEmitir.obterDeclaracoes();
 
 		var retorno = [];
 

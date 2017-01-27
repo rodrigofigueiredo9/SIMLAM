@@ -4,10 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Salvar Registro de Atividade Florestal</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/registroAtividadeFlorestal.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/tituloAdicionar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/registroAtividadeFlorestal.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/tituloAdicionar.js") %>"></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			RegistroAtividadeFlorestal.load($('#central'), {
 				urls: { salvar: '<%= Url.Action("Criar", "RegistroAtividadeFlorestal") %>' }

@@ -3,7 +3,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DominioVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript">
+<script>
 	Dominio.settings.mensagens = <%= Model.Mensagens %>;
 	Dominio.settings.urls.reservaLegal = '<%= Url.Action("ReservaLegal", "Dominialidade") %>';
 	Dominio.settings.urls.reservaLegalVisualizar = '<%= Url.Action("ReservaLegalVisualizar", "Dominialidade") %>';

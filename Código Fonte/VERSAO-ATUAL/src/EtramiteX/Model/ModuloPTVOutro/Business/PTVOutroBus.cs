@@ -161,6 +161,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Business
 			return new List<ListaValor>();
 		}
 
+       
+
+
+
 		public Resultados<PTVOutroListarResultado> Filtrar(PTVOutroListarFiltro ptvListarFiltro, Paginacao paginacao)
 		{
 			try

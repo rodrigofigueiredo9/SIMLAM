@@ -3,7 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<InfracaoVM>" %>
 
-<script type="text/javascript">
+<script>
 
 	Infracao.settings.urls.obterTipo = '<%= Url.Action("ObterInfracaoTipos") %>';
 	Infracao.settings.urls.obterItem = '<%= Url.Action("ObterInfracaoItens") %>';
@@ -28,34 +28,34 @@
 	<legend>Classificação da infração</legend>
 
 	<div class="block">
-		<div class="coluna76">	
+		<div class="coluna76">
 			<label>Classificação *</label><br />
 			<%= Html.DropDownList("Infracao.Classificacao", Model.Classificacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Classificacoes.Count <= 2, new { @class = "text ddlClassificacoes" }))%>
 		</div>
 	</div>
 
 	<div class="block">
-		<div class="coluna76">	
+		<div class="coluna76">
 			<label>Tipo de infração *</label><br />
 			<%= Html.DropDownList("Infracao.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTipos" }))%>
 		</div>
 	</div>
 
 	<div class="block">
-		<div class="coluna76">	
+		<div class="coluna76">
 			<label>Item *</label><br />
 			<%= Html.DropDownList("Infracao.Item", Model.Itens, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlItens" }))%>
 		</div>
 	</div>
 
 	<div class="block">
-		<div class="coluna76">	
+		<div class="coluna76">
 			<label>Subitem</label><br />
 			<%= Html.DropDownList("Infracao.Subitem", Model.Subitens, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlSubitens" }))%>
 		</div>
 	</div>
 
-	<div class="divCamposPerguntas" >	
+	<div class="divCamposPerguntas" >
 		<% Html.RenderPartial("InfracaoCamposPerguntas", Model); %>
 	</div>
 
@@ -72,14 +72,14 @@
 	</div>
 
 	<div class="divInfracaoAutuada <%= (Model.Infracao.IsAutuada == null || !Model.Infracao.IsAutuada.Value ? "hide" : "") %>" >
-	
+
 		<div class="block">
 			<div class="coluna22 append2">
 				<label>Gerar auto de infração? *</label><br />
 				<label><%= Html.RadioButton("Infracao.IsGeradaSistema", 1, (Model.Infracao.IsGeradaSistema == null ? false : Model.Infracao.IsGeradaSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradaSistemaSim rdbIsGeradaSistema" }))%>Sim</label>
 				<label class="append5"><%= Html.RadioButton("Infracao.IsGeradaSistema", 0, (Model.Infracao.IsGeradaSistema == null ? false : !Model.Infracao.IsGeradaSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradaSistemaNao rdbIsGeradaSistema" }))%>Não</label>
 			</div>
-			<div class="coluna15 append2">	
+			<div class="coluna15 append2">
 				<label>Série *</label><br />
 				<%= Html.DropDownList("Infracao.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlSeries" }))%>
 			</div>
@@ -102,7 +102,7 @@
 				<%= Html.TextBox("Infracao.NumeroAutoInfracaoBloco", Model.Infracao.NumeroAutoInfracaoBloco, ViewModelHelper.SetaDisabled(Model.IsVisualizar ,new { @class = "text maskNumInt txtNumeroAutoInfracaoBloco", @maxlength = "10" }))%>
 			</div>
 		</div>
-		
+
 		<div class="divIsGeradoSistema <%= (Model.Infracao.IsGeradaSistema == null || Model.Infracao.IsGeradaSistema.Value ? "hide" : "") %>">
 			<div class="block">
 				<div class="coluna35 inputFileDiv">
@@ -112,7 +112,7 @@
 					</div>
 					<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
 					<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Infracao.Arquivo.Nome) ? "" : "hide" %>">
-						<input type="file" id="file" class="inputFile" style="display: block" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %> />						
+						<input type="file" id="file" class="inputFile" style="display: block" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %> />
 					</span>
 				</div>
 				<% if (!Model.IsVisualizar) { %>
@@ -123,14 +123,14 @@
 				<% } %>
 			</div>
 		</div>
-		
+
 		<div class="block">
 			<div class="coluna76">
 				<label>Descrição da infração *</label>
 				<%= Html.TextArea("Infracao.DescricaoInfracao", Model.Infracao.DescricaoInfracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricaoInfracao", @maxlength = "1000" }))%>
 			</div>
 		</div>
-		
+
 		<div class="block">
 			<div class="coluna18 append2">
 				<label>Código da receita *</label>

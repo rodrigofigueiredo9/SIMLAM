@@ -59,7 +59,7 @@
 				<%} %>
 			</div>
 		</div>
-			
+
 	</div>
 
 	<div class="block box">
@@ -71,9 +71,9 @@
 
 </div>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Administrador/alterarSituacao.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Administrador/alterarSituacao.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		$('#NovaSituacao').focus();
 	});

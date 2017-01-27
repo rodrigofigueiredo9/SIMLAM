@@ -1,7 +1,9 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMValidacao" %>
-
+<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="System.Data" %>
 
 <% if (!String.IsNullOrEmpty(Request.Params["msg"]))
    {
@@ -41,11 +43,11 @@
 						   <li><%= Html.Encode(item.Texto)%></li>
 					<%} %>
 				</ul>
-			</div>	        
+			</div>
 			<% if (ValidacaoVM.ExibirMais(itemTipo)){ %>
 			<a class="linkVejaMaisMensagens" title="Clique aqui para ver mais detalhes desta mensagem">Clique aqui para ver mais detalhes desta mensagem</a>
 			<%} %>
-			
+
 			<!-- REDIRECIONAMENTO ========================================================== -->
 			<div class="redirecinamento block containerAcoes hide">
 				<h5>O que deseja fazer agora?</h5>
@@ -54,7 +56,7 @@
 				<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>
 					<input type="hidden" class="hdnIdAcao" value="<%= Request.Params["acaoId"].ToString() %>" />
 				<%}%>
-	
+
 				<div class="coluna100 margem0 divAcoesContainer">
 					<p class="floatLeft margem0 append1"><button title="[title]" class="btnTemplateAcao hide">[ACAO]</button></p>
 					<div class="containerBotoes"></div>
@@ -65,13 +67,12 @@
 		</div><!-- .mensagemSistema -->
 		<%} %>
 		<!-- ========================================================================= -->
-		
+
 	<%} %>
 
 <% if (Validacao.Erros.Any(x => x.Tipo == eTipoMensagem.Advertencia))
 {%>
-<script type="text/javascript" language="javascript">
-<!--
+<script>
 
 	$(window).load(function () {
 
@@ -81,7 +82,6 @@
 		<%} %>
 	});
 
--->
 </script>
 <%  } %>
 

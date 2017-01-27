@@ -6,11 +6,11 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Habilitar Emissão de CFO e CFOC</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/LiberacaoCFOCFOC/liberarNumeroCFOCFOC.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Pessoa/Pessoa.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/LiberacaoCFOCFOC/liberarNumeroCFOCFOC.js") %>"></script>
+	<script>
 		$(function () {
 			LiberarNumeroCFOCFOC.load($('#central'),
 			{
@@ -72,11 +72,11 @@
 			<div class="block <%=Model.isVisualizar && Model.Liberacao.LiberarBlocoCFO? "": "hide" %>">
 				<div class="coluna30">
 					<label for="Liberacao_NumeroInicialBlocoCFO">Nº inicial do bloco CFO *</label>
-					<%= Html.TextBox("Liberacao.NumeroInicialBlocoCFO", Model.Liberacao.NumeroInicialCFO>0? Model.Liberacao.NumeroInicialCFO.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroInicialBlocoCFO", @maxlength = "10" }))%>
+					<%= Html.TextBox("Liberacao.NumeroInicialBlocoCFO", Model.Liberacao.NumeroInicialCFO>0? Model.Liberacao.NumeroInicialCFO.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroInicialBlocoCFO", @maxlength = "8" }))%>
 				</div>
 				<div class="coluna30 prepend2">
 					<label for="Liberacao_NumeroFinalBlocoCFO">Nº final do bloco CFO *</label>
-					<%= Html.TextBox("Liberacao.NumeroFinalBlocoCFO", Model.Liberacao.NumeroFinalCFO>0?Model.Liberacao.NumeroFinalCFO.ToString():"", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroFinalBlocoCFO", @maxlength = "10" }))%>
+					<%= Html.TextBox("Liberacao.NumeroFinalBlocoCFO", Model.Liberacao.NumeroFinalCFO>0?Model.Liberacao.NumeroFinalCFO.ToString():"", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroFinalBlocoCFO", @maxlength = "8" }))%>
 				</div>
 			</div>
 
@@ -91,11 +91,11 @@
 			<div class="block <%=Model.isVisualizar && Model.Liberacao.LiberarBlocoCFOC? "": "hide" %>">
 				<div class="coluna30">
 					<label for="Liberacao_NumeroInicialBlocoCFOC">Nº inicial do bloco CFOC *</label>
-					<%= Html.TextBox("Liberacao.NumeroInicialBlocoCFOC", Model.Liberacao.NumeroInicialCFOC > 0? Model.Liberacao.NumeroInicialCFOC.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroInicialBlocoCFOC", @maxlength = "10" }))%>
+					<%= Html.TextBox("Liberacao.NumeroInicialBlocoCFOC", Model.Liberacao.NumeroInicialCFOC > 0? Model.Liberacao.NumeroInicialCFOC.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroInicialBlocoCFOC", @maxlength = "8" }))%>
 				</div>
 				<div class="coluna30 prepend2">
 					<label for="Liberacao_NumeroFinalBlocoCFOC">Nº final do bloco CFOC *</label>
-					<%= Html.TextBox("Liberacao.NumeroFinalBlocoCFOC", Model.Liberacao.NumeroFinalCFOC > 0? Model.Liberacao.NumeroFinalCFOC.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroFinalBlocoCFOC", @maxlength = "10" }))%>
+					<%= Html.TextBox("Liberacao.NumeroFinalBlocoCFOC", Model.Liberacao.NumeroFinalCFOC > 0? Model.Liberacao.NumeroFinalCFOC.ToString(): "", ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskNumInt txtNumeroFinalBlocoCFOC", @maxlength = "8" }))%>
 				</div>
 			</div>
 		</fieldset>

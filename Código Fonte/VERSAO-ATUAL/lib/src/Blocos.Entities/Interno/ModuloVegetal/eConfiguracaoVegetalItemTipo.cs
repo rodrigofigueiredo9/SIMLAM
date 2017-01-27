@@ -8,6 +8,7 @@
 		ClassificacaoToxicologica,
 		ModalidadeAplicacao,
 		FormasApresentacao,
-		IngredienteAtivo
+		IngredienteAtivo,
+        DeclaracaoAdicional
 	}
 }

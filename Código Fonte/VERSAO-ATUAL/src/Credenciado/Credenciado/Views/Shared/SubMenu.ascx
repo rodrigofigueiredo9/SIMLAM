@@ -1,5 +1,8 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels.VMMenu" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<MenuVM>" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Linq" %>
 
 <% if (Model.Menus.Count > 0 ) { %>
 

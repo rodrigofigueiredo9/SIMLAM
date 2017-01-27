@@ -62,11 +62,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
 			{
 				lista.ForEach(x =>
 				{
-					if (x.PragaId == item.PragaId && x.TipoProducaoId == item.TipoProducaoId)
+					if (x.PragaId == item.PragaId && 
+                        x.TipoProducaoId == item.TipoProducaoId && 
+                        x.OutroEstado == item.OutroEstado &&
+                        x.DeclaracaoAdicionalTexto == item.DeclaracaoAdicionalTexto )
 					{
 						Validacao.Add(Mensagem.CultivarConfiguracaoMsg.DeclaracaoJaAdicionado);						
 					}
 				});
+
+                if (item.OutroEstado == 0)
+                {
+                    lista.ForEach(x =>
+                    {
+                        if (x.PragaId == item.PragaId &&
+                            x.TipoProducaoId == item.TipoProducaoId &&
+                            x.OutroEstado == item.OutroEstado )
+                        {
+                            Validacao.Add(Mensagem.CultivarConfiguracaoMsg.DeclaracaoJaAdicionado);
+                        }
+                    });
+
+                }
 			}
 			
 			return Validacao.EhValido;

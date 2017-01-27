@@ -3,9 +3,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Configurar Tramitação</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/configurar.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Funcionario/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/configurar.js") %>"></script>
+	<script>
 		$(function () {
 			TramitacaoConfigurar.load($('#central'), {
 				urls: {
@@ -21,7 +21,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-				
+
 		<h1 class="titTela">Configurar Tramitação</h1>
 		<br />
 

@@ -337,6 +337,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
+                @DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -634,6 +635,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@FilaID = filaID
 			}, JsonRequestBehavior.AllowGet);
 		}
+
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
 		public ActionResult VerificarConsultaDUA(int filaID, string numero, string cpfCnpj, string tipo, int ptvId)

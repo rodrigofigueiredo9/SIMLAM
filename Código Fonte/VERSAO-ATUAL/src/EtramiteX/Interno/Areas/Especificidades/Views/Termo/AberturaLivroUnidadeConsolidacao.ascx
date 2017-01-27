@@ -3,10 +3,10 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AberturaLivroUnidadeConsolidacaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/aberturaLivroUnidadeConsolidacao.js") %>"></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/aberturaLivroUnidadeConsolidacao.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	AberturaLivroUnidadeConsolidacao.settings.urls.obterDadosAberturaLivroUnidadeConsolidacao = '<%= Url.Action("ObterDadosAberturaLivroUnidadeConsolidacao", "Termo", new {area="Especificidades"}) %>';
 	AberturaLivroUnidadeConsolidacao.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
@@ -43,7 +43,7 @@
 			<button class="inlineBotao btnAdicionarCultura" type="button" value="Adicionar"><span>Adicionar</span></button>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="coluna75">
 			<table class="dataGridTable gridCulturas" width="100%" border="0" cellspacing="0" cellpadding="0">

@@ -4,8 +4,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Checagens de Pendências</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ChecagemPendencia/listar.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/ChecagemPendencia/listar.js") %>" ></script>
+	<script>
 		$(function () {
 			ChecagemPendenciaListar.urlExcluir = '<%= Url.Action("Excluir", "ChecagemPendencia") %>';
 			ChecagemPendenciaListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "ChecagemPendencia") %>';

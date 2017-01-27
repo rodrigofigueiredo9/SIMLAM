@@ -3,7 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<MaterialApreendidoVM>" %>
 
-<script type="text/javascript">
+<script>
 
 	FiscalizacaoMaterialApreendido.settings.urls.salvar = '<%= Url.Action("CriarMaterialApreendido") %>';
 	FiscalizacaoMaterialApreendido.settings.urls.obterSerie = '<%= Url.Action("ObterInfracaoSeries") %>';
@@ -13,16 +13,16 @@
 	FiscalizacaoMaterialApreendido.settings.urls.obter = '<%= Url.Action("MaterialApreendido") %>';
 
 	FiscalizacaoMaterialApreendido.container = $('.divContainer');
-	
+
 	FiscalizacaoMaterialApreendido.settings.mensagens = <%= Model.Mensagens %>;
 	FiscalizacaoMaterialApreendido.TiposArquivo = <%= Model.TiposArquivoValido %>;
-	
+
 </script>
 
 <div class="divContainer" >
 
 <input type="hidden" class="hdnMaterialApreendidoId" value="<%:Model.MaterialApreendido.Id %>" />
-	
+
 <div class="block box">
 	<div class="coluna40">
 		<label>Houve a apreensão de algum material? *</label><br />
@@ -40,7 +40,7 @@
 				<label><%= Html.RadioButton("MaterialApreendido.IsTadGeradoSistema", 1, (Model.MaterialApreendido.IsTadGeradoSistema == null ? false : Model.MaterialApreendido.IsTadGeradoSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradoSistemaSim rbdIsGeradoSistema" }))%>Sim</label>
 				<label class="append5"><%= Html.RadioButton("MaterialApreendido.IsTadGeradoSistema", 0, (Model.MaterialApreendido.IsTadGeradoSistema == null ? false : !Model.MaterialApreendido.IsTadGeradoSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradoSistemaNao rbdIsGeradoSistema" }))%>Não</label>
 			</div>
-			<div class="coluna15 append2">	
+			<div class="coluna15 append2">
 				<label>Série *</label><br />
 				<%= Html.DropDownList("MaterialApreendido.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
@@ -58,7 +58,7 @@
 					<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.MaterialApreendido.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 				</div>
 			<%} %>
-			
+
 		</div>
 
 		<div class=" <%= (Model.MaterialApreendido.IsTadGeradoSistema == null || Model.MaterialApreendido.IsTadGeradoSistema.Value? "hide" : "") %> divIsTad">
@@ -67,7 +67,7 @@
 					<label class="lblNumTAD">Nº do TAD - bloco *</label>
 					<%= Html.TextBox("MaterialApreendido.NumeroTad", Model.MaterialApreendido.NumeroTad, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroTad", @maxlength = "10" }))%>
 				</div>
-			</div>		
+			</div>
 			<div class="block">
 				<div class="coluna40 inputFileDiv">
 					<label>PDF do termo de apreensão e depósito</label>
@@ -87,7 +87,7 @@
 				<% } %>
 			</div>
 		</div>
-		
+
 		<div class="block">
 			<div class="coluna76">
 				<label>Descrever a apreensão *</label>
@@ -126,46 +126,46 @@
 				<span class="spanVisualizarDepositario <%= (Model.MaterialApreendido.Depositario.Id > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarDepositario" title="Visualizar depositario"></button></span>
 			</div>
 		</div>
-		
+
 		<div class="block" >
 			<div class="coluna60">
 				<label>Logradouro / Rua / Rodovia *</label>
 				<%= Html.TextBox("Depositario.Logradouro", Model.MaterialApreendido.Depositario.Logradouro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtLogradouro", @maxlength = "500" }))%>
 			</div>
 		</div>
-		
+
 		<div class="block" >
 			<div class="coluna30 append2">
 				<label>Bairro / Gleba / Comunidade *</label>
 				<%= Html.TextBox("Depositario.Bairro", Model.MaterialApreendido.Depositario.Bairro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtBairro", @maxlength = "100" }))%>
 			</div>
-		
+
 			<div class="coluna27">
 				<label>Distrito / Localidade *</label>
 				<%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDistrito", @maxlength = "100" }))%>
 			</div>
 		</div>
-		
+
 		<div class="block divEndereco" >
-			<div class="coluna20 append2">	
+			<div class="coluna20 append2">
 				<label>UF *</label><br />
 				<%= Html.DropDownList("Depositario.Estado", Model.Ufs, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Ufs.Count <= 1, new { @class = "text ddlEstado" }))%>
 			</div>
-			<div class="coluna37">	
+			<div class="coluna37">
 				<label>Município *</label><br />
 				<%= Html.DropDownList("Depositario.Municipio", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Municipios.Count <= 1, new { @class = "text ddlMunicipio" }))%>
 			</div>
 		</div>
 
 	</fieldset>
-	
+
 	<fieldset class="fsMateriais block box">
 		<legend>Materiais</legend>
 
 		<%if (!Model.IsVisualizar){%>
-		
+
 			<div class="block" >
-				<div class="coluna40">	
+				<div class="coluna40">
 					<label>Tipo de material apreendido *</label><br />
 					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
 				</div>
@@ -175,14 +175,14 @@
 				<div class="coluna76">
 					<label class="labEspecificacao" ></label>
 					<textarea id="MaterialApreendido_Especificacao" maxlength="250" cols="10" rows="10" class="text media  txtEspecificacao" ></textarea>
-				</div>		
+				</div>
 				<div class="coluna10">
 					<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarMaterial btnAddItem" title="Adicionar">+</button>
 				</div>
 			</div>
 
 		<%} %>
-	
+
 		<div class="block dataGrid divMateriais">
 			<div class="coluna70 ">
 				<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
@@ -224,13 +224,13 @@
 				</table>
 			</div>
 		</div>
-		
-	</fieldset>	
-	
+
+	</fieldset>
+
 	<div class="block box">
 		<div class="coluna76">
 			<label>
-				Opinar pelo destino (permanência no local, doação, uso pela instituição, entre outros) do material e/ou bens apreendidos, levando-se em 
+				Opinar pelo destino (permanência no local, doação, uso pela instituição, entre outros) do material e/ou bens apreendidos, levando-se em
 				consideração os seguintes itens: localização e sua dispersão no local, potencial impacto que a retirada do material possa causar à área, valor
 				econômico, diâmetro médio das espécies, entre outros.
 			</label>

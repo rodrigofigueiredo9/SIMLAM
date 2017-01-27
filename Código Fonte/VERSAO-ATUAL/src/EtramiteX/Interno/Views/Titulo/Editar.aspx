@@ -7,20 +7,20 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 
 	<!-- DEPENDENCIAS DE ASSOCIAR -->
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Processo/listar.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Documento/listar.js") %>"></script>
-	
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Processo/listar.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/Documento/listar.js") %>"></script>
+
+	<script src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
 	<!-- FIM DEPENDENCIAS DE ASSOCIAR -->
 
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/titulo.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteSalvar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoSalvar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
-	
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Titulo/titulo.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteSalvar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoSalvar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
+
+	<script>
 		$(function () {
 			Titulo.load($('#central'), {
 				urls: {
@@ -45,7 +45,7 @@
 					obterAssinanteFuncionarios: '<%= Url.Action("ObterAssinanteFuncionarios", "Titulo") %>'
 				},
 				Mensagens: <%= Model.Mensagens %>,
-				obterCondicionantesFunc: TituloCondicionante.obterCondicionantes,				
+				obterCondicionantesFunc: TituloCondicionante.obterCondicionantes,
 				procDocContemEmp: <%= Model.TemEmpreendimento.ToString().ToLower() %>,
 				carregarEspecificidade: <%= Model.Titulo.Modelo.PossuiEspecificidade().ToString().ToLower() %>,
 				protocoloSelecionado: '<%= Model.ProtocoloSelecionado %>',

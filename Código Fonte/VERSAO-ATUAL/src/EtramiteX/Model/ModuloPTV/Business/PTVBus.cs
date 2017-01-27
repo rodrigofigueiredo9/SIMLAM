@@ -57,6 +57,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
+                        ptv.PossuiLaudoLaboratorial = 0;
 
 						_da.Salvar(ptv, bancoDeDados);
 

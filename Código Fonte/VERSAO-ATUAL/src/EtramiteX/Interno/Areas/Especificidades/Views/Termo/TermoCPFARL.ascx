@@ -2,8 +2,8 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TermoCPFARLVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARL.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Termo/termoCPFARL.js") %>"></script>
+<script>
 	TermoCPFARL.settings.urls.urlObterDadosTermoCPFARL = '<%= Url.Action("ObterDadosTermoCPFARL", "Termo", new {area="Especificidades"}) %>';
 	TermoCPFARL.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
@@ -11,7 +11,7 @@
 <fieldset class="block box">
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
-	
+
 	<div class="divDestinatarios">
 		<%if(!Model.IsVisualizar) {%>
 		<div class="block">
@@ -62,7 +62,7 @@
 				</table>
 			</div>
 		</div>
-	</div>	
+	</div>
 
 </fieldset>
 

@@ -2,11 +2,11 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CondicionanteSituacaoAlterarVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteProrrogar.js") %>" ></script>
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Titulo/condicionanteAtender.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteProrrogar.js") %>" ></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteAtender.js") %>" ></script>
 
-<script type="text/javascript">
+<script>
 	$(function () {
 		CondicionanteSituacaoAlterar.load($('#central'), {
 			urls: {
@@ -29,7 +29,7 @@
 		<div class="block">
 			<div class="coluna30">
 				<label>Número *</label>
-				<%= Html.TextBox("Titulo.Numero.Texto", null, new { @class = "text disabled txtTituloNumero", @disabled = "disabled" })%>				
+				<%= Html.TextBox("Titulo.Numero.Texto", null, new { @class = "text disabled txtTituloNumero", @disabled = "disabled" })%>
 			</div>
 			<div class="coluna60 prepend2">
 				<label>Modelo *</label>
@@ -52,7 +52,7 @@
 			</thead>
 			<tbody>
 				<% foreach (TituloCondicionante item in Model.Titulo.Condicionantes) { %>
-				
+
 					<% if (item.Periodicidades == null || item.Periodicidades.Count == 0 ) { %>
 						<tr class="trItem">
 							<td><span title="<%= Html.Encode(item.Descricao) %>" class="CondDesc"> <%= Html.Encode(item.Descricao)%></span></td>
@@ -67,9 +67,9 @@
 							</td>
 						</tr>
 					<%  } %>
-				
+
 					<% foreach (TituloCondicionantePeriodicidade period in item.Periodicidades.OrderBy(x => x.DataVencimento.Data)) { %>
-				
+
 					<tr class="trItem">
 						<td><span title="<%= Html.Encode(item.Descricao) %>" class="CondDesc"> <%= Html.Encode(item.Descricao)%></span></td>
 						<td><span title="<%= Html.Encode(period.Situacao.Texto) %>" class="CondSituacao"> <%= Html.Encode(period.Situacao.Texto)%></span></td>

@@ -1,0 +1,45 @@
+build:
+  test:
+    image: armand1m/mono-oracle:latest
+    pull: true
+    commands:
+      - cd "./Código Fonte/VERSAO-ATUAL/lib/src"
+      - xbuild EtramiteXLib.sln
+      - cd ../../src/Credenciado
+      - xbuild Credenciado.mono.sln
+      - cd ../EtramiteX
+      - xbuild IDAF.mono.sln
+
+branches:
+  - feature/docker-mono-build
+
+deploy:
+  rsync:
+    user: drone
+    host: 192.168.2.129
+    port: 22
+    source: ./Código Fonte/VERSAO-ATUAL/src/EtramiteX/Interno/bin/_PublishedWebsites/Interno
+    target: /cygwin/c/inetpub/wwwroot/simlam-develop
+    delete: false
+    recursive: true
+
+notify:
+  slack:
+    webhook_url: https://hooks.slack.com/services/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
+    channel: devops
+    username: Drone CI
+    template: >
+      *Build #{{ build.number }}: {{ build.status }}*
+
+      *Duration*: {{ duration build.started_at build.finished_at }}
+
+      *Repository*: {{ repo.full_name }}
+
+      *Branch*: {{ build.branch }}
+
+      *Message*: {{ build.message }}
+
+      *Commit*: <{{ build.link_url }}|{{ truncate build.commit 8 }}>
+    when:
+      success: true
+      failure: true

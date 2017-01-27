@@ -6,9 +6,9 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaosParceirosConveniados.js") %>"></script>
-    <script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
-    <script type="text/javascript">
+    <script src="<%= Url.Content("~/Scripts/OrgaosParceirosConveniados/orgaosParceirosConveniados.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+    <script>
         $(function () {
             OrgaosParceirosConveniados.load($('#central'), {
                 urls: {
@@ -26,19 +26,19 @@
                         urlListar: '<%= Url.Action("Index", "OrgaosParceirosConveniados") %>',
                     }
             });
-            
+
             <%}%>
         });
     </script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    
+
     <div id="central">
         <h1 class="titTela">Cadastrar Órgãos Parceiros/ Conveniados</h1>
         <br />
         <%Html.RenderPartial("OrgaosParceirosConveniados", Model); %>
-        
+
         <div class="block box botoesSalvarCancelar">
 	        <div class="block">
 		        <button class="btnSalvar floatLeft" type="button" value="Salvar"><span>Salvar</span></button>
@@ -46,6 +46,6 @@
 		    </div>
 	    </div>
     </div>
-    
+
 </asp:Content>
 

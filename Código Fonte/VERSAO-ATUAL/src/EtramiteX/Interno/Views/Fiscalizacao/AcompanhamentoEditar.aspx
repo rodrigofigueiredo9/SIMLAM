@@ -4,9 +4,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Acompanhamento</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/acompanhamento.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/acompanhamento.js") %>" ></script>
 
-	<script type="text/javascript">
+	<script>
 		$(function () {
 			Acompanhamento.load($('#central'), {
 				urls: {
@@ -25,7 +25,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		
+
 		<h1 class="titTela">Editar Acompanhamento</h1><br />
 
 		<% Html.RenderPartial("AcompanhamentoPartial", Model); %>

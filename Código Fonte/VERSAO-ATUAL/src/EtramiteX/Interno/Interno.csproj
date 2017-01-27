@@ -102,9 +102,6 @@
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Perfil">
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Perfil.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Areas\Caracterizacoes\CaracterizacoesAreaRegistration.cs" />
@@ -273,11 +270,15 @@
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Servicos\FormsAuthenticationService.cs" />
+    <Compile Include="Interfaces\IFormsAuthenticationService.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\ListarVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\CFOVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\ListarVM.cs" />
+    <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
+    <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
     <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
@@ -665,6 +666,8 @@
     <Content Include="Scripts\CFO\emitir.js" />
     <Content Include="Scripts\CFO\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
+    <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
+    <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\habilitacaoEmissaoPTV.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\listar.js" />
     <Content Include="Scripts\Agrotoxico\listar.js" />
@@ -1674,6 +1677,11 @@
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
     <Content Include="Views\ConfiguracaoVegetal\Cultura\DeclaracaoAdicionalPartial.ascx" />
+    <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Criar.aspx" />
+    <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\DeclaracaoAdicionalPartial.ascx" />
+    <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Index.aspx" />
+    <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
+    <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
@@ -2627,7 +2635,9 @@
     <Content Include="Scripts\Lib\Microsoft\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\Lib\Microsoft\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\Lib\Microsoft\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
@@ -2635,12 +2645,20 @@
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
-      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
       <Name>Blocos.Etx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}</Project>
       <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Perfil\Perfil.csproj">
+      <Project>{5038a24c-72ac-4aab-8559-02b6c9243ca4}</Project>
+      <Name>Perfil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model.Extencao\Interno.Model.Extensoes.csproj">
       <Project>{F7BAF119-128E-4151-89B3-35F1367ADD15}</Project>
@@ -2744,7 +2762,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>15757</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:3547/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

@@ -5,8 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Tipo de infração</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoConfiguracao.js") %>" ></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoConfiguracao.js") %>" ></script>
+	<script>
 		$(function () {
 			ConfigurarTipoInfracao .load($('#central'), {
 				urls: {
@@ -25,7 +25,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		
+
 		<h1 class="titTela">Tipo de infração</h1><br />
 
 		<fieldset class="box">

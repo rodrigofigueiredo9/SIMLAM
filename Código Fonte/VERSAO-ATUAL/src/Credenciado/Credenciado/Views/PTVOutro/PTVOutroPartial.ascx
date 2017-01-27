@@ -38,8 +38,8 @@
 		</div>
 
 		<div class="coluna18 prepend1">
-			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Fisica, Model.PTV.InteressadoCnpjCpf.Length <= 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaFisicaPF" } ) ) %>CPF</label>
-			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Juridica, Model.PTV.InteressadoCnpjCpf.Length > 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaJuridicaPJ" } ) ) %>CNPJ</label>
+			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Fisica, Model.PTV.InteressadoCnpjCpf.Length <= 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaFisicaPF" } ) ) %>CPF *</label>
+			<label for="InteressadoCnpjCpf"><%=Html.RadioButton("CnpjCpf", (int)ePessoaTipo.Juridica, Model.PTV.InteressadoCnpjCpf.Length > 14, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio radioPessoaCpfCnpj rbTipoPessoaJuridicaPJ" } ) ) %>CNPJ *</label>
 			<%= Html.TextBox("InteressadoCnpjCpf",Model.PTV.InteressadoCnpjCpf, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtInteressadoCpfCnpj maskCpfParcial" } ) ) %>
 		</div>
 	</div>
@@ -172,6 +172,67 @@
 			</tbody>
 		</table>
 	</div>
+</fieldset>
+
+<fieldset id="Container_Praga" class="block box destinatario campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+	<legend>Pragas associadas à cultura</legend>
+	<% if (!Model.IsVisualizar) { %>
+	<div class="block">
+		<div class="coluna25">
+			<label>Pragas *</label>
+			<%=Html.DropDownList("PragaId", Model.Pragas ?? new List<SelectListItem>(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new{ @class="ddlPragas text"})) %>
+		</div>
+		<div class="coluna25">
+			<label>Declaração Adicional </label>
+			<%= Html.DropDownList("DeclaracaoAdicional", new List<SelectListItem>(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new{ @class="ddlDeclaracaoAdicional text"}))  %>
+		</div>
+		
+		<div class="coluna10 prepend1">
+			<button type="button" class="inlineBotao btnAddPraga">Adicionar</button>
+		</div>
+	</div>
+	<% } %>
+
+	<div class="block">
+		<table class="dataGridTable gridPragas">
+			<thead>
+				<tr>
+					<th>Nome científico</th>
+					<th>Nome comum</th>
+                    <th>Declaração adicional</th>
+					<% if (!Model.IsVisualizar) { %><th style="width:7%">Ação</th><% } %>
+				</tr>
+			</thead>
+			<tbody>
+               
+				<% foreach (var item in Model.PTV.Declaracoes) {   %>
+					<tr>
+						<td class="nome_cientifico" title="<%=item.NomeCientifico %>"><%=item.NomeCientifico%></td>
+						<td class="nome_comum" title="<%=item.NomeComum%>"> <%=item.NomeComum%></td>
+                        <td class="declaracao_adicional" title="<%=item.DeclaracaoAdicional%>"><%=item.DeclaracaoAdicional%> </td>
+						<%if(!Model.IsVisualizar){ %> 
+						<td>
+							<a class="icone excluir btnExcluir"></a>
+							<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+						</td>
+						<%} %>
+					</tr>
+				<%} %>
+				<%if(!Model.IsVisualizar){ %>
+					<tr class="trTemplate hide">
+						<td class="nome_cientifico"></td>
+						<td class="nome_comum"></td>
+                        <td class="declaracao_adicional" title=""> </td>
+						<td>
+							<a class="icone excluir btnExcluir"></a>
+							<input type="hidden" value="0" class="hdnItemJson" />
+						</td>
+					</tr>
+				<%} %>
+			</tbody>
+		</table>
+	</div>
+    
 </fieldset>
 
 

@@ -2,8 +2,8 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<OutrosReciboEntregaCopiaVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/outrosReciboEntregaCopia.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/outrosReciboEntregaCopia.js") %>"></script>
+<script>
 	OutrosReciboEntregaCopia.settings.urls.obterDadosOutros = '<%= Url.Action("ObterDadosOutros", "Outros", new {area="Especificidades"}) %>';
 </script>
 

@@ -53,6 +53,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 		#region DML
 
+
+
 		public bool Salvar(PTV ptv)
 		{
 			try
@@ -101,6 +103,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 							}
 						}
 						#endregion
+
+                        ptv.PossuiLaudoLaboratorial = 0;
 
 						_da.Salvar(ptv, bancoDeDados);
 
@@ -180,6 +184,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			return numeroDigital;
 		}
+
+        public string ObterDeclaracaoAdicionaisPTVOutro(int numero)        
+        {
+            string numeroDigital = string.Empty;
+            try
+            {
+                numeroDigital = _da.ObterDeclaracaoAdicional(numero);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return numeroDigital;
+        }
+
 
 		public string VerificarNumeroPTV(string numero, int tipoNumero)
 		{
@@ -302,6 +322,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					retorno.Add("empreendimento_id", 0);
 					retorno.Add("empreendimento_denominador", string.Empty);
 					retorno.Add("listaCulturas", new List<Lista>());
+                    retorno.Add("declaracao_adicional", " ");
 				}
 				else
 				{
@@ -309,6 +330,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					retorno.Add("empreendimento_id", documentoOrigem["empreendimento_id"]);
 					retorno.Add("empreendimento_denominador", documentoOrigem["empreendimento_denominador"]);
 					retorno.Add("listaCulturas", _da.ObterCultura((int)origemTipo, (int)documentoOrigem["id"]));
+                    retorno.Add("declaracao_adicional", _da.ObterDeclaracaoAdicional((int)documentoOrigem["id"]));
+
 				}
 
 			}

@@ -3,9 +3,9 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoAuditoriaFomentoFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoAuditoriaFomentoFlorestal.js") %>"></script>
 
-<script type="text/javascript">
+<script>
 	LaudoAuditoriaFomentoFlorestal.urlEspecificidade = '<%= Url.Action("LaudoAuditoriaFomentoFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoAuditoriaFomentoFlorestal.urlObterDadosLaudoAuditoriaFomentoFlorestal = '<%= Url.Action("ObterDadosLaudoAuditoriaFomentoFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoAuditoriaFomentoFlorestal.idsTela = <%= Model.IdsTela %>;
@@ -95,7 +95,7 @@
 			<%= Html.TextArea("Laudo.ResultadoQuais", Model.Laudo.ResultadoQuais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "textarea media text txtResultadoQuais" }))%>
 		</div>
 	</div>
-	
+
 	<div class="block">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricao">Parecer Técnico *</label><br />

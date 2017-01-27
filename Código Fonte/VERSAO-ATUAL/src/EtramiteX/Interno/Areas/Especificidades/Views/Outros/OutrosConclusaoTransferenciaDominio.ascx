@@ -3,8 +3,8 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/outrosConclusaoTransferenciaDominio.js") %>"></script>
-<script type="text/javascript">
+<script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Outros/outrosConclusaoTransferenciaDominio.js") %>"></script>
+<script>
 	OutrosConclusaoTransferenciaDominio.settings.urls.carregarListas = '<%= Url.Action("CarregarListasPessoas", "Outros") %>';
 	OutrosConclusaoTransferenciaDominio.settings.mensagens.Destinatarios = <%= Model.MensagensDestinatarios %>;
 	OutrosConclusaoTransferenciaDominio.settings.mensagens.Interessados = <%= Model.MensagensInteressados %>;
@@ -72,7 +72,7 @@
 		<input type="hidden" class="hdnMsg" value='<%: Model.MensagensResponsaveisEmpreendimento%>' />
 		<div class="coluna10 <%=Model.IsVisualizar? "hide": "" %>">
 			<button type="button" style="width: 35px" class="inlineBotao botaoAdicionarIcone btnAdd" title="Adicionar">+</button>
-		</div>		
+		</div>
 		<div class="dataGrid coluna82">
 			<table class="dgResponsaveis dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>

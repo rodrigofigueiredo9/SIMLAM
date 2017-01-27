@@ -709,6 +709,9 @@ Mascara = {
 		//Número da caixa do arquivo (4 dig.)
 		$(".maskNum4", container).unmask().mask("9999");
 
+		$(".maskNum10", container).unmask().mask("9999999999");
+		$(".maskNum8", container).unmask().mask("99999999");
+
 		$(".maskNum15", container).unmask().mask("999999999999999");
 
 		//Número da caixa do arquivo (38 dig.)

@@ -8,8 +8,8 @@
 
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Tramitacao/receber.js") %>"></script>
-	<script type="text/javascript">
+	<script src="<%= Url.Content("~/Scripts/Tramitacao/receber.js") %>"></script>
+	<script>
 		$(function () {
 			Receber.load(
 			$('.partialTramitacaoReceber'),
