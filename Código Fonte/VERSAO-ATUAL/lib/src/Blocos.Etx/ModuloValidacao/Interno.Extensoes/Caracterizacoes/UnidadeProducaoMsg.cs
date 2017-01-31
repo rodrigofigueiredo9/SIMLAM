@@ -25,7 +25,7 @@
 		public Mensagem NumeroARTObrigatorio { get { return new Mensagem() { Texto = "Numero da ART é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_ResponsavelTecnico_NumeroArt" }; } }
 		public Mensagem DataValidadeARTObrigatorio { get { return new Mensagem() { Texto = "Data de validade da ART é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_ResponsavelTecnico_DataValidadeART" }; } }
 		public Mensagem CodigoUPObrigatorio { get { return new Mensagem() { Texto = "Código da UP é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_CodigoUP" }; } }
-		public Mensagem CodigoUPInvalido { get { return new Mensagem() { Texto = "Código da UP deve possuir 15 caracteres.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_CodigoUP" }; } }
+		public Mensagem CodigoUPInvalido { get { return new Mensagem() { Texto = "Código da UP deve possuir 17 caracteres.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_CodigoUP" }; } }
 
 		public Mensagem NumeroRenasemObrigatorio { get { return new Mensagem() { Texto = "Número do Renasem é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_RenasemNumero" }; } }
 		public Mensagem DataValidadeRenasemObrigatorio { get { return new Mensagem() { Texto = "Data de validade do Renasem é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_DataValidadeRenasem" }; } }
