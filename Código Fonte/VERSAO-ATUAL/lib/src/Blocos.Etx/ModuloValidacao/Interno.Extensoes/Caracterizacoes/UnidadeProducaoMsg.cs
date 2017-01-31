@@ -41,7 +41,8 @@
 		public Mensagem EstimativaProducaoUnidadeMedidaObrigatorio { get { return new Mensagem() { Texto = "Unidade de medida é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducaoItem_EstimativaProducaoUnidadeMedida" }; } }
 		public Mensagem CodigoPropriedadeObrigatorio { get { return new Mensagem() { Texto = "Código da propriedade é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducao_CodigoPropriedade" }; } }
 		public Mensagem CodigoPropriedadeSuperiorMaximo { get { return new Mensagem() { Texto = "Código da propriedade superior ao máximo permitido.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducao_CodigoPropriedade" }; } }
-		public Mensagem LocalLivroDisponivelObrigatorio { get { return new Mensagem() { Texto = "Local do livro disponível é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducao_LocalLivroDisponivel" }; } }
+        public Mensagem CodigoPropriedadeInvalido { get { return new Mensagem() { Texto = "Código da Propriedade deve possuir 11 caracteres.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducao_CodigoPropriedade" }; } }
+        public Mensagem LocalLivroDisponivelObrigatorio { get { return new Mensagem() { Texto = "Local do livro disponível é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "UnidadeProducao_LocalLivroDisponivel" }; } }
 		public Mensagem UnidadeProducaoObrigatorio { get { return new Mensagem() { Texto = "Unidade de Produção é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "Unidades_Producao" }; } }
 		public Mensagem UnidadeProducaoItemIncorreto { get { return new Mensagem() { Texto = "Uma Unidade de Produção foi cadastrada de forma incorreta.", Tipo = eTipoMensagem.Advertencia }; } }
 

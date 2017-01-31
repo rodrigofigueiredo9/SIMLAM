@@ -110,3 +110,22 @@ where en.CORRESPONDENCIA = 0
 and substr(crt.PROPRIEDADE_CODIGO, 1, 7) <> substr(unid.CODIGO_UP, 1, 7)
 order by crt.PROPRIEDADE_CODIGO asc, unid.CODIGO_UP
 ;
+
+-----
+-- public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
+-- Credenciado
+select (select to_char(m.id) ||'-'|| m.texto ||'-'|| m.ibge  from lov_municipio m where m.id = lm.id) as IBGE, te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto,
+				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid
+				from tab_empreendimento_endereco te, lov_estado le, lov_municipio lm
+				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = 44827 /*:empreendimento*/ and te.correspondencia = 0
+;
+
+-- novo SQL:
+select m.IBGE
+from
+TAB_EMPREENDIMENTO_ENDERECO en
+    inner join LOV_MUNICIPIO m
+      on m.ID = en.MUNICIPIO
+where en.CORRESPONDENCIA = 0
+and en.EMPREENDIMENTO = 44827
+;
