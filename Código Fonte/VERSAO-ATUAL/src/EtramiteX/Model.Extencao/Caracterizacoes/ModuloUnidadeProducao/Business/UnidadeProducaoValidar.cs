@@ -69,6 +69,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 				}
 			}
 
+            if (caracterizacao.CodigoPropriedade < 11)
+            {
+                Validacao.Add(Mensagem.UnidadeProducao.CodigoPropriedadeInvalido);
+            }
+
 			if (string.IsNullOrEmpty(caracterizacao.LocalLivroDisponivel))
 			{
 				Validacao.Add(Mensagem.UnidadeProducao.LocalLivroDisponivelObrigatorio);
@@ -113,7 +118,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 				}
 				else
 				{
-					if (unidade.CodigoUP.ToString().Length < 15)
+					if (unidade.CodigoUP.ToString().Length < 17)
 					{
 						mensagens.Add(Mensagem.UnidadeProducao.CodigoUPInvalido);
 					}

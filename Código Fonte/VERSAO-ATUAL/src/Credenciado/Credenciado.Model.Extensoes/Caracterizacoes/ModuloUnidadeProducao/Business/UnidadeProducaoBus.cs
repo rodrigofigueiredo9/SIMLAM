@@ -97,8 +97,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 				else
 				{
-                    Endereco endereco = _da.ObterEndereco(caracterizacao.Empreendimento.Id);
-                    Municipio municipio = _da.ObterMunicipio(endereco.MunicipioId);
+                    Municipio municipio = _da.ObterMunicipioPropriedade(caracterizacao.Empreendimento.Id);
 
 					if (!caracterizacao.PossuiCodigoPropriedade)
 					{
