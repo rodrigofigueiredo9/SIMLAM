@@ -1,0 +1,107 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado", "Credenciado\Credenciado.csproj", "{0443FD70-254F-4A39-93A1-9305E47FC8EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B} = {5E0F5C2F-0105-4709-9553-48101BB78A4B}
+		{60F1014B-FBCC-42C2-95F1-38B6C123C425} = {60F1014B-FBCC-42C2-95F1-38B6C123C425}
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+		{7F898E80-F828-4618-B27B-2D039DCB461E} = {7F898E80-F828-4618-B27B-2D039DCB461E}
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C} = {9C7AF4AF-6757-41FC-953B-5752D5F57B4C}
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C} = {D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Etx", "..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj", "{7F898E80-F828-4618-B27B-2D039DCB461E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C} = {D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuracao", "..\..\lib\src\Configuracao\Configuracao.csproj", "{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model", "Credenciado.Model\Credenciado.Model.csproj", "{60F1014B-FBCC-42C2-95F1-38B6C123C425}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B} = {5E0F5C2F-0105-4709-9553-48101BB78A4B}
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C} = {9C7AF4AF-6757-41FC-953B-5752D5F57B4C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.RelatorioIndividual", "Credenciado.Model.RelatorioIndividual\Credenciado.Model.RelatorioIndividual.csproj", "{5E0F5C2F-0105-4709-9553-48101BB78A4B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Entities", "..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj", "{707F196A-8A05-4B96-92E1-E60335DDC933}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.Extensoes", "Credenciado.Model.Extensoes\Credenciado.Model.Extensoes.csproj", "{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B} = {5E0F5C2F-0105-4709-9553-48101BB78A4B}
+		{707F196A-8A05-4B96-92E1-E60335DDC933} = {707F196A-8A05-4B96-92E1-E60335DDC933}
+		{7F898E80-F828-4618-B27B-2D039DCB461E} = {7F898E80-F828-4618-B27B-2D039DCB461E}
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C} = {D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.WebService", "Credenciado.Model.WebService\Credenciado.Model.WebService.csproj", "{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Autenticacao", "..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj", "{722BEFCA-5026-44E7-B158-C9DA30D20C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\Utilities\Utilities.csproj", "{A280C318-2D35-475C-B358-5FA69BF9601E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0443FD70-254F-4A39-93A1-9305E47FC8EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0443FD70-254F-4A39-93A1-9305E47FC8EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0443FD70-254F-4A39-93A1-9305E47FC8EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0443FD70-254F-4A39-93A1-9305E47FC8EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60F1014B-FBCC-42C2-95F1-38B6C123C425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60F1014B-FBCC-42C2-95F1-38B6C123C425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60F1014B-FBCC-42C2-95F1-38B6C123C425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60F1014B-FBCC-42C2-95F1-38B6C123C425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0F5C2F-0105-4709-9553-48101BB78A4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C7AF4AF-6757-41FC-953B-5752D5F57B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722BEFCA-5026-44E7-B158-C9DA30D20C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A280C318-2D35-475C-B358-5FA69BF9601E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A280C318-2D35-475C-B358-5FA69BF9601E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A280C318-2D35-475C-B358-5FA69BF9601E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A280C318-2D35-475C-B358-5FA69BF9601E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal

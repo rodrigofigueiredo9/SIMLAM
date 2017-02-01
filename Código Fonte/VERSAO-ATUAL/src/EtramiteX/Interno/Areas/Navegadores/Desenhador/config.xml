@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<configuration>
+
+	<webserviceURL>http://localhost:9411</webserviceURL>
+
+</configuration>

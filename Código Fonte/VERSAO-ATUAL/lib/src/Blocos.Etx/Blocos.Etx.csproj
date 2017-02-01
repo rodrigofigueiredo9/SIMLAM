@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7F898E80-F828-4618-B27B-2D039DCB461E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tecnomapas.Blocos.Etx</RootNamespace>
+    <AssemblyName>Tecnomapas.Blocos.Etx</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Words, Version=16.11.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.1.271, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.0.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Criptografia\Business\Decrypt.cs" />
+    <Compile Include="Criptografia\Business\Encrypt.cs" />
+    <Compile Include="ModuloArquivo\Business\ArquivoMetaDadoBus.cs" />
+    <Compile Include="ModuloArquivo\Business\ArquivoZip.cs" />
+    <Compile Include="ModuloArquivo\Business\ArquivoBus.cs" />
+    <Compile Include="ModuloArquivo\Business\ArquivoValidar.cs" />
+    <Compile Include="ModuloCore\Business\DecimalModelBinder.cs" />
+    <Compile Include="ModuloCore\Business\EnderecoBus.cs" />
+    <Compile Include="ModuloCore\Business\EnderecoValidar.cs" />
+    <Compile Include="ModuloCore\Business\IEnderecoValidar.cs" />
+    <Compile Include="ModuloCore\Business\LogBus.cs" />
+    <Compile Include="ModuloCore\Business\RequestJson.cs" />
+    <Compile Include="ModuloCore\Data\ConsultaCredenciado.cs" />
+    <Compile Include="ModuloCore\Data\EnderecoDa.cs" />
+    <Compile Include="ModuloCore\Data\LogDa.cs" />
+    <Compile Include="ModuloCore\Entities\ResponseJsonData.cs" />
+    <Compile Include="ModuloCore\View\Campo.cs" />
+    <Compile Include="ModuloCore\View\GeradorVisualizacao.cs" />
+    <Compile Include="ModuloCore\View\Identificador.cs" />
+    <Compile Include="ModuloCore\View\Link.cs" />
+    <Compile Include="ModuloCore\View\Objeto.cs" />
+    <Compile Include="ModuloCore\View\Sessao.cs" />
+    <Compile Include="ModuloCore\View\Tabela.cs" />
+    <Compile Include="ModuloExtensao\Business\ExtensaoTitulo.cs" />
+    <Compile Include="ModuloExtensao\Data\ExtensaoIDataReader.cs" />
+    <Compile Include="ModuloExtensao\Entities\ExtensaoIEnumerable.cs" />
+    <Compile Include="ModuloExtensao\Entities\DictionaryEtx.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\CabecalhoRodapeDa.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\ICabecalhoRodape.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\AsposeExtensoes.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\AsposeImage.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\CabecalhoRodapeDefault.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\CabecalhoRodapeBus.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\CabecalhoRodapeFactory.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\HandleField.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\HandleNodeChanging.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\AposeMergeFieldDoc.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\IConfiguracaoEvent.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\PdfPadraoRelatorio.cs" />
+    <Compile Include="ModuloRelatorio\IAnexoPdf.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\CabecalhoRodapeBus.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\CabecalhoRodapeDa.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\CabecalhoRodapeFactory.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\ICabecalhoRodape.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\IPageMirroring.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\PdfCabecalhoRodape.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\PdfCabecalhoRodapeUsoOrgao.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\CabecalhoRodape\SetorEndereco.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\ListaBus.cs" />
+    <Compile Include="ModuloCore\Business\ValidacoesGenericasBus.cs" />
+    <Compile Include="ModuloCore\Data\Consulta.cs" />
+    <Compile Include="ModuloCore\Data\DaHelper.cs" />
+    <Compile Include="ModuloCore\Data\Historico.cs" />
+    <Compile Include="ModuloEmail\Business\EmailBus.cs" />
+    <Compile Include="ModuloEmail\Data\EmailDa.cs" />
+    <Compile Include="ModuloExtensao\Data\ExtensaoBancoDeDados.cs" />
+    <Compile Include="ModuloExtensao\Data\ExtensaoComando.cs" />
+    <Compile Include="ModuloGeo\Business\CoordenadaBus.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\ConfiguracaoDefault.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\GeradorAspose.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\IConfiguradorPdf.cs" />
+    <Compile Include="ModuloRelatorio\AsposeEtx\ObjectMailMerge.cs" />
+    <Compile Include="ModuloRelatorio\ITextSharpEtx\PdfMetodosAuxiliares.cs" />
+    <Compile Include="ModuloRelatorio\XLS.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\EmissaoCFOCMsg.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\EmissaoCFOMsg.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\LiberacaoNumeroCFOCFOCMsg.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\CredenciadoMsg.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\LoteMsg.cs" />
+    <Compile Include="ModuloValidacao\Credenciado\ProjetoDigitalMsg.cs" />
+    <Compile Include="ModuloValidacao\eTipoMensagem.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\AquiculturaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\AviculturaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\BarragemDispensaLicencaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\BarragemMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\BeneficiamentoMadeiraMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\CadastroAmbientalRuralMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\UnidadeConsolidacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\UnidadeProducaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\InformacaoCorteMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\PatioLavagemMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\PulverizacaoProdutoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\SilviculturaAtvMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\RegistroAtividadeFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\SilviculturaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\SilviculturaPPFFMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\DescricaoLicenciamentoAtividadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\CoordenadaAtividadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\DespolpamentoCafeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\MateriaPrimaFlorestalConsumidaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\ProducaoCarvaoVegetalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\QueimaControladaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\RegularizacaoFundiariaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\DominialidadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\ExploracaoFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\SecagemMecanicaGraosMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\SuinoculturaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\TerraplanagemMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertidaoDispensaLicenciamentoAmbientalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertificadoCadastroProdutoAgrotoxicoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\AberturaLivroUnidadeConsolidacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\AberturaLivroUnidadeProducaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\AutorizacaoExploracaoFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\AutorizacaoQueimaControladaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CadastroAmbientalRuralTituloMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertidaoAnuenciaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertidaoDebitoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertificadoCadastroProtudoVegetalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertificadoRegistroMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertificadoRegistroAtividadeFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\CertidaoCartaAnuenciaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\OficioUsucapiaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\OutrosInformacaoCorteMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\OutrosLegitimacaoTerraDevolutaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoCompromissoAmbientalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoCPFARLCRMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoCPFARLCMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoCPFARLRMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoAuditoriaFomentoFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoVistoriaFomentoFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoCPFARLMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\NotificacaoEmbargoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LicencaOperacaoFomentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoFundiarioSimplificadoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoVistoriaLicenciamentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LicencaPorteUsoMotosserraMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\EscrituraPublicaCompraVendaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\EscrituraPublicaDoacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoConstatacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoVistoriaFlorestalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\LaudoVistoriaFundiariaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\OficioNotificacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\ProjetoGeograficoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\TermoAprovacaoMedicaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Navegadores\MapasMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AgrotoxicoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AlterarSenhaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AnaliseItemMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ModuloValidacao\Interno\ArquivamentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ArquivoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AdministradorMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AtividadeConfiguracaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AtividadeEspecificidadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AtividadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CARSolicitacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ChecagemPendenciaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\CaracterizacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ClasseUsoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ComplementacaoDadosMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CondiconanteMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ConfiguracaoDocumentoFitossanitarioMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CoordenadaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ConsideracaoFinalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\AcompanhamentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ClassificacaoToxicologicaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\DeclaracaoAdicionalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\DestinatarioPTVMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\HabilitacaoEmissaoPTVMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\HabilitarEmissaoCFOCFOCMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\LocalVistoriaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PragaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CulturaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\FormaApresentacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\IngredienteAtivoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ModalidadeAplicacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PericulosidadeAmbientalMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\FichaFundiariaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\GrupoQuimicoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\MotosserraMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\FiscalizacaoConfiguracaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\MaterialApreendidoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\FiscalizacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\InfracaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\EnquadramentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\LocalInfracaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ObjetoInfracaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\OrgaoParceiroConveniadoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ProfissaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PTVOutroMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PTVMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\RelatorioEspecificoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\SetorMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TramitacaoArquivoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\EspecificidadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\DocumentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\EmpreendimentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\EnderecosMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\EntregaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\FuncionarioMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ChecagemRoteiroMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\IPessoaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ItemMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\LoginMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PadraoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PapelMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\PessoaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ProcessoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\RequerimentoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\ResponsavelTecnicoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\RoteiroMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TituloAlterarSituacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TituloModeloMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TituloMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TramitacaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Mensagem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ModuloValidacao\MensagemExtencoes.cs" />
+    <Compile Include="ModuloValidacao\Relatorio\RelatorioPersonalizadoMsg.cs" />
+    <Compile Include="ModuloValidacao\Publico\SimuladorGeoMsg.cs" />
+    <Compile Include="ModuloValidacao\SistemaMsg.cs" />
+    <Compile Include="ModuloValidacao\Validacao.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\SuppressFormsAuthenticationRedirectModule.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Configuracao\Configuracao.csproj">
+      <Project>{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}</Project>
+      <Name>Configuracao</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModuloRelatorio\ITextSharpEtx\Fontes\ARIAL.TTF" />
+    <EmbeddedResource Include="ModuloRelatorio\ITextSharpEtx\Fontes\ARIALN.TTF" />
+    <EmbeddedResource Include="ModuloRelatorio\ITextSharpEtx\Fontes\ariblk.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModuloRelatorio\AsposeEtx\Aspose.Words.lic">
+      <CustomToolNamespace>Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
