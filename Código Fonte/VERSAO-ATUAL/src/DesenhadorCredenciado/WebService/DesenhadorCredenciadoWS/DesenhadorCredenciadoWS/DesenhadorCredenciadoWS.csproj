@@ -44,15 +44,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.DataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86">
+    <Reference Include="Oracle.DataAccess, Version=10.2.0.100, Culture=neutral, PublicKeyToken=89b483f429c47342">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Oracle.DataAccess.dll</HintPath>
+      <HintPath>..\DLL\Oracle.DataAccess.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -77,26 +77,27 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Tecnomapas.Blocos.Data">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.Blocos.Data.dll</HintPath>
+    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLL\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Blocos.Export">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.Blocos.Export.dll</HintPath>
+      <HintPath>..\DLL\Tecnomapas.Blocos.Export.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Cripto.Dados">
       <HintPath>..\DLL\Tecnomapas.Cripto.Dados.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.TecnoGeo.Acessadores">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.TecnoGeo.Acessadores.dll</HintPath>
+      <HintPath>..\DLL\Tecnomapas.TecnoGeo.Acessadores.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.TecnoGeo.Ferramentas">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.TecnoGeo.Ferramentas.dll</HintPath>
+      <HintPath>..\DLL\Tecnomapas.TecnoGeo.Ferramentas.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.TecnoGeo.Geografico">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.TecnoGeo.Geografico.dll</HintPath>
+      <HintPath>..\DLL\Tecnomapas.TecnoGeo.Geografico.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.TecnoGeo.Geometria">
-      <HintPath>..\..\..\..\Desenhador\DesenhadorWebService\DesenhadorWS\dll_11g\Tecnomapas.TecnoGeo.Geometria.dll</HintPath>
+      <HintPath>..\DLL\Tecnomapas.TecnoGeo.Geometria.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

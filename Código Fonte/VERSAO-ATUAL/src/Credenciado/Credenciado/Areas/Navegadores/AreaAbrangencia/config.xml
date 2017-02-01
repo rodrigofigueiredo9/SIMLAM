@@ -19,10 +19,6 @@
 
 		<mapaLoteURL>http://webidafh/ArcGIS/rest/services/IDAF/EMPREENDIMENTO/MapServer</mapaLoteURL>
 
-<<<<<<< Updated upstream
 		<webserviceURL>http://webidafh/Credenciado/GeoProcessamento/Mapa</webserviceURL>
-=======
-		<webserviceURL>http://localhost:2195/GeoProcessamento/Mapa</webserviceURL>
->>>>>>> Stashed changes
 	</service>
 </configuration>

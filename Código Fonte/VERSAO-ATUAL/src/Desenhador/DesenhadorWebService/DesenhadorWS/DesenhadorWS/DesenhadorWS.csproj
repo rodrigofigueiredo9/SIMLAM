@@ -49,7 +49,7 @@
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.DataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86">
+    <Reference Include="Oracle.DataAccess, Version=10.2.0.100, Culture=neutral, PublicKeyToken=89b483f429c47342">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLL\Oracle.DataAccess.dll</HintPath>
     </Reference>
@@ -219,7 +219,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\PublishProfiles\assa.pubxml" />
     <None Include="Properties\PublishProfiles\Dev - Devap2.pubxml" />
     <None Include="Properties\PublishProfiles\Devap2.pubxml" />
     <None Include="Properties\PublishProfiles\Versao.pubxml" />

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <configuration>
-
-	<webserviceURL>http://localhost:9411</webserviceURL>
-
+	<webserviceURL>http://WEBIDAFH/WEBSERVICES/DESENHADORWEBSERVICES</webserviceURL>
+	<!-- <webserviceURL>http://devap6/projetos/es/IDAF/Desenvolvimento/DesenhadorWebServices</webserviceURL> -->
 </configuration>

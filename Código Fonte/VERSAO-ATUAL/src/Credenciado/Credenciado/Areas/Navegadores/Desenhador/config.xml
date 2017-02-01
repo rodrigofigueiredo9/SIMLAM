@@ -1,8 +1,4 @@
 <?xml version="1.0"?>
 <configuration>		
-<<<<<<< Updated upstream
 	<webserviceURL>http://WEBIDAFH/WEBSERVICES/DESENHADORWEBSERVICESCREDENCIADO</webserviceURL>	
-=======
-	<webserviceURL>http://localhost:4698</webserviceURL>	
->>>>>>> Stashed changes
 </configuration>

@@ -19,8 +19,6 @@
 
 		<mapaLoteURL>http://webidafh/ArcGIS/rest/services/IDAF/D_FISCAL/MapServer</mapaLoteURL>
 		
-
-		<webserviceURL>>http://localhost:16204/GeoProcessamento/Mapa</webserviceURL>
-
+		<webserviceURL>http://webidafh/simlam/GeoProcessamento/Mapa</webserviceURL>
 	</service>
 </configuration>
