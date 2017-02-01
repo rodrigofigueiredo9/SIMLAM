@@ -255,7 +255,7 @@ namespace Tecnomapas.Blocos.RelatorioPersonalizado.Business
 			Node retorno = nodes.LastOrDefault(x =>
 			{
 				Table item = x as Table;
-				string valor = item.ToString(SaveFormat.Text);
+				string valor = item.ToTxt();
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -282,7 +282,7 @@ namespace Tecnomapas.Blocos.RelatorioPersonalizado.Business
 			Node retorno = nodes.LastOrDefault(x =>
 			{
 				Table item = x as Table;
-                string valor = item.ToString(SaveFormat.Text);
+                string valor = item.ToTxt();
 
 				if (String.IsNullOrEmpty(valor))
 				{
@@ -307,7 +307,7 @@ namespace Tecnomapas.Blocos.RelatorioPersonalizado.Business
 			Style para = Documento.Styles.Add(StyleType.Paragraph, "Estilo_" + indice.ToString() + "_" + celula.ToString());
 
 			Estilos.Add("Estilo_" + indice.ToString() + "_" + celula.ToString(), new Estilo("Estilo_" + indice.ToString() + "_" + celula.ToString(), linha.Cells[celula].FirstParagraph.Runs[0].Font,
-            para, linha.Cells[celula].FirstParagraph.ParagraphFormat, linha.RowFormat, linha.Cells[celula].CellFormat, linha.Cells[celula].FirstParagraph.ToString(SaveFormat.Text)));
+            para, linha.Cells[celula].FirstParagraph.ParagraphFormat, linha.RowFormat, linha.Cells[celula].CellFormat, linha.Cells[celula].FirstParagraph.ToTxt()));
 		}
 
 		private void ConfigurarEstilo(Table tabela)
