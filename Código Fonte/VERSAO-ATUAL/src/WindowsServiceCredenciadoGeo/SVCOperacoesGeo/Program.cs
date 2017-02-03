@@ -6,7 +6,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.SVCOperacoesGeo
 	{
 		static void Main()
 		{
-			//Debugger.Launch();
+			Debugger.Launch();
 			ServiceBase[] ServicesToRun = new ServiceBase[] { new ServicoOperacoesGeo() };
 			ServiceBase.Run(ServicesToRun);
 		}
