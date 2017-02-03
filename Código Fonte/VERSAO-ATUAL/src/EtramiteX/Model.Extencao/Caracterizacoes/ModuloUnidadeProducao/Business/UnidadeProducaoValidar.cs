@@ -48,7 +48,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 			if (!Acessar(caracterizacao.Empreendimento.Id))
 			{
 				return false;
-			}
+            }
+
+            if (caracterizacao.CodigoPropriedade.ToString().Length < 11)
+            {
+                Validacao.Add(Mensagem.UnidadeProducao.CodigoPropriedadeInvalido);
+                return false;
+            }
 
 			if (caracterizacao.PossuiCodigoPropriedade)
 			{
@@ -68,11 +74,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 					}
 				}
 			}
-
-            if (caracterizacao.CodigoPropriedade < 11)
-            {
-                Validacao.Add(Mensagem.UnidadeProducao.CodigoPropriedadeInvalido);
-            }
 
 			if (string.IsNullOrEmpty(caracterizacao.LocalLivroDisponivel))
 			{
