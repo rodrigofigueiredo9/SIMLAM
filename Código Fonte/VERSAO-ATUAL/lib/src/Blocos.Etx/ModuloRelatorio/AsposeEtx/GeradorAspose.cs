@@ -13,6 +13,39 @@ using Document = Aspose.Words.Document;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 {
+
+
+    public class DadosFontes
+    {
+
+        private Aspose.Words.Font _fnt;
+        private bool _bold;
+        private int _size;
+
+        public DadosFontes(Aspose.Words.Font fnt, bool bold, int size)
+        {
+            _fnt = fnt;
+            _bold = bold;
+            _size = size;
+        }
+
+        public Aspose.Words.Font GetFont()
+        {
+            return _fnt;
+        }
+
+        public int GetSize()
+        {
+            return _size;
+        }
+
+        public bool IsBold()
+        {
+            return _bold;
+        }
+
+    }
+
 	public class GeradorAspose
 	{
 		IConfiguradorPdf _configuracao = new ConfiguracaoDefault();
@@ -116,36 +149,59 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 
 				ObjectMailMerge objDataSourceCabecalhoRodape = new ObjectMailMerge(_configuracao.CabecalhoRodape);
 
-                ArrayList mfs = new ArrayList();
+                //Dictionary<string, DadosFontes> ListaFontesCampos = new Dictionary<string, DadosFontes>();
 
-                foreach (Field field in _doc.Range.Fields)
-                {
-                    if (field.Type.Equals(FieldType.FieldMergeField))
-                    {
-                        Node currentNode = field.Start;
-                        bool isContinue = true;
-                        while (currentNode != null && isContinue)
-                        {
-                            if (currentNode.NodeType.Equals(NodeType.FieldEnd))
-                                isContinue = false;
+                //foreach (Field field in _doc.Range.Fields)
+                //{
+                //    if (field.Type.Equals(FieldType.FieldMergeField))
+                //    {
+                //        Node currentNode = field.Start;
+                //        bool isContinue = true;
+                //        while (currentNode != null && isContinue)
+                //        {
+                //            if (currentNode.NodeType.Equals(NodeType.FieldEnd))
+                //                isContinue = false;
 
-                            if (currentNode.NodeType.Equals(NodeType.Run))
-                            {
-                                if (((Run)currentNode).Font.Bold)
-                                {
-                                    mfs.Add(((Run)currentNode).ToString(SaveFormat.Text));
-                                    break;
-                                }
+                //            if (currentNode.NodeType.Equals(NodeType.Run))
+                //            {
+                //             //   if (((Run)currentNode).Font.Bold)
+                //               // {
+                //               //     ListaFontesCampos.Add(((Run)currentNode).ToTxt() + System.Guid.NewGuid().ToString(), ((Run)currentNode).Font);
+                //               //     break;
+                //              //  }
+                //               // else
+                //               // {
+                //                if (((Run)currentNode).Text.IndexOf("MERGEFIELD") < 0)
+                //                {
+                //                    Run tmpRun = ((Run)currentNode);
+                //                    DadosFontes _tmp;
+                //                    if (tmpRun.Text.IndexOf("OrgaoContato") >= 0)
+                //                        _tmp = new DadosFontes(tmpRun.Font, tmpRun.Font.Bold, (int)tmpRun.Font.Size);
+                //                    else
+                //                    {
+                //                        if (tmpRun.Font.Size < 5)
+                //                        {
+                //                            tmpRun.Font.Size = 9;
+                //                            tmpRun.Font.Name = "Arial Narrow";
+                //                            _tmp = new DadosFontes(tmpRun.Font, tmpRun.Font.Bold, (int)tmpRun.Font.Size);
 
-                            }
+                //                        }
+                //                        else
+                //                            _tmp = new DadosFontes(tmpRun.ParentParagraph.ParagraphBreakFont, tmpRun.Font.Bold, (int)tmpRun.Font.Size);
+                //                    }
+                //                    ListaFontesCampos.Add(((Run)currentNode).ToTxt() + System.Guid.NewGuid().ToString(), _tmp);
+                //                }
+                //              //  }
 
-                            Node nextNode = currentNode.NextPreOrder(currentNode.Document);
-                            currentNode = nextNode;
-                        }
-                    }
-                }
+                //            }
 
-                ((HandleField)_doc.MailMerge.FieldMergingCallback).camposBold = mfs;
+                //            Node nextNode = currentNode.NextPreOrder(currentNode.Document);
+                //            currentNode = nextNode;
+                //        }
+                //    }
+                //}
+
+                //((HandleField)_doc.MailMerge.FieldMergingCallback).camposBold = ListaFontesCampos;
 
 
 				_doc.MailMerge.Execute(objDataSourceCabecalhoRodape);
@@ -162,9 +218,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 					ObjectMailMerge objDataSource = new ObjectMailMerge(dataSource); 
 					_doc.MailMerge.ExecuteWithRegions(objDataSource);
 				}
-
-
-             
 
 				_configuracao.Executed(_doc, dataSource);
 

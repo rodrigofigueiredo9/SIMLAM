@@ -17,8 +17,8 @@
 		<!-- URL do Servico das Imagens-->
 		<mapaImagemURL>http://mapas.geobases.es.gov.br/ArcGIS/rest/services/IMAGEM/Aerolevantamento/MapServer</mapaImagemURL>
 
-		<mapaLoteURL>http://www3.suportetm.com.br/ArcGIS/rest/services/DEV_IDAF/D_FISCAL/MapServer</mapaLoteURL>
+		<mapaLoteURL>http://webidafh/ArcGIS/rest/services/IDAF/D_FISCAL/MapServer</mapaLoteURL>
 		
-		<webserviceURL>http://devap6/Projetos/ES/IDAF/Desenvolvimento/Institucional/GeoProcessamento/Mapa</webserviceURL>
+		<webserviceURL>http://webidafh/simlam/GeoProcessamento/Mapa</webserviceURL>
 	</service>
 </configuration>

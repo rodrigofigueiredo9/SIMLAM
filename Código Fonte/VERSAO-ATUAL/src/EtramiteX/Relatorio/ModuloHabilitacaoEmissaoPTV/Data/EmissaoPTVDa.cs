@@ -431,7 +431,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                                                 y.numero_crea,
                                                                 y.uf_habilitacao_id, 
                                                                 y.numero_visto_crea,
-                                                                nvl(x.arquivo_id, y.arquivo_id) arquivo_id
+                                                                nvl(x.arquivo_id, y.arquivo_id) arquivo_id,
+                                                                y.sigla,
+                                                                y.orgao_classe_id,
+                                                                y.registro_orgao_classe
                                                             from (select hf.funcionario_id, hf.nome, hf.arquivo_id
                                                                     from hst_funcionario hf
                                                                     where hf.id in (select max(f.id)
@@ -443,15 +446,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                                                         h2.numero_crea,
                                                                         h2.arquivo_id,
                                                                         h2.uf_habilitacao_id, 
-                                                                        h2.numero_visto_crea
-                                                                    from hst_hab_emi_ptv h2
-                                                                    where h2.funcionario_id = :FuncId
+                                                                        h2.numero_visto_crea,
+                                                                        le.sigla,
+                                                                        h2.orgao_classe_id,
+                                                                        h2.registro_orgao_classe
+                                                                    from hst_hab_emi_ptv h2, {0}lov_estado le
+                                                                    where h2.funcionario_id = :FuncId 
+                                                                    and h2.uf_habilitacao_id = le.id
                                                                     and h2.data_execucao =
                                                                         (select max(h.data_execucao)
                                                                             from hst_hab_emi_ptv h
                                                                             where h.funcionario_id = :FuncId
                                                                             and h.data_execucao <= :PTVDataExecucao)) y
                                                             where y.funcionario_id = x.funcionario_id", EsquemaBanco);
+
+                
 
 				comando.AdicionarParametroEntrada("FuncId", emissaoPTV.FuncId, DbType.Int32);
 				comando.AdicionarParametroEntrada("FuncTid", emissaoPTV.FuncTid, DbType.String);
@@ -466,8 +475,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
 
+                        int orgaoClasse = reader.GetValue<int>("orgao_classe_id");
+
                         emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao_id");
-                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = reader.GetValue<string>("numero_visto_crea");
+                        emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse == 9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
 					}
 
 					reader.Close();
