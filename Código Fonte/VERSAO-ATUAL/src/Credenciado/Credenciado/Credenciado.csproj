@@ -1134,6 +1134,7 @@
     <Content Include="Views\PTVOutro\Criar.aspx" />
     <Content Include="Views\PTVOutro\Destinatario\DestinatarioModal.ascx" />
     <Content Include="Views\PTVOutro\Destinatario\DestinatarioPartial.ascx" />
+    <Content Include="Views\PTVOutro\Editar.aspx" />
     <Content Include="Views\PTVOutro\Index.aspx" />
     <Content Include="Views\PTVOutro\ListarFiltros.ascx" />
     <Content Include="Views\PTVOutro\ListarResultados.ascx" />

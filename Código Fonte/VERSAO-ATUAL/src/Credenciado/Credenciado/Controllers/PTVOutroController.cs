@@ -71,6 +71,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
 			}
 
+
+
+
 			vm.PodeVisualizar = User.IsInRole(ePermissao.PTVOutroVisualizar.ToString());
 			vm.PodeCancelar = User.IsInRole(ePermissao.PTVOutroCancelar.ToString());
 
@@ -87,6 +90,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm)
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
+        public ActionResult Editar(int id)
+        {
+            PTVOutro ptv = _bus.Obter(id);
+
+            PTVOutroVM vm = new PTVOutroVM(
+                ptv,
+                ListaCredenciadoBus.PTVSituacao,
+                ListaCredenciadoBus.DocumentosFitossanitario.Where(x => ListTipoOrigem.Contains(x.Id)).ToList(),
+                ListaCredenciadoBus.Estados,
+                ListaCredenciadoBus.Municipios(ptv.Estado),
+                ListaCredenciadoBus.Estados,
+                ListaCredenciadoBus.Municipios(ptv.InteressadoEstadoId),
+                _bus.ObterPragasLista(ptv.Produtos));
+
+            DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
+            vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
+            vm.LstUnidades = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.PTVUnidadeMedida);
+            vm.IsVisualizar = false;
+
+            return View("Editar", vm);
+        }
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.PTVOutroCriar })]
@@ -116,6 +142,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
             new DestinatarioPTVBus().Salvar(ptv.Destinatario);
 
+            String acao = (ptv.Id > 0) ? "Index" : "Criar";
+
 		    if (!Validacao.EhValido)
 		    {
                 return Json(new { @Valido = Validacao.EhValido, @Erros = Validacao.Erros }, JsonRequestBehavior.AllowGet);
@@ -127,7 +155,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
                 @EhValido = valido,
 				@Erros = Validacao.Erros,
-				@Url = Url.Action("Criar", "PTVOutro") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + ptv.Id
+                @Url = Url.Action(acao, "PTVOutro") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + ptv.Id
 			});
 		}
 

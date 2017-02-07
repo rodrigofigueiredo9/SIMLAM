@@ -19,9 +19,15 @@ PTVListar = {
 		container.listarAjax();
 		container.delegate('.btnVisualizar', 'click', PTVListar.visualizar);
 		container.delegate('.btnCancelar', 'click', PTVListar.cancelar);
+		container.delegate('.btnEditar', 'click', PTVListar.editar);
 
 		Aux.setarFoco(container);
 		PTVListar.container = container;
+	},
+
+	editar: function () {
+	    var objeto = PTVListar.obter(this);
+	    MasterPage.redireciona(PTVListar.settings.urls.urlEditar + '/' + objeto.Id);
 	},
 
 	obter: function (container) {

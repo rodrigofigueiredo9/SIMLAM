@@ -17,6 +17,9 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
+using Tecnomapas.Blocos.Arquivo.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 {
@@ -42,7 +45,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
             return _da.ObterListaDeclaracao(pragaId, cultivarId);
         }
 
-		public bool Salvar(PTVOutro ptv)
+        public bool PodeEditar(Int64 numeroPTV)
+        {
+            return _da.VerificaSePTVAssociadoLote(numeroPTV);
+        }
+
+        public bool Salvar(PTVOutro ptv, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -50,14 +58,47 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
 				if (_validar.Salvar(ptv))
 				{
-					ptv.Situacao = (int)ePTVOutroSituacao.Valido;
+
+                    #region Arquivos/Diretorio
+
+                    ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
+
+                    if (ptv.Anexos != null && ptv.Anexos.Count > 0)
+                    {
+                        foreach (Anexo anexo in ptv.Anexos)
+                        {
+                            if (!String.IsNullOrWhiteSpace(anexo.Arquivo.TemporarioNome) && anexo.Arquivo.Id == 0)
+                            {
+                                anexo.Arquivo = _busArquivo.Copiar(anexo.Arquivo);
+                            }
+                        }
+                    }
+
+                    #endregion
+
+                    ptv.Situacao = (int)ePTVOutroSituacao.Valido;
 					ptv.CredenciadoId = User.FuncionarioId;
 
 					GerenciadorTransacao.ObterIDAtual();
 
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
 						bancoDeDados.IniciarTransacao();
+
+                        #region Arquivos/Banco
+                        ArquivoDa arquivoDa = new ArquivoDa();
+
+                        if (ptv.Anexos != null && ptv.Anexos.Count > 0)
+                        {
+                            foreach (Anexo anexo in ptv.Anexos)
+                            {
+                                if (!String.IsNullOrWhiteSpace(anexo.Arquivo.TemporarioNome) && anexo.Arquivo.Id == 0)
+                                {
+                                    arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
+                                }
+                            }
+                        }
+                        #endregion
 
 						_da.Salvar(ptv, bancoDeDados);
 
@@ -215,6 +256,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 			{
 				Filtro<PTVOutroListarFiltro> filtro = new Filtro<PTVOutroListarFiltro>(ptvListarFiltro, paginacao);
 				Resultados<PTVOutroListarResultado> resultados = _da.Filtrar(filtro);
+
+                foreach (PTVOutroListarResultado lis in resultados.Itens)
+                {
+                    if (_da.VerificaSePTVAssociadoLote(Convert.ToInt64(lis.Numero)))
+                        lis.PodeEditar = false;
+                    else
+                        lis.PodeEditar = true;
+                }
 
 				if (resultados.Quantidade < 1)
 				{

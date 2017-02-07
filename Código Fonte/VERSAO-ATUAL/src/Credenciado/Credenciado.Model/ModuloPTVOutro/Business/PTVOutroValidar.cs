@@ -120,15 +120,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 				Validacao.Add(Mensagem.PTVOutro.RespTecnicoNumHabObrigatorio);
 			}
 
+            if (ptv.Anexos.Count <= 0)
+            {
+                Validacao.Add(Mensagem.PTVOutro.AnexoObrigatorio);
+            }
+
 			return Validacao.EhValido;
 		}
 
 		public bool ValidarSituacao(PTVOutro entidade)
 		{
-			if (entidade.Id > 0 && entidade.Situacao != (int)ePTVOutroSituacao.EmElaboracao)
-			{
-				Validacao.Add(Mensagem.PTVOutro.NaoPodeEditarPTV);
-			}
+            if (entidade.Id > 0 && entidade.Situacao != (int)ePTVOutroSituacao.Valido)
+            {
+                Validacao.Add(Mensagem.PTVOutro.NaoPodeEditarPTV);
+            }
+            else
+            {
+                //Verifica se o ptv já esta asssociado a algum lote
+                if (_da.VerificaSePTVAssociadoLote(Convert.ToInt64(entidade.Numero)))
+                {
+                    Validacao.Add(Mensagem.PTVOutro.PTVAssociadoLote);
+                }
+            }
 
 			return Validacao.EhValido;
 		}
