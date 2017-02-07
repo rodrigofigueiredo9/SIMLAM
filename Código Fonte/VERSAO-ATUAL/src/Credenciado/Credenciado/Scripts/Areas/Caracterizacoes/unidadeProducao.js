@@ -143,7 +143,9 @@ UnidadeProducao = {
 	},
 
 	onVisualizar: function () {
-		var objeto = JSON.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
+	    var JsonParser = JsonBigint();
+
+	    var objeto = JsonParser.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
 		var empreendimento = +$('.hdnEmpreendimentoId', UnidadeProducao.container).val();
 
 		Modal.abrir(UnidadeProducao.settings.urls.AdicionarUnidadeProducao, { empreendimento: empreendimento, unidade: objeto, visualizar: true },
@@ -155,6 +157,9 @@ UnidadeProducao = {
 	},
 
 	obter: function () {
+
+	    var JsonParser = JsonBigint();
+
 		var unidadeProducaoObj = {
 			Id: +$('.hdnUnidadeProducaoId', UnidadeProducao.container).val(),
 			LocalLivroDisponivel: $('.txtLocalLivroDisponivel', UnidadeProducao.container).val(),
@@ -168,7 +173,7 @@ UnidadeProducao = {
 		};
 
 		$('.gridUnidadeProducao tbody tr:not(.trTemplate)', UnidadeProducao.container).find('.hdnItemObjeto').each(function () {
-			unidadeProducaoObj.UnidadesProducao.push(JSON.parse($(this).val()));
+			unidadeProducaoObj.UnidadesProducao.push(JsonParser.parse($(this).val()));
 		});
 
 		return unidadeProducaoObj;

@@ -134,3 +134,5 @@ and en.EMPREENDIMENTO = 44827
 --- Analisando novos
 select * from CRT_UNIDADE_PRODUCAO_UNIDADE where codigo_up = 32029000822110004;
 select * from CRT_UNIDADE_PRODUCAO where id in (select UNIDADE_PRODUCAO from CRT_UNIDADE_PRODUCAO_UNIDADE where codigo_up = 32029000822110004);
+--
+select * from CRT_UNIDADE_PRODUCAO where id = 38235;

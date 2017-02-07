@@ -15,7 +15,7 @@
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="Codigo_Propriedade">Código da propriedade *</label>
-			<%= Html.TextBox("UnidadeProducao.CodigoPropriedade", (Model.UnidadeProducao.CodigoPropriedade > 0 ? Model.UnidadeProducao.CodigoPropriedade.ToString("D4") : "Gerado automaticamente"), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.UnidadeProducao.InternoID > 0 || !Model.UnidadeProducao.PossuiCodigoPropriedade, new { @class = "text txtCodigoPropriedade maskNumInt", @maxlength = "11" }))%>
+			<%= Html.TextBox("UnidadeProducao.CodigoPropriedade", (Model.UnidadeProducao.CodigoPropriedade > 0 ? Model.UnidadeProducao.CodigoPropriedade.ToString() : "Gerado automaticamente"), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.UnidadeProducao.InternoID > 0 || !Model.UnidadeProducao.PossuiCodigoPropriedade, new { @class = "text txtCodigoPropriedade maskNumInt", @maxlength = "11" }))%>
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="Codigo_Empreendimento">Código do empreendimento *</label>
