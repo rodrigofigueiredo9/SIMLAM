@@ -68,8 +68,8 @@ UnidadeProducao = {
 		$('tr:not(.trTemplate)', tabela).find('.hdnItemObjeto').each(function () {
 		    var unidadeLinha = JSON.parse($(this).val());
 
-		    var seqAtual = unidade.CodigoUP.toString().substr(13, 2);
-		    var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 2);
+		    var seqAtual = unidade.CodigoUP.toString().substr(13, 4);
+		    var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 4);
 
 		    if (unidade.PossuiCodigoUP && (unidadeLinha.CodigoUP == unidade.CodigoUP || seqAtual == seqNova)) {
 				itemAdicionado = true;
@@ -116,10 +116,13 @@ UnidadeProducao = {
 
 		var itemAdicionado = false;
 		$('tr:not(.trTemplate, .itemEdicao)', tabela).find('.hdnItemObjeto').each(function () {
-			var unidadeLinha = JSON.parse($(this).val());
 
-			var seqAtual = unidade.CodigoUP.toString().substr(13, 2);
-			var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 2);
+		    var JsonParser = new JsonBigint();
+
+		    var unidadeLinha = JsonParser.parse($(this).val());
+
+			var seqAtual = unidade.CodigoUP.toString().substr(13, 4);
+			var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 4);
 
 			if (unidade.PossuiCodigoUP && (unidadeLinha.CodigoUP == unidade.CodigoUP || seqAtual == seqNova)) {
 				itemAdicionado = true;

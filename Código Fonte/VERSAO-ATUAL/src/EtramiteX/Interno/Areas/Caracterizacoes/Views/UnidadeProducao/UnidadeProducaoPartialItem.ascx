@@ -36,7 +36,7 @@
 		</div>
 		<div class="coluna20 prepend1">
 			<label for="CodigoUP">Código da UP *</label>
-			<%=Html.TextBox("UnidadeProducaoItem.CodigoUP", Model.UnidadeProducaoItem.CodigoUP > 0 ? Model.UnidadeProducaoItem.CodigoUP.ToString() : "Gerado automaticamente",  ViewModelHelper.SetaDisabled((Model.IsVisualizar || !Model.UnidadeProducaoItem.PossuiCodigoUP), new { @class = "text txtCodigoUP maskNumInt", @maxlength = "19"}))%>
+			<%=Html.TextBox("UnidadeProducaoItem.CodigoUP", Model.UnidadeProducaoItem.CodigoUP > 0 ? Model.UnidadeProducaoItem.CodigoUP.ToString() : "Gerado automaticamente",  ViewModelHelper.SetaDisabled((Model.IsVisualizar || !Model.UnidadeProducaoItem.PossuiCodigoUP), new { @class = "text txtCodigoUP maskNumInt", @maxlength = "17"}))%>
 		</div>
 	</div>
 	<div class="block">
