@@ -12,6 +12,7 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 {
@@ -318,9 +319,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 
                 PTV.Declaracoes = bancoDeDados.ObterEntityList<PTVOutroDeclaracao>(comando);
 
+
+
                 #endregion
 
-				
+                #region Arquivos
+
+                comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				a.tid from {0}tab_ptv_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    Anexo item;
+                    while (reader.Read())
+                    {
+                        item = new Anexo();
+                        item.Id = Convert.ToInt32(reader["id"]);
+                        item.Ordem = Convert.ToInt32(reader["ordem"]);
+                        item.Descricao = reader["descricao"].ToString();
+
+                        item.Arquivo.Id = Convert.ToInt32(reader["arquivo_id"]);
+                        item.Arquivo.Caminho = reader["caminho"].ToString();
+                        item.Arquivo.Nome = reader["nome"].ToString();
+                        item.Arquivo.Extensao = reader["extensao"].ToString();
+
+                        item.Tid = reader["tid"].ToString();
+
+                        PTV.Anexos.Add(item);
+                    }
+                    reader.Close();
+                }
+
+                #endregion
 
 				return PTV;
 			}
