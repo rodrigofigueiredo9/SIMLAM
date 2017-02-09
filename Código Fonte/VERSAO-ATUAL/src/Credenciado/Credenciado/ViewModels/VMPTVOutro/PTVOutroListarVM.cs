@@ -11,6 +11,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTVOutro
 	{
 		public String UltimaBusca { get; set; }
 		public Boolean PodeVisualizar { get; set; }
+        public Boolean PodeEditar { get; set; }
 		
 		public Boolean PodeCancelar { get; set; }
 		public int RT { get; set; }

@@ -14,6 +14,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 		public string CulturaCultivar { get; set; }
         public int SituacaoID { get; set; }
         public string SituacaoTexto { get; set; }
-		public int ResponsavelTecnicoId { get; set; }		
+		public int ResponsavelTecnicoId { get; set; }
+        public bool PodeEditar { get; set; }
 	}
 }

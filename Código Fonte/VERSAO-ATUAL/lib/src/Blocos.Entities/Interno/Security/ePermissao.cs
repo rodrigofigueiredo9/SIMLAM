@@ -378,6 +378,7 @@
 		PTVOutroListar,
 		PTVOutroVisualizar,
 		PTVOutroCancelar,
+        PTVOutroEditar,
 
 		LocalVistoriaOperar,
 		LocalVistoriaListar,

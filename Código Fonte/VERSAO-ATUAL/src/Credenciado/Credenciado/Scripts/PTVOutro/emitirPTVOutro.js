@@ -68,6 +68,11 @@ PTVOutroEmitir = {
 
         PTVOutroEmitir.container.delegate('.btnAddPraga', 'click', PTVOutroEmitir.addPraga);
 
+        PTVOutroEmitir.container.delegate('.btnExcluirAnexo', 'click', PTVOutroEmitir.onExcluirLinha);
+        PTVOutroEmitir.container.delegate('.btnDescerLinha', 'click', function (container) { PTVOutroEmitir.onBtnDescerClick(container, 'tabAnexos'); });
+        PTVOutroEmitir.container.delegate('.btnSubirLinha', 'click', function (container) { PTVOutroEmitir.onBtnSubirClick(container, 'tabAnexos'); });
+        PTVOutroEmitir.atualizaEstiloGrid('tabAnexos');
+
         PTVOutroEmitir.container.delegate('.rbTipoProducao ', 'change', function(item) {
 
             switch ($('.rbTipoProducao:checked', PTVOutroEmitir.container).val()) {
@@ -635,7 +640,8 @@ PTVOutroEmitir = {
 			Municipio: $('.ddlMunicipios', PTVOutroEmitir.container).val(),
 			DeclaracaoAdicional: declaracoes,
 			Produtos: [],
-            Declaracoes: []
+			Declaracoes: [],
+			Anexos: []
 		}
 
 		
@@ -651,6 +657,193 @@ PTVOutroEmitir = {
 		});
 
 		objeto.Produtos = retorno;
+
+		$('.tabAnexos', PTVOutroEmitir.container).find('tbody tr').each(function (index, linha) {
+		    objeto.Anexos.push({
+		        Ordem: (index + 1),
+		        Descricao: $(linha).find('.hdnAnexoDescricao').val(),
+		        Arquivo: JSON.parse($(linha).find(".hdnAnexoArquivoJson").val())
+		    });
+		});
+
+
 		return objeto;
+	},
+
+    //----------ANEXOS - ENVIAR ARQUIVO---------------
+
+	onEnviarAnexoArquivoClick: function (url) {
+	    if ($('.tabAnexos tbody tr', PTVOutroEmitir.container).length == 5) {
+	        Mensagem.gerar(PTVOutroEmitir.container, [PTVOutroEmitir.settings.Mensagens.AnexoLimiteMaximo]);
+	        return;
+	    }
+
+	    var nome = "enviando ...";
+	    var nomeArquivo = $('.inputFile', PTVOutroEmitir.container).val();
+	    var descricao = $('.txtAnexoDescricao', PTVOutroEmitir.container).val();
+	    var tabAnexos = $('.tabAnexos', PTVOutroEmitir.container);
+	    var trElem = $('tr', tabAnexos);
+
+	    erroMsg = new Array();
+
+	    if (nomeArquivo === '') {
+	        erroMsg.push(PTVOutroEmitir.settings.Mensagens.ArquivoAnexoObrigatorio);
+	    }
+
+	    if (descricao === '') {
+	        erroMsg.push(PTVOutroEmitir.settings.Mensagens.DescricaoAnexoObrigatorio);
+	    }
+
+	    if (nomeArquivo !== '' && descricao !== '') {
+	        if (PTVOutroEmitir.existeAssociado(nomeArquivo, tabAnexos, "hdnArquivoNome")) {
+	            erroMsg.push(PTVOutroEmitir.settings.Mensagens.ArquivoExistente);
+	        }
+
+	        var extensao = nomeArquivo.toLowerCase().substr(nomeArquivo.length - 4);
+	        if (extensao !== ".pdf" && extensao !== ".jpg" && extensao !== ".png") {
+	            erromsg.push(PTVOutroEmitir.settings.Mensagens.AnexoFormatoErrado);
+	        }
+	    }
+
+	    if (erroMsg.length > 0) {
+	        $('.txtAnexoDescricao', PTVOutroEmitir.container).addClass('erroCampo');
+	        Mensagem.gerar(PTVOutroEmitir.container, erroMsg);
+	        return;
+	    }
+
+	    var lastIndex = PTVOutroEmitir.buscarUltimoIndice(tabAnexos);
+	    var linha = $('.trAnexoTemplate', PTVOutroEmitir.container).clone().removeClass('trAnexoTemplate');
+	    var id = "ArquivoId_" + lastIndex;
+
+	    linha.find('.hdnAnexoIndex').val(lastIndex).attr('name', 'PTV.Anexos.Index');
+	    linha.find('.hdnArquivoNome').val(nomeArquivo).attr('name', 'PTV.Anexos[' + lastIndex + '].Arquivo.Nome');
+	    linha.find('.hdnArquivoExtensao').val('').attr('name', 'PTV.Anexos[' + lastIndex + '].Extensao');
+	    linha.find('.hdnAnexoOrdem').val(lastIndex).attr('name', 'PTV.Anexos[' + lastIndex + '].Ordem');
+	    linha.find('.hdnAnexoArquivoJson').val(JSON.stringify({ Id: id })).attr('name', 'PTV.Anexos[' + lastIndex + '].Arquivo');
+	    linha.find('.hdnAnexoDescricao').val(descricao).attr('name', 'PTV.Anexos[' + lastIndex + '].Descricao');
+
+	    linha.find('.ArquivoNome').html(nome).attr('title', nome);
+	    linha.find('.AnexoDescricao').html(descricao).attr('title', descricao);
+
+	    $('tbody:last', tabAnexos).append(linha);
+	    tabAnexos.removeClass('hide');
+	    $('.lblGridVazio', tabAnexos.closest('fieldset')).addClass('hide');
+	    $('.txtArquivoNome, .txtAnexoDescricao', PTVOutroEmitir.container).val('');
+
+	    var inputFile = $('.inputFileDiv input:file', PTVOutroEmitir.container);
+	    PTVOutroEmitir.atualizaEstiloGrid('tabAnexos');
+
+	    FileUpload.upload(url, inputFile, PTVOutroEmitir.msgArqEnviado);
+	    $('.inputFile', PTVOutroEmitir.container).val('');
+	},
+
+	msgArqEnviado: function (controle, retorno, isHtml) {
+	    var tr = $('.tabAnexos tbody tr', PTVOutroEmitir.container).last();
+	    var ret = eval('(' + retorno + ')');
+	    if (ret.Arquivo != null) {
+	        $('.ArquivoNome', tr).html(ret.Arquivo.Nome).attr('title', ret.Arquivo.Nome);
+	        $('.hdnArquivoNome', tr).val(ret.Arquivo.Nome);
+	        $('.hdnArquivoExtensao', tr).val(ret.Arquivo.Extensao);
+	        $('.hdnAnexoArquivoJson', tr).val(JSON.stringify(ret.Arquivo));
+	    } else {
+	        PTVOutroEmitir.onLimparArquivoClick();
+	        tr.remove();
+	    }
+
+	    PTVOutroEmitir.reorganizarEstiloTab($('.tabAnexos tbody', PTVOutroEmitir.container));
+	    $(".btnAddAnexoArquivo", PTVOutroEmitir.container).show();
+	    Mensagem.gerar(PTVOutroEmitir.container, ret.Msg);
+	},
+
+	onBtnDescerClick: function (container, tab) {
+	    var tr = $(container.currentTarget).closest('tr');
+	    tr.next().after(tr);
+	    PTVOutroEmitir.atualizaEstiloGrid(tab);
+	},
+
+	onBtnSubirClick: function (container, tab) {
+	    var tr = $(container.currentTarget).closest('tr');
+	    tr.prev().before(tr);
+	    PTVOutroEmitir.atualizaEstiloGrid(tab);
+	},
+
+	atualizaEstiloGrid: function (tab) {
+	    var table = PTVOutroEmitir.container.find('.' + tab);
+	    Listar.atualizarEstiloTable(table);
+
+	    var rows = $('tbody tr:visible', table).removeClass('selecionado');
+	    rows.each(function (index, elem) {
+	        var btnDescer = $(elem).find('.btnDescerLinhaTab,.btnDescerLinha');
+	        var btnSubir = $(elem).find('.btnSubirLinhaTab,.btnSubirLinha');
+
+	        if (index == 0) {
+	            btnSubir.addClass('desativado');
+	        } else {
+	            btnSubir.removeClass('desativado');
+	        }
+
+	        if (index >= rows.length - 1) {
+	            btnDescer.addClass('desativado');
+	        } else {
+	            btnDescer.removeClass('desativado');
+	        }
+	    });
+	},
+
+	reorganizarEstiloTab: function (tab) {
+	    $(tab).find('tr').each(function (i, linha) {
+	        $(linha).removeClass();
+	        $(linha).addClass((i % 2) === 0 ? 'par' : 'impar');
+	    });
+	},
+
+	reorganizarIndicesTab: function (tab) {
+	    $(tab).find('tr').each(function (i, linha) {
+	        $(linha).find('input[name$=Index]').val(i + 1);
+	    });
+	},
+
+	buscarUltimoIndice: function (tab) {
+	    var ultimoIndex = $(tab).find('tbody tr').length + 1;
+	    return ultimoIndex;
+	},
+
+	onLimparArquivoClick: function () {
+	    //implementar Limpar
+
+	    $('.txtArquivoNome').data('arquivo', null);
+	    $('.txtArquivoNome').val("");
+	    $('.inputFileArquivo').val("");
+	    $('.hdnFileArquivo').val("");
+	},
+
+	existeAssociado: function (item, tab, itemClass) {
+	    var existe = false;
+
+	    var trs = $(tab).find('tbody tr');
+	    $.each(trs, function (key, trElem) {
+	        if ($(trElem).find('.' + itemClass) !== '') {
+	            var trItem = $(trElem).find('.' + itemClass).val();
+	            existe = (item.toLowerCase().trim() === trItem.toLowerCase().trim());
+	            if (existe) {
+	                return false;
+	            }
+	        }
+	    });
+	    return existe;
+	},
+
+	onExcluirLinha: function () {
+	    var tab = $(this).closest('table.dataGridTable tbody');
+
+	    if (tab.closest('table').hasClass('tabAnexos')) {
+	        PTVOutroEmitir.atualizaEstiloGrid('tabAnexos');
+	        FileUpload.cancelar(JSON.parse($(this).closest('tr').find('.hdnAnexoArquivoJson').val()).Id);
+	    }
+
+	    $(this).closest('tr').remove();
+	    PTVOutroEmitir.reorganizarEstiloTab(tab);
 	}
+
+    //----------ANEXOS - ENVIAR ARQUIVO---------------
 }

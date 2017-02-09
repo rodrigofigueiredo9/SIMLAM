@@ -29,6 +29,8 @@
 				<td>
 					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.ID, Numero = item.Numero, CulturaCultivar = item.CulturaCultivar, Situacao = item.SituacaoTexto } ) %>" />
 					<% if (Model.PodeVisualizar) { %><input type="button" title="Visualizar PTV Outro estado" class="icone visualizar btnVisualizar" /><% } %>
+                    <% if (item.PodeEditar)
+		            {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
 					<% if (Model.PodeCancelar && item.SituacaoID == 2)
                         { %><input type="button" title="Cancelar PTV Outro estado" class="icone cancelar btnCancelar" /><% } %>
 				</td>
