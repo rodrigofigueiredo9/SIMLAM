@@ -22,15 +22,15 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 		{
 			try
 			{
-				if (args == null || args.Length <= 0)
-				{
-					throw new Exception("Nenhum argumento informado.");
-				}
+                //if (args == null || args.Length <= 0)
+                //{
+                //    throw new Exception("Nenhum argumento informado.");
+                //}
 
-				string[] parametros = args[0].Split(',');
+				//string[] parametros = args[0].Split(',');
 
 				//projectID,projectType,projectStep 
-				//string[] parametros = "50,3,1,mutexServ1,mutexProc1".Split(',');
+                string[] parametros = "71150,3,3,mutexServ1,mutexProc1".Split(',');
 
 				if (parametros == null || parametros.Length != 5)
 				{
