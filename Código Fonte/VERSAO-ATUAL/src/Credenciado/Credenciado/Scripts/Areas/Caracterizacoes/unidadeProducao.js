@@ -68,8 +68,8 @@ UnidadeProducao = {
 		$('tr:not(.trTemplate)', tabela).find('.hdnItemObjeto').each(function () {
 		    var unidadeLinha = JSON.parse($(this).val());
 
-		    var seqAtual = unidade.CodigoUP.toString().substr(13, 2);
-		    var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 2);
+		    var seqAtual = unidade.CodigoUP.toString().substr(13, 4);
+		    var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 4);
 
 		    if (unidade.PossuiCodigoUP && (unidadeLinha.CodigoUP == unidade.CodigoUP || seqAtual == seqNova)) {
 				itemAdicionado = true;
@@ -116,10 +116,13 @@ UnidadeProducao = {
 
 		var itemAdicionado = false;
 		$('tr:not(.trTemplate, .itemEdicao)', tabela).find('.hdnItemObjeto').each(function () {
-			var unidadeLinha = JSON.parse($(this).val());
 
-			var seqAtual = unidade.CodigoUP.toString().substr(13, 2);
-			var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 2);
+		    var JsonParser = new JsonBigint();
+
+		    var unidadeLinha = JsonParser.parse($(this).val());
+
+			var seqAtual = unidade.CodigoUP.toString().substr(13, 4);
+			var seqNova = unidadeLinha.CodigoUP.toString().substr(13, 4);
 
 			if (unidade.PossuiCodigoUP && (unidadeLinha.CodigoUP == unidade.CodigoUP || seqAtual == seqNova)) {
 				itemAdicionado = true;
@@ -143,7 +146,9 @@ UnidadeProducao = {
 	},
 
 	onVisualizar: function () {
-		var objeto = JSON.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
+	    var JsonParser = JsonBigint();
+
+	    var objeto = JsonParser.parse($('.hdnItemObjeto', $(this).closest('tr')).val());
 		var empreendimento = +$('.hdnEmpreendimentoId', UnidadeProducao.container).val();
 
 		Modal.abrir(UnidadeProducao.settings.urls.AdicionarUnidadeProducao, { empreendimento: empreendimento, unidade: objeto, visualizar: true },
@@ -155,6 +160,9 @@ UnidadeProducao = {
 	},
 
 	obter: function () {
+
+	    var JsonParser = JsonBigint();
+
 		var unidadeProducaoObj = {
 			Id: +$('.hdnUnidadeProducaoId', UnidadeProducao.container).val(),
 			LocalLivroDisponivel: $('.txtLocalLivroDisponivel', UnidadeProducao.container).val(),
@@ -168,7 +176,7 @@ UnidadeProducao = {
 		};
 
 		$('.gridUnidadeProducao tbody tr:not(.trTemplate)', UnidadeProducao.container).find('.hdnItemObjeto').each(function () {
-			unidadeProducaoObj.UnidadesProducao.push(JSON.parse($(this).val()));
+			unidadeProducaoObj.UnidadesProducao.push(JsonParser.parse($(this).val()));
 		});
 
 		return unidadeProducaoObj;

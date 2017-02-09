@@ -32,7 +32,7 @@ group by crt.ID, crt.PROPRIEDADE_CODIGO, emp.ID
 having count(distinct en.MUNICIPIO) > 1
 ;*/
 /*
--- caminho (que não tem a ver com o escopo): CRT_UNIDADE_PRODUCAO_UNIDADE x CRT_UNIDADE_PRODUCAO_UN_COORD
+-- caminho (que nï¿½o tem a ver com o escopo): CRT_UNIDADE_PRODUCAO_UNIDADE x CRT_UNIDADE_PRODUCAO_UN_COORD
 select unid.ID, unid.CODIGO_UP, count(distinct coord.MUNICIPIO) as mun
 from
   CRT_UNIDADE_PRODUCAO_UNIDADE unid
@@ -77,8 +77,8 @@ order by hst_unid.CODIGO_UP asc
 
 
 ----------------------------------------------------------------------------------------------------------
--- Conferindo UPs com Municípios diferentes dos Empreendimentos:
--- Obs.: tem que conferir o subtstr() dos códigos, e também os municípios cadastrados para identificarmos erros.
+-- Conferindo UPs com Municï¿½pios diferentes dos Empreendimentos:
+-- Obs.: tem que conferir o subtstr() dos cï¿½digos, e tambï¿½m os municï¿½pios cadastrados para identificarmos erros.
 select 
   '--- EMPRENDIMENTO: ---' AS SEPARADOR,
   emp.CODIGO, 
@@ -110,3 +110,30 @@ where en.CORRESPONDENCIA = 0
 and substr(crt.PROPRIEDADE_CODIGO, 1, 7) <> substr(unid.CODIGO_UP, 1, 7)
 order by crt.PROPRIEDADE_CODIGO asc, unid.CODIGO_UP
 ;
+
+-----
+-- public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
+-- Credenciado
+select (select to_char(m.id) ||'-'|| m.texto ||'-'|| m.ibge  from lov_municipio m where m.id = lm.id) as IBGE, te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto,
+				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid
+				from tab_empreendimento_endereco te, lov_estado le, lov_municipio lm
+				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = 44827 /*:empreendimento*/ and te.correspondencia = 0
+;
+
+-- novo SQL:
+select m.IBGE
+from
+TAB_EMPREENDIMENTO_ENDERECO en
+    inner join LOV_MUNICIPIO m
+      on m.ID = en.MUNICIPIO
+where en.CORRESPONDENCIA = 0
+and en.EMPREENDIMENTO = 44827
+;
+
+
+--- Analisando novos
+select * from CRT_UNIDADE_PRODUCAO_UNIDADE where codigo_up = 32029000822110004;
+select * from CRT_UNIDADE_PRODUCAO where id in (select UNIDADE_PRODUCAO from CRT_UNIDADE_PRODUCAO_UNIDADE where codigo_up = 32029000822110004);
+--
+select * from CRT_UNIDADE_PRODUCAO where id = 38235;
+select * from CRT_UNIDADE_PRODUCAO where PROPRIEDADE_CODIGO = 32031631601;

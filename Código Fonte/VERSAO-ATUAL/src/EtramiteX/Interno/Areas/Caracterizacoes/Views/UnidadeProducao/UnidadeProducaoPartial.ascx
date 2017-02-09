@@ -25,7 +25,8 @@
                 var codigoPropriedadeMustBeDisabled =
                     Model.IsVisualizar
                     || (isCreating && !Model.UnidadeProducao.PossuiCodigoPropriedade)
-                    || (isEditing && Model.UnidadeProducao.PossuiCodigoPropriedade);
+                    || (isEditing && !Model.UnidadeProducao.PossuiCodigoPropriedade)
+                    || !Model.UnidadeProducao.PossuiCodigoPropriedade;
 
                 var codigoPropriedadeAttributes = ViewModelHelper
                     .SetaDisabled(codigoPropriedadeMustBeDisabled,  new {

@@ -838,7 +838,7 @@ Mascara = {
 
 	getInt64Mask: function (strValue) {
 		//return strValue ? parseFloat(strValue.trim().replace(/\./g, '').replace(',', '.')) : 0;
-		return strValue ? new Number(strValue) : strValue;
+	    return strValue ? new BigNumber(strValue) : strValue;
 	},
 
 	getStringMask: function (number, format) {
