@@ -654,13 +654,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		#endregion
 
 		#region Obter/Filtrar
-        public Municipio ObterMunicipio(int MunicipioId, BancoDeDados banco = null)
+        public Municipio ObterMunicipioPropriedade(int EmprendimentoId, BancoDeDados banco = null)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 Municipio municipio = new Municipio();
-                Comando comando = bancoDeDados.CriarComando(@"select m.id, m.texto, m.estado, m.cep, m.ibge from {0}lov_municipio m where m.id = :id", EsquemaBanco);
-                comando.AdicionarParametroEntrada("id", MunicipioId, DbType.Int32);
+                Comando comando = bancoDeDados.CriarComando(@"
+                    select m.id, m.texto, m.estado, m.cep, m.ibge 
+                    from
+                    TAB_EMPREENDIMENTO_ENDERECO en
+                        inner join LOV_MUNICIPIO m
+                          on m.ID = en.MUNICIPIO
+                    where en.CORRESPONDENCIA = 0
+                    and en.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+                comando.AdicionarParametroEntrada("empreendimento", EmprendimentoId, DbType.Int32);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -679,52 +686,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
                 return municipio;
             }
-        }
-
-        public Endereco ObterEndereco(int empreendimentoId, BancoDeDados banco = null)
-        {
-            Endereco retorno = new Endereco();
-
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                #region Endereços
-
-                Comando comando = bancoDeDados.CriarComando(@"
-				select te.id, te.empreendimento, te.correspondencia, te.zona, te.cep, te.logradouro, te.bairro, le.id estado_id, le.texto estado_texto,
-				lm.id municipio_id, lm.texto municipio_texto, te.numero, te.distrito, te.corrego, te.caixa_postal, te.complemento, te.tid
-				from {0}tab_empreendimento_endereco te, {0}lov_estado le, {0}lov_municipio lm
-				where te.estado = le.id(+) and te.municipio = lm.id(+) and te.empreendimento = :empreendimento and te.correspondencia = 0", EsquemaBanco);
-
-                comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        retorno.Id = reader.GetValue<int>("id");
-                        retorno.Tid = reader.GetValue<string>("tid");
-                        retorno.ZonaLocalizacaoId = reader.GetValue<int>("zona");
-                        retorno.Cep = reader.GetValue<string>("cep");
-                        retorno.Logradouro = reader.GetValue<string>("logradouro");
-                        retorno.Bairro = reader.GetValue<string>("bairro");
-                        retorno.EstadoId = reader.GetValue<int>("estado_id");
-                        retorno.EstadoTexto = reader.GetValue<string>("estado_texto");
-                        retorno.MunicipioId = reader.GetValue<int>("municipio_id");
-                        retorno.MunicipioTexto = reader.GetValue<string>("municipio_texto");
-                        retorno.Numero = reader.GetValue<string>("numero");
-                        retorno.DistritoLocalizacao = reader.GetValue<string>("distrito");
-                        retorno.Corrego = reader.GetValue<string>("corrego");
-                        retorno.CaixaPostal = reader.GetValue<string>("caixa_postal");
-                        retorno.Complemento = reader.GetValue<string>("complemento");
-                    }
-
-                    reader.Close();
-                }
-
-                #endregion
-            }
-
-            return retorno;
         }
 
 		internal UnidadeProducao ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)

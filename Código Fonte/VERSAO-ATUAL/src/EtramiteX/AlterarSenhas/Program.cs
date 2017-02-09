@@ -14,7 +14,9 @@ namespace AlterarSenhas
     {
         static void Main(string[] args)
         {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("default"))
+            // Instância: ATENTAR no config! 
+            // "default"=Institucional, "idafcredenciado"=Credenciado, etc.
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("default")) 
             {
 
                 Comando comando = bancoDeDados.CriarComando(@"Select * from tab_usuario where login = 'livia.almeida'");

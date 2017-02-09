@@ -49,6 +49,7 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/jquery.associar-multiplo.js") %>" ></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
         <script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/json-bigint.js") %>"></script>
+	    <script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/bignumber.js") %>" ></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js")%>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js")%>"></script>
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>

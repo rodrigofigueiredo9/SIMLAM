@@ -319,7 +319,7 @@ UnidadeProducaoItem = {
 		var unidadeProducaoItemObj = {
 			Id: +$('.hdnId', UnidadeProducaoItem.container).val(),
 			PossuiCodigoUP: $('.rbCodigoSim', UnidadeProducaoItem.container).is(':checked'),
-			CodigoUP: +$('.txtCodigoUP', UnidadeProducaoItem.container).val() || 0,
+			CodigoUP: new BigNumber($('.txtCodigoUP', UnidadeProducaoItem.container).val()) || 0,
 			TipoProducao: +$('.RadioTipoProducao:checked', UnidadeProducaoItem.container).val(),
 			RenasemNumero: $('.txtRenasemNumero', UnidadeProducaoItem.container).val(),
 			DataValidadeRenasem: $('.txtDataValidadeRenasem', UnidadeProducaoItem.container).val(),

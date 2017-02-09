@@ -1,4 +1,4 @@
-﻿using Aspose.Words.MailMerging;
+﻿using Aspose.Words.Reporting;
 using System;
 using System.Collections;
 using System.Reflection;

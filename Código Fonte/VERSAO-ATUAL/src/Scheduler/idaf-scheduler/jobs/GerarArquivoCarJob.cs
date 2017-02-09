@@ -44,105 +44,105 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		public void Execute(IJobExecutionContext context)
 		{
 			//logging
-			var jobKey = context.JobDetail.Key;
-			Log.InfoFormat("BEGIN {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
+            //var jobKey = context.JobDetail.Key;
+            //Log.InfoFormat("BEGIN {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 
-			using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
-			{
-				conn.Open();
-				string tid = string.Empty;
+            //using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
+            //{
+            //    conn.Open();
+            //    string tid = string.Empty;
 
-				//Veja se 
-				var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+            //    //Veja se 
+            //    var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 
-				while (nextItem != null)
-				{
-					//Update item as Started
-					//LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
+            //    while (nextItem != null)
+            //    {
+            //        //Update item as Started
+            //        //LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
 
-					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
-					var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
+            //        var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
+            //        //var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 
-					//TODO:PROCESSAR APENAS SOLICITACOES PASSIVOS
-					if (controleSicar.solicitacao_passivo == 0)
-					{
-						break;
-					}
+            //        //TODO:PROCESSAR APENAS SOLICITACOES PASSIVOS
+            //        if (controleSicar != null && controleSicar.solicitacao_passivo == 0)
+            //        {
+            //            break;
+            //        }
 
-					ObterDadosRequisicao(conn, requisicao);
-					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
+            //        ObterDadosRequisicao(conn, requisicao);
+            //        tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
-					try
-					{
-						CAR car;
+            //        try
+            //        {
+            //            CAR car;
 
-						if (requisicao.tem_titulo || requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-						{
-							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
-						}
-						else
-						{
-							using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
-							{
-								connCredendicado.Open();
+            //            if (requisicao.tem_titulo || requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+            //            {
+            //                car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
+            //            }
+            //            else
+            //            {
+            //                using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
+            //                {
+            //                    connCredendicado.Open();
 
-								car = ObterDadosCar(connCredendicado, requisicao, CarUtils.GetEsquemaCredenciado());
-							}
-						}
+            //                    car = ObterDadosCar(connCredendicado, requisicao, CarUtils.GetEsquemaCredenciado());
+            //                }
+            //            }
 
-						Pessoa declarante = null;
+            //            Pessoa declarante = null;
 
-						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-							declarante = ObterDadosDeclarante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
-						else
-							using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
-							{
-								connCredendicado.Open();
-								declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
-							}
+            //            if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+            //                declarante = ObterDadosDeclarante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+            //            else
+            //                using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
+            //                {
+            //                    connCredendicado.Open();
+            //                    declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+            //                }
 
-						car.cadastrante = new Cadastrante()
-						{
-							cpf = declarante.cpf,
-							dataNascimento = declarante.dataNascimento,
-							nome = declarante.nome,
-							nomeMae = declarante.nomeMae
-						};
+            //            car.cadastrante = new Cadastrante()
+            //            {
+            //                cpf = declarante.cpf,
+            //                dataNascimento = declarante.dataNascimento,
+            //                nome = declarante.nome,
+            //                nomeMae = declarante.nomeMae
+            //            };
 
 
-						if (controleSicar.solicitacao_passivo > 0)
-							PreencherCampos(car);
-						else
-							ValidarCampos(car);
+            //            if (controleSicar.solicitacao_passivo > 0)
+            //                PreencherCampos(car);
+            //            else
+            //                ValidarCampos(car);
 
-						//Salvar o arquivo .CAR
-						var arquivoCar = GerarArquivoCAR(car, conn);
+            //            //Salvar o arquivo .CAR
+            //            var arquivoCar = GerarArquivoCAR(car, conn);
 
-						//Marcar como processado
-						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, true, "Processado");
+            //            //Marcar como processado
+            //            LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, true, "Processado");
 
-						//Atualizar o Controle do SICAR
-						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
-						var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
+            //            //Atualizar o Controle do SICAR
+            //            //var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
+            //            var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
 
-						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
+            //            //var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
 
-						//Adicionar na fila pedido para Enviar Arquivo SICAR
-						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
-					}
-					catch (Exception ex)
-					{
-						//Marcar como processado registrando a mensagem de erro
-						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
-						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
-					}
+            //            //Adicionar na fila pedido para Enviar Arquivo SICAR
+            //            LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            //Marcar como processado registrando a mensagem de erro
+            //            LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
+            //            ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
+            //            ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
+            //        }
 
-					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
-				}
-			}
+            //        nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+            //    }
+            //}
 
-			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
+            //Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 		}
 
 		private void ValidarCampos(CAR car)
