@@ -46,6 +46,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                 dataSource.DataAtivacao = "--/--/--";
             }
 
+            foreach (PTVProdutoRelatorio prod in dataSource.Produtos)
+            {
+                if (prod.ExibeQtdKg)
+                {
+                    prod.Quantidade *= 1000;
+                    prod.UnidadeMedida = "KG";
+                }
+            }
+
 			#region Imagem Vazia
 
 			MemoryStream memory = new MemoryStream();

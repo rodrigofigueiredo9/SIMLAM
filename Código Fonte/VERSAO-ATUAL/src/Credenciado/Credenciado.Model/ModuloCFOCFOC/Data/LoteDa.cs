@@ -97,8 +97,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 				#region Lotes
 
 				comando = bancoDeDados.CriarComando(@"
-				insert into tab_lote_item (id, tid, lote, origem_tipo, origem, origem_numero, cultura, cultivar, quantidade, unidade_medida)
-				values (seq_tab_lote_item.nextval, :tid, :lote, :origem_tipo, :origem, :origem_numero, :cultura, :cultivar, :quantidade, :unidade_medida)");
+				insert into tab_lote_item (id, tid, lote, origem_tipo, origem, origem_numero, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
+				values (seq_tab_lote_item.nextval, :tid, :lote, :origem_tipo, :origem, :origem_numero, :cultura, :cultivar, :quantidade, :unidade_medida, :exibe_kilos)");
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("lote", lote.Id, DbType.Int32);
@@ -109,6 +109,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 				comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
 				comando.AdicionarParametroEntrada("unidade_medida", DbType.Int32);
 				comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
+                comando.AdicionarParametroEntrada("exibe_kilos", DbType.String, 1);
 
 				lote.Lotes.ForEach(item =>
 				{
@@ -119,6 +120,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					comando.SetarValorParametro("cultivar", item.Cultivar);
 					comando.SetarValorParametro("unidade_medida", item.UnidadeMedida);
 					comando.SetarValorParametro("quantidade", item.Quantidade);
+                    comando.SetarValorParametro("exibe_kilos", item.ExibeKg ? "1" : "0" );
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -158,15 +160,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					if (item.Id > 0)
 					{
 						comando = bancoDeDados.CriarComando(@"update tab_lote_item  set tid =:tid, origem_tipo = :origem_tipo, origem = :origem, origem_numero = :origem_numero,
-						cultura = :cultura, cultivar = :cultivar, unidade_medida = :unidade_medida, quantidade = :quantidade where id = :id");
+						cultura = :cultura, cultivar = :cultivar, unidade_medida = :unidade_medida, quantidade = :quantidade, exibe_kilos = :exibe_kilos where id = :id");
 
 						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 					}
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into tab_lote_item (id, tid, lote, origem_tipo, origem, origem_numero, cultura, cultivar, quantidade, unidade_medida)
-						values (seq_tab_lote_item.nextval, :tid, :lote, :origem_tipo, :origem, :origem_numero, :cultura, :cultivar, :quantidade, :unidade_medida)");
+						insert into tab_lote_item (id, tid, lote, origem_tipo, origem, origem_numero, cultura, cultivar, quantidade, unidade_medida, exibo_kilos)
+						values (seq_tab_lote_item.nextval, :tid, :lote, :origem_tipo, :origem, :origem_numero, :cultura, :cultivar, :quantidade, :unidade_medida, :exibe_kilos)");
 
 						comando.AdicionarParametroEntrada("lote", lote.Id, DbType.Int32);
 					}
@@ -179,6 +181,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					comando.AdicionarParametroEntrada("cultivar", item.Cultivar, DbType.Int32);
 					comando.AdicionarParametroEntrada("unidade_medida", item.UnidadeMedida, DbType.Int32);
 					comando.AdicionarParametroEntrada("quantidade", item.Quantidade, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("exibe_kilos", DbType.String , 1, item.ExibeKg ? "1" : "0");
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -281,6 +284,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					t.cultivar,
 					cc.cultivar cultivar_texto,
 					t.quantidade,
+                    t.exibe_kilos,
 					(case 
 					when t.origem_tipo = 1 then (select cf.numero from tab_cfo cf where cf.id = t.origem)
 					when t.origem_tipo = 2 then (select cf.numero from tab_cfoc cf where cf.id = t.origem)
@@ -316,7 +320,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 							CultivarTexto = reader.GetValue<string>("cultivar_texto"),
 							UnidadeMedida = reader.GetValue<int>("unidade_medida"),
 							UnidadeMedidaTexto = reader.GetValue<string>("unidade_medida_texto"),
-							Quantidade = reader.GetValue<decimal>("quantidade")
+							Quantidade = reader.GetValue<decimal>("quantidade"),
+                            ExibeKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false
 						});
 					}
 
@@ -378,11 +383,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                 c.unidade_medida_texto, emp.denominador
 				    from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
 					    (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
-						    i.unidade_medida, (
+						    i.unidade_medida, i.exibe_kilos, (
                 select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
 						    from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
 						    where c.id = i.cultura and cc.id = i.cultivar 
-                group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
+                group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
 				    where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0" + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
@@ -393,15 +398,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                 comandtxt = String.Format(@"select * from 
                     (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
 					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
-					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, 
+					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade, c.unidade_medida, c.exibe_kilos,
                   c.unidade_medida_texto, emp.denominador
 				        from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
 					        (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
-						        i.unidade_medida, (
+						        i.unidade_medida, i.exibe_kilos, (
                     select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
 						        from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
 						        where c.id = i.cultura and cc.id = i.cultivar 
-                    group by i.lote, i.unidade_medida, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
+                    group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
 				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
@@ -433,6 +438,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						item.Item.UnidadeMedida = reader.GetValue<int>("unidade_medida");
 						item.Item.UnidadeMedidaTexto = reader.GetValue<string>("unidade_medida_texto");
 						item.Item.Quantidade = reader.GetValue<decimal>("quantidade");
+                        item.Item.ExibeKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false;
 
 						retorno.Itens.Add(item);
 					}

@@ -208,7 +208,19 @@ Lote = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					$('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
+				    $('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
+
+				    var txtUnd = $('select[name=UnidadeMedida] option:selected').text();
+
+				    var total = $('select[name=UnidadeMedida]').children('option').length;
+
+				    if (txtUnd == "T") {
+
+				        $('select[name=UnidadeMedida]').append(new Option('KG', 2));
+				    }
+
+				    
+
 					$('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
 				}
 
@@ -228,6 +240,13 @@ Lote = {
 		var DataCriacao = { DataTexto: $('.txtDataCriacao', Lote.container).val() };
 		var IdEmpreendimeto = $('.ddlEmpreemdimento', Lote.container).val();
 		var unidadeMedida = $('.ddlUnidadeMedida', container).ddlSelecionado();
+
+		var txtUnidMedida = $('.ddlUnidadeMedida :selected', container).text();
+
+		var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
+
+	
+
 		var item = {
 			Numero: $('.txtNumeroOrigem', container).val(),
 			Origem: $('.hdnOrigemID', container).val() || 0,
@@ -239,7 +258,8 @@ Lote = {
 			Cultivar: $('.ddlCultivar', container).val(),
 			CultivarTexto: $('.ddlCultivar option:selected', container).text(),
 			UnidadeMedida: unidadeMedida.Id,
-			Quantidade: $('.txtQuantidade', container).val()
+			Quantidade: $('.txtQuantidade', container).val(),
+            ExibeKg : bExibeKg
 		};
 
 		//Valida Item já adicionado na Grid		
@@ -305,6 +325,11 @@ Lote = {
 		$('.gridLote tbody tr:not(.trTemplate)', Lote.container).each(function (i, linha) {
 			objeto.Lotes.push(JSON.parse($('.hdnItemJson', linha).val()));
 		});
+
+		for (var i = 0; i < objeto.Lotes.length; i++)
+		    if (objeto.Lotes[i].ExibeKg) {
+		        objeto.Lotes[i].Quantidade = parseInt(objeto.Lotes[i].Quantidade) / 1000;
+		    }
 
 		return objeto;
 	},

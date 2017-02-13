@@ -225,7 +225,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                                             nvl(t.origem, 0) origem,
                                                             t.origem_tipo, 
                                                             t.cultura cultura_id,
-                                                            t.cultivar cultivar_id
+                                                            t.cultivar cultivar_id,
+                                                            t.exibe_kilos
 														from {0}tab_ptv_produto             t,
 															 {0}tab_ptv                     p,
 															 {0}tab_cultura                 c,
@@ -256,7 +257,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 							NumeroTF = reader.GetValue<string>("numero_tf"),
 							UnidadeMedida = reader.GetValue<string>("unidade_medida"),
 							Origem = reader.GetValue<int>("origem"),
-							OrigemTipo = reader.GetValue<int>("origem_tipo")
+							OrigemTipo = reader.GetValue<int>("origem_tipo"),
+                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false
 						});
 					}
 					reader.Close();
@@ -499,7 +501,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                               t.unidade_medida_texto as unidade_medida,
                               nvl(t.origem_id, 0) origem,
                               t.origem_tid,
-                              t.origem_tipo_id origem_tipo
+                              t.origem_tipo_id origem_tipo,
+                              t.exibe_kilos
                             from hst_ptv_produto t,
                                hst_ptv p,
                                hst_cultura c,
@@ -532,7 +535,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 							UnidadeMedida = reader.GetValue<string>("unidade_medida"),
 							Origem = reader.GetValue<int>("origem"),
 							OrigemTid = reader.GetValue<string>("origem_tid"),
-							OrigemTipo = reader.GetValue<int>("origem_tipo")
+							OrigemTipo = reader.GetValue<int>("origem_tipo"),
+                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false
 						});
 					}
 					reader.Close();

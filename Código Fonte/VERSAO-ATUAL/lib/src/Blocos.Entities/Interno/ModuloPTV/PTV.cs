@@ -56,6 +56,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int DataHoraVistoriaId { get; set; }
 		public string DataHoraVistoriaTexto { get; set; }
 
+        public bool ExibeQtdKg { get; set; }
+
 		public bool TemAssinatura { get; set; }
 
 		public int Credenciado { get; set; }

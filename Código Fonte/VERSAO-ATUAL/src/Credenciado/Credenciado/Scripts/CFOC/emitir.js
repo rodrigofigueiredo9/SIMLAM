@@ -150,8 +150,21 @@ CFOCEmitir = {
 		$('.txtProdutoCultura', CFOCEmitir.container).val(objeto.Item.CulturaTexto);
 		$('.hdnCultivarId', CFOCEmitir.container).val(objeto.Item.Cultivar);
 		$('.txtProdutoCultivar', CFOCEmitir.container).val(objeto.Item.CultivarTexto);
+		
 		$('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(objeto.Item.Quantidade, 'n4'));
 		$('.txtProdutoUnidadeMedida', CFOCEmitir.container).val(objeto.Item.UnidadeMedidaTexto);
+
+		
+
+	
+		if (objeto.Item.UnidadeMedidaTexto == "T") {
+
+		    if (objeto.Item.ExibeKg) {
+		        $('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(objeto.Item.Quantidade * 1000, 'n4'));
+		        $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val("KG");
+		    }
+		}
+
 		$('.txtProdutoConsolidacao', CFOCEmitir.container).val(objeto.DataCriacao.DataTexto);
 		$('.hdnUnidadeMedidaId', CFOCEmitir.container).val(objeto.Item.UnidadeMedida);
 
@@ -197,7 +210,14 @@ CFOCEmitir = {
 	addIdentificacaoProduto: function () {
 		Mensagem.limpar(CFOCEmitir.container);
 
+
+
 		var IdentificacoesAdicionadas = CFOCEmitir.obterIdentificacoes();
+
+		var txtUnid = $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val();
+
+		var bExibeKg = txtUnid.indexOf("KG") >= 0;
+
 		var objeto = {
 			LoteId: +$('.hdnProdutoLoteId', CFOCEmitir.container).val() || 0,
 			LoteCodigo: $('.txtProdutoLote', CFOCEmitir.container).val(),
@@ -208,7 +228,8 @@ CFOCEmitir = {
 			DataConsolidacao: { DataTexto: $('.txtProdutoConsolidacao', CFOCEmitir.container).val() },
 			CulturaId: +$('.hdnCulturaId', CFOCEmitir.container).val() || 0,
 			CultivarId: +$('.hdnCultivarId', CFOCEmitir.container).val() || 0,
-			UnidadeMedidaId: +$('.hdnUnidadeMedidaId', CFOCEmitir.container).val() || 0
+			UnidadeMedidaId: +$('.hdnUnidadeMedidaId', CFOCEmitir.container).val() || 0,
+			ExibeQtdKg: bExibeKg
 		};
 
 		var retorno = MasterPage.validarAjax(
@@ -458,6 +479,12 @@ CFOCEmitir = {
 		};
 
 		objeto.Produtos = CFOCEmitir.obterIdentificacoes();
+
+		for (var i = 0; i < objeto.Produtos.length; i++)
+		    if (objeto.Produtos[i].ExibeQtdKg)
+		        objeto.Produtos[i].Quantidade = objeto.Produtos[i].Quantidade / 1000;
+
+
 		objeto.Pragas = CFOCEmitir.obterPragas();
 		objeto.TratamentosFitossanitarios = CFOCEmitir.obterTratamentoFitossanitario();
 

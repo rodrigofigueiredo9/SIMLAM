@@ -34,6 +34,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				dataSource.DataAtivacao = "--/--/--";
 			}
 
+            foreach (IdentificacaoProdutoRelatorio prod in dataSource.Produtos)
+            {
+                if (prod.ExibeQtdKg)
+                {
+                    prod.Quantidade *= 1000;
+                    prod.UnidadeMedida = "KG";
+                }
+            }
+
 			if (dataSource.TratamentosFitossanitarios.Count <= 0)
 			{
 				dataSource.TratamentosFitossanitarios.Add(new TratamentoFitossanitarioRelatorio());

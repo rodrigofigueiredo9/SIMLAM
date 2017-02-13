@@ -83,7 +83,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				select cp.id, cp.tid, cp.unidade_producao, i.codigo_up, c.texto cultura, cc.cultivar, lu.texto unidade_medida, cp.quantidade, cp.inicio_colheita, cp.fim_colheita 
+				select cp.id, cp.tid, cp.unidade_producao, i.codigo_up, c.texto cultura, cc.cultivar, lu.texto unidade_medida, cp.quantidade, cp.inicio_colheita, cp.fim_colheita, cp.exibe_kilos
 				from tab_cfo_produto cp, ins_crt_unidade_prod_unidade i, tab_cultura c, tab_cultura_cultivar cc, lov_crt_uni_prod_uni_medida lu 
 				where i.id = cp.unidade_producao and c.id = i.cultura and cc.id = i.cultivar and i.estimativa_unid_medida = lu.id and cp.cfo = :cfo", EsquemaBanco);
 
@@ -102,6 +102,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 							UnidadeMedida = dr.GetValue<string>("unidade_medida"),
 							Quantidade = dr.GetValue<decimal>("quantidade"),
 							DataInicioColheita = dr.GetValue<DateTime>("inicio_colheita").ToShortDateString(),
+                            ExibeQtdKg = dr.GetValue<string>("exibe_kilos") == "1" ? true : false,
 							DataFimColheita = dr.GetValue<DateTime>("fim_colheita").ToShortDateString()
 						});
 					}
@@ -304,7 +305,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 					cp.unidade_producao_tid,
 					cp.quantidade,
 					cp.inicio_colheita,
-					cp.fim_colheita
+					cp.fim_colheita,
+                    cp.exibe_kilos
 				from hst_cfo_produto cp
 				where cp.id_hst = :hst_id", EsquemaBanco);
 
@@ -321,6 +323,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 							UnidadeProducaoTID = dr.GetValue<string>("unidade_producao_tid"),
 							Quantidade = dr.GetValue<decimal>("quantidade"),
 							DataInicioColheita = dr.GetValue<DateTime>("inicio_colheita").ToShortDateString(),
+                            ExibeQtdKg = dr.GetValue<string>("exibe_kilos") == "1" ? true : false,
 							DataFimColheita = dr.GetValue<DateTime>("fim_colheita").ToShortDateString()
 						});
 					}

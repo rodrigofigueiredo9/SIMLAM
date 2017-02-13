@@ -105,8 +105,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				#region Produto PTV
 
-				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida)
-													  values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
+													  values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida,:exibe_kilos)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
@@ -117,6 +117,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
 				comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
 				comando.AdicionarParametroEntrada("unidade_medida", DbType.Int32);
+                comando.AdicionarParametroEntrada("exibe_kilos", DbType.String,1);
 
 				PTV.Produtos.ForEach(item =>
 				{
@@ -138,6 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comando.SetarValorParametro("cultivar", item.Cultivar);
 					comando.SetarValorParametro("quantidade", item.Quantidade);
 					comando.SetarValorParametro("unidade_medida", item.UnidadeMedida);
+                    comando.SetarValorParametro("exibe_kilos", item.ExibeQtdKg ? "1" : "0");
 
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
@@ -221,7 +223,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					{
 						comando = bancoDeDados.CriarComando(@"
 						update {0}tab_ptv_produto set tid = :tid, ptv = :ptv, origem_tipo = :origem_tipo, origem = :origem, numero_origem = :numero_origem, 
-						cultura = :cultura,cultivar = :cultivar, quantidade = :quantidade, unidade_medida = :unidade_medida where id = :id", EsquemaBanco);
+						cultura = :cultura,cultivar = :cultivar, quantidade = :quantidade, unidade_medida = :unidade_medida, exibe_kilos= :exibe_kilos where id = :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("ptv", item.PTV, DbType.Int32);
@@ -229,8 +231,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into {0}tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida)
-						values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem, :numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", EsquemaBanco);
+						insert into {0}tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
+						values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem, :numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida, :exibe_kilos)", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 					}
@@ -253,6 +255,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comando.AdicionarParametroEntrada("cultivar", item.Cultivar, DbType.Int32);
 					comando.AdicionarParametroEntrada("quantidade", item.Quantidade, DbType.Decimal);
 					comando.AdicionarParametroEntrada("unidade_medida", item.UnidadeMedida, DbType.Int32);
+                    comando.AdicionarParametroEntrada("exibe_kilos", item.ExibeQtdKg ? "1" : "0", DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
@@ -412,8 +415,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				#region Produto PTV
 
-				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida)
-													  values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
+													  values(seq_tab_ptv_produto.nextval,:tid,:ptv,:origem_tipo,:origem,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida, :exibe_kilos)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
@@ -424,6 +427,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
 				comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
 				comando.AdicionarParametroEntrada("unidade_medida", DbType.Int32);
+                comando.AdicionarParametroEntrada("exibe_kilos", DbType.String,1);
 
 				PTV.Produtos.ForEach(item =>
 				{
@@ -445,6 +449,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comando.SetarValorParametro("cultivar", item.Cultivar);
 					comando.SetarValorParametro("quantidade", item.Quantidade);
 					comando.SetarValorParametro("unidade_medida", item.UnidadeMedida);
+                    comando.SetarValorParametro("exibe_kilos", item.ExibeQtdKg ? "1" : "0");
 
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
@@ -560,6 +565,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															 c.texto ||'/'||cc.cultivar as cultura_cultivar,
 															 pr.quantidade,
 															 pr.unidade_medida,
+                                                             pr.exibe_kilos,
 															 u.texto unidade_medida_texto
 														from tab_ptv_produto pr, lov_doc_fitossanitarios_tipo t, tab_cultura c, tab_cultura_cultivar cc, lov_crt_uni_prod_uni_medida  u
 														where t.id = pr.origem_tipo  
@@ -589,7 +595,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 							CulturaCultivar = reader.GetValue<string>("cultura_cultivar"),
 							Quantidade = reader.GetValue<decimal>("quantidade"),
 							UnidadeMedida = reader.GetValue<int>("unidade_medida"),
-							UnidadeMedidaTexto = reader.GetValue<string>("unidade_medida_texto")
+							UnidadeMedidaTexto = reader.GetValue<string>("unidade_medida_texto"),
+                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true  :false
 						});
 					}
 
@@ -1015,7 +1022,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						comando = bancoDeDados.CriarComando(@"
-						select lu.id, lu.texto unidade_medida from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
+						select lu.id, lu.texto unidade_medida, exibe_kilos from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
 						where i.id = cp.unidade_producao and i.estimativa_unid_medida = lu.id and i.cultivar = :cultivarID and cp.cfo = :origemID", UsuarioCredenciado);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
@@ -1023,7 +1030,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						break;
 					case eDocumentoFitossanitarioTipo.CFOC:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida from lov_crt_uni_prod_uni_medida lu, cred_cfoc_produto pr, cred_lote_item li
+						select distinct lu.id, lu.texto unidade_medida,exibe_kilos from lov_crt_uni_prod_uni_medida lu, cred_cfoc_produto pr, cred_lote_item li
 						where lu.id = li.unidade_medida and li.lote = pr.lote and pr.cfoc = :origemID and li.cultivar = :cultivarID", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
@@ -1031,7 +1038,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						break;
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida from lov_crt_uni_prod_uni_medida lu, tab_ptv_produto pr
+						select distinct lu.id, lu.texto unidade_medida,exibe_kilos from lov_crt_uni_prod_uni_medida lu, tab_ptv_produto pr
 						where lu.id = pr.unidade_medida and pr.ptv = :origemID and pr.cultura = :culturaID and pr.cultivar = :cultivarID", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
@@ -1040,7 +1047,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida from lov_crt_uni_prod_uni_medida lu, {0}tab_ptv_outrouf_produto t
+						select distinct lu.id, lu.texto unidade_medida, exibe_kilos from lov_crt_uni_prod_uni_medida lu, {0}tab_ptv_outrouf_produto t
 						where lu.id = t.unidade_medida and t.ptv = :origemID and t.cultura = :culturaID and t.cultivar = :cultivarID", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);

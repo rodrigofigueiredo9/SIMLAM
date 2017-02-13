@@ -493,12 +493,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, sum(d.quantidade) quantidade, d.unidade_medida, d.unidade_medida_texto 
+				select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, sum(d.quantidade) quantidade, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto 
 				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, li.quantidade, 
-					li.unidade_medida, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
+					li.unidade_medida, li.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
 					where l.id = cp.lote and li.lote = l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d 
-					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida,d.unidade_medida_texto", EsquemaBanco);
+					group by d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 
@@ -518,7 +518,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 							UnidadeMedidaId = reader.GetValue<int>("unidade_medida"),
 							UnidadeMedida = reader.GetValue<string>("unidade_medida_texto"),
 							Quantidade = reader.GetValue<decimal>("quantidade"),
-							DataConsolidacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_criacao") }
+							DataConsolidacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_criacao") },
+                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true  : false
 						});
 					}
 

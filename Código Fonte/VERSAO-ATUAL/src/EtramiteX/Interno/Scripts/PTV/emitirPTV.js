@@ -346,6 +346,12 @@ PTVEmitir = {
 			vOrigem = $('.hdnNumeroOrigem', PTVEmitir.container).val();
 		}
 
+		
+
+		var txtUnid = $('.ddlProdutoUnidadeMedida option:selected', container).text();
+
+		var bExibeKg = txtUnid.indexOf("KG") >= 0;
+
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
 
 		var item = {
@@ -360,9 +366,10 @@ PTVEmitir = {
 			CultivarTexto: $('.ddlProdutoCultivar option:selected', container).text(),
 			UnidadeMedidaTexto: $('.ddlProdutoUnidadeMedida option:selected', container).text(),
 			UnidadeMedida: $('.ddlProdutoUnidadeMedida option:selected', container).val(),
-			Quantidade: $('.txtProdutoQuantidade', container).val(),
+			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
 			EmpreendimentoId: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
-			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val()
+			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val(),
+			ExibeQtdKg: bExibeKg
 		};
 
 		//Valida Item já adicionado na Grid
@@ -421,7 +428,34 @@ PTVEmitir = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-				$('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
+
+
+
+			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
+
+			    var possuiTon=false;
+			    $(".ddlProdutoUnidadeMedida").each(function () {
+			      
+			        if ($(this).val() == "2") {
+			            possuiTon = true;
+			   
+			        }
+			    });
+			    
+
+			    if (possuiTon) {
+			        $('.ddlProdutoUnidadeMedida').append($('<option>', {
+			            value: 2,
+			            text: 'KG'
+			        }));
+
+			        $('.ddlProdutoUnidadeMedida').removeAttr('disabled');
+			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
+			    }
+			    
+			  
+
+
 			}
 		});
 
@@ -471,7 +505,8 @@ PTVEmitir = {
                     _objetoExcluido.Produtos[0].Cultura != val.Cultura ||
                     _objetoExcluido.Produtos[0].Cultivar != val.Cultivar ||
                     _objetoExcluido.Produtos[0].UnidadeMedida != val.UnidadeMedida ||
-                    _objetoExcluido.Produtos[0].Quantidade != val.Quantidade) &&
+                    _objetoExcluido.Produtos[0].Quantidade != val.Quantidade ||
+                    _objetoExcluido.Produtos[0].ExibeQtdKg != vak.ExibeQtdKg) &&
                     val.EmpreendimentoId > 0) {
 					_temEmpreendimento = true;
 				}
@@ -807,6 +842,14 @@ PTVEmitir = {
 		$('.gridProdutos tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			retorno.push(JSON.parse($('.hdnItemJson', this).val()));
 		});
+
+
+		for (var i = 0; i < retorno.length; i++)
+		    if (retorno[i].ExibeQtdKg) {
+		        alert(retorno[i].Quantidade);
+		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
+
+		    }
 
 		objeto.Produtos = retorno;
 
