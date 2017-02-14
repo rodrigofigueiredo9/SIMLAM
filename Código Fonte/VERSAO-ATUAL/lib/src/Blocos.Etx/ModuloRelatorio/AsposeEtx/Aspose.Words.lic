@@ -1,22 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <License>
   <Data>
-    <LicensedTo>Pentago</LicensedTo>
-    <EmailTo>frederico.lopes@pentago.com.br</EmailTo>
-    <LicenseType>Developer Small Business</LicenseType>
-    <LicenseNote>Limited to one developer, limited to one physical location</LicenseNote>
-    <OrderID>161228090457</OrderID>
-    <UserID>379085</UserID>
-    <OEM>This is not a redistributable license</OEM>
+    <LicensedTo>Tecnomapas</LicensedTo>
+    <LicenseType>Site Enterprise Subscription</LicenseType>
+    <LicenseNote>Limited to 10 physical sites, not to exceed 10 developers</LicenseNote>
+    <OrderID>110418150615</OrderID>
+    <OEM>Not to exceed 10 deployments</OEM>
     <Products>
       <Product>Aspose.Words for .NET</Product>
     </Products>
     <EditionType>Enterprise</EditionType>
-    <SerialNumber>4267a434-2b04-49bf-98dd-32fbc133c743</SerialNumber>
-    <SubscriptionExpiry>20180119</SubscriptionExpiry>
-    <LicenseExpiry>20170219</LicenseExpiry>
-    <ExpiryNote>This is a temporary license for non-commercial use only and it will expire on 2017-02-19.</ExpiryNote>
-    <LicenseVersion>3.0</LicenseVersion>
-    <LicenseInstructions>http://www.aspose.com/corporate/purchase/license-instructions.aspx</LicenseInstructions>
+    <SerialNumber>40d44749-b842-4711-b7f0-496770c77b12</SerialNumber>
+    <SubscriptionExpiry>20120418</SubscriptionExpiry>
+    <LicenseVersion>2.2</LicenseVersion>
   </Data>
-  <Signature>m1tg8SJ1W84UcsPkegsCCDykX6r0cQd0NiZTL+l9Kpl2x1+fxiISZ48e9fwqDXhQ1nnt5DNQVR9MFAhmWF93wfKyvj05f3hhWJFhhd+PzdS1s7IGHr37EiB8BDJUMYPA/NBEctMN4hCQvTL9gFibuH/I+F1wZnuzHPKemMmT45c=</Signature>
+  <Signature>Utll9lD6eMMT+ArcKSHCbKpADJhUQK13s18iSZOQQB8W+M0lU7kAdQX7jbLotM4MlspbrBj1s5khfA1phCAbGAn5VhZxT5+qAA3ZYwJmstEtayqT3cL8dVO2n4h/7nR1VH5nwP2AfZxe7vWtvUHNRpfX4LN9RvHCaPH6Kf+H9X4=</Signature>
 </License>
