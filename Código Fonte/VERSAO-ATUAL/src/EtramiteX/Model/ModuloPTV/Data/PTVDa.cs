@@ -1022,7 +1022,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						comando = bancoDeDados.CriarComando(@"
-						select lu.id, lu.texto unidade_medida, exibe_kilos from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
+						select distinct lu.id, lu.texto unidade_medida, exibe_kilos from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
 						where i.id = cp.unidade_producao and i.estimativa_unid_medida = lu.id and i.cultivar = :cultivarID and cp.cfo = :origemID", UsuarioCredenciado);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
@@ -1067,7 +1067,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					retorno = new List<Lista>();
 					while (reader.Read())
 					{
-						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("unidade_medida") });
+                        if ( (retorno.Count == 0) || 
+                             (retorno.Count > 0 && !retorno.Any(x => x.Texto == reader.GetValue<string>("unidade_medida"))) )
+						    retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("unidade_medida") });
 					}
 
 					reader.Close();

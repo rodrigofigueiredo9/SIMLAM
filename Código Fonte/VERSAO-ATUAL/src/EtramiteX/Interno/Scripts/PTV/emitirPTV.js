@@ -433,8 +433,11 @@ PTVEmitir = {
 
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
 
+
 			    var possuiTon=false;
 			    $(".ddlProdutoUnidadeMedida").each(function () {
+
+			      
 			      
 			        if ($(this).val() == "2") {
 			            possuiTon = true;
@@ -846,7 +849,6 @@ PTVEmitir = {
 
 		for (var i = 0; i < retorno.length; i++)
 		    if (retorno[i].ExibeQtdKg) {
-		        alert(retorno[i].Quantidade);
 		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
 
 		    }
