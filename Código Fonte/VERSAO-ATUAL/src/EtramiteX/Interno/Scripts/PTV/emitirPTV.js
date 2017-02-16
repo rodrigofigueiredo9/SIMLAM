@@ -65,7 +65,20 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.btnVerificarDocumentoOrigem', 'click', PTVEmitir.verificarDocumentoOrigem);
 		$('.divNumeroDocumentoEnter', PTVEmitir.container).keyup(PTVEmitir.verificarNumeroDocumentoEnter);
 
-		PTVEmitir.container.delegate('.ddlProdutoUnidadeMedida', 'change', function () { $('.txtProdutoQuantidade', PTVEmitir.container).focus(); });
+		PTVEmitir.container.delegate('.ddlProdutoUnidadeMedida', 'change', function () {
+		    
+		    var txtunidade = $('.ddlProdutoUnidadeMedida option:selected', container).text();
+		    
+		    if (txtunidade == "KG") {
+		        $('.txtProdutoQuantidade').unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 2 });
+		        $('.txtProdutoQuantidade').attr('maxlength','8');
+		    } else {
+		        $('.txtProdutoQuantidade').unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 4 });
+		        $('.txtProdutoQuantidade').attr('maxlength', '12');
+		    }
+
+		    $('.txtProdutoQuantidade', PTVEmitir.container).focus();
+		});
 
 		PTVEmitir.container.delegate('.rdbRotaTransitoDefinida', 'change', PTVEmitir.onChangeRotaTransitoDefinida);
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscal', 'change', PTVEmitir.onChangeNumeroNotaFiscal);
@@ -850,7 +863,6 @@ PTVEmitir = {
 		for (var i = 0; i < retorno.length; i++)
 		    if (retorno[i].ExibeQtdKg) {
 		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
-
 		    }
 
 		objeto.Produtos = retorno;
