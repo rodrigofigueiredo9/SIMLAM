@@ -774,10 +774,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			List<Lista> retorno = new List<Lista>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u 
-					where u.unidade_producao = c.id and c.empreendimento = :empreendimento 
+				Comando comando = bancoDeDados.CriarComando(@"select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u, tab_titulo ti 
+					where u.unidade_producao = c.id and c.empreendimento = :empreendimento and ti.empreendimento = c.empreendimento and ti.situacao = 3
 					and u.id in (select p.unidade_producao_unidade from crt_unidade_prod_un_produtor p where p.produtor = :produtor)
-					and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico)");
+					and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico) group by u.id, u.codigo_up ");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("produtor", produtorID, DbType.Int32);
