@@ -19,12 +19,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 		public MemoryStream Gerar(int id, int credenciadoID)
 		{
-			ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO.doc";
+
+
+			
 
 			CFORelatorio dataSource = new CFORelatorio();
 
 			dataSource = _da.Obter(id, credenciadoID);
 
+           if ( !string.IsNullOrEmpty(dataSource.DataAtivacao) &&
+               Convert.ToDateTime(dataSource.DataAtivacao).Year < 2017 )
+                ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO_ANTERIOR_2017.doc";
+            else
+                ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO.doc";
+                
 			if (dataSource.Situacao != (int)eDocumentoFitossanitarioSituacao.EmElaboracao)
 			{
 				dataSource = _da.ObterHistorico(id, dataSource.Tid, credenciadoID);
