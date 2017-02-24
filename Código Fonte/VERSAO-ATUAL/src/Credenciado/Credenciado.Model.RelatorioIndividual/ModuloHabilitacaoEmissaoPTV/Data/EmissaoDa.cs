@@ -194,7 +194,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
-			    select f.nome, h.numero_habilitacao, h.numero_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
+			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.orgao_classe, h.registro_orgao_classe, f.arquivo arquivo_id, le.sigla from {0}tab_hab_emi_ptv h, {0}tab_funcionario f, {0}lov_estado le
 			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
@@ -205,8 +205,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 					{
 						emissaoPTV.FuncionarioHabilitado.Nome = reader.GetValue<string>("nome");
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
-						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
+						
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        int orgaoClasse = reader.GetValue<int>("orgao_classe");
+                        int uf_habilitacao = reader.GetValue<int>("uf_habilitacao");
+
+                        emissaoPTV.FuncionarioHabilitado.Registro = (orgaoClasse == 9 && uf_habilitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_crea");
+
+
 					}
 					reader.Close();
 				}
@@ -381,7 +388,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 					comando = bancoDeDados.CriarComando(@"select pp.origem, pp.origem_tipo, pp.unidade_medida from tab_ptv_produto pp where pp.ptv = :origemId and pp.cultivar = :cultivarID", EsquemaBanco);
 					comando.AdicionarParametroEntrada("origemId", origem, DbType.Int32);
-                    comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
@@ -389,7 +396,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 						{
 							int origemPTV = reader.GetValue<int>("origem");
 							int origemTipoPTV = reader.GetValue<int>("origem_tipo");
-							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida_id");
+							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida");
 
 							retorno.AddRange(ObterDeclaracaoAdicional(origemPTV, origemTipoPTV, (int)ValidacoesGenericasBus.ObterTipoProducao(unidadeMedidaIdPTV), cultivarID, bancoDeDados));
 						}
