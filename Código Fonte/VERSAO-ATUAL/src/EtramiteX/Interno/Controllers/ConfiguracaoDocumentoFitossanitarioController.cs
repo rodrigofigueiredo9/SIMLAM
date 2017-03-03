@@ -61,5 +61,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Msg = Validacao.Erros,
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] {ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult Editar()
+        {
+            int i = 2;
+
+            //só pra testar!!!
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+            }, JsonRequestBehavior.AllowGet);
+        }
 	}
 }
