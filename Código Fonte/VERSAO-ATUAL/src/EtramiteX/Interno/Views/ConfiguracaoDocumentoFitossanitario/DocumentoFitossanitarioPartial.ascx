@@ -31,8 +31,9 @@
 				<thead>
 					<tr>
 						<th>Tipo do Documento</th>
-						<th width="30%">Número Inicial</th>
-						<th width="30%">Número Final</th>
+						<th width="25%">Número Inicial</th>
+						<th width="25%">Número Final</th>
+                        <th width="15%">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -48,6 +49,10 @@
 						<td>
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
+                        <td>
+                            <button type="button" title="Editar" class="icone editar btnEditar"></button>
+                            <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
+                        </td>
 					</tr>
 					<% } %>
 
@@ -92,8 +97,9 @@
 				<thead>
 					<tr>
 						<th>Tipo do Documento</th>
-						<th width="30%">Número Inicial</th>
-						<th width="30%">Número Final</th>
+						<th width="25%">Número Inicial</th>
+						<th width="25%">Número Final</th>
+                        <th width="15%">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -109,6 +115,10 @@
 						<td>
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
+                        <td>
+                            <button type="button" title="Editar" class="icone editar btnEditar"></button>
+                            <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
+                        </td>
 					</tr>
 					<% } %>
 					<tr class="trTemplateRow hide">
