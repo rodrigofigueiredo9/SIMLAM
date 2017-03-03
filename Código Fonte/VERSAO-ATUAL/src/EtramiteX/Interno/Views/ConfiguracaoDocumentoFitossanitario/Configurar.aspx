@@ -13,8 +13,7 @@
 			ConfigDocFitossanitario.load($("#central"), {
 				urls: {
 					salvar: '<%= Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario") %>',
-				    validarIntervalo: '<%= Url.Action("ValidarIntervalo", "ConfiguracaoDocumentoFitossanitario") %>',
-                    editar: '<%= Url.Action("Editar", "ConfiguracaoDocumentoFitossanitario") %>'
+				    validarIntervalo: '<%= Url.Action("ValidarIntervalo", "ConfiguracaoDocumentoFitossanitario") %>'
 				}
 			});
 		});
