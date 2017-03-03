@@ -7,7 +7,8 @@ ConfigDocFitossanitario = {
 	settings: {
 		urls: {
 			salvar: '',
-			validarIntervalo: ''
+			validarIntervalo: '',
+            editar: ''
 		},
 		Mensagens: null
 	},
@@ -21,9 +22,14 @@ ConfigDocFitossanitario = {
 
 		container.delegate('.btnAdicionarNumero', 'click', ConfigDocFitossanitario.adicionarIntervalo);
 		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.abrirModalConfirmarSalvar);
+		container.delegate('.btnEditar', 'click', ConfigDocFitossanitario.editarIntervalo);
 		container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
 
 		Aux.setarFoco(container);
+	},
+
+	editarIntervalo: function () {
+	    Modal.abrirHtml('<p>ISSO É UM TESTE</p>');
 	},
 
 	adicionarIntervalo: function () {
@@ -62,7 +68,7 @@ ConfigDocFitossanitario = {
 	},
 
 	abrirModalConfirmarSalvar: function () {
-		var html = '<p>Após salvo os dados não poderão mais ser alterados. Deseja confirmar a ação?</p>';
+		var html = '<p>Deseja confirmar a ação?</p>';
 		var settings = {
 			titulo: 'Confirmar',
 			onLoadCallbackName: function (content) {
@@ -73,12 +79,14 @@ ConfigDocFitossanitario = {
 	},
 
 	atualizarDataGrid: function (container, item) {
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    var btnEdit = $('<button type="button" title="Editar" class="icone editar btnEditar"></button><button type="button" title="Excluir" class="icone excluir btnExcluir"></button>');
 
 		linha.find('.hdnItemJSon').val(JSON.stringify(item));
 		linha.find('.TipoDocumentoTexto').html(item.TipoDocumentoTexto).attr('title', item.TipoDocumentoTexto);
 		linha.find('.NumeroInicial').html(item.NumeroInicial).attr('title', item.NumeroInicial);
 		linha.find('.NumeroFinal').html(item.NumeroFinal).attr('title', item.NumeroFinal);
+		linha.find('.Acoes').html(btnEdit);
 
 		$('tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable(container);

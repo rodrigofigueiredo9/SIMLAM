@@ -63,6 +63,7 @@
 						</td>
 						<td><span class="NumeroInicial"></span></td>
 						<td><span class="NumeroFinal"></span></td>
+                        <td><span class="Acoes"></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -128,6 +129,7 @@
 						</td>
 						<td><span class="NumeroInicial"></span></td>
 						<td><span class="NumeroFinal"></span></td>
+                        <td><span class="Acoes"></span></td>
 					</tr>
 				</tbody>
 			</table>
