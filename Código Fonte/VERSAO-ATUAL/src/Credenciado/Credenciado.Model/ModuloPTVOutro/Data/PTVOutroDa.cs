@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 {
@@ -50,11 +51,194 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				throw new Exception("PTV outro estado é nulo.");
 			}
 
-			if (PTV.Id == 0)
-			{
-				Criar(PTV, banco);
-			}
+            if (PTV.Id == 0)
+            {
+                Criar(PTV, banco);
+            }
+            else
+            {
+                Editar(PTV, banco);
+            }
+
 		}
+
+        internal void Editar(PTVOutro PTV, BancoDeDados banco)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+                Comando comando = null;
+
+                #region Update
+
+                comando = bancoDeDados.CriarComando(@"
+				    update tab_ptv_outrouf set
+					tid=:tid,
+					numero=:numero,
+					data_emissao=:data_emissao,
+					data_ativacao=:data_ativacao,
+					data_cancelamento=:data_cancelamento,
+					situacao=:situacao,
+					interessado=:interessado,
+					interessado_cnpj_cpf=:interessado_cnpj_cpf,
+					interessado_endereco=:interessado_endereco,
+					interessado_estado=:interessado_estado,
+                    interessado_municipio=:interessado_municipio,
+					destinatario=:destinatario,
+					valido_ate=:valido_ate,
+					resp_tecnico=:resp_tecnico,
+					resp_tecnico_num_hab=:resp_tecnico_num_hab,
+					estado=:estado,
+					municipio=:municipio,
+					credenciado=:credenciado,
+                    declaracao_adicional=:declaracao_adicional,
+                    declaracao_adicional_formatado=:declaracao_adicional_formatado
+			        where id=:id", Esquema);
+
+                comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("numero", PTV.Numero > 0 ? PTV.Numero : (object)DBNull.Value, DbType.Int64);
+                comando.AdicionarParametroEntrada("data_emissao", PTV.DataEmissao.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("data_ativacao", PTV.DataAtivacao.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("data_cancelamento", PTV.DataCancelamento.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
+                comando.AdicionarParametroEntrada("interessado", DbType.String, 120, PTV.Interessado);
+                comando.AdicionarParametroEntrada("interessado_cnpj_cpf", DbType.String, 20, PTV.InteressadoCnpjCpf);
+                comando.AdicionarParametroEntrada("interessado_endereco", DbType.String, 200, PTV.InteressadoEndereco);
+                comando.AdicionarParametroEntrada("interessado_estado", PTV.InteressadoEstadoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("interessado_municipio", PTV.InteressadoMunicipioId, DbType.Int32);
+                comando.AdicionarParametroEntrada("destinatario", PTV.DestinatarioID, DbType.Int32);
+                comando.AdicionarParametroEntrada("valido_ate", PTV.ValidoAte.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("resp_tecnico", DbType.String, 120, PTV.RespTecnico);
+                comando.AdicionarParametroEntrada("resp_tecnico_num_hab", DbType.String, 8, PTV.RespTecnicoNumHab);
+                comando.AdicionarParametroEntrada("estado", PTV.Estado, DbType.Int32);
+                comando.AdicionarParametroEntrada("municipio", PTV.Municipio, DbType.Int32);
+                comando.AdicionarParametroEntrada("credenciado", PTV.CredenciadoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao_adicional", PTV.DeclaracaoAdicional, DbType.String);
+                comando.AdicionarParametroEntrada("declaracao_adicional_formatado", PTV.DeclaracaoAdicional, DbType.String);
+
+             
+                bancoDeDados.ExecutarNonQuery(comando);
+                #endregion
+
+                #region Limpar Dados
+
+                comando = bancoDeDados.CriarComando(@"delete from tab_ptv_outrouf_produto ", UsuarioCredenciado);
+                comando.DbCommand.CommandText += String.Format("where ptv = :ptv {0}",
+                comando.AdicionarNotIn("and", "id", DbType.Int32, PTV.Produtos.Select(p => p.Id).ToList()));
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando(@"delete from tab_ptv_arquivo ", UsuarioCredenciado);
+                comando.DbCommand.CommandText += String.Format("where ptv = :ptv {0}",
+                comando.AdicionarNotIn("and", "id", DbType.Int32, PTV.Anexos.Select(x => x.Id).ToList()));
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+
+                comando = bancoDeDados.CriarComando(@"delete from tab_ptv_outrouf_declaracao ", UsuarioCredenciado);
+                comando.DbCommand.CommandText += "where ptv = :ptv";
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                #endregion
+
+                #region Produto PTV
+                //
+                //
+                PTV.Produtos.ForEach(item =>
+                {
+                    if (item.Id > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+						update tab_ptv_outrouf_produto set tid = :tid, ptv = :ptv, origem_tipo = :origem_tipo, numero_origem = :numero_origem, 
+						cultura = :cultura,cultivar = :cultivar, quantidade = :quantidade, unidade_medida = :unidade_medida where id = :id", UsuarioCredenciado);
+
+                        comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("ptv", item.PTV, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+						insert into tab_ptv_outrouf_produto(id, tid, ptv, origem_tipo, numero_origem, cultura, cultivar, quantidade, unidade_medida)
+						values(tab_ptv_outrouf_produto.nextval,:tid,:ptv,:origem_tipo,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", UsuarioCredenciado);
+
+                        comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                    }
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                    comando.AdicionarParametroEntrada("origem_tipo", item.OrigemTipo, DbType.Int32);
+                    comando.AdicionarParametroEntrada("numero_origem", item.OrigemNumero, DbType.Int64);
+                    comando.AdicionarParametroEntrada("cultura", item.Cultura, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cultivar", item.Cultivar, DbType.Int32);
+                    comando.AdicionarParametroEntrada("quantidade", item.Quantidade, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("unidade_medida", item.UnidadeMedida, DbType.Int32);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+
+                #endregion
+
+                #region Declaracao PTV
+
+                comando = bancoDeDados.CriarComando(@"
+				insert into tab_ptv_outrouf_declaracao
+					(id, tid, ptv, declaracao_adicional, cultivar, praga)
+				values 
+					(seq_tab_ptv_outrouf_declaracao.nextval, :tid, :ptv, :declaracao, :cultivar, :praga)", Esquema);
+
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("declaracao", DbType.Int32);
+                comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
+                comando.AdicionarParametroEntrada("praga", DbType.Int32);
+
+                PTV.Declaracoes.ForEach(item =>
+                {
+                    comando.SetarValorParametro("declaracao", item.IdDeclaracao);
+                    comando.SetarValorParametro("cultivar", item.IdCultivar);
+                    comando.SetarValorParametro("praga", item.IdPraga);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+
+                #endregion
+
+                #region Arquivos
+
+                if (PTV.Anexos != null && PTV.Anexos.Count > 0)
+			    {
+					foreach (Anexo item in PTV.Anexos)
+					{
+						if (item.Id > 0)
+						{
+							comando = bancoDeDados.CriarComando(@"update {0}tab_ptv_arquivo a set a.ptv = :ptv, a.arquivo = :arquivo, 
+							a.ordem = :ordem, a.descricao = :descricao, a.tid = :tid where a.id = :id", EsquemaBanco);
+							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+						}
+						else
+						{
+							comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
+							values ({0}seq_ptv_arquivo.nextval, :ptv, :arquivo, :ordem, :descricao, :tid)", EsquemaBanco);
+						}
+
+						comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+						comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+                }
+
+                #endregion
+
+                Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptvoutro, eHistoricoAcao.atualizar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+
+        }
 
 		internal void Criar(PTVOutro PTV, BancoDeDados banco)
 		{
@@ -197,6 +381,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                     bancoDeDados.ExecutarNonQuery(comando);
                 });
+
+                #region Arquivos
+
+                if (PTV.Anexos != null && PTV.Anexos.Count > 0)
+                {
+                    comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
+					values ({0}seq_ptv_arquivo.nextval, :ptv, :arquivo, :ordem, :descricao, :tid)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("arquivo", DbType.Int32);
+                    comando.AdicionarParametroEntrada("ordem", DbType.Int32);
+                    comando.AdicionarParametroEntrada("descricao", DbType.String, 100);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    foreach (Anexo item in PTV.Anexos)
+                    {
+                        comando.SetarValorParametro("arquivo", item.Arquivo.Id);
+                        comando.SetarValorParametro("ordem", item.Ordem);
+                        comando.SetarValorParametro("descricao", item.Descricao);
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                #endregion
             
 
                 #endregion
@@ -495,9 +703,54 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 #endregion
 
+                #region Arquivos
+
+                comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				a.tid from {0}tab_ptv_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    Anexo item;
+                    while (reader.Read())
+                    {
+                        item = new Anexo();
+                        item.Id = Convert.ToInt32(reader["id"]);
+                        item.Ordem = Convert.ToInt32(reader["ordem"]);
+                        item.Descricao = reader["descricao"].ToString();
+
+                        item.Arquivo.Id = Convert.ToInt32(reader["arquivo_id"]);
+                        item.Arquivo.Caminho = reader["caminho"].ToString();
+                        item.Arquivo.Nome = reader["nome"].ToString();
+                        item.Arquivo.Extensao = reader["extensao"].ToString();
+
+                        item.Tid = reader["tid"].ToString();
+
+                        PTV.Anexos.Add(item);
+                    }
+                    reader.Close();
+                }
+
+                #endregion
+
                 return PTV;
 			}
 		}
+
+        internal bool VerificaSePTVAssociadoLote(Int64 ptvNumero)
+        {
+           
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_lote_item t where t.origem_numero = :numero", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("numero", ptvNumero, DbType.Int64);
+
+                return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+
+            }
+        }
 
 		internal bool VerificarNumeroPTV(Int64 ptvNumero)
 		{

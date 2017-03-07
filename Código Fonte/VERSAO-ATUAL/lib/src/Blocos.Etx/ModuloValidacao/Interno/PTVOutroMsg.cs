@@ -44,6 +44,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem PragaJaAdicionada { get { return new Mensagem() { Campo = "OrigemTipo", Texto = "Praga já adicionada.", Tipo = eTipoMensagem.Advertencia }; } }
         public Mensagem PragaObrigatorio { get { return new Mensagem() { Campo = "OrigemTipo", Texto = "Praga é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 
+        public Mensagem AnexoObrigatorio { get { return new Mensagem() { Campo = "ArquivoTexto", Texto = "Anexo é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
+
+        public Mensagem PTVAssociadoLote { get { return new Mensagem() { Campo = "Numero", Texto = "PTV já está associado a um lote.", Tipo = eTipoMensagem.Advertencia }; } }
+
 		public Mensagem QuantidadeMaximoCFOCFOC(string documentoOrigem)
 		{
 			return new Mensagem() { Texto = string.Format("{0} deve conter entre 8 e 12 números.", documentoOrigem), Tipo = eTipoMensagem.Advertencia };

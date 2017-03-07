@@ -5,6 +5,7 @@ using System.Text;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV.Destinatario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 {
@@ -45,6 +46,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
         public string DeclaracaoAdicionalHtml { get; set; }
         public List<Praga> Pragas { get; set; }
 
+        public List<Anexo> Anexos { get; set; }
+
         public List<PTVOutroDeclaracao> Declaracoes { get; set; }
 
 		public PTVOutro()
@@ -57,6 +60,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
 			Destinatario = new DestinatarioPTV();
             Pragas = new List<Praga>();
             Declaracoes = new List<PTVOutroDeclaracao>();
+
+            Anexos = new List<Anexo>();
 
             Tid =
             SituacaoTexto =

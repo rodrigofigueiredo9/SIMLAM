@@ -13,7 +13,8 @@
 			PTVListar.load($('#central'), {
 				urls: {
 					urlVisualizar: '<%= Url.Action("Visualizar", "PTVOutro") %>',
-					urlConfirmCancel: '<%= Url.Action("CancelarConfirm", "PTVOutro") %>',
+				    urlConfirmCancel: '<%= Url.Action("CancelarConfirm", "PTVOutro") %>',
+				    urlEditar: '<%= Url.Action("Editar", "PTVOutro") %>',
 					urlCancelar: '<%= Url.Action("PTVCancelar", "PTVOutro") %>'
 				}
 			});

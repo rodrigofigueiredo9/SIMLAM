@@ -328,9 +328,9 @@
     <Compile Include="Interno\ModuloVegetal\Cultura\CulturaListarFiltro.cs" />
     <Compile Include="Interno\ModuloVegetal\eConfiguracaoVegetalItemTipo.cs" />
     <Compile Include="Interno\ModuloPessoa\ePessoaEstadoCivil.cs" />
-    <Compile Include="Interno\ModuloProfissao\eProfissaoOrigem.cs" />
-    <Compile Include="Interno\ModuloProfissao\Profissao.cs" />
-    <Compile Include="Interno\ModuloProfissao\ProfissaoListarFiltros.cs" />
+    <Compile Include="Interno\ModuloPTVOutro\ModuloProfissao\eProfissaoOrigem.cs" />
+    <Compile Include="Interno\ModuloPTVOutro\ModuloProfissao\Profissao.cs" />
+    <Compile Include="Interno\ModuloPTVOutro\ModuloProfissao\ProfissaoListarFiltros.cs" />
     <Compile Include="Interno\ModuloRoteiro\eRoteiroItemTipo.cs" />
     <Compile Include="Interno\ModuloVegetal\eIngredienteAtivoSituacao.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloModeloTipo.cs" />
