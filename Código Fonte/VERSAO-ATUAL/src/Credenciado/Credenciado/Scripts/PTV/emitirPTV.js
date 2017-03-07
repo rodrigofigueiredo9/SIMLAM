@@ -287,7 +287,7 @@ PTVEmitir = {
 
 	onChangeOrigemTipo: function () {
 		Mensagem.limpar(PTVEmitir.container);
-
+		alert('teste');
 		var labelOrigem = $('.labelOrigem', PTVEmitir.container);
 		labelOrigem.text('');
 		var option = $('option:selected', this);

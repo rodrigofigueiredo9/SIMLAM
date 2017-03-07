@@ -63,14 +63,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				#region Insert
 
-				comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv
+                string sqlCmd = @"insert into {0}tab_ptv
 														(id, tid, tipo_numero, numero, data_emissao, situacao, empreendimento, partida_lacrada_origem, numero_lacre, numero_porao, 
 														numero_container, destinatario, possui_laudo_laboratorial, tipo_transporte, veiculo_identificacao_numero, rota_transito_definida, itinerario, apresentacao_nota_fiscal, 
-														numero_nota_fiscal, valido_ate, responsavel_tecnico, responsavel_emp, municipio_emissao)
+														numero_nota_fiscal, valido_ate, responsavel_tecnico, responsavel_emp, municipio_emissao, dua_numero,dua_tipo_pessoa,dua_cpf_cnpj, empreendimento_sem_doc, responsavel_sem_doc)
 													values
 														(seq_tab_ptv.nextval,:tid,:tipo_numero,:numero,:data_emissao,:situacao,:empreendimento,:partida_lacrada_origem,:numero_lacre,:numero_porao,
 														:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,
-														:numero_nota_fiscal,:valido_ate,:responsavel_tecnico,:responsavel_emp,:municipio_emissao) returning id into :id", EsquemaBanco);
+														:numero_nota_fiscal,:valido_ate,:responsavel_tecnico,:responsavel_emp,:municipio_emissao, :dua_numero,:dua_tipo_pessoa,:dua_cpf_cnpj, :empreendimento_sem_doc, :responsavel_sem_doc) returning id into :id";
+
+                if (!string.IsNullOrEmpty(PTV.EmpreendimentoSemDoc))
+                {
+                    sqlCmd = sqlCmd.Replace(":empreendimento,", "");
+                    sqlCmd = sqlCmd.Replace(":responsavel_emp,", "");
+
+                    sqlCmd = sqlCmd.Replace("empreendimento,", "");
+                    sqlCmd = sqlCmd.Replace("responsavel_emp,", "");
+
+                    
+                }
+
+
+                comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -78,7 +92,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("numero", PTV.Numero > 0 ? PTV.Numero : (object)DBNull.Value, DbType.Int64);
 				comando.AdicionarParametroEntrada("data_emissao", PTV.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
-				comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+
+                if (string.IsNullOrEmpty(PTV.EmpreendimentoSemDoc))
+                {
+                    comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+                    comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
+                }
+               
+
 				comando.AdicionarParametroEntrada("partida_lacrada_origem", PTV.PartidaLacradaOrigem, DbType.Int32);
 				comando.AdicionarParametroEntrada("numero_lacre", PTV.LacreNumero, DbType.String);
 				comando.AdicionarParametroEntrada("numero_porao", PTV.PoraoNumero, DbType.String);
@@ -93,8 +114,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("numero_nota_fiscal", PTV.NotaFiscalNumero, DbType.String);
 				comando.AdicionarParametroEntrada("valido_ate", PTV.ValidoAte.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("responsavel_tecnico", PTV.ResponsavelTecnicoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
+				
 				comando.AdicionarParametroEntrada("municipio_emissao", PTV.LocalEmissaoId, DbType.Int32);
+
+                comando.AdicionarParametroEntrada("dua_numero", PTV.NumeroDua, DbType.String);
+                comando.AdicionarParametroEntrada("dua_cpf_cnpj", PTV.CPFCNPJDUA, DbType.String);
+                comando.AdicionarParametroEntrada("dua_tipo_pessoa", PTV.TipoPessoa, DbType.Int32);
+
+                comando.AdicionarParametroEntrada("responsavel_sem_doc", PTV.ResponsavelSemDoc, DbType.String);
+                comando.AdicionarParametroEntrada("empreendimento_sem_doc", PTV.EmpreendimentoSemDoc, DbType.String);
+                
+
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -179,7 +209,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 																valido_ate = :valido_ate,
 																responsavel_tecnico = :responsavel_tecnico,
 																responsavel_emp = :responsavel_emp,
-																municipio_emissao = :municipio_emissao
+																municipio_emissao = :municipio_emissao,
+                                                                dua_numero = :dua_numero,
+                                                                dua_tipo_pessoa = :dua_tipo_pessoa,
+                                                                dua_cpf_cnpj = :dua_cpf_cnpj,
+                                                                empreedimento_sem_doc = :empreedimento_sem_doc,
+                                                                responsavel_sem_doc = :responsavel_sem_doc
 															where id = :id", EsquemaBanco);
 				#endregion
 
@@ -202,6 +237,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio_emissao", PTV.LocalEmissaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+
+                comando.AdicionarParametroEntrada("dua_numero", PTV.NumeroDua, DbType.String);
+                comando.AdicionarParametroEntrada("dua_cpf_cnpj", PTV.CPFCNPJDUA, DbType.String);
+                comando.AdicionarParametroEntrada("dua_tipo_pessoa", PTV.TipoPessoa, DbType.Int32);
+
+
+                comando.AdicionarParametroEntrada("responsavel_sem_doc", PTV.ResponsavelSemDoc, DbType.String);
+                comando.AdicionarParametroEntrada("empreendimento_sem_doc", PTV.EmpreendimentoSemDoc, DbType.String);
 
 				bancoDeDados.ExecutarScalar(comando);
 
@@ -499,9 +542,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				Comando comando = bancoDeDados.CriarComando(@" select p.id, p.tid, p.tipo_numero, p.numero, p.data_emissao, p.situacao,
                     lst.texto situacao_texto, p.empreendimento, p.responsavel_emp, em.denominador, p.partida_lacrada_origem, p.numero_lacre,
                     p.numero_porao, p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal,
-                    p.numero_nota_fiscal, p.valido_ate, p.responsavel_tecnico, f.nome responsavel_tecnico_nome, p.municipio_emissao 
+                    p.numero_nota_fiscal, p.valido_ate, p.responsavel_tecnico, f.nome responsavel_tecnico_nome, p.municipio_emissao, p.dua_numero,p.dua_tipo_pessoa,p.dua_cpf_cnpj, p.responsavel_sem_doc, p .empreendimento_sem_doc
                     from {0}tab_ptv p, {0}tab_empreendimento em, lov_ptv_situacao lst, {0}tab_funcionario f
-                    where em.id = p.empreendimento and lst.id = p.situacao and p.responsavel_tecnico = f.id and p.id = :id", EsquemaBanco);
+                    where em.id(+) = p.empreendimento and lst.id = p.situacao and p.responsavel_tecnico = f.id and p.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -535,6 +578,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						PTV.ResponsavelTecnicoId = reader.GetValue<int>("responsavel_tecnico");
 						PTV.ResponsavelTecnicoNome = reader.GetValue<string>("responsavel_tecnico_nome");
 						PTV.LocalEmissaoId = reader.GetValue<int>("municipio_emissao");
+                        PTV.CPFCNPJDUA = reader.GetValue<string>("dua_cpf_cnpj");
+                        PTV.NumeroDua = reader.GetValue<string>("dua_numero");
+                        PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
+                        PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
 					}
 
 					reader.Close();
@@ -1539,7 +1586,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				"select count(*) from (" + String.Format(@"select pt.id
 														from {0}tab_ptv pt,{0}tab_ptv_produto pr,{0}tab_empreendimento em,{0}lov_ptv_situacao st,{0}tab_cultura c,{0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
 														where pt.id(+) = pr.ptv
-															and em.id = pt.empreendimento 
+															and em.id(+) = pt.empreendimento 
 															and st.id = pt.situacao 
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
@@ -1554,18 +1601,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 												pt.id,
 												pt.numero,
 												pt.tipo_numero,
-												em.denominador as empreendimento,
+												nvl(em.denominador, pt.empreendimento_sem_doc) as empreendimento,
 											    pt.situacao,
 												st.texto as situacao_texto,
 												pt.responsavel_tecnico,
 												stragg(c.texto || '/' || trim(cc.cultivar)) as cultura_cultivar
 											from {0}tab_ptv pt, {0}tab_ptv_produto pr, {0}tab_empreendimento em, {0}lov_ptv_situacao st, {0}tab_cultura c, {0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
 											where pt.id(+) = pr.ptv
-											  and em.id = pt.empreendimento
+											  and em.id(+) = pt.empreendimento
 											  and st.id = pt.situacao
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 
-										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, em.denominador, pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion

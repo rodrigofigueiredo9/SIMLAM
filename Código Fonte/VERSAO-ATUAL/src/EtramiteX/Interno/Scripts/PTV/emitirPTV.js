@@ -42,6 +42,11 @@ PTVEmitir = {
 		if (options) { $.extend(PTVEmitir.settings, options); }
 
 		PTVEmitir.container = MasterPage.getContent(container);
+
+		PTVEmitir.container.delegate('.btnVerificarDua', 'click', PTVEmitir.onVerificarDua);
+		PTVEmitir.container.delegate('.btnLimparDua', 'click', PTVEmitir.onLimparDua);
+		$('.divDUA', PTVEmitir.container).keyup(PTVEmitir.verificarDUAEnter);
+
 		PTVEmitir.container.delegate('.rbTipoNumero', 'change', PTVEmitir.onTipoNumeroChange);
 		PTVEmitir.container.delegate('.btnVerificarPTV', 'click', PTVEmitir.onVerificarPTV);
 		PTVEmitir.container.delegate('.btnLimparPTV', 'click', PTVEmitir.onLimparNumeroPTV);
@@ -65,9 +70,13 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.btnVerificarDocumentoOrigem', 'click', PTVEmitir.verificarDocumentoOrigem);
 		$('.divNumeroDocumentoEnter', PTVEmitir.container).keyup(PTVEmitir.verificarNumeroDocumentoEnter);
 
+		PTVEmitir.container.delegate('.rdbPessaoTipo', 'change', PTVEmitir.onTipoPessoaDuaChange);
+
 		PTVEmitir.container.delegate('.ddlProdutoUnidadeMedida', 'change', function () {
 		    
 		    var txtunidade = $('.ddlProdutoUnidadeMedida option:selected', container).text();
+
+		    
 		    
 		    if (txtunidade == "KG") {
 		        $('.txtProdutoQuantidade').unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 2 });
@@ -84,10 +93,14 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscal', 'change', PTVEmitir.onChangeNumeroNotaFiscal);
 		PTVEmitir.container.delegate('.btnSalvar', 'click', PTVEmitir.onSalvar);
 
+		PTVEmitir.container.delegate('.rbTipoDocumento', 'change', PTVEmitir.onTipoPessoaChange);
+
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
 			PTVEmitir.habilitarCampos(false);
 			$('.btnLimparPTV', PTVEmitir.container).hide();
 		}
+
+		$('.txtNumeroDua', PTVEmitir.container).focus();
 	},
 
 	verificarNumeroEnter: function (e) {
@@ -144,6 +157,144 @@ PTVEmitir = {
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 			}
 		});
+	},
+
+	onTipoPessoaChange: function () {
+	    Mensagem.limpar(PTVEmitir.container);
+	    var container = $(this).closest('.destinatario');
+	    $('.txtDocumentoCpfCnpj', container).val('');
+	    $('.novoDestinatario', container).addClass('hide');
+
+	    if ($('.rbTipoPessoaFisica').is(':checked')) {
+	        $('.lblCPFCNPJ', container).html('CPF *');
+	        $('.txtDocumentoCpfCnpj', container).removeClass('maskCnpj').unmask().addClass('maskCpf');
+	    } else {
+	        $('.txtDocumentoCpfCnpj', container).removeClass('maskCpf').unmask().addClass('maskCnpj');
+	        $('.lblCPFCNPJ', container).html('CNPJ *');
+	    }
+
+	    Mascara.load(container);
+	    $('.txtDocumentoCpfCnpj', container).focus();
+	},
+
+	onTipoPessoaDuaChange: function () {
+
+	    $('.txtCPFDUA', PTVEmitir.container).val('');
+	    $('.txtCNPJDUA', PTVEmitir.container).val('');
+
+	    if ($('.rdbPessaoTipo:checked', PTVEmitir.container).val() == '1') {
+	        $('.CnpjPessoaJuridicaContainer', PTVEmitir.container).addClass('hide');
+	        $('.CpfPessoaFisicaContainer', PTVEmitir.container).removeClass('hide');
+	    } else {
+	        $('.CpfPessoaFisicaContainer', PTVEmitir.container).addClass('hide');
+	        $('.CnpjPessoaJuridicaContainer', PTVEmitir.container).removeClass('hide');
+	    }
+	},
+
+	onVerificarDua: function () {
+	    Mensagem.limpar(PTVEmitir.container);
+	    var Cpfcnpj = '';
+
+	    if ($('.rdbPessaoTipo:checked', PTVEmitir.container).val() == '1') {
+	        Cpfcnpj = $('.txtCPFDUA', PTVEmitir.container).val();
+	    } else {
+	        Cpfcnpj = $('.txtCNPJDUA', PTVEmitir.container).val();
+	    }
+
+	    PTVEmitir.RequisicaoDUA = { numero: $('.txtNumeroDua', PTVEmitir.container).val(), cpfcnpj: Cpfcnpj, tipo: $('.rdbPessaoTipo:checked', PTVEmitir.container).val(), ptvId: $('.hdnEmissaoId', PTVEmitir.container).val() };
+
+	    MasterPage.carregando(true);
+
+	    $.ajax({
+	        url: PTVEmitir.settings.urls.urlGravarVerificacaoDUA,
+	        data: JSON.stringify(PTVEmitir.RequisicaoDUA),
+	        cache: false,
+	        async: true,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (!response.Valido) {
+	                MasterPage.carregando(false);
+	                Mensagem.gerar(PTVEmitir.container, response.Msg);
+	                return;
+	            }
+
+	            PTVEmitir.RequisicaoDUA.filaID = response.FilaID;
+
+	            clearTimeout(PTVEmitir.settings.timeoutID);
+	            PTVEmitir.settings.timeoutID =
+					setTimeout(function () {
+					    PTVEmitir.onChecarRetornoDUA();
+					}, 5000);
+	        }
+	    });
+	},
+
+	onChecarRetornoDUA: function () {
+	    $.ajax({
+	        url: PTVEmitir.settings.urls.urlVerificarConsultaDUA,
+	        data: JSON.stringify(PTVEmitir.RequisicaoDUA),
+	        cache: false,
+	        async: true,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (!response.Valido) {
+	                MasterPage.carregando(false);
+	                Mensagem.gerar(PTVEmitir.container, response.Msg);
+	                return;
+	            }
+
+	            if (!response.Consultado) {
+	                clearTimeout(PTVEmitir.settings.timeoutID);
+	                PTVEmitir.settings.timeoutID =
+						setTimeout(function () {
+						    PTVEmitir.onChecarRetornoDUA();
+						}, 5000);
+
+	                return;
+	            }
+
+	            $('.linhaConteudo', PTVEmitir.container).removeClass('hide');
+	            $('.btnVerificarDua', PTVEmitir.container).addClass('hide');
+	            $('.btnLimparDua', PTVEmitir.container).removeClass('hide');
+	            $('.campoTela', PTVEmitir.container).removeClass('hide');
+
+	            $('.txtNumeroDua', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+	            $('.txtCNPJDUA', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+	            $('.txtCPFDUA', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+	            $('.rdbPessaoTipo', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+
+	            MasterPage.carregando(false);
+	        }
+	    });
+	},
+
+	onLimparDua: function () {
+	    $('.linhaConteudo', PTVEmitir.container).addClass('hide');
+	    $('.txtNumeroDua', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
+	    $('.txtCNPJDUA', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
+	    $('.txtCPFDUA', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
+
+	    $('.rdbPessaoTipo', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
+
+	    $('.campoTela', PTVEmitir.container).addClass('hide');
+
+
+	    $('.btnVerificarDua', PTVEmitir.container).removeClass('hide');
+	    $('.btnLimparDua', PTVEmitir.container).addClass('hide');
+
+	},
+
+	verificarDUAEnter: function (e) {
+	    if (e.keyCode == MasterPage.keyENTER) {
+	        $('.btnVerificarDua', PTVEmitir.container).click();
+	    }
+	    return false;
 	},
 
 	onLimparNumeroPTV: function () {
@@ -215,6 +366,41 @@ PTVEmitir = {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
+		}
+
+		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+
+		    $('#EmpreendimentoTexto').removeAttr('disabled');
+		    $('#EmpreendimentoTexto').removeClass('disabled');
+
+		    if ($(this).val() == "7") {
+
+		        $('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).addClass('hide');
+
+		        $('label[for="NumeroOrigem"]').hide();
+		       
+		    } else {
+		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		        $('label[for="NumeroOrigem"]').show();
+		       
+		    }
+		    
+		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
+		}
+		else {
+
+		    $('#EmpreendimentoTexto').attr('disabled', 'disabled');
+		    $('#EmpreendimentoTexto').addClass('disabled');
+
+		    $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		    $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		    $('label[for="NumeroOrigem"]').show();
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<select id="ResponsavelEmpreendimento" class="text ddlResponsaveis disabled" disabled="disabled" name="ResponsavelEmpreendimento">' +
+                                        
+                                        '</select>');
 		}
 
 		$('.txtNumeroOrigem', PTVEmitir.container).focus();
@@ -367,6 +553,8 @@ PTVEmitir = {
 
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
 
+
+
 		var item = {
 			PTV: $('.txtNumero', PTVEmitir.container).val(),
 			OrigemTipo: $('.ddlOrigemTipo', container).val(),
@@ -382,7 +570,8 @@ PTVEmitir = {
 			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
 			EmpreendimentoId: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
 			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val(),
-			ExibeQtdKg: bExibeKg
+			ExibeQtdKg: bExibeKg,
+			SemDoc: $('.ddlOrigemTipo option:selected', container).val() == "7"
 		};
 
 		//Valida Item já adicionado na Grid
@@ -410,9 +599,11 @@ PTVEmitir = {
 		$('tbody', tabela).append(linha);
 		$('.ddlOrigemTipo', container).focus();
 
-		if ($('.txtEmpreendimento', PTVEmitir.container).text() == '') {
+		if ( (!item.SemDoc) && $('.txtEmpreendimento', PTVEmitir.container).text() == '') {
+
 			$('.hdnEmpreendimentoID', PTVEmitir.container).val(item.EmpreendimentoId);
 			$('.txtEmpreendimento', PTVEmitir.container).val(item.EmpreendimentoDeclaratorio);
+            
 			PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
 		}
 		
@@ -446,17 +637,17 @@ PTVEmitir = {
 
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
 
+			    //alert(response.UnidadeMedida.length);
 
-			    var possuiTon=false;
-			    $(".ddlProdutoUnidadeMedida").each(function () {
-
-			      
-			      
-			        if ($(this).val() == "2") {
-			            possuiTon = true;
 			   
-			        }
-			    });
+
+			    var possuiTon = false;
+			 
+			    for (var i = 0 ; i < response.UnidadeMedida.length; i++) {
+
+			        if (response.UnidadeMedida[i].Texto == "T")
+			            possuiTon = true;
+			    }
 			    
 
 			    if (possuiTon) {
@@ -468,9 +659,7 @@ PTVEmitir = {
 			        $('.ddlProdutoUnidadeMedida').removeAttr('disabled');
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
 			    }
-			    
-			  
-
+			   
 
 			}
 		});
@@ -825,11 +1014,27 @@ PTVEmitir = {
 	},
 
 	obter: function () {
-		var pessoaTipo = $('.rbTipoDocumento:checked', PTVEmitir.container).val();
+	    var pessoaTipo = $('.rbTipoDocumento:checked', PTVEmitir.container).val();
+
+	 
+	    var dados = '';
+
+	    if ($('.rdbPessaoTipo:checked', PTVEmitir.container).val() == '1') {
+	        dados = $('.txtCPFDUA', PTVEmitir.container).val();
+	    } else {
+	        dados = $('.txtCNPJDUA', PTVEmitir.container).val();
+	    }
+
+
+
+
+
 		var objeto = {
 			Id: +$('.hdnEmissaoId', PTVEmitir.container).val(),
 			NumeroTipo: +$('.rbTipoNumero:checked', PTVEmitir.container).val(),
 			Numero: $('.txtNumero', PTVEmitir.container).val(),
+			NumeroDua: $('.txtNumeroDua', PTVEmitir.container).val(),
+			CPFCNPJDUA: dados,
 			DataEmissao: { DataTexto: $('.txtDataEmissao', PTVEmitir.container).val() },
 			Situacao: $('.ddlSituacoes', PTVEmitir.container).val(),
 			Empreendimento: $('.hdnEmpreendimentoID', PTVEmitir.container).val(),
@@ -851,6 +1056,8 @@ PTVEmitir = {
 			ValidoAte: { DataTexto: $('.txtDataValidade', PTVEmitir.container).val() },
 			ResponsavelTecnicoId: $('.hdnResponsavelTecnicoId', PTVEmitir.container).val(),
 			LocalEmissaoId: $('.ddlLocalEmissao', PTVEmitir.container).val(),
+			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
+			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			Produtos: []
 		}
 

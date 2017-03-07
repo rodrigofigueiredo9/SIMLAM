@@ -914,6 +914,7 @@
     </Content>
     <Content Include="Content\_pdfAspose\PTV.doc" />
     <Content Include="Content\_pdfAspose\Pendencias_SICAR.doc" />
+    <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Agrotoxicos\listar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />

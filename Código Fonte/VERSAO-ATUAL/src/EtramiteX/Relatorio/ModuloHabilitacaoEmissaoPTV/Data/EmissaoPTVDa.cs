@@ -122,7 +122,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					tab_destinatario_ptv         d,
 					lov_estado                   led,
 					lov_municipio                lmd
-				where e.id = t.empreendimento
+				where e.id(+) = t.empreendimento
 				and (ee.empreendimento = e.id and ee.correspondencia = 0)
 				and le.id = ee.estado
 				and lm.id = ee.municipio
@@ -361,7 +361,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					hst_pessoa                   pr,
 					hst_destinatario_ptv         d,
 					lov_estado                   led
-				where e.empreendimento_id = t.empreendimento_id
+				where e.empreendimento_id(+) = t.empreendimento_id
 				and e.tid = t.empreendimento_tid
 				and (ee.id_hst = e.id and ee.correspondencia = 0)
 				and le.id = ee.estado_id

@@ -3,10 +3,47 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPessoa" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
 
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
+
+<fieldset class="box">
+	<div class="block">
+		<div class="coluna22 divDUA">
+			<label for="NumeroDua">Número DUA*</label>
+			<%=Html.TextBox("NumeroDua", Model.PTV.NumeroDua , ViewModelHelper.SetaDisabled(Model.PTV.Id > 0 , new { @class="text txtNumeroDua maskNumInt", @maxlength="80"}))%>
+		</div>
+
+		<div class="coluna20 divDUA">
+			<label for="PessoaTipo">Tipo *</label><br />
+			<label><%= Html.RadioButton("TipoPessoa", PessoaTipo.FISICA, Model.PTV.TipoPessoa != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaf rdbPessaoTipo" }))%> Física</label>							
+			<label class="append5"><%= Html.RadioButton("TipoPessoa", PessoaTipo.JURIDICA, Model.PTV.TipoPessoa == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaj rdbPessaoTipo" }))%> Jurídica</label>
+		</div>
+
+		<div class="coluna20 prepend7 divDUA">
+			<div class="CpfPessoaFisicaContainer <%= Model.PTV.TipoPessoa != PessoaTipo.JURIDICA ? "" : "hide" %> ">
+				<label for="CPFCNPJDUA">CPF *</label>
+				<%= Html.TextBox("CPFCNPJDUA", Model.PTV.CPFCNPJDUA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "text maskCpf txtCPFDUA" }))%>
+			</div>
+			<div class="CnpjPessoaJuridicaContainer <%= Model.PTV.TipoPessoa == PessoaTipo.JURIDICA ? "" : "hide" %> ">
+				<label for="CPFCNPJDUA">CNPJ *</label>
+				<%= Html.TextBox("CPFCNPJDUA", Model.PTV.CPFCNPJDUA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "text maskCnpj txtCNPJDUA" }))%>
+			</div>
+		</div>
+
+		<% if (!Model.IsVisualizar) { %>
+		<div class="coluna10">
+			<button type="button" class="inlineBotao btnVerificarDua <%= Model.PTV.Id > 0 ? "hide":""%>">Verificar</button>
+			<button type="button" class="inlineBotao btnLimparDua <%= Model.PTV.Id <= 0 ? "hide":""%>">Editar</button>
+		</div>
+		<% } %>
+		</div>
+</fieldset>
+
+<div class="linhaConteudo <%= Model.PTV.Id <= 0 ? "hide":""%>">
+
 <fieldset class="box">
 	<div class="block">
 		<div class="coluna21 divNumeroEnter">
@@ -323,4 +360,5 @@
 			<%= Html.DropDownList("LocalEmissao", Model.lsLocalEmissao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalEmissao"}))%>
 		</div>
 	</div>
+</div>
 </div>

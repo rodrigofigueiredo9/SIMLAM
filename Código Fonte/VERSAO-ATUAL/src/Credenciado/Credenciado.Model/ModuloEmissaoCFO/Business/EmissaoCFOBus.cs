@@ -274,6 +274,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 			return null;
 		}
 
+
+        public List<Lista> ObterEmpreendimentosListaEtramiteX(int produtorID)
+        {
+            try
+            {
+                return _da.ObterEmpreendimentosListaEtramiteX(produtorID);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+            return null;
+        }
+
 		public List<Lista> ObterEmpreendimentosLista(int produtorID)
 		{
 			try
@@ -299,6 +313,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 			}
 			return null;
 		}
+
+       
 
 		public Cultivar ObterCulturaUP(int unidadeProducaoId)
 		{

@@ -49,6 +49,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
         public string EmpreendimentoDeclaratorio { get; set; }
 
         public bool ExibeQtdKg { get; set; }
+
+        public bool SemDoc { get; set; }
 	}
 
 }

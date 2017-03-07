@@ -21,7 +21,8 @@
 			PTVEmitir.settings.dataAtual = '<%= Model.DataAtual%>';
 			PTVEmitir.load($("#central"), {
 				urls: {
-					urlSalvar: '<%= Url.Action("Salvar", "PTV") %>',
+				    urlSalvar: '<%= Url.Action("Salvar", "PTV") %>',
+				    urlAssociarCultura: '<%= Url.Action("Caracterizacoes", "ConfiguracaoVegetal/AssociarCultura") %>',
 					urlVerificarNumeroPTV: '<%= Url.Action("VerificarNumeroPTV", "PTV") %>',
 					urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
 					urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',
