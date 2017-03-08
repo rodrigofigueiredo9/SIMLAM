@@ -312,6 +312,41 @@ PTVEmitir = {
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
 		}
 
+		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+
+		    $('#EmpreendimentoTexto').removeAttr('disabled');
+		    $('#EmpreendimentoTexto').removeClass('disabled');
+
+		    if ($(this).val() == "7") {
+
+		        $('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).addClass('hide');
+
+		        $('label[for="NumeroOrigem"]').hide();
+
+		    } else {
+		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		        $('label[for="NumeroOrigem"]').show();
+
+		    }
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
+		}
+		else {
+
+		    $('#EmpreendimentoTexto').attr('disabled', 'disabled');
+		    $('#EmpreendimentoTexto').addClass('disabled');
+
+		    $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		    $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		    $('label[for="NumeroOrigem"]').show();
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<select id="ResponsavelEmpreendimento" class="text ddlResponsaveis disabled" disabled="disabled" name="ResponsavelEmpreendimento">' +
+
+                                        '</select>');
+		}
+
 		$('.txtNumeroOrigem', PTVEmitir.container).focus();
 	},
 
