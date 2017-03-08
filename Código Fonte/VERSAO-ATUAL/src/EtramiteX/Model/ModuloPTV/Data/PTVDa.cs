@@ -72,7 +72,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 														:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,
 														:numero_nota_fiscal,:valido_ate,:responsavel_tecnico,:responsavel_emp,:municipio_emissao, :dua_numero,:dua_tipo_pessoa,:dua_cpf_cnpj, :empreendimento_sem_doc, :responsavel_sem_doc) returning id into :id";
 
-                if (!string.IsNullOrEmpty(PTV.EmpreendimentoSemDoc))
+                if (PTV.Produtos.Count > 0 && PTV.Produtos[0].SemDoc)
                 {
                     sqlCmd = sqlCmd.Replace(":empreendimento,", "");
                     sqlCmd = sqlCmd.Replace(":responsavel_emp,", "");
@@ -93,7 +93,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("data_emissao", PTV.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
 
-                if (string.IsNullOrEmpty(PTV.EmpreendimentoSemDoc))
+                if (PTV.Produtos.Count > 0 && !PTV.Produtos[0].SemDoc)
                 {
                     comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
                     comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
