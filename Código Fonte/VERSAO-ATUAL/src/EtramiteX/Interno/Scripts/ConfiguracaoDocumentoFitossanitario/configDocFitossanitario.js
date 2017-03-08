@@ -28,8 +28,21 @@ ConfigDocFitossanitario = {
 		Aux.setarFoco(container);
 	},
 
+	obterId: function (container) {
+	    var id = $(container).closest('tr').find('.ItemID').val();
+
+	    alert(id);
+
+	    return id;
+	},
+
 	editarIntervalo: function () {
-	    Modal.abrirHtml('<p>ISSO É UM TESTE</p>');
+	    //alert('oi');
+	    var settings = function (content) {
+	            Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvar(content) }, 'Salvar');
+	    };
+	    var id = ConfigDocFitossanitario.obterId(this);
+	    Modal.abrir(ConfigDocFitossanitario.settings.urls.editar + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Numeração");
 	},
 
 	adicionarIntervalo: function () {

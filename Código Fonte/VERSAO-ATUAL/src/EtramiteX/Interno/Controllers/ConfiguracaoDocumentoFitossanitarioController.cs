@@ -25,7 +25,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
 		public ActionResult Configurar()
 		{
-			ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
+            ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
 				_bus.Obter(),
 				_listaBus.DocumentosFitossanitario.Where(x => 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO || 
@@ -62,18 +62,31 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
-        [HttpPost]
         [Permite(RoleArray = new Object[] {ePermissao.ConfigDocumentoFitossanitario })]
-        public ActionResult Editar()
+        public ActionResult EditarNumeracao(int id)
         {
             int i = 2;
 
-            //só pra testar!!!
-            return Json(new
-            {
-                @EhValido = Validacao.EhValido,
-                @Msg = Validacao.Erros,
-            }, JsonRequestBehavior.AllowGet);
+            //Preciso passar para a view as infos do range a ser editado:
+                //Se é bloco ou digital
+                //Tipo de documento
+                //Número inicial
+                //Número final
+                //id
+            //Na tabela, já vem uma configuração de documento. Preciso então retornar um objeto do tipo ConfiguracaoDocumentoFitossanitario
+            //Pegar na _listacompletaintervalos, o documento fitossanitário que tem o id que eu quero (acho que é o campo tipo)
+            ConfiguracaoDocumentoFitossanitario _listaCompletaIntervalos = _bus.Obter();
+
+            DocumentoFitossanitario intervaloSelecionado = _listaCompletaIntervalos.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
+
+            ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
+                _bus.Obter(),
+                _listaBus.DocumentosFitossanitario.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList());
+
+            return View("EditarNumeracao", intervaloSelecionado);
         }
 	}
 }
