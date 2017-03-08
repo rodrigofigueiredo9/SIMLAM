@@ -38,6 +38,7 @@
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosBloco) { %>
+                    <%--<%= Html.Hidden("ItemID", item.ID, new { @class = "ItemID" })%>--%>
 					<tr>
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
@@ -50,7 +51,8 @@
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
                         <td>
-                            <button type="button" title="Editar" class="icone editar btnEditar"></button>
+                            <input type="hidden" class="ItemID" value="<%:item.ID%>" />
+                            <input type="button" title="Editar" class="icone editar btnEditar" />
                             <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
                         </td>
 					</tr>
@@ -117,7 +119,8 @@
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
                         <td>
-                            <button type="button" title="Editar" class="icone editar btnEditar"></button>
+                            <input type="hidden" class="ItemID" value="<%:item.ID%>" />
+                            <input type="button" title="Editar" class="icone editar btnEditar" />
                             <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
                         </td>
 					</tr>
