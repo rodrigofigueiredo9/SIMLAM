@@ -733,7 +733,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				return false;
 			}
 
-			if(eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
+                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;
