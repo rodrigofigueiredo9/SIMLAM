@@ -8,7 +8,8 @@ ConfigDocFitossanitario = {
 		urls: {
 			salvar: '',
 			validarIntervalo: '',
-            editar: ''
+			editar: '',
+            salvarEdicao: '',
 		},
 		Mensagens: null
 	},
@@ -31,18 +32,45 @@ ConfigDocFitossanitario = {
 	obterId: function (container) {
 	    var id = $(container).closest('tr').find('.ItemID').val();
 
-	    alert(id);
-
 	    return id;
 	},
 
 	editarIntervalo: function () {
-	    //alert('oi');
-	    var settings = function (content) {
-	            Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvar(content) }, 'Salvar');
-	    };
 	    var id = ConfigDocFitossanitario.obterId(this);
+	    
+	    var settings = function (content) {
+	        Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvarEdicao(content) }, 'Salvar');
+	    };
+
 	    Modal.abrir(ConfigDocFitossanitario.settings.urls.editar + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Numeração");
+	},
+
+	salvarEdicao: function(modal){
+	    //Modal.fechar(modal);
+	    Mensagem.limpar(ConfigDocFitossanitario.container);
+	    MasterPage.carregando(true);
+
+	    $.ajax({
+	        url: ConfigDocFitossanitario.settings.urls.salvarEdicao,
+	        data: JSON.stringify({ configuracao: ConfigDocFitossanitario.obter() }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (response.EhValido) {
+	                MasterPage.redireciona(response.Url);
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(ConfigDocFitossanitario.container, response.Msg);
+	            }
+	        }
+	    });
+
+	    MasterPage.carregando(false);
 	},
 
 	adicionarIntervalo: function () {
