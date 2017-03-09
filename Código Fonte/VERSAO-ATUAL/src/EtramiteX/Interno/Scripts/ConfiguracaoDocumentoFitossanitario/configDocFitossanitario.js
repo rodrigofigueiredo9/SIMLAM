@@ -62,7 +62,7 @@ ConfigDocFitossanitario = {
 	        url: ConfigDocFitossanitario.settings.urls.salvarEdicao,
 	        data: JSON.stringify({
 	            configuracao: ConfigDocFitossanitario.obter(),
-	            id: iditem,
+	            idstring: iditem,
 	            novoNumInicial: numInicial,
                 novoNumFinal: numFinal,
 	        }),

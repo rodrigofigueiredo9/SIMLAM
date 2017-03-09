@@ -55,26 +55,37 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             int id = Convert.ToInt32(idString);
             DocumentoFitossanitario editar = configuracao.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
-            editar.NumeroInicial = Convert.ToInt32(novoNumInicial);
-            editar.NumeroFinal = Convert.ToInt32(novoNumFinal);
+
+            long inicioOriginal = editar.NumeroInicial;
+            long fimOriginal = editar.NumeroFinal;
+
+            editar.NumeroInicial = Convert.ToInt64(novoNumInicial);
+            editar.NumeroFinal = Convert.ToInt64(novoNumFinal);
             var intervalos = configuracao.DocumentoFitossanitarioIntervalos.Where(x => x.ID != id).ToList();
 
             //Faz as verificações para ver se o novo intervalo é válido
             _validar.ValidarIntervalo(editar, intervalos);  //Verificações normais relativas a um intervalo
 
             //Trazer a lista de todos os numeros já LIBERADOS (Institucional lívia -> Credenciado -> Consultar número de cfo/cfoc liberado)
+            var lista = _bus.ObterLiberadosIntervalo(editar.TipoDocumentoID, inicioOriginal, fimOriginal);
+
             //Verificar se existem números liberados dentro do intervalo modificado
             //Se existe, verificar se a mudança de range deixa de incluir os números liberados
+            if (lista.Count(x => x < editar.NumeroInicial || x > editar.NumeroFinal) > 0)
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.IntervaloUtilizado());
+            }
+            else
+            {
+                //Se for válido, remove o item original de Configuração
+                configuracao.DocumentoFitossanitarioIntervalos = intervalos;
 
-            //Se for válido, remove o item original de Configuração
-            configuracao.DocumentoFitossanitarioIntervalos = intervalos;
+                //Coloca o item com os novos valores em Configuração
+                configuracao.DocumentoFitossanitarioIntervalos.Add(editar);
 
-            //Coloca o item com os novos valores em Configuração
-            configuracao.DocumentoFitossanitarioIntervalos.Add(editar);
-
-            //Chama a função de salvar, normalmente
-            _bus.Salvar(configuracao);
-
+                //Chama a função de salvar, normalmente
+                _bus.Editar(configuracao, id);
+            }
             return Json(new
             {
                 @EhValido = Validacao.EhValido,

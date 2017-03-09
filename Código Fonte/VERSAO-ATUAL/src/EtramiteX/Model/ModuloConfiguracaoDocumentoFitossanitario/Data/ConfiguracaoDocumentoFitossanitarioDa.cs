@@ -41,6 +41,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			}
 		}
 
+        internal void SalvarEdicaoIntervalo(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado, BancoDeDados banco = null)
+        {
+            if (configuracao == null)
+            {
+                throw new Exception("Configuração é nula.");
+            }
+
+            EditarIntervalo(configuracao, idEditado, banco);
+        }
+
 		internal void Criar(ConfiguracaoDocumentoFitossanitario configuracao, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -123,6 +133,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			}
 		}
 
+        internal void EditarIntervalo(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                Comando comando = bancoDeDados.CriarComando(@"update cnf_doc_fitossanitario t set t.tid = :tid where t.id = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("id", configuracao.ID, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando("delete from cnf_doc_fito_intervalo where configuracao = :configuracao ");
+                comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "id", DbType.Int32, configuracao.DocumentoFitossanitarioIntervalos.Select(x => x.ID).ToList());
+                comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                foreach (var item in configuracao.DocumentoFitossanitarioIntervalos)
+                {
+                    if (item.ID != idEditado)
+                    {
+                        continue;
+                    }
+
+                    comando = bancoDeDados.CriarComando(@"
+					update cnf_doc_fito_intervalo set numero_inicial=" + item.NumeroInicial + ", numero_final=" + item.NumeroFinal + " where id = " + item.ID);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                Historico.Gerar(configuracao.ID, eHistoricoArtefato.configdocumentofitossanitario, eHistoricoAcao.atualizar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
 		#endregion
 
 		#region Obter
@@ -183,6 +230,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
 			return retorno;
 		}
+
+        internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, BancoDeDados banco = null)
+        {
+            List<long> retorno = new List<long>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+				select t.* from tab_numero_cfo_cfoc t, hst_liberacao_cfo_cfoc h 
+				where h.liberacao_id = t.liberacao
+                      and t.numero >= " + inicio + " and t.numero <= " + fim +
+                      " and t.tipo_documento = " + tipo);
+
+                //comando.DbCommand.CommandText += comando.FiltroAnd("t.tipo_documento", "tipo_documento", tipo);
+
+                //comando.AdicionarParametroEntrada("inicio", inicio, DbType.Int64);
+                //comando.AdicionarParametroEntrada("fim", inicio, DbType.Int64);
+
+                comando.DbCommand.CommandText += " order by t.numero";
+//                Comando comando = bancoDeDados.CriarComando(@"
+//				select t.* from tab_numero_cfo_cfoc t, hst_liberacao_cfo_cfoc h 
+//				where h.responsavel_tecnico_id = :credenciado_id and h.liberacao_id = t.liberacao and t.tipo_numero = :tipo_numero ");
+
+//                comando.AdicionarParametroEntrada("tipo_numero", filtro.TipoNumero, DbType.Int32);
+//                comando.AdicionarParametroEntrada("credenciado_id", filtro.CredenciadoId, DbType.Int32);
+
+                //comando.DbCommand.CommandText += comando.FiltroAnd("t.numero", "numero", filtro.Numero);
+
+                //comando.DbCommand.CommandText += comando.FiltroAnd("t.tipo_documento", "tipo_documento", filtro.TipoDocumento);
+
+                //if (!string.IsNullOrEmpty(filtro.DataInicialEmissao))
+                //{
+                //    comando.DbCommand.CommandText += " and h.data_execucao >= :data_inicial ";
+                //    comando.AdicionarParametroEntrada("data_inicial", filtro.DataInicialEmissao, DbType.DateTime);
+                //}
+
+                //if (!string.IsNullOrEmpty(filtro.DataFinalEmissao))
+                //{
+                //    comando.DbCommand.CommandText += " and h.data_execucao <= :data_final";
+                //    comando.AdicionarParametroEntrada("data_final", filtro.DataFinalEmissao, DbType.DateTime);
+                //}
+
+                //comando.DbCommand.CommandText += " order by t.numero";
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    long numero;
+                    while (reader.Read())
+                    {
+                        numero = reader.GetValue<long>("numero");
+                        retorno.Add(numero);
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
 
 		#endregion
 
