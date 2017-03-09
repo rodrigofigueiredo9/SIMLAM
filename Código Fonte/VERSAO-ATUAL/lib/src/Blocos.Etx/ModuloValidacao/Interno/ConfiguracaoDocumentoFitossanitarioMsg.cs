@@ -68,5 +68,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("O número final do {0} deve ser múltiplo de 25.", tipo), Campo = tipo + "NumeroFinal" };
 		}
+
+        public Mensagem IntervaloUtilizado()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existem números do intervalo original que já foram utilizados."), Campo = "NumeroFinal" };
+        }
 	}
 }
