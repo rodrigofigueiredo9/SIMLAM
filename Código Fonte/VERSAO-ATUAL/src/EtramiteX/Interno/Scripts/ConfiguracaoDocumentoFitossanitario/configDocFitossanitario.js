@@ -16,6 +16,8 @@ ConfigDocFitossanitario = {
 
 	container: null,
 
+    modalOrigem: null,
+
 	load: function (container, options) {
         
 		if (options) { $.extend(ConfigDocFitossanitario.settings, options); }
@@ -39,20 +41,31 @@ ConfigDocFitossanitario = {
 	    var id = ConfigDocFitossanitario.obterId(this);
 	    
 	    var settings = function (content) {
-	        Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvarEdicao(content) }, 'Salvar');
+	        Modal.defaultButtons(content, function () {
+	            ConfigDocFitossanitario.modalOrigem = content;
+	            ConfigDocFitossanitario.salvarEdicao(content, id);
+	        }, 'Salvar');
 	    };
 
 	    Modal.abrir(ConfigDocFitossanitario.settings.urls.editar + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Numeração");
 	},
 
-	salvarEdicao: function(modal){
+	salvarEdicao: function(modal, iditem){
 	    //Modal.fechar(modal);
 	    Mensagem.limpar(ConfigDocFitossanitario.container);
 	    MasterPage.carregando(true);
 
+	    var numInicial = ConfigDocFitossanitario.modalOrigem.find('.txtNumeroInicial').val();
+	    var numFinal = ConfigDocFitossanitario.modalOrigem.find('.txtNumeroFinal').val();
+
 	    $.ajax({
 	        url: ConfigDocFitossanitario.settings.urls.salvarEdicao,
-	        data: JSON.stringify({ configuracao: ConfigDocFitossanitario.obter() }),
+	        data: JSON.stringify({
+	            configuracao: ConfigDocFitossanitario.obter(),
+	            id: iditem,
+	            novoNumInicial: numInicial,
+                novoNumFinal: numFinal,
+	        }),
 	        cache: false,
 	        async: false,
 	        type: 'POST',
