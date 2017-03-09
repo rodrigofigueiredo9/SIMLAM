@@ -60,7 +60,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			}
 
 
-            if (ptv.Produtos.Count > 0 && !ptv.Produtos[0].SemDoc)
+            if (ptv.Produtos.Count > 0 && ( (!ptv.Produtos[0].SemDoc) && 
+                (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado) ) )
             {
                 if (ptv.Empreendimento <= 0)
                 {

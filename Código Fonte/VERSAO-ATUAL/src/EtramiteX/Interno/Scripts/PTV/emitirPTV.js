@@ -603,8 +603,9 @@ PTVEmitir = {
 
 			$('.hdnEmpreendimentoID', PTVEmitir.container).val(item.EmpreendimentoId);
 			$('.txtEmpreendimento', PTVEmitir.container).val(item.EmpreendimentoDeclaratorio);
-            
-			PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
+             
+			if ( item.OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado )
+			    PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
 		}
 		
 		Listar.atualizarEstiloTable(tabela);
