@@ -51,8 +51,28 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
-        public ActionResult SalvarEdicao(ConfiguracaoDocumentoFitossanitario configuracao)
+        public ActionResult SalvarEdicao(ConfiguracaoDocumentoFitossanitario configuracao, string idString, string novoNumInicial, string novoNumFinal)
         {
+            int id = Convert.ToInt32(idString);
+            DocumentoFitossanitario editar = configuracao.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
+            editar.NumeroInicial = Convert.ToInt32(novoNumInicial);
+            editar.NumeroFinal = Convert.ToInt32(novoNumFinal);
+            var intervalos = configuracao.DocumentoFitossanitarioIntervalos.Where(x => x.ID != id).ToList();
+
+            //Faz as verificações para ver se o novo intervalo é válido
+            _validar.ValidarIntervalo(editar, intervalos);  //Verificações normais relativas a um intervalo
+
+            //Trazer a lista de todos os numeros já LIBERADOS (Institucional lívia -> Credenciado -> Consultar número de cfo/cfoc liberado)
+            //Verificar se existem números liberados dentro do intervalo modificado
+            //Se existe, verificar se a mudança de range deixa de incluir os números liberados
+
+            //Se for válido, remove o item original de Configuração
+            configuracao.DocumentoFitossanitarioIntervalos = intervalos;
+
+            //Coloca o item com os novos valores em Configuração
+            configuracao.DocumentoFitossanitarioIntervalos.Add(editar);
+
+            //Chama a função de salvar, normalmente
             _bus.Salvar(configuracao);
 
             return Json(new
