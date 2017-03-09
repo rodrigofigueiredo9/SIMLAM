@@ -1,4 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DocumentoFitossanitario>" %>
 
@@ -7,9 +8,12 @@
 	<legend>N° Bloco</legend>
 
 	<div class="block">
+        <input type="hidden" class="ItemID" value="<%:Model.ID%>" />
 		<div class="coluna20">
 			<label>Tipo do Documento*</label>
-			<%= Html.TextBox("BlocoTipoDocumento", Model.TipoDocumentoTexto, new { @class = "text ddlBloco ddlTipoDocumento setarFoco" })%>
+            <%--<%=Html.TextBox(, , ViewModelHelper.SetaDisabled(Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Digital || Model.IsVisualizar, new { @class="text txtDataEmissao maskData"}))%>--%>
+            <%--<%= Html.TextBox("BlocoTipoDocumento", Model.TipoDocumentoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlBloco ddlTipoDocumento" })%>--%>
+			<%= Html.TextBox("BlocoTipoDocumento", Model.TipoDocumentoTexto, new { @class = "text ddlBloco ddlTipoDocumento", @readonly="readonly" })%>
 		</div>
 		<div class="coluna20">
 			<label>Número inicial*</label>
