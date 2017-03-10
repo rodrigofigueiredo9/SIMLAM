@@ -37,16 +37,55 @@ ConfigDocFitossanitario = {
 	    return id;
 	},
 
+	obterTipo: function (container) {
+	    var tipo = $(container).closest('tr').find('.TipoDocumentoTexto').text();
+
+	    return tipo;
+	},
+
+	toggleMaskModal: function (tipo) {
+	    function toggleClass(element, tipo) {
+	        switch (tipo) {
+	            case "CFO":
+	            case "CFOC":
+	                element.classList.remove("maskNum10");
+	                element.classList.add("maskNum8");
+	                break;
+
+	            default:
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
+	        }
+	    }
+
+	    var campoInicial = document.querySelector(".txtNumeroInicial")
+	    var campoFinal = document.querySelector(".txtNumeroFinal")
+
+	    toggleClass(campoInicial, tipo)
+	    toggleClass(campoFinal, tipo)
+
+	    $(".maskNum8")
+            .unmask()
+            .mask("99999999");
+
+	    $(".maskNum10")
+            .unmask()
+            .mask("9999999999");
+	},
+
 	editarIntervalo: function () {
 	    var id = ConfigDocFitossanitario.obterId(this);
+
+	    var tipo = ConfigDocFitossanitario.obterTipo(this);
 	    
 	    var settings = function (content) {
 	        Modal.defaultButtons(content, function () {
 	            ConfigDocFitossanitario.modalOrigem = content;
 	            ConfigDocFitossanitario.salvarEdicao(content, id);
 	        }, 'Salvar');
+	        ConfigDocFitossanitario.toggleMaskModal(tipo);
 	    };
-
+	    
 	    Modal.abrir(ConfigDocFitossanitario.settings.urls.editar + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Numeração");
 	},
 
