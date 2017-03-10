@@ -258,7 +258,7 @@ ConfigDocFitossanitario = {
 	                element.classList.remove("maskNum8");
 	                element.classList.add("maskNum10");
 	        }
-	    }
+        }
 
         var target = evt.target
         var txt = target.selectedOptions[0].text
@@ -272,6 +272,25 @@ ConfigDocFitossanitario = {
 
 	    toggleClass(campoInicial, txt)
 	    toggleClass(campoFinal, txt)
+
+	    //Pegar todas as linhas da tabela em que o texto do campo TipoDocumentoTexto é igual ao txt
+	    //Mudar todas essas linhas para hidden
+
+	    //var id = $(container).closest('tr').find('.ItemID').val();
+	    $(this).closest('fieldset').find('.Linha').each(function () {
+	        if (txt == "CFO" || txt == "CFOC" || txt == "PTV") {
+	            var linha = $(this);
+	            if (linha.find('.TipoDocumentoTexto').text() != txt) {
+	                linha.hide();
+	            } else {
+	                linha.show();
+	            }
+
+	        } else {
+	            var linha = $(this);
+	            linha.show();
+	        }
+	    });
 
 	    $(".maskNum8" + complemento)
             .unmask()
