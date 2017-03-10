@@ -52,7 +52,7 @@
                         <td>
                             <input type="hidden" class="ItemID" value="<%:item.ID%>" />
                             <input type="button" title="Editar" class="icone editar btnEditar" />
-                            <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
+                            <input type="button" title="Excluir" class="icone excluir btnExcluir" />
                         </td>
 					</tr>
 					<% } %>

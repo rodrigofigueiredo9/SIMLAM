@@ -170,6 +170,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             }
         }
 
+        internal void Excluir(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                Comando comando = bancoDeDados.CriarComando(@"update cnf_doc_fitossanitario t set t.tid = :tid where t.id = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("id", configuracao.ID, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando("delete from cnf_doc_fito_intervalo where configuracao = :configuracao ");
+                comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "id", DbType.Int32, configuracao.DocumentoFitossanitarioIntervalos.Select(x => x.ID).ToList());
+                comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                foreach (var item in configuracao.DocumentoFitossanitarioIntervalos)
+                {
+                    if (item.ID != idEditado)
+                    {
+                        continue;
+                    }
+
+                    comando = bancoDeDados.CriarComando(@"
+					delete from cnf_doc_fito_intervalo where id = " + item.ID);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                Historico.Gerar(configuracao.ID, eHistoricoArtefato.configdocumentofitossanitario, eHistoricoAcao.atualizar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
 		#endregion
 
 		#region Obter

@@ -66,12 +66,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             //Faz as verificações para ver se o novo intervalo é válido
             _validar.ValidarIntervalo(editar, intervalos);  //Verificações normais relativas a um intervalo
 
-            //Trazer a lista de todos os numeros já LIBERADOS
+            //Trazer a lista de todos os numeros já LIBERADOS (CFO/CFOC) ou USADOS (PTV) dentro do intervalo
             var lista = _bus.ObterLiberadosIntervalo(editar.TipoDocumentoID, inicioOriginal, fimOriginal);
 
-            //Verificar se existem números liberados dentro do intervalo modificado
+            //Verifica se existem números liberados dentro do intervalo modificado
             //Se existe, verificar se a mudança de range deixa de incluir os números liberados
-
             if (lista.Count(x => x < editar.NumeroInicial || x > editar.NumeroFinal) > 0)
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.IntervaloUtilizado());
@@ -84,7 +83,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 //Coloca o item com os novos valores em Configuração
                 configuracao.DocumentoFitossanitarioIntervalos.Add(editar);
 
-                //Chama a função de salvar, normalmente
+                //Salva as edições
                 _bus.Editar(configuracao, id);
             }
             return Json(new
@@ -118,5 +117,33 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             return View("EditarNumeracao", intervaloSelecionado);
         }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult Excluir(ConfiguracaoDocumentoFitossanitario configuracao, string idString)
+        {
+            int id = Convert.ToInt32(idString);
+            DocumentoFitossanitario docExcluir = configuracao.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
+
+            //Trazer a lista de todos os numeros já LIBERADOS (CFO/CFOC) ou USADOS (PTV) dentro do intervalo
+            var lista = _bus.ObterLiberadosIntervalo(docExcluir.TipoDocumentoID, docExcluir.NumeroInicial, docExcluir.NumeroFinal);
+
+            //Se a lista não é vazia o intervalo não pode ser excluído
+            if (lista.Count() > 0)
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.IntervaloUtilizado());
+            }
+            else
+            {
+                _bus.Excluir(configuracao, id);
+            }
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Url = Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
+        }
+
 	}
 }
