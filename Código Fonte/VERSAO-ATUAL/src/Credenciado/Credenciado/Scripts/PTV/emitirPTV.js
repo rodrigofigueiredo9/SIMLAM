@@ -1118,6 +1118,8 @@ PTVEmitir = {
 			DataHoraVistoriaId: $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).val(),
 			TipoPessoa: $('.rdbPessaoTipo:checked', PTVEmitir.container).val(),
 			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVEmitir.container).html(),
+			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
+			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			Produtos: [],
 			Anexos: []
 		}
