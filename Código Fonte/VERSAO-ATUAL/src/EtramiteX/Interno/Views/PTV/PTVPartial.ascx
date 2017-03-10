@@ -204,7 +204,7 @@
 	<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="coluna58">
 			<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-            <% if (Model.PTV.Produtos.Count > 1 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
+            <% if (Model.PTV.Produtos.Count > 0 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
                { %>
 			    <%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.ResponsavelSemDoc , ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
             <% } else { %>
