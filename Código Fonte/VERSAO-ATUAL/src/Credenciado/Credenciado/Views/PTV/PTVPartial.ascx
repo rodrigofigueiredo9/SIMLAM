@@ -170,15 +170,24 @@
 		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="EmpreendimentoTexto">Empreendimento *</label>
-				<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
-				<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+				 <% if ( !string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) ) { %>
+			        <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoSemDoc, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+                <%} else { %>
+                    <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+			    <input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+                    <% }%>
 			</div>		
 		</div>
 
 		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+				   <% if (Model.PTV.Produtos.Count > 0 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
+                   { %>
+			        <%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.ResponsavelSemDoc , ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
+                <% } else { %>
+                    <%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 2, new { @class="text ddlResponsaveis"}))%>
+                <% } %>
 			</div>
 		</div>
 	</fieldset>
