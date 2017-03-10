@@ -66,11 +66,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             //Faz as verificações para ver se o novo intervalo é válido
             _validar.ValidarIntervalo(editar, intervalos);  //Verificações normais relativas a um intervalo
 
-            //Trazer a lista de todos os numeros já LIBERADOS (Institucional lívia -> Credenciado -> Consultar número de cfo/cfoc liberado)
+            //Trazer a lista de todos os numeros já LIBERADOS
             var lista = _bus.ObterLiberadosIntervalo(editar.TipoDocumentoID, inicioOriginal, fimOriginal);
 
             //Verificar se existem números liberados dentro do intervalo modificado
             //Se existe, verificar se a mudança de range deixa de incluir os números liberados
+
             if (lista.Count(x => x < editar.NumeroInicial || x > editar.NumeroFinal) > 0)
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.IntervaloUtilizado());
