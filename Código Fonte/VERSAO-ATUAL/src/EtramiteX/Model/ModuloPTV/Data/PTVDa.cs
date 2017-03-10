@@ -1708,7 +1708,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				"select count(*) from (" + String.Format(@"select pt.id
 														from {0}tab_ptv pt,{0}tab_ptv_produto pr,{0}ins_empreendimento em,{0}lov_solicitacao_ptv_situacao st,{0}tab_cultura c,{0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
 														where pt.id(+) = pr.ptv
-															and em.id = pt.empreendimento 
+															and em.id(+) = pt.empreendimento 
 															and st.id = pt.situacao 
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
@@ -1725,19 +1725,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 												pt.id,
 												pt.numero,
 												pt.tipo_numero,
-												em.denominador as empreendimento,
+												nvl(em.denominador, pt.empreendimento_sem_doc) as empreendimento,
 											    pt.situacao,
 												st.texto as situacao_texto,
 												pt.responsavel_tecnico,
 												stragg(c.texto || '/' || trim(cc.cultivar)) as cultura_cultivar
 											from {0}tab_ptv pt, {0}tab_ptv_produto pr, {0}ins_empreendimento em, {0}lov_solicitacao_ptv_situacao st, {0}tab_cultura c, {0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
 											where pt.id(+) = pr.ptv
-											  and em.id = pt.empreendimento
+											  and em.id(+) = pt.empreendimento
 											  and st.id = pt.situacao
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 											  
                                               and pt.situacao in (2, 4, 5, 6)
-										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, em.denominador, pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion
