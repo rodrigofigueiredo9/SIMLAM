@@ -38,7 +38,6 @@
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosBloco) { %>
-                    <%--<%= Html.Hidden("ItemID", item.ID, new { @class = "ItemID" })%>--%>
 					<tr>
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
