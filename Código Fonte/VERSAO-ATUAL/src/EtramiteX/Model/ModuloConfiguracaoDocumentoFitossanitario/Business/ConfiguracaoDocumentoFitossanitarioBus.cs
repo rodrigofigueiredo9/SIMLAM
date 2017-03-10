@@ -81,6 +81,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return Validacao.EhValido;
         }
 
+        public bool Excluir(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado)
+        {
+            try
+            {
+                GerenciadorTransacao.ObterIDAtual();
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                    _da.Excluir(configuracao, idEditado);
+
+                    bancoDeDados.Commit();
+
+                    Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.Excluir);
+                }
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return Validacao.EhValido;
+        }
+
 		#endregion
 
 		#region Obter

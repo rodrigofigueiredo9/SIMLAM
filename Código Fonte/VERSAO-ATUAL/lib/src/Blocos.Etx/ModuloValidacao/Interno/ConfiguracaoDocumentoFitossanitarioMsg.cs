@@ -15,7 +15,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	public class ConfiguracaoDocumentoFitossanitarioMsg
 	{
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de numeração salvo com sucesso." }; } }
-		public Mensagem NumeroInicialExiste(string tipoDocumento) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existe número no intervalo do {0} que já está adicionado.", tipoDocumento) }; }
+
+        public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Intervalo de numeração excluído com sucesso." }; } }
+		
+        public Mensagem NumeroInicialExiste(string tipoDocumento) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existe número no intervalo do {0} que já está adicionado.", tipoDocumento) }; }
 
 		public Mensagem TipoDocumentoDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Existe número no intervalo do #TIPO# que já está adicionado.", Campo = "NumeroInicial" }; } }
 
@@ -71,7 +74,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         public Mensagem IntervaloUtilizado()
         {
-            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existem números do intervalo original que já foram utilizados."), Campo = "NumeroFinal" };
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existem números do intervalo que já foram utilizados."), Campo = "NumeroFinal" };
         }
 	}
 }
