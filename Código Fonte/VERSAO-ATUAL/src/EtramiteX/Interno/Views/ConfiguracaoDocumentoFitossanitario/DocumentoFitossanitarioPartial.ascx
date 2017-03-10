@@ -38,7 +38,7 @@
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosBloco) { %>
-					<tr>
+					<tr class="Linha">
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 							<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
@@ -106,7 +106,7 @@
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosDigitais) { %>
-					<tr>
+					<tr class="Linha">
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 							<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
