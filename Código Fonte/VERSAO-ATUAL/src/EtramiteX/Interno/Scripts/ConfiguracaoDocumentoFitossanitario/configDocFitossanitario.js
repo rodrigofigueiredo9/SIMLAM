@@ -9,7 +9,8 @@ ConfigDocFitossanitario = {
 			salvar: '',
 			validarIntervalo: '',
 			editar: '',
-            salvarEdicao: '',
+			salvarEdicao: '',
+            excluir: '',
 		},
 		Mensagens: null
 	},
@@ -26,6 +27,7 @@ ConfigDocFitossanitario = {
 		container.delegate('.btnAdicionarNumero', 'click', ConfigDocFitossanitario.adicionarIntervalo);
 		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.abrirModalConfirmarSalvar);
 		container.delegate('.btnEditar', 'click', ConfigDocFitossanitario.editarIntervalo);
+		container.delegate('.btnExcluir', 'click', ConfigDocFitossanitario.abrirModalConfirmarExcluir);
 		container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
 
 		Aux.setarFoco(container);
@@ -41,36 +43,6 @@ ConfigDocFitossanitario = {
 	    var tipo = $(container).closest('tr').find('.TipoDocumentoTexto').text();
 
 	    return tipo;
-	},
-
-	toggleMaskModal: function (tipo) {
-	    function toggleClass(element, tipo) {
-	        switch (tipo) {
-	            case "CFO":
-	            case "CFOC":
-	                element.classList.remove("maskNum10");
-	                element.classList.add("maskNum8");
-	                break;
-
-	            default:
-	                element.classList.remove("maskNum8");
-	                element.classList.add("maskNum10");
-	        }
-	    }
-
-	    var campoInicial = document.querySelector(".txtNumeroInicial")
-	    var campoFinal = document.querySelector(".txtNumeroFinal")
-
-	    toggleClass(campoInicial, tipo)
-	    toggleClass(campoFinal, tipo)
-
-	    $(".maskNum8")
-            .unmask()
-            .mask("99999999");
-
-	    $(".maskNum10")
-            .unmask()
-            .mask("9999999999");
 	},
 
 	editarIntervalo: function () {
@@ -226,6 +198,53 @@ ConfigDocFitossanitario = {
 		return objeto;
 	},
 
+	abrirModalConfirmarExcluir: function () {
+	    var html = '<p>Deseja confirmar a ação?</p>';
+
+	    var id = ConfigDocFitossanitario.obterId(this);
+	    
+	    var settings = {
+	        titulo: 'Confirmar',
+	        onLoadCallbackName: function (content) {
+	            Modal.defaultButtons(content, function () {
+	                ConfigDocFitossanitario.excluirIntervalo(content, id);
+	            }, 'Sim');
+	        }
+	    };
+	    Modal.abrirHtml(html, settings);
+	},
+
+	excluirIntervalo: function (modal, idItem) {
+	    Modal.fechar(modal);
+	    Mensagem.limpar(ConfigDocFitossanitario.container);
+	    MasterPage.carregando(true);
+	    
+	    $.ajax({
+	        url: ConfigDocFitossanitario.settings.urls.excluir,
+	        data: JSON.stringify({
+	            configuracao: ConfigDocFitossanitario.obter(),
+	            idString: idItem,
+	        }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (response.EhValido) {
+	                MasterPage.redireciona(response.Url);
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(ConfigDocFitossanitario.container, response.Msg);
+	            }
+	        }
+	    });
+	    
+	    MasterPage.carregando(false);
+	},
+
 	toggleMask: function (evt) {
         function toggleClass(element, txt) {
 	        switch (txt) {
@@ -263,5 +282,35 @@ ConfigDocFitossanitario = {
             .unmask()
             .mask("9999999999")
             .val("");
+	},
+
+	toggleMaskModal: function (tipo) {
+	    function toggleClass(element, tipo) {
+	        switch (tipo) {
+	            case "CFO":
+	            case "CFOC":
+	                element.classList.remove("maskNum10");
+	                element.classList.add("maskNum8");
+	                break;
+
+	            default:
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
+	        }
+	    }
+
+	    var campoInicial = document.querySelector(".txtNumeroInicial")
+	    var campoFinal = document.querySelector(".txtNumeroFinal")
+
+	    toggleClass(campoInicial, tipo)
+	    toggleClass(campoFinal, tipo)
+
+	    $(".maskNum8")
+            .unmask()
+            .mask("99999999");
+
+	    $(".maskNum10")
+            .unmask()
+            .mask("9999999999");
 	}
 }
