@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				return false;
             }
 
-            if (caracterizacao.Id > 0 && caracterizacao.CodigoPropriedade.ToString().Length < 11)
+            if ((caracterizacao.Id > 0 || caracterizacao.PossuiCodigoPropriedade) && caracterizacao.CodigoPropriedade.ToString().Length < 11)
             {
                 Validacao.Add(Mensagem.UnidadeProducao.CodigoPropriedadeInvalido);
                 return false;
