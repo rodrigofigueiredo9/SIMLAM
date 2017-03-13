@@ -1,4 +1,4 @@
-﻿namespace Tecnomapas.Blocos.Entities.Interno.Security
+namespace Tecnomapas.Blocos.Entities.Interno.Security
 {
 	public enum ePermissao
 	{
