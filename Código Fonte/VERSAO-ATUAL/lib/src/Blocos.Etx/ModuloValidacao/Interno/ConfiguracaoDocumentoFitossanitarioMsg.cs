@@ -76,5 +76,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         {
             return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existem números do intervalo que já foram utilizados."), Campo = "NumeroFinal" };
         }
+
+        public Mensagem IntervaloEditadoNaoSalvo()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Não é possível editar um intervalo não salvo."), Campo = "Editar" };
+        }
 	}
 }

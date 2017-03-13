@@ -124,6 +124,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return null;
 		}
 
+        public ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false)
+        {
+            try
+            {
+                return _da.ObterAnoCorrente(simplificado);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
         public List<long> ObterLiberadosIntervalo(int tipo, long inicio, long fim)
         {
             List<long> retorno = new List<long>();
