@@ -268,6 +268,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return retorno;
 		}
 
+        internal ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false, BancoDeDados banco = null)
+        {
+            ConfiguracaoDocumentoFitossanitario retorno = new ConfiguracaoDocumentoFitossanitario();
+
+            using (BancoDeDados bancoDedados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDedados.CriarComando(@"select id, tid from cnf_doc_fitossanitario", EsquemaBanco);
+
+                using (IDataReader reader = bancoDedados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        retorno.ID = reader.GetValue<int>("id");
+                        retorno.Tid = reader.GetValue<string>("tid");
+                    }
+
+                    reader.Close();
+                }
+
+                if (retorno == null || retorno.ID < 1 || simplificado)
+                {
+                    return retorno;
+                }
+
+                #region Intervalos
+
+                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
+				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
+                                                      where lt.id = i.tipo_documento and i.configuracao = :configuracao", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
+
+                using (IDataReader reader = bancoDedados.ExecutarReader(comando))
+                {
+                    DocumentoFitossanitario item = null;
+
+                    while (reader.Read())
+                    {
+                        item = new DocumentoFitossanitario();
+                        item.ID = reader.GetValue<int>("id");
+                        item.TID = reader.GetValue<string>("tid");
+                        item.TipoDocumentoID = reader.GetValue<int>("tipo_documento");
+                        item.TipoDocumentoTexto = reader.GetValue<string>("tipo_documento_texto");
+                        item.Tipo = reader.GetValue<int>("tipo");
+                        item.NumeroInicial = reader.GetValue<long>("numero_inicial");
+                        item.NumeroFinal = reader.GetValue<long>("numero_final");
+                        retorno.DocumentoFitossanitarioIntervalos.Add(item);
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return retorno;
+        }
+
         internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, BancoDeDados banco = null)
         {
             List<long> retorno = new List<long>();

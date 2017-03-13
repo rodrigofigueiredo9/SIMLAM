@@ -26,7 +26,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Configurar()
 		{
             ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
-				_bus.Obter(),
+                //_bus.Obter(),
+                _bus.ObterAnoCorrente(),
 				_listaBus.DocumentosFitossanitario.Where(x => 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO || 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC || 
@@ -107,12 +108,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult ValidarEdicao(string idStr)
+        {
+            int id;
+            if (!int.TryParse(idStr, out id) || id <= 0)
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.IntervaloEditadoNaoSalvo());
+            }
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         [Permite(RoleArray = new Object[] {ePermissao.ConfigDocumentoFitossanitario })]
         public ActionResult EditarNumeracao(int id)
         {
-            int i = 2;
-
-            ConfiguracaoDocumentoFitossanitario _listaCompletaIntervalos = _bus.Obter();
+            ConfiguracaoDocumentoFitossanitario _listaCompletaIntervalos = _bus.ObterAnoCorrente();
             DocumentoFitossanitario intervaloSelecionado = _listaCompletaIntervalos.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
 
             return View("EditarNumeracao", intervaloSelecionado);
