@@ -101,10 +101,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				comando = bancoDeDados.CriarComando("delete from cnf_doc_fito_intervalo where configuracao = :configuracao ");
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "id", DbType.Int32, configuracao.DocumentoFitossanitarioIntervalos.Select(x => x.ID).ToList());
-				comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
+                //Isso estava excluindo os intervalos que não estavam na lista. Como agora só são exibidos os intervalos do ano corrente, não queremos que os outros sejam apagados.
+                //comando = bancoDeDados.CriarComando("delete from cnf_doc_fito_intervalo where configuracao = :configuracao ");
+                //comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "id", DbType.Int32, configuracao.DocumentoFitossanitarioIntervalos.Select(x => x.ID).ToList());
+                //comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
+                //bancoDeDados.ExecutarNonQuery(comando);
 
 				foreach (var item in configuracao.DocumentoFitossanitarioIntervalos)
 				{
@@ -296,7 +297,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
 				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
-                                                      where lt.id = i.tipo_documento and i.configuracao = :configuracao", EsquemaBanco);
+                                                      where lt.id = i.tipo_documento
+                                                            and i.configuracao = :configuracao
+                                                            and substr(i.NUMERO_INICIAL, 3, 2)=to_char(sysdate, 'YY')", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
 
