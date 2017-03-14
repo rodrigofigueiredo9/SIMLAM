@@ -36,7 +36,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial é obrigatório.", Campo = tipo + "NumeroInicial" };
 		}
-
+        public Mensagem AnoCorrenteObrigatorio(string tipo, string campo)
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O intervalo deve ser referente ao ano corrente.", Campo = tipo + campo };
+        }
 		public Mensagem NumeroInicialInvalido(string tipo)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial deve ser composto de 10 caracteres.", Campo = tipo + "NumeroInicial" };
