@@ -732,6 +732,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			return retorno;
 		}
 
+        internal List<Lista> ObterEmpreendimentosListaEtramiteX(int produtorID, BancoDeDados banco = null)
+        {
+            List<Lista> retorno = new List<Lista>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+					select distinct e.id, e.denominador
+					  from crt_unidade_producao c, tab_empreendimento e
+					 where e.id = c.empreendimento
+					   and c.id in
+						   (select u.unidade_producao
+							  from crt_unidade_producao_unidade u
+							 where u.id in (select p.unidade_producao_unidade
+											  from crt_unidade_prod_un_produtor p
+											 where p.produtor = :produtor))");
+
+                comando.AdicionarParametroEntrada("produtor", produtorID, DbType.Int32);
+                
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("denominador") });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		internal List<Lista> ObterEmpreendimentosLista(int produtorID, int credenciadoID, BancoDeDados banco = null)
 		{
 			List<Lista> retorno = new List<Lista>();
@@ -774,10 +806,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			List<Lista> retorno = new List<Lista>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u, tab_titulo ti 
-					where u.unidade_producao = c.id and c.empreendimento = :empreendimento and ti.empreendimento = c.empreendimento and ti.situacao = 3
-					and u.id in (select p.unidade_producao_unidade from crt_unidade_prod_un_produtor p where p.produtor = :produtor)
-					and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico) group by u.id, u.codigo_up ");
+                Comando comando = bancoDeDados.CriarComando(@" select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u, tab_titulo ti, esp_aber_livro_up_unid uni, esp_abertura_livro_up esp
+                                                                where u.unidade_producao = c.id and c.empreendimento = :empreendimento and esp.titulo = ti.id 
+                                                                and ti.empreendimento = c.empreendimento and ti.situacao = 3 and uni.especificidade = esp.id 
+                                                                and uni.unidade = u.id
+                                                                and u.id in (select p.unidade_producao_unidade from crt_unidade_prod_un_produtor p where p.produtor = :produtor)
+                                                                and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico) group by u.id, u.codigo_up ");
+
+               
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("produtor", produtorID, DbType.Int32);

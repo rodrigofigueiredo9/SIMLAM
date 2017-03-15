@@ -53,20 +53,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			ValidacoesGenericasBus.DataMensagem(ptv.DataEmissao, "DataEmissao", "emissão");
 
+
 			if (ptv.Situacao <= 0)
 			{
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
-			if (ptv.Empreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-			}
 
-			if (ptv.ResponsavelEmpreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-			}
+            if (ptv.Produtos.Count > 0 && ( (!ptv.Produtos[0].SemDoc) && 
+                (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado) ) )
+            {
+                if (ptv.Empreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+                }
+
+                if (ptv.ResponsavelEmpreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+                }
+            }
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -330,6 +336,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		public bool ValidarProduto(PTVProduto item, DateTecno ptvData, List<PTVProduto> lista, int ptvID)
 		{
 			lista = lista ?? new List<PTVProduto>();
+
+            if (item.SemDoc)
+                return true;
 
 			if (item.OrigemTipo <= 0)
 			{
@@ -725,7 +734,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				return false;
 			}
 
-			if(eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
+                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;

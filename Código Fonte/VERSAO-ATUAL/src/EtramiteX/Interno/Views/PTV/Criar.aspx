@@ -34,7 +34,10 @@
 					urlObterLaboratorio: '<%= Url.Action("ObterLaboratorio","PTV") %>',
 					urlObterTratamentoFisso: '<%= Url.Action("ObterTratamentoFitossanitario","PTV") %>',
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
-					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>'
+				    urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
+				    urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
+				    urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',
+				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>'
 				},
 			});
 

@@ -40,9 +40,9 @@ EPTVAnalisar = {
 				break;
 
 			case EPTVAnalisar.settings.idsTela.AgendarFiscalizacao:
-				container = $('.divAprovar', EPTVAnalisar.container).addClass('hide');
-				container = $('.divMotivo', EPTVAnalisar.container).addClass('hide');
-				break;
+				//container = $('.divAprovar', EPTVAnalisar.container).addClass('hide');
+				//container = $('.divMotivo', EPTVAnalisar.container).addClass('hide');
+				//break;
 
 			case EPTVAnalisar.settings.idsTela.Rejeitado:
 			case EPTVAnalisar.settings.idsTela.Bloqueado:

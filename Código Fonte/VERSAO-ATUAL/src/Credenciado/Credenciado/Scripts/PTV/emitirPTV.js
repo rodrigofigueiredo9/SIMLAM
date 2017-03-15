@@ -287,7 +287,7 @@ PTVEmitir = {
 
 	onChangeOrigemTipo: function () {
 		Mensagem.limpar(PTVEmitir.container);
-
+		
 		var labelOrigem = $('.labelOrigem', PTVEmitir.container);
 		labelOrigem.text('');
 		var option = $('option:selected', this);
@@ -310,6 +310,41 @@ PTVEmitir = {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
+		}
+
+		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+
+		    $('#EmpreendimentoTexto').removeAttr('disabled');
+		    $('#EmpreendimentoTexto').removeClass('disabled');
+
+		    if ($(this).val() == "7") {
+
+		        $('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).addClass('hide');
+
+		        $('label[for="NumeroOrigem"]').hide();
+
+		    } else {
+		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		        $('label[for="NumeroOrigem"]').show();
+
+		    }
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
+		}
+		else {
+
+		    $('#EmpreendimentoTexto').attr('disabled', 'disabled');
+		    $('#EmpreendimentoTexto').addClass('disabled');
+
+		    $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		    $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		    $('label[for="NumeroOrigem"]').show();
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<select id="ResponsavelEmpreendimento" class="text ddlResponsaveis disabled" disabled="disabled" name="ResponsavelEmpreendimento">' +
+
+                                        '</select>');
 		}
 
 		$('.txtNumeroOrigem', PTVEmitir.container).focus();
@@ -504,7 +539,10 @@ PTVEmitir = {
 		if ($('.txtEmpreendimento', PTVEmitir.container).text() == '') {
 			$('.hdnEmpreendimentoID', PTVEmitir.container).val(item.EmpreendimentoId);
 			$('.txtEmpreendimento', PTVEmitir.container).val(item.EmpreendimentoDeclaratorio);
-			PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
+
+			if (item.OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)
+			    PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
+		
 		}
 
 		if (item.OrigemTipo == '1' || item.OrigemTipo == '2' || item.OrigemTipo == '3') {
@@ -1080,6 +1118,8 @@ PTVEmitir = {
 			DataHoraVistoriaId: $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).val(),
 			TipoPessoa: $('.rdbPessaoTipo:checked', PTVEmitir.container).val(),
 			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVEmitir.container).html(),
+			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
+			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			Produtos: [],
 			Anexos: []
 		}
