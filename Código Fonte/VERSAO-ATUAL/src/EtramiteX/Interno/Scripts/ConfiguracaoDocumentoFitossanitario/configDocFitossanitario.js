@@ -126,25 +126,13 @@ ConfigDocFitossanitario = {
 
 		ConfigDocFitossanitario.atualizarDataGrid(container, item);
 
-		//Limpa os controles
-		ddl.ddlFirst();
+		//Limpa os controles, mas mantém o tipo de documento selecionado
 		$('.txtNumeroInicial', container).val('');
 		$('.txtNumeroFinal', container).val('');
 	},
 
-	//abrirModalConfirmarSalvar: function () {
-	//	var html = '<p>Deseja confirmar a ação?</p>';
-	//	var settings = {
-	//		titulo: 'Confirmar',
-	//		onLoadCallbackName: function (content) {
-	//			Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvar(content) }, 'Sim');
-	//		}
-	//	};
-	//	Modal.abrirHtml(html, settings);
-	//},
-
 	atualizarDataGrid: function (container, item) {
-	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide').addClass('Linha');
 	    var btnEdit = $('<button type="button" title="Editar" class="icone editar btnEditar"></button><button type="button" title="Excluir" class="icone excluir btnExcluir"></button>');
 
 		linha.find('.hdnItemJSon').val(JSON.stringify(item));
@@ -301,10 +289,8 @@ ConfigDocFitossanitario = {
 	    toggleClass(campoInicial, txt)
 	    toggleClass(campoFinal, txt)
 
-	    //Pegar todas as linhas da tabela em que o texto do campo TipoDocumentoTexto é igual ao txt
-	    //Mudar todas essas linhas para hidden
+	    //Oculta as linhas que não são do mesmo tipo de documento selecionado
 
-	    //var id = $(container).closest('tr').find('.ItemID').val();
 	    $(this).closest('fieldset').find('.Linha').each(function () {
 	        if (txt == "CFO" || txt == "CFOC" || txt == "PTV") {
 	            var linha = $(this);
