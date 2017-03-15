@@ -26,24 +26,12 @@ ConfigDocFitossanitario = {
 		ConfigDocFitossanitario.container = MasterPage.getContent(container);
 
 		container.delegate('.btnAdicionarNumero', 'click', ConfigDocFitossanitario.adicionarIntervalo);
-		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.abrirModalConfirmarSalvar);
+		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.salvar);
 		container.delegate('.btnEditar', 'click', ConfigDocFitossanitario.editarIntervalo);
 		container.delegate('.btnExcluir', 'click', ConfigDocFitossanitario.abrirModalConfirmarExcluir);
 		container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
 
 		Aux.setarFoco(container);
-	},
-
-	obterId: function (container) {
-	    var id = $(container).closest('tr').find('.ItemID').val();
-
-	    return id;
-	},
-
-	obterTipo: function (container) {
-	    var tipo = $(container).closest('tr').find('.TipoDocumentoTexto').text();
-
-	    return tipo;
 	},
 
 	editarIntervalo: function () {
@@ -144,16 +132,16 @@ ConfigDocFitossanitario = {
 		$('.txtNumeroFinal', container).val('');
 	},
 
-	abrirModalConfirmarSalvar: function () {
-		var html = '<p>Deseja confirmar a ação?</p>';
-		var settings = {
-			titulo: 'Confirmar',
-			onLoadCallbackName: function (content) {
-				Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvar(content) }, 'Sim');
-			}
-		};
-		Modal.abrirHtml(html, settings);
-	},
+	//abrirModalConfirmarSalvar: function () {
+	//	var html = '<p>Deseja confirmar a ação?</p>';
+	//	var settings = {
+	//		titulo: 'Confirmar',
+	//		onLoadCallbackName: function (content) {
+	//			Modal.defaultButtons(content, function () { ConfigDocFitossanitario.salvar(content) }, 'Sim');
+	//		}
+	//	};
+	//	Modal.abrirHtml(html, settings);
+	//},
 
 	atualizarDataGrid: function (container, item) {
 	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
@@ -210,17 +198,45 @@ ConfigDocFitossanitario = {
 		return objeto;
 	},
 
+	obterId: function (container) {
+	    var id = $(container).closest('tr').find('.ItemID').val();
+
+	    return id;
+	},
+
+	obterTipo: function (container) {
+	    var tipo = $(container).closest('tr').find('.TipoDocumentoTexto').text();
+
+	    return tipo;
+	},
+
+	obterInicioIntervalo: function (container){
+	    var numero = $(container).closest('tr').find('.NumeroInicial').text();
+
+	    return numero;
+	},
+
+	obterFinalIntervalo: function (container) {
+	    var numero = $(container).closest('tr').find('.NumeroFinal').text();
+
+	    return numero;
+	},
+
 	abrirModalConfirmarExcluir: function () {
-	    var html = '<p>Deseja confirmar a ação?</p>';
+	    var tipo = ConfigDocFitossanitario.obterTipo(this);
+	    var inicio = ConfigDocFitossanitario.obterInicioIntervalo(this);
+	    var fim = ConfigDocFitossanitario.obterFinalIntervalo(this);
+
+	    var html = '<p>Tem certeza de que deseja excluir o intervalo de ' + inicio + ' a ' + fim + ' do tipo ' + tipo + '?</p>';
 
 	    var id = ConfigDocFitossanitario.obterId(this);
 	    
 	    var settings = {
-	        titulo: 'Confirmar',
+	        titulo: 'Excluir Intervalo ' + tipo,
 	        onLoadCallbackName: function (content) {
 	            Modal.defaultButtons(content, function () {
 	                ConfigDocFitossanitario.excluirIntervalo(content, id);
-	            }, 'Sim');
+	            }, 'Excluir');
 	        }
 	    };
 	    Modal.abrirHtml(html, settings);
