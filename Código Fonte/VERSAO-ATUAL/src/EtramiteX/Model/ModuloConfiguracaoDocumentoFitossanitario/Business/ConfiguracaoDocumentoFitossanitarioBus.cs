@@ -51,6 +51,61 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return Validacao.EhValido;
 		}
 
+        public bool Editar(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado)
+        {
+            if (!_validar.Salvar(configuracao))
+            {
+                return false;
+            }
+
+            try
+            {
+                GerenciadorTransacao.ObterIDAtual();
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                    _da.SalvarEdicaoIntervalo(configuracao, idEditado);
+
+                    bancoDeDados.Commit();
+
+                    Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.Salvar);
+                }
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        public bool Excluir(ConfiguracaoDocumentoFitossanitario configuracao, int idEditado)
+        {
+            try
+            {
+                GerenciadorTransacao.ObterIDAtual();
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                    _da.Excluir(configuracao, idEditado);
+
+                    bancoDeDados.Commit();
+
+                    Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.Excluir);
+                }
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return Validacao.EhValido;
+        }
+
 		#endregion
 
 		#region Obter
@@ -68,6 +123,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
 			return null;
 		}
+
+        public ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false)
+        {
+            try
+            {
+                return _da.ObterAnoCorrente(simplificado);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
+        public List<long> ObterLiberadosIntervalo(int tipo, long inicio, long fim)
+        {
+            List<long> retorno = new List<long>();
+            try
+            {
+                retorno = _da.LiberadosIntervalo(tipo, inicio, fim);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return retorno;
+        }
 
 		#endregion
 	}

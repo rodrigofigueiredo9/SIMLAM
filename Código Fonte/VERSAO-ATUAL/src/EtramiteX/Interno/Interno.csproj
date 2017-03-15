@@ -307,6 +307,13 @@
     <Compile Include="ViewModels\VMFiscalizacao\FiscalizacaoAssinanteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
+    <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
+      <DependentUpon>EditarNumeracao.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.designer.cs">
+      <DependentUpon>EditarNumeracao.ascx</DependentUpon>
+    </Compile>
     <Content Include="Areas\Caracterizacoes\Views\Aquicultura\Aquicultura.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Aquicultura\AquiculturaAquicult.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Aquicultura\Criar.aspx" />
@@ -1676,6 +1683,7 @@
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\Cultura\DeclaracaoAdicionalPartial.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Criar.aspx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\DeclaracaoAdicionalPartial.ascx" />

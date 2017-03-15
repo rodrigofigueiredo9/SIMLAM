@@ -45,6 +45,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialObrigatorio(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
 			}
+            else if (intervalo.NumeroInicial.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2, 2))
+            {
+                var temp1 = intervalo.NumeroInicial.ToString().Substring(2, 2);
+                var temp2 = DateTime.Now.Year.ToString().Substring(2, 2);
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.AnoCorrenteObrigatorio(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString(), "NumeroInicial"));
+            }
+            else if (intervalo.NumeroFinal.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2, 2))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.AnoCorrenteObrigatorio(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString(), "NumeroFinal"));
+            }
 			else if (intervalo.NumeroInicial.ToString().Length != 10 
                 && intervalo.TipoDocumentoTexto == "PTV")
 			{
@@ -107,5 +117,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
 			return Validacao.EhValido;
 		}
+
 	}
 }
