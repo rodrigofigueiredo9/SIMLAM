@@ -15,7 +15,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	public class ConfiguracaoDocumentoFitossanitarioMsg
 	{
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de numeração salvo com sucesso." }; } }
-		public Mensagem NumeroInicialExiste(string tipoDocumento) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existe número no intervalo do {0} que já está adicionado.", tipoDocumento) }; }
+
+        public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Intervalo de numeração excluído com sucesso." }; } }
+		
+        public Mensagem NumeroInicialExiste(string tipoDocumento) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existe número no intervalo do {0} que já está adicionado.", tipoDocumento) }; }
 
 		public Mensagem TipoDocumentoDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Existe número no intervalo do #TIPO# que já está adicionado.", Campo = "NumeroInicial" }; } }
 
@@ -33,7 +36,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial é obrigatório.", Campo = tipo + "NumeroInicial" };
 		}
-
+        public Mensagem AnoCorrenteObrigatorio(string tipo, string campo)
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O intervalo deve ser referente ao ano corrente.", Campo = tipo + campo };
+        }
 		public Mensagem NumeroInicialInvalido(string tipo)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O número inicial deve ser composto de 10 caracteres.", Campo = tipo + "NumeroInicial" };
@@ -68,5 +74,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("O número final do {0} deve ser múltiplo de 25.", tipo), Campo = tipo + "NumeroFinal" };
 		}
+
+        public Mensagem IntervaloUtilizado()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Existem números do intervalo que já foram utilizados."), Campo = "NumeroFinal" };
+        }
+
+        public Mensagem IntervaloEditadoNaoSalvo()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Não é possível editar um intervalo não salvo."), Campo = "Editar" };
+        }
 	}
 }
