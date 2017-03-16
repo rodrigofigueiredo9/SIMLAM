@@ -76,7 +76,7 @@ PTVEmitir = {
 		    
 		    var txtunidade = $('.ddlProdutoUnidadeMedida option:selected', container).text();
 
-		    
+		   
 		    
 		    if (txtunidade == "KG") {
 		        $('.txtProdutoQuantidade').unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 2 });
@@ -259,10 +259,10 @@ PTVEmitir = {
 	                return;
 	            }
 
-	            $('.linhaConteudo', PTVEmitir.container).removeClass('hide');
+	            $('.linhaConteudo2', PTVEmitir.container).removeClass('hide');
 	            $('.btnVerificarDua', PTVEmitir.container).addClass('hide');
 	            $('.btnLimparDua', PTVEmitir.container).removeClass('hide');
-	            $('.campoTela', PTVEmitir.container).removeClass('hide');
+	            //$('.campoTela', PTVEmitir.container).removeClass('hide');
 
 	            $('.txtNumeroDua', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
 	            $('.txtCNPJDUA', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
@@ -638,11 +638,12 @@ PTVEmitir = {
 
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
 
-			    //alert(response.UnidadeMedida.length);
-
+			 
 			   
 
 			    var possuiTon = false;
+
+			  
 			 
 			    for (var i = 0 ; i < response.UnidadeMedida.length; i++) {
 
@@ -712,7 +713,7 @@ PTVEmitir = {
                     _objetoExcluido.Produtos[0].Cultivar != val.Cultivar ||
                     _objetoExcluido.Produtos[0].UnidadeMedida != val.UnidadeMedida ||
                     _objetoExcluido.Produtos[0].Quantidade != val.Quantidade ||
-                    _objetoExcluido.Produtos[0].ExibeQtdKg != vak.ExibeQtdKg) &&
+                    _objetoExcluido.Produtos[0].ExibeQtdKg != val.ExibeQtdKg) &&
                     val.EmpreendimentoId > 0) {
 					_temEmpreendimento = true;
 				}
@@ -1074,6 +1075,8 @@ PTVEmitir = {
 		    }
 
 		objeto.Produtos = retorno;
+
+		
 
 		return objeto;
 	}

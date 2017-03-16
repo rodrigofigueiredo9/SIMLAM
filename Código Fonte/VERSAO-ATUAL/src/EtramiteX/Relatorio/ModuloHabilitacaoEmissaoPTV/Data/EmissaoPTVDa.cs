@@ -321,7 +321,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					ee.logradouro,
 					ee.bairro,
 					ee.distrito,
-					nvl(pr.nome, pr.razao_social) as resp_razao_social,
+					nvl(nvl(pr.nome, pr.razao_social),t.responsavel_sem_doc) as resp_razao_social,
 					pr.cpf as empreend_resp_cpf,
 					t.partida_lacrada_origem,
 					t.numero_lacre,
@@ -353,15 +353,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					hst_destinatario_ptv         d,
 					lov_estado                   led
 				where e.empreendimento_id(+) = t.empreendimento_id
-				and e.tid = t.empreendimento_tid
-				and (ee.id_hst = e.id and ee.correspondencia = 0)
-				and le.id = ee.estado_id
+				and e.tid(+) = t.empreendimento_tid
+				and (ee.id_hst(+) = e.id and nvl(ee.correspondencia,0) = 0)
+				and le.id(+) = ee.estado_id
 				and pr.pessoa_id(+) = t.responsavel_emp_id
 				and pr.tid(+) = t.responsavel_emp_tid
-				and d.destinatario_ptv_id = t.destinatario_id
-				and d.tid = t.destinatario_tid
-				and led.id = d.uf_id
-				and t.ptv_id = :ptv_id
+				and d.destinatario_ptv_id(+) = t.destinatario_id
+				and d.tid(+) = t.destinatario_tid
+				and led.id(+) = d.uf_id
+                and t.ptv_id = :ptv_id
 				and t.tid = :tid", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("ptv_id", id, DbType.Int32);

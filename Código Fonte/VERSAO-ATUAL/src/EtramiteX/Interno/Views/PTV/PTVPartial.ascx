@@ -42,7 +42,7 @@
 		</div>
 </fieldset>
 
-<div class="linhaConteudo <%= Model.PTV.Id <= 0 ? "hide":""%>">
+<div class="linhaConteudo2 <%= Model.PTV.Id <= 0 ? "hide":""%>">
 
 <fieldset class="box">
 	<div class="block">
@@ -74,6 +74,10 @@
 		</div>
 	</div>
 </fieldset>
+</div>
+
+
+
 
 <fieldset class="block box identificacao_produto campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Identificação do produto</legend>
@@ -369,5 +373,4 @@
 			<%= Html.DropDownList("LocalEmissao", Model.lsLocalEmissao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalEmissao"}))%>
 		</div>
 	</div>
-</div>
 </div>
