@@ -161,7 +161,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
                     {
                         comando = bancoDeDados.CriarComando(@"
 						insert into tab_ptv_outrouf_produto(id, tid, ptv, origem_tipo, numero_origem, cultura, cultivar, quantidade, unidade_medida)
-						values(tab_ptv_outrouf_produto.nextval,:tid,:ptv,:origem_tipo,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", UsuarioCredenciado);
+						values(seq_tab_ptv_outrouf_prod.nextval,:tid,:ptv,:origem_tipo,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", UsuarioCredenciado);
 
                         comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
                     }

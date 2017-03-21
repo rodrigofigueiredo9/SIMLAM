@@ -69,15 +69,15 @@
         <div class="coluna35">
 		    <label>Tipos de produção</label><br />
             <label class="rbTipoProducao1">
-            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.Frutos, Model.PTV.ProducaoTipo == (int)ePTVTipoProducao.Frutos,ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoProducao rbTipoFrutos"})) %>
+            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.Frutos, Model.PTV.ProducaoTipo == (int)ePTVTipoProducao.Frutos,ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbTipoProducao rbTipoFrutos"})) %>
 		    Frutos</label>
 		    
             <label class="rbTipoProducao2">
-            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.Madeira, Model.PTV.ProducaoTipo == (int) ePTVTipoProducao.Madeira, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoProducao rbTipomadeira"})) %>
+            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.Madeira, Model.PTV.ProducaoTipo == (int) ePTVTipoProducao.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="rbTipoProducao rbTipomadeira"})) %>
 		    Madeira</label>
 			
             <label class="rbTipoProducao3">
-            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.MaterialPropagacao, Model.PTV.ProducaoTipo == (int) ePTVTipoProducao.MaterialPropagacao, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoProducao rbTipoMaterialPropagacao"})) %>
+            <%=Html.RadioButton("TipoProducao", (int) ePTVTipoProducao.MaterialPropagacao, Model.PTV.ProducaoTipo == (int) ePTVTipoProducao.MaterialPropagacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbTipoProducao rbTipoMaterialPropagacao"})) %>
 		    Material de propagação</label>
 	    </div>
      </div>
