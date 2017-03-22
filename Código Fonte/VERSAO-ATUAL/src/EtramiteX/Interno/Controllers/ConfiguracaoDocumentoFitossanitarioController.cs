@@ -26,7 +26,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Configurar()
 		{
             ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
-                //_bus.Obter(),
                 _bus.ObterAnoCorrente(),
 				_listaBus.DocumentosFitossanitario.Where(x => 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO || 
@@ -39,13 +38,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
         public ActionResult Index()
         {
-            ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
-                //_bus.Obter(),
-                _bus.ObterAnoCorrente(),
-                _listaBus.DocumentosFitossanitario.Where(x =>
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList());
+            ConfiguracaoNumeracaoListarVM vm = new ConfiguracaoNumeracaoListarVM();
 
             return View(vm);
         }

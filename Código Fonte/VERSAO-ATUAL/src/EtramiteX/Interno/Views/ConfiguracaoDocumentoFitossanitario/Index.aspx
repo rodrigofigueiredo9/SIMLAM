@@ -1,7 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossanitario" %>
 
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ConfiguracaoDocumentoFitossanitarioVM>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ConfiguracaoNumeracaoListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Numeração de CFO/CFOC/PTV</asp:Content>
 
@@ -9,15 +9,15 @@
 	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/configDocFitossanitario.js") %>"></script>
 
 	<script>
-		$(function () {
-			ConfigDocFitossanitario.load($("#central"), {
-				urls: {
-					salvar: '<%= Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario") %>',
+	    $(function () {
+	        ConfigDocFitossanitario.load($("#central"), {
+	            urls: {
+	                salvar: '<%= Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario") %>',
 				    validarIntervalo: '<%= Url.Action("ValidarIntervalo", "ConfiguracaoDocumentoFitossanitario") %>',
 				    editar: '<%= Url.Action("EditarNumeracao", "ConfiguracaoDocumentoFitossanitario")%>',
 				    salvarEdicao: '<%= Url.Action("SalvarEdicao", "ConfiguracaoDocumentoFitossanitario")%>',
 				    excluir: '<%= Url.Action("Excluir", "ConfiguracaoDocumentoFitossanitario") %>',
-                    validarEdicao: '<%= Url.Action("ValidarEdicao", "ConfiguracaoDocumentoFitossanitario") %>',
+				    validarEdicao: '<%= Url.Action("ValidarEdicao", "ConfiguracaoDocumentoFitossanitario") %>',
 				}
 			});
 		});
@@ -28,7 +28,8 @@
 	<div id="central">
 		<h1 class="titTela">Numeração de CFO/CFOC/PTV</h1>
 		<br />
-        <h1>TESTE</h1>
-		</div>
+
+		<%Html.RenderPartial("VisualizarNumeracaoPartial", Model); %>
+
 	</div>
 </asp:Content>
