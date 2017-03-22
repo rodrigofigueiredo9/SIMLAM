@@ -27,17 +27,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossa
         //    get { return Configuracao.DocumentoFitossanitarioIntervalos.Where(x => x.Tipo == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList(); }
         //}
 
-        public ConfiguracaoNumeracaoListarVM()
-        {
-            Configuracao = new ConfiguracaoDocumentoFitossanitario();
-            TiposDocumento = new List<SelectListItem>();
-            TiposNumeracao = new List<SelectListItem>();
-        }
-
-		public ConfiguracaoNumeracaoListarVM(ConfiguracaoDocumentoFitossanitario configuracao, List<Lista> tipoDocumento)
+		public ConfiguracaoNumeracaoListarVM(ConfiguracaoDocumentoFitossanitario configuracao, List<Lista> tipoDocumento, List<Lista> tipoNumeracao)
 		{
 			Configuracao = configuracao;
 			TiposDocumento = ViewModelHelper.CriarSelectList(tipoDocumento);
+            TiposNumeracao = ViewModelHelper.CriarSelectList(tipoNumeracao);
 		}
 	}
 }

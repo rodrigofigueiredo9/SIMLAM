@@ -12,14 +12,10 @@
 			<%= Html.DropDownList("BlocoTipoDocumento", Model.TiposDocumento, new { @class = "text ddlBloco ddlTipoDocumento setarFoco" })%>
 		</div>
 		<div class="coluna20">
-			<%--<label>Número inicial*</label>
-			<%= Html.TextBox("BlocoNumeroInicial", null, new { @class = "text txtNumeroInicial txtBloco maskNum8"}) %>--%>
             <label>Tipo de Numeração*</label>
 			<%= Html.DropDownList("BlocoTipoNumeracao", Model.TiposNumeracao, new { @class = "text ddlBloco ddlTipoNumeracao"}) %>
 		</div>
 		<div class="coluna20">
-			<%--<label>Número final*</label>
-			<%= Html.TextBox("BlocoNumeroFinal", null, new { @class = "text txtNumeroFinal txtBloco maskNum8"} ) %>--%>
             <label>Ano*</label>
 			<%= Html.TextBox("BlocoAno", null, new { @class = "text txtAno txtBloco maskNum4"} ) %>
 		</div>
