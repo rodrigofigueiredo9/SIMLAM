@@ -36,6 +36,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View(vm);
 		}
 
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult Index()
+        {
+            ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
+                //_bus.Obter(),
+                _bus.ObterAnoCorrente(),
+                _listaBus.DocumentosFitossanitario.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList());
+
+            return View(vm);
+        }
+
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
 		public ActionResult Configurar(ConfiguracaoDocumentoFitossanitario configuracao)

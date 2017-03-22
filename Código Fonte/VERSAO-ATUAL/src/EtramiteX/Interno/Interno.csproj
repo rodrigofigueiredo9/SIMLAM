@@ -1683,6 +1683,7 @@
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\Index.aspx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\Cultura\DeclaracaoAdicionalPartial.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Criar.aspx" />
