@@ -277,6 +277,7 @@
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\CFOVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\ListarVM.cs" />
+    <Compile Include="ViewModels\VMConfiguracaoDocumentoFitossanitario\ConfiguracaoNumeracaoListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
@@ -1683,6 +1684,7 @@
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\VisualizarNumeracaoPartial.ascx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\Index.aspx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\Cultura\DeclaracaoAdicionalPartial.ascx" />
