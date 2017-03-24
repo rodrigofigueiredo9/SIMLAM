@@ -22,11 +22,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        #region Configuração CFO/CFOC/PTV
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
 		public ActionResult Configurar()
 		{
             ConfiguracaoDocumentoFitossanitarioVM vm = new ConfiguracaoDocumentoFitossanitarioVM(
-                _bus.ObterAnoCorrente(),
+                _bus.ObterPorAno(DateTime.Now.Year),
 				_listaBus.DocumentosFitossanitario.Where(x => 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO || 
 					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC || 
@@ -34,23 +36,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return View(vm);
 		}
-
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
-        public ActionResult Index()
-        {
-            ConfiguracaoNumeracaoListarVM vm = new ConfiguracaoNumeracaoListarVM(
-                new ConfiguracaoDocumentoFitossanitario(),
-				_listaBus.DocumentosFitossanitario.Where(x => 
-					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO || 
-					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC || 
-					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList(),
-                _listaBus.DocumentosFitossanitarioTipoNumero.Where(x => 
-					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Bloco || 
-					Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList()
-            );
-
-            return View(vm);
-        }
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
@@ -144,7 +129,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] {ePermissao.ConfigDocumentoFitossanitario })]
         public ActionResult EditarNumeracao(int id)
         {
-            ConfiguracaoDocumentoFitossanitario _listaCompletaIntervalos = _bus.ObterAnoCorrente();
+            ConfiguracaoDocumentoFitossanitario _listaCompletaIntervalos = _bus.ObterPorAno(DateTime.Now.Year);
             DocumentoFitossanitario intervaloSelecionado = _listaCompletaIntervalos.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
 
             return View("EditarNumeracao", intervaloSelecionado);
@@ -177,5 +162,60 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-	}
+        #endregion
+
+        #region Listar CFO/CFOC/PTV
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult Index()
+        {
+            ConfiguracaoNumeracaoListarVM vm = new ConfiguracaoNumeracaoListarVM(
+                _listaBus.DocumentosFitossanitario.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList(),
+                _listaBus.DocumentosFitossanitarioTipoNumero.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Bloco ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList()
+            );
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult Index(string idTipoDoc, string idTipoNum, string anoStr)
+        {
+            var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr));
+
+            ConfiguracaoNumeracaoListarVM vm = new ConfiguracaoNumeracaoListarVM(
+                _listaBus.DocumentosFitossanitario.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList(),
+                _listaBus.DocumentosFitossanitarioTipoNumero.Where(x =>
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Bloco ||
+                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList(),
+                resultados.DocumentoFitossanitarioIntervalos
+            );
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+        public ActionResult ValidarBusca(string idTipoDoc, string idTipoNum, string anoStr)
+        {
+            _validar.ValidarBusca(idTipoDoc, idTipoNum, anoStr);
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion CFO/CFOC/PTV
+
+    }
 }
