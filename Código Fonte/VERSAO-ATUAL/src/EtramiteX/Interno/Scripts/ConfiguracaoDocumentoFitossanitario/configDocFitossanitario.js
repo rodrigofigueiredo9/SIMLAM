@@ -37,16 +37,12 @@ ConfigDocFitossanitario = {
 	editarIntervalo: function () {
 	    var id = ConfigDocFitossanitario.obterId(this);
 
-	    //INÍCIO
-
 	    Mensagem.limpar(ConfigDocFitossanitario.container);
 	    
 	    var retorno = MasterPage.validarAjax(ConfigDocFitossanitario.settings.urls.validarEdicao, { idStr: id }, ConfigDocFitossanitario.container, false);
 	    if (!retorno.EhValido) {
 	        return;
 	    }
-
-        //FIM
 
 	    var tipo = ConfigDocFitossanitario.obterTipo(this);
 	    

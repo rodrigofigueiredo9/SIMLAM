@@ -124,11 +124,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return null;
 		}
 
-        public ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false)
+        public ConfiguracaoDocumentoFitossanitario ObterPorAno(int ano, bool simplificado = false)
         {
             try
             {
-                return _da.ObterAnoCorrente(simplificado);
+                return _da.ObterPorAno(ano, simplificado);
             }
             catch (Exception exc)
             {

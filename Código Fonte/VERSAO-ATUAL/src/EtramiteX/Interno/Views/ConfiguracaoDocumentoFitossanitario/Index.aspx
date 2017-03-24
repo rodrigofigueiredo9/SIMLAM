@@ -6,18 +6,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Numeração de CFO/CFOC/PTV</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/configDocFitossanitario.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/listarNumeracao.js") %>"></script>
 
 	<script>
 	    $(function () {
 	        ConfigDocFitossanitario.load($("#central"), {
 	            urls: {
-	                salvar: '<%= Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario") %>',
-				    validarIntervalo: '<%= Url.Action("ValidarIntervalo", "ConfiguracaoDocumentoFitossanitario") %>',
-				    editar: '<%= Url.Action("EditarNumeracao", "ConfiguracaoDocumentoFitossanitario")%>',
-				    salvarEdicao: '<%= Url.Action("SalvarEdicao", "ConfiguracaoDocumentoFitossanitario")%>',
-				    excluir: '<%= Url.Action("Excluir", "ConfiguracaoDocumentoFitossanitario") %>',
-				    validarEdicao: '<%= Url.Action("ValidarEdicao", "ConfiguracaoDocumentoFitossanitario") %>',
+	                buscar: '<%= Url.Action("Index", "ConfiguracaoDocumentoFitossanitario") %>',
+	                validarBusca: '<%= Url.Action("ValidarBusca", "ConfiguracaoDocumentoFitossanitario") %>',
 				}
 			});
 		});

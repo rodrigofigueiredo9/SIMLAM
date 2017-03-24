@@ -269,7 +269,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return retorno;
 		}
 
-        internal ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false, BancoDeDados banco = null)
+        internal ConfiguracaoDocumentoFitossanitario ObterPorAno(int ano, bool simplificado = false, BancoDeDados banco = null)
         {
             ConfiguracaoDocumentoFitossanitario retorno = new ConfiguracaoDocumentoFitossanitario();
 
@@ -295,12 +295,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 #region Intervalos
 
+                string anoStr = ano.ToString().Substring(2, 2);
+
                 comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
 				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
                                                       where lt.id = i.tipo_documento
                                                             and i.configuracao = :configuracao
-                                                            and substr(i.NUMERO_INICIAL, 3, 2)=to_char(sysdate, 'YY')
-                                                      order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
+                                                            and substr(i.NUMERO_INICIAL, 3, 2) = " + anoStr +    //to_char(sysdate, 'YY')
+                                                      " order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
 
