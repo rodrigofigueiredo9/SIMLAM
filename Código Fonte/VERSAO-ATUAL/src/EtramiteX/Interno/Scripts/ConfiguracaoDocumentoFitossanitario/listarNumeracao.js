@@ -18,6 +18,7 @@ ConfigDocFitossanitario = {
 
 	    if (options) { $.extend(ConfigDocFitossanitario.settings, options); }
 	    ConfigDocFitossanitario.container = MasterPage.getContent(container);
+	    container.listarAjax();
 
 	    container.delegate('.btnBuscarNumero', 'click', ConfigDocFitossanitario.buscarIntervalos);
 
@@ -25,7 +26,7 @@ ConfigDocFitossanitario = {
 	},
 
 	buscarIntervalos: function () {
-	    var container = $(this).closest('.filtroEspansivo');
+	    var container = $(this).closest('.filtroExpansivo');
 		var ddlTipoDocumento = container.find('.ddlTipoDocumento');
 		var ddlTipoDocSelecionado = ddlTipoDocumento.ddlSelecionado();
 		var ddlTipoNumeracao = container.find('.ddlTipoNumeracao');
@@ -55,13 +56,13 @@ ConfigDocFitossanitario = {
 		    error: Aux.error,
 		    success: function () {
 		        alert('ok');
-		        //if (response.EhValido) {
-		        //    MasterPage.redireciona(response.Url);
-		        //}
+		        if (response.EhValido) {
+		            MasterPage.redireciona(response.Url);
+		        }
 
-		        //if (response.Msg && response.Msg.length > 0) {
-		        //    Mensagem.gerar(ConfigDocFitossanitario.container, response.Msg);
-		        //}
+		        if (response.Msg && response.Msg.length > 0) {
+		            Mensagem.gerar(ConfigDocFitossanitario.container, response.Msg);
+		        }
 		    }
 		});
 
