@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossanitario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
+using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossanitario;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
@@ -184,7 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
-        public ActionResult Index(string idTipoDoc, string idTipoNum, string anoStr)
+        public ActionResult Filtrar(string idTipoDoc, string idTipoNum, string anoStr)
         {
             var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr));
 
@@ -198,15 +199,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList(),
                 resultados.DocumentoFitossanitarioIntervalos
             );
-
-            //return View(vm);
-
-            return Json(new
+            
+            return Json(new 
             {
                 @EhValido = Validacao.EhValido,
                 @Msg = Validacao.Erros,
-                @Url = Url.Action("Index", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
+                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm),
             }, JsonRequestBehavior.AllowGet);
+
+            //return Json(new
+            //{
+            //    @EhValido = Validacao.EhValido,
+            //    @Msg = Validacao.Erros,
+            //    @Url = Url.Action("Index", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
+            //}, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
