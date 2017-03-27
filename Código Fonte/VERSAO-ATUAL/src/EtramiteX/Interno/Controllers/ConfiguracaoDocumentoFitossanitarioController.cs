@@ -199,7 +199,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 resultados.DocumentoFitossanitarioIntervalos
             );
 
-            return View(vm);
+            //return View(vm);
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Url = Url.Action("Index", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
