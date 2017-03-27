@@ -258,6 +258,7 @@
     <Compile Include="Interno\ModuloCadastroAmbientalRural\ControleArquivoSICAR.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARSolicitacaoOrigem.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusArquivoSICAR.cs" />
+    <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitarioListarFiltros.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitario.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\ConfiguracaoDocumentoFitossanitario.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\eDocumentoFitossanitarioSituacao.cs" />

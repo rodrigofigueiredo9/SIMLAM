@@ -673,7 +673,7 @@
     <Content Include="Scripts\CFOC\lote.js" />
     <Content Include="Scripts\CFO\emitir.js" />
     <Content Include="Scripts\CFO\listar.js" />
-    <Content Include="Scripts\ConfiguracaoDocumentoFitossanitario\listarNumeracao.js" />
+    <Content Include="Scripts\ConfiguracaoDocumentoFitossanitario\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
