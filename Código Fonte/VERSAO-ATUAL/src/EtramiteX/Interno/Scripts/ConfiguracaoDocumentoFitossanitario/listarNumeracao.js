@@ -25,7 +25,7 @@ ConfigDocFitossanitario = {
 	},
 
 	buscarIntervalos: function () {
-		var container = $(this).closest('fieldset');
+	    var container = $(this).closest('.filtroEspansivo');
 		var ddlTipoDocumento = container.find('.ddlTipoDocumento');
 		var ddlTipoDocSelecionado = ddlTipoDocumento.ddlSelecionado();
 		var ddlTipoNumeracao = container.find('.ddlTipoNumeracao');
