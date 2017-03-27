@@ -3,13 +3,13 @@
 /// <reference path="../../../jquery.ddl.js" 
 /// <reference path="../masterpage.js" />
 
-ConfigDocFitossanitario = {
+ConfigDocFitossanitarioListar = {
 	settings: {
 		urls: {
 		    buscar: '',
             validarBusca: '',
 		},
-		Mensagens: null
+		associarFunc: null
 	},
 
 	container: null,
@@ -20,7 +20,11 @@ ConfigDocFitossanitario = {
 	    ConfigDocFitossanitario.container = MasterPage.getContent(container);
 	    container.listarAjax();
 
-	    container.delegate('.btnBuscarNumero', 'click', ConfigDocFitossanitario.buscarIntervalos);
+	    //container.delegate('.btnBuscarNumero', 'click', ConfigDocFitossanitario.buscarIntervalos);
+
+	    if (ConfigDocFitossanitarioListar.settings.associarFunc) {
+	        $('.hdnIsAssociar', ConfigDocFitossanitarioListar.container).val(true);
+	    }
 
 	    Aux.setarFoco(container);
 	},

@@ -41,6 +41,20 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossa
         }
 
         public String UltimaBusca { get; set; }
+
+        public ConfiguracaoNumeracaoListarVM() { }
+
+        public ConfiguracaoNumeracaoListarVM(List<QuantPaginacao> quantPaginacao)
+		{
+			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false);
+		}
+
+		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
+		{
+			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
+		}
+
+		public bool IsAssociar { get; set; }
        
 		public ConfiguracaoNumeracaoListarVM(List<Lista> tipoDocumento, List<Lista> tipoNumeracao, List<DocumentoFitossanitario> intervalos = null)
 		{

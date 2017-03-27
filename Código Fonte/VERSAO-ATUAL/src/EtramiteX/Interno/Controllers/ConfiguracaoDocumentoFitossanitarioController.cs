@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -185,34 +187,31 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
-        public ActionResult Filtrar(string idTipoDoc, string idTipoNum, string anoStr)
+        public ActionResult Filtrar(ConfiguracaoNumeracaoListarVM vm, Paginacao paginacao)
         {
-            var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr));
-
-            ConfiguracaoNumeracaoListarVM vm = new ConfiguracaoNumeracaoListarVM(
-                _listaBus.DocumentosFitossanitario.Where(x =>
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFO ||
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.CFOC ||
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipo.PTV).ToList(),
-                _listaBus.DocumentosFitossanitarioTipoNumero.Where(x =>
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Bloco ||
-                    Convert.ToInt32(x.Id) == (int)eDocumentoFitossanitarioTipoNumero.Digital).ToList(),
-                resultados.DocumentoFitossanitarioIntervalos
-            );
-            
-            return Json(new 
+            if (!String.IsNullOrEmpty(vm.UltimaBusca))
             {
-                @EhValido = Validacao.EhValido,
-                @Msg = Validacao.Erros,
-                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm),
-            }, JsonRequestBehavior.AllowGet);
+                vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
+            }
 
-            //return Json(new
-            //{
-            //    @EhValido = Validacao.EhValido,
-            //    @Msg = Validacao.Erros,
-            //    @Url = Url.Action("Index", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
-            //}, JsonRequestBehavior.AllowGet);
+            vm.Paginacao = paginacao;
+            vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+            //var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr)); 
+            Resultados<DocumentoFitossanitario> resultados = _bus.fil
+            //Resultados<Profissao> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+            if (resultados == null)
+            {
+                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+            }
+
+            vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+            vm.Paginacao.EfetuarPaginacao();
+            vm.Resultados = resultados.Itens;
+
+            return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
