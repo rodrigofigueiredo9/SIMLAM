@@ -189,44 +189,86 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
         public ActionResult Filtrar(ConfiguracaoNumeracaoListarVM vm, Paginacao paginacao)
         {
-            #region VALIDAÇÃO
-
-            _validar.ValidarBusca(vm.Filtros.TipoDocumentoID, vm.Filtros.TipoNumeracaoID, vm.Filtros.Ano);
-
-            if (!Validacao.EhValido)
+            if (vm.Filtros.EhIntervalo == true)
             {
-                return Json(new
+                #region VALIDAÇÃO
+
+                _validar.ValidarBusca(vm.Filtros.TipoDocumentoID, vm.Filtros.TipoNumeracaoID, vm.Filtros.Ano);
+
+                if (!Validacao.EhValido)
                 {
-                    @EhValido = Validacao.EhValido,
-                    @Msg = Validacao.Erros,
-                }, JsonRequestBehavior.AllowGet);
+                    return Json(new
+                    {
+                        @EhValido = Validacao.EhValido,
+                        @Msg = Validacao.Erros,
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                #endregion
+
+                if (!String.IsNullOrEmpty(vm.UltimaBusca))
+                {
+                    vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
+                }
+
+                vm.Paginacao = paginacao;
+                vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+                vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+                vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+                Resultados<DocumentoFitossanitario> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+                if (resultados == null)
+                {
+                    return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+                }
+
+                vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+                vm.Paginacao.EfetuarPaginacao();
+                vm.Resultados = resultados.Itens;
+
+                return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
             }
-
-            #endregion
-
-            if (!String.IsNullOrEmpty(vm.UltimaBusca))
+            else if (vm.Filtros.EhConsolidado == true)
             {
-                vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
+                #region VALIDAÇÃO
+
+                _validar.ValidarBuscaConsolidado(vm.Filtros.Ano);
+
+                if (!Validacao.EhValido)
+                {
+                    return Json(new
+                    {
+                        @EhValido = Validacao.EhValido,
+                        @Msg = Validacao.Erros,
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                #endregion
+
+                if (!String.IsNullOrEmpty(vm.UltimaBusca))
+                {
+                    vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
+                }
+
+                vm.Paginacao = paginacao;
+                vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+                vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+                vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+                Resultados<DocumentoFitossanitario> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+                if (resultados == null)
+                {
+                    return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+                }
+
+                vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+                vm.Paginacao.EfetuarPaginacao();
+                vm.Resultados = resultados.Itens;
+
+                return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
             }
-
-            vm.Paginacao = paginacao;
-            vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
-            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-            vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
-
-            //var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr)); 
-            Resultados<DocumentoFitossanitario> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
-            //Resultados<Profissao> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
-            if (resultados == null)
-            {
-                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
-            }
-
-            vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
-            vm.Paginacao.EfetuarPaginacao();
-            vm.Resultados = resultados.Itens;
-
-            return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
+            
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

@@ -10,27 +10,22 @@
 
 	<script>
 	    $(function () {
-	        ConfigDocFitossanitarioListar.load($("#central"), {
-	            urls: {
-	                buscar: '<%= Url.Action("Index", "ConfiguracaoDocumentoFitossanitario") %>',
-	                validarBusca: '<%= Url.Action("ValidarBusca", "ConfiguracaoDocumentoFitossanitario") %>',
-				}
-			});
+	        ConfigDocFitossanitarioListar.load($("#central"));
 		});
 	</script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-	<div id="central">
+	<div id="central" class="principal">
 		<h1 class="titTela">Numeração de CFO/CFOC/PTV</h1>
 		<br />
-
+        
         <div>
 		    <%Html.RenderPartial("ListarFiltros", Model); %>
         </div>
 
         <div>
-            
+            <%Html.RenderPartial("ListarFiltrosConsolidado", Model); %>
         </div>
 	</div>
 </asp:Content>

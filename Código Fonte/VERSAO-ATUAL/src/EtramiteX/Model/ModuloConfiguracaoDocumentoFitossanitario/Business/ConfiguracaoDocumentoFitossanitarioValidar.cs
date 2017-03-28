@@ -138,5 +138,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return Validacao.EhValido;
         }
 
+        public bool ValidarBuscaConsolidado(string anoStr)
+        {
+            if (string.IsNullOrWhiteSpace(anoStr))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.AnoObrigatorio());
+            }
+
+            return Validacao.EhValido;
+        }
+
 	}
 }
