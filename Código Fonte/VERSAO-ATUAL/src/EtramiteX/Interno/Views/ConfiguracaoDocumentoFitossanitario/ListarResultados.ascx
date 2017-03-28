@@ -11,9 +11,9 @@
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th>Tipo do Documento</th>
-				<th width="25%">Número Inicial</th>
-				<th width="25%">Número Final</th>
+				<th class="semOrdenacao">Tipo do Documento</th>
+				<th class="semOrdenacao" width="25%">Número Inicial</th>
+				<th class="semOrdenacao" width="25%">Número Final</th>
 			</tr>
 		</thead>
 		<tbody>
