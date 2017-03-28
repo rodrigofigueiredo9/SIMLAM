@@ -189,6 +189,21 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
         public ActionResult Filtrar(ConfiguracaoNumeracaoListarVM vm, Paginacao paginacao)
         {
+            #region VALIDAÇÃO
+
+            _validar.ValidarBusca(vm.Filtros.TipoDocumentoID, vm.Filtros.TipoNumeracaoID, vm.Filtros.Ano);
+
+            if (!Validacao.EhValido)
+            {
+                return Json(new
+                {
+                    @EhValido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            #endregion
+
             if (!String.IsNullOrEmpty(vm.UltimaBusca))
             {
                 vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
