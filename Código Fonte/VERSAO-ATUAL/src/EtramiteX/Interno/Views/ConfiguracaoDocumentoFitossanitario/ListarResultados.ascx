@@ -13,7 +13,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% foreach (var item in Model.Intervalos) { %>
+				<% foreach (var item in Model.Resultados) { %>
 				<tr class="Linha">
 					<td>
 						<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />

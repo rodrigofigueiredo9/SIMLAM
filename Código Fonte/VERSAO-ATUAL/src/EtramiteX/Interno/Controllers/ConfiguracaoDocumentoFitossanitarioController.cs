@@ -200,7 +200,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
             //var resultados = _bus.ObterPorAno(Convert.ToInt32(anoStr)); 
-            Resultados<DocumentoFitossanitario> resultados = _bus.fil
+            Resultados<DocumentoFitossanitario> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
             //Resultados<Profissao> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
             if (resultados == null)
             {
