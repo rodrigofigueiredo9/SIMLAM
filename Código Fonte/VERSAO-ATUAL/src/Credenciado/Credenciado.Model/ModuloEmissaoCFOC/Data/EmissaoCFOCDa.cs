@@ -701,8 +701,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			List<Lista> retorno = null;
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select distinct e.id, e.denominador from crt_unidade_consolidacao c, tab_empreendimento e where e.id = c.empreendimento and 
-				c.id in (select unidade_consolidacao from crt_unida_conso_resp_tec where responsavel_tecnico = :credenciado)");
+				Comando comando = bancoDeDados.CriarComando(@"select distinct emp.id, emp.denominador from crt_unidade_consolidacao c, crt_unidade_cons_cultivar u,
+                tab_empreendimento emp, tab_titulo t, esp_abertura_livro_uc uc, esp_aber_livro_uc_cultura ucu  
+                where  emp.id = c.empreendimento and c.id = u.unidade_consolidacao and ucu.especificidade = uc.id
+                and c.empreendimento = t.empreendimento and t.situacao = 3
+				and c.id in (select unidade_consolidacao from crt_unida_conso_resp_tec where responsavel_tecnico = :credenciado)");
+
+              
 
 				comando.AdicionarParametroEntrada("credenciado", credenciadoID, DbType.Int32);
 
