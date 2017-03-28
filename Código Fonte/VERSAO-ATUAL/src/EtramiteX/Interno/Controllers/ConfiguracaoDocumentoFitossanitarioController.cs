@@ -255,7 +255,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
                 vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
-                Resultados<DocumentoFitossanitario> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+                Resultados<DocumentoFitossanitarioConsolidado> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
                 if (resultados == null)
                 {
                     return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);

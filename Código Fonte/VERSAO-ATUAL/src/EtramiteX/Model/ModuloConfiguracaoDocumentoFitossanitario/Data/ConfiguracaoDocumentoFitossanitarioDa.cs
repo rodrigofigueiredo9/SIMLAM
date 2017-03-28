@@ -479,6 +479,69 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return retorno;
         }
 
+        internal Resultados<DocumentoFitossanitarioConsolidado> FiltrarConsolidado(Filtro<DocumentoFitossanitarioListarFiltros> filtros, BancoDeDados banco = null)
+        {
+            Resultados<DocumentoFitossanitario> retorno = new Resultados<DocumentoFitossanitario>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                string comandtxt = string.Empty;
+                Comando comando = bancoDeDados.CriarComando("");
+
+                //#region Adicionando Filtros
+
+                //List<String> ordenar = new List<String>() { "TipoDocumento", "Numero_Inicial" };
+                //List<String> colunas = new List<String>() { "TipoDocumento", "Numero_Inicial" };
+
+                //#endregion
+
+                if (!string.IsNullOrEmpty(filtros.Dados.AnoConsolidado))
+                {
+                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL
+                                   from CNF_DOC_FITO_INTERVALO i, lov_doc_fitossanitarios_tipo td, LOV_DOC_FITOSSANI_TIPO_NUMERO tn
+                                   where i.TIPO_DOCUMENTO = " + Convert.ToInt32(filtros.Dados.TipoDocumentoID)
+                                         + " and i.TIPO = " + Convert.ToInt32(filtros.Dados.TipoNumeracaoID)
+                                         + " and substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.Ano.Substring(2, 2)
+                                         + " and i.TIPO_DOCUMENTO = td.ID and i.TIPO = tn.ID";
+
+                    //colunas[0] = "TipoDocumento";
+                    //ordenar[0] = "TipoDocumento";
+                }
+
+                #region Executa a pesquisa nas tabelas
+                comando.DbCommand.CommandText = "select count(*) from (" + comandtxt + ")";
+
+                retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+                comando.AdicionarParametroEntrada("menor", filtros.Menor);
+                comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+                comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+                #endregion
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    DocumentoFitossanitario doc;
+
+                    while (reader.Read())
+                    {
+                        doc = new DocumentoFitossanitario();
+
+                        doc.TipoDocumentoTexto = reader["TipoDocumento"].ToString();
+                        doc.NumeroInicial = Convert.ToInt64(reader["NUMERO_INICIAL"]);
+                        doc.NumeroFinal = Convert.ToInt64(reader["NUMERO_FINAL"]);
+
+                        retorno.Itens.Add(doc);
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		#endregion
 
 		#region Validaçoes

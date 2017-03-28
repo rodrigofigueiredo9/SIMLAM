@@ -2,7 +2,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ConfiguracaoNumeracaoListarVM>" %>
 
 <div class="filtroExpansivo">
-    <span class="titFiltro">Filtros</span>
+    <span class="titFiltroSimples">Filtros</span>
 	<div class="filtroCorpo filtroSerializarAjax block">
         <input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
 		<input type="hidden" class="hdnIsAssociar" name="IsAssociar" value="<%= Model.IsAssociar %>" />
