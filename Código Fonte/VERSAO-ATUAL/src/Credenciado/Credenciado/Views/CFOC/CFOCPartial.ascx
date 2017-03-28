@@ -107,7 +107,7 @@
 		<div class="block">
 			<div class="coluna23">
 				<label>Quantidade/Mês *</label>
-				<%=Html.TextBox("CFOC.Produto.Quantidade", "", ViewModelHelper.SetaDisabled(true, new { @class="text txtProdutoQuantidade"}))%>
+				<%=Html.TextBox("CFOC.Produto.Quantidade", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutoQuantidade maskDecimalPonto4"}))%>
 			</div>
 			<div class="coluna23 prepend1">
 				<label>Unidade de medida *</label>

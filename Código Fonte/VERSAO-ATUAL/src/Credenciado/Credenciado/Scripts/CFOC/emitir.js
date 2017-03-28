@@ -151,19 +151,34 @@ CFOCEmitir = {
 		$('.hdnCultivarId', CFOCEmitir.container).val(objeto.Item.Cultivar);
 		$('.txtProdutoCultivar', CFOCEmitir.container).val(objeto.Item.CultivarTexto);
 		
-		$('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(objeto.Item.Quantidade, 'n4'));
-		$('.txtProdutoUnidadeMedida', CFOCEmitir.container).val(objeto.Item.UnidadeMedidaTexto);
+		//$('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(0, 'n4'));
+
+		//$('.txtProdutoUnidadeMedida', CFOCEmitir.container).val(objeto.Item.UnidadeMedidaTexto);
 
 		
-
-	
 		if (objeto.Item.UnidadeMedidaTexto == "T") {
 
-		    if (objeto.Item.ExibeKg) {
-		        $('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(objeto.Item.Quantidade * 1000, 'n4'));
-		        $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val("KG");
-		    }
+		    $('#CFOC_Produto_UnidadeMedida')
+                            .replaceWith('<select id="CFO_Produto_UnidadeMedida" class="text txtProdutoUnidadeMedida" name="CFOC_Produto_UnidadeMedida">' +
+                                '<option value="T">T</option>' +
+                                '<option value="KG">KG</option>' +
+                                '</select>');
+
 		}
+		else {
+
+		    $('#CFOC_Produto_UnidadeMedida')
+                        .replaceWith('<input class="text txtProdutoUnidadeMedida disabled" disabled="disabled" id="CFOC_Produto_UnidadeMedida" name="CFOC.Produto.UnidadeMedida" type="text" value="">');
+
+		    $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val(objeto.Item.UnidadeMedidaTexto);
+		}
+
+
+		//if (objeto.Item.ExibeKg) {
+		//    $('.txtProdutoQuantidade', CFOCEmitir.container).val(Mascara.getStringMask(objeto.Item.Quantidade * 1000, 'n4'));
+		//    $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val("KG");
+		//}
+		
 
 		$('.txtProdutoConsolidacao', CFOCEmitir.container).val(objeto.DataCriacao.DataTexto);
 		$('.hdnUnidadeMedidaId', CFOCEmitir.container).val(objeto.Item.UnidadeMedida);
@@ -214,8 +229,9 @@ CFOCEmitir = {
 
 		var IdentificacoesAdicionadas = CFOCEmitir.obterIdentificacoes();
 
+		$("#yourdropdownid option:selected")
 		var txtUnid = $('.txtProdutoUnidadeMedida', CFOCEmitir.container).val();
-
+		
 		var bExibeKg = txtUnid.indexOf("KG") >= 0;
 
 		var objeto = {

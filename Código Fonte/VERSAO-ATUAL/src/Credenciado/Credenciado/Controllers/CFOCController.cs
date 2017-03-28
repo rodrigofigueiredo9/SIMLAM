@@ -526,6 +526,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				selecionado = culturas.First().Id;
 			}
 
+
+        
 			return Json(new
 			{
 				@Msg = Validacao.Erros,
@@ -549,11 +551,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.LoteCriar, ePermissao.LoteEditar })]
 		public ActionResult ObterUnidadeMedida(int origemTipo, int origemID, int culturaID, int cultivarID)
 		{
+
+            decimal Quantidade = 0;
 			return Json(new
 			{
 				@Msg = Validacao.Erros,
 				@EhValido = Validacao.EhValido,
-				@Lista = _loteBus.ObterUnidadeMedida(origemTipo, origemID, culturaID, cultivarID)
+				@Lista = _loteBus.ObterUnidadeMedida(origemTipo, origemID, culturaID, cultivarID, out Quantidade),
+                @QtdDocOrigem = Quantidade
 			});
 		}
 
@@ -564,7 +569,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return Json(new
 			{
 				@Msg = Validacao.Erros,
-				@EhValido = Validacao.EhValido
+				@EhValido = Validacao.EhValido,
+                @QtdDocOrigem = item.Quantidade
 			});
 		}
 

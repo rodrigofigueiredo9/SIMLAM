@@ -109,6 +109,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				comando.AdicionarParametroEntrada("estado_emissao", entidade.EstadoEmissaoId > 0 ? entidade.EstadoEmissaoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio_emissao", entidade.MunicipioEmissaoId > 0 ? entidade.MunicipioEmissaoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+                
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -118,15 +119,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				insert into tab_cfoc_produto (id, tid, cfoc, lote) values (seq_tab_cfoc_produto.nextval, :tid, :cfoc, :lote)");
+				insert into tab_cfoc_produto (id, tid, cfoc, lote, quantidade, exibe_kilos) values (seq_tab_cfoc_produto.nextval, :tid, :cfoc, :lote, :quantidade, :exibe_kilos)");
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("cfoc", entidade.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("lote", DbType.Int32);
+                comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
+                comando.AdicionarParametroEntrada("exibe_kilos", DbType.String);
 
 				entidade.Produtos.ForEach(produto =>
 				{
 					comando.SetarValorParametro("lote", produto.LoteId);
+                    comando.SetarValorParametro("quantidade", produto.Quantidade);
+                    comando.SetarValorParametro("exibe_kilos", produto.ExibeQtdKg ? "1" : "0");
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -245,20 +250,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				{
 					if (produto.Id > 0)
 					{
-						comando = bancoDeDados.CriarComando(@"update tab_cfoc_produto set tid =:tid, lote = :lote where id = :id");
+						comando = bancoDeDados.CriarComando(@"update tab_cfoc_produto set tid =:tid, lote = :lote, quantidade = :quantidade, exibe_kilos = :exibe_kilos where id = :id");
 
 						comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
 					}
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into tab_cfoc_produto (id, tid, cfoc, lote) values (seq_tab_cfoc_produto.nextval, :tid, :cfoc, :lote)");
+						insert into tab_cfoc_produto (id, tid, cfoc, lote, quantidade, exibe_kilos) values (seq_tab_cfoc_produto.nextval, :tid, :cfoc, :lote, :quantidade, :exibe_kilos)");
 
 						comando.AdicionarParametroEntrada("cfoc", entidade.Id, DbType.Int32);
 					}
 
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("lote", produto.LoteId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("exibe_kilos", DbType.String, 1, produto.ExibeQtdKg ? "1" : "0");
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -494,7 +501,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 				comando = bancoDeDados.CriarComando(@"
 				select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, sum(d.quantidade) quantidade, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto 
-				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, li.quantidade, 
+				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, cp.quantidade, 
 					li.unidade_medida, li.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
 					where l.id = cp.lote and li.lote = l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d 
@@ -821,12 +828,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			return responsavel;
 		}
 
+
+        internal decimal ObterSaldoRemanescente(int lote, int empreendimento)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"  select nvl(sum(li.quantidade),0) - ( select nvl(sum(p.quantidade),0) from tab_cfoc cf 
+                                                                inner join tab_cfoc_produto p on p.cfoc = cf.id
+                                                                where cf.situacao=2 and p.lote = :lote )                                
+                                                                from tab_lote l, tab_lote_item li 
+                                                                where  li.lote = l.id and l.id = :lote
+                                                                group by li.lote ");
+
+                //comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+                //comando.AdicionarParametroEntrada("cultivar", cultivar, DbType.Int32);
+                comando.AdicionarParametroEntrada("lote", lote, DbType.Int32);
+
+                return bancoDeDados.ExecutarScalar<decimal>(comando);
+            }
+        }
+
 		internal decimal ObterCapacidadeMes(int cfoc, int empreendimento, int cultivar)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select nvl((select sum(li.quantidade) from tab_cfoc c, tab_cfoc_produto cp, tab_lote l, tab_lote_item li 
+				select nvl((select sum(cp.quantidade) from tab_cfoc c, tab_cfoc_produto cp, tab_lote l, tab_lote_item li 
 				where c.situacao != 4 and cp.cfoc = c.id and l.id = cp.lote and li.lote = l.id and li.cultivar = :cultivar and c.empreendimento = :empreendimento and c.id != :cfoc), 0) from dual");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
