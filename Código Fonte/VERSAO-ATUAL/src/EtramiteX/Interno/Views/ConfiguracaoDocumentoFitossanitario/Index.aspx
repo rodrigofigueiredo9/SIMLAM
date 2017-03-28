@@ -25,7 +25,12 @@
 		<h1 class="titTela">Numeração de CFO/CFOC/PTV</h1>
 		<br />
 
-		<%Html.RenderPartial("ListarFiltros", Model); %>
+        <div>
+		    <%Html.RenderPartial("ListarFiltros", Model); %>
+        </div>
 
+        <div>
+            
+        </div>
 	</div>
 </asp:Content>
