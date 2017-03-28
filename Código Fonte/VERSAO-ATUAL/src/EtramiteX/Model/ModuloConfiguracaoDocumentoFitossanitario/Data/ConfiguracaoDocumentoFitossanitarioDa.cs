@@ -389,9 +389,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                 #region Adicionando Filtros
 
                 //comandtxt += comando.FiltroAndLike("p.texto", "texto", filtros.Dados.Texto, true, true);
-                comandtxt += comando.FiltroAndLike("p.tipo_documento", "TipoDocumento", filtros.Dados.TipoDocumentoID, true, true);
-                comandtxt += comando.FiltroAndLike("p.tipo", "TipoNumeracao", filtros.Dados.TipoNumeracaoID, true, true);
-                comandtxt += comando.FiltroAndLike("p.numero_inicial", "NumeroInicial", filtros.Dados.Ano, true, true);
+                //comandtxt += comando.FiltroAndLike("i.TIPO_DOCUMENTO", "TipoDocumento", filtros.Dados.TipoDocumentoID, true, true);
+                //comandtxt += comando.FiltroAndLike("i.TIPO", "TipoNumeracao", filtros.Dados.TipoNumeracaoID, true, true);
+                //comandtxt += comando.FiltroAndLike("i.NUMERO_INICIAL", "Numero_Inicial", filtros.Dados.Ano, true, true);
 
 //                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
 //				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
@@ -403,8 +403,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 //                comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
 
 
-                List<String> ordenar = new List<String>() { "TipoDocumento", "NumeroInicial" };
-                List<String> colunas = new List<String>() { "TipoDocumento", "NumeroInicial" };
+                List<String> ordenar = new List<String>() { "TipoDocumento", "Numero_Inicial" };
+                List<String> colunas = new List<String>() { "TipoDocumento", "Numero_Inicial" };
 
                 #endregion
 
@@ -412,33 +412,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                     && !string.IsNullOrEmpty(filtros.Dados.TipoDocumentoID)
                     && !string.IsNullOrEmpty(filtros.Dados.Ano))
                 {
-                    comandtxt += @" union all select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, max(trunc(metaphone.jaro_winkler(:filtro_fonetico,p.texto),5)) 
-								similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id and p.texto_fonema like upper('%' || upper(metaphone.gerarCodigo(:filtro_fonetico)) || '%') 
-								and metaphone.jaro_winkler(:filtro_fonetico,p.texto) >= to_number(:limite_similaridade) group by p.id, p.texto, p.codigo, p.tid, p.origem, o.texto";
+//                    comandtxt += @" union all select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, max(trunc(metaphone.jaro_winkler(:filtro_fonetico,p.texto),5)) 
+//								similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id and p.texto_fonema like upper('%' || upper(metaphone.gerarCodigo(:filtro_fonetico)) || '%') 
+//								and metaphone.jaro_winkler(:filtro_fonetico,p.texto) >= to_number(:limite_similaridade) group by p.id, p.texto, p.codigo, p.tid, p.origem, o.texto";
+                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL
+                                   from CNF_DOC_FITO_INTERVALO i, lov_doc_fitossanitarios_tipo td, LOV_DOC_FITOSSANI_TIPO_NUMERO tn
+                                   where i.TIPO_DOCUMENTO = " + Convert.ToInt32(filtros.Dados.TipoDocumentoID)
+                                         + " and i.TIPO = " + Convert.ToInt32(filtros.Dados.TipoNumeracaoID)
+                                         + " and substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.Ano.Substring(2, 2)
+                                         + " and i.TIPO_DOCUMENTO = td.ID and i.TIPO = tn.ID";
 
-                    //                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
-                    //				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
-                    //                                                      where lt.id = i.tipo_documento
-                    //                                                            and i.configuracao = :configuracao
-                    //                                                            and substr(i.NUMERO_INICIAL, 3, 2) = " + anoStr +    //to_char(sysdate, 'YY')
-                    //                                                      " order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
-
-                    comando.AdicionarParametroEntrada("filtro_fonetico", filtros.Dados.Texto, DbType.String);
-                    comando.AdicionarParametroEntrada("limite_similaridade", ConfiguracaoSistema.LimiteSimilaridade, DbType.String);
-                    colunas[0] = "similaridade";
-                    ordenar[0] = "similaridade";
+                    //comando.AdicionarParametroEntrada("filtro_fonetico", filtros.Dados.Texto, DbType.String);
+                    //comando.AdicionarParametroEntrada("limite_similaridade", ConfiguracaoSistema.LimiteSimilaridade, DbType.String);
+                    colunas[0] = "TipoDocumento";
+                    ordenar[0] = "TipoDocumento";
                 }
 
                 #region Executa a pesquisa nas tabelas
-                comando.DbCommand.CommandText = "select count(*) from (select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, 0 similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id " + comandtxt + ")";
+                //comando.DbCommand.CommandText = "select count(*) from (select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, 0 similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id " + comandtxt + ")";
+                comando.DbCommand.CommandText = "select count(*) from (" + comandtxt + ")";
 
                 retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
                 comando.AdicionarParametroEntrada("menor", filtros.Menor);
                 comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-                comandtxt = String.Format(@"select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, 1 similaridade 
-				from tab_profissao p, lov_profissao_origem o where p.origem = o.id {0} {1}", comandtxt, DaHelper.Ordenar(colunas, ordenar, !string.IsNullOrEmpty(filtros.Dados.Texto)));
+                //comandtxt = String.Format(@"select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, 1 similaridade 
+                //from tab_profissao p, lov_profissao_origem o where p.origem = o.id {0} {1}", comandtxt, DaHelper.Ordenar(colunas, ordenar, !string.IsNullOrEmpty(filtros.Dados.Texto)));
 
                 comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
@@ -446,24 +446,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
-                    Profissao profissao;
+                    DocumentoFitossanitario doc;
 
                     while (reader.Read())
                     {
-                        profissao = new Profissao();
-                        profissao.Id = Convert.ToInt32(reader["id"]);
+                        doc = new DocumentoFitossanitario();
+                        
+                        doc.TipoDocumentoTexto = reader["TipoDocumento"].ToString();
+                        doc.NumeroInicial = Convert.ToInt64(reader["NUMERO_INICIAL"]);
+                        doc.NumeroFinal = Convert.ToInt64(reader["NUMERO_FINAL"]);
 
-                        if (retorno.Itens.Exists(x => x.Id == profissao.Id))
-                        {
-                            continue;
-                        }
+                        retorno.Itens.Add(doc);
+                        //profissao.Id = Convert.ToInt32(reader["id"]);
 
-                        profissao.Tid = reader["tid"].ToString();
-                        profissao.Texto = reader["texto"].ToString();
-                        profissao.Codigo = reader["codigo"].ToString();
-                        profissao.OrigemId = Convert.ToInt32(reader["origem"]);
+                        //if (retorno.Itens.Exists(x => x.Id == profissao.Id))
+                        //{
+                        //    continue;
+                        //}
 
-                        retorno.Itens.Add(profissao);
+                        //profissao.Tid = reader["tid"].ToString();
+                        //profissao.Texto = reader["texto"].ToString();
+                        //profissao.Codigo = reader["codigo"].ToString();
+                        //profissao.OrigemId = Convert.ToInt32(reader["origem"]);
+
+                        //retorno.Itens.Add(profissao);
                     }
 
                     reader.Close();

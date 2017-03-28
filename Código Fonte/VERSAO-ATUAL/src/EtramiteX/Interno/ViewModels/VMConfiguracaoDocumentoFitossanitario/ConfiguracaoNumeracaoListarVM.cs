@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
-using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossanitario
@@ -26,15 +25,15 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossa
             set { _paginacao = value; }
         }
 
-        private ListarProtocoloFiltro _filtros = new ListarProtocoloFiltro();
-        public ListarProtocoloFiltro Filtros
+        private DocumentoFitossanitarioListarFiltros _filtros = new DocumentoFitossanitarioListarFiltros();
+        public DocumentoFitossanitarioListarFiltros Filtros
         {
             get { return _filtros; }
             set { _filtros = value; }
         }
 
-        private List<Protocolo> _resultados = new List<Protocolo>();
-        public List<Protocolo> Resultados
+        private List<DocumentoFitossanitario> _resultados = new List<DocumentoFitossanitario>();
+        public List<DocumentoFitossanitario> Resultados
         {
             get { return _resultados; }
             set { _resultados = value; }

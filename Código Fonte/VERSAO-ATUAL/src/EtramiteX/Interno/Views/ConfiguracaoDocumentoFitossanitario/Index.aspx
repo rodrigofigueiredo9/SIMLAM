@@ -6,11 +6,11 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Numeração de CFO/CFOC/PTV</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/listarNumeracao.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/ConfiguracaoDocumentoFitossanitario/listar.js") %>"></script>
 
 	<script>
 	    $(function () {
-	        ConfigDocFitossanitario.load($("#central"), {
+	        ConfigDocFitossanitarioListar.load($("#central"), {
 	            urls: {
 	                buscar: '<%= Url.Action("Index", "ConfiguracaoDocumentoFitossanitario") %>',
 	                validarBusca: '<%= Url.Action("ValidarBusca", "ConfiguracaoDocumentoFitossanitario") %>',

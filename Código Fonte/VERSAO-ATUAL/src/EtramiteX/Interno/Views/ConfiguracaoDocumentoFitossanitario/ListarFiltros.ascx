@@ -15,15 +15,15 @@
             <div class="block fixado">
 	            <div class="coluna20">
 		            <label>Tipo do Documento*</label>
-		            <%= Html.DropDownList("BlocoTipoDocumento", Model.TiposDocumento, new { @class = "text ddlBloco ddlTipoDocumento setarFoco" })%>
+		            <%= Html.DropDownList("Filtros.TipoDocumentoID", Model.TiposDocumento, new { @class = "text ddlBloco ddlTipoDocumento setarFoco" })%>
 	            </div>
 	            <div class="coluna20">
                     <label>Tipo de Numeração*</label>
-		            <%= Html.DropDownList("BlocoTipoNumeracao", Model.TiposNumeracao, new { @class = "text ddlBloco ddlTipoNumeracao"}) %>
+		            <%= Html.DropDownList("Filtros.TipoNumeracaoID", Model.TiposNumeracao, new { @class = "text ddlBloco ddlTipoNumeracao"}) %>
 	            </div>
 	            <div class="coluna20">
                     <label>Ano*</label>
-		            <%= Html.TextBox("BlocoAno", null, new { @class = "text txtAno txtBloco maskNum4"} ) %>
+		            <%= Html.TextBox("Filtros.Ano", Model.Filtros.Ano, new { @class = "text txtAno txtBloco maskNum4"} ) %>
 	            </div>
 	            <div class="coluna20">
 		            <button class="inlineBotao btnBuscar">Buscar</button>
