@@ -1685,6 +1685,7 @@
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarFiltrosConsolidado.ascx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarResultados.ascx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\Index.aspx" />

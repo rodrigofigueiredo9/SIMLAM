@@ -7,12 +7,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossan
 {
 	public class DocumentoFitossanitarioListarFiltros
 	{
-        //public int ID { get; set; }
+        public bool EhConsolidado { get; set; }
+        public bool EhIntervalo { get; set; }
 		public string TipoDocumentoID { get; set; }
-        //public string TipoDocumentoTexto { get; set; }
 		public string TipoNumeracaoID { get; set; }
-        //public string TipoNumeracaoTexto { get; set; }
         public string Ano { get; set; }
-        //public string Codigo { get; set; }
+        public string AnoConsolidado { get; set; }
 	}
 }
