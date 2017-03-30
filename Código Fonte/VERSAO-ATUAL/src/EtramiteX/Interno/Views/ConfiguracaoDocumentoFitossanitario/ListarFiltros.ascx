@@ -34,4 +34,4 @@
 	</div>
 </div>
 
-<div class="gridContainer"></div>
+<div class="gridContainerIntervalos"></div>

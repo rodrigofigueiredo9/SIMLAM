@@ -232,7 +232,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 #region VALIDAÇÃO
 
-                _validar.ValidarBuscaConsolidado(vm.Filtros.Ano);
+                _validar.ValidarBuscaConsolidado(vm.Filtros.AnoConsolidado);
 
                 if (!Validacao.EhValido)
                 {
@@ -245,27 +245,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
                 #endregion
 
-                if (!String.IsNullOrEmpty(vm.UltimaBusca))
-                {
-                    vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
-                }
+                //if (!String.IsNullOrEmpty(vm.UltimaBusca))
+                //{
+                //    vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ConfiguracaoNumeracaoListarVM>(vm.UltimaBusca).Filtros;
+                //}
 
-                vm.Paginacao = paginacao;
-                vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
-                vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-                vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+                //vm.Paginacao = paginacao;
+                //vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+                //vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+                //vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
-                Resultados<DocumentoFitossanitarioConsolidado> resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+                Resultados<DocumentoFitossanitarioConsolidado> resultados = _bus.FiltrarConsolidado(vm.Filtros, vm.Paginacao);
                 if (resultados == null)
                 {
                     return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
                 }
 
-                vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
-                vm.Paginacao.EfetuarPaginacao();
-                vm.Resultados = resultados.Itens;
+                //vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+                //vm.Paginacao.EfetuarPaginacao();
+                vm.ResultadosConsolidados = resultados.Itens;
 
-                return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
+                return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultadosConsolidado", vm) }, JsonRequestBehavior.AllowGet);
             }
             
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);

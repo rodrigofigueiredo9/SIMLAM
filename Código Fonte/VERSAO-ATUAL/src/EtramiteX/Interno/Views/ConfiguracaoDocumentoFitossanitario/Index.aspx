@@ -24,6 +24,9 @@
 		    <%Html.RenderPartial("ListarFiltros", Model); %>
         </div>
 
+        <br />
+        <br />
+
         <div>
             <%Html.RenderPartial("ListarFiltrosConsolidado", Model); %>
         </div>

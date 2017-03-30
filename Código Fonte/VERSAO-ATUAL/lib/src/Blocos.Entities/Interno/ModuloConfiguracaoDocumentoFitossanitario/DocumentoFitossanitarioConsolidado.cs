@@ -8,11 +8,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossan
 	public class DocumentoFitossanitarioConsolidado
 	{
         public string Texto { get; set; }
-        public int QtdBlocoCFO { get; set; }
-        public int QtdBlocoCFOC { get; set; }
-        public int QtdBlocoPTV { get; set; }
-        public int QtdDigitalCFO { get; set; }
-        public int QtdDigitalCFOC { get; set; }
-        public int QtdDigitalPTV { get; set; }
+        public string QtdBlocoCFO { get; set; }
+        public string QtdBlocoCFOC { get; set; }
+        public string QtdBlocoPTV { get; set; }
+        public string QtdDigitalCFO { get; set; }
+        public string QtdDigitalCFOC { get; set; }
+        public string QtdDigitalPTV { get; set; }
 	}
 }

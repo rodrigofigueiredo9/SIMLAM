@@ -36,11 +36,17 @@ ConfigDocFitossanitarioListar = {
 	buscarIntervalos: function () {
 	    $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('true');
 	    $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('false');
+
+	    $(this).closest('.principal').find('.gridContainerIntervalos').addClass('gridContainer');
+	    $(this).closest('.principal').find('.gridContainerConsolidado').removeClass('gridContainer');
 	},
 
 	buscarConsolidado: function () {
 	    $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('true');
 	    $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('false');
+
+	    $(this).closest('.principal').find('.gridContainerConsolidado').addClass('gridContainer');
+	    $(this).closest('.principal').find('.gridContainerIntervalos').removeClass('gridContainer');
 	}
 
 	
