@@ -39,6 +39,13 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoDocumentoFitossa
             set { _resultados = value; }
         }
 
+        private List<DocumentoFitossanitarioConsolidado> _resultadosConsolidados = new List<DocumentoFitossanitarioConsolidado>();
+        public List<DocumentoFitossanitarioConsolidado> ResultadosConsolidados
+        {
+            get { return _resultadosConsolidados; }
+            set { _resultadosConsolidados = value; }
+        }
+
         public String UltimaBusca { get; set; }
 
         public ConfiguracaoNumeracaoListarVM() { }

@@ -181,12 +181,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             try
             {
                 Filtro<DocumentoFitossanitarioListarFiltros> filtro = new Filtro<DocumentoFitossanitarioListarFiltros>(filtrosListar, paginacao);
-                Resultados<DocumentoFitossanitarioConsolidado> resultados = _da.Filtrar(filtro);
-
-                if (resultados.Quantidade < 1)
-                {
-                    Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
-                }
+                Resultados<DocumentoFitossanitarioConsolidado> resultados = _da.FiltrarConsolidado(filtro);
 
                 return resultados;
             }
