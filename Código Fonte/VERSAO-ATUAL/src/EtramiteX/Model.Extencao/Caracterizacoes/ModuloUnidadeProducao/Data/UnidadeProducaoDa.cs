@@ -856,7 +856,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
                     using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                     {
-                        Coordenada coordenada = null;
 
                         if (reader.Read())
                         {
