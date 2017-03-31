@@ -68,6 +68,7 @@
 					<th style="width:12%;">Área(ha)</th>
 					<th style="width:12%;">Cultivar</th>
 					<th style="width:14%;">Quantidade/Ano</th>
+                    <th style="width:14%;">Situação</th>
 					<th style="width:10%;">Ações</th>
 				</tr>
 			</thead>
@@ -90,6 +91,11 @@
 					<td>
 						<label class="lblEstimativaQuantidadeAno" title="<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + item.EstimativaProducaoUnidadeMedida %>">
 							<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + " " +item.EstimativaProducaoUnidadeMedida%>
+						</label>
+					</td>
+                    <td>
+						<label class="lblAtivo" title="<%=item.Situacao %>">
+							<%=item.Situacao%>
 						</label>
 					</td>
 					<td>

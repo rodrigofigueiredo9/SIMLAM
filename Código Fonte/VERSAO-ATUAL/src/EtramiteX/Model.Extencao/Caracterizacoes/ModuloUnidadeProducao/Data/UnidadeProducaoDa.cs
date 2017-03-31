@@ -838,19 +838,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
                     #region Títulos Concluídos
 
                     comando = bancoDeDados.CriarComando(@"select count(*) concluidos
-from crt_unidade_producao c,
-     crt_unidade_producao_unidade u,
-     tab_titulo ti,
-     esp_aber_livro_up_unid uni, 
-     esp_abertura_livro_up esp
-where u.unidade_producao = c.id
-      and esp.titulo = ti.id 
-      and ti.empreendimento = c.empreendimento
-      and ti.situacao = 3
-      and uni.especificidade = esp.id 
-      and uni.unidade = u.id
-      and u.CODIGO_UP = :codUP
-", EsquemaBanco);
+                                                          from crt_unidade_producao c,
+                                                               crt_unidade_producao_unidade u,
+                                                               tab_titulo ti,
+                                                               esp_aber_livro_up_unid uni, 
+                                                               esp_abertura_livro_up esp
+                                                          where u.unidade_producao = c.id
+                                                                and esp.titulo = ti.id 
+                                                                and ti.empreendimento = c.empreendimento
+                                                                and ti.situacao = 3
+                                                                and uni.especificidade = esp.id 
+                                                                and uni.unidade = u.id
+                                                                and u.CODIGO_UP = :codUP
+                                                        ", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
 

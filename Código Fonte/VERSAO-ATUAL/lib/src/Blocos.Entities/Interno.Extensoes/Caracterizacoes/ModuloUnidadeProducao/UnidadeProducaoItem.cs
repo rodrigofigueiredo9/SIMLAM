@@ -74,6 +74,16 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 			}
 		}
 
+        public string Situacao
+        {
+            get
+            {
+                if (TitulosConcluidos > 0) return "Ativo";
+
+                return "Inativo";
+            }
+        }
+
 		public UnidadeProducaoItem()
 		{
 			Municipio = new Municipio();

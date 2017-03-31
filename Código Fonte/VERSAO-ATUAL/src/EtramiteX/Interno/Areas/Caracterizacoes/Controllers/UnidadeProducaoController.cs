@@ -162,8 +162,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.UnidadeProducao = caracterizacao;
 			vm.UrlRetorno = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id });
 
-//            vm.Situacao
-
 			return View(vm);
 		}
 
