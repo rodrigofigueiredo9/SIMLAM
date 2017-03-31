@@ -49,6 +49,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 		public string CulturaTexto { get; set; }
 		public int? CultivarId { get; set; }
 		public string CultivarTexto { get; set; }
+        public int TitulosConcluidos { get; set; }
 
 		public Municipio Municipio { get; set; }
 		public Coordenada Coordenada { get; set; }
