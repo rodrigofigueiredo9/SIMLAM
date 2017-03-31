@@ -12,7 +12,6 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public bool IsVisualizar { get; set; }
 		public string UrlRetorno { get; set; }
 		public UnidadeProducao UnidadeProducao { get; set; }
-        public string Situacao { get; set; }
 
 		public String Mensagens
 		{
