@@ -50,7 +50,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@Url = Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario", new { Msg = Validacao.QueryParam() })
+				@Url = Url.Action("Configurar", "ConfiguracaoDocumentoFitossanitario")
 			}, JsonRequestBehavior.AllowGet);
 		}
 
