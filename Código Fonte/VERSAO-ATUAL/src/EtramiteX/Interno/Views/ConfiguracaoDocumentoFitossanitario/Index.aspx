@@ -11,7 +11,7 @@
 	<script>
 	    $(function () {
 	        ConfigDocFitossanitarioListar.load($("#central"));
-		});
+	    });
 	</script>
 </asp:Content>
 
@@ -20,6 +20,7 @@
 		<h1 class="titTela">Numeração de CFO/CFOC/PTV</h1>
 		<br />
         
+        <input type="hidden" class="ehEnter" name="ehEnter" value="0" />
         <div>
 		    <%Html.RenderPartial("ListarFiltros", Model); %>
         </div>
