@@ -5,7 +5,7 @@
 <input type="hidden" class="paginaAtual" value="" />
 <input type="hidden" class="numeroPaginas" value="<%= Model.Paginacao.NumeroPaginas %>" />
 
-<div class="dataGrid <%= ((Model.Paginacao.QuantidadeRegistros > 0) ? string.Empty : "hide") %> ">
+<div class="block dataGrid <%= ((Model.Paginacao.QuantidadeRegistros > 0) ? string.Empty : "hide") %> ">
 	<% Html.RenderPartial("Paginacao", Model.Paginacao); %>
 
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -13,7 +13,7 @@
 			<tr>
 				<th class="semOrdenacao">Tipo do Documento</th>
 				<th class="semOrdenacao" width="25%">Número Inicial</th>
-				<th class="semOrdenacao" width="25%">Número Final</th>
+				<th width="25%">Número Final</th>
 			</tr>
 		</thead>
 		<tbody>
