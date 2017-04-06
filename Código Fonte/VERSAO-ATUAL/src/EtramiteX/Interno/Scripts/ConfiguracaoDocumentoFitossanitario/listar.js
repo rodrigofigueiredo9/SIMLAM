@@ -21,6 +21,8 @@ ConfigDocFitossanitarioListar = {
 	    
 	    ConfigDocFitossanitarioListar.container = MasterPage.getContent(container);
 
+	    container.delegate('.txtAno', 'keydown', ConfigDocFitossanitarioListar.desabilitaEnter);
+	    container.delegate('.txtAnoConsolidado', 'keydown', ConfigDocFitossanitarioListar.desabilitaEnter);
 	    container.delegate('.btnBuscarIntervalos', 'click', ConfigDocFitossanitarioListar.buscarIntervalos);
 	    container.delegate('.btnBuscarConsolidado', 'click', ConfigDocFitossanitarioListar.buscarConsolidado);
 
@@ -33,20 +35,38 @@ ConfigDocFitossanitarioListar = {
 	    Aux.setarFoco(container);
 	},
 
-	buscarIntervalos: function () {
-	    $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('true');
-	    $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('false');
-
-	    $(this).closest('.principal').find('.gridContainerIntervalos').addClass('gridContainer');
-	    $(this).closest('.principal').find('.gridContainerConsolidado').removeClass('gridContainer');
+	desabilitaEnter: function(e){
+	    if (e.keyCode == 13) {
+	        $(this).closest('.principal').find('.ehEnter').val('1');
+	    } else {
+	        $(this).closest('.principal').find('.ehEnter').val('0');
+	    }
 	},
 
-	buscarConsolidado: function () {
-	    $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('true');
-	    $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('false');
+	buscarIntervalos: function (e) {
+	    var ehEnter = $(this).closest('.principal').find('.ehEnter').val();
 
-	    $(this).closest('.principal').find('.gridContainerConsolidado').addClass('gridContainer');
-	    $(this).closest('.principal').find('.gridContainerIntervalos').removeClass('gridContainer');
+	    if (ehEnter == '0') {
+	        $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('true');
+	        $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('false');
+
+	        $(this).closest('.principal').find('.gridContainerIntervalos').addClass('gridContainer');
+	        $(this).closest('.principal').find('.gridContainerConsolidado').removeClass('gridContainer');
+	    }
+	},
+
+	buscarConsolidado: function (e) {
+	    var ehEnter = $(this).closest('.principal').find('.ehEnter').val();
+
+	    if (ehEnter == '0') {
+	        $(this).closest('.principal').find('.txtTipoBuscaConsolidado').val('true');
+	        $(this).closest('.principal').find('.txtTipoBuscaIntervalos').val('false');
+
+	        $(this).closest('.principal').find('.gridContainerConsolidado').addClass('gridContainer');
+	        $(this).closest('.principal').find('.gridContainerIntervalos').removeClass('gridContainer');
+	    }else{
+	        $(this).closest('.principal').find('.ehEnter').val('0');
+	    }
 	}
 
 	

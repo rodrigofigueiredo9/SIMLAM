@@ -19,7 +19,7 @@
 		            <%= Html.TextBox("Filtros.AnoConsolidado", Model.Filtros.AnoConsolidado, new { @class = "text txtAnoConsolidado txtBloco maskNum4"} ) %>
 	            </div>
 	            <div class="coluna20">
-		            <button class="inlineBotao btnBuscar btnBuscarConsolidado">Buscar</button>
+		            <button class="inlineBotao btnBuscar btnBuscarConsolidado" value="btnBuscarConsolidado">Buscar</button>
 	            </div>
             </div>
         </div>

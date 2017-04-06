@@ -27,7 +27,7 @@
 		            <%= Html.TextBox("Filtros.Ano", Model.Filtros.Ano, new { @class = "text txtAno txtBloco maskNum4"} ) %>
 	            </div>
 	            <div class="coluna20">
-		            <button class="inlineBotao btnBuscar btnBuscarIntervalos">Buscar</button>
+		            <button class="inlineBotao btnBuscar btnBuscarIntervalos" value="btnBuscarIntervalos">Buscar</button>
 	            </div>
             </div>
         </div>
