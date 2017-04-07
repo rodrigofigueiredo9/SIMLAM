@@ -111,7 +111,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			ptv.NotaFiscalApresentacao = (int)eApresentacaoNotaFiscal.Sim;
 			ptv.Situacao = (int)ePTVSituacao.EmElaboracao;
 
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
 
 			PTVVM vm = new PTVVM(
 				ptv,
