@@ -22,6 +22,7 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC.Lote
 		public LoteItem Item { get; set; }
 		public string CulturaCultivar { get; set; }
         public decimal Quantidade { get; set; }
+        public decimal SaldoTotal { get; set; }
 
 
 		public string NumeroCompleto
