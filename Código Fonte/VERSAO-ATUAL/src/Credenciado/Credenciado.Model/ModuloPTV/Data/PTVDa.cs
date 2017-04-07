@@ -78,11 +78,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				insert into {0}tab_ptv
 					(id, tid, situacao, situacao_data, tipo_numero, numero, dua_numero, dua_cpf_cnpj, data_emissao, empreendimento, partida_lacrada_origem, numero_lacre, numero_porao, 
 					numero_container, destinatario, possui_laudo_laboratorial, tipo_transporte, veiculo_identificacao_numero, 
-					rota_transito_definida, itinerario, apresentacao_nota_fiscal, numero_nota_fiscal, responsavel_emp, local_vistoria, credenciado, data_hora_vistoria, dua_tipo_pessoa, declaracaoadicional,empreendimento_sem_doc, responsavel_sem_doc)
+					rota_transito_definida, itinerario, apresentacao_nota_fiscal, numero_nota_fiscal, responsavel_emp, local_vistoria, credenciado, data_hora_vistoria, dua_tipo_pessoa, declaracaoadicional,empreendimento_sem_doc, responsavel_sem_doc, data_vistoria)
 				values
 					(seq_tab_ptv.nextval, :tid, :situacao, sysdate, :tipo_numero,:numero, :dua_numero, :dua_cpf_cnpj,:data_emissao,:empreendimento,:partida_lacrada_origem,:numero_lacre,:numero_porao,
 					:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,
-					:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,:numero_nota_fiscal,:responsavel_emp, :local_vistoria, :credenciado, :data_hora_vistoria, :dua_tipo_pessoa, :declaracaoadicional, :empreendimento_sem_doc, :responsavel_sem_doc) returning id into :id";
+					:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,:numero_nota_fiscal,:responsavel_emp, :local_vistoria, :credenciado, :data_hora_vistoria, :dua_tipo_pessoa, :declaracaoadicional, :empreendimento_sem_doc, :responsavel_sem_doc, :data_vistoria) returning id into :id";
 
           
                 if (PTV.Produtos.Count > 0 && ((PTV.Produtos[0].SemDoc) ||
@@ -138,6 +138,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
                 comando.AdicionarParametroEntrada("responsavel_sem_doc", PTV.ResponsavelSemDoc, DbType.String);
                 comando.AdicionarParametroEntrada("empreendimento_sem_doc", PTV.EmpreendimentoSemDoc, DbType.String);
+
+                comando.AdicionarParametroEntrada("data_vistoria", PTV.DataVistoria, DbType.DateTime);
                 
 
 				//ID de retorno
@@ -249,7 +251,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					local_vistoria = :local_vistoria,
 					data_hora_vistoria = :data_hora_vistoria,
 					dua_tipo_pessoa = :dua_tipo_pessoa,
-					situacao = 1
+					situacao = 1,
+                    data_vistoria = :data_vistoria
 				where id = :id", UsuarioCredenciado);
 
 				#endregion-
@@ -274,6 +277,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("local_vistoria", PTV.LocalVistoriaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_hora_vistoria", PTV.DataHoraVistoriaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dua_tipo_pessoa", PTV.TipoPessoa, DbType.Int32);
+                comando.AdicionarParametroEntrada("data_vistoria", PTV.DataVistoria, DbType.DateTime);
 
 				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
 
@@ -466,7 +470,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				p.empreendimento, p.responsavel_emp, em.denominador, p.partida_lacrada_origem, p.numero_lacre, p.numero_porao,
 				p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal, p.numero_nota_fiscal,
 				p.valido_ate, p.responsavel_tecnico, p.municipio_emissao, p.dua_numero, p.dua_cpf_cnpj, p.local_vistoria, (select s.nome from {0}tab_setor s where s.id=p.local_vistoria) local_vistoria_texto, p.credenciado credenciado_id, nvl(tp.nome, tp.razao_social) credenciado_nome,
-				p.data_hora_vistoria, dua_tipo_pessoa, p.responsavel_sem_doc, p .empreendimento_sem_doc from {0}tab_ptv p, ins_empreendimento em, {0}tab_credenciado tc, {0}lov_solicitacao_ptv_situacao lst, {0}tab_pessoa tp 
+				p.data_hora_vistoria, dua_tipo_pessoa, p.responsavel_sem_doc, p.empreendimento_sem_doc, trunc(p.data_vistoria) as data_vistoria from {0}tab_ptv p, ins_empreendimento em, {0}tab_credenciado tc, {0}lov_solicitacao_ptv_situacao lst, {0}tab_pessoa tp 
 				where p.id = :id and em.id(+) = p.empreendimento and lst.id = p.situacao and tc.id = p.credenciado and tc.pessoa = tp.id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -508,6 +512,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						PTV.SituacaoData.Data = reader.GetValue<DateTime>("situacao_data");
                         PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
                         PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
+                        PTV.DataVistoria = reader.GetValue<DateTime>("data_vistoria");
 
 						if (reader.GetValue<DateTime>("valido_ate") != DateTime.MinValue)
 						{
@@ -1831,10 +1836,48 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"
-			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
+//                Comando comando = bancoDeDados.CriarComando(@"
+//			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("setorId", setorId, DbType.Int32);
+                Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(*) FROM cnf_local_vistoria_bloqueio WHERE setor = :setor", EsquemaBanco);
+                comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
+
+                int totRegistros = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+
+                if (totRegistros > 0)
+                {
+                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
+                                                                FROM (
+                                                                      SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                      FROM DUAL
+                                                                      CONNECT BY TRUNC(SYSDATE, 'mm') + LEVEL - 1 <= LAST_DAY(SYSDATE)),
+                                                                      cnf_local_vistoria lv,
+                                                                      lov_dia_semana d,
+                                                                (  SELECT to_char(dia_inicio,'DD/MM/YY HH24:MI') dia_inicio,to_char(dia_fim,'DD/MM/YY HH24:MI') dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor = :setor
+                                                                ) bloq
+                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
+                                                               AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
+                                                               AND (to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
+                                                               AND to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))");
+
+
+
+                }
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
+                                                                FROM (    SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                            FROM DUAL
+                                                                        CONNECT BY TRUNC(SYSDATE, 'mm') + LEVEL - 1 <= LAST_DAY(SYSDATE)) ,
+                                                                        cnf_local_vistoria lv,
+                                                                        lov_dia_semana d
+                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
+                                                                and to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')");
+                }
+
+
+                comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 
 				List<ListaValor> retorno = null;
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))

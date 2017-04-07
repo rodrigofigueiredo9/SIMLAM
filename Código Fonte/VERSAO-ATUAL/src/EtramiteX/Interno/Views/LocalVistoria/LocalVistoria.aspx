@@ -21,6 +21,7 @@
 				    obter: '<%= Url.Action("EditarLocalVistoria", "LocalVistoria") %>',
 				    escolherSetor: '<%= Url.Action("EscolherSetorLocalVistoria", "LocalVistoria") %>',
 				    podeExcluir: '<%= Url.Action("PodeExcluir", "LocalVistoria") %>',
+				    podeIncluirBloqueio: '<%= Url.Action("PodeAcrescentarBloqueio", "LocalVistoria") %>',
 				},
 		        Mensagens: <%= Model.Mensagens %>,
 		    });

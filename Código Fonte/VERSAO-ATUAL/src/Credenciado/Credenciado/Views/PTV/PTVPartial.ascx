@@ -44,6 +44,8 @@
 		</div>
 </fieldset>
 
+
+
 <div class="linhaConteudo <%= Model.PTV.Id <= 0 ? "hide":""%>">
 
 	<fieldset class="box">
@@ -328,6 +330,33 @@
 		</div>
 	</div>
 
+    <script>
+       
+        $(document).ready(function () {
+             
+           
+            $("#DataVistoria").datepicker({
+                dateFormat: 'dd/mm/y',
+                dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                minDate: new Date(),
+                beforeShowDay: function (d) {
+                  
+                    // normalize the date for searching in array
+                    var dmy = "";
+                    dmy += ("00" + d.getDate()).slice(-2) + "/";
+                    dmy += ("00" + (d.getMonth() + 1)).slice(-2) + "/";
+                    dmy += d.getFullYear().toString().substr(-2);
+                   // alert(datelist);
+                    return [$.inArray(dmy, datelist) >= 0 ? true : false, ""];
+                }
+            });
+
+        });
+
+    </script>
+
 	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="block">
 			<div class="coluna40">
@@ -339,7 +368,8 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="LocalEmissao">Vistoria de Carga *</label>
-				<%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%>
+                 <%= Html.TextBox("DataVistoria",Model.PTV.DataVistoria.ToString("dd/MM/yy"), new { @class = "txtDataHoraVistoria text" })%>
+				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
 			</div>
 		</div>
 	</div>

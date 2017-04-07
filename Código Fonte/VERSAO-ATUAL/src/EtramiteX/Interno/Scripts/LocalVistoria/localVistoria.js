@@ -8,6 +8,7 @@ LocalVistoria = {
 	        obter: null,
 	        escolherSetor: null,
 	        podeExcluir: null,
+            podeIncluirBloqueio: null,
 	    },
         edicao: false,
 	    Mensagens: null
@@ -31,6 +32,8 @@ LocalVistoria = {
 	    LocalVistoria.container.delegate('.ddlSetores', 'change', LocalVistoria.onSelecionarSetor);
 	    LocalVistoria.container.delegate('.btnBloquear', 'click', LocalVistoria.bloquear);
 	    LocalVistoria.container.delegate('.btnExcluir', 'click', LocalVistoria.excluir);
+	    LocalVistoria.container.delegate('.btnAdicionarBloqueio', 'click', LocalVistoria.onAdicionarBloqueio);
+	    LocalVistoria.container.delegate('.btnExcluirBloqueio', 'click', LocalVistoria.excluirBloqueio);
 	},
 
 
@@ -67,6 +70,97 @@ LocalVistoria = {
 	        return false;
 	    }
 	    return true;
+
+	},
+
+	onAdicionarBloqueio: function () {
+
+
+	    var podeIncuir = 0;
+	    var item = {
+	        datInicial: $("#DataInicialBloqueio").val() + ' ' + $("#HoraInicialBloqueio").val(),
+	        datFinal: $("#DataFinalBloqueio").val() + ' ' + $("#HoraFinalBloqueio").val(),
+	        setorId: $("#SetorTipo option:selected").val(),
+	    };
+
+	    MasterPage.carregando(true);
+	    $.ajax({
+	        url: LocalVistoria.settings.urls.podeIncluirBloqueio,
+	        data: JSON.stringify(item),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, LocalVistoria.container);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(LocalVistoria.container, response.Msg);
+	                podeIncuir = 0;
+	                return
+	            }
+	            else {
+	                podeIncuir = 1;
+	            }
+	        }
+	    });
+
+	    MasterPage.carregando(false);
+
+	    if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
+	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+	        return;
+	    }
+
+	    if ($('.txtHoraFinalBloqueio', LocalVistoria.container).val() == '') {
+	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+	        return;
+	    }
+
+	    if (!LocalVistoria.ValidarHora($('.txtHoraInicialBloqueio', LocalVistoria.container).val())) {
+	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicioInvalida]);
+	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+	        return;
+	    }
+	    if (!LocalVistoria.ValidarHora($('.txtHoraFinalBloqueio', LocalVistoria.container).val())) {
+	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
+	        $('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
+	        return;
+	    }
+
+	    var linha = $('.tr_template_bloqueio', LocalVistoria.container).clone();
+	    var item = {
+	        Id: null,
+	        DataInicialBloqueio: $('.txtDataInicialBloqueio', LocalVistoria.container).val(),
+	        HoraInicialBloqueio: $('.txtHoraInicialBloqueio', LocalVistoria.container).val(),
+	        DataFinalBloqueio: $('.txtDataFinalBloqueio', LocalVistoria.container).val(),
+	        HoraFinalBloqueio: $('.txtHoraFinalBloqueio', LocalVistoria.container).val(),
+	        Tid: null,
+	    };
+
+	    LocalVistoria.alterandoItemListaBloqueio(linha, item, 0);
+
+	    
+
+	    $(linha).removeClass('hide');
+	    $(linha).removeClass('tr_template_bloqueio');
+
+
+	    $('.gridBloqueios tbody', LocalVistoria.container).append($(linha));
+
+	    $('.txtDataInicialBloqueio', LocalVistoria.container).val('');
+	    $('.txtHoraInicialBloqueio', LocalVistoria.container).val('');
+	    $('.txtDataFinalBloqueio', LocalVistoria.container).val('');
+	    $('.txtHoraFinalBloqueio', LocalVistoria.container).val('');
+	  
+
+	    Listar.atualizarEstiloTable($('.gridBloqueios', LocalVistoria.container));
+	    Aux.setarFoco(LocalVistoria.container);
+
 
 	},
 
@@ -120,6 +214,7 @@ LocalVistoria = {
 	        Situacao:1,
 	        Tid: null,
 	    };
+
 	    LocalVistoria.alterandoItemLista(linha, item, 0);
 	    $(linha).removeClass('hide');
 	    $(linha).removeClass('tr_template');
@@ -160,7 +255,6 @@ LocalVistoria = {
 	        DiaSemanaId: $(this).closest('tr').find('.hdnDiaSemanaId').val(),
 	        HoraInicio: $(this).closest('tr').find('.lblHoraInicio').html(),
 	        HoraFim: $(this).closest('tr').find('.lblHoraFim').html(),
-	        Situacao: $(this).closest('tr').find('.hdnItemSituacao').val(),
 	        Tid: $(this).closest('tr').find('.hdnItemTid').val(),
 	    };
 
@@ -172,7 +266,6 @@ LocalVistoria = {
 	    $('.txtHoraFim', LocalVistoria.container).val(item.HoraFim);
 	    $('.hdnLocalVistoriaId', LocalVistoria.container).val(item.Id);
 	    $('.hdnLocalVistoriaTid', LocalVistoria.container).val(item.Tid);
-	    $('.hdnLocalVistoriaSituacao', LocalVistoria.container).val(item.Situacao);
 	    $('.btnAdicionar', LocalVistoria.container).addClass('hide');
 	    $('.btnEditar', LocalVistoria.container).removeClass('hide');
 	    $('.ddldiasemana', LocalVistoria.container).focus();
@@ -222,7 +315,6 @@ LocalVistoria = {
 	        DiaSemanaTexto: $('.ddldiasemana option:selected', LocalVistoria.container).text(),
 	        HoraInicio: $('.txtHoraInicio', LocalVistoria.container).val(),
 	        HoraFim: $('.txtHoraFim', LocalVistoria.container).val(),
-	        Situacao: $('.hdnLocalVistoriaSituacao', LocalVistoria.container).val(),
 	        Tid: "", //Se editou o TID fica vazio
 	    };
 
@@ -234,8 +326,7 @@ LocalVistoria = {
 	    $('.ddldiasemana', LocalVistoria.container).val('0');
 	    $('.hdnLocalVistoriaId', LocalVistoria.container).val('');
 	    $('.hdnLocalVistoriaTid', LocalVistoria.container).val('');
-	    $('.hdnLocalVistoriaSituacao', LocalVistoria.container).val('');
-
+	 
         $(linha).removeClass('itemEdicao');
 
 	    $('.btnAdicionar', LocalVistoria.container).removeClass('hide');
@@ -245,6 +336,25 @@ LocalVistoria = {
 	},
 
 	
+	
+	alterandoItemListaBloqueio: function (linha, item, itemIndex) {
+	   
+	    $('.lblDataInicialBloqueio', linha).html(item.DataInicialBloqueio);
+	    $('.lblHoraInicialBloqueio', linha).html(item.HoraInicialBloqueio);
+	    $('.lblDataFinalBloqueio', linha).html(item.DataFinalBloqueio);
+	    $('.lblHoraFinalBloqueio', linha).html(item.HoraFinalBloqueio);
+	    $('.hdnItemBloqueioId', linha).val(item.Id);
+	    $('.hdnItemBloqueioTid', linha).val(item.Tid);
+	   
+	   
+	    if ((itemIndex == 0) || (itemIndex == "0")) {
+	        $('.hdnItemBloqueioIndex', linha).val($('.gridBloqueios tbody tr:not(.tr_template_bloqueio)').length);
+	    }
+	    else {
+	        $('.hdnItemBloqueioIndex', linha).val(itemIndex);
+	    }
+	},
+
 
 	alterandoItemLista: function(linha, item, itemIndex){
 	    $('.lblDiaSemana', linha).html(item.DiaSemanaTexto);
@@ -253,13 +363,7 @@ LocalVistoria = {
 	    $('.lblHoraFim', linha).html(item.HoraFim);
 	    $('.hdnItemId', linha).val(item.Id);
 	    $('.hdnItemTid', linha).val(item.Tid);
-	    if ((item.Situacao == 1)||(item.Situacao == "1")) {
-	        $('.lblSituacao', linha).html("Ativo");
-	    }
-	    else {
-	        $('.lblSituacao', linha).html("Bloqueado");
-	    }
-	    $('.hdnItemSituacao', linha).val(item.Situacao);
+	  
 
 	    if ((itemIndex == 0)||(itemIndex == "0")) {
 	        $('.hdnItemIndex', linha).val($('.gridLocalVistoria tbody tr:not(.tr_template)').length);
@@ -337,6 +441,12 @@ LocalVistoria = {
 	    $(this).closest('tr').find('.hdnItemTid').val("");//Se editou o TID fica vazio
 	},
 
+	excluirBloqueio: function () {
+
+	    $(this).closest('tr').remove();
+	    Listar.atualizarEstiloTable($('.gridBloqueios', LocalVistoria.container));
+
+	},
 
 	excluir: function () {
 	    Mensagem.limpar(LocalVistoria.container);
@@ -346,7 +456,6 @@ LocalVistoria = {
 	        DiaSemanaTexto: $(this).closest('tr').find('.lblDiaSemana').html(),
 	        HoraInicio: $(this).closest('tr').find('.lblHoraInicio').html(),
 	        HoraFim: $(this).closest('tr').find('.lblHoraFim').html(),
-	        Situacao: $(this).closest('tr').find('.hdnItemSituacao').val(),
 	        Tid: $(this).closest('tr').find('.hdnItemTid').val(),
 	    };
 
@@ -423,8 +532,9 @@ LocalVistoria = {
 	    var LocalVistoriaObj = {
 	        SetorId: $('.ddlSetores option:selected', LocalVistoria.container).val(),
 	        SetorTexto: $('.ddlSetores option:selected', LocalVistoria.container).text(),
-	        DiasHorasVistoria: new Array ()
-	    };
+	        DiasHorasVistoria: new Array(),
+	        Bloqueios: new Array()
+        };
 
 	    $('tr:not(.tr_template)', gridContainer).each(function () {
 	        LocalVistoriaObj.DiasHorasVistoria.push({
@@ -433,10 +543,24 @@ LocalVistoria = {
 	            DiaSemanaTexto: $('.lblDiaSemana', this).html(),
 	            HoraInicio: $('.lblHoraInicio', this).html(),
 	            HoraFim: $('.lblHoraFim', this).html(),
-	            Situacao: $('.hdnItemSituacao', this).val(),
 	            Tid: $('.hdnItemTid', this).val()
 	        });
 	    });
+
+	    gridContainer = $('.gridBloqueios tbody', LocalVistoria.container);
+
+	    $('tr:not(.tr_template_bloqueio)', gridContainer).each(function () {
+	        LocalVistoriaObj.Bloqueios.push({
+	            Id: $('.hdnItemId', this).val(),
+	            DiaInicio: $('.lblDataInicialBloqueio', this).html(),
+	            HoraInicio: $('.lblHoraInicialBloqueio', this).html(),
+	            DiaFim: $('.lblDataFinalBloqueio', this).html(),
+	            HoraFim: $('.lblHoraFinalBloqueio', this).html(),
+	            Tid: $('.hdnItemTid', this).val()
+	        });
+	    });
+
+	  
 
 	    return LocalVistoriaObj;
 	},

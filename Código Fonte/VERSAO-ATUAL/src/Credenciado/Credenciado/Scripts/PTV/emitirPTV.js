@@ -2,7 +2,7 @@
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
-
+var datelist = []; 
 PTVEmitir = {
 	settings: {
 		urls: {
@@ -38,9 +38,55 @@ PTVEmitir = {
 
 	container: null,
 
+    
+
+	
 	cidadeID: null,
 
 	load: function (container, options) {
+
+
+	    jQuery.fn.filterByText = function (textbox, selectSingleMatch) {
+	        return this.each(function () {
+	            var select = this;
+	            var options = [];
+	            $(select).find('option').each(function () {
+	                options.push({ value: $(this).val(), text: $(this).text() });
+	            });
+
+	            $(select).data('options', options);
+	            
+
+	            $(textbox).bind('change', function () {
+	                //var options = $(select).empty().scrollTop(0).data('options');
+	               
+	                var options = [];
+	                $("#DataHoraVistoriaId option").each(function () {
+	                    options.push({ "id": $(this).val(), "text": $(this).text() });
+	                });
+
+	                $(select).empty();
+	                var search = $.trim($(this).val());
+	                var regex = new RegExp(search, 'gi');
+	              
+	                for (var i = 0; i < options.length; i++) {
+	                    var option = options[i];
+	            
+	                    if (option.text.match(regex) !== null) {
+	                        $(select).append(
+                                    $('<option>').text(option.text).val(option.id)
+                            );
+	                    }
+	                }
+	                if (selectSingleMatch === true &&
+                            $(select).children().length === 1) {
+	                    $(select).children().get(0).selected = true;
+	                }
+	            });
+	        });
+	    };
+
+
 		if (options) { $.extend(PTVEmitir.settings, options); }
 
 		PTVEmitir.container = MasterPage.getContent(container);
@@ -89,6 +135,22 @@ PTVEmitir = {
 		}
 
 		$('.txtNumeroDua', PTVEmitir.container).focus();
+
+
+		//$('#DataVistoria').keydown(function (e) {
+		//    //e.preventDefault();
+		//    return false;
+		//});
+	    
+		$('#DataVistoria').change(function (e) {
+		        
+		    PTVEmitir.onChangeLocalVistoria();
+		});
+
+		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+
+		
+
 	},
 
 	verificarDUAEnter: function (e) {
@@ -122,7 +184,21 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 
-				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
+			    $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
+
+			    var txtData = JSON.stringify(response.DiasHorasVistoria).toString();
+			   
+			    var lstDatas = txtData.match(/\d{2}\/\d{2}\/\d{2}/g);
+
+			   
+
+			    //var lstDatas = "^([0-2][0-9]||3[0-1])/(0[0-9]||1[0-2])/([0-9][0-9])?[0-9][0-9]$";
+
+			   
+			    //var result = "28-02-2012,29-02-2012,01-03-2012,02-03-2012,03-03-2012,04-03-2012,05-03-2012,06-03-2012,07-03-2012,08-03-2012,09-03-2012,28-02-2012,29-02-2012,01-03-2012,02-03-2012,03-03-2012,04-03-2012,05-03-2012,06-03-2012,07-03-2012,08-03-2012,09-03-2012"; // dummy result
+			    datelist = lstDatas; // populate the array
+			   
+			    $("#DataVistoria").datepicker("refresh"); // 
 
 			}
 		});
@@ -1090,6 +1166,8 @@ PTVEmitir = {
 			dados = $('.txtCNPJDUA', PTVEmitir.container).val();
 		}
 
+		alert($('#DataVistoria', PTVEmitir.container).val());
+
 		var objeto = {
 			Id: +$('.hdnEmissaoId', PTVEmitir.container).val(),
 			NumeroTipo: +$('.rbTipoNumero:checked', PTVEmitir.container).val(),
@@ -1121,7 +1199,8 @@ PTVEmitir = {
 			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			Produtos: [],
-			Anexos: []
+			Anexos: [],
+			DataVistoria: $('#DataVistoria', PTVEmitir.container).val()
 		}
 
 		var retorno = [];

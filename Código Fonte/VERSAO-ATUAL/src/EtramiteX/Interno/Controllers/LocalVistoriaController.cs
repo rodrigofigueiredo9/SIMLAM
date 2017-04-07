@@ -71,6 +71,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			LocalVistoria buscandoLocal = new LocalVistoria();
 			buscandoLocal = _localVistoriaBus.Obter(idSetor, null);
 			vm.DiasHorasVistoria = buscandoLocal.DiasHorasVistoria;
+            vm.ListBloqueios = buscandoLocal.Bloqueios;
 			vm.IsEdicao = true;
 			vm.IsVisualizar = false;
 			return View("LocalVistoria", vm);
@@ -115,6 +116,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 
 		}
+
+
+        [Permite(RoleArray = new Object[] { ePermissao.LocalVistoriaOperar })]
+        public ActionResult PodeAcrescentarBloqueio(string datInicial, string datFinal, int setorId)
+        {
+
+            if (!string.IsNullOrEmpty(datInicial) && !string.IsNullOrEmpty(datFinal) && setorId != 0)
+                  _localVistoriaBus.VerificaPodeIncluirBloqueio(datInicial, datFinal, setorId);
+
+          
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
+
 
 		[Permite(RoleArray = new Object[] { ePermissao.LocalVistoriaOperar })]
 		public ActionResult SalvarLocalVistoria(LocalVistoria local)

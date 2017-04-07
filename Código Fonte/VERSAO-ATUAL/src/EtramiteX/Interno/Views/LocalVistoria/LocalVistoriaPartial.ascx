@@ -24,7 +24,7 @@
                         <%= Html.TextBox("HoraInicio","", new { @class = "txtHoraInicio text maskHoraMinuto" })%>
 		    </div>
             <div class="coluna20">
-				    <label for="EditandoDiaSemanaTexto">Dia de Fim</label>
+				    <label for="EditandoDiaSemanaTexto">Hora de Fim</label>
                         <%= Html.TextBox("HoraFim", "" , new { @class = "txtHoraFim text maskHoraMinuto" })%>
                         <%= Html.Hidden("hdnId", "", new { @class = "hdnId" })%>
                         <%= Html.Hidden("hdnLocalVistoriaId","", new { @class = "hdnLocalVistoriaId" })%>
@@ -48,7 +48,7 @@
 						<th width="20%">Dia da Semana</th>
                         <th width="20%">Hora Inicio</th>
                         <th width="20%">Hora Fim</th>
-                        <th >Situação</th>
+                       
                         <% if (!Model.IsVisualizar) { %>
 						    <th class="semOrdenacao" width="15%">Ações</th>
                         <% } %>
@@ -70,21 +70,10 @@
 							<td>
                                 <label class="lblHoraFim" id="lblHoraFim"><%= item.HoraFim %></label>
 							</td>
-							<td>
-                                <%  if (item.Situacao==1) {%>
-                                    <label class="lblSituacao" id="lblSituacao" >Ativo</label>
-                                <% } 
-                                    else 
-                                    { %>
-                                    <label class="lblSituacao" id="lblSituacao" >Bloqueado</label>
-                                <% } %>
-        					</td>
                             <% if (!Model.IsVisualizar) { %>
 							    <td>
                                     <a class="icone editar btnItemEditar" title="Editar"></a>
-							        <a class="icone dispensado btnBloquear" title="Bloquear Local de Vistoria"></a>
                                     <a class="icone excluir btnExcluir" title="Excluir"></a>
-                                    <input type="hidden" value="<%= item.Situacao %>" class="hdnItemSituacao" />
 							        <input type="hidden" value="<%= item.Id %>" class="hdnItemId" />
                                     <input type="hidden" value="<%= item.Tid %>" class="hdnItemTid" />
 							        <input type="hidden" value="<%= i %>" class="hdnItemIndex" />
@@ -104,18 +93,121 @@
 						<td>
 							<label class="lblHoraFim" id="lblHoraFim"></label>
 						</td>
-							<td>
-								<label class="lblSituacao" ></label>
-
-							</td>
 						<td>
                             <a class="icone editar btnItemEditar" title="Editar"></a>
-							<a class="icone dispensado btnBloquear" title="Bloquear Local de Vistoria"></a>
                             <a class="icone excluir btnExcluir" title="Excluir"></a>
-                            <input type="hidden" value="" class="hdnItemSituacao" />
 							<input type="hidden" value="" class="hdnItemId" />
                             <input type="hidden" value="" class="hdnItemTid" />
 							<input type="hidden" value="" class="hdnItemIndex" />
+						</td>
+					</tr>
+                    <% } %>
+				</tbody>
+			</table>
+		</div>
+	</div>
+    </fieldset>
+    <fieldset class="block box">
+        <legend>Bloqueios</legend>
+      <% if (!Model.IsVisualizar) { %>
+        
+        <div class="block hide" style="display: block;">
+            <div class="coluna20">
+				    <label for="DataInicialBloqueio">Data Inicial</label>
+                        <%= Html.TextBox("DataInicialBloqueio","", new { @class = "txtDataInicialBloqueio datepicker maskData text" })%>
+		    </div>
+
+             <div class="coluna20">
+				    <label for="HoraInicialBloqueio">Hora Inicial</label>
+                        <%= Html.TextBox("HoraInicialBloqueio","", new { @class = "txtHoraInicialBloqueio text maskHoraMinuto" })%>
+		    </div>
+            <div class="coluna20">
+				    <label for="DataFinalBloqueio">Data Final</label>
+                        <%= Html.TextBox("DataFinalBloqueio","", new { @class = "txtDataFinalBloqueio datepicker maskData text" })%>
+		    </div>
+
+             <div class="coluna20">
+				    <label for="HoraFinallBloqueio">Hora Final</label>
+                        <%= Html.TextBox("HoraFinalBloqueio","", new { @class = "txtHoraFinalBloqueio text maskHoraMinuto" })%>
+		    </div>
+                      
+		    <div class="coluna10">
+			    <button class="inlineBotao btnAdicionarBloqueio">Adicionar</button>
+
+		    </div>
+
+        </div>
+		
+    <%} %>
+        
+    	<div class="block">
+		<div class="gridContainer">
+			<table class="dataGridTable gridBloqueios" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th width="20%">Data Inicial</th>
+                        <th width="20%">Hora Inicial</th>
+                        <th width="20%">Data Final</th>
+                        <th width="20%">Hora Final</th>
+                        <% if (!Model.IsVisualizar) { %>
+						    <th class="semOrdenacao" width="15%">Ações</th>
+                        <% } %>
+					</tr>
+				</thead>
+				<tbody>
+					<% Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria.BloqueioLocalVistoria itemBloqueio = null;
+						for (int i = 0; i < Model.ListBloqueios.Count; i++)  {
+                            itemBloqueio = Model.ListBloqueios[i];
+                            var DataInicial = itemBloqueio.DiaInicio.ToString("dd/MM/yyyy");
+                            var HoraInicial = itemBloqueio.HoraInicio;
+                            var DataFinal = itemBloqueio.DiaFim.ToString("dd/MM/yyyy");
+                            var HoraFinal = itemBloqueio.HoraFim;
+					%>
+						<tr>
+							<td>
+                                <label class="lblDataInicialBloqueio" id="Label1"><%= DataInicial %> </label>
+                              
+							</td>
+							<td>
+                                <label class="lblHoraInicialBloqueio" id="Label2"><%= HoraInicial%></label>
+							</td>
+							<td>
+                                <label class="lblDataFinalBloqueio" id="Label3"><%= DataFinal %> </label>
+                              
+							</td>
+							<td>
+                                <label class="lblHoraFinalBloqueio" id="Label7"><%= HoraFinal %></label>
+							</td>
+                            <% if (!Model.IsVisualizar) { %>
+							    <td>
+                                    <a class="icone excluir btnExcluir" title="Excluir"></a>
+							        <input type="hidden" value="<%= item.Id %>" class="hdnItemBloqueioId" />
+                                    <input type="hidden" value="<%= item.Tid %>" class="hdnItemBloqueioTid" />
+							        <input type="hidden" value="<%= i %>" class="hdnItemBloqueioIndex" />
+							    </td>
+                            <% } %>
+						</tr>
+					<% } %>
+                    <% if (!Model.IsVisualizar) { %>
+					<tr class="hide tr_template_bloqueio">
+						<td>
+							<label class="lblDataInicialBloqueio" id="lblDataInicialBloqueio"></label>                          
+						</td>
+						<td>
+							<label class="lblHoraInicialBloqueio" id="lblHoraInicialBloqueio"></label>
+						</td>
+						<td>
+							<label class="lblDataFinalBloqueio" id="lblDataFinalBloqueio"></label>
+						</td>
+						<td>
+							<label class="lblHoraFinalBloqueio" id="lblHoraFinalBloqueio"></label>
+
+						</td>
+						<td>
+                            <a class="icone excluir btnExcluirBloqueio" title="Excluir"></a>
+							<input type="hidden" value="" class="hdnItemBloqueioId" />
+                            <input type="hidden" value="" class="hdnItemBloqueioTid" />
+							<input type="hidden" value="" class="hdnItemBloqueioIndex" />
 						</td>
 					</tr>
                     <% } %>

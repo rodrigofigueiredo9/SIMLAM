@@ -47,5 +47,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
             return new Mensagem() { Texto = string.Format("O horário de {0} entre {1} e {2} já foi utilizado para solicitar E-PTV, não podendo ser excluído.", diaSemana, horaInicio, horaFim), Tipo = eTipoMensagem.Erro };
         }
 
+        public Mensagem PossuiHorarioAssociado()
+        {
+            return new Mensagem() { Texto = string.Format("Não foi possível incluir bloqueio, intervalo possui E-PTV."), Tipo = eTipoMensagem.Erro };
+        }
+
     }
 }

@@ -14,7 +14,8 @@
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/listar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 	<script type="text/javascript">
-		$(function () {
+	    $(function () {
+	       
 			PTVEmitir.settings.idsTela = <%= Model.IdsTela %>;
 			PTVEmitir.settings.idsOrigem = <%= Model.IdsOrigem %>;
 			PTVEmitir.settings.Mensagens = <%= Model.Mensagens %>;
