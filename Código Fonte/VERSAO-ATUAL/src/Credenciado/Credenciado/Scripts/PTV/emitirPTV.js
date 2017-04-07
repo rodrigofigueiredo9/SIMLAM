@@ -2,6 +2,36 @@
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
+
+$(document).ready(function () {
+
+
+    $("#DataVistoria").datepicker({
+        dateFormat: 'dd/mm/y',
+        dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        minDate: new Date(),
+        beforeShowDay: function (d) {
+
+            // normalize the date for searching in array
+            var dmy = "";
+            dmy += ("00" + d.getDate()).slice(-2) + "/";
+            dmy += ("00" + (d.getMonth() + 1)).slice(-2) + "/";
+            dmy += d.getFullYear().toString().substr(-2);
+            // alert(datelist);
+            return [$.inArray(dmy, datelist) >= 0 ? true : false, ""];
+        }
+    });
+
+    $("#OrigemTipo option").filter(function () {
+        return $.trim($(this).text()) == 'Sem Documento'
+    }).remove();
+
+
+});
+
+
 var datelist = []; 
 PTVEmitir = {
 	settings: {
@@ -137,14 +167,15 @@ PTVEmitir = {
 		$('.txtNumeroDua', PTVEmitir.container).focus();
 
 
-		//$('#DataVistoria').keydown(function (e) {
-		//    //e.preventDefault();
-		//    return false;
-		//});
+		$('#DataVistoria').keydown(function (e) {
+		    e.preventDefault();
+		    return false;
+		});
 	    
 		$('#DataVistoria').change(function (e) {
 		        
 		    PTVEmitir.onChangeLocalVistoria();
+		    $(this).blur();
 		});
 
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
@@ -1166,7 +1197,7 @@ PTVEmitir = {
 			dados = $('.txtCNPJDUA', PTVEmitir.container).val();
 		}
 
-		alert($('#DataVistoria', PTVEmitir.container).val());
+	
 
 		var objeto = {
 			Id: +$('.hdnEmissaoId', PTVEmitir.container).val(),
