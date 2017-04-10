@@ -12,6 +12,7 @@
 		<thead>
 			<tr>
 				<th width="15%">Número do lote</th>
+                <th width="15%">Empreendimento</th>
 				<th width="15%">Data de criação</th>
 				<th>Cultivar</th>
                 <th width="10%">Saldo Total</th>
@@ -24,6 +25,7 @@
 	  { %>
 			<tr>
 				<td title="<%: item.NumeroCompleto %>"><%: item.NumeroCompleto %></td>
+                <td title="<%: item.NomeEmpreendimento %>"><%: item.NomeEmpreendimento %></td>
 				<td title="<%: item.DataCriacao.DataTexto %>"><%: item.DataCriacao.DataTexto %></td>
 				<td title="<%: item.CulturaCultivar %>"><%: item.CulturaCultivar %></td>
                 <td title="<%: item.SaldoTotal + " " + item.Item.UnidadeMedidaTexto %>"><%: item.SaldoTotal + " " + item.Item.UnidadeMedidaTexto  %></td>

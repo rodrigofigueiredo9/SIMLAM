@@ -456,6 +456,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						item.Item.Quantidade = reader.GetValue<decimal>("quantidade");
                         item.Item.ExibeKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false;
                         item.SaldoTotal = reader.GetValue<decimal>("saldo_total");
+                        item.NomeEmpreendimento = reader.GetValue<string>("denominador");
 
 						retorno.Itens.Add(item);
 					}
