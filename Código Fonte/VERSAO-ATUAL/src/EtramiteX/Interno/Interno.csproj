@@ -277,6 +277,7 @@
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\LoteVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\CFOVM.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFO\ListarVM.cs" />
+    <Compile Include="ViewModels\VMConfiguracaoDocumentoFitossanitario\ConfiguracaoNumeracaoListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
@@ -672,6 +673,7 @@
     <Content Include="Scripts\CFOC\lote.js" />
     <Content Include="Scripts\CFO\emitir.js" />
     <Content Include="Scripts\CFO\listar.js" />
+    <Content Include="Scripts\ConfiguracaoDocumentoFitossanitario\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
@@ -1683,6 +1685,11 @@
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
     <Content Include="Views\CFO\Visualizar.aspx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarFiltrosConsolidado.ascx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarResultadosConsolidado.ascx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarResultados.ascx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\ListarFiltros.ascx" />
+    <Content Include="Views\ConfiguracaoDocumentoFitossanitario\Index.aspx" />
     <Content Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\Cultura\DeclaracaoAdicionalPartial.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Criar.aspx" />

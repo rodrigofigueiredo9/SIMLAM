@@ -431,8 +431,9 @@
 			<siteMapNode url="~/Agrotoxico/Criar" title="Cadastrar Agrotóxico" description="linkMenu" roles="AgrotoxicoCriar" />
 		</siteMapNode>
 
-		<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar" title="Numeração CFO/CFOC/PTV"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario">
-			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar/" title="Numeração CFO/CFOC/PTV" description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"/>
+		<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario" title="Numeração CFO/CFOC/PTV"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario">
+      <siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Index" title="CFO/CFOC/PTV" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar" title="Configurar Numeração CFO/CFOC/PTV" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 		</siteMapNode>
 		
 		<siteMapNode url="~/PTV/" title="PTV"  description="linkMenu ptv" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar,DestinatarioPTVListar,DestinatarioPTVEditar,DestinatarioPTVExcluir,DestinatarioPTVVisualizar">

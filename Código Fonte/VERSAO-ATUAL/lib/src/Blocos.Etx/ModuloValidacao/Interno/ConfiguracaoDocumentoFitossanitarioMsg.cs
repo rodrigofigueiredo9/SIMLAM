@@ -84,5 +84,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         {
             return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Não é possível editar um intervalo não salvo."), Campo = "Editar" };
         }
+
+        public Mensagem TipoNumeracaoObrigatorio()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O tipo de numeração é obrigatório.", Campo = "Tipo de Numeração" };
+        }
+
+        public Mensagem AnoObrigatorio()
+        {
+            return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O ano é obrigatório.", Campo = "Ano" };
+        }
 	}
 }

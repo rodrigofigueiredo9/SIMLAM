@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossanitario.Data;
@@ -108,7 +109,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
 		#endregion
 
-		#region Obter
+		#region Obter/Filtrar
 
 		public ConfiguracaoDocumentoFitossanitario Obter(bool simplificado = false)
 		{
@@ -124,11 +125,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return null;
 		}
 
-        public ConfiguracaoDocumentoFitossanitario ObterAnoCorrente(bool simplificado = false)
+        public ConfiguracaoDocumentoFitossanitario ObterPorAno(int ano, bool simplificado = false)
         {
             try
             {
-                return _da.ObterAnoCorrente(simplificado);
+                return _da.ObterPorAno(ano, simplificado);
             }
             catch (Exception exc)
             {
@@ -151,6 +152,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             }
 
             return retorno;
+        }
+
+        public Resultados<DocumentoFitossanitario> Filtrar(DocumentoFitossanitarioListarFiltros filtrosListar, Paginacao paginacao)
+        {
+            try
+            {
+                Filtro<DocumentoFitossanitarioListarFiltros> filtro = new Filtro<DocumentoFitossanitarioListarFiltros>(filtrosListar, paginacao);
+                Resultados<DocumentoFitossanitario> resultados = _da.Filtrar(filtro);
+
+                if (resultados.Quantidade < 1)
+                {
+                    Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+                }
+
+                return resultados;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
+        public Resultados<DocumentoFitossanitarioConsolidado> FiltrarConsolidado(DocumentoFitossanitarioListarFiltros filtrosListar, Paginacao paginacao)
+        {
+            try
+            {
+                Filtro<DocumentoFitossanitarioListarFiltros> filtro = new Filtro<DocumentoFitossanitarioListarFiltros>(filtrosListar, paginacao);
+                Resultados<DocumentoFitossanitarioConsolidado> resultados = _da.FiltrarConsolidado(filtro);
+
+                return resultados;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
         }
 
 		#endregion

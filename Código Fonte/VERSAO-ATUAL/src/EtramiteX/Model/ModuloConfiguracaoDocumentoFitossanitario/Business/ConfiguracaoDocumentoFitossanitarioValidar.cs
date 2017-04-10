@@ -118,5 +118,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			return Validacao.EhValido;
 		}
 
+        public bool ValidarBusca(string tipoDocumentoID, string tipoNumeracaoID, string anoStr)
+        {
+            if (Convert.ToInt32(tipoDocumentoID) <= 0)
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.TipoDocumentoObrigatorio(string.Empty));
+            }
+
+            if (Convert.ToInt32(tipoNumeracaoID) <= 0)
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.TipoNumeracaoObrigatorio());
+            }
+
+            if (string.IsNullOrWhiteSpace(anoStr))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.AnoObrigatorio());
+            }
+
+            return Validacao.EhValido;
+        }
+
+        public bool ValidarBuscaConsolidado(string anoStr)
+        {
+            if (string.IsNullOrWhiteSpace(anoStr))
+            {
+                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.AnoObrigatorio());
+            }
+
+            return Validacao.EhValido;
+        }
+
 	}
 }

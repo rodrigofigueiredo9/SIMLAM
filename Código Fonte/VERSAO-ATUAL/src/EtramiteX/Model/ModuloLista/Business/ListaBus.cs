@@ -947,6 +947,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 			get { return _configDocFitossanitario.Obter<List<Lista>>(ConfiguracaoDocumentoFitossanitario.KeyDocumentosFitossanitario); }
 		}
 
+        public List<Lista> DocumentosFitossanitarioTipoNumero
+        {
+            get { return _configDocFitossanitario.Obter<List<Lista>>(ConfiguracaoDocumentoFitossanitario.KeyDocFitossanitarioTipoNumero); }
+        }
+
 		public List<Lista> DocFitossanitarioSituacao
 		{
 			get { return _configDocFitossanitario.Obter<List<Lista>>(ConfiguracaoDocumentoFitossanitario.KeyDocFitossanitarioSituacao); }
