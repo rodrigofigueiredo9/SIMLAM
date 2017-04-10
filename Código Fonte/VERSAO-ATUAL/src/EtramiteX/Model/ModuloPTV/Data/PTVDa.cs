@@ -1673,7 +1673,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				if (!String.IsNullOrEmpty(filtro.Dados.Empreendimento))
 				{
-					comandtxt += comando.FiltroAndLike("em.denominador", "nome_fantasia", filtro.Dados.Empreendimento, true, true);
+					comandtxt += comando.FiltroAndLike("nvl(em.denominador,pt.empreendimento_sem_doc)", "nome_fantasia", filtro.Dados.Empreendimento, true, true);
 				}
 				if (filtro.Dados.Situacao > 0)
 				{
@@ -1767,26 +1767,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		internal List<ListaValor> DiasHorasVistoria(int setorId)
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-			{
-				Comando comando = bancoDeDados.CriarComando(@"
-			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                //                Comando comando = bancoDeDados.CriarComando(@"
+                //			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("setorId", setorId, DbType.Int32);
+                Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(*) FROM cnf_local_vistoria_bloqueio WHERE setor = :setor", EsquemaBanco);
+                comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 
-				List<ListaValor> retorno = null;
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-					retorno = new List<ListaValor>();
-					while (reader.Read())
-					{
-						retorno.Add(new ListaValor() { Id = reader.GetValue<int>("id"), Texto = reader.GetValue<string>("texto") });
-					}
-					reader.Close();
-				}
+                int totRegistros = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
-				return retorno;
-			}
+
+                if (totRegistros > 0)
+                {
+                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
+                                                                FROM (
+                                                                      SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                      FROM DUAL
+                                                                      CONNECT BY TRUNC(SYSDATE, 'mm') + LEVEL - 1 <= LAST_DAY(SYSDATE)),
+                                                                      cnf_local_vistoria lv,
+                                                                      lov_dia_semana d,
+                                                                (  SELECT to_char(dia_inicio,'DD/MM/YY HH24:MI') dia_inicio,to_char(dia_fim,'DD/MM/YY HH24:MI') dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor = :setor
+                                                                ) bloq
+                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
+                                                               AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
+                                                               AND (to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
+                                                               AND to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))");
+
+
+
+                }
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
+                                                                FROM (    SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                            FROM DUAL
+                                                                        CONNECT BY TRUNC(SYSDATE, 'mm') + LEVEL - 1 <= LAST_DAY(SYSDATE)) ,
+                                                                        cnf_local_vistoria lv,
+                                                                        lov_dia_semana d
+                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
+                                                                and to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')");
+                }
+
+
+                comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
+
+                List<ListaValor> retorno = null;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    retorno = new List<ListaValor>();
+                    while (reader.Read())
+                    {
+                        retorno.Add(new ListaValor() { Id = reader.GetValue<int>("id"), Texto = reader.GetValue<string>("texto") });
+                    }
+                    reader.Close();
+                }
+
+                return retorno;
+            }
 		}
 
 		internal List<String> ObterDeclaracaoAdicional(int origem, int origemTipo, int tipoProducaoID, int cultivarID, bool isFormatado)
