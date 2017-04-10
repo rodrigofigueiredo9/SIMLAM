@@ -712,6 +712,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			UnidadeProducao caracterizacao = new UnidadeProducao();
 
+            BancoDeDados novoBanco = null;
+
+            BancoDeDados bancoDeDadosIDAF = BancoDeDados.ObterInstancia(novoBanco);
+
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				#region Unidade de Produção
@@ -905,6 +909,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
                     #region Títulos Concluídos
 
+                    EsquemaBanco = "idaf";
+
                     comando = bancoDeDados.CriarComando(@"select count(*) concluidos
                                                           from crt_unidade_producao_unidade u,
                                                                crt_unidade_producao c,
@@ -922,7 +928,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
                     comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
 
-                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    using (IDataReader reader = bancoDeDadosIDAF.ExecutarReader(comando))
                     {
 
                         if (reader.Read())
