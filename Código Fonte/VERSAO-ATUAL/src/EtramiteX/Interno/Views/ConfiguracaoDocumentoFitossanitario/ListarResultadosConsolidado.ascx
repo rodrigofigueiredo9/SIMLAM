@@ -4,14 +4,15 @@
 
 <fieldset class="block box">
     <div class="block dataGrid">
-	    <table class="dataGridTable2" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
-		    <thead>
-			    <tr>
+	    <table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
+		    
+		    <tbody>
+                <tr>
 				    <th rowspan="2" width="25%"></th>
 				    <th colspan="3" >Bloco</th>
 				    <th colspan="3" >Digital</th>
 			    </tr>
-                <tr>
+                 <tr>
 				    <th>CFO</th>
 				    <th>CFOC</th>
                     <th>PTV</th>
@@ -19,8 +20,6 @@
 				    <th>CFOC</th>
                     <th>PTV</th>
 			    </tr>
-		    </thead>
-		    <tbody>
 			    <% foreach (var item in Model.ResultadosConsolidados) { %>
 				    <tr class="Linha">
 					    <td>
