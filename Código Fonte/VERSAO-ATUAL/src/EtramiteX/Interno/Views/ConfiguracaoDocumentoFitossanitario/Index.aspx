@@ -21,15 +21,12 @@
 		<br />
         
         <input type="hidden" class="ehEnter" name="ehEnter" value="0" />
-        <div>
 		    <%Html.RenderPartial("ListarFiltros", Model); %>
-        </div>
 
         <br />
         <br />
 
-        <div>
             <%Html.RenderPartial("ListarFiltrosConsolidado", Model); %>
-        </div>
+        
 	</div>
 </asp:Content>
