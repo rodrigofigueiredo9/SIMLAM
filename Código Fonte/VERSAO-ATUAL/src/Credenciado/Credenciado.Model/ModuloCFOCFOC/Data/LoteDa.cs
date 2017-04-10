@@ -334,7 +334,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 			return retorno;
 		}
 
-		public Resultados<Lote> Filtrar(Filtro<Lote> filtros)
+		public Resultados<Lote> Filtrar(Filtro<Lote> filtros, bool filtraTodos = false)
 		{
 			Resultados<Lote> retorno = new Resultados<Lote>();
 
@@ -376,7 +376,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 				#region Quantidade de registro do resultado
 
-                comando.DbCommand.CommandText = String.Format(@"select count(*) from 
+                string cmdSql = @"select count(*) from 
                     (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
 					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
 					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar,c.quantidade as saldo_total,  c.quantidade - (
@@ -391,14 +391,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						        from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
 						        where c.id = i.cultura and cc.id = i.cultivar 
                     group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
-				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.quantidade > 0 and d.id > 0 " + comandtxt, esquemaBanco);
+				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0 ";
+
+                if (filtros.Dados.EmpreendimentoId != 0)
+                    cmdSql += " and d.quantidade > 0";
+
+                comando.DbCommand.CommandText = String.Format(cmdSql + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
 				comando.AdicionarParametroEntrada("menor", filtros.Menor);
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-                comandtxt = String.Format(@"select * from 
+                cmdSql = @"select * from 
                     (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
 					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
 					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar,c.quantidade as saldo_total,  c.quantidade - (
@@ -413,7 +418,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						        from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
 						        where c.id = i.cultura and cc.id = i.cultivar 
                     group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
-				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.quantidade > 0 and d.id > 0 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.id > 0 ";
+
+                if (filtros.Dados.EmpreendimentoId != 0)
+                    cmdSql += " and d.quantidade > 0";
+
+                comandtxt = String.Format(cmdSql + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
