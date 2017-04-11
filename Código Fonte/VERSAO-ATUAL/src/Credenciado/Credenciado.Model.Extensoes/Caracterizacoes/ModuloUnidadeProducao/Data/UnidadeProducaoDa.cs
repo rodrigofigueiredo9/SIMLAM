@@ -939,6 +939,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                         reader.Close();
                     }
 
+                    EsquemaBanco = null;
+
                     #endregion
 				}
 
