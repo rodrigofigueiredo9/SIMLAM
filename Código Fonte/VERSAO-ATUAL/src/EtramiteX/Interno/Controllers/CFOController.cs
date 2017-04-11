@@ -73,7 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CFOVisualizar })]
 		public ActionResult Visualizar(int id)
 		{
-			EmissaoCFO entidade = _bus.Obter(id);
+			EmissaoCFO entidade = _bus.ObterHistorico(id);
 
 			CFOVM vm = new CFOVM(entidade, _bus.ObterProdutoresLista(entidade.CredenciadoId), ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(entidade.EstadoId), _bus.ObterEmpreendimentosListaEtramiteX(entidade.ProdutorId),
 				new List<Lista>(), ListaCredenciadoBus.CFOProdutoEspecificacao, ListaCredenciadoBus.DocFitossanitarioSituacao, new List<Lista>(), ListaCredenciadoBus.Municipios(entidade.EstadoEmissaoId));
