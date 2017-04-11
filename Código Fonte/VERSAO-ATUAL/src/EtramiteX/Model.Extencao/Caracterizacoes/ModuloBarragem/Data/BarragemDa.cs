@@ -675,21 +675,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					select ta.quantidade, 
-						   lf.texto finalidade, 
+						   f_get_lista_finalidades(ta.id) as finalidade, 
 						   tb.lamina_agua, 
 						   tb.volume_armazenamento,
 						   ta.geometria_coord_atv_x,
 						   ta.geometria_coord_atv_y
-					  from {0}crt_barragem_barragens ta,
-						   {0}lov_crt_barragem_finalidade lf,
+					  from crt_barragem_barragens ta,
 						   (select sum(cbbd.lamina_agua) lamina_agua,
 								   sum(cbbd.volume_armazenamento) volume_armazenamento,
 								   cbbd.barragens
-							  from {0}crt_barragem_barragens cbb, {0}crt_barragem_brgns_dados cbbd
+							  from crt_barragem_barragens cbb, crt_barragem_brgns_dados cbbd
 							 where cbb.id = cbbd.barragens
 							 group by cbbd.barragens) tb
-					 where ta.finalidade = lf.id(+)
-					   and ta.id = tb.barragens
+					 where ta.id = tb.barragens
 					   and ta.id = :barragemId", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("barragemId", barragemId, DbType.Int32);				
