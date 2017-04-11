@@ -60,6 +60,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                 }
             }
 
+            ExcluirTodosNaoAssociadosBloqueio(local, banco);
+
             foreach (BloqueioLocalVistoria bloq in local.Bloqueios)
             {
                 if (bloq.Id <= 0)
@@ -170,6 +172,53 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
                 bancoDeDados.Commit();
             }
+        }
+
+
+        internal void ExcluirTodosNaoAssociadosBloqueio(LocalVistoria local, BancoDeDados banco)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                List<int> listaIdExcluir = new List<int>();
+
+                Comando cmdConsulta = bancoDeDados.CriarComando(@"select lv.id from {0}CNF_LOCAL_VISTORIA_BLOQUEIO lv where lv.setor = :setorId", EsquemaBanco);
+                cmdConsulta.DbCommand.CommandText += cmdConsulta.AdicionarNotIn("and", "lv.id", DbType.Int32, local.Bloqueios.Select(x => x.Id).ToList());
+                cmdConsulta.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(cmdConsulta))
+                {
+                    while (reader.Read())
+                    {
+                        listaIdExcluir.Add(reader.GetValue<int>("id"));
+                    }
+
+                    reader.Close();
+                }
+
+                if (listaIdExcluir.Count > 0)
+                {
+                    Comando cmdUpdate = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA_BLOQUEIO set tid = :tid where ", EsquemaBanco);
+                    cmdUpdate.DbCommand.CommandText += cmdUpdate.AdicionarIn("", "id", DbType.Int32, listaIdExcluir);
+                    cmdUpdate.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                    bancoDeDados.ExecutarNonQuery(cmdUpdate);
+
+                    //foreach (int idExcluido in listaIdExcluir)
+                    //{
+                    //    // Gerando historico para todos os itens excluidos
+                    //    Historico.Gerar(idExcluido, eHistoricoArtefato.localvistoria, eHistoricoAcao.excluir, bancoDeDados);
+                    //}
+
+                    Comando comando = bancoDeDados.CriarComando("delete from {0}CNF_LOCAL_VISTORIA_BLOQUEIO lv where lv.setor = :setorId ", EsquemaBanco);
+                    comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "lv.id", DbType.Int32, local.Bloqueios.Select(x => x.Id).ToList());
+                    comando.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+
+                bancoDeDados.Commit();
+
+            }
+
         }
 
 
