@@ -100,6 +100,9 @@
 					<td>
 						<label class="lblEstimativaQuantidadeAno" title=""> </label>
 					</td>
+                    <td>
+						<label class="lblAtivo" title="Inativo"> Inativo </label>
+					</td>
 					<td>
 						<a class="icone excluir btnExcluirUnidadeProducao"></a>
 						<a class="icone editar btnEditarUnidadeProducao"></a>
