@@ -712,6 +712,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			UnidadeProducao caracterizacao = new UnidadeProducao();
 
+            BancoDeDados novoBanco = null;
+
+            BancoDeDados bancoDeDadosIDAF = BancoDeDados.ObterInstancia(novoBanco);
+
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				#region Unidade de Produção
@@ -902,6 +906,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					}
 
 					#endregion
+
+                    #region Títulos Concluídos
+
+                    EsquemaBanco = "idaf";
+
+                    comando = bancoDeDados.CriarComando(@"select count(*) concluidos
+                                                          from crt_unidade_producao_unidade u,
+                                                               crt_unidade_producao c,
+                                                               tab_titulo ti,
+                                                               esp_abertura_livro_up esp,
+                                                               esp_aber_livro_up_unid uni
+                                                          where u.CODIGO_UP = :codUP
+                                                                and u.unidade_producao = c.id
+                                                                and c.empreendimento = ti.empreendimento
+                                                                and ti.situacao = 3
+                                                                and ti.id = esp.titulo
+                                                                and esp.id = uni.especificidade
+                                                                and uni.unidade = u.id
+                                                        ", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
+
+                    using (IDataReader reader = bancoDeDadosIDAF.ExecutarReader(comando))
+                    {
+
+                        if (reader.Read())
+                        {
+                            item.TitulosConcluidos = reader.GetValue<int>("concluidos");
+                        }
+
+                        reader.Close();
+                    }
+
+                    EsquemaBanco = null;
+
+                    #endregion
 				}
 
 				#endregion
