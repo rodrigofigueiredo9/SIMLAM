@@ -325,11 +325,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
        // [ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemitem)] //???
         public ActionResult EditarFinalidade(int id)
         {
-            int x = id;
-
             List<BarragemItem> listaFinalidades = _bus.ObterListaFinalidade(id);
 
-            return View("EditarFinalidade", listaFinalidades);
+            return View("EditarFinalidade", listaFinalidades.First());
         }
 
 		[HttpPost]
