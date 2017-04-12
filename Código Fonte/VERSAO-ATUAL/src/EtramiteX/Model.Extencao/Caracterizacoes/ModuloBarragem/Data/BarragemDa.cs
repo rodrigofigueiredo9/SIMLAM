@@ -721,7 +721,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				Comando comando = bancoDeDados.CriarComando(@"
 					select ta.id,
 						   ta.quantidade,
-						   lf.texto,
+						    f_get_lista_finalidades(ta.id) as texto,
 						   tb.lamina_agua,
 						   tb.volume_armazenamento
 					  from {0}crt_barragem_barragens ta,
