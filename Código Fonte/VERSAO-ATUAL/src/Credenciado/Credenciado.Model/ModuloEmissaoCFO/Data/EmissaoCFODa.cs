@@ -16,6 +16,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
+using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCFOCFOC;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
@@ -598,6 +599,131 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				return CFO;
 			}
 		}
+
+        public List<IdentificacaoProduto> ObterHistorico(int id, string tid, BancoDeDados banco = null)
+        {
+            EmissaoCFO entidade = new EmissaoCFO();
+            string credenciadoTID = string.Empty;
+            int hst_id = 0;
+
+            #region Credenciado
+
+            string EsquemaBancoCredenciado = "idafcredenciado";
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaBancoCredenciado))
+            {
+                #region Dados
+
+                Comando comando = bancoDeDados.CriarComando(@"
+				select t.id
+				from hst_cfo t, lov_estado le, lov_estado lee
+				where le.id(+) = t.estado_id
+				and lee.id(+) = t.estado_emissao_id
+				and t.cfo_id = :id
+				and t.tid = :tid", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, tid);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        hst_id = reader.GetValue<int>("id");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion Dados
+
+                #region Produtos
+
+                comando = bancoDeDados.CriarComando(@"
+				select cp.id,
+					cp.tid,
+					cp.unidade_producao_id,
+					cp.unidade_producao_tid,
+					cp.quantidade,
+					cp.inicio_colheita,
+					cp.fim_colheita,
+                    cp.exibe_kilos
+				from hst_cfo_produto cp
+				where cp.id_hst = :hst_id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("hst_id", hst_id, DbType.Int32);
+
+                using (IDataReader dr = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (dr.Read())
+                    {
+                        entidade.Produtos.Add(new IdentificacaoProduto()
+                        {
+                            Id = dr.GetValue<int>("id"),
+                            UnidadeProducaoID = dr.GetValue<int>("unidade_producao_id"),
+                            UnidadeProducaoTID = dr.GetValue<string>("unidade_producao_tid"),
+                            Quantidade = dr.GetValue<decimal>("quantidade"),
+                            DataInicioColheita = new DateTecno() { Data = dr.GetValue<DateTime>("inicio_colheita") },
+                            ExibeQtdKg = dr.GetValue<string>("exibe_kilos") == "1" ? true : false,
+                            DataFimColheita = new DateTecno() { Data = dr.GetValue<DateTime>("fim_colheita") }
+                        });
+                    }
+
+                    dr.Close();
+                }
+
+                #endregion
+            }
+
+            #endregion Credenciado
+
+            #region Interno
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                #region Produtos
+
+                entidade.Produtos.ForEach(produto =>
+                {
+                    Comando comando = bancoDeDados.CriarComando(@"
+					select u.codigo_up,
+						c.texto                        cultura,
+						cc.cultivar_nome               cultivar,
+						u.estimativa_unid_medida_texto unidade_medida
+					from hst_crt_unidade_prod_unidade u,
+						hst_cultura                   c,
+						hst_cultura_cultivar          cc
+					where c.cultura_id = u.cultura_id
+					and c.tid = u.cultura_tid
+					and cc.cultivar_id(+) = u.cultivar_id
+					and cc.tid(+) = u.cultivar_tid
+					and u.unidade_producao_unidade_id = :id
+					and u.tid = :tid", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("id", produto.UnidadeProducaoID, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, produto.UnidadeProducaoTID);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            produto.CodigoUP = reader.GetValue<string>("codigo_up");
+                            produto.CulturaTexto = reader.GetValue<string>("cultura");
+                            produto.CultivarTexto = reader.GetValue<string>("cultivar");
+                            produto.UnidadeMedida = reader.GetValue<string>("unidade_medida");
+                        }
+
+                        reader.Close();
+                    }
+                });
+
+                #endregion Produtos
+            }
+
+            #endregion Interno
+
+            return entidade.Produtos;
+        }
 
 		public Resultados<EmissaoCFO> Filtrar(Filtro<EmissaoCFO> filtros)
 		{
