@@ -49,7 +49,7 @@
 							<input type="hidden" class="hdnItemBarragem" name="hdnItemBarragem" value='<%= Model.GetJSON(item) %>' />
 							<button title="Visualizar" class="icone visualizar btnVisualizar" value="" type="button"></button>
 						<% if (!Model.IsVisualizar) { %>
-							<button title="Editar" class="icone editar btnEditar" value="" type="button"></button>
+							<button title="Editar" class="icone editar btnEditar btnEditarPrincipal" value="" type="button"></button>
 							<button title="Excluir" class="icone excluir btnExcluirItemBarragem" value="" type="button"></button>
 						<% } %>
 						</td>
@@ -68,7 +68,7 @@
 						<td>
 							<input type="hidden" class="hdnItemBarragem" name="hdnItemBarragem" value="" />
 							<button title="Visualizar" class="icone visualizar btnVisualizar" value="" type="button"></button>
-							<button title="Editar" class="icone editar btnEditar" value="" type="button"></button>
+							<button title="Editar" class="icone editar btnEditar btnEditarPrincipal" value="" type="button"></button>
 							<button title="Excluir" class="icone excluir btnExcluirItemBarragem" value="" type="button"></button>
 						</td>
 					</tr>

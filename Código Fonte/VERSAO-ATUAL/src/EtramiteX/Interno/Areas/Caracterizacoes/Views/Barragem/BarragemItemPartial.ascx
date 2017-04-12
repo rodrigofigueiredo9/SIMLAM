@@ -53,13 +53,14 @@
 			<table class="dataGridTable gridBarragemItemDados" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<thead>
 					<tr>
-						<th width="10%">Identificador</th>
-						<th width="31%">Área de lâmina d´água por barragem (ha)</th>
-						<th width="19%">Volume armazenado (m³)</th>
-						<th>Outorga de água</th>
-						<th width="15%">Número da Outorga</th>
+						<th width="8%">Identificador</th>
+                        <th width="20%">Finalidade</th>
+						<th width="20%">Área de lâmina d´água por barragem (ha)</th>
+						<th width="13%">Volume armazenado (m³)</th>
+						<th width="10%">Outorga de água</th>
+						<th width="10%">Número da Outorga</th>
 						<% if (!Model.IsVisualizar) { %>
-						<th width="5%">Ações</th>
+						<th width="10%">Ações</th>
 						<% } %>
 					</tr>
 				</thead>
@@ -67,14 +68,16 @@
 					<% foreach (var item in Model.BarragemItem.BarragensDados) { %>
 					<tr>
 						<td><span class="spanIdentificador" title="<%= item.Identificador  %>"><%= item.Identificador  %></span></td>
-						<td><span class="spanLaminaAgua" title="<%= item.LaminaAguaToDecimal.ToStringTrunc(4) %>"><%= item.LaminaAguaToDecimal.ToStringTrunc(4) %></span></td>
+						<td><span class="spanFinalidade" title="<%= item.FinalidadeTexto %>"><%= item.FinalidadeTexto %></span></td>
+                        <td><span class="spanLaminaAgua" title="<%= item.LaminaAguaToDecimal.ToStringTrunc(4) %>"><%= item.LaminaAguaToDecimal.ToStringTrunc(4) %></span></td>
 						<td><span class="spanVolumeArmazenamento" title="<%= item.VolumeArmazenamentoToDecimal.ToStringTrunc(4) %>"><%= item.VolumeArmazenamentoToDecimal.ToStringTrunc(4) %></span></td>
 						<td><span class="spanOutorgaTexto" title="<%= item.OutorgaTexto %>"><%= item.OutorgaTexto %></span></td>
 						<td><span class="spanNumero" title="<%= item.Numero %>"><%= item.Numero %></span></td>
 						<% if (!Model.IsVisualizar) { %>						
 						<td>
 							<input type="hidden" class="hdnItemBarragemItemDados" name="hdnItemBarragemItemDados" value='<%= Model.GetJSON(item) %>' />						
-							<button title="Excluir" class="icone excluir btnExcluirLinhaBarragemItem" value="" type="button"></button>						
+							<button title="Editar" class="icone editar btnEditar btnEditarFinalidade" value="" type="button"></button>
+                            <button title="Excluir" class="icone excluir btnExcluirLinhaBarragemItem" value="" type="button"></button>						
 						</td>
 						<% } %>
 					</tr>
@@ -86,12 +89,14 @@
 				<tbody>
 					<tr class="trBarragemItemDadosTemplate">
 						<td><span class="spanIdentificador" title=""></span></td>
+                        <td><span class="spanFinalidade" title=""></span></td>
 						<td><span class="spanLaminaAgua" title=""></span></td>
 						<td><span class="spanVolumeArmazenamento" title=""></span></td>
 						<td><span class="spanOutorgaTexto" title=""></span></td>
 						<td><span class="spanNumero" title=""></span></td>
 						<td>
-							<input type="hidden" class="hdnItemBarragemItemDados" name="hdnItemBarragemItemDados" value="" />
+							<input type="hidden" class="hdnItemBarragemItemDados" name="hdnItemBarragemItemDados" value="" />                            
+                            <button title="Editar" class="icone editar btnEditar" value="" type="button"></button>
 							<button title="Excluir" class="icone excluir btnExcluirLinhaBarragemItem" value="" type="button"></button>
 						</td>
 					</tr>

@@ -1,5 +1,6 @@
 ﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
-/// <reference path="../../mensagem.js" />
+/// <reference path="../../mensagem.js" />,
+/// <reference path="../../../jquery.ddl.js" 
 /// <reference path="../../masterpage.js" />
 
 Barragem = {
@@ -13,7 +14,8 @@ Barragem = {
 			editarBarragemItem: '',
 			visualizarBarragemItem: '',
 			excluirBarragemItem: '',
-			confirmExcluirBarragemItem: ''
+			confirmExcluirBarragemItem: '',
+			editarModalFinalidade: ''
 		},
 		salvarCallBack: null,
 		mensagens: {},
@@ -30,19 +32,22 @@ Barragem = {
 	container: null,
 
 	load: function (container, options) {
+	    
 		if (options) { $.extend(Barragem.settings, options); }
 		Barragem.container = MasterPage.getContent(container);
-
+		
 		Barragem.container.delegate('#linkCancelar', 'click', Barragem.onClickLinkCancelar);
 		Barragem.container.delegate('.ddlFinalidade', 'change', Barragem.onChangeFinalidade);
 		Barragem.container.delegate('.btnAddBarragemItemDados', 'click', Barragem.onClickAddBarragemItemDados);
 		Barragem.container.delegate('.btnExcluirLinhaBarragemItem', 'click', Barragem.onClickRemoverTR);
 		Barragem.container.delegate('.btnAddBarragem', 'click', Barragem.onClickAddBarragem);
 		Barragem.container.delegate('.btnSalvar', 'click', Barragem.onClickSalvar);
-
+		
 		Barragem.container.delegate('.btnVisualizar', 'click', Barragem.onClickVisualizar);
-		Barragem.container.delegate('.btnEditar', 'click', Barragem.onClickEditar);
+		Barragem.container.delegate('.btnEditarPrincipal', 'click', Barragem.onClickEditar);
 		Barragem.container.delegate('.btnExcluirItemBarragem', 'click', Barragem.onClickExcluirItemBarragem);
+		Barragem.container.delegate('.btnEditarFinalidade', 'click', Barragem.editarFinalidade);
+		
 
 		var editar = $('.hdnIsEditar', container).val();
 
@@ -191,6 +196,12 @@ Barragem = {
 		}
 	},
 
+	obterTipo: function (container) {
+	    var tipo = $(container).closest('tr').find('.FinalidadeTexto').text();
+
+	    return tipo;
+	},
+
 	gerarObjeto: function () {
 
 		var barragem = {
@@ -246,9 +257,9 @@ Barragem = {
 		$('.divEspecificar,.divOutorga', Barragem.container).addClass('hide');
 
 		if (itemSelecionadoId > 0) {
-			if (itemSelecionadoId == Barragem.finalidadeOutrosId) {
+			/*if (itemSelecionadoId == Barragem.finalidadeOutrosId) {
 				$('.divEspecificar', Barragem.container).removeClass('hide');
-			}
+			}*/
 			if (itemSelecionadoId != Barragem.finalidadeReservacaoId) {
 				$('.divOutorga', Barragem.container).removeClass('hide');
 			}
@@ -303,10 +314,11 @@ Barragem = {
 
 	onClickEditar: function () {
 
+
 		Barragem.trEmEdicao = $(this).closest('tr');
 
 		MasterPage.carregando(true);
-
+		
 		$.ajax({
 			url: Barragem.settings.urls.editarBarragemItem,
 			data: JSON.stringify({
@@ -559,6 +571,32 @@ Barragem = {
 
 		Barragem.trEmEdicao = null;
 		MasterPage.carregando(false);
+	},
+
+	editarFinalidade: function () {
+	    
+	    //var id = response.BarragemItem;
+	    var id = 803;
+
+	    Mensagem.limpar(Barragem.container);
+
+	    //var retorno = MasterPage.validarAjax(Barragem.settings.urls.validarEdicao, { idStr: id }, Barragem.container, false);
+	    //if (!retorno.EhValido) {
+	    //    return;
+	    //}
+	    
+	    var settings = function (content) {
+	        Modal.defaultButtons(content, function () {
+	            Barragem.modalOrigem = content;
+	            Barragem.salvarEdicaoFinalidade();
+	        }, 'Salvar');
+	    };
+	    
+	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
+	},
+
+	salvarEdicaoFinalidade: function(){
+	    alert('CHEGOU AQUI!!! \O/');
 	},
 
 	onClickExcluirItemBarragem: function () {

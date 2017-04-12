@@ -334,6 +334,7 @@
     <Content Include="Areas\Caracterizacoes\Views\Barragem\BarragemPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Barragem\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Barragem\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\Barragem\EditarFinalidade.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Barragem\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BeneficiamentoMadeira\BeneficiamentoMadeira.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BeneficiamentoMadeira\BeneficiamentoMadeiraBeneficiamento.ascx" />

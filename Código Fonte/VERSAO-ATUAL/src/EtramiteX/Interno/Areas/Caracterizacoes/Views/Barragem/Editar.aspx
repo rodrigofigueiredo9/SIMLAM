@@ -13,7 +13,8 @@
 					editarBarragemItem: '<%= Url.Action("EditarBarragemItem", "Barragem") %>',
 					visualizarBarragemItem: '<%= Url.Action("VisualizarBarragemItem", "Barragem") %>',
 					excluirBarragemItem: '<%= Url.Action("ExcluirBarragemItem", "Barragem") %>',
-					confirmExcluirBarragemItem: '<%= Url.Action("ExcluirBarragemItemConfirm", "Barragem") %>'
+				    confirmExcluirBarragemItem: '<%= Url.Action("ExcluirBarragemItemConfirm", "Barragem") %>',
+				    editarModalFinalidade: '<%= Url.Action("EditarFinalidade", "Barragem") %>'
 				},
 				mensagens: <%= Model.Mensagens %>			
 			});
