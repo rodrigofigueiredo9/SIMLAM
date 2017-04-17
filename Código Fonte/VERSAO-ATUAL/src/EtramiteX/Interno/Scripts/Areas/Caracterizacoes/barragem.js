@@ -575,28 +575,31 @@ Barragem = {
 
 	editarFinalidade: function () {
 	    
-	    //var id = response.BarragemItem;
-	    var id = 803;
+	    var id = $('.hdnItemId', Barragem.container).val(); 
+	    var id = $(this).closest('tr').find('.hdnItemId').val();
 
-	    Mensagem.limpar(Barragem.container);
-
-	    //var retorno = MasterPage.validarAjax(Barragem.settings.urls.validarEdicao, { idStr: id }, Barragem.container, false);
-	    //if (!retorno.EhValido) {
-	    //    return;
-	    //}
+	    Mensagem.limpar(Barragem.container); 
 	    
-	    var settings = function (content) {
-	        Modal.defaultButtons(content, function () {
-	            Barragem.modalOrigem = content;
-	            Barragem.salvarEdicaoFinalidade();
-	        }, 'Salvar');
+	    var settings = function (content) { 
+	        Modal.defaultButtons(content, function () { 
+	            Barragem.modalOrigem = content; 
+	            Barragem.salvarEdicaoFinalidade(); 
+	        }, 'Salvar'); 
 	    };
 	    
 	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
 	},
 
 	salvarEdicaoFinalidade: function(){
-	    alert('CHEGOU AQUI!!! \O/');
+	    alert('CHEGOU AQUI!!!');
+
+	    var selected = [];
+	    $('#checkboxes input:checked').each(function () {
+	        selected.push($(this).attr('value'));
+	    });
+ 
+	    alert(selected); 
+	    
 	},
 
 	onClickExcluirItemBarragem: function () {

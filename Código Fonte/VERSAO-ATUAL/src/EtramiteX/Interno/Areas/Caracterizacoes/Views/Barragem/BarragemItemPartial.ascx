@@ -67,6 +67,7 @@
 				<tbody>
 					<% foreach (var item in Model.BarragemItem.BarragensDados) { %>
 					<tr>
+                         <input type="hidden" class="hdnItemId" value="<%: item.Id %>" /> 
 						<td><span class="spanIdentificador" title="<%= item.Identificador  %>"><%= item.Identificador  %></span></td>
 						<td><span class="spanFinalidade" title="<%= item.FinalidadeTexto %>"><%= item.FinalidadeTexto %></span></td>
                         <td><span class="spanLaminaAgua" title="<%= item.LaminaAguaToDecimal.ToStringTrunc(4) %>"><%= item.LaminaAguaToDecimal.ToStringTrunc(4) %></span></td>
@@ -96,7 +97,7 @@
 						<td><span class="spanNumero" title=""></span></td>
 						<td>
 							<input type="hidden" class="hdnItemBarragemItemDados" name="hdnItemBarragemItemDados" value="" />                            
-                            <button title="Editar" class="icone editar btnEditar" value="" type="button"></button>
+                            <button title="Editar" class="icone editar btnEditar btnEditarFinalidade" value="" type="button"></button>
 							<button title="Excluir" class="icone excluir btnExcluirLinhaBarragemItem" value="" type="button"></button>
 						</td>
 					</tr>
