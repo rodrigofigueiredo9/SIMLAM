@@ -327,7 +327,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             List<BarragemItem> listaFinalidades = _bus.ObterListaFinalidade(id);
 
-            return View("EditarFinalidade", listaFinalidades.First());
+            Barragem retorno = new Barragem() { Barragens = listaFinalidades };
+
+            return View("EditarFinalidade", retorno); 
         }
 
 		[HttpPost]

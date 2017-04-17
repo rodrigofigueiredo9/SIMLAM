@@ -568,7 +568,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
                 Comando comando = bancoDeDados.CriarComando(@"
 					select b.finalidade FinalidadeId, b.finalidade_texto FinalidadeTexto
                     from {0}crt_barragens_finalidades b    
-                    where b.crt_barragem = :id", EsquemaBanco);
+                    where b.id_barragem_dados = :id", EsquemaBanco); 
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -616,7 +616,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						   cbb.id IdRelacionamento,
 						   cbb.quantidade Quantidade,
                            cbb.finalidade FinalidadeId, 						   
-                           F_GET_LISTA_FINALIDADES(:id) FinalidadeTexto, 						  
+                           f_get_lista_finalidades(:id) FinalidadeTexto,   					  
 						   cbb.especificar Especificar,
 						   cbb.geometria_id,
 						   cbb.geometria_tipo geometria_tipo_id,
@@ -649,7 +649,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 					select cbb.id Id,
 						   cbb.id IdRelacionamento,
 						   cbb.identificador Identificador,
-                           F_GET_LISTA_FINALIDADES(:id) FinalidadeTexto, 
+                           f_get_lista_finalidades_caract(:id) FinalidadeTexto,  
 						   cbb.lamina_agua LaminaAgua,
 						   cbb.volume_armazenamento VolumeArmazenamento,
 						   cbb.outorga OutorgaId,
