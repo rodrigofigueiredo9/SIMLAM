@@ -15,7 +15,9 @@ Barragem = {
 			visualizarBarragemItem: '',
 			excluirBarragemItem: '',
 			confirmExcluirBarragemItem: '',
-			editarModalFinalidade: ''
+			editarModalFinalidade: '',
+			salvarFinalidade: '',
+			idEmpreendimento: '',
 		},
 		salvarCallBack: null,
 		mensagens: {},
@@ -23,13 +25,14 @@ Barragem = {
 		textoMerge: null,
 		dependencias: null,
 		temARL: false,
-		temARLDesconhecida: false
+		temARLDesconhecida: false,
 	},
 	finalidadeOutrosId: null,
 	finalidadeReservacaoId: null,
 	identificador: 1,
 	trEmEdicao: null,
 	container: null,
+	
 
 	load: function (container, options) {
 	    
@@ -314,7 +317,6 @@ Barragem = {
 
 	onClickEditar: function () {
 
-
 		Barragem.trEmEdicao = $(this).closest('tr');
 
 		MasterPage.carregando(true);
@@ -335,7 +337,7 @@ Barragem = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Barragem.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
+			    
 				if (response.EhValido) {
 					$('.divBarragemItem', Barragem.container).empty().html(response.Html);
 					$('fieldset:last', '.divBarragemItem').addClass('boxBranca');
@@ -357,7 +359,6 @@ Barragem = {
 	},
 
 	onClickAddBarragem: function () {
-
 		Barragem.trEmEdicao = null;
 
 		MasterPage.carregando(true);
@@ -396,6 +397,13 @@ Barragem = {
 	},
 
 	onClickAddBarragemItemDados: function () {
+	    var idsFinalidades = [];
+	    var txtFinalidades = [];
+	    $('#checkboxes input:checked').each(function () {
+	        idsFinalidades.push($(this).attr('value'));
+	        txtFinalidades.push($(this).attr('name'));
+	    });
+
 		Mensagem.limpar(Barragem.container);
 		var arrayMsg = [];
 		var trTemplate = null;
@@ -414,14 +422,16 @@ Barragem = {
 		var Identificador = Number($('.txtIdentificador', Barragem.container).val()) || 0;
 
 		var barragemDadosItem = {
-			Identificador: Barragem.identificador,
+		    Identificador: Barragem.identificador,
+		    FinalidadeTextos: JSON.stringify(txtFinalidades),    //MELHORAR
+		    ListaIdsFinalidades: idsFinalidades,
 			LaminaAgua: txtLaminaAgua.val(),
 			VolumeArmazenamento: txtArmazenado.val(),
 			OutorgaId: parseInt(ddlOutorga.val()),
 			OutorgaTexto: ddlOutorga.find('option').filter(':selected').text(),
 			Numero: txtNumero.val()
 		};
-
+        
 		if (Quantidade == '') {
 			arrayMsg.push(Barragem.settings.mensagens.InformeQuantidade);
 			Mensagem.gerar(Barragem.container, arrayMsg);
@@ -479,6 +489,7 @@ Barragem = {
 		trTemplate = $('.trBarragemItemDadosTemplate', Barragem.container).clone().removeAttr('class');
 
 		$('.spanIdentificador', trTemplate).text(barragemDadosItem.Identificador).attr('title', barragemDadosItem.Identificador);
+		$('.spanFinalidade', trTemplate).text(barragemDadosItem.FinalidadeTextos).attr('title', barragemDadosItem.FinalidadeTextos);
 		$('.spanLaminaAgua', trTemplate).text(barragemDadosItem.LaminaAgua).attr('title', barragemDadosItem.LaminaAgua);
 		$('.spanVolumeArmazenamento', trTemplate).text(barragemDadosItem.VolumeArmazenamento).attr('title', barragemDadosItem.VolumeArmazenamento);
 		$('.spanOutorgaTexto', trTemplate).text(barragemDadosItem.OutorgaTexto).attr('title', barragemDadosItem.OutorgaTexto);
@@ -575,30 +586,105 @@ Barragem = {
 
 	editarFinalidade: function () {
 	    
-	    var id = $('.hdnItemId', Barragem.container).val(); 
 	    var id = $(this).closest('tr').find('.hdnItemId').val();
+	    var idGeral = $(this).closest('.divBarragemItem').find('.hdnBarragemItemId').val();
 
 	    Mensagem.limpar(Barragem.container); 
 	    
 	    var settings = function (content) { 
 	        Modal.defaultButtons(content, function () { 
 	            Barragem.modalOrigem = content; 
-	            Barragem.salvarEdicaoFinalidade(); 
+	            Barragem.salvarEdicaoFinalidade(content); 
 	        }, 'Salvar'); 
 	    };
 	    
-	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '/' + id, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
+	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '?id=' + id + "&idGeral=" + idGeral, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
 	},
 
-	salvarEdicaoFinalidade: function(){
-	    alert('CHEGOU AQUI!!!');
+	recarregarGrid: function () {
 
+	    Barragem.trEmEdicao = $(this).closest('tr');
+
+	    MasterPage.carregando(true);
+
+	    $.ajax({
+	        url: Barragem.settings.urls.editarBarragemItem,
+	        data: JSON.stringify({
+	            id: JSON.parse($(this).closest('tr').find('.hdnItemBarragem').val()).Id,
+	            empreendimentoId: $('.hdnEmpreendimentoId', Barragem.container).val(),
+	            barragemId: $('.hdnCaracterizacaoId', Barragem.container).val()
+	        }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, Barragem.container);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+
+	            if (response.EhValido) {
+	                $('.divBarragemItem', Barragem.container).empty().html(response.Html);
+	                $('fieldset:last', '.divBarragemItem').addClass('boxBranca');
+	                Barragem.identificador = response.Identificador;
+	                $('.txtIdentificador', Barragem.container).val(Barragem.identificador);
+	                Barragem.toggleBotoes(true);
+	                Mascara.load('.divBarragemItem');
+	                MasterPage.load();
+	                Mensagem.limpar(Barragem.container);
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(Barragem.container, response.Msg);
+	            }
+	        }
+	    });
+
+	    MasterPage.carregando(false);
+	},
+
+	salvarEdicaoFinalidade: function(modalContent){
 	    var selected = [];
 	    $('#checkboxes input:checked').each(function () {
 	        selected.push($(this).attr('value'));
 	    });
- 
-	    alert(selected); 
+
+	    var id = $('#checkboxes').find('.ItemIDBarragem').attr('value');
+	    var idGeral = $('#checkboxes').find('.ItemIDGeral').attr('value');
+
+	    var idEmp = Barragem.settings.urls.idEmpreendimento;
+
+	    MasterPage.carregando(true);
+
+	    $.ajax({
+	        url: Barragem.settings.urls.salvarFinalidade,
+	        data: JSON.stringify({
+	            idBarragem: id,
+	            idBarragemGeral: idGeral,
+	            idsFinalidades: selected,
+	            idEmpreendimento: idEmp
+	        }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+
+	            if (response.EhValido) {
+	                MasterPage.redireciona(response.Url);
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(Barragem.container, response.Msg);
+	            }
+	        }
+	    });
+
+	    Barragem.trEmEdicao = null;
+	    MasterPage.carregando(false);
 	    
 	},
 

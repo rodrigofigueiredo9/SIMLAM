@@ -238,9 +238,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 				foreach (var item in barragem.Barragens)
 				{
+                    //Deleta registro na tabela agregada CRT_BARRAGENS_FINALIDADES
+                    comando = bancoDeDados.CriarComando("delete from {0}crt_barragens_finalidades t ", EsquemaBanco);
+                    comando.DbCommand.CommandText += String.Format("where t.barragem = :barragem{0} ",
+                    comando.AdicionarNotIn("and", "t.id_barragem_dados", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
+                    comando.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    //Deleta registro na tabela agregada CRT_BARRAGEM_BRGNS_DADOS
 					comando = bancoDeDados.CriarComando("delete from {0}crt_barragem_brgns_dados t ", EsquemaBanco);
 					comando.DbCommand.CommandText += String.Format("where t.barragens = :barragem{0}",
-						comando.AdicionarNotIn("and", "t.id", DbType.Int32, item.BarragensDados.Select(x => x.IdRelacionamento).ToList()));
+					comando.AdicionarNotIn("and", "t.id", DbType.Int32, item.BarragensDados.Select(x => x.IdRelacionamento).ToList()));
 					comando.AdicionarParametroEntrada("barragem", item.Id, DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -248,20 +257,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 				comando = bancoDeDados.CriarComando("delete from {0}crt_barragem_barragens t ", EsquemaBanco);
 				comando.DbCommand.CommandText += String.Format("where t.barragem = :barragem{0}",
-					comando.AdicionarNotIn("and", "t.id", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
+				comando.AdicionarNotIn("and", "t.id", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
 				comando.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
-                //Deleta registro na tabela agregada CRT_BARRAGENS_FINALIDADES
-                Comando comando2 = bancoDeDados.CriarComando("delete from {0}crt_barragens_finalidades t ", EsquemaBanco);
-                comando2.DbCommand.CommandText += String.Format("where t.barragem = :barragem{0}",
-                comando2.AdicionarNotIn("and", "t.id", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
-                comando2.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
-
-                bancoDeDados.ExecutarNonQuery(comando2);
-
-                
+                                
 				foreach (var itemBarragem in barragem.Barragens)
 				{
 					if (itemBarragem.Id > 0)
@@ -269,8 +270,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						comando = bancoDeDados.CriarComando(@"
 							update {0}crt_barragem_barragens t
 							   set t.quantidade            = :quantidade,
-								   t.finalidade            = :finalidade,
-								   t.especificar           = :especificar,
 								   t.geometria_id          = :geometria_id,
 								   t.geometria_tipo        = :geometria_tipo,
 								   t.geometria_coord_atv_x = :geometria_coord_atv_x,
@@ -281,13 +280,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						comando.AdicionarParametroEntrada("id", itemBarragem.Id, DbType.Int32);
 
 
-                        comando2 = bancoDeDados.CriarComando(@"update {0}crt_barragens_finalidades c set c.finalidade = :finalidade, 
-                                                                                                           c.finalidadetexto = :finalidadetexto, 
-                                                                                                           c.barragem = :barragem{0}
-                                                                       where c.id = :id and c.finalidade = :finalidade", EsquemaBanco);
+//                        comando2 = bancoDeDados.CriarComando(@"update {0}crt_barragens_finalidades c set c.finalidade = :finalidade, 
+//                                                                                                           c.finalidadetexto = :finalidadetexto, 
+//                                                                                                           c.barragem = :barragem{0}
+//                                                                       where c.id = :id and c.finalidade = :finalidade", EsquemaBanco);
 
                         
-                        comando2.AdicionarParametroEntrada("id", itemBarragem.Id, DbType.Int32);
+                        //comando2.AdicionarParametroEntrada("id", itemBarragem.Id, DbType.Int32);
                       //  comando2.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                         
@@ -301,8 +300,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 							  (id,
 							   barragem,
 							   quantidade,
-							   finalidade,
-							   especificar,
 							   geometria_id,
 							   geometria_tipo,
 							   geometria_coord_atv_x,
@@ -312,8 +309,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 							  ({0}seq_crt_barragem_barragens.nextval,
 							   :barragem,
 							   :quantidade,
-							   :finalidade,
-							   :especificar,
 							   :geometria_id,
 							   :geometria_tipo,
 							   :geometria_coord_atv_x,
@@ -323,20 +318,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						comando.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
-                        // Commando 2: Operação na tabela CRT_BARRAGENS_FINALIDADES
-                        comando2 = bancoDeDados.CriarComando(@"insert into {0}crt_barragens_finalidades (id, crt_barragem, barragem, finalidade, finalidadetexto
-                                                                       ({0}seq_crt_barragens_finalidades.nextval, :id, :barragem, :finalidade, :finalidadetexto) 
-                                                                        returning id into :id_bar_fin ", EsquemaBanco);
-
-                        comando2.AdicionarParametroSaida("id_bar_fin", DbType.Int32);
-                        comando2.AdicionarParametroSaida("id", DbType.Int32);
-                        comando2.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
+                       
                        
 					}
 
 					comando.AdicionarParametroEntrada("quantidade", itemBarragem.Quantidade, DbType.Int32);
-					comando.AdicionarParametroEntrada("finalidade", itemBarragem.FinalidadeId, DbType.Int32);
-					comando.AdicionarParametroEntrada("especificar", DbType.String, 30, itemBarragem.Especificar);
+                    //comando.AdicionarParametroEntrada("finalidade", itemBarragem.FinalidadeId, DbType.Int32);
+                    //comando.AdicionarParametroEntrada("especificar", DbType.String, 30, itemBarragem.Especificar);
 					comando.AdicionarParametroEntrada("geometria_id", itemBarragem.CoordenadaAtividade.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("geometria_tipo", itemBarragem.CoordenadaAtividade.Tipo, DbType.Int32);
 					comando.AdicionarParametroEntrada("geometria_coord_atv_x", itemBarragem.CoordenadaAtividade.CoordX, DbType.Decimal);
@@ -347,10 +335,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
                     // Commando 2: Operação na tabela CRT_BARRAGENS_FINALIDADES
 
-                    comando2.AdicionarParametroEntrada("finalidade", itemBarragem.FinalidadeId, DbType.Int32);
-                    comando2.AdicionarParametroEntrada("finalidadetexto", DbType.String, 30, itemBarragem.FinalidadeTexto);
+                    //comando2.AdicionarParametroEntrada("finalidade", itemBarragem.FinalidadeId, DbType.Int32);
+                    //comando2.AdicionarParametroEntrada("finalidadetexto", DbType.String, 2500, itemBarragem.FinalidadeTexto);
                     
-                    bancoDeDados.ExecutarNonQuery(comando2);
+                    //bancoDeDados.ExecutarNonQuery(comando2);
 
 
 
@@ -360,6 +348,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 					foreach (var itemBarragemDados in itemBarragem.BarragensDados)
 					{
+
 						if (itemBarragemDados.Id > 0)
 						{
 							comando = bancoDeDados.CriarComando(@"
@@ -394,9 +383,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 								   :volume_armazenamento,
 								   :outorga,
 								   :numero,
-								   :tid)", EsquemaBanco);
+								   :tid) returning id into :idBarragemDados", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("barragens", itemBarragem.Id, DbType.Int32);
+                            comando.AdicionarParametroSaida("idBarragemDados", DbType.Int32);
 						}
 
 						comando.AdicionarParametroEntrada("identificador", itemBarragemDados.Identificador, DbType.Int32);
@@ -407,10 +397,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
-					}
+
+                        if (itemBarragemDados.Id == 0)
+                        {
+
+                            // Commando 2: Operação na tabela CRT_BARRAGENS_FINALIDADES
+                            foreach (var idFinalidade in itemBarragemDados.ListaIdsFinalidades)
+                            {
+                                Comando comando2 = bancoDeDados.CriarComando(@"
+                                insert into {0}crt_barragens_finalidades 
+                                (id, 
+                                id_barragem_dados, 
+                                barragem, 
+                                finalidade, 
+                                finalidade_texto)
+                                values    
+                                ({0}seq_crt_barragens_finalidades.nextval, 
+                                    :barragemDados, 
+                                    :barragem, 
+                                    :finalidade, 
+                                    (select f.texto from lov_crt_barragem_finalidade f where f.id = :finalidade))", EsquemaBanco);
+
+                                comando2.AdicionarParametroEntrada("barragemDados", Convert.ToInt32(comando.ObterValorParametro("idBarragemDados")), DbType.Int32);
+                                comando2.AdicionarParametroEntrada("barragem", itemBarragem.Id, DbType.Int32);
+                                comando2.AdicionarParametroEntrada("finalidade", idFinalidade, DbType.Int32);
+
+                                bancoDeDados.ExecutarNonQuery(comando2);
+                            }
+                        }
+                        }
 					
 					#endregion
-				}
+                    }
 
 				#endregion
 
@@ -579,6 +597,51 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
             return barragemFinalidade;
         }
 
+        internal void SalvarEdicaoFinalidades(int idBarragem, int idBarragemGeral, List<int> idsFinalidades, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region ListaFinalidadeTexto
+
+                //Seleciona todas as finalidades de uma caracterização
+
+                 //Deleta registro na tabela agregada CRT_BARRAGENS_FINALIDADES
+                Comando comando = bancoDeDados.CriarComando("delete from {0}crt_barragens_finalidades t ", EsquemaBanco);
+                comando.DbCommand.CommandText += String.Format("where t.barragem = :idBarragemGeral{0} and t.ID_BARRAGEM_DADOS = :idBarragem{0}", EsquemaBanco);
+                //comando.AdicionarNotIn("and", "t.ID_BARRAGEM_DADOS = :", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
+                comando.AdicionarParametroEntrada("idBarragem", idBarragem, DbType.Int32);
+                comando.AdicionarParametroEntrada("idBarragemGeral", idBarragemGeral, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                foreach (int idFinalidade in idsFinalidades)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+								insert into {0}crt_barragens_finalidades
+								  (id,
+								   barragem,
+								   finalidade,
+								   finalidade_texto,
+								   id_barragem_dados)
+								values
+								  ({0}seq_crt_barragens_finalidades.nextval,
+								   :idBarragemGeral,
+                                   :idFinalidade,
+								   (select f.texto from lov_crt_barragem_finalidade f where f.id = :idFinalidade),
+								   :idBarragem)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("idBarragem", idBarragem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("idBarragemGeral", idBarragemGeral, DbType.Int32);
+                    comando.AdicionarParametroEntrada("idFinalidade", idFinalidade, DbType.Int32);
+
+                    //                barragemFinalidade = bancoDeDados.ObterEntityList<BarragemItem>(comando);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                #endregion
+            }
+        }
 
 		internal Barragem Obter(int id, BancoDeDados banco = null, bool simplificado = false)
 		{
@@ -616,7 +679,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						   cbb.id IdRelacionamento,
 						   cbb.quantidade Quantidade,
                            cbb.finalidade FinalidadeId, 						   
-                           f_get_lista_finalidades(:id) FinalidadeTexto,   					  
+                           f_get_lista_finalidades(cbb.id) FinalidadeTexto,   					  
 						   cbb.especificar Especificar,
 						   cbb.geometria_id,
 						   cbb.geometria_tipo geometria_tipo_id,
@@ -649,7 +712,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 					select cbb.id Id,
 						   cbb.id IdRelacionamento,
 						   cbb.identificador Identificador,
-                           f_get_lista_finalidades_caract(:id) FinalidadeTexto,  
+                           f_get_lista_finalidades_caract(cbb.id) FinalidadeTexto,  
 						   cbb.lamina_agua LaminaAgua,
 						   cbb.volume_armazenamento VolumeArmazenamento,
 						   cbb.outorga OutorgaId,
