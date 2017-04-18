@@ -450,25 +450,37 @@ Barragem = {
 			}
 		}
 
+		if (txtFinalidades.length == 0) {
+		    arrayMsg.push(Barragem.settings.mensagens.SelecioneFinalidade);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
+		}
+
 		numeroAux = Mascara.getFloatMask(barragemDadosItem.LaminaAgua);
 		if (isNaN(numeroAux) || numeroAux == 0) {
-			arrayMsg.push(Barragem.settings.mensagens.InformeLamina);
+		    arrayMsg.push(Barragem.settings.mensagens.InformeLamina);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
 		}
 		numeroAux = Mascara.getFloatMask(barragemDadosItem.VolumeArmazenamento);
 		if (isNaN(numeroAux) || numeroAux == 0) {
-			arrayMsg.push(Barragem.settings.mensagens.InformeArmazenado);
+		    arrayMsg.push(Barragem.settings.mensagens.InformeArmazenado);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
 		}
 
-		numeroAux = parseInt($('.ddlFinalidade', Barragem.container).val());
-
-		if (numeroAux > 0 && numeroAux != Barragem.finalidadeReservacaoId) {
+		if (txtFinalidades.indexOf('Reservação') >= 0) {
 
 			if (barragemDadosItem.Numero != '' && barragemDadosItem.OutorgaId == 0) {
-				arrayMsg.push(Barragem.settings.mensagens.SelecioneOutorga);
+			    arrayMsg.push(Barragem.settings.mensagens.SelecioneOutorga);
+			    Mensagem.gerar(Barragem.container, arrayMsg);
+			    return;
 			}
 
 			if (barragemDadosItem.OutorgaId != 0 && barragemDadosItem.Numero == '') {
-				arrayMsg.push(Barragem.settings.mensagens.InformeNumero);
+			    arrayMsg.push(Barragem.settings.mensagens.InformeNumero);
+			    Mensagem.gerar(Barragem.container, arrayMsg);
+			    return;
 			}
 		} else {
 			barragemDadosItem.OutorgaId = null;
@@ -505,6 +517,10 @@ Barragem = {
 		txtArmazenado.val('');
 		ddlOutorga.val(0);
 		txtNumero.val('');
+
+		$('#checkboxes input:checked').each(function () {
+		    $(this).removeAttr('checked');
+		});
 
 		numeroAux = Mascara.getFloatMask(txtTotalLaminaItem.val());
 		numeroAux += Mascara.getFloatMask(barragemDadosItem.LaminaAgua);

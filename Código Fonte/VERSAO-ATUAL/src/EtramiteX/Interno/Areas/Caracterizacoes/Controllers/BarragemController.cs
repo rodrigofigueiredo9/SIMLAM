@@ -347,7 +347,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         //[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemitem)]
         public ActionResult SalvarFinalidades(int idBarragem, int idBarragemGeral, int idEmpreendimento, List<int> idsFinalidades)
         {
-            _bus.SalvarEdicaoFinalidades(idBarragem, idBarragemGeral, idsFinalidades);
+            if (idsFinalidades != null && idsFinalidades.Count > 0)
+            {
+                _bus.SalvarEdicaoFinalidades(idBarragem, idBarragemGeral, idsFinalidades);
+            }
+            else
+            {
+                Validacao.Add(Mensagem.BarragemMsg.SelecioneFinalidade);
+            }
 
             return Json(new
             {
