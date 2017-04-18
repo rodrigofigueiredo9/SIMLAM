@@ -241,8 +241,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
                     //Deleta registro na tabela agregada CRT_BARRAGENS_FINALIDADES
                     comando = bancoDeDados.CriarComando("delete from {0}crt_barragens_finalidades t ", EsquemaBanco);
                     comando.DbCommand.CommandText += String.Format("where t.barragem = :barragem{0} ",
-                    comando.AdicionarNotIn("and", "t.id_barragem_dados", DbType.Int32, barragem.Barragens.Select(x => x.IdRelacionamento).ToList()));
-                    comando.AdicionarParametroEntrada("barragem", barragem.Id, DbType.Int32);
+                    comando.AdicionarNotIn("and", "t.id_barragem_dados", DbType.Int32, item.BarragensDados.Select(x => x.IdRelacionamento).ToList()));
+                    comando.AdicionarParametroEntrada("barragem", item.Id, DbType.Int32);
 
                     bancoDeDados.ExecutarNonQuery(comando);
 
