@@ -14,13 +14,15 @@
 					visualizarBarragemItem: '<%= Url.Action("VisualizarBarragemItem", "Barragem") %>',
 					excluirBarragemItem: '<%= Url.Action("ExcluirBarragemItem", "Barragem") %>',
 				    confirmExcluirBarragemItem: '<%= Url.Action("ExcluirBarragemItemConfirm", "Barragem") %>',
-				    editarModalFinalidade: '<%= Url.Action("EditarFinalidade", "Barragem") %>'
+				    editarModalFinalidade: '<%= Url.Action("EditarFinalidade", "Barragem") %>',
+				    salvarFinalidade: '<%= Url.Action("SalvarFinalidades", "Barragem") %>',
+				    idEmpreendimento: <%= Model.Barragem.EmpreendimentoId %>
 				},
 				mensagens: <%= Model.Mensagens %>			
 			});
 
 			Barragem.finalidadeReservacaoId = <%= new BarragemItemVM().FinalidadeReservacaoId %>;
-			Barragem.finalidadeOutrosId = <%= new BarragemItemVM().FinalidadeOutrosId %>;
+		    Barragem.finalidadeOutrosId = <%= new BarragemItemVM().FinalidadeOutrosId %>;
 			CoordenadaAtividade.settings.mensagens = <%= new CoordenadaAtividadeVM().Mensagens %>;
 			CoordenadaAtividade.settings.urls.urlObterDadosCoordenadaAtividade = '<%= Url.Action("ObterDadosCoordenadaAtividade", "Barragem") %>';
 			CoordenadaAtividade.settings.urls.urlObterDadosTipoGeometria = '<%= Url.Action("ObterDadosTipoGeometria", "Barragem") %>';

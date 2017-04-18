@@ -29,15 +29,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				Validacao.Add(Mensagem.BarragemMsg.QuantidadeInvalida);
 			}
 
-			if (caracterizacao.Barragens.Where(x => x.FinalidadeId == 0).Count() > 0)
-			{
-				Validacao.Add(Mensagem.BarragemMsg.SelecioneFinalidade);
-			}
+            //if (caracterizacao.Barragens.Where(x => x.FinalidadeId == 0).Count() > 0)
+            //{
+            //    Validacao.Add(Mensagem.BarragemMsg.SelecioneFinalidade);
+            //}
 
-			if (caracterizacao.Barragens.Where(x => x.FinalidadeId == (int)eFinalidade.Outros && string.IsNullOrEmpty(x.Especificar)).Count() > 0)
-			{
-				Validacao.Add(Mensagem.BarragemMsg.InformeOutroFinalidade);
-			}
+            //if (caracterizacao.Barragens.Where(x => x.FinalidadeId == (int)eFinalidade.Outros && string.IsNullOrEmpty(x.Especificar)).Count() > 0)
+            //{
+            //    Validacao.Add(Mensagem.BarragemMsg.InformeOutroFinalidade);
+            //}
 
 			if (caracterizacao.Barragens.Where(x => x.BarragensDados.Count == 0).Count() > 0)
 			{
