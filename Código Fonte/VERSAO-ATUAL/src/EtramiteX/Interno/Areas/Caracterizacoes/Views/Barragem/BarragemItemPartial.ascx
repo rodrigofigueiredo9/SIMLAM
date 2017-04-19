@@ -3,6 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <div class="divBarragemItem">
 	<input type="hidden" class="hdnBarragemItemId" value="<%: Model.BarragemItem.Id %>" />
+    <input type="hidden" class="hdnModificacoesNaoSalvas" value="0" />
 	<fieldset class="block box">	
 		<legend class="titFiltros">Barragem</legend>
 		<div class="block">

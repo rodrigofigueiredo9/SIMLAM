@@ -186,6 +186,8 @@ Barragem = {
 		$('.txtTotalArmazenadoItem', Barragem.container).val(Mascara.getStringMask(totalArmazenado, 'n4'));
 
 		Listar.atualizarEstiloTable(Barragem.container.find('.dataGridTable'));
+
+		$('.hdnModificacoesNaoSalvas').val('1');
 	},
 
 	toggleBotoes: function (flag) {
@@ -527,6 +529,8 @@ Barragem = {
 		Mensagem.limpar(Barragem.container);
 
 		Listar.atualizarEstiloTable(Barragem.container.find('.dataGridTable'));
+
+		$('.hdnModificacoesNaoSalvas').val('1');
 	},
 
 	onClickSalvar: function () {
@@ -591,12 +595,22 @@ Barragem = {
 
 		Barragem.trEmEdicao = null;
 		MasterPage.carregando(false);
+
+		$('.hdnModificacoesNaoSalvas').val('0');
 	},
 
 	editarFinalidade: function () {
+	    arrayMsg = [];
+
+	    var modificado = $('.hdnModificacoesNaoSalvas').val();
+	    if (modificado == '1') {
+	        arrayMsg.push(Barragem.settings.mensagens.ModificacoesNaoSalvas);
+	        Mensagem.gerar(Barragem.container, arrayMsg);
+	        return;
+	    }
+
 	    var id = $(this).closest('tr').find('.hdnItemId').val();
 
-	    arrayMsg = [];
 	    if (id == undefined) {
 	        arrayMsg.push(Barragem.settings.mensagens.BarragemNaoSalva);
 	        Mensagem.gerar(Barragem.container, arrayMsg);
