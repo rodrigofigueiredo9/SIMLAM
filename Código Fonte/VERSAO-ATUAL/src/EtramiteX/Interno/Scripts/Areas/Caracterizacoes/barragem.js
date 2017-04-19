@@ -40,7 +40,6 @@ Barragem = {
 		Barragem.container = MasterPage.getContent(container);
 		
 		Barragem.container.delegate('#linkCancelar', 'click', Barragem.onClickLinkCancelar);
-		Barragem.container.delegate('.ddlFinalidade', 'change', Barragem.onChangeFinalidade);
 		Barragem.container.delegate('.btnAddBarragemItemDados', 'click', Barragem.onClickAddBarragemItemDados);
 		Barragem.container.delegate('.btnExcluirLinhaBarragemItem', 'click', Barragem.onClickRemoverTR);
 		Barragem.container.delegate('.btnAddBarragem', 'click', Barragem.onClickAddBarragem);
@@ -231,7 +230,6 @@ Barragem = {
 			Id: parseInt($('.hdnBarragemItemId', Barragem.container).val()),
 			IdRelacionamento: parseInt($('.hdnBarragemItemId', Barragem.container).val()),
 			Quantidade: parseInt($('.txtQuantidade', Barragem.container).val()),
-			FinalidadeId: parseInt($('.ddlFinalidade', Barragem.container).val()),
 			FinalidadeTexto: $('.ddlFinalidade', Barragem.container).filter(':selected').text(),
 			CoordenadaAtividade: CoordenadaAtividade.obter(),
 			BarragensDados: []
@@ -241,6 +239,16 @@ Barragem = {
 			var item = JSON.parse($(this).val());
 			barragemItem.BarragensDados.push(item);
 		});
+
+		//if (barragemItem.FinalidadeTexto==null || barragemItem.FinalidadeTexto.trim()==""){
+		//    barragemItem.FinalidadeTexto="";
+		//    barragemItem.BarragensDados.forEach(function (i) {
+		//        alert(JSON.stringify(i.FinalidadeTextos));
+		//        //alert(JSON.stringify($(this)));
+		//        barragemItem.FinalidadeTexto += JSON.stringify(i.FinalidadeTextos);
+		//        barragemItem.FinalidadeTexto += ", ";
+		//    })
+		//}
 
 		barragem.Barragens.push(barragemItem);
 
@@ -532,7 +540,6 @@ Barragem = {
 	},
 
 	onClickSalvar: function () {
-
 		MasterPage.carregando(true);
 
 		$.ajax({
