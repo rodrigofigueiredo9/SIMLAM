@@ -16,7 +16,7 @@
 			    <div class="block" id="checkboxes">
 		            <label>Selecione as finalidades*</label> 
                      <br /> 
-                    <input type="checkbox" name="Reservação" value="1" /> Reservação 
+                    <input type="checkbox" name="Reservação" class="CheckReservacao" value="1" /> Reservação 
                     <br /> 
                     <input type="checkbox" name="Captação para Irrigação" value="2" class="CaptacaoIrrigacao" /> Captação para Irrigação 
                     <br /> 
@@ -51,7 +51,7 @@
 				<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAddBarragemItemDados " title="Adicionar dados da barragem">Adicionar</button>		  
 			</div>
 		</div>
-		<div class="block divOutorga<%= Model.BarragemItem.FinalidadeId > 0 && Model.BarragemItem.FinalidadeId != Model.FinalidadeReservacaoId ? " " : " hide" %>">
+		<div class="block divOutorga hide" %>">
 			<div class="coluna21 append2">
 				<label for="ddlOutorga">Outorga de uso da água</label>
 				<%= Html.DropDownList("ddlOutorga", Model.Outorgas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlOutorga", @id = "ddlOutorga" }))%>
