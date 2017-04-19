@@ -591,11 +591,13 @@ Barragem = {
 				}
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Barragem.container, response.Msg);
+				} else {
+				    Barragem.trEmEdicao = null;
 				}
 			}
 		});
 
-		Barragem.trEmEdicao = null;
+		//Barragem.trEmEdicao = null;
 		MasterPage.carregando(false);
 
 		$('.hdnModificacoesNaoSalvas').val('0');
