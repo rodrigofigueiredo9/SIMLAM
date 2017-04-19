@@ -29,7 +29,8 @@
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a caracterização de Barragem deste empreendimento?" }; } }
 		public Mensagem ExcluirBarragemItemConfirm { get { return new Mensagem() { Texto = "Deseja realmente excluir esta barragem?" }; } }
 		public Mensagem ExcluirBarragemItemSucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Barragem excluída com sucesso." }; } }
-
+        public Mensagem BarragemNaoSalva { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A barragem ainda não foi salva. Salve para poder editar as finalidades." }; } }
+        public Mensagem ModificacoesNaoSalvas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Existem modificações não salvas. Salve para editar as finalidades." }; } }
 		public Mensagem SemARLConfirm { get { return new Mensagem() { Texto = "O empreendimento está localizado em zona rural e na caracterização de Dominialidade não possui Reserva Legal. Deseja realmente continuar?" }; } }
 		public Mensagem ARLDesconhecidaConfirm { get { return new Mensagem() { Texto = "O empreendimento está localizado em zona rural e na caracterização de Dominialidade possui Reserva Legal sem situação vegetal definida. Deseja realmente continuar?" }; } }
 		public Mensagem SelecioneEspBarragem { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "#ddlBarragens", Texto = "Selecione a barragem da licença." }; } }

@@ -43,7 +43,9 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@Excluir = Mensagem.BarragemMsg.Excluir,
 					@ExcluirMensagem = Mensagem.BarragemMsg.ExcluirMensagem,
 					@SemARLConfirm = Mensagem.BarragemMsg.SemARLConfirm,
-					@ARLDesconhecidaConfirm = Mensagem.BarragemMsg.ARLDesconhecidaConfirm
+					@ARLDesconhecidaConfirm = Mensagem.BarragemMsg.ARLDesconhecidaConfirm,
+                    @BarragemNaoSalva = Mensagem.BarragemMsg.BarragemNaoSalva,
+                    @ModificacoesNaoSalvas = Mensagem.BarragemMsg.ModificacoesNaoSalvas
 				});
 			}
 		}

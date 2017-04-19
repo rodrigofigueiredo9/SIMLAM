@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragem;
@@ -318,6 +319,51 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "BarragemItemPartial", vm),
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+        [Permite(RoleArray = new Object[] { ePermissao.BarragemCriar, ePermissao.BarragemEditar, ePermissao.BarragemVisualizar })]
+        [ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemitem)]
+        public ActionResult EditarFinalidade(int id, int idGeral)
+        {
+            List<BarragemItem> listaFinalidades = _bus.ObterListaFinalidade(id);
+
+            if (listaFinalidades.Count > 0)
+            {
+                listaFinalidades.First().Id = id;
+            }
+            else
+            {
+                listaFinalidades.Add(new BarragemItem { Id = id });
+            }
+
+            Barragem retorno = new Barragem() { 
+                Id=idGeral, //id da barragem
+                Barragens = listaFinalidades };
+
+            return View("EditarFinalidade", retorno); 
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.BarragemCriar, ePermissao.BarragemEditar, ePermissao.BarragemVisualizar })]
+        //[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemitem)]
+        public ActionResult SalvarFinalidades(int idBarragem, int idBarragemGeral, int idEmpreendimento, List<int> idsFinalidades)
+        {
+            if (idsFinalidades != null && idsFinalidades.Count > 0)
+            {
+                _bus.SalvarEdicaoFinalidades(idBarragem, idBarragemGeral, idsFinalidades);
+            }
+            else
+            {
+                Validacao.Add(Mensagem.BarragemMsg.SelecioneFinalidade);
+            }
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Url = Url.Action("Editar", "Barragem", new { id = idEmpreendimento, Msg = Validacao.QueryParam() })
+                
+            }, JsonRequestBehavior.AllowGet);
+        } 
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemCriar, ePermissao.BarragemEditar, ePermissao.BarragemVisualizar })]

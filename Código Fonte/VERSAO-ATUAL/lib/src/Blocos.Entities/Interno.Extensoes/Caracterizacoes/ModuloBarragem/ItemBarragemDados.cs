@@ -1,10 +1,13 @@
-﻿namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragem
+﻿using System.Collections.Generic;
+namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragem
 {
 	public class BarragemDadosItem
 	{
 		public int Id { get; set; }
 		public int IdRelacionamento { get; set; }
 		public int Identificador { get; set; }
+        public string FinalidadeTexto { get; set; }
+        public List<int> ListaIdsFinalidades { get; set; }
 		public string LaminaAgua { get; set; }
 		public decimal? LaminaAguaToDecimal { get { return this.ToDecimal(this.LaminaAgua); } }
 		public string VolumeArmazenamento { get; set; }

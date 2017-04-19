@@ -1,5 +1,6 @@
 ﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
-/// <reference path="../../mensagem.js" />
+/// <reference path="../../mensagem.js" />,
+/// <reference path="../../../jquery.ddl.js" 
 /// <reference path="../../masterpage.js" />
 
 Barragem = {
@@ -13,7 +14,10 @@ Barragem = {
 			editarBarragemItem: '',
 			visualizarBarragemItem: '',
 			excluirBarragemItem: '',
-			confirmExcluirBarragemItem: ''
+			confirmExcluirBarragemItem: '',
+			editarModalFinalidade: '',
+			salvarFinalidade: '',
+			idEmpreendimento: '',
 		},
 		salvarCallBack: null,
 		mensagens: {},
@@ -21,28 +25,33 @@ Barragem = {
 		textoMerge: null,
 		dependencias: null,
 		temARL: false,
-		temARLDesconhecida: false
+		temARLDesconhecida: false,
 	},
 	finalidadeOutrosId: null,
 	finalidadeReservacaoId: null,
 	identificador: 1,
 	trEmEdicao: null,
 	container: null,
+	
 
 	load: function (container, options) {
+	    
 		if (options) { $.extend(Barragem.settings, options); }
 		Barragem.container = MasterPage.getContent(container);
-
+		
 		Barragem.container.delegate('#linkCancelar', 'click', Barragem.onClickLinkCancelar);
-		Barragem.container.delegate('.ddlFinalidade', 'change', Barragem.onChangeFinalidade);
 		Barragem.container.delegate('.btnAddBarragemItemDados', 'click', Barragem.onClickAddBarragemItemDados);
 		Barragem.container.delegate('.btnExcluirLinhaBarragemItem', 'click', Barragem.onClickRemoverTR);
 		Barragem.container.delegate('.btnAddBarragem', 'click', Barragem.onClickAddBarragem);
 		Barragem.container.delegate('.btnSalvar', 'click', Barragem.onClickSalvar);
-
+		
 		Barragem.container.delegate('.btnVisualizar', 'click', Barragem.onClickVisualizar);
-		Barragem.container.delegate('.btnEditar', 'click', Barragem.onClickEditar);
+		Barragem.container.delegate('.btnEditarPrincipal', 'click', Barragem.onClickEditar);
 		Barragem.container.delegate('.btnExcluirItemBarragem', 'click', Barragem.onClickExcluirItemBarragem);
+		Barragem.container.delegate('.btnEditarFinalidade', 'click', Barragem.editarFinalidade);
+
+		Barragem.container.delegate('.CheckReservacao', 'click', Barragem.onChangeFinalidade);
+		
 
 		var editar = $('.hdnIsEditar', container).val();
 
@@ -179,6 +188,8 @@ Barragem = {
 		$('.txtTotalArmazenadoItem', Barragem.container).val(Mascara.getStringMask(totalArmazenado, 'n4'));
 
 		Listar.atualizarEstiloTable(Barragem.container.find('.dataGridTable'));
+
+		$('.hdnModificacoesNaoSalvas').val('1');
 	},
 
 	toggleBotoes: function (flag) {
@@ -189,6 +200,12 @@ Barragem = {
 			$('.btnSalvar,.btnModalOu,#linkCancelar', Barragem.container).addClass('hide');
 			$('#linkVoltar', Barragem.container).removeClass('hide');
 		}
+	},
+
+	obterTipo: function (container) {
+	    var tipo = $(container).closest('tr').find('.FinalidadeTexto').text();
+
+	    return tipo;
 	},
 
 	gerarObjeto: function () {
@@ -217,9 +234,7 @@ Barragem = {
 			Id: parseInt($('.hdnBarragemItemId', Barragem.container).val()),
 			IdRelacionamento: parseInt($('.hdnBarragemItemId', Barragem.container).val()),
 			Quantidade: parseInt($('.txtQuantidade', Barragem.container).val()),
-			FinalidadeId: parseInt($('.ddlFinalidade', Barragem.container).val()),
 			FinalidadeTexto: $('.ddlFinalidade', Barragem.container).filter(':selected').text(),
-			Especificar: $('.txtEspecificar', Barragem.container).val().trim(),
 			CoordenadaAtividade: CoordenadaAtividade.obter(),
 			BarragensDados: []
 		};
@@ -241,19 +256,13 @@ Barragem = {
 	},
 
 	onChangeFinalidade: function () {
-		var itemSelecionadoId = parseInt($(this).val());
+	    var reservacao = $('.CheckReservacao').attr('checked');
 
-		$('.divEspecificar,.divOutorga', Barragem.container).addClass('hide');
+		$('.divOutorga', Barragem.container).addClass('hide');
 
-		if (itemSelecionadoId > 0) {
-			if (itemSelecionadoId == Barragem.finalidadeOutrosId) {
-				$('.divEspecificar', Barragem.container).removeClass('hide');
-			}
-			if (itemSelecionadoId != Barragem.finalidadeReservacaoId) {
-				$('.divOutorga', Barragem.container).removeClass('hide');
-			}
+		if (reservacao == true) {
+		    $('.divOutorga', Barragem.container).removeClass('hide');
 		}
-		$('.txtEspecificar', Barragem.container).val('');
 		$('.ddlOutorga', Barragem.container).val(0);
 		$('.txtNumero', Barragem.container).val('');
 	},
@@ -306,7 +315,7 @@ Barragem = {
 		Barragem.trEmEdicao = $(this).closest('tr');
 
 		MasterPage.carregando(true);
-
+		
 		$.ajax({
 			url: Barragem.settings.urls.editarBarragemItem,
 			data: JSON.stringify({
@@ -323,7 +332,7 @@ Barragem = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Barragem.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
+			    
 				if (response.EhValido) {
 					$('.divBarragemItem', Barragem.container).empty().html(response.Html);
 					$('fieldset:last', '.divBarragemItem').addClass('boxBranca');
@@ -345,7 +354,6 @@ Barragem = {
 	},
 
 	onClickAddBarragem: function () {
-
 		Barragem.trEmEdicao = null;
 
 		MasterPage.carregando(true);
@@ -384,6 +392,16 @@ Barragem = {
 	},
 
 	onClickAddBarragemItemDados: function () {
+	    var idsFinalidades = [];
+	    var txtFinalidades = [];
+	    var FinalidadeTextoString = "";
+	    $('#checkboxes input:checked').each(function () {
+	        idsFinalidades.push($(this).attr('value'));
+	        txtFinalidades.push($(this).attr('name'));
+	        FinalidadeTextoString += ($(this).attr('name'));
+	        FinalidadeTextoString += ", ";
+	    });
+
 		Mensagem.limpar(Barragem.container);
 		var arrayMsg = [];
 		var trTemplate = null;
@@ -402,14 +420,16 @@ Barragem = {
 		var Identificador = Number($('.txtIdentificador', Barragem.container).val()) || 0;
 
 		var barragemDadosItem = {
-			Identificador: Barragem.identificador,
+		    Identificador: Barragem.identificador,
+		    FinalidadeTextos: JSON.stringify(txtFinalidades),
+		    ListaIdsFinalidades: idsFinalidades,
 			LaminaAgua: txtLaminaAgua.val(),
 			VolumeArmazenamento: txtArmazenado.val(),
 			OutorgaId: parseInt(ddlOutorga.val()),
 			OutorgaTexto: ddlOutorga.find('option').filter(':selected').text(),
 			Numero: txtNumero.val()
 		};
-
+        
 		if (Quantidade == '') {
 			arrayMsg.push(Barragem.settings.mensagens.InformeQuantidade);
 			Mensagem.gerar(Barragem.container, arrayMsg);
@@ -428,25 +448,37 @@ Barragem = {
 			}
 		}
 
+		if (txtFinalidades.length == 0) {
+		    arrayMsg.push(Barragem.settings.mensagens.SelecioneFinalidade);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
+		}
+
 		numeroAux = Mascara.getFloatMask(barragemDadosItem.LaminaAgua);
 		if (isNaN(numeroAux) || numeroAux == 0) {
-			arrayMsg.push(Barragem.settings.mensagens.InformeLamina);
+		    arrayMsg.push(Barragem.settings.mensagens.InformeLamina);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
 		}
 		numeroAux = Mascara.getFloatMask(barragemDadosItem.VolumeArmazenamento);
 		if (isNaN(numeroAux) || numeroAux == 0) {
-			arrayMsg.push(Barragem.settings.mensagens.InformeArmazenado);
+		    arrayMsg.push(Barragem.settings.mensagens.InformeArmazenado);
+		    Mensagem.gerar(Barragem.container, arrayMsg);
+		    return;
 		}
 
-		numeroAux = parseInt($('.ddlFinalidade', Barragem.container).val());
-
-		if (numeroAux > 0 && numeroAux != Barragem.finalidadeReservacaoId) {
+		if (txtFinalidades.indexOf('Reservação') >= 0) {
 
 			if (barragemDadosItem.Numero != '' && barragemDadosItem.OutorgaId == 0) {
-				arrayMsg.push(Barragem.settings.mensagens.SelecioneOutorga);
+			    arrayMsg.push(Barragem.settings.mensagens.SelecioneOutorga);
+			    Mensagem.gerar(Barragem.container, arrayMsg);
+			    return;
 			}
 
 			if (barragemDadosItem.OutorgaId != 0 && barragemDadosItem.Numero == '') {
-				arrayMsg.push(Barragem.settings.mensagens.InformeNumero);
+			    arrayMsg.push(Barragem.settings.mensagens.InformeNumero);
+			    Mensagem.gerar(Barragem.container, arrayMsg);
+			    return;
 			}
 		} else {
 			barragemDadosItem.OutorgaId = null;
@@ -467,6 +499,7 @@ Barragem = {
 		trTemplate = $('.trBarragemItemDadosTemplate', Barragem.container).clone().removeAttr('class');
 
 		$('.spanIdentificador', trTemplate).text(barragemDadosItem.Identificador).attr('title', barragemDadosItem.Identificador);
+		$('.spanFinalidade', trTemplate).text(FinalidadeTextoString).attr('title', barragemDadosItem.FinalidadeTextos);
 		$('.spanLaminaAgua', trTemplate).text(barragemDadosItem.LaminaAgua).attr('title', barragemDadosItem.LaminaAgua);
 		$('.spanVolumeArmazenamento', trTemplate).text(barragemDadosItem.VolumeArmazenamento).attr('title', barragemDadosItem.VolumeArmazenamento);
 		$('.spanOutorgaTexto', trTemplate).text(barragemDadosItem.OutorgaTexto).attr('title', barragemDadosItem.OutorgaTexto);
@@ -483,6 +516,10 @@ Barragem = {
 		ddlOutorga.val(0);
 		txtNumero.val('');
 
+		$('#checkboxes input:checked').each(function () {
+		    $(this).removeAttr('checked');
+		});
+
 		numeroAux = Mascara.getFloatMask(txtTotalLaminaItem.val());
 		numeroAux += Mascara.getFloatMask(barragemDadosItem.LaminaAgua);
 		txtTotalLaminaItem.val(Mascara.getStringMask(numeroAux, 'n4'));
@@ -494,10 +531,11 @@ Barragem = {
 		Mensagem.limpar(Barragem.container);
 
 		Listar.atualizarEstiloTable(Barragem.container.find('.dataGridTable'));
+
+		$('.hdnModificacoesNaoSalvas').val('1');
 	},
 
 	onClickSalvar: function () {
-
 		MasterPage.carregando(true);
 
 		$.ajax({
@@ -553,12 +591,91 @@ Barragem = {
 				}
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Barragem.container, response.Msg);
+				} else {
+				    Barragem.trEmEdicao = null;
 				}
 			}
 		});
 
-		Barragem.trEmEdicao = null;
 		MasterPage.carregando(false);
+
+		$('.hdnModificacoesNaoSalvas').val('0');
+	},
+
+	editarFinalidade: function () {
+	    arrayMsg = [];
+
+	    var modificado = $('.hdnModificacoesNaoSalvas').val();
+	    if (modificado == '1') {
+	        arrayMsg.push(Barragem.settings.mensagens.ModificacoesNaoSalvas);
+	        Mensagem.gerar(Barragem.container, arrayMsg);
+	        return;
+	    }
+
+	    var id = $(this).closest('tr').find('.hdnItemId').val();
+
+	    if (id == undefined) {
+	        arrayMsg.push(Barragem.settings.mensagens.BarragemNaoSalva);
+	        Mensagem.gerar(Barragem.container, arrayMsg);
+	        return;
+	    }
+
+	    var idGeral = $(this).closest('.divBarragemItem').find('.hdnBarragemItemId').val();
+
+	    Mensagem.limpar(Barragem.container);
+	    
+	    var settings = function (content) { 
+	        Modal.defaultButtons(content, function () { 
+	            Barragem.modalOrigem = content; 
+	            Barragem.salvarEdicaoFinalidade(content); 
+	        }, 'Salvar'); 
+	    };
+	    
+	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '?id=' + id + "&idGeral=" + idGeral, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
+	},
+
+	salvarEdicaoFinalidade: function(modalContent){
+	    var selected = [];
+	    $('#checkboxes input:checked').each(function () {
+	        selected.push($(this).attr('value'));
+	    });
+
+	    var id = $('#checkboxes').find('.ItemIDBarragem').attr('value');
+	    var idGeral = $('#checkboxes').find('.ItemIDGeral').attr('value');
+
+	    var idEmp = Barragem.settings.urls.idEmpreendimento;
+
+	    MasterPage.carregando(true);
+
+	    $.ajax({
+	        url: Barragem.settings.urls.salvarFinalidade,
+	        data: JSON.stringify({
+	            idBarragem: id,
+	            idBarragemGeral: idGeral,
+	            idsFinalidades: selected,
+	            idEmpreendimento: idEmp
+	        }),
+	        cache: false,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+
+	            if (response.EhValido) {
+	                MasterPage.redireciona(response.Url);
+	            }
+
+	            if (response.Msg && response.Msg.length > 0) {
+	                Mensagem.gerar(Barragem.container, response.Msg);
+	            }
+	        }
+	    });
+
+	    Barragem.trEmEdicao = null;
+	    MasterPage.carregando(false);
+	    
 	},
 
 	onClickExcluirItemBarragem: function () {
