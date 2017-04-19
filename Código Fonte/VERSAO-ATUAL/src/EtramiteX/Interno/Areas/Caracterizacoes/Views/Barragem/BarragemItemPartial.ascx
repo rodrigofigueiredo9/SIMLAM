@@ -6,7 +6,7 @@
 	<fieldset class="block box">	
 		<legend class="titFiltros">Barragem</legend>
 		<div class="block">
-			<div class="coluna15 append2">
+			<div class="coluna20 append2">
 				<label for="BarragemItem.Quantidade">Quantidade de barragens *</label>
 				<%= Html.TextBox("BarragemItem.Quantidade", Model.BarragemItem.Quantidade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidade maskNum3", @id = "txtQuantidade", @maxlength = 3 }))%>
 			</div>
