@@ -49,6 +49,8 @@ Barragem = {
 		Barragem.container.delegate('.btnEditarPrincipal', 'click', Barragem.onClickEditar);
 		Barragem.container.delegate('.btnExcluirItemBarragem', 'click', Barragem.onClickExcluirItemBarragem);
 		Barragem.container.delegate('.btnEditarFinalidade', 'click', Barragem.editarFinalidade);
+
+		Barragem.container.delegate('.CheckReservacao', 'click', Barragem.onChangeFinalidade);
 		
 
 		var editar = $('.hdnIsEditar', container).val();
@@ -254,11 +256,11 @@ Barragem = {
 	},
 
 	onChangeFinalidade: function () {
-		var itemSelecionadoId = parseInt($(this).val());
+	    var reservacao = $('.CheckReservacao').attr('checked');
 
 		$('.divOutorga', Barragem.container).addClass('hide');
 
-		if (itemSelecionadoId > 0 && itemSelecionadoId != Barragem.finalidadeReservacaoId) {
+		if (reservacao == true) {
 		    $('.divOutorga', Barragem.container).removeClass('hide');
 		}
 		$('.ddlOutorga', Barragem.container).val(0);
