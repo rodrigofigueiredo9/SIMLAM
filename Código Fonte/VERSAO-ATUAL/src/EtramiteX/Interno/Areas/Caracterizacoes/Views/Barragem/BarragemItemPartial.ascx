@@ -6,37 +6,29 @@
 	<fieldset class="block box">	
 		<legend class="titFiltros">Barragem</legend>
 		<div class="block">
-			<div class="coluna25 append2">
+			<div class="coluna15 append2">
 				<label for="BarragemItem.Quantidade">Quantidade de barragens *</label>
 				<%= Html.TextBox("BarragemItem.Quantidade", Model.BarragemItem.Quantidade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidade maskNum3", @id = "txtQuantidade", @maxlength = 3 }))%>
 			</div>
 
-			<div class="coluna75 append2">
+			<div class="coluna50 append2">
 			    <div class="block" id="checkboxes">
 		            <label>Selecione as finalidades*</label> 
-         
                      <br /> 
                     <input type="checkbox" name="Reservação" value="1" /> Reservação 
+                    <br /> 
                     <input type="checkbox" name="Captação para Irrigação" value="2" class="CaptacaoIrrigacao" /> Captação para Irrigação 
+                    <br /> 
                     <input type="checkbox" name="Ecoturismo/Turismo Rural" value="4" class="Turismo" /> Ecoturismo/Turismo Rural 
                     <br /> 
-                    <input type="checkbox" name="Dessedentação de Animais" value="5" class="Dessedentacao" />  Dessedentação de Animais 
+                    <input type="checkbox" name="Dessedentação de Animais" value="5" class="Dessedentacao" />  Dessedentação de Animais
+                    <br /> 
                     <input type="checkbox" name="Aquicultura" value="6" class="Aquicultura" /> Aquicultura 
+                    <br /> 
                     <input type="checkbox" name="Captação para Abastecimento Industrial" value="7" class="CaptacaoAbastecimentoIndustrial" /> Captação para Abastecimento Industrial 
-             
                     <br /> 
                     <input type="checkbox" name="Captação para abastecimento Público" value="8" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
 	            </div>
-			</div>
-
-
-
-
-
-
-			<div class="coluna24 divEspecificar<%= Model.BarragemItem.FinalidadeId > 0 && Model.BarragemItem.FinalidadeId == Model.FinalidadeOutrosId ? " " : " hide" %>">
-				<label for="BarragemItem.Especificar">Especificar *</label>
-				<%= Html.TextBox("BarragemItem.Especificar", Model.BarragemItem.Especificar, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEspecificar", @id = "txtEspecificar", @maxlength = 30 }))%>
 			</div>
 		</div>
 
