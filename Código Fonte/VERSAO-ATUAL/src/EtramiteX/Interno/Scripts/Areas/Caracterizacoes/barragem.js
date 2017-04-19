@@ -633,49 +633,6 @@ Barragem = {
 	    Modal.abrir(Barragem.settings.urls.editarModalFinalidade + '?id=' + id + "&idGeral=" + idGeral, null, settings, Modal.tamanhoModalMedia, "Editar Finalidade");
 	},
 
-	recarregarGrid: function () {
-
-	    Barragem.trEmEdicao = $(this).closest('tr');
-
-	    MasterPage.carregando(true);
-
-	    $.ajax({
-	        url: Barragem.settings.urls.editarBarragemItem,
-	        data: JSON.stringify({
-	            id: JSON.parse($(this).closest('tr').find('.hdnItemBarragem').val()).Id,
-	            empreendimentoId: $('.hdnEmpreendimentoId', Barragem.container).val(),
-	            barragemId: $('.hdnCaracterizacaoId', Barragem.container).val()
-	        }),
-	        cache: false,
-	        async: false,
-	        type: 'POST',
-	        dataType: 'json',
-	        contentType: 'application/json; charset=utf-8',
-	        error: function (XMLHttpRequest, textStatus, erroThrown) {
-	            Aux.error(XMLHttpRequest, textStatus, erroThrown, Barragem.container);
-	        },
-	        success: function (response, textStatus, XMLHttpRequest) {
-
-	            if (response.EhValido) {
-	                $('.divBarragemItem', Barragem.container).empty().html(response.Html);
-	                $('fieldset:last', '.divBarragemItem').addClass('boxBranca');
-	                Barragem.identificador = response.Identificador;
-	                $('.txtIdentificador', Barragem.container).val(Barragem.identificador);
-	                Barragem.toggleBotoes(true);
-	                Mascara.load('.divBarragemItem');
-	                MasterPage.load();
-	                Mensagem.limpar(Barragem.container);
-	            }
-
-	            if (response.Msg && response.Msg.length > 0) {
-	                Mensagem.gerar(Barragem.container, response.Msg);
-	            }
-	        }
-	    });
-
-	    MasterPage.carregando(false);
-	},
-
 	salvarEdicaoFinalidade: function(modalContent){
 	    var selected = [];
 	    $('#checkboxes input:checked').each(function () {
