@@ -8,7 +8,10 @@ LiberarNumeroCFOCFOC = {
 		urls: {
 			salvar: null,
 			visualizarPessoa: null,
-			verificarCPF: null
+			verificarCPF: null,
+			urlVerificarConsultaDUA: null,
+		    urlGravarVerificacaoDUA : null
+
 		},
 		Mensagens: null
 	},
@@ -37,33 +40,98 @@ LiberarNumeroCFOCFOC = {
 		Aux.setarFoco(LiberarNumeroCFOCFOC.container);
 	},
 
+	onChecarRetornoDUA: function () {
+
+	    
+	    $.ajax({
+	        url: LiberarNumeroCFOCFOC.settings.urls.urlVerificarConsultaDUA,
+	        data: JSON.stringify(LiberarNumeroCFOCFOC.RequisicaoDUA),
+	        cache: false,
+	        async: true,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: Aux.error,
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            if (!response.Valido) {
+	                MasterPage.carregando(false);
+	                Mensagem.gerar(LiberarNumeroCFOCFOC.container, response.Msg);
+	                return;
+	            }
+
+	            if (!response.Consultado) {
+	                clearTimeout(LiberarNumeroCFOCFOC.settings.timeoutID);
+	                LiberarNumeroCFOCFOC.settings.timeoutID =
+						setTimeout(function () {
+						    LiberarNumeroCFOCFOC.onChecarRetornoDUA();
+						}, 5000);
+
+	                return;
+	            }
+
+
+	            $.ajax({
+	                url: LiberarNumeroCFOCFOC.settings.urls.verificarCPF,
+	                data: JSON.stringify(LiberarNumeroCFOCFOC.RequisicaoDUA),
+	                cache: false,
+	                async: false,
+	                type: 'POST',
+	                dataType: 'json',
+	                contentType: 'application/json; charset=utf-8',
+	                error: Aux.error,
+	                success: function (response, textStatus, XMLHttpRequest) {
+	                    if (response.EhValido) {
+	                        $('.mostrar', LiberarNumeroCFOCFOC.container).removeClass('hide');
+	                        $('.hdnCredenciadoId', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Id);
+	                        $('.hdnPessoaId', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Pessoa.InternoId);
+	                        $('.txtNome', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Nome);
+	                    }
+	                    else {
+	                        Mensagem.gerar(LiberarNumeroCFOCFOC.container, response.Msg);
+	                    }
+	                }
+	            });
+	         
+
+	            MasterPage.carregando(false);
+	        }
+	    });
+	},
+
 	verificarCPF: function () {
 		Mensagem.limpar(LiberarNumeroCFOCFOC.container);
 		MasterPage.carregando(true);
 
+		LiberarNumeroCFOCFOC.RequisicaoDUA = { cpf: $('.txtCpf', LiberarNumeroCFOCFOC.container).val(), NumeroDua: $('.txtNumeroDua', LiberarNumeroCFOCFOC.container).val() };
+		
 		$.ajax({
-			url: LiberarNumeroCFOCFOC.settings.urls.verificarCPF,
-			data: JSON.stringify({ cpf: $('.txtCpf', LiberarNumeroCFOCFOC.container).val()}),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: Aux.error,
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					$('.mostrar', LiberarNumeroCFOCFOC.container).removeClass('hide');
-					$('.hdnCredenciadoId', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Id);
-					$('.hdnPessoaId', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Pessoa.InternoId);
-					$('.txtNome', LiberarNumeroCFOCFOC.container).val(response.Credenciado.Nome);
-				}
-				else
-				{
-					Mensagem.gerar(LiberarNumeroCFOCFOC.container, response.Msg);
-				}
-			}
+		    url: LiberarNumeroCFOCFOC.settings.urls.urlGravarVerificacaoDUA,
+		    data: JSON.stringify(LiberarNumeroCFOCFOC.RequisicaoDUA),
+		    cache: false,
+		    async: false,
+		    type: 'POST',
+		    dataType: 'json',
+		    contentType: 'application/json; charset=utf-8',
+		    error: Aux.error,
+		    success: function (response, textStatus, XMLHttpRequest) {
+		        if (!response.Valido) {
+		            MasterPage.carregando(false);
+		            Mensagem.gerar(LiberarNumeroCFOCFOC.container, response.Msg);
+		            return;
+		        }
+
+		        LiberarNumeroCFOCFOC.RequisicaoDUA.filaID = response.FilaID;
+
+		        clearTimeout(LiberarNumeroCFOCFOC.settings.timeoutID);
+		        LiberarNumeroCFOCFOC.settings.timeoutID =
+					setTimeout(function () {
+					    LiberarNumeroCFOCFOC.onChecarRetornoDUA();
+					}, 5000);
+		    }
 		});
-		MasterPage.carregando(false);
+
+		
+		//MasterPage.carregando(false);
 	},
 
 	abrirModalVisualizarPessoa: function () {
@@ -104,7 +172,9 @@ LiberarNumeroCFOCFOC = {
 			LiberarDigitalCFO: $('.cbLiberarNumeroDigitalCFO', LiberarNumeroCFOCFOC.container).is(':checked'),
 			QuantidadeDigitalCFO: $('.ddlQtdNumeroDigitalCFO:visible :selected', LiberarNumeroCFOCFOC.container).val(),
 			LiberarDigitalCFOC: $('.cbLiberarNumeroDigitalCFOC', LiberarNumeroCFOCFOC.container).is(':checked'),
-			QuantidadeDigitalCFOC: $('.ddlQtdNumeroDigitalCFOC:visible :selected', LiberarNumeroCFOCFOC.container).val()
+			QuantidadeDigitalCFOC: $('.ddlQtdNumeroDigitalCFOC:visible :selected', LiberarNumeroCFOCFOC.container).val(),
+			NumeroDua: $('.txtNumeroDua', LiberarNumeroCFOCFOC.container).val(),
+			FilaID: LiberarNumeroCFOCFOC.RequisicaoDUA.filaID
 		};
 
 		return retorno;

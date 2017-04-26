@@ -86,6 +86,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem MarqueUmTipoNumero { get { return new Mensagem() { Texto = "Marque o tipo de número a ser liberado.", Tipo = eTipoMensagem.Advertencia }; } }
 
+        public Mensagem CodigoDuaInvalido { get { return new Mensagem() { Texto = "Código do DUA inválido.", Tipo = eTipoMensagem.Advertencia }; } }
+
 		public Mensagem NumeroCanceladoSucesso(string numero)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = String.Format("Número {0} cancelado com sucesso.", numero) };

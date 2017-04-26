@@ -22,7 +22,10 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossanitario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data;
+using Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA;
+using Tecnomapas.Blocos.Entities.WebService;
 using Cred = Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado;
+using System.Xml.Serialization;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 {
@@ -33,6 +36,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 		LiberacaoNumeroCFOCFOCDa _da = new LiberacaoNumeroCFOCFOCDa();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 		ConfiguracaoDocumentoFitossanitarioBus _busConfiguracaoCfoCfoc = new ConfiguracaoDocumentoFitossanitarioBus();
+
+
+        private Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus _PTVBusCred = new Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus();
 
 		private static EtramiteIdentity User
 		{
@@ -82,6 +88,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			}
 		}
 
+        internal bool ValidarDadosWebServiceDuaCFO(DUA dua, string numero, string cpfCnpj, LiberaracaoNumeroCFOCFOC liberacao = null)
+        {
+            if (dua == null)
+            {
+                Validacao.Add(Mensagem.PTV.DuaNaoEncontrado);
+                return Validacao.EhValido;
+            }
+
+            if (dua.PagamentoCodigo != "2"/*Pago e Consolidado*/ && dua.PagamentoCodigo != "1"/*Pago e não Consolidado*/)
+            {
+                Validacao.Add(Mensagem.PTV.DuaInvalido(numero));
+            }
+
+            if (dua.CodigoServicoRef != "21213")
+            {
+                Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.CodigoDuaInvalido);
+            }
+
+            if (liberacao != null)
+            {
+                int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj);
+
+                float ValorUnitario = _da.ObterValorUnitarioDua();
+
+                int totalPagos = (int)((float)dua.ValorTotal / (float)ValorUnitario);
+
+                long totalCfo = liberacao.NumeroFinalCFO - liberacao.NumeroInicialCFO;
+                long totalCfoc = liberacao.NumeroFinalCFOC - liberacao.NumeroInicialCFOC;
+
+                totalCfo += liberacao.QuantidadeDigitalCFO + liberacao.QuantidadeDigitalCFOC;
+
+                if ((totalPagos * 25) < ( quantidadeDuaEmitido + totalCfo + totalCfoc) )
+                {
+                    Validacao.Add(Mensagem.PTV.DuaSemSaldo(numero));
+                }
+            }
+
+            return Validacao.EhValido;
+        }
+
+
 		internal bool Salvar(LiberaracaoNumeroCFOCFOC liberacao)
 		{
 			ValidarCPF(liberacao.CPF);
@@ -91,6 +138,61 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.MarqueUmTipoNumero);
 				return false;
 			}
+
+            
+            try
+            {
+                DUA dua = new DUA();
+
+                var duaRequisicao = _da.BuscarRespostaConsultaDUA(liberacao.FilaID);
+
+                if (duaRequisicao == null)
+                    return false;
+
+                if (!duaRequisicao.Sucesso)
+                {
+                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
+                    return false;
+                }
+
+                var xser = new XmlSerializer(typeof(RespostaConsultaDua));
+
+                RespostaConsultaDua xml = null;
+
+                try
+                {
+                    xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
+                }
+                catch
+                {
+                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
+                    return false;
+                }
+
+                if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
+                {
+                    Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
+                    return false;
+                }
+
+                dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
+                dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
+
+                dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
+                dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
+                dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
+
+                dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
+                dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
+                dua.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot.Replace(".",","));
+                dua.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
+
+                ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
 
 			if (liberacao.LiberarBlocoCFO)
 			{

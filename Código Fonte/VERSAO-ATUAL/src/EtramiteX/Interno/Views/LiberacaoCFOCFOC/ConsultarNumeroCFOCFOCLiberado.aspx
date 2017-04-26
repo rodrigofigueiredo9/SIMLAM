@@ -16,7 +16,10 @@
 					verificarCPF: '<%=Url.Action("VerificarCPFConsulta", "LiberacaoCFOCFOC")%>',
 					buscar: '<%=Url.Action("FiltrarConsulta", "LiberacaoCFOCFOC")%>',
 					cancelarModal: '<%=Url.Action("MotivoCancelamento", "LiberacaoCFOCFOC")%>',
-					cancelar: '<%=Url.Action("Cancelar", "LiberacaoCFOCFOC")%>'
+				    cancelar: '<%=Url.Action("Cancelar", "LiberacaoCFOCFOC")%>',
+				    urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "LiberacaoCFOCFOC") %>',
+				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "LiberacaoCFOCFOC") %>',
+
 				}
 			});
 		});
