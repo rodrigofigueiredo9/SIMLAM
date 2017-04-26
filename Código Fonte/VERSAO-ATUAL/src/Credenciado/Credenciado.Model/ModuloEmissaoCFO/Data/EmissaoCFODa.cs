@@ -1118,10 +1118,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
+                //Situação 2 (ativo) e 3 (inativo) são as únicas situações de CFO que devem ser consideradas no cálculo
 				Comando comando = bancoDeDados.CriarComando(@"
-				select nvl((select sum(cp.quantidade) from tab_cfo c, tab_cfo_produto cp, ins_crt_unidade_prod_unidade u
-				where cp.cfo = c.id and u.id = cp.unidade_producao and u.cultivar = :cultivar and u.tipo_producao = :tipo_producao and c.empreendimento = :empreendimento and cp.unidade_producao = :unidade and c.id != :cfo
-				and c.situacao != 4 and c.data_emissao >= :data_saldo_inicio and c.data_emissao < :data_saldo_fim), 0) from dual");
+				select nvl((select sum(cp.quantidade)
+                            from tab_cfo c,
+                                 tab_cfo_produto cp,
+                                 ins_crt_unidade_prod_unidade u
+				            where cp.cfo = c.id
+                                  and u.id = cp.unidade_producao
+                                  and u.cultivar = :cultivar
+                                  and u.tipo_producao = :tipo_producao
+                                  and c.empreendimento = :empreendimento
+                                  and cp.unidade_producao = :unidade
+                                  and c.id != :cfo
+                                  and c.data_emissao >= :data_saldo_inicio
+                                  and c.data_emissao < :data_saldo_fim
+                                  and (c.situacao = 2 or c.situacao = 3)),
+                           0)
+                from dual");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("cultivar", cultivar, DbType.Int32);
@@ -1132,7 +1146,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				comando.AdicionarParametroEntrada("data_saldo_inicio", dataSaldo.ToShortDateString(), DbType.Date);
 				comando.AdicionarParametroEntrada("data_saldo_fim", dataSaldo.AddYears(1).ToShortDateString(), DbType.Date);
 
-				return bancoDeDados.ExecutarScalar<decimal>(comando);
+                var valor = bancoDeDados.ExecutarScalar<decimal>(comando);
+
+				return valor;
 			}
 		}
 
