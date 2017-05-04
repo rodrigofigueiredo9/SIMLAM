@@ -264,12 +264,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, loteData.Data.GetValueOrDefault().Year, loteID);
 
-                    //decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
+                    decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
-                    //if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
-                    //{
-                    //    Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
-                    //}
+                    if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
+                    }
 				}
 
                 item.Quantidade = saldo;
