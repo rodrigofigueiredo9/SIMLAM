@@ -934,6 +934,104 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 			}
 		}
 
+        internal decimal obterSaldoRestanteCultivarUC(int empreendimentoID, int cultivarID, int culturaID)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+//                Comando comando = bancoDeDados.CriarComando(@"
+//				select cc.capacidade_mes from crt_unidade_consolidacao c, crt_unidade_cons_cultivar cc 
+//				where cc.unidade_consolidacao = c.id and c.empreendimento = :empreendimentoID and cc.cultivar = :cultivarID", EsquemaCredenciado);
+
+                Comando comando = bancoDeDados.CriarComando(@"
+				select t.data_criacao dataTitulo
+                from tab_titulo t,
+                     esp_abertura_livro_uc e,
+                     esp_aber_livro_uc_cultura ec
+                where e.titulo = t.id
+                      and ec.especificidade = e.id
+			          and t.situacao = 3
+			          and t.empreendimento = :empreendimentoID
+			          and ec.cultura = :culturaID", EsquemaCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoID, DbType.Int32);
+                comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
+
+                //DateTime dataTitulo = Convert.ToDateTime(bancoDeDados.ExecutarScalar<string>(comando));
+                DateTime dataTitulo = DateTime.Now;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        dataTitulo = Convert.ToDateTime(reader.GetValue<string>("dataTitulo"));
+                    }
+
+                    reader.Close();
+                }
+
+
+                comando = bancoDeDados.CriarComando(@"
+                select cc.capacidade_mes capacidadeuc
+                from crt_unidade_consolidacao c,
+                     crt_unidade_cons_cultivar cc 
+                where cc.unidade_consolidacao = c.id
+                      and c.empreendimento = :empreendimentoID
+                      and cc.cultivar = :cultivarID", EsquemaCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoID, DbType.Int32);
+                comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+
+                decimal capacidadeUC = 0;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        capacidadeUC = reader.GetValue<decimal>("capacidadeuc");
+                    }
+
+                    reader.Close();
+                }
+
+
+                DateTime dataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dataTitulo.Day);
+                if (DateTime.Now.Day < dataTitulo.Day)
+                {
+                    dataInicio = dataInicio.AddMonths(-1);
+                }
+
+                DateTime dataFim = dataInicio.AddDays(30);
+
+                comando = bancoDeDados.CriarComando(@"
+                select sum(tli.quantidade) saldousado
+                from idafcredenciado.tab_lote tl,
+                     idafcredenciado.tab_lote_item tli
+                where tl.empreendimento = :empreendimentoID
+                      and tli.lote = tl.id
+                      and tli.cultivar = :cultivarID
+                      and tl.data_criacao >= :dataInicio
+                      and tl.data_criacao < :dataFim", EsquemaCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoID, DbType.Int32);
+                comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                comando.AdicionarParametroEntrada("dataInicio", dataInicio.Date, DbType.Date);
+                comando.AdicionarParametroEntrada("dataFim", dataFim.Date, DbType.Date);
+
+                decimal saldoUsado = 0;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        saldoUsado = reader.GetValue<decimal>("saldousado");
+                    }
+
+                    reader.Close();
+                }
+
+                decimal saldoRestante = capacidadeUC - saldoUsado;
+
+                return saldoRestante;
+            }
+        }
+
 		#endregion
 
 		#region Validações
