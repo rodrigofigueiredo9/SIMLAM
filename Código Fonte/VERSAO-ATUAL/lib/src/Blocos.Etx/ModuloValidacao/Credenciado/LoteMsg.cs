@@ -43,7 +43,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem UnidadeMedidaUnico { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Unidade", Texto = "Os cultivares devem possuir a mesma unidade de medida." }; } }
 
-		public Mensagem CultivarQuantidadeSomaSuperior { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Cultivar", Texto = "O saldo da cultivar já foi inteiramente utilizado." }; } }
+		public Mensagem CultivarSaldoTodoUtilizado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Cultivar", Texto = "O saldo da cultivar já foi inteiramente utilizado." }; } }
+        public Mensagem CultivarQuantidadeSomaSuperior { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Cultivar", Texto = "O saldo restante da cultivar na UC é menor do que o saldo do documento de origem." }; } }
 		public Mensagem QuantidadeObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Quantidade", Texto = "Quantidade é obrigatória." }; } }
 		public Mensagem LoteAdicionarObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pelo menos uma origem é obrigatório." }; } }
 		public Mensagem OrigemDataMaiorLoteData { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A data do documento de origem deve ser menor ou igual a data de criação do lote." }; } }

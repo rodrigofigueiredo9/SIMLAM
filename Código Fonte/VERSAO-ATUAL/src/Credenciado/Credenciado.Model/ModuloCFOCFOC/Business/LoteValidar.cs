@@ -134,9 +134,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				return;
 			}
 
-			//TODO
+			//FALTA FAZER AS VALIDAÇÕES DE SALDO DE UC
 			int auxiliar = 0;
-			decimal saldo = 0;
+			decimal saldoDocOrigem = 0;
 			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
 			if (produtos != null)
 			{
@@ -145,7 +145,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.CFO:
 						EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
 						EmissaoCFO cfo = emissaoCFOBus.Obter(item.Origem);
-						saldo = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (cfo.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 						{
@@ -167,7 +167,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.CFOC:
 						EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
 						EmissaoCFOC cfoc = emissaoCFOCBus.Obter(item.Origem);
-						saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (cfoc.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 						{
@@ -189,7 +189,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.PTV:
 						PTVInternoBus ptvInternoBus = new PTVInternoBus();
 						PTV ptv = ptvInternoBus.Obter(item.Origem);
-						saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (ptv.Situacao != (int)ePTVOutroSituacao.Valido)
 						{
@@ -210,7 +210,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						PTVOutroBus ptvOutroBus = new PTVOutroBus();
 						PTVOutro ptvOutro = ptvOutroBus.Obter(item.Origem);
-						saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (ptvOutro.Situacao != (int)ePTVOutroSituacao.Valido
 							&& ptvOutro.Situacao != (int)ePTVOutroSituacao.Invalido)
@@ -262,17 +262,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 						Validacao.Add(Mensagem.Lote.CultivarDesassociadoUC(item.CultivarTexto));
 					}
 
-					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, loteData.Data.GetValueOrDefault().Year, loteID);
+                    //SALDO DA UC
+                    decimal saldoUc = _da.obterSaldoRestanteCultivarUC(empreendimentoID, item.Cultivar, item.Cultura);
+                    if (saldoUc <= 0)
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarSaldoTodoUtilizado);
+                    }
 
-                    //decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
+                    decimal quantidadeAdicionada = lista.Sum(x => x.Quantidade);
 
-                    //if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
-                    //{
-                    //    Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
-                    //}
+                    if ((quantidadeAdicionada + item.Quantidade) > saldoUc)
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
+                    }
 				}
 
-                item.Quantidade = saldo;
+                item.Quantidade = saldoDocOrigem;
 			}
 		}
 
