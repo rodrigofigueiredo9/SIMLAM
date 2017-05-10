@@ -38,14 +38,7 @@ Vitória – ES";
 			{
 				return @"Senhora chefe:
  
-Trata o presente ofício de resposta ao Ofício PGE/PPI Nº <<---/---- >>, referente a ação de usucapião proposta por << --- >>, processo judicial Nº << --- >> no qual está sendo reivindicada a regularização da área com a dimensão de << --- >> m², situada no lugar denominado << --- >>, no Município de << --- >>, conforme petição planta e laudo anexos.
- 
-A petição faz referência ao imóvel como sendo << --- >>.
- 
-Por outro lado, em se tratando de imóvel situado em << --- >> com posse constatada do(s) requerente(s) desde << --- >> há mais de << --- >>.
- 
- 
-Atenciosamente,";
+Trata o presente ofício de resposta ao Ofício PGE/PPI Nº <<---/---- >>, referente a ação de usucapião proposta por << --- >>, processo judicial Nº << --- >> no qual está sendo reivindicada a regularização da área com a dimensão de << --- >> m², ";
 			}
 		}
 	}
