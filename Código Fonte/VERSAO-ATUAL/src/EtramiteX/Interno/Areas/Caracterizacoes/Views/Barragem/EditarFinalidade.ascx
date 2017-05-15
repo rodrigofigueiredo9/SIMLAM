@@ -48,15 +48,7 @@
             <input type="checkbox" name="Barragens" value="6" class="Aquicultura" checked="checked" /> 
         <% }else{ %>                                       
             <input type="checkbox" name="Barragens" value="6" class="Aquicultura" /> 
-        <% } %> Aquicultura 
-             
-        <br /> 
- 
-        <% if (Model.Barragens.Count(i => i.FinalidadeTexto == "Captação para Abastecimento Industrial") > 0 ){ %> 
-            <input type="checkbox" name="Barragens" value="7" class="CaptacaoAbastecimentoIndustrial" checked="checked" /> 
-        <% }else{ %>                                       
-            <input type="checkbox" name="Barragens" value="7" class="CaptacaoAbastecimentoIndustrial" /> 
-        <% } %> Captação para Abastecimento Industrial 
+        <% } %> Aquicultura
              
         <br /> 
  
@@ -66,13 +58,16 @@
         <% }else{ %>                                       
             <input type="checkbox" name="Barragens" value="8" class="CaptacaoAbastecimentoPublico" /> 
         <% } %> Captação para abastecimento Público 
-             
-        <br /> 
+ 
+        <!-- As atividades abaixo não existem mais, e serão exibidas somente em caracterizações que já as possuíam -->
+        <% if (Model.Barragens.Count(i => i.FinalidadeTexto == "Captação para Abastecimento Industrial") > 0 ){ %> 
+            <br /> 
+            <input type="checkbox" name="Barragens" value="7" class="CaptacaoAbastecimentoIndustrial" checked="checked" /> Captação para Abastecimento Industrial 
+        <% } %>
  
         <% if (Model.Barragens.Count(i => i.FinalidadeTexto == "Outros") > 0 ){ %> 
+            <br /> 
             <input type="checkbox" name="Barragens" value="3" class="Outros" checked="checked" /> Outros 
-        <% }else{ %> 
-            <input type="checkbox" name="Barragens" value="3" class="Outros" hidden /> 
         <% } %> 
              
         <%--<%= Html.CheckBox("Reservação", false)%>--%> 
