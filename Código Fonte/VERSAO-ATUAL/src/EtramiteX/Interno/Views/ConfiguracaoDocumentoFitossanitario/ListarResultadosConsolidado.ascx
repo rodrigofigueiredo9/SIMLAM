@@ -8,7 +8,7 @@
 		    
 		    <tbody>
                 <tr>
-				    <th rowspan="2" width="25%"></th>
+				    <th rowspan="2" width="25%">Quantitativo de Números</th>
 				    <th colspan="3" >Bloco</th>
 				    <th colspan="3" >Digital</th>
 			    </tr>
