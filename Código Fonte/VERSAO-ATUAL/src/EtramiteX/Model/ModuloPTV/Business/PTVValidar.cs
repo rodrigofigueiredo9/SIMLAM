@@ -377,7 +377,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.PTV.OrigemSituacaoInvalida(item.OrigemTipoTexto));
 					}
 
-					DateTime dataVencimentoCFO = cfo.DataEmissao.Data.GetValueOrDefault().AddDays(cfo.ValidadeCertificado);
+					DateTime dataVencimentoCFO = cfo.DataAtivacao.Data.GetValueOrDefault().AddDays(cfo.ValidadeCertificado);
 					if (dataVencimentoCFO < DateTime.Today)
 					{
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
@@ -399,7 +399,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.PTV.OrigemSituacaoInvalida(item.OrigemTipoTexto));
 					}
 
-					DateTime dataVencimentoCFOC = cfoc.DataEmissao.Data.GetValueOrDefault().AddDays(cfoc.ValidadeCertificado);
+					DateTime dataVencimentoCFOC = cfoc.DataAtivacao.Data.GetValueOrDefault().AddDays(cfoc.ValidadeCertificado);
 					if (dataVencimentoCFOC < DateTime.Today)
 					{
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
