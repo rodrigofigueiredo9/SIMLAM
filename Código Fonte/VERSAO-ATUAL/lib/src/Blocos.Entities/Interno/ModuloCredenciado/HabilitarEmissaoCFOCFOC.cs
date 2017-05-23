@@ -33,6 +33,29 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado
 		public Int32? Motivo { get; set; }
 		public String MotivoTexto { get; set; }
 		public String NumeroDua { get; set; }
+        public String DataPagamentoDUA
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ValidadeRegistro))
+                {
+                    var data = (Convert.ToDateTime(ValidadeRegistro)).AddYears(-1).ToShortDateString();
+                    return data;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            set
+            {
+                DateTime data = new DateTime();
+                if (DateTime.TryParse(value, out data))
+                {
+                    ValidadeRegistro = data.AddYears(1).ToString();
+                }
+            }
+        }
 		public Int32 ExtensaoHabilitacao { get; set; }
 		public String Observacao { get; set; }
 		public String NumeroHabilitacaoOrigem { get; set; }

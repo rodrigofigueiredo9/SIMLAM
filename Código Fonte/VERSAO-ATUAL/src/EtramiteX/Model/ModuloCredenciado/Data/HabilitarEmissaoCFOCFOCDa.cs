@@ -233,14 +233,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				update tab_hab_emi_cfo_cfoc p set p.motivo = :motivo, p.observacao = :observacao, p.situacao_data =:situacao_data, 
-				p.situacao = :situacao, p.tid = :tid where p.id = :id", EsquemaBanco);
+				update tab_hab_emi_cfo_cfoc p
+                set p.motivo = :motivo,
+                    p.observacao = :observacao,
+                    p.situacao_data =:situacao_data, 
+				    p.situacao = :situacao,
+                    p.numero_dua = :numero_dua,
+                    p.validade_registro = :validade_registro,
+                    p.tid = :tid
+                where p.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", habilitar.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivo", (habilitar.Motivo.HasValue && habilitar.Motivo > 0) ? habilitar.Motivo : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("observacao", DbType.String, 250, habilitar.Observacao);
 				comando.AdicionarParametroEntrada("situacao_data", habilitar.SituacaoData, DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", habilitar.Situacao, DbType.Int32);
+                comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
+                comando.AdicionarParametroEntrada("validade_registro", Convert.ToDateTime(habilitar.ValidadeRegistro), DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -270,6 +279,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 			return retorno;
 		}
+
+        //Verificar se a situação da habilitação pode ser alterado para Ativa, caso a inativação tenha ocorrido por suspensão ou descredenciamento
+        internal Boolean ValidarPodeAtivar(Int32 id)
+        {
+            Boolean retorno = true;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                DateTime dataDesc = DateTime.Now.AddMonths(-18);
+                DateTime dataSusp = DateTime.Now.AddMonths(-3);
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(th.situacao)
+                                    from tab_hab_emi_cfo_cfoc th
+                                    where th.situacao = 3
+                                          and ((th.motivo = 1 and th.situacao_data >= '" + dataDesc.ToShortDateString() + // :dataDescredenciamento)
+                                              @"') or (th.motivo = 2 and th.situacao >= '" + dataSusp.ToShortDateString() + // :dataSuspensao))
+                                          @"')) and th.id = " + id);
+
+                //comando.AdicionarParametroEntrada("dataDescredenciamento", dataDesc, DbType.Date);
+                //comando.AdicionarParametroEntrada("dataSuspensao", dataSusp, DbType.Date);
+                //comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                retorno = bancoDeDados.ExecutarScalar(comando).ToString() == "0";
+            }
+            return retorno;
+        }
 
 		internal Boolean ValidarNumeroHabilitacao(Int32 id, String numero)
 		{
