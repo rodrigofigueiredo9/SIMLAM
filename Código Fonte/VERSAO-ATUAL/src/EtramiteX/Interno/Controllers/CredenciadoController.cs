@@ -507,7 +507,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCAlterarSituacao })]
 		public ActionResult AlterarSituacaoHabilitacaoCFO(int id)
 		{
-			var motivos = _busLista.HabilitacaoCFOMotivos.Where(x => Convert.ToInt32(x.Id) < 3).ToList();
+            var motivos = _busLista.HabilitacaoCFOMotivos;
             var situacoes = _busLista.HabilitacaoCFOSituacoes.Where(x => x.Texto.ToLower() != "advertido").ToList();
 			HabilitarEmissaoCFOCFOCVM vm = new HabilitarEmissaoCFOCFOCVM(situacoes, _busLista.Estados, motivos);
 			vm.HabilitarEmissao = _busHabilitar.Obter(id);

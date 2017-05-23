@@ -265,6 +265,7 @@
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\eDocumentoFitossanitarioSituacao.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\eDocumentoFitossanitarioTipo.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\eDocumentoFitossanitarioTipoNumero.cs" />
+    <Compile Include="Interno\ModuloCredenciado\eHabilitacaoCFOCFOCMotivo.cs" />
     <Compile Include="Interno\ModuloCredenciado\eHabilitacaoCFOCFOCSituacao.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\Lote\Lote.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\Lote\LoteItem.cs" />
