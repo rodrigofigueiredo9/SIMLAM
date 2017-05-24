@@ -74,6 +74,11 @@
 			<label for="HabilitarEmissao.SituacaoData">Data da inativação *</label>
 			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData txtSituacaoData" })%>
 		</div>
+
+        <div class="coluna30 divNumeroProcesso hide">
+			<label for="HabilitarEmissao.NumeroProcesso">Número do Processo *</label>
+			<%= Html.TextBox("HabilitarEmissao.NumeroProcesso", Model.HabilitarEmissao.NumeroProcesso, new { @class = "text txtNumeroProcesso" })%>
+		</div>
 	</div>
 
 	<div class="block ultima">

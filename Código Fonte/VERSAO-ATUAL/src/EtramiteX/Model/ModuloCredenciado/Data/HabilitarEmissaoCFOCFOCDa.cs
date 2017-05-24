@@ -240,6 +240,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				    p.situacao = :situacao,
                     p.numero_dua = :numero_dua,
                     p.validade_registro = :validade_registro,
+                    p.numero_processo = :numero_processo,
                     p.tid = :tid
                 where p.id = :id", EsquemaBanco);
 
@@ -250,6 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				comando.AdicionarParametroEntrada("situacao", habilitar.Situacao, DbType.Int32);
                 comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
                 comando.AdicionarParametroEntrada("validade_registro", Convert.ToDateTime(habilitar.ValidadeRegistro), DbType.DateTime);
+                comando.AdicionarParametroEntrada("numero_processo", DbType.String, 30, habilitar.NumeroProcesso);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -441,7 +443,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"select t.id, t.tid, t.responsavel, t.responsavel_arquivo, aa.nome responsavel_arquivo_nome, cc.cpf responsavel_cpf, cc.nome responsavel_nome, 
 				pc.registro registro_crea, t.numero_habilitacao, trunc(t.validade_registro) validade_registro, trunc(t.situacao_data) situacao_data, t.situacao, ls.texto situacao_texto, t.motivo,
-				lm.texto motivo_texto, t.observacao, t.numero_dua, t.extensao_habilitacao, t.numero_habilitacao_ori, t.uf, t.numero_visto_crea, t.tid from tab_hab_emi_cfo_cfoc t, tab_credenciado tc, 
+				lm.texto motivo_texto, t.observacao, t.numero_dua, t.extensao_habilitacao, t.numero_habilitacao_ori, t.uf, t.numero_visto_crea, t.numero_processo, t.tid from tab_hab_emi_cfo_cfoc t, tab_credenciado tc, 
 				cre_pessoa cc, cre_pessoa_profissao pc, lov_hab_emissao_cfo_situacao ls, lov_hab_emissao_cfo_motivo lm, tab_arquivo aa where t.situacao = ls.id and t.motivo = lm.id(+) 
 				and t.responsavel_arquivo = aa.id(+) and tc.id = t.responsavel and tc.pessoa = cc.id and cc.id = pc.pessoa(+) and t.id = :id", UsuarioCredenciado);
 
@@ -478,6 +480,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						habilitar.RegistroCrea = reader.GetValue<String>("registro_crea");
 						habilitar.UF = reader.GetValue<Int32>("uf");
 						habilitar.NumeroVistoCrea = reader.GetValue<String>("numero_visto_crea");
+                        habilitar.NumeroProcesso = reader.GetValue<String>("numero_processo");
 					}
 					reader.Close();
 				}

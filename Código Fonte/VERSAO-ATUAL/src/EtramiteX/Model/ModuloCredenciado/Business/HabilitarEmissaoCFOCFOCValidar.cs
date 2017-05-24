@@ -247,13 +247,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
             }
 
             //Inativo
-			if (habilitar.Situacao == 3)
-			{
-				if (habilitar.Motivo == 0)
-				{
-					Validacao.Add(Msg.MotivoObrigatorio);
-				}
-			}
+            if (habilitar.Situacao == 3)
+            {
+                if (habilitar.Motivo == null || habilitar.Motivo == 0)
+                {
+                    Validacao.Add(Msg.MotivoObrigatorio);
+                }
+                else if ((habilitar.Motivo == (int)eHabilitacaoCFOCFOCMotivo.Suspensao || habilitar.Motivo == (int)eHabilitacaoCFOCFOCMotivo.Descredenciamento)
+                         && string.IsNullOrWhiteSpace(habilitar.NumeroProcesso))
+                {
+                    Validacao.Add(Msg.NumeroProcessoObrigatorio);
+                }
+            }
 
 			if (String.IsNullOrEmpty(habilitar.Observacao))
 			{
