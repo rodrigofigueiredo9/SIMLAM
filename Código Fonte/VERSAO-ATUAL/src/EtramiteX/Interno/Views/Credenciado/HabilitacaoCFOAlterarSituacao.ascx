@@ -8,7 +8,10 @@
 		urls: {
 			alterarSituacao: '<%= Url.Action("AlterarSituacaoHabilitacaoCFO", "Credenciado") %>'
 		},
-		situacaoMotivo: <%= (int)eHabilitacaoCFOCFOCSituacao.Inativo %>
+	    situacaoMotivo: '<%= (int)eHabilitacaoCFOCFOCSituacao.Inativo %>',
+	    situacaoMotivoAtivo: '<%= (int)eHabilitacaoCFOCFOCSituacao.Ativo %>',
+	    motivoSuspenso: '<%= (int)eHabilitacaoCFOCFOCMotivo.Suspensao %>',
+	    motivoDescredenciado: '<%= (int)eHabilitacaoCFOCFOCMotivo.Descredenciamento %>'
 	});
 </script>
 
@@ -37,7 +40,22 @@
 
 		<div class="coluna30">
 			<label for="SituacaoData">Data da situação atual</label>
-			<%= Html.TextBox("SituacaoDataAntiga", Model.HabilitarEmissao.SituacaoData, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
+			<%= Html.TextBox("SituacaoDataAntiga", Model.HabilitarEmissao.SituacaoData, ViewModelHelper.SetaDisabled(true, new { @class = "text maskData" }))%>
+		</div>
+
+        <div class="coluna30 divDataFinalSituacao hide">
+			<label for="HabilitarEmissao.SituacaoData">Data final da inativação *</label>
+			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData disabled txtFinalSituacaoData" })%>
+		</div>
+
+        <div class="coluna30 divNumeroDua append1 hide">
+			<label for="NumeroDua">Número do DUA *</label>
+			<%= Html.TextBox("NumeroDua", Model.HabilitarEmissao.NumeroDua, ViewModelHelper.SetaDisabled(false, new { @class = "text txtNumeroDua" }))%>
+		</div>
+
+        <div class="coluna30 divDataPagamento append1 hide">
+			<label for="DataPagamento">Data do pagamento</label>
+			<%= Html.TextBox("DataPagamento", Model.HabilitarEmissao.DataPagamentoDUA, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData txtDataPagamentoDua" }))%>
 		</div>
 	</div>
 
@@ -47,14 +65,14 @@
 			<%= Html.DropDownList("Situacao.Novo", Model.Situacoes, new { @class = "text ddlSituacao" })%>
 		</div>
 
-		<div class="coluna30 hide divMotivo append1">
-			<label for="Motivo.Novo">Novo motivo *</label>
+		<div class="coluna30 divMotivo append1 hide">
+			<label for="Motivo.Novo" class="labelNovoMotivo">Novo motivo *</label>
 			<%= Html.DropDownList("Motivo.Novo", Model.SituacaoMotivos, new { @class = "text ddlMotivo" })%>
 		</div>
 
-		<div class="coluna30">
-			<label for="HabilitarEmissao.SituacaoData">Data da nova situação *</label>
-			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSituacaoData" }))%>
+		<div class="coluna30 divDataNovaSituacao hide">
+			<label for="HabilitarEmissao.SituacaoData">Data da inativação *</label>
+			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData txtSituacaoData" })%>
 		</div>
 	</div>
 

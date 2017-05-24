@@ -224,11 +224,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				}
 			}
 
+            //Nenhuma
 			if (habilitar.Situacao == 0)
 			{
 				Validacao.Add(Msg.SituacaoObrigatoria);
 			}
 
+            //Ativo
+            if (habilitar.Situacao == 1)
+            {
+                if (string.IsNullOrWhiteSpace(habilitar.NumeroDua))
+                {
+                    Validacao.Add(Msg.NumeroDuaObrigatorio);
+                }
+
+                if (string.IsNullOrWhiteSpace(habilitar.DataPagamentoDUA))
+                {
+                    Validacao.Add(Msg.DataPagamentoObrigatorio);
+                }
+
+                
+            }
+
+            //Inativo
 			if (habilitar.Situacao == 3)
 			{
 				if (habilitar.Motivo == 0)
