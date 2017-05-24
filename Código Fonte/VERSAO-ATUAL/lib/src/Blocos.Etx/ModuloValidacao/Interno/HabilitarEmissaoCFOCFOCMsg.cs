@@ -32,7 +32,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem DataPagamentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_DataPagamento", Texto = "Informe a data do pagamento." }; } }
 		//
 		public Mensagem SituacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Situacao_Novo, #Situacao_Novo", Texto = "Selecione a situação da habilitação." }; } }
-		public Mensagem MotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissa_Motivo_Novo, #Motivo_Novo", Texto = "Selecione o motivo da alteração." }; } }	//
+		public Mensagem MotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Motivo_Novo, #Motivo_Novo", Texto = "Selecione o motivo da alteração." }; } }
+        public Mensagem NumeroProcessoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Numero_Processo, #Numero_Processo", Texto = "Informe o número do processo." }; } }
 		public Mensagem ValidadeRegistroObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_ValidadeRegistro, #ValidadeRegistro_Novo", Texto = "Informe a validade da taxa de registro." }; } }
 		public Mensagem ValidadeRegistroInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_ValidadeRegistro, #ValidadeRegistro_Novo", Texto = "Data de validade da taxa de registro inválida." }; } }
 

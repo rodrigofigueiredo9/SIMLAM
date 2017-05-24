@@ -63,6 +63,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado
 		public String NumeroVistoCrea { get; set; }
 		public Int32 UF { get; set; }
 		public String UFTexto { get; set; }
+        public String NumeroProcesso { get; set; }
 
 		#region Meio de contato
 
