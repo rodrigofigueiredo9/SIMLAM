@@ -43,6 +43,11 @@
 			<%= Html.TextBox("SituacaoDataAntiga", Model.HabilitarEmissao.SituacaoData, ViewModelHelper.SetaDisabled(true, new { @class = "text maskData" }))%>
 		</div>
 
+        <div class="coluna30 divDataFinalSituacao hide">
+			<label for="HabilitarEmissao.SituacaoData">Data final da inativação *</label>
+			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData disabled txtFinalSituacaoData" })%>
+		</div>
+
         <div class="coluna30 divNumeroDua append1 hide">
 			<label for="NumeroDua">Número do DUA *</label>
 			<%= Html.TextBox("NumeroDua", Model.HabilitarEmissao.NumeroDua, ViewModelHelper.SetaDisabled(false, new { @class = "text txtNumeroDua" }))%>
@@ -68,11 +73,6 @@
 		<div class="coluna30 divDataNovaSituacao hide">
 			<label for="HabilitarEmissao.SituacaoData">Data da inativação *</label>
 			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData txtSituacaoData" })%>
-		</div>
-
-        <div class="coluna30 divDataFinalSituacao hide">
-			<label for="HabilitarEmissao.SituacaoData">Data final da inativação *</label>
-			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData disabled txtFinalSituacaoData" })%>
 		</div>
 	</div>
 
