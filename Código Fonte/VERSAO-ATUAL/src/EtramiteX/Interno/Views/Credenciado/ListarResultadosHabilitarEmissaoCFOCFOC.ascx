@@ -11,8 +11,9 @@
 		<thead>
 			<tr>
 				<th>Responsável técnico</th>
-				<th width="30%">Nº da habilitação</th>
+				<th width="20%">Nº da habilitação</th>
 				<th width="10%">Situação</th>
+                <th width="20%">Motivo</th>
 				<th class="semOrdenacao" width="17%">Ações</th>
 			</tr>
 		</thead>
@@ -22,6 +23,7 @@
 				<td class="responsavelNomeRazaoSocial" title="<%= Html.Encode(item.NomeRazaoSocial)%>"><%= Html.Encode(item.NomeRazaoSocial)%></td>
 				<td class="numeroHabilitacao" title="<%= Html.Encode(item.NumeroHabilitacao)%>"><%= Html.Encode(item.NumeroHabilitacao)%></td>
 				<td class="situacao" title="<%= item.SituacaoTexto%>"><%= item.SituacaoTexto%></td>
+                <td class="motivo" title="<%= item.MotivoTexto%>"><%= item.MotivoTexto%></td>
 				<td>
 					<input type="hidden" class="itemId" value="<%= item.Id %>" />
 					<input type="hidden" class="itemTid" value="<%= item.Tid %>" />
@@ -31,6 +33,7 @@
 					<%if (Model.PodeAlterarSituacao) {%>
 						<input type="button" name="alterar situação" title="Alterar situação" class="icone altStatus btnAltStatus" />
 					<% }%>
+                    <%if (Model.PodeVisualizar) { %><input type="button" title="Histórico" class="icone historico btnHistorico" /><%}%>
 				</td>
 			</tr>
 		<% } %>

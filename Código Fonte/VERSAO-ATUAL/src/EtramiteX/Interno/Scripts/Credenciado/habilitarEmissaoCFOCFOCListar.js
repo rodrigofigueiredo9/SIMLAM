@@ -8,6 +8,7 @@ HabilitarEmissaoCFOCFOCListar = {
 	visualizarLink: null,
 	urlEditar: null,
 	urlPdf: null,
+    historicoLink: null,
 	container: null,
 
 	load: function (container) {
@@ -18,6 +19,7 @@ HabilitarEmissaoCFOCFOCListar = {
 		container.delegate('.btnAltStatus', 'click', HabilitarEmissaoCFOCFOCListar.alterarSituacao);
 		container.delegate('.btnEditar', 'click', HabilitarEmissaoCFOCFOCListar.editar);
 		container.delegate('.btnPDF', 'click', HabilitarEmissaoCFOCFOCListar.gerarPdf);
+		container.delegate('.btnHistorico', 'click', HabilitarEmissaoCFOCFOCListar.historico);
 
 		Aux.setarFoco(container);
 		HabilitarEmissaoCFOCFOCListar.container = container;
@@ -51,5 +53,17 @@ HabilitarEmissaoCFOCFOCListar = {
 		var content = MasterPage.getContent($(this, HabilitarEmissaoCFOCFOCListar.container));
 
 		MasterPage.redireciona($('.urlVisualizar', content).val() + "/" + id);
-	}
+	},
+
+	historico: function () {
+	    var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
+	    var nome = JSON.stringify($(this).closest('tr').find('.responsavelNomeRazaoSocial').text());
+	    var habilitacao = JSON.stringify($(this).closest('tr').find('.numeroHabilitacao').text());
+	    
+	    Modal.confirma({
+	        url: HabilitarEmissaoCFOCFOCListar.historicoLink + '?id=' + itemId + '&nome=' + nome + '&habilitacao=' + habilitacao,
+	        tamanhoModal: Modal.tamanhoModalGrande,
+	        btnOkLabel: 'Ok'
+	    });
+	},
 }

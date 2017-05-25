@@ -12,7 +12,8 @@
 		$(function () {
 			HabilitarEmissaoCFOCFOCListar.Mensagens = <%= Model.Mensagens %>;
 			HabilitarEmissaoCFOCFOCListar.visualizarLink = '<%= Url.Action("VisualizarHabilitarEmissaoCFOCFOC", "Credenciado") %>';
-			HabilitarEmissaoCFOCFOCListar.alterarSituacaoLink = '<%= Url.Action("AlterarSituacaoHabilitacaoCFO", "Credenciado") %>';
+		    HabilitarEmissaoCFOCFOCListar.alterarSituacaoLink = '<%= Url.Action("AlterarSituacaoHabilitacaoCFO", "Credenciado") %>';
+		    HabilitarEmissaoCFOCFOCListar.historicoLink = '<%= Url.Action("VisualizarHistoricoHabilitacao", "Credenciado") %>';
 			HabilitarEmissaoCFOCFOCListar.associar = '<%= Url.Action("Filtrar", "Credenciado") %>';
 			HabilitarEmissaoCFOCFOCListar.urlEditar = '<%= Url.Action("EditarHabilitarEmissaoCFOCFOC", "Credenciado") %>';
 			HabilitarEmissaoCFOCFOCListar.urlPdf = '<%= Url.Action("GerarPdfHabilitarEmissaoCFOCFOC", "Credenciado") %>';
