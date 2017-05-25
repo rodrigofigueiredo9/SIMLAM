@@ -267,6 +267,7 @@
     <Compile Include="Interno\ModuloCredenciado\eHabilitacaoCFOCFOCSituacao.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\Lote\Lote.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\Lote\LoteItem.cs" />
+    <Compile Include="Interno\ModuloCredenciado\HistoricoEmissaoCFOCFOC.cs" />
     <Compile Include="Interno\ModuloCredenciado\Praga.cs" />
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />

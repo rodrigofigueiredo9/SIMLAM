@@ -219,6 +219,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			return retorno;
 		}
 
+        public List<HistoricoEmissaoCFOCFOC> ObterHistoricoHabilitacoes(int id)
+        {
+            List<HistoricoEmissaoCFOCFOC> retorno = _da.ObterHistoricoHabilitacoes(id);
+
+            return retorno;
+        }
+
 		#endregion
 
 		public HabilitarEmissaoCFOCFOC ObterCredenciado(int credenciadoId, Boolean isCredenciado = false)

@@ -279,6 +279,7 @@
     <Compile Include="ViewModels\VMCFOCFOC\CFO\ListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
+    <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
     <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
@@ -1683,6 +1684,7 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\Index.aspx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
+    <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
