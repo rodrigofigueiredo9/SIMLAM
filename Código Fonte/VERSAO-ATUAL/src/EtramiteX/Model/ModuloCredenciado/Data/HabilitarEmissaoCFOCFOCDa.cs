@@ -574,14 +574,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                            hc.situacao_texto,
                                            hc.motivo_id,
                                            hc.motivo_texto,
-                                           (case when hc.situacao_id = 3 then to_char(hc.situacao_data) else '' end) penalidade_data,
+                                           (case when hc.situacao_id = 3 then to_char(hc.situacao_data, 'DD/MM/YYYY') else '' end) penalidade_data,
                                            hc.numero_processo,
-                                           to_char(hc.data_execucao) data_execucao
+                                           to_char(hc.data_execucao, 'DD/MM/YYYY') data_execucao
                                     from hst_hab_emi_cfo_cfoc hc
-                                    where hc.habilitar_emissao_id = :id", UsuarioCredenciado);
+                                    where hc.habilitar_emissao_id = :id
+                                    order by hc.data_execucao desc", UsuarioCredenciado);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
+                int cont = 0;
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
                     while (reader.Read())
@@ -599,17 +601,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                         item.NumeroProcesso = reader.GetValue<String>("numero_processo");
                         item.HistoricoData = reader.GetValue<String>("data_execucao");
 
-                        historico.Add(item);
+                        //só adiciona o item se houve mudança na situação
+                        if (cont == 0 || item.Situacao != historico[cont-1].Situacao)
+                        {
+                            historico.Add(item);
+                            cont++;
+                        }
                     }
                     reader.Close();
                 }
 
                 #endregion
-
-                if (simplificado)
-                {
-                    return historico;
-                }
             }
 
             return historico;

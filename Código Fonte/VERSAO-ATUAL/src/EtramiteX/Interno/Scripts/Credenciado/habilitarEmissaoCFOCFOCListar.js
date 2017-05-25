@@ -55,30 +55,15 @@ HabilitarEmissaoCFOCFOCListar = {
 		MasterPage.redireciona($('.urlVisualizar', content).val() + "/" + id);
 	},
 
-	obter: function(a){
-	    var itemId = parseInt($(a).closest('tr').find('.itemId:first').val());
-	    var nome = JSON.stringify($(a).closest('tr').find('.responsavelNomeRazaoSocial').text());
-
-	    var obj = {
-	        id: itemId,
-	        nome: nome
-	    }
-
-	    return obj;
-	},
-
 	historico: function () {
 	    var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
 	    var nome = JSON.stringify($(this).closest('tr').find('.responsavelNomeRazaoSocial').text());
-
+	    var habilitacao = JSON.stringify($(this).closest('tr').find('.numeroHabilitacao').text());
 	    
 	    Modal.confirma({
-	        url: HabilitarEmissaoCFOCFOCListar.historicoLink + '?id=' + itemId + '&nome=' + nome,
-	        //data: JSON.stringify(HabilitarEmissaoCFOCFOCListar.obter(this)),
-	        tamanhoModal: Modal.tamanhoModalMedia,
-	        btnOkLabel: 'Salvar',
-	        onLoadCallbackName: function (conteudoModal) { HabilitacaoCFOAlterarSituacao.load(conteudoModal); },
-	        btnOkCallback: HabilitacaoCFOAlterarSituacao.alterarSituacao
+	        url: HabilitarEmissaoCFOCFOCListar.historicoLink + '?id=' + itemId + '&nome=' + nome + '&habilitacao=' + habilitacao,
+	        tamanhoModal: Modal.tamanhoModalGrande,
+	        btnOkLabel: 'Ok'
 	    });
 	},
 }
