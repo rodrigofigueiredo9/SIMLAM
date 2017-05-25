@@ -556,11 +556,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
         [Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCListar, ePermissao.HabilitarEmissaoCFOCFOCVisualizar })]
-        public ActionResult VisualizarHistoricoHabilitacao(string id, string nome)
+        public ActionResult VisualizarHistoricoHabilitacao(string id, string nome, string habilitacao)
         {
             HistoricoEmissaoCFOCFOCVM vm = new HistoricoEmissaoCFOCFOCVM();
             vm.ListaHistoricoHabilitacao = _busHabilitar.ObterHistoricoHabilitacoes(Convert.ToInt32(id));
-            vm.Nome = nome.Replace("\"", string.Empty).Trim();
+            vm.Nome = nome.Replace("\"", string.Empty);
+            vm.NumeroHabilitacao = habilitacao.Replace("\"", string.Empty);
 
             return PartialView("HabilitacaoCFOHistorico", vm);
         }
