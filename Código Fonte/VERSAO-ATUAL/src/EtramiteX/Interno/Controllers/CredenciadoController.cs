@@ -429,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao = paginacao;
 			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-			vm.SetListItens(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, vm.Paginacao.QuantPaginacao);
+            vm.SetListItens(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, _busLista.HabilitacaoCFOSituacoes, _busLista.HabilitacaoCFOMotivos, vm.Paginacao.QuantPaginacao);
 
 			var resultados = _busHabilitar.Filtrar(vm.Filtros, vm.Paginacao);
 
@@ -451,7 +451,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCListar, ePermissao.HabilitarEmissaoCFOCFOCVisualizar, ePermissao.HabilitarEmissaoCFOCFOCEditar, ePermissao.HabilitarEmissaoCFOCFOCAlterarSituacao })]
 		public ActionResult IndexHabilitarEmissaoCFOCFOC()
 		{
-			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes);
+			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, _busLista.HabilitacaoCFOSituacoes, _busLista.HabilitacaoCFOMotivos);
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return View("IndexHabilitarEmissaoCFOCFOC", vm);
 		}
