@@ -356,6 +356,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("cpfcnpj", filtros.Dados.CpfCnpj, DbType.String);
 				}
 
+                if (filtros.Dados.Situacao != 0)
+                {
+                    comandtxt += " and cc.situacao = :situacao_habilitacao";
+
+                    comando.AdicionarParametroEntrada("situacao_habilitacao", filtros.Dados.Situacao, DbType.Int32);
+                }
+                if (filtros.Dados.Motivo != 0)
+                {
+                    comandtxt += " and cc.motivo = :motivo_habilitacao";
+
+                    comando.AdicionarParametroEntrada("motivo_habilitacao", filtros.Dados.Motivo, DbType.Int32);
+                }
+
 				comandtxt += comando.FiltroAnd("cc.numero_habilitacao", "numero_habilitacao", filtros.Dados.NumeroHabilitacao);
 
 				if (!string.IsNullOrWhiteSpace(filtros.Dados.NomeComumPraga))

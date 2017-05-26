@@ -43,6 +43,17 @@
 					<%= Html.TextBox("Filtros.NomeComumPraga", null, new { @class = "text txtPragaNome", @maxlength = "80" })%>
 				</div>
 			</div>
+            <div class="block hide">
+				<div class="coluna30">
+			        <label for="Fltros.Situacao">Situação</label>
+			        <%= Html.DropDownList("Filtros.Situacao", Model.ListaSituacaoHab, new { @class = "text ddlSituacao" })%>
+		        </div>
+				<div class="coluna30">
+					<label for="Filtros.Motivo">Motivo</label>
+					<%= Html.DropDownList("Filtros.Motivo", Model.ListaMotivoHab, new { @class = "text ddlMotivo" })%>
+				</div>
+			</div>
+
 		</div>
 	</div>
 </div>
