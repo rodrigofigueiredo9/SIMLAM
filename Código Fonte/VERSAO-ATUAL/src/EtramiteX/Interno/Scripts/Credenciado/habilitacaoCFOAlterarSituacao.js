@@ -36,7 +36,13 @@ HabilitacaoCFOAlterarSituacao = {
 	    var dataString = $(".txtSituacaoData", HabilitacaoCFOAlterarSituacao.container).val();
 	    var dia = (dataString.substring(0, 2));
 	    var mes = dataString.substring(3, 5);
-	    var ano = dataString.substring(6, 10);
+
+	    var ano = 2000;
+	    if (dataString.length == 8) {
+	        var ano = "20" + dataString.substring(6, 8);
+	    } else {
+	        var ano = dataString.substring(6, 10);
+	    }
 	    var data = new Date(ano, mes - 1, dia); //mes-1, pq jan=0, fev=1, mar=2...
 
 	    return data;
