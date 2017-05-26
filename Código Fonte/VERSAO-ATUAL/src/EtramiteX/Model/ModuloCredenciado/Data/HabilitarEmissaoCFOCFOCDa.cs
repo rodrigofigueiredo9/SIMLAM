@@ -296,8 +296,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                     select count(th.situacao)
                                     from tab_hab_emi_cfo_cfoc th
                                     where th.situacao = 3
-                                          and ((th.motivo = 1 and th.situacao_data >= '" + dataDesc.ToShortDateString() + // :dataDescredenciamento)
-                                              @"') or (th.motivo = 2 and th.situacao >= '" + dataSusp.ToShortDateString() + // :dataSuspensao))
+                                          and ((th.motivo = 1 and to_char(th.situacao_data) >= '" + dataDesc.ToShortDateString() + // :dataDescredenciamento)
+                                              @"') or (th.motivo = 2 and to_char(th.situacao) >= '" + dataSusp.ToShortDateString() + // :dataSuspensao))
                                           @"')) and th.id = " + id);
 
                 //comando.AdicionarParametroEntrada("dataDescredenciamento", dataDesc, DbType.Date);
