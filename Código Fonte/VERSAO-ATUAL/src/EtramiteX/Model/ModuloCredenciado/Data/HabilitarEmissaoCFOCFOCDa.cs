@@ -247,7 +247,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				comando.AdicionarParametroEntrada("id", habilitar.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivo", (habilitar.Motivo.HasValue && habilitar.Motivo > 0) ? habilitar.Motivo : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("observacao", DbType.String, 250, habilitar.Observacao);
-				comando.AdicionarParametroEntrada("situacao_data", habilitar.SituacaoData, DbType.DateTime);
+				comando.AdicionarParametroEntrada("situacao_data", Convert.ToDateTime(habilitar.SituacaoData), DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", habilitar.Situacao, DbType.Int32);
                 comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
                 comando.AdicionarParametroEntrada("validade_registro", Convert.ToDateTime(habilitar.ValidadeRegistro), DbType.DateTime);
