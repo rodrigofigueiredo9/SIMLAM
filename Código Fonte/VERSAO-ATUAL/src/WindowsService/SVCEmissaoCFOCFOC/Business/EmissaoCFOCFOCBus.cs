@@ -84,6 +84,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.SVCEmissaoCFOCFOC.Business
 					_da.EditarConfiguracao(configuracao, bancoDeDados);
 
 					List<HabilitarEmissaoCFOCFOC> solicitacoes = _da.ObterEmissoesComValidadeVencida(bancoDeDados);
+                    solicitacoes = solicitacoes.Where(x => x.Situacao != 3).ToList();
 
 					if (solicitacoes != null)
 					{
