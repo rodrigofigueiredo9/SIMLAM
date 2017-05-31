@@ -218,7 +218,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			}
 			else
 			{
-				if (!ValidacoesGenericasBus.ValidarData(habilitar.SituacaoData))
+				if (!ValidacoesGenericasBus.ValidarData(habilitar.SituacaoData)
+                    || Convert.ToDateTime(habilitar.SituacaoData) < new DateTime(2000, 1, 1))
 				{
 					Validacao.Add(Msg.SituacaoDataInvalida);
 				}

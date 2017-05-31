@@ -45,7 +45,7 @@
 
         <div class="coluna30 divDataFinalSituacao hide">
 			<label for="HabilitarEmissao.SituacaoData">Data final da inativação *</label>
-			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), new { @class = "text maskData disabled txtFinalSituacaoData" })%>
+			<%= Html.TextBox("HabilitarEmissao.SituacaoData", DateTime.Now.ToShortDateString(), ViewModelHelper.SetaDisabled(true, new { @class = "text maskData disabled txtFinalSituacaoData" }))%>
 		</div>
 
         <div class="coluna30 divNumeroDua append1 hide">
