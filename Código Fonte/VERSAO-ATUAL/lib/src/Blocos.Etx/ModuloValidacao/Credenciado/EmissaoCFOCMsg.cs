@@ -42,10 +42,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem NumeroInvalido { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFOC está inválido." }; } }
 		public Mensagem NumeroCancelado { get { return new Mensagem() { Campo = "CFOC_Numero", Tipo = eTipoMensagem.Advertencia, Texto = "O número do CFO está cancelado." }; } }
 		public Mensagem EmpreendimentoObrigatorio { get { return new Mensagem() { Campo = "CFOC_EmpreendimentoId", Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento obrigatório." }; } }
-
+        public Mensagem QtdProdutoObrigatorio { get { return new Mensagem() { Texto = "É necessário informar a quantidade.", Tipo = eTipoMensagem.Advertencia, Campo = "Container_Produto" }; } }
 		public Mensagem ProdutoObrigatorio { get { return new Mensagem() { Texto = "Pelo menos um lote é obrigatório informar.", Tipo = eTipoMensagem.Advertencia, Campo = "Container_Produto" }; } }
 		public Mensagem UCTituloConcluido { get { return new Mensagem() { Texto = "A Cultura selecionada deve possuir título de Abertura de Livro de Unidade de Consolidação concluído.", Campo = "CFOC_Produto_UnidadeProducao", Tipo = eTipoMensagem.Advertencia }; } }
-
+        public Mensagem ProdutoUnico { get { return new Mensagem() { Texto = "Produto já informado.", Tipo = eTipoMensagem.Advertencia, Campo = "Container_Produto" }; } }
 		public Mensagem LoteObrigatorio { get { return new Mensagem() { Campo = "CFOC_Produto_LoteId", Texto = "Lote é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem LotePossuiOrigemCancelada { get { return new Mensagem() { Campo = "CFOC_Produto_LoteId", Texto = "Lote possui Documento de origem na situação cancelado.", Tipo = eTipoMensagem.Advertencia }; } }
 
