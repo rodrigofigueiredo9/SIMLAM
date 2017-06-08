@@ -14,6 +14,7 @@
 			import models.Esri.DesenhadorEsri;
 			import models.LayerFeicao;
 			import models.LayerFeicaoSelecionada;
+			import mx.controls.Alert;
 			
 			public var layerFeicao:LayerFeicao;
 			public var idLayer:int;
@@ -62,7 +63,14 @@
 								layer.selecionado = false;
 						}
 						
-						novaLayer.selecionado = true;
+						if (novaLayer.Nome.indexOf("Rio (linha)") >= 0)
+						{
+							novaLayer.selecionado = false;
+							Alert.show("Não é possível inserir Rio (linha).");
+							
+						}
+						else
+							novaLayer.selecionado = true;
 						
 						LayerFeicaoSelecionada.getInstance().layerFeicao = layerFeicao;							
 						dispatchEvent(new LayerFeicaoControllerEvent(LayerFeicaoControllerEvent.SELECIONOU_LAYER,null,true,true));

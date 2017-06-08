@@ -2658,7 +2658,7 @@
       <Name>Blocos.Etx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
-      <Project>{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}</Project>
+      <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Perfil\Perfil.csproj">

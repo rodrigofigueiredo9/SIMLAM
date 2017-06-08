@@ -223,6 +223,18 @@
 			{	
 				var range:Number = DesenhadorEsri.getInstance().range();
 				var ar:Vector.<Point> = null;
+				
+				
+				for each (var f:Feicao in FeicoesSelecionadas.getInstance().feicoes)
+				{
+					if (f.layerFeicao.Nome.indexOf("Rio (linha)") >= 0)
+					{
+						Alert.show("Não é possível inserir Rio (linha)."); 
+						
+						return;
+					}
+				}
+				
 				if(!(ev.target is ButtonExt))
 				{
 					var pt:Point = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);

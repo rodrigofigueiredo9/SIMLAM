@@ -147,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult DesenhadorPartial(int modo = 1)
 		{
 			CoordenadaVM vm = new CoordenadaVM();
-			vm.CoordenadaGeoUrl = Url.Content("~/Areas/Navegadores/Desenhador/DesenhadorIdaf.swf");
+			vm.CoordenadaGeoUrl = Url.Content("~/Areas/Navegadores/Desenhador/DesenhadorIdaf.swf?ver=" + new System.Random().Next(1,2000).ToString() );
 			vm.Modo = modo;
 			return PartialView(vm);
 		}
