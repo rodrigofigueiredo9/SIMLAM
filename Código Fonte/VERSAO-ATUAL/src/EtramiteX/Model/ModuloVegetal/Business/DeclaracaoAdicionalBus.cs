@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business
                     retErros = true;
                 }
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 //Validacao.AddErro(exc);
                 //retErros = false;

@@ -184,6 +184,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			return barragem;
 		}
 
+        public List<BarragemItem> ObterListaFinalidade(int id, bool simplificado = false, BancoDeDados banco = null)
+        {
+            List<BarragemItem> barragem = new List<BarragemItem>();
+            try
+            {
+                barragem = _da.ObterListaFinalidade(id, banco, simplificado);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return barragem;
+        }
+
 		public Barragem ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
 			throw new NotImplementedException();

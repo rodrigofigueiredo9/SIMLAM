@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragem;
@@ -318,6 +319,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "BarragemItemPartial", vm),
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+       // [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.BarragemCriar, ePermissao.BarragemEditar, ePermissao.BarragemVisualizar })]
+       // [ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemitem)] //???
+        public ActionResult EditarFinalidade(int id)
+        {
+            int x = id;
+
+            List<BarragemItem> listaFinalidades = _bus.ObterListaFinalidade(id);
+
+            return View("EditarFinalidade", listaFinalidades);
+        }
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemCriar, ePermissao.BarragemEditar, ePermissao.BarragemVisualizar })]
