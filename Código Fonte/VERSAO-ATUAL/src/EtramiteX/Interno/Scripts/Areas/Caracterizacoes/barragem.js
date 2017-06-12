@@ -233,7 +233,6 @@ Barragem = {
 			Quantidade: parseInt($('.txtQuantidade', Barragem.container).val()),
 			FinalidadeId: parseInt($('.ddlFinalidade', Barragem.container).val()),
 			FinalidadeTexto: $('.ddlFinalidade', Barragem.container).filter(':selected').text(),
-			Especificar: $('.txtEspecificar', Barragem.container).val().trim(),
 			CoordenadaAtividade: CoordenadaAtividade.obter(),
 			BarragensDados: []
 		};
@@ -257,17 +256,11 @@ Barragem = {
 	onChangeFinalidade: function () {
 		var itemSelecionadoId = parseInt($(this).val());
 
-		$('.divEspecificar,.divOutorga', Barragem.container).addClass('hide');
+		$('.divOutorga', Barragem.container).addClass('hide');
 
-		if (itemSelecionadoId > 0) {
-			/*if (itemSelecionadoId == Barragem.finalidadeOutrosId) {
-				$('.divEspecificar', Barragem.container).removeClass('hide');
-			}*/
-			if (itemSelecionadoId != Barragem.finalidadeReservacaoId) {
-				$('.divOutorga', Barragem.container).removeClass('hide');
-			}
+		if (itemSelecionadoId > 0 && itemSelecionadoId != Barragem.finalidadeReservacaoId) {
+		    $('.divOutorga', Barragem.container).removeClass('hide');
 		}
-		$('.txtEspecificar', Barragem.container).val('');
 		$('.ddlOutorga', Barragem.container).val(0);
 		$('.txtNumero', Barragem.container).val('');
 	},
