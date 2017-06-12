@@ -109,7 +109,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOfi
 			try
 			{
 				Oficio oficio = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
+
+
+                if (!string.IsNullOrEmpty(oficio.Titulo.Numero))
+                {
+                    string[] sequencial = oficio.Titulo.Numero.Split('/');
+                     
+                    oficio.Titulo.Numero = sequencial[0].Length == 1 ? "0" + sequencial[0] + "/" + sequencial[1] : sequencial[0] + "/" + sequencial[1];
+                }
+
 				DataEmissaoPorExtenso(oficio.Titulo);
+               
 
 				#region Anexos
 
@@ -155,11 +165,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOfi
 				List<Table> itenRemover = new List<Table>();
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 
-				if (oficio.Anexos.Count <= 0)
-				{
-					doc.FindTable("«TableStart:Anexos»").RemovePageBreakAnterior();
-					itenRemover.Add(doc.FindTable("«TableStart:Anexos»"));
-				}
+                //if (oficio.Anexos.Count <= 0)
+                //{
+                //    doc.FindTable("«TableStart:Anexos»").RemovePageBreakAnterior();
+                //    itenRemover.Add(doc.FindTable("«TableStart:Anexos»"));
+                //}
 
 				AsposeExtensoes.RemoveTables(itenRemover);
 			});
