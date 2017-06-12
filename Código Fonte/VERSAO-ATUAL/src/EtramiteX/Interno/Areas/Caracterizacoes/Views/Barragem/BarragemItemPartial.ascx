@@ -11,37 +11,22 @@
 				<%= Html.TextBox("BarragemItem.Quantidade", Model.BarragemItem.Quantidade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidade maskNum3", @id = "txtQuantidade", @maxlength = 3 }))%>
 			</div>
 
-
-
-
-
-			<div class="coluna25 append2">
-			<div class="block" id="checkboxes">
-		<label>Selecione as finalidades*</label> 
+			<div class="coluna75 append2">
+			    <div class="block" id="checkboxes">
+		            <label>Selecione as finalidades*</label> 
          
-        <br /> 
-            <input type="checkbox" name="Reservação" value="1" /> Reservação 
- 
-        <br /> 
- 
-            <input type="checkbox" name="Captação para Irrigação" value="2" class="CaptacaoIrrigacao" /> Captação para Irrigação 
+                     <br /> 
+                    <input type="checkbox" name="Reservação" value="1" /> Reservação 
+                    <input type="checkbox" name="Captação para Irrigação" value="2" class="CaptacaoIrrigacao" /> Captação para Irrigação 
+                    <input type="checkbox" name="Ecoturismo/Turismo Rural" value="4" class="Turismo" /> Ecoturismo/Turismo Rural 
+                    <br /> 
+                    <input type="checkbox" name="Dessedentação de Animais" value="5" class="Dessedentacao" />  Dessedentação de Animais 
+                    <input type="checkbox" name="Aquicultura" value="6" class="Aquicultura" /> Aquicultura 
+                    <input type="checkbox" name="Captação para Abastecimento Industrial" value="7" class="CaptacaoAbastecimentoIndustrial" /> Captação para Abastecimento Industrial 
              
-        <br /> 
-            <input type="checkbox" name="Ecoturismo/Turismo Rural" value="4" class="Turismo" /> Ecoturismo/Turismo Rural 
-             
-        <br /> 
-            <input type="checkbox" name="Dessedentação de Animais" value="5" class="Dessedentacao" />  Dessedentação de Animais 
-             
-        <br /> 
-            <input type="checkbox" name="Aquicultura" value="6" class="Aquicultura" /> Aquicultura 
-             
-        <br /> 
- 
-            <input type="checkbox" name="Captação para Abastecimento Industrial" value="7" class="CaptacaoAbastecimentoIndustrial" /> Captação para Abastecimento Industrial 
-             
-        <br /> 
-            <input type="checkbox" name="Captação para abastecimento Público" value="8" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
-	</div>
+                    <br /> 
+                    <input type="checkbox" name="Captação para abastecimento Público" value="8" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
+	            </div>
 			</div>
 
 

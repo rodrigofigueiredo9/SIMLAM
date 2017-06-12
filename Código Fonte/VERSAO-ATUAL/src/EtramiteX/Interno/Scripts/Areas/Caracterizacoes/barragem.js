@@ -399,9 +399,12 @@ Barragem = {
 	onClickAddBarragemItemDados: function () {
 	    var idsFinalidades = [];
 	    var txtFinalidades = [];
+	    var FinalidadeTextoString = "";
 	    $('#checkboxes input:checked').each(function () {
 	        idsFinalidades.push($(this).attr('value'));
 	        txtFinalidades.push($(this).attr('name'));
+	        FinalidadeTextoString += ($(this).attr('name'));
+	        FinalidadeTextoString += ", ";
 	    });
 
 		Mensagem.limpar(Barragem.container);
@@ -501,7 +504,7 @@ Barragem = {
 		trTemplate = $('.trBarragemItemDadosTemplate', Barragem.container).clone().removeAttr('class');
 
 		$('.spanIdentificador', trTemplate).text(barragemDadosItem.Identificador).attr('title', barragemDadosItem.Identificador);
-		$('.spanFinalidade', trTemplate).text(barragemDadosItem.FinalidadeTextos).attr('title', barragemDadosItem.FinalidadeTextos);
+		$('.spanFinalidade', trTemplate).text(FinalidadeTextoString).attr('title', barragemDadosItem.FinalidadeTextos);
 		$('.spanLaminaAgua', trTemplate).text(barragemDadosItem.LaminaAgua).attr('title', barragemDadosItem.LaminaAgua);
 		$('.spanVolumeArmazenamento', trTemplate).text(barragemDadosItem.VolumeArmazenamento).attr('title', barragemDadosItem.VolumeArmazenamento);
 		$('.spanOutorgaTexto', trTemplate).text(barragemDadosItem.OutorgaTexto).attr('title', barragemDadosItem.OutorgaTexto);
