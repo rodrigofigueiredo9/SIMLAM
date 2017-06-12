@@ -109,9 +109,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOfi
 			try
 			{
 				Oficio oficio = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
+
+
+                if (!string.IsNullOrEmpty(oficio.Titulo.Numero))
+                {
+                    string[] sequencial = oficio.Titulo.Numero.Split('/');
+                     
+                    oficio.Titulo.Numero = sequencial[0].Length == 1 ? "0" + sequencial[0] + "/" + sequencial[1] : sequencial[0] + "/" + sequencial[1];
+                }
+
 				DataEmissaoPorExtenso(oficio.Titulo);
-                oficio.Titulo.DataEmissao = DateTime.Now.Day.ToString() + " de " + _config.Obter<List<String>>(ConfiguracaoSistema.KeyMeses).ElementAt(DateTime.Now.Month - 1) +
-                    " de " + DateTime.Now.Year.ToString();
+               
 
 				#region Anexos
 
