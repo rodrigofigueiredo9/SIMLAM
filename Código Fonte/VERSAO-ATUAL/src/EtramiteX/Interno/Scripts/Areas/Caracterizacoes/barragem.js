@@ -597,7 +597,6 @@ Barragem = {
 			}
 		});
 
-		//Barragem.trEmEdicao = null;
 		MasterPage.carregando(false);
 
 		$('.hdnModificacoesNaoSalvas').val('0');
