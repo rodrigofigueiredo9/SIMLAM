@@ -240,16 +240,6 @@ Barragem = {
 			barragemItem.BarragensDados.push(item);
 		});
 
-		//if (barragemItem.FinalidadeTexto==null || barragemItem.FinalidadeTexto.trim()==""){
-		//    barragemItem.FinalidadeTexto="";
-		//    barragemItem.BarragensDados.forEach(function (i) {
-		//        alert(JSON.stringify(i.FinalidadeTextos));
-		//        //alert(JSON.stringify($(this)));
-		//        barragemItem.FinalidadeTexto += JSON.stringify(i.FinalidadeTextos);
-		//        barragemItem.FinalidadeTexto += ", ";
-		//    })
-		//}
-
 		barragem.Barragens.push(barragemItem);
 
 		return barragem;
@@ -427,7 +417,7 @@ Barragem = {
 
 		var barragemDadosItem = {
 		    Identificador: Barragem.identificador,
-		    FinalidadeTextos: JSON.stringify(txtFinalidades),    //MELHORAR
+		    FinalidadeTextos: JSON.stringify(txtFinalidades),
 		    ListaIdsFinalidades: idsFinalidades,
 			LaminaAgua: txtLaminaAgua.val(),
 			VolumeArmazenamento: txtArmazenado.val(),
@@ -604,11 +594,18 @@ Barragem = {
 	},
 
 	editarFinalidade: function () {
-	    
 	    var id = $(this).closest('tr').find('.hdnItemId').val();
+
+	    arrayMsg = [];
+	    if (id == undefined) {
+	        arrayMsg.push(Barragem.settings.mensagens.BarragemNaoSalva);
+	        Mensagem.gerar(Barragem.container, arrayMsg);
+	        return;
+	    }
+
 	    var idGeral = $(this).closest('.divBarragemItem').find('.hdnBarragemItemId').val();
 
-	    Mensagem.limpar(Barragem.container); 
+	    Mensagem.limpar(Barragem.container);
 	    
 	    var settings = function (content) { 
 	        Modal.defaultButtons(content, function () { 
