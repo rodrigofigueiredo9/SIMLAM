@@ -110,6 +110,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOfi
 			{
 				Oficio oficio = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
 				DataEmissaoPorExtenso(oficio.Titulo);
+                oficio.Titulo.DataEmissao = DateTime.Now.Day.ToString() + " de " + _config.Obter<List<String>>(ConfiguracaoSistema.KeyMeses).ElementAt(DateTime.Now.Month - 1) +
+                    " de " + DateTime.Now.Year.ToString();
 
 				#region Anexos
 
@@ -155,11 +157,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOfi
 				List<Table> itenRemover = new List<Table>();
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 
-				if (oficio.Anexos.Count <= 0)
-				{
-					doc.FindTable("«TableStart:Anexos»").RemovePageBreakAnterior();
-					itenRemover.Add(doc.FindTable("«TableStart:Anexos»"));
-				}
+                //if (oficio.Anexos.Count <= 0)
+                //{
+                //    doc.FindTable("«TableStart:Anexos»").RemovePageBreakAnterior();
+                //    itenRemover.Add(doc.FindTable("«TableStart:Anexos»"));
+                //}
 
 				AsposeExtensoes.RemoveTables(itenRemover);
 			});
