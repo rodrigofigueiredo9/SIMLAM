@@ -15,7 +15,8 @@
 					excluirBarragemItem: '<%= Url.Action("ExcluirBarragemItem", "Barragem") %>',
 				    confirmExcluirBarragemItem: '<%= Url.Action("ExcluirBarragemItemConfirm", "Barragem") %>',
 				    editarModalFinalidade: '<%= Url.Action("EditarFinalidade", "Barragem") %>',
-				    salvarFinalidade: '<%= Url.Action("SalvarFinalidades", "Barragem") %>'
+				    salvarFinalidade: '<%= Url.Action("SalvarFinalidades", "Barragem") %>',
+				    idEmpreendimento: <%= Model.Barragem.EmpreendimentoId %>
 				},
 				mensagens: <%= Model.Mensagens %>			
 			});
