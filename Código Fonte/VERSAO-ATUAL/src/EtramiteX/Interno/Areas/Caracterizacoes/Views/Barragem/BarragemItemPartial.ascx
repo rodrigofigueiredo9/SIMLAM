@@ -11,8 +11,11 @@
 				<label for="BarragemItem.Quantidade">Quantidade de barragens *</label>
 				<%= Html.TextBox("BarragemItem.Quantidade", Model.BarragemItem.Quantidade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidade maskNum3", @id = "txtQuantidade", @maxlength = 3 }))%>
 			</div>
+		</div>
 
-			<div class="coluna50 append2">
+		<% if (!Model.IsVisualizar) { %>
+        <div class="block">
+            <div class="coluna50 append2">
 			    <div class="block" id="checkboxes">
 		            <label>Selecione as finalidades*</label> 
                      <br /> 
@@ -31,9 +34,7 @@
                     <input type="checkbox" name="Captação para abastecimento Público" value="8" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
 	            </div>
 			</div>
-		</div>
-
-		<% if (!Model.IsVisualizar) { %>
+        </div>
 		<div class="block">
 			<div class="coluna13 append2">
 				<label for="txtIdentificador">Identificador *</label>
