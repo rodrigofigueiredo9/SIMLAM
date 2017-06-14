@@ -665,7 +665,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}tab_pessoa p, {0}tab_credenciado c where p.id = c.pessoa and nvl(p.cpf,p.cnpj) = :cpf_cnpj", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}tab_pessoa p, {0}tab_credenciado c where p.id = c.pessoa and nvl(p.cpf,p.cnpj) = :cpf_cnpj and c.situacao = 2", EsquemaBanco);
 				comando.AdicionarParametroEntrada("cpf_cnpj", DbType.String, 25, cpfCnpj);
 
 				int id = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
