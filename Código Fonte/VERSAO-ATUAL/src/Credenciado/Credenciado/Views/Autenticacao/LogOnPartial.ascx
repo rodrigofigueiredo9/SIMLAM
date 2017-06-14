@@ -58,6 +58,7 @@
 							</p>
 							<% if (!(Model != null && Model.AlterarSenha)) { %>
 							<p>
+                                <input type="button" value="&nbsp;&nbsp;Esqueci minha senha&nbsp;&nbsp;" class="btnEsqueciSenha" />
 								<input type="button" value="&nbsp;&nbsp;Entrar&nbsp;&nbsp;" class="btnEntrarLogin" />
 							</p>
 							<%} %>
@@ -144,6 +145,25 @@
 					});
 				<% } %>
 			});
+
+
+
+
+
+
+	    $('.btnEsqueciSenha').click(function () {
+	        alert('inicio');
+
+
+            alert('fim')
+        });
+
+
+
+
+
+
+
 
 			if ($('input[type=hidden]#alterarSenha').val() === 'True') {
 				$('#login').addClass('disabled').attr('readOnly', 'true');
