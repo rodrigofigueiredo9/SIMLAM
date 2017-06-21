@@ -458,10 +458,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 				comando = bancoDeDados.CriarComando(@"begin " +
 					"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
+                    "delete from {0}crt_barragens_finalidades b where b.barragem in (select id from {0}crt_barragem_barragens where barragem = :caracterizacao);" +
 					"delete from {0}crt_barragem_brgns_dados b where b.barragens in (select id from {0}crt_barragem_barragens where barragem = :caracterizacao);" +
 					"delete from {0}crt_barragem_barragens b where b.barragem = :caracterizacao;" +
 					"delete from {0}crt_barragem r where r.id = :caracterizacao;" +
-                    "delete from {0}crt_barragens_finalidades f where f.barragem = :caracterizacao;" +
 				"end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("caracterizacao", id, DbType.Int32);
