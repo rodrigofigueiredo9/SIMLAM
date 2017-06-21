@@ -520,6 +520,8 @@ Barragem = {
 		    $(this).removeAttr('checked');
 		});
 
+		$('.divOutorga', Barragem.container).addClass('hide');
+
 		numeroAux = Mascara.getFloatMask(txtTotalLaminaItem.val());
 		numeroAux += Mascara.getFloatMask(barragemDadosItem.LaminaAgua);
 		txtTotalLaminaItem.val(Mascara.getStringMask(numeroAux, 'n4'));
