@@ -656,8 +656,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		#region Obter/Filtrar
         public Municipio ObterMunicipioPropriedade(int EmprendimentoId, BancoDeDados banco = null)
         {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+            //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
+                    
                 Municipio municipio = new Municipio();
                 Comando comando = bancoDeDados.CriarComando(@"
                     select m.id, m.texto, m.estado, m.cep, m.ibge 
@@ -1151,7 +1153,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal int ObterSequenciaCodigoPropriedade()
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+             //Busca o código sequencial no banco Institucional       
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select seq_crt_unidade_producao_cod.nextval from dual", EsquemaBanco);
 
@@ -1180,9 +1183,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			bool existe = false;
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo =: codigo and id <> :id", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo =: codigo and id <> :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("id", caracterizacao.InternoID, DbType.Int32);
@@ -1236,7 +1239,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				empreendimentoInternoID = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 			}
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e
 				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
