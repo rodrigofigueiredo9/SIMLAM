@@ -16,7 +16,7 @@
 	<div class="block">
 		<div class="coluna75">
 			<label for="CertidaoAnuencia_Certificacao">Certificação *</label>
-			<%= Html.TextArea("CertidaoAnuencia.Certificacao", Model.CertidaoAnuencia.Certificacao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text txtCertificacao", @maxlength = "1500" }))%>
+			<%= Html.TextArea("CertidaoAnuencia.Certificacao", Model.CertidaoAnuencia.Certificacao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text txtCertificacao" }))%>
 		</div>
 	</div>
 
