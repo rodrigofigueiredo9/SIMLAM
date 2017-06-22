@@ -29,7 +29,7 @@
                     <br /> 
                     <input type="checkbox" name="Aquicultura" value="6" class="Aquicultura" /> Aquicultura 
                     <br /> 
-                    <input type="checkbox" name="Captação para abastecimento Público" value="8" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
+                    <input type="checkbox" name="Captação para abastecimento Público" value="7" class="CaptacaoAbastecimentoPublico" />Captação para abastecimento Público  
 	            </div>
 			</div>
         </div>
