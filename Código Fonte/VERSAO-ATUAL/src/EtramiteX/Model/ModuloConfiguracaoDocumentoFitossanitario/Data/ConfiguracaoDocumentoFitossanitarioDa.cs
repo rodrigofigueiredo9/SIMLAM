@@ -488,323 +488,269 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                 string comandtxt = string.Empty;
                 Comando comando = bancoDeDados.CriarComando("");
 
-                //#region Adicionando Filtros
-
-                //List<String> ordenar = new List<String>() { "TipoDocumento", "Numero_Inicial" };
-                //List<String> colunas = new List<String>() { "TipoDocumento", "Numero_Inicial" };
-
-                //#endregion
-
                 if (!string.IsNullOrEmpty(filtros.Dados.AnoConsolidado))
                 {
                     #region SQL
 
-//                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL
-//                                   from CNF_DOC_FITO_INTERVALO i, lov_doc_fitossanitarios_tipo td, LOV_DOC_FITOSSANI_TIPO_NUMERO tn
-//                                   where i.TIPO_DOCUMENTO = " + Convert.ToInt32(filtros.Dados.TipoDocumentoID)
-//                                         + " and i.TIPO = " + Convert.ToInt32(filtros.Dados.TipoNumeracaoID)
-//                                         + " and substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.Ano.Substring(2, 2)
-//                                         + " and i.TIPO_DOCUMENTO = td.ID and i.TIPO = tn.ID";
-
+                    #region inicio
                     comandtxt += @"select 
-       --Não Liberados: Bloco CFO, Bloco CFOC, Digital CFO, Digital CFOC
-       (cad_B_CFO - lib_B_CFO) nlib_B_CFO,
-       (cad_B_CFOC - lib_B_CFOC) nlib_B_CFOC,
-       (cad_D_CFO - lib_D_CFO) nlib_D_CFO,
-       (cad_D_CFOC - lib_D_CFOC) nlib_D_CFOC,
+                                   --Não Liberados: Bloco CFO, Bloco CFOC, Digital CFO, Digital CFOC
+                                   (cad_B_CFO - lib_B_CFO) nlib_B_CFO,
+                                   (cad_B_CFOC - lib_B_CFOC) nlib_B_CFOC,
+                                   (cad_D_CFO - lib_D_CFO) nlib_D_CFO,
+                                   (cad_D_CFOC - lib_D_CFOC) nlib_D_CFOC,
        
-       --Liberados: Bloco CFO, Bloco CFOC, Digital CFO, Digital CFOC
-       lib_B_CFO,
-       lib_B_CFOC,
-       lib_D_CFO,
-       lib_D_CFOC,
+                                   --Liberados: Bloco CFO, Bloco CFOC, Digital CFO, Digital CFOC
+                                   lib_B_CFO,
+                                   lib_B_CFOC,
+                                   lib_D_CFO,
+                                   lib_D_CFOC,
        
-       --Em elaboração: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
-       elab_B_CFO,
-       elab_B_CFOC,
-       elab_B_PTV,
-       elab_D_CFO,
-       elab_D_CFOC,
-       elab_D_PTV,
+                                   --Em elaboração: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
+                                   elab_B_CFO,
+                                   elab_B_CFOC,
+                                   elab_B_PTV,
+                                   elab_D_CFO,
+                                   elab_D_CFOC,
+                                   elab_D_PTV,
        
        
-       --Quantidade de números Utilizados: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
-       uti_B_CFO,
-       uti_B_CFOC,
-       uti_B_PTV,
-       uti_D_CFO,
-       uti_D_CFOC,
-       uti_D_PTV,
+                                   --Quantidade de números Utilizados: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
+                                   uti_B_CFO,
+                                   uti_B_CFOC,
+                                   uti_B_PTV,
+                                   uti_D_CFO,
+                                   uti_D_CFOC,
+                                   uti_D_PTV,
        
-       --Quantidade de números Cancelados: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
-       canc_B_CFO,
-       canc_B_CFOC,
-       canc_B_PTV,
-       canc_D_CFO,
-       canc_D_CFOC,
-       canc_D_PTV,
+                                   --Quantidade de números Cancelados: Bloco CFO, Bloco CFOC, Bloco PTV, Digital CFO, Digital CFOC, Digital PTV
+                                   canc_B_CFO,
+                                   canc_B_CFOC,
+                                   canc_B_PTV,
+                                   canc_D_CFO,
+                                   canc_D_CFOC,
+                                   canc_D_PTV,
        
-       --Último número liberado: Digital CFO, Digital CFOC, Digital PTV
-       ultnum_D_CFO,
-       ultnum_D_CFOC,
-       ultnum_D_PTV
-from 
-      /*CADASTRADOS*/
-      --Bloco de CFO
-      (select sum(i.numero_final - i.numero_inicial) cad_B_CFO
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and i.TIPO = 1  --BLOCO
-            and i.TIPO_DOCUMENTO = 1  --CFO
-      ),
-      --Bloco de CFOC
-      (select sum(i.numero_final - i.numero_inicial) cad_B_CFOC
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and i.TIPO = 1  --BLOCO
-            and i.TIPO_DOCUMENTO = 2  --CFOC
-      ),
-      --Bloco de PTV
-      (select sum(i.numero_final - i.numero_inicial) cad_B_PTV
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and i.TIPO = 1  --BLOCO
-            and i.TIPO_DOCUMENTO = 3  --PTV
-      ),
-      --Digital de CFO
-      (select sum(i.numero_final - i.numero_inicial) cad_D_CFO
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @" 
-            and i.TIPO = 2  --DIGITAL
-            and i.TIPO_DOCUMENTO = 1  --CFO
-      ),
-      --Digital de CFOC
-      (select sum(i.numero_final - i.numero_inicial) cad_D_CFOC
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and i.TIPO = 2  --DIGITAL
-            and i.TIPO_DOCUMENTO = 2  --CFOC
-      ),
-      --Digital de PTV
-      (select sum(i.numero_final - i.numero_inicial) cad_B_PTV
-      from CNF_DOC_FITO_INTERVALO i
-      where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and i.TIPO = 2  --DIGITAL
-            and i.TIPO_DOCUMENTO = 3  --PTV
-      ),
-      
-      
-      /*LIBERADOS, UTILIZADOS, CANCELADOS, ÚLTIMOS*/
-      --Bloco de CFO      
-      (select count (*) lib_B_CFO,
-              sum(case when l.utilizado = 1 then 1 else 0 end) uti_B_CFO,
-              max(l.numero) ultnum_B_CFO
-      from TAB_NUMERO_CFO_CFOC l
-      where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and l.TIPO_DOCUMENTO = 1  --CFO
-            and l.TIPO_NUMERO = 1 --BLOCO
-      ),
-      --Bloco de CFOC
-      (select count (*) lib_B_CFOC,
-              sum(case when l.utilizado = 1 then 1 else 0 end) uti_B_CFOC,
-              max(l.numero) ultnum_B_CFOC
-      from TAB_NUMERO_CFO_CFOC l
-      where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and l.TIPO_DOCUMENTO = 2  --CFOC
-            and l.TIPO_NUMERO = 1 --BLOCO
-      ),
-      --Digital de CFO
-      (select count (*) lib_D_CFO,
-              sum(case when l.utilizado = 1 then 1 else 0 end) uti_D_CFO,
-              max(l.numero) ultnum_D_CFO
-      from TAB_NUMERO_CFO_CFOC l
-      where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and l.TIPO_DOCUMENTO = 1  --CFO
-            and l.TIPO_NUMERO = 2 --DIGITAL
-      ),
-      --Digital de CFOC
-      (select count (*) lib_D_CFOC,
-              sum(case when l.utilizado = 1 then 1 else 0 end) uti_D_CFOC,
-              max(l.numero) ultnum_D_CFOC
-      from TAB_NUMERO_CFO_CFOC l
-      where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-            and l.TIPO_DOCUMENTO = 2  --CFOC
-            and l.TIPO_NUMERO = 2 --DIGITAL
-      ),
-      --Bloco de PTV
-      (select count(*) uti_B_PTV
-      from tab_ptv t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 1 --BLOCO
-      ),
-      --Digital de PTV
-      (select count(*) uti_D_PTV,
-              max(t.numero) ultnum_D_PTV
-      from tab_ptv t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 2 --DIGITAL
-      ),
-      
-      /*EM ELABORAÇÃO, CANCELADO*/
-      --Bloco de CFO
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_B_CFO,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_B_CFO
-      from IDAFCREDENCIADO.tab_cfo t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 1 --BLOCO
-      ),
-      --Bloco de CFOC
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_B_CFOC,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_B_CFOC
-      from IDAFCREDENCIADO.tab_cfoc t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 1 --BLOCO
-      ),
-      --Bloco de PTV
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_B_PTV,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_B_PTV
-      from IDAFCREDENCIADO.tab_ptv t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 1 --BLOCO
-      ),
-      --Digital de CFO
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_D_CFO,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_D_CFO
-      from IDAFCREDENCIADO.tab_cfo t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 2 --DIGITAL
-      ),
-      --Digital de CFOC
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_D_CFOC,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_D_CFOC
-      from IDAFCREDENCIADO.tab_cfoc t
-      where substr(t.numero, 3, 2) =  " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 2 --DIGITAL
-      ),
-      --Digital de PTV
-      (select sum(case when t.situacao = 3 then 1 else 0 end) elab_D_PTV,
-              sum(case when t.situacao = 4 then 1 else 0 end) canc_D_PTV
-      from IDAFCREDENCIADO.tab_ptv t
-      where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
-           and t.tipo_numero = 2 --DIGITAL
-      )";
+                                   --Último número liberado: Digital CFO, Digital CFOC, Digital PTV
+                                   ultnum_D_CFO,
+                                   ultnum_D_CFOC,
+                                   ultnum_D_PTV
+                            from ";
 
+                    #endregion inicio
+
+                    #region IDAFCREDENCIADO.TAB_CFO
+
+                    comandtxt += @"(
+                        select sum( (case when c.tipo_numero = 1 and c.situacao = 1 then 1 else 0 end) ) elab_B_CFO,
+                               sum( (case when c.tipo_numero = 2 and c.situacao = 1 then 1 else 0 end) ) elab_D_CFO,
+                               sum( (case when c.tipo_numero = 1 and (c.situacao = 2 or c.situacao = 3) then 1 else 0 end) ) uti_B_CFO,
+                               sum( (case when c.tipo_numero = 2 and (c.situacao = 2 or c.situacao = 3) then 1 else 0 end) ) uti_D_CFO,
+                               sum( (case when c.tipo_numero = 1 and c.situacao = 4 then 1 else 0 end) ) canc_B_CFO,
+                               sum( (case when c.tipo_numero = 2 and c.situacao = 4 then 1 else 0 end) ) canc_D_CFO
+                        from IDAFCREDENCIADO.TAB_CFO c
+                        where substr(c.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"),";
+
+                    #endregion IDAFCREDENCIADO.TAB_CFO
+
+                    #region IDAFCREDENCIADO.TAB_CFOC
+
+                    comandtxt += @"(
+                         select sum( (case when c.tipo_numero = 1 and c.situacao = 1 then 1 else 0 end) ) elab_B_CFOC,
+                                sum( (case when c.tipo_numero = 2 and c.situacao = 1 then 1 else 0 end) ) elab_D_CFOC,
+                                sum( (case when c.tipo_numero = 1 and (c.situacao = 2 or c.situacao = 3) then 1 else 0 end) ) uti_B_CFOC,
+                                sum( (case when c.tipo_numero = 2 and (c.situacao = 2 or c.situacao = 3) then 1 else 0 end) ) uti_D_CFOC,
+                                sum( (case when c.tipo_numero = 1 and c.situacao = 4 then 1 else 0 end) ) canc_B_CFOC,
+                                sum( (case when c.tipo_numero = 2 and c.situacao = 4 then 1 else 0 end) ) canc_D_CFOC
+                        from idafcredenciado.tab_cfoc c
+                        where substr(c.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"),";
+
+                    #endregion IDAFCREDENCIADO.TAB_CFOC
+
+                    #region TAB_PTV
+
+                    comandtxt += @"(
+                        select sum( (case when p.tipo_numero = 1 and p.situacao = 1 then 1 else 0 end) ) elab_B_PTV,
+                               sum( (case when p.tipo_numero = 2 and p.situacao = 1 then 1 else 0 end) ) elab_D_PTV,
+                               sum( (case when p.tipo_numero = 1 and (p.situacao = 2 or p.situacao = 4) then 1 else 0 end) ) uti_B_PTV,
+                               sum( (case when p.tipo_numero = 2 and (p.situacao = 2 or p.situacao = 4) then 1 else 0 end) ) uti_D_PTV,
+                               sum( (case when p.tipo_numero = 1 and p.situacao = 3 then 1 else 0 end) ) canc_B_PTV,
+                               sum( (case when p.tipo_numero = 2 and p.situacao = 3 then 1 else 0 end) ) canc_D_PTV
+                        from TAB_PTV p
+                        where (p.numero is null and to_char(p.DATA_EMISSAO, 'YYYY') = " + filtros.Dados.AnoConsolidado + @")
+                              or substr(p.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"),";
+
+                    #endregion TAB_PTV
+
+                    #region CNF_DOC_FITO_INTERVALO
+
+                    comandtxt += @"(
+                        select sum( (case when i.tipo = 1 and i.tipo_documento = 1 then (i.numero_final - i.numero_inicial + 1) else 0 end) ) cad_B_CFO,
+                               sum( (case when i.tipo = 1 and i.tipo_documento = 2 then (i.numero_final - i.numero_inicial + 1) else 0 end) ) cad_B_CFOC,
+                               sum( (case when i.tipo = 2 and i.tipo_documento = 1 then (i.numero_final - i.numero_inicial + 1) else 0 end) ) cad_D_CFO,
+                               sum( (case when i.tipo = 2 and i.tipo_documento = 2 then (i.numero_final - i.numero_inicial + 1) else 0 end) ) cad_D_CFOC
+                        from CNF_DOC_FITO_INTERVALO i
+                        where substr(i.NUMERO_INICIAL, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"),";
+
+                    #endregion CNF_DOC_FITO_INTERVALO
+
+                    #region OUTRAS
+                    comandtxt += @"
+                              /*LIBERADOS, ÚLTIMOS*/
+                              --Bloco de CFO      
+                              (select count (*) lib_B_CFO,
+                                      max(l.numero) ultnum_B_CFO
+                              from TAB_NUMERO_CFO_CFOC l
+                              where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                    and l.TIPO_DOCUMENTO = 1  --CFO
+                                    and l.TIPO_NUMERO = 1 --BLOCO
+                              ),
+                              --Bloco de CFOC
+                              (select count (*) lib_B_CFOC,
+                                      max(l.numero) ultnum_B_CFOC
+                              from TAB_NUMERO_CFO_CFOC l
+                              where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                    and l.TIPO_DOCUMENTO = 2  --CFOC
+                                    and l.TIPO_NUMERO = 1 --BLOCO
+                              ),
+                              --Digital de CFO
+                              (select count (*) lib_D_CFO,
+                                      max(l.numero) ultnum_D_CFO
+                              from TAB_NUMERO_CFO_CFOC l
+                              where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                    and l.TIPO_DOCUMENTO = 1  --CFO
+                                    and l.TIPO_NUMERO = 2 --DIGITAL
+                              ),
+                              --Digital de CFOC
+                              (select count (*) lib_D_CFOC,
+                                      max(l.numero) ultnum_D_CFOC
+                              from TAB_NUMERO_CFO_CFOC l
+                              where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                    and l.TIPO_DOCUMENTO = 2  --CFOC
+                                    and l.TIPO_NUMERO = 2 --DIGITAL
+                              ),
+                              --Digital de PTV
+                              (select max(t.numero) ultnum_D_PTV
+                              from tab_ptv t
+                              where substr(t.numero, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                   and t.tipo_numero = 2 --DIGITAL
+                              )";
+                    #endregion OUTRAS
+
+                    #endregion SQL
+
+                    #region Executa a pesquisa nas tabelas
+                    //comando.DbCommand.CommandText = "select count(*) from (" + comandtxt + ")";
+
+                    //retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+                    //comando.AdicionarParametroEntrada("menor", filtros.Menor);
+                    //comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+                    //comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+                    comando.DbCommand.CommandText = comandtxt;
 
                     #endregion
 
-                    //colunas[0] = "TipoDocumento";
-                    //ordenar[0] = "TipoDocumento";
-                }
+                    #region Preenche o resultado
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        DocumentoFitossanitarioConsolidado doc;
 
-                #region Executa a pesquisa nas tabelas
-                //comando.DbCommand.CommandText = "select count(*) from (" + comandtxt + ")";
+                        reader.Read();
 
-                //retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+                        #region Não Liberados
 
-                //comando.AdicionarParametroEntrada("menor", filtros.Menor);
-                //comando.AdicionarParametroEntrada("maior", filtros.Maior);
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                //comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
-                comando.DbCommand.CommandText = comandtxt;
+                        doc.Texto = "Não Liberados";
+                        doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
+                        doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
+                        doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
 
-                #endregion
+                        retorno.Itens.Add(doc);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    DocumentoFitossanitarioConsolidado doc;
+                        #endregion
 
-                    reader.Read();
+                        #region Liberados
 
-                    #region Não Liberados
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                    doc = new DocumentoFitossanitarioConsolidado();
+                        doc.Texto = "Liberados";
+                        doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
+                        doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
+                        doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
 
-                    doc.Texto = "Não Liberados";
-                    doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
-                    doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
-                    doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
+                        retorno.Itens.Add(doc);
 
-                    retorno.Itens.Add(doc);
+                        #endregion
 
-                    #endregion
+                        #region Em Elaboração
 
-                    #region Liberados
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                    doc = new DocumentoFitossanitarioConsolidado();
+                        doc.Texto = "Em Elaboração";
+                        doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
+                        doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
+                        doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
+                        doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["elab_D_CFOC"].ToString();
+                        doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
 
-                    doc.Texto = "Liberados";
-                    doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
-                    doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
-                    doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
+                        retorno.Itens.Add(doc);
 
-                    retorno.Itens.Add(doc);
+                        #endregion
 
-                    #endregion
+                        #region Utilizados
 
-                    #region Em Elaboração
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                    doc = new DocumentoFitossanitarioConsolidado();
+                        doc.Texto = "Utilizados";
+                        doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
+                        doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
+                        doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
+                        doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
+                        doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
 
-                    doc.Texto = "Em Elaboração";
-                    doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
-                    doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
-                    doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
-                    doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC =reader["elab_D_CFOC"].ToString();
-                    doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
+                        retorno.Itens.Add(doc);
 
-                    retorno.Itens.Add(doc);
+                        #endregion
 
-                    #endregion
+                        #region Cancelados
 
-                    #region Utilizados
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                    doc = new DocumentoFitossanitarioConsolidado();
+                        doc.Texto = "Cancelados";
+                        doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
+                        doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
+                        doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
+                        doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
+                        doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
 
-                    doc.Texto = "Utilizados";
-                    doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
-                    doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
-                    doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
-                    doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
-                    doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
+                        retorno.Itens.Add(doc);
 
-                    retorno.Itens.Add(doc);
+                        #endregion
 
-                    #endregion
+                        #region Ultimo Liberado
 
-                    #region Cancelados
+                        doc = new DocumentoFitossanitarioConsolidado();
 
-                    doc = new DocumentoFitossanitarioConsolidado();
+                        doc.Texto = "Último nº liberado";
+                        doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
+                        doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
+                        doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
 
-                    doc.Texto = "Cancelados";
-                    doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
-                    doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
-                    doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
-                    doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
-                    doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
+                        retorno.Itens.Add(doc);
 
-                    retorno.Itens.Add(doc);
+                        #endregion
 
-                    #endregion
-
-                    #region Ultimo Liberado
-
-                    doc = new DocumentoFitossanitarioConsolidado();
-
-                    doc.Texto = "Último nº liberado";
-                    doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
-                    doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
-                    doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
-
-                    retorno.Itens.Add(doc);
-
-                    #endregion
-
-                    reader.Close();
+                        reader.Close();
+                    }
+                    #endregion Preenche o resultado
                 }
             }
 
