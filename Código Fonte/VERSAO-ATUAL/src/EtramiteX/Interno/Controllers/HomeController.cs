@@ -34,6 +34,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("LogOn", "Autenticacao");
 			}
 
+
+
+
 			IndicadorPeriodoRelatorio indicadores = new IndicadorPeriodoRelatorio();
 			IndicadoresVM viewModel = new IndicadoresVM();
 
@@ -83,6 +86,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return PartialView("SobrePartial", vm);
 		}
+
+
+        [Permite(Tipo = ePermiteTipo.Logado)]
+        public ActionResult AvisoManutencao()
+        {
+            SobreVM vm = new SobreVM();
+
+            vm.Sobre = _busSobre.Obter();
+
+            return PartialView("AvisoManutencaoPartial", vm);
+        }
 
 		[Permite(Tipo = ePermiteTipo.Logado)]
 		public ActionResult SobreItens()

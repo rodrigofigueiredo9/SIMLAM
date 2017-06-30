@@ -14,6 +14,17 @@ $.ajaxSetup({ cache: false });
 
 $(window).load(function () {
     $(".carregandoMaster").addClass("hide");
+
+    if (document.referrer.indexOf("LogOn") >= 0 || document.referrer.indexOf("Logon") >= 0) {
+
+        Modal.abrir("/Credenciado/Home/AvisoManutencao", null,
+           function (content) {
+               //Modal.defaultButtons(content);
+           }, { width: "615px", minWidthPerc: "46.3%" });
+
+    }
+
+
 });
 
 function object(o) {
@@ -122,6 +133,7 @@ MasterPage = {
 	clockStarted: 0,
 	clockTimeReset: null, //{ min: 0, seg: 0 },
 	keyENTER: 13,
+	urlAvisoManutencao: "",
 
 	validarAcesso: function (e, xhr, settings) {
 
@@ -951,7 +963,7 @@ function SetClickCheckBox(event, controlePai) {
 Modal = {
 
 	/////Script para fechar o Modal
-	load: function () {
+    load: function () {
 		$('body').delegate(".fMdl", "click", function () {
 			Modal.fechar($(this));
 		});
@@ -1263,7 +1275,6 @@ Modal = {
 	},
 
 	abrirHtml: function (content, options) {
-
 		var settings = $.extend({}, {
 			'tamanho': Modal.tamanhoModalPequena,
 			'onLoadCallbackName': '',
