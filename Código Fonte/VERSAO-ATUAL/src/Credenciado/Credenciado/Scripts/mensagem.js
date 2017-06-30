@@ -24,6 +24,12 @@ Mensagem = {
 				}
 			);
 		});
+
+        
+	
+		$("#dialog").dialog({ modal: true, width: 'auto', modal: true }).position({ my: "center", at: "center", of: window });
+
+	
 	},
 
 	template: function () {
