@@ -58,10 +58,25 @@
 							</p>
 							<% if (!(Model != null && Model.AlterarSenha)) { %>
 							<p>
-                                <input type="button" value="&nbsp;&nbsp;Esqueci minha senha&nbsp;&nbsp;" class="btnEsqueciSenha" />
+                                <% if (!Model.IsAjaxRequest && Model.EsqueciSenha!=true) { %>
+                                    <input type="button" value="&nbsp;&nbsp;Esqueci minha senha&nbsp;&nbsp;" class="btnEsqueciSenha" />
+                                    <%= Html.Hidden("esqueciSenha", false)%>
+                                <% } %>
 								<input type="button" value="&nbsp;&nbsp;Entrar&nbsp;&nbsp;" class="btnEntrarLogin" />
 							</p>
 							<%} %>
+                            <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
+                                <p style="float:left">
+								    <label for="CPF" class="fonteBrancaLabel">CPF:</label><br/>
+								    <%= Html.TextBox("CPF", null, new { @class = "cpfTxt maskCpf"})%>
+								    <%= Html.ValidationMessage("CPF")%>
+							    </p>
+                                <p style="float:right">
+                                    <label for="email" class="fonteBrancaLabel">E-mail:</label><br/>
+								    <%= Html.TextBox("E-mail", null, new { @class = "emailTxt"})%>
+								    <%= Html.ValidationMessage("email")%>
+                                </p>
+                            <% } %>
 
 							<% if (Model != null && Model.AlterarSenha) { %>
 
@@ -97,7 +112,9 @@
 	<% } %>
 
 	<script type="text/javascript" >
-			$('#login').focus();
+	    $(".maskCpf").unmask().mask("999.999.999-99");
+
+	    $('#login').focus();
 
 			$('#loginCaixa').keypress(function (e) {
 				if (e.keyCode != 13) return;
@@ -120,7 +137,7 @@
 
 				<% if ( Model == null || !Model.IsAjaxRequest ){ %>
 					$('.formLogon').submit();
-				<%} else { %>
+			    <%} else { %>
 
 					Modal.carregando($('.formLogon'), true);
 
@@ -154,6 +171,15 @@
 	    $('.btnEsqueciSenha').click(function () {
 	        alert('inicio');
 
+	        $('.camposExtrasLogin').slideDown('normal');
+
+	        <% if ( Model == null || !Model.IsAjaxRequest ){ %>
+	            //alert($('#esqueciSenha').val());
+	            $('#esqueciSenha').val('True');
+	        //alert($('#esqueciSenha').val());
+
+	            $('.formLogon').submit();
+	        <% } %>
 
             alert('fim')
         });
