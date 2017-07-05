@@ -52,11 +52,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl)
+		public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha)
 		{
-			LogonVM viewModel = new LogonVM() { AlterarSenha = alterarSenha ?? false };
+			LogonVM viewModel = new LogonVM() {
+                AlterarSenha = alterarSenha ?? false,
+                EsqueciSenha = esqueciSenha
+            };
 
 			viewModel.IsAjaxRequest = Request.IsAjaxRequest();
+
+            if (esqueciSenha == true)
+            {
+                if (Request.IsAjaxRequest())
+                    return this.getAjaxLogOnPartial();
+
+                return View(viewModel);
+            }
 
 			try
 			{
