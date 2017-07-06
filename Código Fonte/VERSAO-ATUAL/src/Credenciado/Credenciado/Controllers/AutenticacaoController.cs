@@ -51,8 +51,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			});
 		}
 
+        private LogonVM RecuperarSenha(LogonVM viewModel, string cpf, string email)
+        {
+            if (!GerenciarAutenticacao.ValidarRecuperacaoSenha(cpf, email))
+            {
+                return viewModel;
+            }
+
+            GerenciarAutenticacao.RecuperarSenha(cpf, email);
+
+            return viewModel;
+        }
+
 		[HttpPost]
-        public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha, bool? verificarTrocarSenha)
+        public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha, bool? verificarTrocarSenha, string email, string cpf)
 		{
 			LogonVM viewModel = new LogonVM() {
                 AlterarSenha = alterarSenha ?? false,
@@ -71,8 +83,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
             if (verificarTrocarSenha == true)
             {
-                int a = 4;
-                a++;
+                viewModel = RecuperarSenha(viewModel, cpf, email);
+
+                return View(viewModel);
             }
 
 			try

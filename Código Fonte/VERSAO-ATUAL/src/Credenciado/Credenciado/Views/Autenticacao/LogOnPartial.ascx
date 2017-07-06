@@ -68,13 +68,13 @@
                             <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
                                 <%= Html.Hidden("verificarTrocarSenha", false)%>
                                 <p style="float:left">
-								    <label for="CPF" class="fonteBrancaLabel">CPF:</label><br/>
+								    <label for="cpf" class="fonteBrancaLabel">CPF:</label><br/>
 								    <%= Html.TextBox("CPF", null, new { @class = "cpfTxt maskCpf"})%>
 								    <%= Html.ValidationMessage("CPF")%>
 							    </p>
                                 <p style="float:left; margin-left:20px">
                                     <label for="email" class="fonteBrancaLabel">E-mail:</label><br/>
-								    <%= Html.TextBox("E-mail", null, new { @class = "emailTxt"})%>
+								    <%= Html.TextBox("Email", null, new { @class = "emailTxt email"})%>
 								    <%= Html.ValidationMessage("email")%>
                                 </p>
                                 <p>
