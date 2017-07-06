@@ -85,6 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			LocalVistoria buscandoLocal = new LocalVistoria();
 			buscandoLocal = _localVistoriaBus.Obter(idSetor, null);
 			vm.DiasHorasVistoria = buscandoLocal.DiasHorasVistoria;
+            vm.ListBloqueios = buscandoLocal.Bloqueios;
 			vm.IsEdicao = false;
 			vm.IsVisualizar = true;
 			return View("LocalVistoriaVisualizar", vm);

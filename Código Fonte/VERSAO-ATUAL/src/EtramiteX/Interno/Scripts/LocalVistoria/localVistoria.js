@@ -462,6 +462,7 @@ LocalVistoria = {
 	        HoraInicio: $(this).closest('tr').find('.lblHoraInicio').html(),
 	        HoraFim: $(this).closest('tr').find('.lblHoraFim').html(),
 	        Tid: $(this).closest('tr').find('.hdnItemTid').val(),
+	        LocalVistoriaId: $('.ddlSetores option:selected', LocalVistoria.container).val(),
 	    };
 
 	    if (item.Id != "") {

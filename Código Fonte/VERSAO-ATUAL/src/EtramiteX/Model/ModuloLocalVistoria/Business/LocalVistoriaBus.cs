@@ -97,7 +97,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
 
         public bool VerificaPodeExcluir(DiaHoraVistoria DiaHoraVistoria)
         {
-            int QtdHorariosAssociados = _da.PossuiHorarioAssociado(DiaHoraVistoria.Id);
+            int QtdHorariosAssociados = _da.PossuiHorarioAssociado(DiaHoraVistoria.LocalVistoriaId);
             //QtdHorariosAssociados = 1;
             if (QtdHorariosAssociados > 0)
             {
