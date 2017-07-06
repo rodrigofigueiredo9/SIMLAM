@@ -141,10 +141,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
             {
                 CredenciadoPessoa cred = _busCred.Obter(cpf);
 
-                if (cred.Id != null && cred.Id != 0)
+                if (cred != null && cred.Id != 0 && (cred.Situacao == 2 || cred.Situacao == 4))
                 {
-                    _busCred.RegerarChave((int)cred.CredenciadoId);
-                    Validacao.Add(Mensagem.Login.SenhaEnviada);
+                    eCredenciadoSituacao situacao = cred.Situacao == 2 ? eCredenciadoSituacao.Ativo : eCredenciadoSituacao.SenhaVencida;
+
+                    _busCred.RegerarChave(cred.Id, bancoDeDados, situacao);
                 }
                 else
                 {
