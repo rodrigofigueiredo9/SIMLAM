@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security.Interfaces;
+using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
 {
@@ -102,6 +103,55 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
 
 			return retorno;
 		}
+
+        public static bool ValidarRecuperacaoSenha(string cpf, string email)
+        {
+            #region Validacao de Obrigatoriedade
+
+            if (string.IsNullOrEmpty(cpf))
+            {
+                Validacao.Add(Mensagem.Login.ObrigatorioCpf);
+            }
+
+            if (string.IsNullOrEmpty(email))
+            {
+                Validacao.Add(Mensagem.Login.ObrigatorioEmail);
+            }
+
+            if (!Validacao.EhValido)
+            {
+                return false;
+            }
+
+            #endregion
+
+            bool retorno = false;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+            {
+                retorno = _busCred.PodeSolicitarSenha(cpf, email, bancoDeDados);
+            }
+
+            return retorno;
+        }
+
+        public static void RecuperarSenha(string cpf, string email)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+            {
+                CredenciadoPessoa cred = _busCred.Obter(cpf);
+
+                if (cred.Id != null && cred.Id != 0)
+                {
+                    _busCred.RegerarChave((int)cred.CredenciadoId);
+                    Validacao.Add(Mensagem.Login.SenhaEnviada);
+                }
+                else
+                {
+                    Validacao.Add(Mensagem.Login.SenhaNaoEnviada);
+                }
+            }
+        }
 
 		public static void CarregarUser(string login, string sessionId = null)
 		{

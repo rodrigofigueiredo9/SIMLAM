@@ -21,8 +21,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ObrigatorioNovaSenha { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "NovaSenha", Texto = "É necessário informar Senha para efetuar o acesso ao sistema" }; } }
 		public Mensagem ObrigatorioConfirmarNovaSenha { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ConfirmarNovaSenha", Texto = "É necessário informar Senha para efetuar o acesso ao sistema" }; } }
 
+        public Mensagem ObrigatorioCpf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "CPF", Texto = "É necessário informar o CPF cadastrado no sistema para solicitar a recuperação de senha." }; } }
+        public Mensagem ObrigatorioEmail { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Email", Texto = "É necessário informar o e-mail cadastrado no sistema para solicitar a recuperação de senha." }; } }
+
 		public Mensagem LoginSenhaInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,   Texto = "Login ou senha incorretos. Atenção com as teclas \"Caps Lock\" e \"Shift\", pois o sistema diferencia letras maiúsculas e minúsculas. Por favor tente novamente" }; } }
 		public Mensagem SenhaAlterada { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "A senha foi alterada com sucesso." }; } }
+
+        public Mensagem EmailCPFNaoEncontrados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado usuário cadastrado para o e-mail e cpf informados." }; } }
 
 		public Mensagem SituacaoInvalida(string situacao)
 		{
@@ -39,6 +44,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem FuncionarioBloqueado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,   Texto = "Usuário bloqueado. Entre em contato com um administrador" }; } }
 		public Mensagem AcessoSimultaneo { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao,   Texto = "Este usuário foi desconectado por acesso simultâneo" }; } }
 		public Mensagem SessaoDerrubada { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao,   Texto = "Este usuário estava sendo utilizado em outra sessão que foi desconectada" }; } }
+
+        public Mensagem SenhaEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "A nova senha foi enviada para o e-mail cadastrado." }; } }
+        public Mensagem SenhaNaoEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi possível gerar uma nova senha." }; } }
 
 		public Mensagem HistoricoSenha(int qtd)
 		{

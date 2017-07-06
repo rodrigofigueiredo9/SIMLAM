@@ -101,6 +101,20 @@ namespace Tecnomapas.Blocos.Autenticacao
 			return _da.Obter(login, banco);
 		}
 
+        public Int32 ObterUsuarioIDEmailCPF(string email, string cpf, BancoDeDados banco = null)
+        {
+            int idUsuarioEmail = _da.ObterUsuarioIdEmail(email, banco);
+
+            int idUsuarioCPF = _da.ObterUsuarioIdCPF(cpf, banco);
+
+            if (idUsuarioCPF == idUsuarioEmail)
+            {
+                return idUsuarioCPF;
+            }
+
+            return 0;
+        }
+
 		public void Autenticar(Usuario usuario, bool ehUsuarioValido, int executorTipo, BancoDeDados banco = null)
 		{
 			try
