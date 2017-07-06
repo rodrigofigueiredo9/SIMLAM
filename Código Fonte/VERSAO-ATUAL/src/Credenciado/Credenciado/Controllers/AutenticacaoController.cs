@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha)
+        public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha, bool? verificarTrocarSenha)
 		{
 			LogonVM viewModel = new LogonVM() {
                 AlterarSenha = alterarSenha ?? false,
@@ -67,6 +67,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                     return this.getAjaxLogOnPartial();
 
                 return View(viewModel);
+            }
+
+            if (verificarTrocarSenha == true)
+            {
+                int a = 4;
+                a++;
             }
 
 			try
