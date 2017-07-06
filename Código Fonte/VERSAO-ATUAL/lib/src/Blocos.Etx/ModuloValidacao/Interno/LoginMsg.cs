@@ -45,7 +45,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem AcessoSimultaneo { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao,   Texto = "Este usuário foi desconectado por acesso simultâneo" }; } }
 		public Mensagem SessaoDerrubada { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao,   Texto = "Este usuário estava sendo utilizado em outra sessão que foi desconectada" }; } }
 
-        public Mensagem SenhaEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "A nova senha foi enviada para o e-mail cadastrado." }; } }
         public Mensagem SenhaNaoEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi possível gerar uma nova senha." }; } }
 
 		public Mensagem HistoricoSenha(int qtd)
