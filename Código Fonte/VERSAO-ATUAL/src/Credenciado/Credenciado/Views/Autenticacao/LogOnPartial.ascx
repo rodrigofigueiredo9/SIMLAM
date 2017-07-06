@@ -66,15 +66,19 @@
 							</p>
 							<%} %>
                             <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
+                                <%= Html.Hidden("verificarTrocarSenha", false)%>
                                 <p style="float:left">
 								    <label for="CPF" class="fonteBrancaLabel">CPF:</label><br/>
 								    <%= Html.TextBox("CPF", null, new { @class = "cpfTxt maskCpf"})%>
 								    <%= Html.ValidationMessage("CPF")%>
 							    </p>
-                                <p style="float:right">
+                                <p style="float:left; margin-left:20px">
                                     <label for="email" class="fonteBrancaLabel">E-mail:</label><br/>
 								    <%= Html.TextBox("E-mail", null, new { @class = "emailTxt"})%>
 								    <%= Html.ValidationMessage("email")%>
+                                </p>
+                                <p>
+                                    <input type="button" value="&nbsp;&nbsp;Recuperar Senha&nbsp;&nbsp;" class="btnRecuperarSenha" />
                                 </p>
                             <% } %>
 
@@ -169,7 +173,7 @@
 
 
 	    $('.btnEsqueciSenha').click(function () {
-	        alert('inicio');
+	        //alert('INÍCIO ESQUECI SENHA');
 
 	        $('.camposExtrasLogin').slideDown('normal');
 
@@ -181,7 +185,22 @@
 	            $('.formLogon').submit();
 	        <% } %>
 
-            alert('fim')
+	        //alert('FIM ESQUECI SENHA')
+	    });
+
+	    $('.btnRecuperarSenha').click(function () {
+	        //alert('INÍCIO RECUPERAR SENHA');
+
+	        $('.camposExtrasLogin').slideDown('normal');
+
+	        <% if ( Model == null || !Model.IsAjaxRequest ){ %>
+	        $('#esqueciSenha').val('False');
+	        $('#verificarTrocarSenha').val('True');
+
+            $('.formLogon').submit();
+	        <% } %>
+
+	        //alert('FIM RECUPERAR SENHA')
         });
 
 
