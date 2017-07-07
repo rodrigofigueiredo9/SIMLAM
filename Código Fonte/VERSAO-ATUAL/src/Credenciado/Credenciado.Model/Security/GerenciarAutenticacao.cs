@@ -139,18 +139,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
             {
+                bancoDeDados.IniciarTransacao();
+
                 CredenciadoPessoa cred = _busCred.Obter(cpf);
 
                 if (cred != null && cred.Id != 0 && (cred.Situacao == 2 || cred.Situacao == 4))
                 {
                     eCredenciadoSituacao situacao = cred.Situacao == 2 ? eCredenciadoSituacao.Ativo : eCredenciadoSituacao.SenhaVencida;
 
-                    _busCred.RegerarChave(cred.Id, bancoDeDados, situacao);
+                    _busCred.RegerarChave(cred.Id, bancoDeDados);
                 }
                 else
                 {
                     Validacao.Add(Mensagem.Login.SenhaNaoEnviada);
                 }
+
+                bancoDeDados.Commit();
             }
         }
 
