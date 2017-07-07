@@ -404,7 +404,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 				credenciado.Chave = GerarChaveAcesso(email, nome);
 
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
 					bancoDeDados.IniciarTransacao();
 
@@ -876,6 +876,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 		{
 			_da.Deslogar(login, banco);
 		}
+
+        internal bool PodeSolicitarSenha(string cpf, string email, BancoDeDados banco = null)
+        {
+            bool usuarioValido = false;
+
+            try
+            {
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                    int idUsuario = _busUsuario.ObterUsuarioIDEmailCPF(email, cpf, banco);
+
+                    //Se o usuário não existir, ou se email e cpf não coincidirem
+                    if (idUsuario == 0)
+                    {
+                        Validacao.Add(Mensagem.Login.EmailCPFNaoEncontrados);
+                        usuarioValido = false;
+                    }
+                    else
+                    {
+                        usuarioValido = true;
+                    }
+                }
+            }
+            catch
+            {
+                usuarioValido = false;
+            }
+
+            return usuarioValido;
+        }
 
 		#endregion
 

@@ -944,10 +944,14 @@ input[type=button].icone.unlink.desativado, .icone.unlink.desativado { backgroun
 	padding: 8px 0px 0px 2%;
 }
 #loginCaixa {  width: 590px; margin: 0 auto ; margin-top:8% }
-#loginCaixa .btnEntrarLogin { background: url(../_img/btn_logar.png); height: 31px; width: 106px; border-style: none; margin-top: 20px; color: #FFF; text-shadow:1px 1px 1px #000; margin-left: 365px; float:left}
+#loginCaixa .btnEntrarLogin { background: url(../_img/btn_logar.png); height: 31px; width: 106px; border-style: none; margin-top: 20px; color: #FFF; text-shadow:1px 1px 1px #000; margin-right: 56px; float:right}
+#loginCaixa .btnEsqueciSenha { background: url(../_img/btn_esquecisenha.png); height: 31px; width: 200px; border-style: none; margin-top: 20px; color: #FFF; text-shadow:1px 1px 1px #000; margin-left: 0px; float:left}
 #loginCaixa .logo { background: url(../_imgLogo/logo_login.png) center center; height: 105px; width: 278px;  margin:0 auto; margin-bottom:30px}
 #loginCaixa .loginTxt { background: url(../_img/bg_input_login.png) center center; height: 30px; width: 195px; border:none; margin: 0px; padding: 0px 0px 0px 32px; color: #666; }
 #loginCaixa .loginTxtSenha { background: url(../_img/bg_input_pass.png) center center; height: 30px; width: 195px; border:none; margin: 0px; padding: 0px 0px 0px 32px; color: #666; }
+#loginCaixa .cpfTxt { background: url(../_img/bg_input_login.png) center center; height: 30px; width: 195px; border:none; margin: 0px; padding: 0px 0px 0px 32px; color: #666; }
+#loginCaixa .emailTxt { background: url(../_img/bg_input_login.png) center center; height: 30px; width: 195px; border:none; margin: 0px; padding: 0px 0px 0px 32px; color: #666; }
+#loginCaixa .btnRecuperarSenha { background: url(../_img/btn_esquecisenha.png); height: 31px; width: 200px; border-style: none; margin-top: 20px; color: #FFF; text-shadow:1px 1px 1px #000; margin-right: 56px; float:right}
 #loginCaixa .corpoCaixaLogin .holderFundo { float: right; width: 590px; padding: 5px; }
 .fonteBrancaLabel { color:#fff !important; text-shadow:1px 1px 1px #000; font-weight: normal; }
 #loginCaixa .camposExtrasLogin {

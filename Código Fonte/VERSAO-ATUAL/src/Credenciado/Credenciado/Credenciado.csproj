@@ -753,6 +753,7 @@
     <Content Include="Content\_img\botao_gerar_xls.png" />
     <Content Include="Content\_img\botao_inserir_lista.png" />
     <Content Include="Content\_img\bt-fechar-large.png" />
+    <Content Include="Content\_img\btn_esquecisenha.png" />
     <Content Include="Content\_img\btn_logar.png" />
     <Content Include="Content\_img\bt_fechar_mensagem.gif" />
     <Content Include="Content\_img\bt_info.png" />

@@ -10,6 +10,7 @@ using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
 using Tecnomapas.EtramiteX.Credenciado.Services;
 using Tecnomapas.EtramiteX.Credenciado.Interfaces;
+using Tecnomapas.Blocos.Etx.Criptografia.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -51,12 +52,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			});
 		}
 
+        private LogonVM RecuperarSenha(LogonVM viewModel, string cpf, string email)
+        {
+            if (!GerenciarAutenticacao.ValidarRecuperacaoSenha(cpf, email))
+            {
+                return viewModel;
+            }
+
+            GerenciarAutenticacao.RecuperarSenha(cpf, email);
+
+            return viewModel;
+        }
+
 		[HttpPost]
-		public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl)
+        public ActionResult LogOn(string login, string senha, bool? alterarSenha, string novaSenha, string confirmarNovaSenha, string returnUrl, bool? esqueciSenha, bool? verificarTrocarSenha, string email, string cpf)
 		{
-			LogonVM viewModel = new LogonVM() { AlterarSenha = alterarSenha ?? false };
+			LogonVM viewModel = new LogonVM() {
+                AlterarSenha = alterarSenha ?? false,
+                EsqueciSenha = esqueciSenha
+            };
 
 			viewModel.IsAjaxRequest = Request.IsAjaxRequest();
+
+            if (esqueciSenha == true)
+            {
+                if (Request.IsAjaxRequest())
+                    return this.getAjaxLogOnPartial();
+
+                return View(viewModel);
+            }
+
+            if (verificarTrocarSenha == true)
+            {
+                viewModel = RecuperarSenha(viewModel, cpf, email);
+
+                return View(viewModel);
+            }
 
 			try
 			{

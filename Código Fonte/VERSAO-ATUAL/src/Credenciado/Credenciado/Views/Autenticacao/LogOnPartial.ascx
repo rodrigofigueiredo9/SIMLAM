@@ -46,6 +46,7 @@
 						<div class="logo"></div>
 
 						<div class="prepend10">
+                            <% if (Model.EsqueciSenha!=true){ %>
 							<p style="float:left">
 								<label for="login" class="fonteBrancaLabel">Login:</label><br/>
 								<%= Html.TextBox("login", null, new { @class = "loginTxt", @maxlength = "30" })%>
@@ -58,9 +59,30 @@
 							</p>
 							<% if (!(Model != null && Model.AlterarSenha)) { %>
 							<p>
+                                <% if (!Model.IsAjaxRequest && Model.EsqueciSenha!=true) { %>
+                                    <input type="button" value="&nbsp;&nbsp;Esqueci minha senha&nbsp;&nbsp;" class="btnEsqueciSenha" />
+                                    <%= Html.Hidden("esqueciSenha", false)%>
+                                <% } %>
 								<input type="button" value="&nbsp;&nbsp;Entrar&nbsp;&nbsp;" class="btnEntrarLogin" />
 							</p>
 							<%} %>
+                            <%} %>
+                            <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
+                                <%= Html.Hidden("verificarTrocarSenha", false)%>
+                                <p style="float:left">
+								    <label for="cpf" class="fonteBrancaLabel">CPF:</label><br/>
+								    <%= Html.TextBox("CPF", null, new { @class = "cpfTxt maskCpf"})%>
+								    <%= Html.ValidationMessage("CPF")%>
+							    </p>
+                                <p style="float:left; margin-left:20px">
+                                    <label for="email" class="fonteBrancaLabel">E-mail:</label><br/>
+								    <%= Html.TextBox("Email", null, new { @class = "emailTxt"})%>
+								    <%= Html.ValidationMessage("email")%>
+                                </p>
+                                <p>
+                                    <input type="button" value="&nbsp;&nbsp;Recuperar Senha&nbsp;&nbsp;" class="btnRecuperarSenha" />
+                                </p>
+                            <% } %>
 
 							<% if (Model != null && Model.AlterarSenha) { %>
 
@@ -96,7 +118,9 @@
 	<% } %>
 
 	<script type="text/javascript" >
-			$('#login').focus();
+	    $(".maskCpf").unmask().mask("999.999.999-99");
+
+	    $('#login').focus();
 
 			$('#loginCaixa').keypress(function (e) {
 				if (e.keyCode != 13) return;
@@ -119,7 +143,7 @@
 
 				<% if ( Model == null || !Model.IsAjaxRequest ){ %>
 					$('.formLogon').submit();
-				<%} else { %>
+			    <%} else { %>
 
 					Modal.carregando($('.formLogon'), true);
 
@@ -144,6 +168,49 @@
 					});
 				<% } %>
 			});
+
+
+
+
+
+
+	    $('.btnEsqueciSenha').click(function () {
+	        //alert('INÍCIO ESQUECI SENHA');
+
+	        $('.camposExtrasLogin').slideDown('normal');
+
+	        <% if ( Model == null || !Model.IsAjaxRequest ){ %>
+	            //alert($('#esqueciSenha').val());
+	            $('#esqueciSenha').val('True');
+	        //alert($('#esqueciSenha').val());
+
+	            $('.formLogon').submit();
+	        <% } %>
+
+	        //alert('FIM ESQUECI SENHA')
+	    });
+
+	    $('.btnRecuperarSenha').click(function () {
+	        //alert('INÍCIO RECUPERAR SENHA');
+
+	        $('.camposExtrasLogin').slideDown('normal');
+
+	        <% if ( Model == null || !Model.IsAjaxRequest ){ %>
+	        $('#esqueciSenha').val('False');
+	        $('#verificarTrocarSenha').val('True');
+
+            $('.formLogon').submit();
+	        <% } %>
+
+	        //alert('FIM RECUPERAR SENHA')
+        });
+
+
+
+
+
+
+
 
 			if ($('input[type=hidden]#alterarSenha').val() === 'True') {
 				$('#login').addClass('disabled').attr('readOnly', 'true');

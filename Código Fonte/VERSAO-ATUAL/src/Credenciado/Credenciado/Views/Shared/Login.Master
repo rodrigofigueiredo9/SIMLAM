@@ -35,7 +35,9 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-ui-1.10.3.custom.min.js") %>" ></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery.json-2.2.min.js") %>" ></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/json2.js") %>" ></script>
+        <script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/mask/jquery.maskedinput.js") %>" ></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/mensagem.js") %>" ></script>
+
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
 	</head>
 
