@@ -10,6 +10,7 @@ using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
 using Tecnomapas.EtramiteX.Credenciado.Services;
 using Tecnomapas.EtramiteX.Credenciado.Interfaces;
+using Tecnomapas.Blocos.Etx.Criptografia.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
