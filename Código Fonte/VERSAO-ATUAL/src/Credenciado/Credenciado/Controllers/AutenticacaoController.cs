@@ -56,6 +56,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         {
             if (!GerenciarAutenticacao.ValidarRecuperacaoSenha(cpf, email))
             {
+                viewModel.EsqueciSenha = true;
                 return viewModel;
             }
 
