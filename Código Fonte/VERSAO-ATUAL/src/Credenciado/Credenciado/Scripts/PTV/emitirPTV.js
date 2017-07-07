@@ -178,7 +178,13 @@ PTVEmitir = {
 		    $(this).blur();
 		});
 
+
+		
+		PTVEmitir.onChangeLocalVistoria();
+		   
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+
+	
 
 		
 

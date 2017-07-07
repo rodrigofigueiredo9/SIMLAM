@@ -1854,7 +1854,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                       CONNECT BY TRUNC(SYSDATE, 'mm') + LEVEL - 1 <= LAST_DAY(SYSDATE)),
                                                                       cnf_local_vistoria lv,
                                                                       lov_dia_semana d,
-                                                                (  SELECT to_char(dia_inicio,'DD/MM/YY HH24:MI') dia_inicio,to_char(dia_fim,'DD/MM/YY HH24:MI') dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor
+                                                                (  SELECT to_char(dia_inicio,'DD/MM/YY HH24:MI') dia_inicio,to_char(dia_fim,'DD/MM/YY HH24:MI') dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor AND to_date(dia_inicio,'DD/MM/YY') > to_date(sysdate,'DD/MM/YY')
                                                                 ) bloq
                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
                                                                AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
@@ -1864,7 +1864,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                (
                                                                   TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
                                                                   AND  to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY') 
-                                                                  AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') < to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
+                                                                  AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') <= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
                                                                   )  ) ");
 
 
