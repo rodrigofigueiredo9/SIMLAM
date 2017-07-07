@@ -46,6 +46,7 @@
 						<div class="logo"></div>
 
 						<div class="prepend10">
+                            <% if (Model.EsqueciSenha!=true){ %>
 							<p style="float:left">
 								<label for="login" class="fonteBrancaLabel">Login:</label><br/>
 								<%= Html.TextBox("login", null, new { @class = "loginTxt", @maxlength = "30" })%>
@@ -65,6 +66,7 @@
 								<input type="button" value="&nbsp;&nbsp;Entrar&nbsp;&nbsp;" class="btnEntrarLogin" />
 							</p>
 							<%} %>
+                            <%} %>
                             <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
                                 <%= Html.Hidden("verificarTrocarSenha", false)%>
                                 <p style="float:left">
@@ -74,7 +76,7 @@
 							    </p>
                                 <p style="float:left; margin-left:20px">
                                     <label for="email" class="fonteBrancaLabel">E-mail:</label><br/>
-								    <%= Html.TextBox("Email", null, new { @class = "emailTxt email"})%>
+								    <%= Html.TextBox("Email", null, new { @class = "emailTxt"})%>
 								    <%= Html.ValidationMessage("email")%>
                                 </p>
                                 <p>
