@@ -27,7 +27,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem LoginSenhaInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,   Texto = "Login ou senha incorretos. Atenção com as teclas \"Caps Lock\" e \"Shift\", pois o sistema diferencia letras maiúsculas e minúsculas. Por favor tente novamente" }; } }
 		public Mensagem SenhaAlterada { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "A senha foi alterada com sucesso." }; } }
 
-        public Mensagem EmailCPFNaoEncontrados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado usuário cadastrado para o e-mail e cpf informados." }; } }
+        public Mensagem EmailCPFNaoEncontrados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado usuário cadastrado para o e-mail e/ou cpf informados." }; } }
 
 		public Mensagem SituacaoInvalida(string situacao)
 		{
