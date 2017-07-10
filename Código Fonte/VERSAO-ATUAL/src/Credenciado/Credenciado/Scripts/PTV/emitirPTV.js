@@ -180,7 +180,7 @@ PTVEmitir = {
 
 
 		
-		PTVEmitir.onChangeLocalVistoria();
+		//PTVEmitir.onChangeLocalVistoria();
 		   
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
 
@@ -228,11 +228,6 @@ PTVEmitir = {
 			    var lstDatas = txtData.match(/\d{2}\/\d{2}\/\d{2}/g);
 
 			   
-
-			    //var lstDatas = "^([0-2][0-9]||3[0-1])/(0[0-9]||1[0-2])/([0-9][0-9])?[0-9][0-9]$";
-
-			   
-			    //var result = "28-02-2012,29-02-2012,01-03-2012,02-03-2012,03-03-2012,04-03-2012,05-03-2012,06-03-2012,07-03-2012,08-03-2012,09-03-2012,28-02-2012,29-02-2012,01-03-2012,02-03-2012,03-03-2012,04-03-2012,05-03-2012,06-03-2012,07-03-2012,08-03-2012,09-03-2012"; // dummy result
 			    datelist = lstDatas; // populate the array
 			   
 			    $("#DataVistoria").datepicker("refresh"); // 

@@ -343,7 +343,7 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="LocalEmissao">Vistoria de Carga *</label>
-                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , new { @class = "txtDataHoraVistoria text" })%>
+                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
 				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
 			</div>
 		</div>
