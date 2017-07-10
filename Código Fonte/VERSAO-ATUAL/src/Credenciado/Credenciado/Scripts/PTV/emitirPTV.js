@@ -24,6 +24,9 @@ $(document).ready(function () {
         }
     });
 
+
+  
+
     $("#OrigemTipo option").filter(function () {
         return $.trim($(this).text()) == 'Sem Documento'
     }).remove();
@@ -86,7 +89,7 @@ PTVEmitir = {
 
 	            $(select).data('options', options);
 	            
-
+	           
 	            $(textbox).bind('change', function () {
 	                //var options = $(select).empty().scrollTop(0).data('options');
 	               
@@ -98,10 +101,11 @@ PTVEmitir = {
 	                $(select).empty();
 	                var search = $.trim($(this).val());
 	                var regex = new RegExp(search, 'gi');
+	             
 	              
 	                for (var i = 0; i < options.length; i++) {
 	                    var option = options[i];
-	            
+	                    
 	                    if (option.text.match(regex) !== null) {
 	                        $(select).append(
                                     $('<option>').text(option.text).val(option.id)
@@ -172,21 +176,20 @@ PTVEmitir = {
 		    return false;
 		});
 	    
-		$('#DataVistoria').change(function (e) {
+		//$('#DataVistoria').change(function (e) {
 		        
-		    PTVEmitir.onChangeLocalVistoria();
-		    $(this).blur();
-		});
-
+		//    PTVEmitir.onChangeLocalVistoria();
+		//    $(this).blur();
+		//});
 
 		
-		//PTVEmitir.onChangeLocalVistoria();
+	   if (window.location.href.indexOf("Visualizar") == -1)
+	        PTVEmitir.onChangeLocalVistoria();
+
 		   
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
 
-	
-
-		
+		$('#DataVistoria').change();
 
 	},
 

@@ -1361,7 +1361,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						comando = bancoDeDados.CriarComando(@"
-						select lu.id, lu.texto unidade_medida from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
+						select lu.id, case when cp.exibe_kilos  = 1 then 'KG' else lu.texto end unidade_medida from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
 						where i.id = cp.unidade_producao and i.estimativa_unid_medida = lu.id and i.cultivar = :cultivarID and cp.cfo = :origemID", UsuarioCredenciado);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
@@ -1369,7 +1369,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						break;
 					case eDocumentoFitossanitarioTipo.CFOC:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida from lov_crt_uni_prod_uni_medida lu, cred_cfoc_produto pr, cred_lote_item li
+						select distinct lu.id, case when pr.exibe_kilos  = 1 then 'KG' else lu.texto end unidade_medida  from lov_crt_uni_prod_uni_medida lu, cred_cfoc_produto pr, cred_lote_item li
 						where lu.id = li.unidade_medida and li.lote = pr.lote and pr.cfoc = :origemID and li.cultivar = :cultivarID", UsuarioCredenciado);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
@@ -1377,7 +1377,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						break;
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida from lov_crt_uni_prod_uni_medida lu, tab_ptv_produto pr
+						select distinct lu.id, case when pr.exibe_kilos  = 1 then 'KG' else lu.texto end unidade_medida  from lov_crt_uni_prod_uni_medida lu, tab_ptv_produto pr
 						where lu.id = pr.unidade_medida and pr.ptv = :origemID and pr.cultura = :culturaID and pr.cultivar = :cultivarID", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
@@ -1411,6 +1411,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 					reader.Close();
 				}
+
+                if (retorno.Count == 0)
+                    retorno.Add(new Lista() { Id = "2", Texto = "KG" });
+
 				return retorno;
 			}
 		}

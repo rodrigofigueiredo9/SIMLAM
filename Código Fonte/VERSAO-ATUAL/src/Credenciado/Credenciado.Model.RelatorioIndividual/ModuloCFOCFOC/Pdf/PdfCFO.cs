@@ -27,7 +27,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 			dataSource = _da.Obter(id, credenciadoID);
 
-           if ( !string.IsNullOrEmpty(dataSource.DataAtivacao) &&
+           if ( dataSource.DataAtivacao != "01/01/0001"   &&
                Convert.ToDateTime(dataSource.DataAtivacao).Year < 2017 )
                 ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO_ANTERIOR_2017.doc";
             else
