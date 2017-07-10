@@ -63,8 +63,7 @@ HabilitarEmissaoCFOCFOCListar = {
 	    Modal.confirma({
 	        url: HabilitarEmissaoCFOCFOCListar.historicoLink + '?id=' + itemId + '&nome=' + nome + '&habilitacao=' + habilitacao,
 	        tamanhoModal: Modal.tamanhoModalGrande,
-	        btnOkLabel: null,
-	        btnOkCallback: null
+	        btnOkLabel: 'Ok'
 	    });
 	},
 }

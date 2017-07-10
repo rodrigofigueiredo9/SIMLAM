@@ -37,7 +37,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(NumeroDua) && !string.IsNullOrWhiteSpace(ValidadeRegistro))
+                if (!string.IsNullOrWhiteSpace(ValidadeRegistro))
                 {
                     var data = (Convert.ToDateTime(ValidadeRegistro)).AddYears(-1).ToShortDateString();
                     return data;
