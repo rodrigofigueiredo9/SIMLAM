@@ -238,7 +238,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                     p.observacao = :observacao,
                     p.situacao_data =:situacao_data, 
 				    p.situacao = :situacao,
-                    p.numero_dua = :numero_dua,
                     p.validade_registro = :validade_registro,
                     p.numero_processo = :numero_processo,
                     p.tid = :tid
@@ -249,12 +248,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				comando.AdicionarParametroEntrada("observacao", DbType.String, 250, habilitar.Observacao);
 				comando.AdicionarParametroEntrada("situacao_data", Convert.ToDateTime(habilitar.SituacaoData), DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", habilitar.Situacao, DbType.Int32);
-                comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
                 comando.AdicionarParametroEntrada("validade_registro", Convert.ToDateTime(habilitar.ValidadeRegistro), DbType.DateTime);
                 comando.AdicionarParametroEntrada("numero_processo", DbType.String, 30, habilitar.NumeroProcesso);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
+
+                if (habilitar.NumeroDua != null && !string.IsNullOrWhiteSpace(habilitar.NumeroDua))
+                {
+                    comando = bancoDeDados.CriarComando(@"
+				        update tab_hab_emi_cfo_cfoc p
+                        set p.numero_dua = :numero_dua
+                        where p.id = :id", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
+                    comando.AdicionarParametroEntrada("id", habilitar.Id, DbType.Int32);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
 
 				#endregion
 
@@ -515,7 +526,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						habilitar.Motivo = reader.GetValue<Int32>("motivo");
 						habilitar.MotivoTexto = reader.GetValue<String>("motivo_texto");
 						habilitar.Observacao = reader.GetValue<String>("observacao");
-						habilitar.NumeroDua = reader.GetValue<String>("numero_dua");
+                        habilitar.NumeroDua = string.Empty; // reader.GetValue<String>("numero_dua");
 						habilitar.ExtensaoHabilitacao = reader.GetValue<Int32>("extensao_habilitacao");
 						habilitar.NumeroHabilitacaoOrigem = reader.GetValue<String>("numero_habilitacao_ori");
 						habilitar.RegistroCrea = reader.GetValue<String>("registro_crea");
