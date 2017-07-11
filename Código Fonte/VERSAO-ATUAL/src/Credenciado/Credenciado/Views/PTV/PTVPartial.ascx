@@ -129,12 +129,27 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% foreach (var item in Model.PTV.Produtos) { %>
+					<% foreach (var item in Model.PTV.Produtos) { 
+           
+                    decimal qtd = 0;
+                    var unid = "";
+                    if (item.ExibeQtdKg)
+                    {
+                        qtd = item.Quantidade * 1000;
+                        unid = "KG";
+
+                    }
+                    else
+                    {
+                        qtd = item.Quantidade;
+                        unid = item.UnidadeMedidaTexto;
+                    }             
+            %>
 					<tr>
 						<td class="Origem_Tipo" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
 						<td class="cultura_cultivar" title="<%= item.CulturaCultivar %>"><%= item.CulturaCultivar %></td>
-						<td class="quantidade" title="<%=item.Quantidade %>"><%=item.Quantidade %></td>
-						<td class="unidade_medida" title="<%= item.UnidadeMedida %>"><%=item.UnidadeMedidaTexto %></td>
+						<td class="quantidade" title="<%=qtd %>"><%=qtd %></td>
+					    <td class="unidade_medida" title="<%= unid %>"><%=unid %></td>
 						<%if (!Model.IsVisualizar) { %>
 						<td>
 							<a class="icone excluir btnExcluir"></a>

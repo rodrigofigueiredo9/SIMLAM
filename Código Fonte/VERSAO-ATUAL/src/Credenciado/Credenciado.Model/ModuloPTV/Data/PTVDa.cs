@@ -1883,7 +1883,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                         cnf_local_vistoria lv,
                                                                         lov_dia_semana d
                                                                 WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
-                                                                and to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')");
+                                                                and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(sysdate,'DD/MM/YY HH24:MI')");
                 }
 
 

@@ -375,8 +375,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                 Comando comando = bancoDeDados.CriarComando(@" select count(*) from cnf_local_vistoria lc
                                                               inner join idafcredenciado.tab_ptv ptv on ptv.local_vistoria = lc.setor 
                                                               and ptv.data_hora_vistoria = lc.id and data_vistoria is not null
-                                                              where lc.setor = :setorId and to_date(:datIni,'dd/mm/yy hh24:mi') <= to_date(ptv.data_vistoria || ' ' || lc.hora_inicio,'dd/mm/yy hh24:mi')
-                                                             and to_date(:datFim,'dd/mm/yy hh24:mi') >= to_date(ptv.data_vistoria || ' ' || lc.hora_fim,'dd/mm/yy hh24:mi') ");
+                                                              where lc.setor = :setorId and to_date(:datIni,'dd/mm/yy hh24:mi') >= to_date(ptv.data_vistoria || ' ' || lc.hora_inicio,'dd/mm/yy hh24:mi')
+                                                             and to_date(:datFim,'dd/mm/yy hh24:mi') <= to_date(ptv.data_vistoria || ' ' || lc.hora_fim,'dd/mm/yy hh24:mi') ");
                                                                   
                 comando.AdicionarParametroEntrada("datIni", datInicial, DbType.String);
                 comando.AdicionarParametroEntrada("datFim", datFinal, DbType.String);

@@ -586,9 +586,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 		internal PTVOutro Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
+            PTVOutro PTV = new PTVOutro();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				PTVOutro PTV = new PTVOutro();
+				
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				select p.tid                   Tid,
@@ -703,10 +704,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 #endregion
 
-                #region Arquivos
+			}
 
-                comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
-				a.tid from {0}tab_ptv_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem", EsquemaBanco);
+
+            #region Arquivos
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+            {
+
+                Comando comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				    a.tid from tab_ptv_arquivo a, tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem");
 
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 
@@ -731,11 +738,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
                     }
                     reader.Close();
                 }
+            }
 
-                #endregion
+            #endregion
 
-                return PTV;
-			}
+            return PTV;
 		}
 
         internal bool VerificaSePTVAssociadoLote(Int64 ptvNumero)

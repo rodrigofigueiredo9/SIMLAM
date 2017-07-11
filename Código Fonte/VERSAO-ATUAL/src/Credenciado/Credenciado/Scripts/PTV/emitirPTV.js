@@ -603,6 +603,9 @@ PTVEmitir = {
 
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
 
+		var txtUnid = $('.ddlProdutoUnidadeMedida option:selected', container).text();
+		var bExibeKg = txtUnid.indexOf("KG") >= 0;
+
 		var item = {
 			PTV: $('.txtNumero', PTVEmitir.container).val(),
 			OrigemTipo: $('.ddlOrigemTipo', container).val(),
@@ -615,9 +618,11 @@ PTVEmitir = {
 			CultivarTexto: $('.ddlProdutoCultivar option:selected', container).text(),
 			UnidadeMedidaTexto: $('.ddlProdutoUnidadeMedida option:selected', container).text(),
 			UnidadeMedida: $('.ddlProdutoUnidadeMedida option:selected', container).val(),
-			Quantidade: $('.txtProdutoQuantidade', container).val(),
+			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
 			EmpreendimentoId: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
-			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val()
+			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val(),
+			ExibeQtdKg: bExibeKg
+
 		};
 
 		//Valida Item já adicionado na Grid
@@ -1242,6 +1247,12 @@ PTVEmitir = {
 		$('.gridProdutos tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			retorno.push(JSON.parse($('.hdnItemJson', this).val()));
 		});
+
+
+		for (var i = 0; i < retorno.length; i++)
+		    if (retorno[i].ExibeQtdKg) {
+		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
+		    }
 
 		objeto.Produtos = retorno;
 

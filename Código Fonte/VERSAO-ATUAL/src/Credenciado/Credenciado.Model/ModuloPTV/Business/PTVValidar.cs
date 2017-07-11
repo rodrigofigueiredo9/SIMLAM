@@ -429,6 +429,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
+                    if (item.ExibeQtdKg)
+                        item.Quantidade = item.Quantidade / 1000;
+
 					if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
 					{
 						Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);

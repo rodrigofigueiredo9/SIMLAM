@@ -66,6 +66,8 @@ PTVOutroEmitir = {
         PTVOutroEmitir.container.delegate('.btnVerificarDestinatario', 'click', PTVOutroEmitir.onValidarDocumento);
         PTVOutroEmitir.container.delegate('.btnLimparDestinatario', 'click', PTVOutroEmitir.onLimparDestinatario);
 
+
+
         PTVOutroEmitir.container.delegate('.btnAddPraga', 'click', PTVOutroEmitir.addPraga);
 
         PTVOutroEmitir.container.delegate('.btnExcluirAnexo', 'click', PTVOutroEmitir.onExcluirLinha);
@@ -164,8 +166,15 @@ PTVOutroEmitir = {
         $('.btnModalOu', PTVOutroEmitir.container).hide();
         $('.txtNumero', PTVOutroEmitir.container).val('');
         $('.ddlOrigemTipo', PTVOutroEmitir.container).ddlFirst();
-        $('.ddlNumeroOrigem, .ddlProdutoCultura, .ddlProdutoCultivar', PTVOutroEmitir.container).ddlClear();
+        $('.ddlNumeroOrigem, .ddlProdutoCultura, .ddlProdutoCultivar, .ddlEstados, .ddlMunicipios', PTVOutroEmitir.container).ddlClear();
         $('.txtProdutoQuantidade', PTVOutroEmitir.container).val('');
+
+        $('.txtValidade', PTVOutroEmitir.container).val('');
+        $('.txtTecnico', PTVOutroEmitir.container).val('');
+        $('.txtNumHab', PTVOutroEmitir.container).val('');
+
+        $(".gridProdutos > tbody").html("");
+        $(".gridPragas > tbody").html("");
         
         var interessado = $('.interessado', PTVOutroEmitir.container);
         $('input, select', interessado).addClass('disabled').attr('disabled', 'disabled').val('');
