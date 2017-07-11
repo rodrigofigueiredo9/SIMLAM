@@ -283,7 +283,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (cfo.DataEmissao.Data > ptvData.Data)
+					if (cfo.DataAtivacao.Data < ptvData.Data)
 					{
 						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
 					}

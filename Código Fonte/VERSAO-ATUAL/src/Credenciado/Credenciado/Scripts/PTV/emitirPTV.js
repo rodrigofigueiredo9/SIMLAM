@@ -375,6 +375,9 @@ PTVEmitir = {
 			produtos.push(JSON.parse($(this).val()));
 		});
 
+		
+
+
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlObterResponsaveisEmpreend,
 			data: JSON.stringify({ empreendimentoID: empreendimentoID, produtos: produtos }),
@@ -655,9 +658,12 @@ PTVEmitir = {
 		if ($('.txtEmpreendimento', PTVEmitir.container).text() == '') {
 			$('.hdnEmpreendimentoID', PTVEmitir.container).val(item.EmpreendimentoId);
 			$('.txtEmpreendimento', PTVEmitir.container).val(item.EmpreendimentoDeclaratorio);
+			
+			if (item.OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
+			    
+			    PTVEmitir.onObterResposaveisEmpreend(item.EmpreendimentoId);
 
-			if (item.OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)
-			    PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
+			}
 		
 		}
 
