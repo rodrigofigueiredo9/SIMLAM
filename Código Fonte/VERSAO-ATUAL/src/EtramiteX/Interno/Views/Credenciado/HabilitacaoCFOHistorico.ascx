@@ -47,7 +47,7 @@
 			    <tr>
 				    <th width="20%">Situação</th>
 				    <th>Motivo</th>
-				    <th width="20%">Data da Penalidade</th>
+				    <th width="20%">Data da Situação</th>
                     <th width="20%">Nº do Processo</th>
 				    <th width="15%">Data do Histórico</th>
 			    </tr>
