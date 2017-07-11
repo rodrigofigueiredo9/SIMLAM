@@ -704,8 +704,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 #endregion
 
-			}
+        
 
+			}
 
             #region Arquivos
 
@@ -713,7 +714,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
             {
 
                 Comando comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
-				    a.tid from tab_ptv_arquivo a, tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem");
+				        a.tid from idaf.tab_ptv_arquivo a, tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem");
 
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 
@@ -740,9 +741,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
                 }
             }
 
+
             #endregion
 
             return PTV;
+
 		}
 
         internal bool VerificaSePTVAssociadoLote(Int64 ptvNumero)
