@@ -283,10 +283,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (cfo.DataAtivacao.Data < ptvData.Data)
-					{
-						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
-					}
+                    //if (cfo.DataAtivacao.Data < ptvData.Data)
+                    //{
+                    //    Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                    //}
 					break;
 
 				case eDocumentoFitossanitarioTipo.CFOC:
