@@ -11,32 +11,43 @@ using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
-	public class ArquivoController : DefaultController
-	{
-		[HttpPost]
-		[Permite(Tipo = ePermiteTipo.Logado)]
-		public string Arquivo(HttpPostedFileBase file)
-		{
-			string msg = string.Empty;
-			Arquivo arquivo = null;
-			try
-			{
-				ArquivoBus _bus = new ArquivoBus(eExecutorTipo.Credenciado);
-				arquivo = _bus.SalvarTemp(file);
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
+    public class ArquivoController : DefaultController
+    {
+        [HttpPost]
+        [Permite(Tipo = ePermiteTipo.Logado)]
+        public string Arquivo(HttpPostedFileBase file)
+        {
+            string msg = string.Empty;
+            Arquivo arquivo = null;
+            try
+            {
+                ArquivoBus _bus;
+                string url = HttpContext.Request.UrlReferrer.ToString();
+                if (url.IndexOf("PTVOutro") >= 0)
+                    _bus = new ArquivoBus(eExecutorTipo.Interno);
+                else
+                    _bus = new ArquivoBus(eExecutorTipo.Credenciado);
 
-			return ViewModelHelper.JsSerializer.Serialize(new { Msg = Validacao.Erros, Arquivo = arquivo });
-		}
+                arquivo = _bus.SalvarTemp(file);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
-		public FileResult Baixar(int id)
-		{
-			return ViewModelHelper.BaixarArquivo(id);
-		}
+            return ViewModelHelper.JsSerializer.Serialize(new { Msg = Validacao.Erros, Arquivo = arquivo });
+        }
+
+        [Permite(Tipo = ePermiteTipo.Logado)]
+        public FileResult Baixar(int id)
+        {
+            string url = HttpContext.Request.UrlReferrer.ToString();
+            if (url.IndexOf("PTVOutro") >= 0)
+                return ViewModelHelper.BaixarArquivoInterno(id);
+            else
+                return ViewModelHelper.BaixarArquivo(id);
+
+        }
 
 
         public FileResult BaixarInterno(int id)
@@ -45,10 +56,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         }
 
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
-		public FileResult BaixarTemporario(string nomeTemporario, string contentType)
-		{
-			return ViewModelHelper.BaixarArquivoTemporario(nomeTemporario, contentType);
-		}
-	}
+        [Permite(Tipo = ePermiteTipo.Logado)]
+        public FileResult BaixarTemporario(string nomeTemporario, string contentType)
+        {
+            return ViewModelHelper.BaixarArquivoTemporario(nomeTemporario, contentType);
+        }
+    }
 }

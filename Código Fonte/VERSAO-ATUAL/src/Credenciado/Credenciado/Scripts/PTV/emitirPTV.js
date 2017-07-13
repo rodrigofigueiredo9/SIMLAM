@@ -1222,7 +1222,7 @@ PTVEmitir = {
 			Numero: $('.txtNumero', PTVEmitir.container).val(),
 			DataEmissao: { DataTexto: $('.txtDataEmissao', PTVEmitir.container).val() },
 			Situacao: $('.ddlSituacoes', PTVEmitir.container).val(),
-			Empreendimento: $('.hdnEmpreendimentoID', PTVEmitir.container).val(),
+			Empreendimento: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
 			EmpreendimentoTexto: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelEmpreendimento: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			PartidaLacradaOrigem: $('.rbPartidaLacradaOrigem:checked', PTVEmitir.container).val(),

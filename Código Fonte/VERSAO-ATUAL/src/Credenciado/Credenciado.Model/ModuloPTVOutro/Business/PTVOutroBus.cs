@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
                     #region Arquivos/Diretorio
 
-                    ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
+                    ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 
                  
                     if (ptv.Anexos != null && ptv.Anexos.Count > 0)
@@ -81,7 +81,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
                             }
                         }
 
-                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                         {
                             bancoDeDados.IniciarTransacao();
 
