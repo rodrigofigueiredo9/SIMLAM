@@ -222,21 +222,13 @@ Lote = {
 				if (response.EhValido) {
 				    $('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
 
-				    var txtUnd = $('select[name=UnidadeMedida] option:selected').text();
-
-				    var total = $('select[name=UnidadeMedida]').children('option').length;
-
-				    if (txtUnd == "T") {
-
-				        $('select[name=UnidadeMedida]').append(new Option('KG', 2));
-				    }
-
 				    var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
 				    
 				    $('.txtQuantidade', Lote.container).val(quantidade);
 				    $('.txtQuantidade', Lote.container).change();
 
-					$('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
+				    $('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
+				    $('.ddlUnidadeMedida', Lote.container).attr('disabled', 'disabled').addClass('disaled');
 				}
 
 				if (response.Msg && response.Msg.length > 0) {

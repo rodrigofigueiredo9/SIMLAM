@@ -643,7 +643,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 		            where lu.id = pp.unidade_medida 
                         and pp.cultura = :culturaID 
                         and pp.cultivar = :cultivarID
-                        and pp.ptv = :origemID", EsquemaBanco);
+                        and pp.ptv = :origemID
+                        and lu.texto = 'T'", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
 					comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
@@ -693,7 +694,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					where lu.id = pp.unidade_medida 
 						and pp.cultura = :culturaID 
 						and pp.cultivar = :cultivarID
-						and pp.ptv = :origemID", EsquemaBanco);
+						and pp.ptv = :origemID
+                        and lu.texto = 'T'", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
 					comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
@@ -739,17 +741,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 
 						comando = bancoDeDados.CriarComando(@"
-						select (case when i.tipo_producao = 1 then (select lu.id from lov_crt_uni_prod_uni_medida lu where lu.id = 2)
-									when i.tipo_producao = 2 then (select lu.id from lov_crt_uni_prod_uni_medida lu where lu.id = 1)
-									else (select lu.id from lov_crt_uni_prod_uni_medida lu where lu.id = 3) end) id,
+						select (case when i.tipo_producao = 1 then 2
+									when i.tipo_producao = 2 then 1
+									else 3 end) id,
 							(case when i.tipo_producao = 1 then (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = 2)
 									when i.tipo_producao = 2 then (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = 1)
 									else (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = 3) end) texto
 						from tab_cfo_produto cp, ins_crt_unidade_prod_unidade i
 							where i.id = cp.unidade_producao
 							and i.cultivar = :cultivarID
-							and i.cultura = :culturaID
-							and cp.cfo = :origemID", EsquemaBanco);
+							and i.cultura = :culturaID   
+							and cp.cfo = :origemID
+                        group by i.tipo_producao", EsquemaBanco);
 						break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
