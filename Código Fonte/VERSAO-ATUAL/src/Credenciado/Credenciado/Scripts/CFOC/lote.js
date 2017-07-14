@@ -231,10 +231,10 @@ Lote = {
 				        $('select[name=UnidadeMedida]').append(new Option('KG', 2));
 				    }
 
+				    var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
 				    
-				    $('.txtQuantidade', Lote.container).val(response.QtdDocOrigem);
+				    $('.txtQuantidade', Lote.container).val(quantidade);
 				    $('.txtQuantidade', Lote.container).change();
-				    //alert(response.QtdDocOrigem);
 
 					$('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
 				}
@@ -259,8 +259,6 @@ Lote = {
 		var txtUnidMedida = $('.ddlUnidadeMedida :selected', container).text();
 
 		var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
-
-	
 
 		var item = {
 			Numero: $('.txtNumeroOrigem', container).val(),
