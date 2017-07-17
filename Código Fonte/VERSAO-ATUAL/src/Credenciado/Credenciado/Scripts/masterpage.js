@@ -951,7 +951,7 @@ function SetClickCheckBox(event, controlePai) {
 Modal = {
 
 	/////Script para fechar o Modal
-	load: function () {
+    load: function () {
 		$('body').delegate(".fMdl", "click", function () {
 			Modal.fechar($(this));
 		});
@@ -1263,7 +1263,6 @@ Modal = {
 	},
 
 	abrirHtml: function (content, options) {
-
 		var settings = $.extend({}, {
 			'tamanho': Modal.tamanhoModalPequena,
 			'onLoadCallbackName': '',

@@ -31,13 +31,14 @@
 				<thead>
 					<tr>
 						<th>Tipo do Documento</th>
-						<th width="30%">Número Inicial</th>
-						<th width="30%">Número Final</th>
+						<th width="25%">Número Inicial</th>
+						<th width="25%">Número Final</th>
+                        <th width="15%">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosBloco) { %>
-					<tr>
+					<tr class="Linha">
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 							<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
@@ -48,6 +49,11 @@
 						<td>
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
+                        <td>
+                            <input type="hidden" class="ItemID" value="<%:item.ID%>" />
+                            <input type="button" title="Editar" class="icone editar btnEditar" />
+                            <input type="button" title="Excluir" class="icone excluir btnExcluir" />
+                        </td>
 					</tr>
 					<% } %>
 
@@ -58,6 +64,7 @@
 						</td>
 						<td><span class="NumeroInicial"></span></td>
 						<td><span class="NumeroFinal"></span></td>
+                        <td><span class="Acoes"></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -92,13 +99,14 @@
 				<thead>
 					<tr>
 						<th>Tipo do Documento</th>
-						<th width="30%">Número Inicial</th>
-						<th width="30%">Número Final</th>
+						<th width="25%">Número Inicial</th>
+						<th width="25%">Número Final</th>
+                        <th width="15%">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
 					<% foreach (var item in Model.NumerosDigitais) { %>
-					<tr>
+					<tr class="Linha">
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 							<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
@@ -109,6 +117,11 @@
 						<td>
 							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
 						</td>
+                        <td>
+                            <input type="hidden" class="ItemID" value="<%:item.ID%>" />
+                            <input type="button" title="Editar" class="icone editar btnEditar" />
+                            <button type="button" title="Excluir" class="icone excluir btnExcluir"></button>
+                        </td>
 					</tr>
 					<% } %>
 					<tr class="trTemplateRow hide">
@@ -118,6 +131,7 @@
 						</td>
 						<td><span class="NumeroInicial"></span></td>
 						<td><span class="NumeroFinal"></span></td>
+                        <td><span class="Acoes"></span></td>
 					</tr>
 				</tbody>
 			</table>
