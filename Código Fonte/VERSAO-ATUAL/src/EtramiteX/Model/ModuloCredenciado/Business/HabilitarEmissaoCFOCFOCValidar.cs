@@ -218,24 +218,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			}
 			else
 			{
-				if (!ValidacoesGenericasBus.ValidarData(habilitar.SituacaoData))
+				if (!ValidacoesGenericasBus.ValidarData(habilitar.SituacaoData)
+                    || Convert.ToDateTime(habilitar.SituacaoData) < new DateTime(2000, 1, 1))
 				{
 					Validacao.Add(Msg.SituacaoDataInvalida);
 				}
 			}
 
+            //Nenhuma
 			if (habilitar.Situacao == 0)
 			{
 				Validacao.Add(Msg.SituacaoObrigatoria);
 			}
 
-			if (habilitar.Situacao == 3)
-			{
-				if (habilitar.Motivo == 0)
-				{
-					Validacao.Add(Msg.MotivoObrigatorio);
-				}
-			}
+            //Ativo
+            if (habilitar.Situacao == 1)
+            {
+                if (string.IsNullOrWhiteSpace(habilitar.NumeroDua))
+                {
+                    Validacao.Add(Msg.NumeroDuaObrigatorio);
+                }
+
+                if (string.IsNullOrWhiteSpace(habilitar.DataPagamentoDUA))
+                {
+                    Validacao.Add(Msg.DataPagamentoObrigatorio);
+                }
+
+                
+            }
+
+            //Inativo
+            if (habilitar.Situacao == 3)
+            {
+                if (habilitar.Motivo == null || habilitar.Motivo == 0)
+                {
+                    Validacao.Add(Msg.MotivoObrigatorio);
+                }
+                else if ((habilitar.Motivo == (int)eHabilitacaoCFOCFOCMotivo.Suspensao || habilitar.Motivo == (int)eHabilitacaoCFOCFOCMotivo.Descredenciamento)
+                         && string.IsNullOrWhiteSpace(habilitar.NumeroProcesso))
+                {
+                    Validacao.Add(Msg.NumeroProcessoObrigatorio);
+                }
+            }
 
 			if (String.IsNullOrEmpty(habilitar.Observacao))
 			{

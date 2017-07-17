@@ -48,6 +48,7 @@
 					<th width="12%">Área(ha)</th>
 					<th>Cultivar</th>
 					<th width="14%">Quantidade/Ano</th>
+                    <th style="width:14%;">Situação</th>
 					<th width="10%">Ações</th>
 				</tr>
 			</thead>
@@ -72,6 +73,11 @@
 							<%=item.EstimativaProducaoQuantidadeAno.ToStringTrunc(4) + " " +item.EstimativaProducaoUnidadeMedida%> 
 						</label>
 					</td>
+                    <td>
+						<label class="lblAtivo" title="<%=item.Situacao %>">
+							<%=item.Situacao%>
+						</label>
+					</td>
 					<td>
 						<%if(!Model.IsVisualizar){ %> <a class="icone excluir btnExcluirUnidadeProducao"></a><%} %>
 						<%if(!Model.IsVisualizar){ %> <a class="icone editar btnEditarUnidadeProducao"></a><%} %>
@@ -93,6 +99,9 @@
 					</td>
 					<td>
 						<label class="lblEstimativaQuantidadeAno" title=""> </label>
+					</td>
+                    <td>
+						<label class="lblAtivo" title="Inativo"> Inativo </label>
 					</td>
 					<td>
 						<a class="icone excluir btnExcluirUnidadeProducao"></a>

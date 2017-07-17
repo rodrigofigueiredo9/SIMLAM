@@ -58,6 +58,20 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado
 			set { _listaTipoCred = value; }
 		}
 
+        private List<SelectListItem> _listaSituacaoHab = new List<SelectListItem>();
+        public List<SelectListItem> ListaSituacaoHab
+        {
+            get { return _listaSituacaoHab; }
+            set { _listaSituacaoHab = value; }
+        }
+
+        private List<SelectListItem> _listaMotivoHab = new List<SelectListItem>();
+        public List<SelectListItem> ListaMotivoHab
+        {
+            get { return _listaMotivoHab; }
+            set { _listaMotivoHab = value; }
+        }
+
 		public String UltimaBusca { get; set; }
 
 		public ListarVM()
@@ -69,12 +83,26 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCredenciado
 			SetListItens(quantPaginacao, tipoCredenciado, situacaoCredenciado);
 		}
 
+        public ListarVM(List<QuantPaginacao> quantPaginacao, List<Situacao> tipoCredenciado, List<Situacao> situacaoCredenciado, List<Situacao> situacaoHabilitacao, List<Lista> motivosHabilitacao)
+        {
+            SetListItens(quantPaginacao, tipoCredenciado, situacaoCredenciado, situacaoHabilitacao, motivosHabilitacao);
+        }
+
 		public void SetListItens(List<QuantPaginacao> quantPaginacao, List<Situacao> tipoCredenciado, List<Situacao> situacaoCredenciado, int quantidadePagina = 5)
 		{
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
 			ListaSituacaoCred = ViewModelHelper.CriarSelectList(situacaoCredenciado, true, true);
 			ListaTipoCred = ViewModelHelper.CriarSelectList(tipoCredenciado, true, true);
 		}
+
+        public void SetListItens(List<QuantPaginacao> quantPaginacao, List<Situacao> tipoCredenciado, List<Situacao> situacaoCredenciado, List<Situacao> situacaoHabilitacao, List<Lista> motivosHabilitacao, int quantidadePagina = 5)
+        {
+            Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
+            ListaSituacaoCred = ViewModelHelper.CriarSelectList(situacaoCredenciado, true, true);
+            ListaTipoCred = ViewModelHelper.CriarSelectList(tipoCredenciado, true, true);
+            ListaSituacaoHab = ViewModelHelper.CriarSelectList(situacaoHabilitacao, true, true);
+            ListaMotivoHab = ViewModelHelper.CriarSelectList(motivosHabilitacao, true, true);
+        }
 
 		public void SetResultados(List<ListarFiltro> resultados)
 		{

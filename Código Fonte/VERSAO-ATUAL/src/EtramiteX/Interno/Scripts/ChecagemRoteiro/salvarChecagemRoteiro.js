@@ -184,7 +184,7 @@ ChecagemRoteiroSalvar = {
 	},
 
 	onVisualizarRoteiroClick: function () {
-		var idRoteiro = $(this).closest("tr").find('.hdnRoteiroId').val();
+	    var idRoteiro = $(this).closest("tr").find('.hdnRoteiroId').val();
 		Modal.abrir(ChecagemRoteiroSalvar.visualizarRoteiroModalLink + "/" + idRoteiro, null, function (container) {
 			Modal.defaultButtons(container);
 		});

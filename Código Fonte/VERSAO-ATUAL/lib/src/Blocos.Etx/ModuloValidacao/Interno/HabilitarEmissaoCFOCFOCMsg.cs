@@ -29,14 +29,17 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem NumeroHabilitacaoTamanhoInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_NumeroHabilitacao", Texto = "O número de habilitação deve possuir o tamanho máximo de 8 caracteres." }; } }
 		public Mensagem NumeroHabilitacaoJaExiste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_NumeroHabilitacao", Texto = "O número de habilitação já existe no sistema." }; } }
 		public Mensagem NumeroDuaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_NumeroDua", Texto = "Informe o número do DUA." }; } }
+        public Mensagem DataPagamentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_DataPagamento", Texto = "Informe a data do pagamento." }; } }
 		//
 		public Mensagem SituacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Situacao_Novo, #Situacao_Novo", Texto = "Selecione a situação da habilitação." }; } }
-		public Mensagem MotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissa_Motivo_Novo, #Motivo_Novo", Texto = "Selecione o motivo da alteração." }; } }	//
+		public Mensagem MotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Motivo_Novo, #Motivo_Novo", Texto = "Selecione o motivo da alteração." }; } }
+        public Mensagem NumeroProcessoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_Numero_Processo, #Numero_Processo", Texto = "Informe o número do processo." }; } }
 		public Mensagem ValidadeRegistroObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_ValidadeRegistro, #ValidadeRegistro_Novo", Texto = "Informe a validade da taxa de registro." }; } }
 		public Mensagem ValidadeRegistroInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_ValidadeRegistro, #ValidadeRegistro_Novo", Texto = "Data de validade da taxa de registro inválida." }; } }
 
 		public Mensagem SituacaoDataObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_SituacaoData", Texto = "Informe a data da situação." }; } }
 		public Mensagem SituacaoDataInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_SituacaoData", Texto = "Data de situação inválida." }; } }
+        public Mensagem SituacaoAnteriorVigente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_SituacaoData", Texto = "Não é possível alterar a situação para Ativo antes do fim do prazo de inativação (Suspensão - 3 meses / Descredenciamento - 18 meses)." }; } }
 
 		//
 		public Mensagem NumeroHabilitacaoOrigemObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "HabilitarEmissao_NumeroHabilitacaoOrigem", Texto = "Informe o número da habilitação de origem." }; } }

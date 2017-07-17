@@ -7,7 +7,10 @@ HabilitacaoCFOAlterarSituacao = {
 		urls: {
 			alterarSituacao: null
 		},
-		situacaoMotivo: null
+		situacaoMotivo: null,
+		situacaoMotivoAtivo: null,
+		motivoSuspenso: null,
+        motivoDescredenciado: null
 	},
 	container: null,
 
@@ -18,16 +21,150 @@ HabilitacaoCFOAlterarSituacao = {
 		HabilitacaoCFOAlterarSituacao.container = MasterPage.getContent(container);
 		HabilitacaoCFOAlterarSituacao.container.delegate('.btnSalvar', 'click', HabilitacaoCFOAlterarSituacao.alterarSituacao);
 		$(".ddlSituacao", HabilitacaoCFOAlterarSituacao.container).change(HabilitacaoCFOAlterarSituacao.situacaoChange);
+		$(".ddlMotivo", HabilitacaoCFOAlterarSituacao.container).change(HabilitacaoCFOAlterarSituacao.motivoChange);
+		$(".txtSituacaoData", HabilitacaoCFOAlterarSituacao.container).change(HabilitacaoCFOAlterarSituacao.dataInicialChange);
+
+		HabilitacaoCFOAlterarSituacao.container = container;
+	},
+
+    //retorna a data no formato dd/MM/aaaa
+	dataFormatoBR: function(data){
+	    return data.getDate() + '/' + (data.getMonth() + 1) + '/' + data.getFullYear();
+	},
+
+	pegaDataTela: function(){
+	    var dataString = $(".txtSituacaoData", HabilitacaoCFOAlterarSituacao.container).val();
+	    var dia = (dataString.substring(0, 2));
+	    var mes = dataString.substring(3, 5);
+
+	    var ano = 2000;
+	    if (dataString.length == 8) {
+	        var ano = "20" + dataString.substring(6, 8);
+	    } else {
+	        var ano = dataString.substring(6, 10);
+	    }
+	    var data = new Date(ano, mes - 1, dia); //mes-1, pq jan=0, fev=1, mar=2...
+
+	    return data;
 	},
 
 	situacaoChange: function () {
-		if ($(".ddlSituacao", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.situacaoMotivo) {
-			$(".divMotivo", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+        //SITUAÇÃO: INATIVO
+	    if ($(".ddlSituacao", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.situacaoMotivo) {
+
+	        //Motivo
+	        $(".divMotivo", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+	        $('.ddlMotivo :selected', HabilitacaoCFOAlterarSituacao.container).ddlFirst();
+	        $('.labelNovoMotivo', HabilitacaoCFOAlterarSituacao.container).text("Novo Motivo *");
+	        //Remove o motivo Advertência
+	        $(".ddlMotivo option[value='1']", HabilitacaoCFOAlterarSituacao.container).show();
+	        $(".ddlMotivo option[value='2']", HabilitacaoCFOAlterarSituacao.container).show();
+	        $(".ddlMotivo option[value='3']", HabilitacaoCFOAlterarSituacao.container).show();
+	        $(".ddlMotivo option[value='4']", HabilitacaoCFOAlterarSituacao.container).show();
+	        $(".ddlMotivo option[value='5']", HabilitacaoCFOAlterarSituacao.container).hide();
+
+            //Número do DUA
+	        $(".divNumeroDua", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+
+	        //Data do pagamento
+	        $(".divDataPagamento", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+	    }
+        //SITUAÇÃO: ATIVO
+	    else if ($(".ddlSituacao", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.situacaoMotivoAtivo) {
+
+	        //Motivo
+		    $(".divMotivo", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+		    $('.ddlMotivo :selected', HabilitacaoCFOAlterarSituacao.container).ddlFirst();
+		    $('.labelNovoMotivo', HabilitacaoCFOAlterarSituacao.container).text("Novo Motivo");
+            //Remove todos os motivos que não sejam Advertência
+		    $(".ddlMotivo option[value='1']", HabilitacaoCFOAlterarSituacao.container).hide();
+		    $(".ddlMotivo option[value='2']", HabilitacaoCFOAlterarSituacao.container).hide();
+		    $(".ddlMotivo option[value='3']", HabilitacaoCFOAlterarSituacao.container).hide();
+		    $(".ddlMotivo option[value='4']", HabilitacaoCFOAlterarSituacao.container).hide();
+		    $(".ddlMotivo option[value='5']", HabilitacaoCFOAlterarSituacao.container).show();
+
+	        //Número do DUA
+		    $(".divNumeroDua", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+
+	        //Data do Pagamento
+		    $(".divDataPagamento", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
 		}
-		else {
-			$(".divMotivo", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
-			$('.ddlMotivo :selected', container).ddlFirst();
+        //OUTRAS (SELECIONE)
+	    else {
+            //Motivo
+		    $(".divMotivo", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+		    $('.ddlMotivo :selected', HabilitacaoCFOAlterarSituacao.container).ddlFirst();
+
+	        //Número do DUA
+		    $(".divNumeroDua", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+
+	        //Data do pagamento
+		    $(".divDataPagamento", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
 		}
+	},
+
+	motivoChange: function () {
+	    //MOTIVO: SUSPENSAO
+	    if ($(".ddlMotivo", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.motivoSuspenso) {
+
+	        //Data da nova situação
+	        $(".divDataNovaSituacao", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+
+	        //Data final da situação
+	        $(".divDataFinalSituacao", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+	        var dataFinal = HabilitacaoCFOAlterarSituacao.pegaDataTela();
+	        dataFinal.setMonth(dataFinal.getMonth() + 3);
+	        $(".txtFinalSituacaoData", HabilitacaoCFOAlterarSituacao.container).val(HabilitacaoCFOAlterarSituacao.dataFormatoBR(dataFinal));
+
+	        //Número do Processo
+	        $(".divNumeroProcesso", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+	    }
+	    //MOTIVO: DESCREDENCIAMENTO
+	    else if ($(".ddlMotivo", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.motivoDescredenciado) {
+
+	        //Data da nova situação
+	        $(".divDataNovaSituacao", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+
+	        //Data final da situação
+	        $(".divDataFinalSituacao", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+	        var dataFinal = HabilitacaoCFOAlterarSituacao.pegaDataTela();
+	        dataFinal.setMonth(dataFinal.getMonth() + 18);
+	        $(".txtFinalSituacaoData", HabilitacaoCFOAlterarSituacao.container).val(HabilitacaoCFOAlterarSituacao.dataFormatoBR(dataFinal));
+
+	        //Número do Processo
+	        $(".divNumeroProcesso", HabilitacaoCFOAlterarSituacao.container).removeClass("hide");
+	    }
+	    else {
+
+	        //Data da nova situação
+	        $(".divDataNovaSituacao", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+
+	        //Data final da situação
+	        $(".divDataFinalSituacao", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+
+	        //Número do Processo
+	        $(".divNumeroProcesso", HabilitacaoCFOAlterarSituacao.container).addClass("hide");
+	    }
+	},
+
+	dataInicialChange: function () {
+	    //MOTIVO: SUSPENSAO
+	    if ($(".ddlMotivo", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.motivoSuspenso) {
+
+	        //Data final da situação
+	        var dataFinal = HabilitacaoCFOAlterarSituacao.pegaDataTela();
+	        dataFinal.setMonth(dataFinal.getMonth() + 3);
+	        $(".txtFinalSituacaoData", HabilitacaoCFOAlterarSituacao.container).val(HabilitacaoCFOAlterarSituacao.dataFormatoBR(dataFinal));
+
+	    }
+	    //MOTIVO: DESCREDENCIAMENTO
+	    else if ($(".ddlMotivo", HabilitacaoCFOAlterarSituacao.container).val() == HabilitacaoCFOAlterarSituacao.settings.motivoDescredenciado) {
+
+	        //Data final da situação
+	        var dataFinal = HabilitacaoCFOAlterarSituacao.pegaDataTela();
+	        dataFinal.setMonth(dataFinal.getMonth() + 18);
+	        $(".txtFinalSituacaoData", HabilitacaoCFOAlterarSituacao.container).val(HabilitacaoCFOAlterarSituacao.dataFormatoBR(dataFinal));
+	    }
 	},
 
 	obter: function () {
@@ -37,7 +174,10 @@ HabilitacaoCFOAlterarSituacao = {
 			Situacao: $('.ddlSituacao :selected', container).val(),
 			SituacaoData: $('.txtSituacaoData', container).val(),
 			Motivo: $('.ddlMotivo :selected', container).val(),
-			Observacao: $('.txtObservacao', container).val()
+			Observacao: $('.txtObservacao', container).val(),
+			NumeroDua: $('.txtNumeroDua', container).val(),
+			DataPagamentoDUA: $('.txtDataPagamentoDua', container).val(),
+			NumeroProcesso: $('.txtNumeroProcesso', container).val()
 		}
 
 		return obj;

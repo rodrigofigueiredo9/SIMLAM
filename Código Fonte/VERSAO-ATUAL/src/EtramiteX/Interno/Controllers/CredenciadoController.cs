@@ -429,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao = paginacao;
 			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-			vm.SetListItens(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, vm.Paginacao.QuantPaginacao);
+            vm.SetListItens(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, _busLista.HabilitacaoCFOSituacoes, _busLista.HabilitacaoCFOMotivos, vm.Paginacao.QuantPaginacao);
 
 			var resultados = _busHabilitar.Filtrar(vm.Filtros, vm.Paginacao);
 
@@ -451,7 +451,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCListar, ePermissao.HabilitarEmissaoCFOCFOCVisualizar, ePermissao.HabilitarEmissaoCFOCFOCEditar, ePermissao.HabilitarEmissaoCFOCFOCAlterarSituacao })]
 		public ActionResult IndexHabilitarEmissaoCFOCFOC()
 		{
-			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes);
+			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.CredenciadoTipos, _busLista.CredenciadoSituacoes, _busLista.HabilitacaoCFOSituacoes, _busLista.HabilitacaoCFOMotivos);
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return View("IndexHabilitarEmissaoCFOCFOC", vm);
 		}
@@ -503,11 +503,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return PartialView("HabilitarEmissaoCFOCFOCSalvar", viewModel);
 		}
 
+        //Carrega e preenche o modal "Alterar Situação da Habilitação"
 		[Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCAlterarSituacao })]
 		public ActionResult AlterarSituacaoHabilitacaoCFO(int id)
 		{
-			var motivos = _busLista.HabilitacaoCFOMotivos.Where(x => Convert.ToInt32(x.Id) < 3).ToList();
-			HabilitarEmissaoCFOCFOCVM vm = new HabilitarEmissaoCFOCFOCVM(_busLista.HabilitacaoCFOSituacoes, _busLista.Estados, motivos);
+            var motivos = _busLista.HabilitacaoCFOMotivos;
+            var situacoes = _busLista.HabilitacaoCFOSituacoes.Where(x => x.Texto.ToLower() != "advertido").ToList();
+			HabilitarEmissaoCFOCFOCVM vm = new HabilitarEmissaoCFOCFOCVM(situacoes, _busLista.Estados, motivos);
 			vm.HabilitarEmissao = _busHabilitar.Obter(id);
 
 			var sit = vm.Situacoes.FirstOrDefault(x => x.Value == vm.HabilitarEmissao.Situacao.ToString());
@@ -519,6 +521,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return PartialView("HabilitacaoCFOAlterarSituacao", vm);
 		}
 
+        //Salvar na tela de "Alterar Situação da Habilitação"
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCAlterarSituacao })]
 		public ActionResult AlterarSituacaoHabilitacaoCFO(HabilitarEmissaoCFOCFOC habilitar)
@@ -551,6 +554,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("IndexHabilitarEmissaoCFOCFOC", Validacao.QueryParamSerializer());
 			}
 		}
+
+        [Permite(RoleArray = new Object[] { ePermissao.HabilitarEmissaoCFOCFOCListar, ePermissao.HabilitarEmissaoCFOCFOCVisualizar })]
+        public ActionResult VisualizarHistoricoHabilitacao(string id, string nome, string habilitacao)
+        {
+            HistoricoEmissaoCFOCFOCVM vm = new HistoricoEmissaoCFOCFOCVM();
+            vm.ListaHistoricoHabilitacao = _busHabilitar.ObterHistoricoHabilitacoes(Convert.ToInt32(id));
+            vm.Nome = nome.Replace("\"", string.Empty);
+            vm.NumeroHabilitacao = habilitacao.Replace("\"", string.Empty);
+
+            return PartialView("HabilitacaoCFOHistorico", vm);
+        }
 
 		#endregion
 	}
