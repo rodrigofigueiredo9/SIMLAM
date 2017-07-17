@@ -14,6 +14,8 @@
 		public string DataAtivacao { get; set; }
 		public int Situacao { get; set; }
 		public string SituacaoTexto { get; set; }
+        public int Motivo { get; set; }
+        public string MotivoTexto { get; set; }
 		public int QuantPaginacao { get; set; }
 		public bool PodeBloquear
 		{

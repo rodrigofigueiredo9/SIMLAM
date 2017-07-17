@@ -233,14 +233,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				update tab_hab_emi_cfo_cfoc p set p.motivo = :motivo, p.observacao = :observacao, p.situacao_data =:situacao_data, 
-				p.situacao = :situacao, p.tid = :tid where p.id = :id", EsquemaBanco);
+				update tab_hab_emi_cfo_cfoc p
+                set p.motivo = :motivo,
+                    p.observacao = :observacao,
+                    p.situacao_data =:situacao_data, 
+				    p.situacao = :situacao,
+                    p.numero_dua = :numero_dua,
+                    p.validade_registro = :validade_registro,
+                    p.numero_processo = :numero_processo,
+                    p.tid = :tid
+                where p.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", habilitar.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivo", (habilitar.Motivo.HasValue && habilitar.Motivo > 0) ? habilitar.Motivo : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("observacao", DbType.String, 250, habilitar.Observacao);
-				comando.AdicionarParametroEntrada("situacao_data", habilitar.SituacaoData, DbType.DateTime);
+				comando.AdicionarParametroEntrada("situacao_data", Convert.ToDateTime(habilitar.SituacaoData), DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", habilitar.Situacao, DbType.Int32);
+                comando.AdicionarParametroEntrada("numero_dua", DbType.String, 30, habilitar.NumeroDua);
+                comando.AdicionarParametroEntrada("validade_registro", Convert.ToDateTime(habilitar.ValidadeRegistro), DbType.DateTime);
+                comando.AdicionarParametroEntrada("numero_processo", DbType.String, 30, habilitar.NumeroProcesso);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -270,6 +281,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 			return retorno;
 		}
+
+        //Verificar se a situação da habilitação pode ser alterado para Ativa, caso a inativação tenha ocorrido por suspensão ou descredenciamento
+        internal Boolean ValidarPodeAtivar(Int32 id)
+        {
+            Boolean retorno = true;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                DateTime dataDesc = DateTime.Now.AddMonths(-18);
+                DateTime dataSusp = DateTime.Now.AddMonths(-3);
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(th.situacao)
+                                    from tab_hab_emi_cfo_cfoc th
+                                    where th.situacao = 3
+                                          and ((th.motivo = 1 and th.situacao_data >= '" + dataDesc.ToShortDateString() + // :dataDescredenciamento)
+                                              @"') or (th.motivo = 2 and th.situacao_data >= '" + dataSusp.ToShortDateString() + // :dataSuspensao))
+                                          @"')) and th.id = " + id);
+
+                //comando.AdicionarParametroEntrada("dataDescredenciamento", dataDesc, DbType.Date);
+                //comando.AdicionarParametroEntrada("dataSuspensao", dataSusp, DbType.Date);
+                //comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                retorno = bancoDeDados.ExecutarScalar(comando).ToString() == "0";
+            }
+            return retorno;
+        }
 
 		internal Boolean ValidarNumeroHabilitacao(Int32 id, String numero)
 		{
@@ -318,6 +356,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("cpfcnpj", filtros.Dados.CpfCnpj, DbType.String);
 				}
 
+                if (filtros.Dados.Situacao != 0)
+                {
+                    comandtxt += " and cc.situacao = :situacao_habilitacao";
+
+                    comando.AdicionarParametroEntrada("situacao_habilitacao", filtros.Dados.Situacao, DbType.Int32);
+                }
+                if (filtros.Dados.Motivo != 0)
+                {
+                    comandtxt += " and cc.motivo = :motivo_habilitacao";
+
+                    comando.AdicionarParametroEntrada("motivo_habilitacao", filtros.Dados.Motivo, DbType.Int32);
+                }
+
 				comandtxt += comando.FiltroAnd("cc.numero_habilitacao", "numero_habilitacao", filtros.Dados.NumeroHabilitacao);
 
 				if (!string.IsNullOrWhiteSpace(filtros.Dados.NomeComumPraga))
@@ -355,10 +406,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				comando.AdicionarParametroEntrada("menor", filtros.Menor);
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-				comandtxt = String.Format(@"select cc.id, tc.tid, nvl(tp.nome, tp.razao_social) nome, nvl(tp.cpf, tp.cnpj) cpfcnpj, lct.texto tipo, 
-				to_char(tc.data_cadastro, 'dd/mm/yyyy') ativacao, lcs.id situacao, lcs.texto situacao_texto, (case when cc.extensao_habilitacao = 1 then cc.numero_habilitacao||'-ES' else cc.numero_habilitacao end) numero_habilitacao 
-				from tab_credenciado tc, cre_pessoa tp, {2}lov_credenciado_tipo lct, lov_hab_emissao_cfo_situacao lcs, tab_hab_emi_cfo_cfoc cc where tc.pessoa = tp.id and tc.tipo = lct.id and cc.situacao = lcs.id
-				and cc.responsavel = tc.id {0} {1}", comandtxt, DaHelper.Ordenar(colunas, ordenar), credenciado);
+				comandtxt = String.Format(@"
+                            select cc.id,
+                                   tc.tid,
+                                   nvl(tp.nome, tp.razao_social) nome,
+                                   nvl(tp.cpf, tp.cnpj) cpfcnpj,
+                                   lct.texto tipo, 
+				                   to_char(tc.data_cadastro, 'dd/mm/yyyy') ativacao,
+                                   lcs.id situacao,
+                                   lcs.texto situacao_texto,
+                                   (case when cc.motivo is null then 0 else lcm.id end) motivo,
+                                   (case when cc.motivo is null then '' else lcm.texto end) motivo_texto,
+                                   (case when cc.extensao_habilitacao = 1 then cc.numero_habilitacao||'-ES' else cc.numero_habilitacao end) numero_habilitacao 
+				            from tab_credenciado tc,
+                                 cre_pessoa tp,
+                                 {2}lov_credenciado_tipo lct,
+                                 lov_hab_emissao_cfo_situacao lcs,
+                                 tab_hab_emi_cfo_cfoc cc
+                            left join lov_hab_emissao_cfo_motivo lcm
+                            on cc.motivo = lcm.id
+                            where tc.pessoa = tp.id
+                                  and tc.tipo = lct.id
+                                  and cc.situacao = lcs.id
+				                  and cc.responsavel = tc.id {0} {1}", comandtxt, DaHelper.Ordenar(colunas, ordenar), credenciado);
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
@@ -379,10 +449,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						item.DataAtivacao = reader.GetValue<String>("ativacao");
 						item.Situacao = reader.GetValue<Int32>("situacao");
 						item.SituacaoTexto = reader.GetValue<String>("situacao_texto");
+                        item.Motivo = reader.GetValue<Int32>("motivo");
+                        item.MotivoTexto = reader.GetValue<String>("motivo_texto");
 						item.TipoTexto = reader.GetValue<String>("tipo");
 						item.NumeroHabilitacao = reader.GetValue<String>("numero_habilitacao");
 
 						retorno.Itens.Add(item);
+                        int teste = 1;
+
+                        if (item.Motivo == 0)
+                        {
+                            
+                            teste++;
+                        }
 					}
 
 					reader.Close();
@@ -405,7 +484,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"select t.id, t.tid, t.responsavel, t.responsavel_arquivo, aa.nome responsavel_arquivo_nome, cc.cpf responsavel_cpf, cc.nome responsavel_nome, 
 				pc.registro registro_crea, t.numero_habilitacao, trunc(t.validade_registro) validade_registro, trunc(t.situacao_data) situacao_data, t.situacao, ls.texto situacao_texto, t.motivo,
-				lm.texto motivo_texto, t.observacao, t.numero_dua, t.extensao_habilitacao, t.numero_habilitacao_ori, t.uf, t.numero_visto_crea, t.tid from tab_hab_emi_cfo_cfoc t, tab_credenciado tc, 
+				lm.texto motivo_texto, t.observacao, t.numero_dua, t.extensao_habilitacao, t.numero_habilitacao_ori, t.uf, t.numero_visto_crea, t.numero_processo, t.tid from tab_hab_emi_cfo_cfoc t, tab_credenciado tc, 
 				cre_pessoa cc, cre_pessoa_profissao pc, lov_hab_emissao_cfo_situacao ls, lov_hab_emissao_cfo_motivo lm, tab_arquivo aa where t.situacao = ls.id and t.motivo = lm.id(+) 
 				and t.responsavel_arquivo = aa.id(+) and tc.id = t.responsavel and tc.pessoa = cc.id and cc.id = pc.pessoa(+) and t.id = :id", UsuarioCredenciado);
 
@@ -442,6 +521,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						habilitar.RegistroCrea = reader.GetValue<String>("registro_crea");
 						habilitar.UF = reader.GetValue<Int32>("uf");
 						habilitar.NumeroVistoCrea = reader.GetValue<String>("numero_visto_crea");
+                        habilitar.NumeroProcesso = reader.GetValue<String>("numero_processo");
 					}
 					reader.Close();
 				}
@@ -491,6 +571,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 			return habilitar;
 		}
+
+        internal List<HistoricoEmissaoCFOCFOC> ObterHistoricoHabilitacoes(int id, bool simplificado = false, string _schemaBanco = null)
+        {
+            List<HistoricoEmissaoCFOCFOC> historico = new List<HistoricoEmissaoCFOCFOC>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                #region Historico
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select hc.id,
+                                           hc.tid,
+                                           hc.situacao_id,
+                                           hc.situacao_texto,
+                                           hc.motivo_id,
+                                           hc.motivo_texto,
+                                           (case when hc.situacao_id = 3 then to_char(hc.situacao_data, 'DD/MM/YYYY') else '' end) penalidade_data,
+                                           hc.numero_processo,
+                                           to_char(hc.data_execucao, 'DD/MM/YYYY') data_execucao
+                                    from hst_hab_emi_cfo_cfoc hc
+                                    where hc.habilitar_emissao_id = :id
+                                    order by hc.data_execucao desc", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                int cont = 0;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        HistoricoEmissaoCFOCFOC item = new HistoricoEmissaoCFOCFOC();
+
+                        item = new HistoricoEmissaoCFOCFOC();
+                        item.Id = reader.GetValue<Int32>("id");
+                        item.Tid = reader.GetValue<String>("tid");
+                        item.Situacao = reader.GetValue<Int32>("situacao_id");
+                        item.SituacaoTexto = reader.GetValue<String>("situacao_texto");
+                        item.Motivo = reader.GetValue<Int32>("motivo_id");
+                        item.MotivoTexto = reader.GetValue<String>("motivo_texto");
+                        item.SituacaoData = reader.GetValue<String>("penalidade_data");
+                        item.NumeroProcesso = reader.GetValue<String>("numero_processo");
+                        item.HistoricoData = reader.GetValue<String>("data_execucao");
+
+                        //só adiciona o item se houve mudança na situação
+                        if (cont == 0 || item.Situacao != historico[cont-1].Situacao)
+                        {
+                            historico.Add(item);
+                            cont++;
+                        }
+                    }
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return historico;
+        }
 
 		internal HabilitarEmissaoCFOCFOC ObterCredenciado(int id)
 		{

@@ -116,6 +116,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 		{
 			try
 			{
+                if (habilitar.Situacao == 1 && !_da.ValidarPodeAtivar(habilitar.Id))
+                {
+                    Validacao.Add(Mensagem.HabilitarEmissaoCFOCFOC.SituacaoAnteriorVigente);
+                    return Validacao.EhValido;
+                }
 				if (_validar.AlterarSituacao(habilitar))
 				{
 					GerenciadorTransacao.ObterIDAtual();
@@ -213,6 +218,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 
 			return retorno;
 		}
+
+        public List<HistoricoEmissaoCFOCFOC> ObterHistoricoHabilitacoes(int id)
+        {
+            List<HistoricoEmissaoCFOCFOC> retorno = _da.ObterHistoricoHabilitacoes(id);
+
+            return retorno;
+        }
 
 		#endregion
 
