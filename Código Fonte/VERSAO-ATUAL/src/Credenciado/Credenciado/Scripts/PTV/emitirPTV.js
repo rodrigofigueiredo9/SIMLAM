@@ -176,11 +176,11 @@ PTVEmitir = {
 		    return false;
 		});
 	    
-		//$('#DataVistoria').change(function (e) {
+		$('#DataVistoria').change(function (e) {
 		        
-		//    PTVEmitir.onChangeLocalVistoria();
-		//    $(this).blur();
-		//});
+		    PTVEmitir.onChangeLocalVistoria();
+		    $(this).blur();
+		});
 
 		
 	   if (window.location.href.indexOf("Visualizar") == -1)

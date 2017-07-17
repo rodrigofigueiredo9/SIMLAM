@@ -37,6 +37,10 @@
 			private var pontoMouse:Point;
 			public var pausado:Boolean = false;
 			private var menuItem:ContextMenuItem = null;
+			
+			private var desabilitaSnap:Boolean = false;
+			
+			private var estavaPausado:Boolean = true;
 
 			public function ligarDesligar():void
 			{
@@ -157,9 +161,19 @@
 						ligarOk(false,deixarHabilitadoSnap);
 						pausado = false;
 						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN,null, this,false));
+						
+						
+						if (estavaPausado)
+						{
+							desabilitaSnap = true;
+							estavaPausado = estavaPausado;
+						}
 					}
 					else
 					{
+						estavaPausado = !estavaPausado;
+						desabilitaSnap = false;
+						
 						desligarSemApagarFeicao(deixarHabilitadoSnap);
 						ligado = true;
 						pausado = true;
@@ -243,7 +257,12 @@
 					{
 						var feicoesSnap:Vector.<Feicao> = FeicoesSnapSelecionadas.getInstance().feicoes;
 						//verifica vertices
-						range = DesenhadorEsri.getInstance().range(1); 
+						
+						if (desabilitaSnap)
+							range = DesenhadorEsri.getInstance().range(1); 
+						else
+							range = DesenhadorEsri.getInstance().range(7);
+						
 						for(var i:int =0; i< feicoesSnap.length; i++)
 						{  
 							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pt, range, feicoesSnap[i].geometria.vertices,
@@ -256,7 +275,11 @@
 						if(!pontoIntersectado)
 						{
 							//verifica arestas
-							range = DesenhadorEsri.getInstance().range(1); 
+							if (desabilitaSnap)
+								range = DesenhadorEsri.getInstance().range(1); 
+							else
+								range = DesenhadorEsri.getInstance().range(4);
+							
 							for(var i:int =0; i< feicoesSnap.length; i++)
 							{  
 								pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pt,range, feicoesSnap[i].geometria.vertices,
@@ -334,7 +357,12 @@
 					range = DesenhadorEsri.getInstance().range(25);
 				
 					//verifica vertices
-					range = DesenhadorEsri.getInstance().range(7); 
+					//verifica vertices
+					if (desabilitaSnap)
+						range = DesenhadorEsri.getInstance().range(1); 
+					else
+						range = DesenhadorEsri.getInstance().range(7);
+					
 				
 					pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pt, range, FeicoesSnapSelecionadas.getInstance().verticesMaisProximos,
 						null, true);
@@ -348,7 +376,11 @@
 					if(!pontoIntersectado)
 					{
 						//verifica arestas
-						range = DesenhadorEsri.getInstance().range(1); 
+						if (desabilitaSnap)
+							range = DesenhadorEsri.getInstance().range(1); 
+						else
+							range = DesenhadorEsri.getInstance().range(4);
+						
 						for(var i:int =0; i< feicoesSnap.length; i++)
 						{  							
 							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pt,range, feicoesSnap[i].geometria.vertices,
