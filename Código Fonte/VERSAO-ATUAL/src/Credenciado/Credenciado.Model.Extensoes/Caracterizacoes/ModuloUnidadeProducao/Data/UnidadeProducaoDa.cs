@@ -714,6 +714,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			UnidadeProducao caracterizacao = new UnidadeProducao();
 
+            BancoDeDados novoBanco = null;
+
+            BancoDeDados bancoDeDadosIDAF = BancoDeDados.ObterInstancia(novoBanco);
+
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				#region Unidade de Produção
@@ -904,6 +908,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					}
 
 					#endregion
+
+                    #region Títulos Concluídos
+
+                    EsquemaBanco = "idaf";
+
+                    comando = bancoDeDados.CriarComando(@"select count(*) concluidos
+                                                          from crt_unidade_producao_unidade u,
+                                                               crt_unidade_producao c,
+                                                               tab_titulo ti,
+                                                               esp_abertura_livro_up esp,
+                                                               esp_aber_livro_up_unid uni
+                                                          where u.CODIGO_UP = :codUP
+                                                                and u.unidade_producao = c.id
+                                                                and c.empreendimento = ti.empreendimento
+                                                                and ti.situacao = 3
+                                                                and ti.id = esp.titulo
+                                                                and esp.id = uni.especificidade
+                                                                and uni.unidade = u.id
+                                                        ", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
+
+                    using (IDataReader reader = bancoDeDadosIDAF.ExecutarReader(comando))
+                    {
+
+                        if (reader.Read())
+                        {
+                            item.TitulosConcluidos = reader.GetValue<int>("concluidos");
+                        }
+
+                        reader.Close();
+                    }
+
+                    EsquemaBanco = null;
+
+                    #endregion
 				}
 
 				#endregion
@@ -916,6 +956,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			int id_hst = 0;
 			UnidadeProducao caracterizacao = new UnidadeProducao();
+
+            BancoDeDados novoBanco = null;
+
+            BancoDeDados bancoDeDadosIDAF = BancoDeDados.ObterInstancia(novoBanco);
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
@@ -1030,8 +1074,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Produtores
 
 						comando = bancoDeDados.CriarComando(@"
-						select h.id, h.tid, h.unidade_prod_produtor_id id_rel, h.produtor_id, nvl(hp.nome, hp.razao_social) nome_razao, nvl(hp.cpf, hp.cnpj) cpf_cnpj, hp.tipo, hp.interno_id
-						from {0}hst_crt_unid_prod_un_produtor h, {0}hst_pessoa hp where h.produtor_id = hp.pessoa_id and h.produtor_tid = hp.tid and h.id_hst = :id_hst", EsquemaCredenciadoBanco);
+						select h.id,
+                               h.tid,
+                               h.unidade_prod_produtor_id id_rel,
+                               h.produtor_id,
+                               nvl(hp.nome, hp.razao_social) nome_razao,
+                               nvl(hp.cpf, hp.cnpj) cpf_cnpj,
+                               hp.tipo, hp.interno_id
+						from {0}hst_crt_unid_prod_un_produtor h,
+                             {0}hst_pessoa hp
+                        where h.produtor_id = hp.pessoa_id
+                              and h.produtor_tid = hp.tid
+                              and h.id_hst = :id_hst", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("id_hst", id_hst, DbType.Int32);
 
@@ -1138,6 +1192,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						}
 
 						#endregion
+
+                        #region Títulos Concluídos
+
+                        EsquemaBanco = "idaf";
+
+                        comando = bancoDeDados.CriarComando(@"select count(*) concluidos
+                                                          from crt_unidade_producao_unidade u,
+                                                               crt_unidade_producao c,
+                                                               tab_titulo ti,
+                                                               esp_abertura_livro_up esp,
+                                                               esp_aber_livro_up_unid uni
+                                                          where u.CODIGO_UP = :codUP
+                                                                and u.unidade_producao = c.id
+                                                                and c.empreendimento = ti.empreendimento
+                                                                and ti.situacao = 3
+                                                                and ti.id = esp.titulo
+                                                                and esp.id = uni.especificidade
+                                                                and uni.unidade = u.id
+                                                        ", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
+
+                        using (IDataReader readerAux = bancoDeDadosIDAF.ExecutarReader(comando))
+                        {
+
+                            if (readerAux.Read())
+                            {
+                                item.TitulosConcluidos = readerAux.GetValue<int>("concluidos");
+                            }
+
+                            readerAux.Close();
+                        }
+
+                        EsquemaBanco = null;
+
+                        #endregion
 
 						caracterizacao.UnidadesProducao.Add(item);
 					}

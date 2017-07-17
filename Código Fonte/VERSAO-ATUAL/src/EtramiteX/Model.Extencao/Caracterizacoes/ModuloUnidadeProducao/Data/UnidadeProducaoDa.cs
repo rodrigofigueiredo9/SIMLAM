@@ -642,14 +642,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 
 				if (valor != null && !Convert.IsDBNull(valor))
 				{
-					caracterizacao = Obter(Convert.ToInt32(valor), bancoDeDados, simplificado);
+					caracterizacao = Obter(Convert.ToInt32(valor), empreendimento, bancoDeDados, simplificado);
 				}
 			}
 
 			return caracterizacao;
 		}
 
-		internal UnidadeProducao Obter(int id, BancoDeDados banco = null, bool simplificado = false)
+		internal UnidadeProducao Obter(int id, int idEmpreendimento, BancoDeDados banco = null, bool simplificado = false)
 		{
 			UnidadeProducao caracterizacao = new UnidadeProducao();
 
@@ -834,7 +834,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 					}
 
 					#endregion
-				}
+
+                    #region Títulos Concluídos
+
+                    comando = bancoDeDados.CriarComando(@"select count(*) concluidos
+                                                          from crt_unidade_producao_unidade u,
+                                                               crt_unidade_producao c,
+                                                               tab_titulo ti,
+                                                               esp_abertura_livro_up esp,
+                                                               esp_aber_livro_up_unid uni
+                                                          where u.CODIGO_UP = :codUP
+                                                                and u.unidade_producao = c.id
+                                                                and c.empreendimento = ti.empreendimento
+                                                                and ti.situacao = 3
+                                                                and ti.id = esp.titulo
+                                                                and esp.id = uni.especificidade
+                                                                and uni.unidade = u.id
+                                                        ", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("codUP", item.CodigoUP, DbType.String);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+
+                        if (reader.Read())
+                        {
+                            item.TitulosConcluidos = reader.GetValue<int>("concluidos");
+                        }
+
+                        reader.Close();
+                    }
+
+                    #endregion
+                }
 
 				#endregion
 			}

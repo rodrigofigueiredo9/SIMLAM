@@ -49,6 +49,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 		public string CulturaTexto { get; set; }
 		public int? CultivarId { get; set; }
 		public string CultivarTexto { get; set; }
+        public int TitulosConcluidos { get; set; }
 
 		public Municipio Municipio { get; set; }
 		public Coordenada Coordenada { get; set; }
@@ -72,6 +73,16 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUni
 				return 0;
 			}
 		}
+
+        public string Situacao
+        {
+            get
+            {
+                if (TitulosConcluidos > 0) return "Ativo";
+
+                return "Inativo";
+            }
+        }
 
 		public UnidadeProducaoItem()
 		{
