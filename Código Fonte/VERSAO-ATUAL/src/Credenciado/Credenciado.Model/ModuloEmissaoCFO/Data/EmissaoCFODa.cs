@@ -728,6 +728,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			return retorno;
 		}
 
+        internal List<Lista> ObterEmpreendimentosListaEtramiteX(int produtorID, BancoDeDados banco = null)
+        {
+            List<Lista> retorno = new List<Lista>();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+					select distinct e.id, e.denominador
+					  from crt_unidade_producao c, tab_empreendimento e
+					 where e.id = c.empreendimento
+					   and c.id in
+						   (select u.unidade_producao
+							  from crt_unidade_producao_unidade u
+							 where u.id in (select p.unidade_producao_unidade
+											  from crt_unidade_prod_un_produtor p
+											 where p.produtor = :produtor))");
+
+                comando.AdicionarParametroEntrada("produtor", produtorID, DbType.Int32);
+                
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("denominador") });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		internal List<Lista> ObterEmpreendimentosLista(int produtorID, int credenciadoID, BancoDeDados banco = null)
 		{
 			List<Lista> retorno = new List<Lista>();
