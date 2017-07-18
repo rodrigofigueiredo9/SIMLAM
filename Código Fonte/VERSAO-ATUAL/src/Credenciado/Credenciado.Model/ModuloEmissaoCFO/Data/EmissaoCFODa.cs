@@ -121,8 +121,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				insert into tab_cfo_produto (id, tid, cfo, unidade_producao, quantidade, inicio_colheita, fim_colheita) 
-				values (seq_tab_cfo_produto.nextval, :tid, :cfo, :unidade_producao, :quantidade, :inicio_colheita, :fim_colheita)");
+				insert into tab_cfo_produto (id, tid, cfo, unidade_producao, quantidade, inicio_colheita, fim_colheita, exibe_kilos) 
+				values (seq_tab_cfo_produto.nextval, :tid, :cfo, :unidade_producao, :quantidade, :inicio_colheita, :fim_colheita, :exibe_kilos)");
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("cfo", CFO.Id, DbType.Int32);
@@ -130,6 +130,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
 				comando.AdicionarParametroEntrada("inicio_colheita", DbType.DateTime);
 				comando.AdicionarParametroEntrada("fim_colheita", DbType.DateTime);
+                comando.AdicionarParametroEntrada("exibe_kilos", DbType.String,1);
 
 				CFO.Produtos.ForEach(produto =>
 				{
@@ -137,6 +138,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 					comando.SetarValorParametro("quantidade", produto.Quantidade);
 					comando.SetarValorParametro("inicio_colheita", produto.DataInicioColheita.Data);
 					comando.SetarValorParametro("fim_colheita", produto.DataFimColheita.Data);
+                    comando.SetarValorParametro("exibe_kilos", produto.ExibeQtdKg ? "1" : "0");
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -257,15 +259,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 					if (produto.Id > 0)
 					{
 						comando = bancoDeDados.CriarComando(@"update tab_cfo_produto set tid =:tid, unidade_producao = :unidade_producao, 
-						quantidade = :quantidade, inicio_colheita = :inicio_colheita, fim_colheita = :fim_colheita where id = :id");
+						quantidade = :quantidade, inicio_colheita = :inicio_colheita, fim_colheita = :fim_colheita, exibe_kilos = :exibe_kilos where id = :id");
 
 						comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
 					}
 					else
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into tab_cfo_produto (id, tid, cfo, unidade_producao, quantidade, inicio_colheita, fim_colheita) 
-						values (seq_tab_cfo_produto.nextval, :tid, :cfo, :unidade_producao, :quantidade, :inicio_colheita, :fim_colheita)");
+						insert into tab_cfo_produto (id, tid, cfo, unidade_producao, quantidade, inicio_colheita, fim_colheita, exibe_kilos) 
+						values (seq_tab_cfo_produto.nextval, :tid, :cfo, :unidade_producao, :quantidade, :inicio_colheita, :fim_colheita, :exibe_kilos)");
 
 						comando.AdicionarParametroEntrada("cfo", CFO.Id, DbType.Int32);
 					}
@@ -275,6 +277,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 					comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Decimal);
 					comando.AdicionarParametroEntrada("inicio_colheita", produto.DataInicioColheita.Data, DbType.DateTime);
 					comando.AdicionarParametroEntrada("fim_colheita", produto.DataFimColheita.Data, DbType.DateTime);
+                    comando.AdicionarParametroEntrada("exibe_kilos", produto.ExibeQtdKg ? "1" : "0" , DbType.String);
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 
@@ -509,7 +512,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				select cp.id, cp.tid, cp.unidade_producao, i.codigo_up, c.id cultura_id,c.texto cultura, cc.id cultivar_id, cc.cultivar, lu.id unidade_medida, lu.texto unidade_medida_texto, cp.quantidade, cp.inicio_colheita, cp.fim_colheita 
+				select cp.id, cp.tid, cp.unidade_producao, i.codigo_up, c.id cultura_id,c.texto cultura, cc.id cultivar_id, cc.cultivar, lu.id as unidade_medida, lu.texto unidade_medida_texto, cp.quantidade, cp.inicio_colheita, cp.fim_colheita, cp.exibe_kilos 
 				from tab_cfo_produto cp, ins_crt_unidade_prod_unidade i, tab_cultura c, tab_cultura_cultivar cc, lov_crt_uni_prod_uni_medida lu 
 				where i.id = cp.unidade_producao and c.id = i.cultura and cc.id = i.cultivar and i.estimativa_unid_medida = lu.id and cp.cfo = :cfo", EsquemaBanco);
 
@@ -531,6 +534,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 							UnidadeMedidaId = reader.GetValue<int>("unidade_medida"),
 							UnidadeMedida = reader.GetValue<string>("unidade_medida_texto"),
 							Quantidade = reader.GetValue<decimal>("quantidade"),
+                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false ,
 							DataInicioColheita = new DateTecno() { Data = reader.GetValue<DateTime>("inicio_colheita") },
 							DataFimColheita = new DateTecno() { Data = reader.GetValue<DateTime>("fim_colheita") }
 						});
@@ -802,10 +806,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			List<Lista> retorno = new List<Lista>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u 
-					where u.unidade_producao = c.id and c.empreendimento = :empreendimento 
-					and u.id in (select p.unidade_producao_unidade from crt_unidade_prod_un_produtor p where p.produtor = :produtor)
-					and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico)");
+                Comando comando = bancoDeDados.CriarComando(@" select u.id, u.codigo_up from crt_unidade_producao c, crt_unidade_producao_unidade u, tab_titulo ti, esp_aber_livro_up_unid uni, esp_abertura_livro_up esp
+                                                                where u.unidade_producao = c.id and c.empreendimento = :empreendimento and esp.titulo = ti.id 
+                                                                and ti.empreendimento = c.empreendimento and ti.situacao = 3 and uni.especificidade = esp.id 
+                                                                and uni.unidade = u.id
+                                                                and u.id in (select p.unidade_producao_unidade from crt_unidade_prod_un_produtor p where p.produtor = :produtor)
+                                                                and u.id in (select r.unidade_producao_unidade from crt_unidade_prod_un_resp_tec r where r.responsavel_tecnico = :responsavel_tecnico) group by u.id, u.codigo_up ");
+
+               
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("produtor", produtorID, DbType.Int32);
