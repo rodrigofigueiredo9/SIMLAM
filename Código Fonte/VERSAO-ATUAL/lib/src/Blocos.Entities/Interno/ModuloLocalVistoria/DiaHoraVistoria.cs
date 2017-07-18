@@ -15,6 +15,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria
         public int Situacao { get; set; }
         public string Tid { get; set; }
 
+        public int LocalVistoriaId { get; set; }
+
         public DiaHoraVistoria() { }
     }
 }
