@@ -11,6 +11,8 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC
 		public int Id { get; set; }
 		public string Tid { get; set; }
 		public int UnidadeProducao { get; set; }
+        public int UnidadeProducaoID { get; set; }
+        public string UnidadeProducaoTID { get; set; }
 		public string CodigoUP { get; set; }
 		public int LoteId { get; set; }
 		public string LoteCodigo { get; set; }

@@ -220,6 +220,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 			return null;
 		}
 
+        public EmissaoCFO ObterHistorico(int id, bool simplificado = false)
+        {
+            try
+            {
+                EmissaoCFO dataSource = _da.Obter(id, simplificado);
+
+                if (dataSource.SituacaoId != (int)eDocumentoFitossanitarioSituacao.EmElaboracao)
+                {
+                    dataSource.Produtos = _da.ObterHistorico(id, dataSource.Tid);
+                }
+
+                return dataSource;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public Resultados<EmissaoCFO> Filtrar(EmissaoCFO filtrosListar, Paginacao paginacao)
 		{
 			try
@@ -230,7 +251,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				if (resultados.Quantidade < 1)
 				{
 					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
-				}
+                }
+                else
+                {
+                    for (int i = 0; i < resultados.Itens.Count; i++)
+                    {
+                        if (resultados.Itens[i].SituacaoId != (int)eDocumentoFitossanitarioSituacao.EmElaboracao)
+                        {
+                            var listaProdutos = _da.ObterHistorico(resultados.Itens[i].Id, resultados.Itens[i].Tid);
+
+                            if (listaProdutos.Count > 0)
+                            {
+                                resultados.Itens[i].CulturaCultivar = listaProdutos.First().CulturaTexto + "/" + listaProdutos.First().CultivarTexto;
+                            }
+                            
+                        }
+                    }
+                }
 
 				return resultados;
 			}
