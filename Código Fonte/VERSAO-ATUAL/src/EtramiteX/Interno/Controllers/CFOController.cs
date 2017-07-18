@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			EmissaoCFO entidade = _bus.ObterHistorico(id);
 
-			CFOVM vm = new CFOVM(entidade, _bus.ObterProdutoresLista(entidade.CredenciadoId), ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(entidade.EstadoId), _bus.ObterEmpreendimentosLista(entidade.ProdutorId),
+			CFOVM vm = new CFOVM(entidade, _bus.ObterProdutoresLista(entidade.CredenciadoId), ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(entidade.EstadoId), _bus.ObterEmpreendimentosListaEtramiteX(entidade.ProdutorId),
 				new List<Lista>(), ListaCredenciadoBus.CFOProdutoEspecificacao, ListaCredenciadoBus.DocFitossanitarioSituacao, new List<Lista>(), ListaCredenciadoBus.Municipios(entidade.EstadoEmissaoId));
 
 			vm.IsVisualizar = true;
