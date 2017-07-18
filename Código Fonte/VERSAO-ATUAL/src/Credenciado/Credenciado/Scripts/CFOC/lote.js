@@ -222,21 +222,13 @@ Lote = {
 				if (response.EhValido) {
 				    $('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
 
-				    var txtUnd = $('select[name=UnidadeMedida] option:selected').text();
-
-				    var total = $('select[name=UnidadeMedida]').children('option').length;
-
-				    if (txtUnd == "T") {
-
-				        $('select[name=UnidadeMedida]').append(new Option('KG', 2));
-				    }
-
+				    var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
 				    
-				    $('.txtQuantidade', Lote.container).val(response.QtdDocOrigem);
+				    $('.txtQuantidade', Lote.container).val(quantidade);
 				    $('.txtQuantidade', Lote.container).change();
-				    //alert(response.QtdDocOrigem);
 
-					$('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
+				    $('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
+				    $('.ddlUnidadeMedida', Lote.container).attr('disabled', 'disabled').addClass('disaled');
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
@@ -259,8 +251,6 @@ Lote = {
 		var txtUnidMedida = $('.ddlUnidadeMedida :selected', container).text();
 
 		var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
-
-	
 
 		var item = {
 			Numero: $('.txtNumeroOrigem', container).val(),
