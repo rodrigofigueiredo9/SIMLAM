@@ -25,6 +25,8 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC
 		public DateTecno DataFimColheita { get; set; }
 		public DateTecno DataConsolidacao { get; set; }
 
+        public bool ExibeQtdKg { get; set; }
+
 		public IdentificacaoProduto()
 		{
 			DataInicioColheita = new DateTecno();

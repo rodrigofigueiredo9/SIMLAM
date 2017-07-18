@@ -21,6 +21,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCFOCFOC
 		public string DataFimColheita { get; set; }
 		public string DataConsolidacao { get; set; }
 
+        public bool ExibeQtdKg { get; set; }
+
 		public string CulturaCultivar
 		{
 			get
