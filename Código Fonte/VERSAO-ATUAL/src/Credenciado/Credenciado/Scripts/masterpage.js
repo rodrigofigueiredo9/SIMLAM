@@ -17,7 +17,7 @@ $(window).load(function () {
 
     if (document.referrer.indexOf("LogOn") >= 0 || document.referrer.indexOf("Logon") >= 0) {
 
-        Modal.abrir("/Credenciado/Home/AvisoManutencao", null,
+        Modal.abrir("/Home/AvisoManutencao", null,
            function (content) {
                //Modal.defaultButtons(content);
            }, { width: "615px", minWidthPerc: "46.3%" });
