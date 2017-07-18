@@ -461,7 +461,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 
 				#region Dados
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.tid, c.tipo_numero, c.numero, c.data_emissao, c.situacao, c.produtor, c.empreendimento, c.possui_laudo_laboratorial, 
+				Comando comando = bancoDeDados.CriarComando(@"select c.tid, c.tipo_numero, c.numero, c.data_ativacao, c.data_emissao, c.situacao, c.produtor, c.empreendimento, c.possui_laudo_laboratorial, 
 				c.nome_laboratorio, c.numero_laudo_resultado_analise, c.estado, c.municipio, c.produto_especificacao, c.possui_trat_fito_fins_quaren, c.partida_lacrada_origem, c.numero_lacre, 
 				c.numero_porao, c.numero_container, c.validade_certificado, c.informacoes_complementares, c.estado_emissao, c.municipio_emissao, c.credenciado 
 				from tab_cfo c where c.id = :id", EsquemaBanco);
@@ -477,6 +477,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 						CFO.TipoNumero = reader.GetValue<int>("tipo_numero");
 						CFO.Numero = reader.GetValue<string>("numero");
 						CFO.DataEmissao.Data = reader.GetValue<DateTime>("data_emissao");
+                        CFO.DataAtivacao.Data = reader.GetValue<DateTime>("data_ativacao");
 						CFO.SituacaoId = reader.GetValue<int>("situacao");
 						CFO.ProdutorId = reader.GetValue<int>("produtor");
 						CFO.EmpreendimentoId = reader.GetValue<int>("empreendimento");
