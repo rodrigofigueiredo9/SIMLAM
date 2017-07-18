@@ -280,6 +280,7 @@
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\ListarResultados.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\NumeroCFOCFOC .cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\eCFOCFOCTipo.cs" />
+    <Compile Include="Interno\ModuloLocalVistoria\BloqueioLocalVistoria.cs" />
     <Compile Include="Interno\ModuloLocalVistoria\DiaHoraVistoria.cs" />
     <Compile Include="Interno\ModuloLocalVistoria\LocalVistoria.cs" />
     <Compile Include="Interno\ModuloLocalVistoria\LocalVistoriaListar.cs" />

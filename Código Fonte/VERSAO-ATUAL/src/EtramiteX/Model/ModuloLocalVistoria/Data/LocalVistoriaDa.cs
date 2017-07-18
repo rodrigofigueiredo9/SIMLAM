@@ -49,7 +49,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             {
                 if (dia.Id <= 0)
                 {
-                    Criar(dia, local.SetorID, banco);
+                        Criar(dia, local.SetorID, banco);
                 }
                 else
                 {
@@ -59,7 +59,69 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                     }
                 }
             }
+
+            foreach (BloqueioLocalVistoria bloq in local.Bloqueios)
+            {
+                if (bloq.Id <= 0)
+                {
+                    Criar(bloq, local.SetorID, banco);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(bloq.Tid))
+                    {
+                        Editar(bloq, local.SetorID, banco);
+                    }
+                }
+            }
+
 		}
+
+        internal void Editar(BloqueioLocalVistoria bloq, int idsetor, BancoDeDados banco)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = comando = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA_BLOQUEIO set DIA_INICIO = :dia_inicio, DIA_FIM = :dia_fim,
+				tid = :tid where id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("dia_inicio", bloq.DiaInicio.ToShortDateString() + bloq.HoraInicio, DbType.String);
+                comando.AdicionarParametroEntrada("dia_fim", bloq.DiaFim.ToShortDateString() + bloq.HoraFim, DbType.String);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("id", bloq.Id, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                bloq.Tid = GerenciadorTransacao.ObterIDAtual();
+
+                //Historico.Gerar(local.Id, eHistoricoArtefato.localvistoria, eHistoricoAcao.atualizar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
+
+        internal void Criar(BloqueioLocalVistoria bloq, int idsetor, BancoDeDados banco)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"insert into {0}CNF_LOCAL_VISTORIA_BLOQUEIO (ID, SETOR, DIA_INICIO, DIA_FIM, TID) 
+                                                                    values ({0}SEQ_CNF_LOCAL_VISTORIA_BLOQ.nextval, :setor, :dia_inicio, :dia_fim, :tid) 
+                                                              returning id into :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("setor", idsetor, DbType.String);
+                comando.AdicionarParametroEntrada("dia_inicio", bloq.DiaInicio.ToShortDateString() + " " + bloq.HoraInicio, DbType.DateTime);
+                comando.AdicionarParametroEntrada("dia_fim", bloq.DiaFim.ToShortDateString() + " " + bloq.HoraFim, DbType.DateTime);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroSaida("id", DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+                bloq.Id = comando.ObterValorParametro<int>("id");
+                bloq.Tid = GerenciadorTransacao.ObterIDAtual();
+
+                //Historico.Gerar(local.Id, eHistoricoArtefato.localvistoria, eHistoricoAcao.criar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
 
 
         internal void Criar(DiaHoraVistoria local, int idsetor, BancoDeDados banco) 
@@ -203,6 +265,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
+                Comando comando = bancoDeDados.CriarComando(@"select lv.id, to_char(dia_inicio,'dd/mm/yyyy') as dia_inicio, to_char(dia_fim,'dd/mm/yyyy') as dia_fim,
+                                                              to_char(dia_inicio,'hh24:mi') as hora_inicio, to_char(dia_fim,'hh24:mi') as hora_fim, tid
+                                                              from {0}cnf_local_vistoria_bloqueio lv where lv.setor = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", idsetor, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    BloqueioLocalVistoria bloqueio = null;
+
+                    while (reader.Read())
+                    {
+                        bloqueio = new BloqueioLocalVistoria();
+
+                        bloqueio.Id = reader.GetValue<int>("id");
+                        bloqueio.DiaInicio = reader.GetValue<DateTime>("dia_inicio");
+                        bloqueio.HoraInicio = reader.GetValue<string>("hora_inicio");
+                        bloqueio.DiaFim = reader.GetValue<DateTime>("dia_fim");
+                        bloqueio.HoraFim = reader.GetValue<string>("hora_fim");
+                        bloqueio.Tid = reader.GetValue<string>("tid");
+                        local.Bloqueios.Add(bloqueio);
+                    }
+
+                    reader.Close();
+                }
+
+            }
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
                 Comando comando = bancoDeDados.CriarComando(@"select s.id, s.nome from {0}tab_setor s where s.id=:id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", idsetor, DbType.Int32);
@@ -221,6 +313,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
             return local;
 
+        }
+
+        internal int PodeAcrescentarBloqueio(string datInicial, string datFinal, int setorId, BancoDeDados banco = null)
+        {
+
+            int qtdAssociacao = 0;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+
+                Comando comando = bancoDeDados.CriarComando(@" select count(*) from cnf_local_vistoria lc
+                                                                inner join idafcredenciado.tab_ptv ptv on ptv.local_vistoria = lc.setor 
+                                                                and ptv.data_hora_vistoria = lc.id
+                                                                where to_date(to_char(:datIni,'dd/mm/yy hh24:mi')) >= to_date(to_char(ptv.data_vistoria || ' ' || lc.hora_inicio,'dd/mm/yy hh24:mi')) 
+                                                                and to_date(to_char(:datFim,'dd/mm/yy hh24:mi')) <= to_date(to_char(ptv.data_vistoria || ' ' || lc.hora_fim,'dd/mm/yy hh24:mi')) 
+                                                                and lc.setor = :setorId");
+                                                                  
+                comando.AdicionarParametroEntrada("datIni", datInicial, DbType.String);
+                comando.AdicionarParametroEntrada("datFim", datFinal, DbType.String);
+                comando.AdicionarParametroEntrada("setorId", setorId, DbType.Int32);
+
+                qtdAssociacao = bancoDeDados.ExecutarScalar<int>(comando);
+            }
+
+            return qtdAssociacao;
         }
 
 

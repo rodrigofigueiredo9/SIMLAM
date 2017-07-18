@@ -13,6 +13,15 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMLocalVistoria
 	{
 
         private DiaHoraVistoria _diaHoraLocalVistoria = new DiaHoraVistoria();
+
+        private List<BloqueioLocalVistoria> _lstBloqueios = new List<BloqueioLocalVistoria>();
+
+        public List<BloqueioLocalVistoria> ListBloqueios
+        {
+            get { return _lstBloqueios; }
+            set { _lstBloqueios = value; }
+        }
+
         
         public bool IsEdicao { get; set; }
         public bool IsVisualizar { get; set; }

@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			xmlBuilder.Append("<duaConsulta xmlns=\"http://www.sefaz.es.gov.br/duae\">");
 			xmlBuilder.Append("<duaDadosMsg>");
 			xmlBuilder.Append("<consDua versao=\"1.00\">");
-			xmlBuilder.Append("<tpAmb>1</tpAmb>");
+			xmlBuilder.Append("<tpAmb>2</tpAmb>");
 			xmlBuilder.Append("<nDua>" + numeroDua + "</nDua>");
 			xmlBuilder.Append("<cpf>" + cpf + "</cpf>");
 			xmlBuilder.Append("</consDua>");
@@ -78,7 +78,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			xmlBuilder.Append("<duaConsulta xmlns=\"http://www.sefaz.es.gov.br/duae\">");
 			xmlBuilder.Append("<duaDadosMsg>");
 			xmlBuilder.Append("<consDua versao=\"1.00\">");
-			xmlBuilder.Append("<tpAmb>1</tpAmb>");
+			xmlBuilder.Append("<tpAmb>2</tpAmb>");
 			xmlBuilder.Append("<nDua>" + numeroDua + "</nDua>");
 			xmlBuilder.Append("<cnpj>" + cnpj + "</cnpj>");
 			xmlBuilder.Append("</consDua>");

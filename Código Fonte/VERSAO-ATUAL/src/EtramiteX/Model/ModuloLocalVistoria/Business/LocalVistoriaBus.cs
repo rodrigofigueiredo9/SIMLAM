@@ -82,6 +82,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
             return local;
         }
 
+        public bool VerificaPodeIncluirBloqueio(string datInicial, string datFinal, int setorId)
+        {
+            int QtdHorariosAssociados = _da.PodeAcrescentarBloqueio(datInicial, datFinal, setorId);
+            //QtdHorariosAssociados = 1;
+            if (QtdHorariosAssociados > 0)
+            {
+                Validacao.Add(Mensagem.LocalVistoria.PossuiHorarioAssociado());
+            }
+
+            return Validacao.EhValido;
+        }
 
 
         public bool VerificaPodeExcluir(DiaHoraVistoria DiaHoraVistoria)
