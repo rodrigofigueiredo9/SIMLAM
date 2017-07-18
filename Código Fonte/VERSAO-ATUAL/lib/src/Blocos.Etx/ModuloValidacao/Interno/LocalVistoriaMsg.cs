@@ -49,7 +49,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         public Mensagem PossuiHorarioAssociado()
         {
-            return new Mensagem() { Texto = string.Format("Não foi possível incluir bloqueio, intervalo possui E-PTV."), Tipo = eTipoMensagem.Erro };
+            return new Mensagem() { Texto = string.Format("Não foi possível incluir bloqueio, intervalo possui E-PTV."), Tipo = eTipoMensagem.Advertencia };
         }
 
     }

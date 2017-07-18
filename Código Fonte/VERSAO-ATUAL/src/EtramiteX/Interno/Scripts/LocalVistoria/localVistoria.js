@@ -107,7 +107,12 @@ LocalVistoria = {
 	        }
 	    });
 
+	    
 	    MasterPage.carregando(false);
+
+	    if (podeIncuir == 0)
+	        return;
+
 
 	    if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
