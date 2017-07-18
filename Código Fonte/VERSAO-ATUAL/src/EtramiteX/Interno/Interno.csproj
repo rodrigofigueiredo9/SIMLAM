@@ -89,16 +89,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model">
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.Extensoes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll</HintPath>
-    </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual">
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
     </Reference>
@@ -2674,6 +2664,22 @@
     <ProjectReference Include="..\..\..\lib\src\Perfil\Perfil.csproj">
       <Project>{5038a24c-72ac-4aab-8559-02b6c9243ca4}</Project>
       <Name>Perfil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Credenciado\Credenciado.Model.Extensoes\Credenciado.Model.Extensoes.csproj">
+      <Project>{9c7af4af-6757-41fc-953b-5752d5f57b4c}</Project>
+      <Name>Credenciado.Model.Extensoes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Credenciado\Credenciado.Model.RelatorioIndividual\Credenciado.Model.RelatorioIndividual.csproj">
+      <Project>{5e0f5c2f-0105-4709-9553-48101bb78a4b}</Project>
+      <Name>Credenciado.Model.RelatorioIndividual</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Credenciado\Credenciado.Model.WebService\Credenciado.Model.WebService.csproj">
+      <Project>{d285e05c-d1ca-4ca0-b9ee-c79e9b80b53b}</Project>
+      <Name>Credenciado.Model.WebService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Credenciado\Credenciado.Model\Credenciado.Model.csproj">
+      <Project>{60f1014b-fbcc-42c2-95f1-38b6c123c425}</Project>
+      <Name>Credenciado.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utilities\Utilities.csproj">
       <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>

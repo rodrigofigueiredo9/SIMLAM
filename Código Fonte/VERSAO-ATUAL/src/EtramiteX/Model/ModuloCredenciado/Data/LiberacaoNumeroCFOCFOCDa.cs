@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
 using Cred = Tecnomapas.Blocos.Entities.Interno.ModuloCredenciado;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
@@ -40,6 +41,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 		{
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
 		}
+
+        internal float ObterValorUnitarioDua()
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+                    select valor from cnf_valor_dua t where t.tipo = 2", EsquemaBanco);
+
+                return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+            }
+        }
 
 		public String UsuarioInterno
 		{
@@ -69,6 +81,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 		}
 
+        public DUARequisicao BuscarRespostaConsultaDUA(int filaID)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+            {
+                var comando = bancoDeDados.CriarComando(@"select tsf.resultado, tsf.sucesso from {0}TAB_SCHEDULER_FILA tsf where tsf.id = :id", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    if (reader.Read())
+                        return new DUARequisicao
+                        {
+                            Sucesso = reader.GetValue<string>("sucesso") == "verdadeiro",
+                            Resultado = reader.GetValue<string>("resultado"),
+                        };
+
+                return null;
+            }
+        }
+
 		private void Criar(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
 		{
 			IDataReader reader = null;
@@ -79,10 +110,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				{
 					Comando comando = bancoDeDados.CriarComando(@"
 					insert into tab_liberacao_cfo_cfoc (id, tid, responsavel_tecnico, liberar_bloco_cfo, numero_inicial_cfo, numero_final_cfo, 
-					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc)
+					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero)
 					values (seq_tab_liberacao_cfo_cfoc.nextval, :tid, :responsavel_tecnico, :liberar_bloco_cfo, :numero_inicial_cfo, :numero_final_cfo, 
 					:liberar_bloco_cfoc, :numero_inicial_cfoc, :numero_final_cfoc, :liberar_num_digital_cfo, :qtd_num_cfo, :liberar_num_digital_cfoc, 
-					:qtd_num_cfoc) returning id into :liberacao_id", EsquemaBanco);
+					:qtd_num_cfoc, :dua_numero) returning id into :liberacao_id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("responsavel_tecnico", liberacao.CredenciadoId, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberar_bloco_cfo", liberacao.LiberarBlocoCFO, DbType.Int32);
@@ -95,6 +126,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("qtd_num_cfo", liberacao.QuantidadeDigitalCFO, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberar_num_digital_cfoc", liberacao.LiberarDigitalCFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("qtd_num_cfoc", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
+                    comando.AdicionarParametroEntrada("dua_numero", liberacao.NumeroDua, DbType.String);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroSaida("liberacao_id", DbType.Int32);
 
@@ -262,6 +294,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				}
 			}
 		}
+
+        internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select sum(total) from
+                                                                (
+                                                                    select nvl(sum(nvl(qtd_num_cfo,0)) + sum(nvl(qtd_num_cfoc,0)),0) as total
+                                                                    from tab_liberacao_cfo_cfoc t where t.dua_numero = :dua_numero
+                                                                    union all
+                                                                    select nvl(numero_final_cfo-numero_inicial_cfo,0) as total from tab_liberacao_cfo_cfoc where dua_numero=:dua_numero
+                                                                    union all
+                                                                    select nvl(numero_final_cfoc-numero_inicial_cfoc,0) as total from tab_liberacao_cfo_cfoc where dua_numero=:dua_numero
+                                                                ) ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("dua_numero", numero, DbType.String);
+               
+                return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+            }
+        }
 
 		internal void Cancelar(NumeroCFOCFOC objeto, BancoDeDados banco = null)
 		{

@@ -16,9 +16,11 @@
 			{
 				urls:
 				{
+				    urlGravarVerificacaoDUA: '<%=Url.Action("GravarVerificacaoDUA", "LiberacaoCFOCFOC")%>',
 					verificarCPF: '<%=Url.Action("VerificarCPF", "LiberacaoCFOCFOC")%>',
 					visualizarPessoa: '<%=Url.Action("Visualizar", "Credenciado")%>',
-					salvar: '<%=Url.Action("SalvarLiberacao", "LiberacaoCFOCFOC")%>'
+				    salvar: '<%=Url.Action("SalvarLiberacao", "LiberacaoCFOCFOC")%>',
+				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "LiberacaoCFOCFOC") %>'
 				}
 			});
 		});
@@ -37,9 +39,13 @@
 		<fieldset class="block box">
 			<legend>Responsáveis Técnicos</legend>
 			<div class="block">
+                <div class="coluna22 divDUA">
+			        <label for="NumeroDua">Número DUA*</label>
+			        <%=Html.TextBox("NumeroDua", Model.Liberacao.NumeroDua , ViewModelHelper.SetaDisabled(Model.isVisualizar , new { @class="text setarFoco txtNumeroDua maskNumInt", @maxlength="80"}))%>
+		        </div>
 				<div class="coluna15">
 					<label for="Pessoa_Fisica_Cpf">CPF *</label>
-					<%= Html.TextBox("Pessoa.Fisica.Cpf", Model.Liberacao.CPF, ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text setarFoco maskCpf txtCpf", @maxlength = "14" }))%>
+					<%= Html.TextBox("Pessoa.Fisica.Cpf", Model.Liberacao.CPF, ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "text maskCpf txtCpf", @maxlength = "14" }))%>
 					<%= Html.Hidden("Credenciado.Id", 0, new { @class = "hdnCredenciadoId" })%>
 				</div>
 				<%if (!Model.isVisualizar) { %>

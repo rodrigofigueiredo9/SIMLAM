@@ -14,8 +14,11 @@ namespace Tecnomapas.Blocos.Entities.WebService
 		public string ReferenciaData { get; set; }
 		public float ReceitaValor { get; set; }
 		public string PagamentoCodigo { get; set; }
+        public string CodigoServicoRef { get; set; }
 
         public string CPF { get; set; }
         public string CNPJ { get; set; }
+
+        public float ValorTotal { get; set; }
 	}
 }

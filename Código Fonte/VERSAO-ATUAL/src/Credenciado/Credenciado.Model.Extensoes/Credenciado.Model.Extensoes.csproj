@@ -50,9 +50,6 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Etx">
-      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Etx.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.EtramiteX.Configuracao">
       <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Configuracao.dll</HintPath>
     </Reference>
@@ -111,6 +108,10 @@
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
       <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utilities\Utilities.csproj">
       <Project>{a280c318-2d35-475c-b358-5fa69bf9601e}</Project>

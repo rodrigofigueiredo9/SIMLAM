@@ -17,6 +17,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMLiberacaoCFOCFOC;
 
+
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
 	public class LiberacaoCFOCFOCController : DefaultController
@@ -29,6 +30,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		LiberacaoNumeroCFOCFOCBus _bus = new LiberacaoNumeroCFOCFOCBus();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 		OrgaoParceiroConveniadoBus _busOrgaoParceiro = new OrgaoParceiroConveniadoBus();
+
+        private Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus _PTVBusCred = new Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus();
+
 		#endregion
 
 		#region Filtrar
@@ -107,8 +111,44 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View(vm);
 		}
 
+        [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
+        public ActionResult VerificarConsultaDUA(int filaID, string NumeroDua, string cpf)
+        {
+            cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
+
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
+
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
+
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Consultado = true
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
+        public ActionResult GravarVerificacaoDUA(string NumeroDua, string cpf)
+        {
+            var filaID = _PTVBusCred.GravarConsultaDUA(NumeroDua, cpf, "1");
+
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @FilaID = filaID
+            }, JsonRequestBehavior.AllowGet);
+        }
+
 		[Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
-		public ActionResult VerificarCPF(string cpf)
+        public ActionResult VerificarCPF(int filaID, string cpf, string NumeroDua )
 		{
 			CredenciadoPessoa credenciado = null;
 			_bus.VerificarCPF(cpf);
@@ -117,6 +157,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				credenciado = _busCredenciadoInterno.ObterPorCPF(cpf);
 			}
+
+
+
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
+
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
+
 
 			return Json(new { @Msg = Validacao.Erros, @EhValido = Validacao.EhValido, @Credenciado = credenciado });
 		}

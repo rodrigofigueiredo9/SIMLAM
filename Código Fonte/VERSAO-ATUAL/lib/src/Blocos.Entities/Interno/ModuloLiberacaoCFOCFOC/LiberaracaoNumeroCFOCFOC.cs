@@ -12,6 +12,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloLiberacaoCFOCFOC
 		public string CPF { get; set; }
 		public string Nome { get; set; }
 
+        public string NumeroDua { get; set; }
+
+        public int FilaID { get; set; } 
+
 		#region Numero de Bloco CFO
 
 		public bool LiberarBlocoCFO { get; set; }
