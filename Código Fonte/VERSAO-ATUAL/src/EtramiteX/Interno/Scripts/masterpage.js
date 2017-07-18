@@ -8,7 +8,16 @@ $.ajaxSetup({ cache: false });
 
 $(window).load(function () {
 	$(".carregandoMaster").addClass("hide");
+	
+	if (document.referrer.indexOf("LogOn") >= 0 || document.referrer.indexOf("Logon") >= 0) {
+	    
+	    Modal.abrir(MasterPage.urlAvisoManutencao, null,
+        function (content) {
+            //Modal.defaultButtons(content);
+        }, { width: "615px", minWidthPerc: "46.3%" });
 
+
+	}
 	
 });
 
@@ -120,6 +129,7 @@ MasterPage = {
 	clockStarted: 0,
 	clockTimeReset: null, //{ min: 0, seg: 0 },
 	keyENTER: 13,
+    urlAvisoManutencao: "",
 
 	validarAcesso: function (e, xhr, settings) {
 
@@ -238,6 +248,8 @@ MasterPage = {
 		MasterPage.grid();
 		MasterPage.manuais();
 		MasterPage.sobre();
+
+		
 
 		$(".timer").ajaxComplete(function (request, settings) {
 			MasterPage.clockTimeReset = { min: MasterPage.loginTimeOutMinutes, seg: 0 };
@@ -763,6 +775,9 @@ Mascara = {
 		$(".maskDecimalPonto", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.' });
 		$(".maskDecimalPonto4", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 4 });
 		$(".maskDecimalPonto3", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 3 });
+	
+
+		$(".maskDecimalPonto2", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 2 });
 
 		/*-->maskMoney
 		{
