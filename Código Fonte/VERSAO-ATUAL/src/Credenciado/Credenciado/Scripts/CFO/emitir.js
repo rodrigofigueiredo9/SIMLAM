@@ -194,7 +194,27 @@ CFOEmitir = {
 				if (response.EhValido) {
 					$('.txtProdutoCultura', CFOEmitir.container).val(response.Cultivar.CulturaTexto);
 					$('.txtProdutoCultivar', CFOEmitir.container).val(response.Cultivar.Nome);
-					$('.txtProdutoUnidadeMedida', CFOEmitir.container).val(response.Cultivar.UnidadeMedidaTexto);
+
+					if (response.Cultivar.UnidadeMedidaTexto == "T") {
+
+
+					    $('#CFO_Produto_UnidadeMedida')
+                                     .replaceWith('<select id="CFO_Produto_UnidadeMedida" class="text txtProdutoUnidadeMedida" name="CFO_Produto_UnidadeMedida">' +
+                                           '<option value="T">T</option>' +
+                                           '<option value="KG">KG</option>' +
+                                         '</select>');
+
+					}
+					else {
+
+					    $('#CFO_Produto_UnidadeMedida')
+                                    .replaceWith('<input class="text txtProdutoUnidadeMedida disabled" disabled="disabled" id="CFO_Produto_UnidadeMedida" name="CFO.Produto.UnidadeMedida" type="text" value="">');
+
+					    $('.txtProdutoUnidadeMedida', CFOEmitir.container).val(response.Cultivar.UnidadeMedidaTexto);
+					}
+
+
+					
 					$('.hdnCulturaId', CFOEmitir.container).val(response.Cultivar.CulturaId);
 					$('.hdnCultivarId', CFOEmitir.container).val(response.Cultivar.Id);
 					$('.hdnUnidadeMedidaId', CFOEmitir.container).val(response.Cultivar.UnidadeMedida);
@@ -245,6 +265,12 @@ CFOEmitir = {
 		Mensagem.limpar(CFOEmitir.container);
 
 		var IdentificacoesAdicionadas = CFOEmitir.obterIdentificacoes();
+
+		var txtUnid = $('.txtProdutoUnidadeMedida', CFOEmitir.container).val();
+
+		var bExibeKg = txtUnid.indexOf("KG") >= 0;
+
+
 		var objeto = {
 			UnidadeProducao: +$('.ddlUnidadesProducao :selected', CFOEmitir.container).val() || 0,
 			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', CFOEmitir.container).val()),
@@ -252,7 +278,8 @@ CFOEmitir = {
 			DataFimColheita: { DataTexto: $('.txtProdutoFimColheita', CFOEmitir.container).val() },
 			CulturaId: +$('.hdnCulturaId', CFOEmitir.container).val() || 0,
 			CultivarId: +$('.hdnCultivarId', CFOEmitir.container).val() || 0,
-			UnidadeMedidaId: +$('.hdnUnidadeMedidaId', CFOEmitir.container).val() || 0
+			UnidadeMedidaId: +$('.hdnUnidadeMedidaId', CFOEmitir.container).val() || 0,
+			ExibeQtdKg: bExibeKg
 		};
 
 		var retorno = MasterPage.validarAjax(
@@ -497,6 +524,13 @@ CFOEmitir = {
 		};
 
 		objeto.Produtos = CFOEmitir.obterIdentificacoes();
+
+
+		for (var i = 0; i < objeto.Produtos.length; i++)
+		    if (objeto.Produtos[i].ExibeQtdKg)
+		        objeto.Produtos[i].Quantidade = objeto.Produtos[i].Quantidade / 1000;
+
+
 		objeto.Pragas = CFOEmitir.obterPragas();
 		objeto.TratamentosFitossanitarios = CFOEmitir.obterTratamentoFitossanitario();
 

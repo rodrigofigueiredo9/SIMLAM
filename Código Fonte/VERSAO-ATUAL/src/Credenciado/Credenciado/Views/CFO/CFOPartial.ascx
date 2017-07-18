@@ -114,7 +114,7 @@
 				<label>Quantidade *</label>
 				<%=Html.TextBox("CFO.Produto.Quantidade", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutoQuantidade maskDecimalPonto4", @maxlength = "12"}))%>
 			</div>
-			<div class="coluna17 prepend1">
+			<div id="UnidadeMedidaChn" class="coluna17 prepend1">
 				<label>Unidade de medida *</label>
 				<%=Html.TextBox("CFO.Produto.UnidadeMedida", "", ViewModelHelper.SetaDisabled(true, new { @class="text txtProdutoUnidadeMedida"}))%>
 				<input type="hidden" class="hdnUnidadeMedidaId" />
@@ -146,11 +146,25 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% foreach (var item in Model.CFO.Produtos) { %>
+					<% foreach (var item in Model.CFO.Produtos)
+                        {
+                            decimal qtd = 0;
+                            var unid = "";
+                            if (item.ExibeQtdKg)
+                            {
+                                qtd = item.Quantidade * 1000;
+                                unid = "KG";
+
+                            }
+                            else
+                            {
+                                qtd = item.Quantidade;
+                                unid = item.UnidadeMedida;
+                            }     %>
 						<tr>
 							<td class="codigoUP" title="<%=item.CodigoUP %>"><%=item.CodigoUP %></td>
 							<td class="cultura_cultivar" title="<%=item.CulturaTexto + " " + item.CultivarTexto %>"> <%=item.CulturaTexto + " " + item.CultivarTexto%></td>
-							<td class="quantidade" title="<%= item.Quantidade + " " + item.UnidadeMedida %>"><%= item.Quantidade + " " + item.UnidadeMedida %></td>
+							<td class="quantidade" title="<%= qtd + " " + unid %>"><%= qtd + " " + unid %></td>
 							<td class="periodo" title="<%=item.DataInicioColheita.DataTexto + " a " + item.DataFimColheita.DataTexto %>"><%=item.DataInicioColheita.DataTexto + " a " + item.DataFimColheita.DataTexto %></td>
 							<%if(!Model.IsVisualizar){ %> 
 							<td>
