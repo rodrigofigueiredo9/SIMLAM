@@ -2098,9 +2098,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Auxiliares
+        #region Produtos Apreendidos/Destinação
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+        public ActionResult ConfigurarProdutosDestinacao()
+        {
+            CampoInfracaoVM vm = new CampoInfracaoVM(_busConfiguracao.ObterCampoInfracao(), _busLista.ConfiguracaoFiscalizacaoCamposTipo, _busLista.ConfiguracaoFiscalizacaoCamposUnidade);
+            return View(vm);
+        }
+
+        #endregion Produtos Apreendidos/Destinação
+
+        #region Auxiliares
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
 		public ActionResult AlterarSituacaoTipoInfracao(int tipoId, int situacaoNova)
 		{
 			_busConfiguracao.AlterarSituacaoTipoInfracao(tipoId, situacaoNova);

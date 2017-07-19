@@ -241,6 +241,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Security
 		ConfigurarCampo,
 		ConfigurarPergunta,
 		ConfigurarResposta,
+        ConfigurarProdutosDestinacao,
 		ConfigurarFiscCriar,
 		ConfigurarFiscEditar,
 		ConfigurarFiscVisualizar,
