@@ -2103,7 +2103,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
         public ActionResult ConfigurarProdutosDestinacao()
         {
-            CampoInfracaoVM vm = new CampoInfracaoVM(_busConfiguracao.ObterCampoInfracao(), _busLista.ConfiguracaoFiscalizacaoCamposTipo, _busLista.ConfiguracaoFiscalizacaoCamposUnidade);
+            ProdutoDestinacaoVM vm = new ProdutoDestinacaoVM();
+            
             return View(vm);
         }
 
