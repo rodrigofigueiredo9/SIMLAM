@@ -14,17 +14,6 @@ $.ajaxSetup({ cache: false });
 
 $(window).load(function () {
     $(".carregandoMaster").addClass("hide");
-
-    if (document.referrer.indexOf("LogOn") >= 0 || document.referrer.indexOf("Logon") >= 0) {
-
-        Modal.abrir("/Home/AvisoManutencao", null,
-           function (content) {
-               //Modal.defaultButtons(content);
-           }, { width: "615px", minWidthPerc: "46.3%" });
-
-    }
-
-
 });
 
 function object(o) {
@@ -133,7 +122,6 @@ MasterPage = {
 	clockStarted: 0,
 	clockTimeReset: null, //{ min: 0, seg: 0 },
 	keyENTER: 13,
-	urlAvisoManutencao: "",
 
 	validarAcesso: function (e, xhr, settings) {
 

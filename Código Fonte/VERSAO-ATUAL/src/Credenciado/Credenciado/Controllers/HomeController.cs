@@ -28,13 +28,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return View();
 		}
 
-        public ActionResult AvisoManutencao()
-        {
-            return PartialView("AvisoManutencaoPartial");
-        }
-
-            
-
 		public string ValoresCache()
 		{
 			//Configuracao.GerenciadorConfiguracao _confg = new Configuracao.GerenciadorConfiguracao(new Configuracao.ConfiguracaoFuncionario());
