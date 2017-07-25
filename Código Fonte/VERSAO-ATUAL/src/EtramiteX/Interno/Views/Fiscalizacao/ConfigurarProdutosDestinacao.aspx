@@ -17,8 +17,7 @@
 					ExcluirConfirm: '<%= Url.Action("ExcluirCampoInfracaoConfirm", "Fiscalizacao") %>',
 					alterarSituacao: '<%= Url.Action("AlterarSituacaoCampoInfracao", "Fiscalizacao") %>'--%>
 				},
-				<%--mensagens: <%= Model.Mensagens %>,
-				idsTela: <%= Model.IdsTela %>--%>
+				Mensagens: <%= Model.Mensagens %>
 			});
 		});
 	</script>

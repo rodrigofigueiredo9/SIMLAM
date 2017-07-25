@@ -1,7 +1,7 @@
-﻿/// <reference path="../../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
-/// <reference path="../../../masterpage.js" />
-/// <reference path="../../../jquery.ddl.js" 
+﻿/// <reference path="../jquery-1.4.3-vsdoc.js" />
+/// <reference path="../jquery.json - 2.2.min.js" />
 /// <reference path="../masterpage.js" />
+/// <reference path="../jquery.ddl.js" />
 
 ConfigurarProdutosDestinos = {
     settings: {
@@ -29,73 +29,62 @@ ConfigurarProdutosDestinos = {
         //container.delegate('.btnExcluir', 'click', ConfigDocFitossanitario.abrirModalConfirmarExcluir);
         //container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
 
+        Listar.atualizarEstiloTable('.tabProdutos', ConfigurarProdutosDestinos.container)
         Aux.setarFoco(container);
     },
 
     adicionarProduto: function () {
         Mensagem.limpar(ConfigurarProdutosDestinos.container);
-        //$(Localizacao.container).removeClass('erroModo erroIdentificacao');
         var mensagens = new Array();
 
+        //Pega os campos para adicionar na tabela
         var container = $(this).closest('fieldset');
         var item = container.find('.txtProdutoItem').val();
         var unidade = container.find('.txtProdutoUnidade').val();
         var id = container.find('.hdnItemId').val();
         var ehAtivo = container.find('.hdnItemIsAtivo').val();
 
+        //Verifica se os campos foram preenchidos
         if (item.length == 0) {
-            $('.txtProdutoItem', container).addClass('erroModo');
-            //    mensagens.push(Localizacao.settings.mensagens.ModoObrigratorio);
+            $('.txtProdutoItem', container).addClass('erroItem');
+            mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.ItemProdutoObrigatorio);
         }
-        
         if (unidade.length == 0) {
-            $('.txtProdutoUnidade', container).addClass('erroModo');
-            //    mensagens.push(Localizacao.settings.mensagens.ModoObrigratorio);
+            $('.txtProdutoUnidade', container).addClass('erroUnidade');
+            mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.UnidadeProdutoObrigatoria);
         }
-
         if (ConfigurarProdutosDestinos.publicarMensagem(mensagens)) {
             return false;
         }
 
+        //Verifica se o produto (item+unidade) já existe na tabela
         var tabelaProdutos = $('.tabProdutos tbody tr', container);
-
-        $(tabelaProdutos).each(function (i, item) {
-            if ($('.hdnModoId', item).val() == modoId && $('.trIdentificacaoTexto', item).text() == identificacao) {
-                mensagens.push(Localizacao.settings.mensagens.PrateleiraItemArquivoJaAdicionada);
+        $(tabelaProdutos).each(function (i, prod) {
+            if ($('.nomeItem', prod).text() == item && $('.unidadeMedida', prod).text() == unidade) {
+                mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.ProdutoDuplicado);
             }
         });
+        if (ConfigurarProdutosDestinos.publicarMensagem(mensagens)) {
+            return false;
+        }
 
+        //Monta a nova linha e insere na tabela
+        var linha = $('.trTemplateRow', container).clone();
+        linha.find('.nomeItem').text(item);
+        linha.find('.nomeItem').attr('title', item);
+        linha.find('.unidadeMedida').text(unidade);
+        linha.find('.unidadeMedida').attr('title', unidade);
+        linha.find('.itemId').val(id);
+        linha.removeClass('trTemplateRow hide');
+        $('.tabProdutos > tbody:last', container).append(linha);
 
+        Listar.atualizarEstiloTable($('.tabProdutos', container));
 
-
-        
-
-        
-
-        //if (Localizacao.publicarMensagem(mensagens)) {
-        //    return false;
-        //}
-
-        //var linha = $('.templatePrateleira', containerPrateleira).clone();
-
-        //linha.find('.hdnModoId').val(modoId);
-
-        //linha.find('.trModoTexto').text($('.ddlModo :selected', containerPrateleira).text());
-        //linha.find('.trModoTexto').attr('title', $('.ddlModo :selected', containerPrateleira).text());
-
-        //linha.find('.trIdentificacaoTexto').text(identificacao);
-        //linha.find('.trIdentificacaoTexto').attr('title', identificacao);
-
-        //linha.removeClass('templatePrateleira hide');
-
-        //$('.tabPrateleira > tbody:last', containerPrateleira).append(linha);
-
-        //Listar.atualizarEstiloTable($('.tabPrateleira', containerPrateleira));
-
-        //$('.ddlModo', containerPrateleira).find('option:first').attr('selected', 'selected');
-        //$('.txtIdentificacao', containerPrateleira).val('')
-
-        //$(containerEstante).removeClass('erroCampo');
+        //limpa os campos de texto
+        $('.txtProdutoItem', container).val('');
+        $('.txtProdutoUnidade', container).val('');
+        $('.hdnItemId', container).val('0');
+        $('.hdnItemIsAtivo', container).val('1');
     },
 
     publicarMensagem: function (mensagens) {

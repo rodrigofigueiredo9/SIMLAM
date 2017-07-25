@@ -22,27 +22,18 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
             }
         }
 
-        //public String Mensagens
-        //{
-        //    get
-        //    {
-        //        return ViewModelHelper.Json(new
-        //        {
-        //            @NomeItemObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoNomeObrigatorio,
-        //            @ItemDuplicado = Mensagem.FiscalizacaoConfiguracao.CampoJaAdicionado,
-        //            @UnidadeCampoObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoUnidadeObrigatorio,
-        //            @TipoCampoObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoTipoObrigatorio,
-        //            @EditarItemDesativado = Mensagem.FiscalizacaoConfiguracao.EditarCampoInfracaoDesativado
-        //        });
-        //    }
-        //}
-
-        //public CampoInfracaoVM(List<Item> itens, List<Lista> tipos, List<Lista> unidades)
-        //{
-        //    Entidade.Itens = itens;
-        //    Tipos = ViewModelHelper.CriarSelectList(tipos, true, true);
-        //    Unidades = ViewModelHelper.CriarSelectList(unidades, true, true);
-        //}
+        public String Mensagens
+        {
+            get
+            {
+                return ViewModelHelper.Json(new
+                {
+                    @ItemProdutoObrigatorio = Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio,
+                    @UnidadeProdutoObrigatoria = Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria,
+                    @ProdutoDuplicado = Mensagem.FiscalizacaoConfiguracao.ProdutoDuplicado
+                });
+            }
+        }
 
         public ProdutoDestinacaoVM(List<ProdutoApreendido> listaProdutos)
         {

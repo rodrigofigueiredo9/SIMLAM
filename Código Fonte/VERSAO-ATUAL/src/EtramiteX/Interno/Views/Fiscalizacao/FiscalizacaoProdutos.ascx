@@ -16,7 +16,7 @@
                 <% foreach (var item in Model.ListaProdutos){ %>
 				    <tr>
 					    <td>
-						    <span class="nomeCampo" title="<%:item.Item%>"><%:item.Item%></span>
+						    <span class="nomeItem" title="<%:item.Item%>"><%:item.Item%></span>
 					    </td>
 					    <td>
 						    <span class="unidadeMedida" title="<%:item.Unidade%>"><%:item.Unidade%></span>
@@ -32,12 +32,11 @@
 				    </tr>
                 <%} %>
 				<tr class="trTemplateRow hide">
-					<td><span class="nomeCampo"></span></td>
-					<td><span class="tipo"></span></td>
-					<td><span class="unidade"></span></td>
-					<td><span class="situacao"></span></td>
+					<td><span class="nomeItem"></span></td>
+					<td><span class="unidadeMedida"></span></td>
 					<td class="tdAcoes">
 						<input type="hidden" class="hdnItemJSon" value="" />
+                        <input type="hidden" value="" class="itemId" />
 						<input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
 						<input title="Desativar campo" type="button" class="icone cancelar btnDesativarItem" value="" />
 						<input title="Ativar campo" type="button" class="icone recebido btnAtivarItem" value="" />
