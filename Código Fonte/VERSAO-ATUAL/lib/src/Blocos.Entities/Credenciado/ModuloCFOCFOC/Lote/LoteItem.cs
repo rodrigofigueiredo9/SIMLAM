@@ -19,7 +19,6 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC.Lote
 		public int UnidadeMedida { get; set; }
 		public string UnidadeMedidaTexto { get; set; }
 		public decimal Quantidade { get; set; }
-        public bool ExibeKg { get; set; }
 		
 	}
 }
