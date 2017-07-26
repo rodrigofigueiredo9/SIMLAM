@@ -376,22 +376,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 				#region Quantidade de registro do resultado
 
-                comando.DbCommand.CommandText = String.Format(@"select count(*) from 
-                    (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
-					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
-					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar,c.quantidade as saldo_total,  c.quantidade - (
-                             select nvl(sum(cfoc.quantidade),0) from tab_cfoc_produto cfoc 
-                                                               inner join tab_cfoc tc on tc.id = cfoc.cfoc
-                                                               where tc.situacao = 2 and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
-                  c.unidade_medida_texto, emp.denominador
-				        from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
-					        (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
-						        i.unidade_medida, i.exibe_kilos, (
-                    select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
-						        from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
-						        where c.id = i.cultura and cc.id = i.cultivar 
-                    group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
-				        where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.quantidade > 0 and d.id > 0 " + comandtxt, esquemaBanco);
+                comando.DbCommand.CommandText = String.Format(@"select COUNT(*) from 
+                (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
+					    l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
+					    l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade - (
+                            select nvl(sum(lote.quantidade),0) from tab_cfoc_produto cfoc inner join tab_lote_item lote on cfoc.lote = lote.lote where lote.lote = l.id ) as quantidade, c.unidade_medida, 
+                c.unidade_medida_texto, emp.denominador
+				    from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
+					    (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(i.quantidade) quantidade,
+						    i.unidade_medida, i.exibe_kilos, (
+                select l.texto from lov_crt_uni_prod_uni_medida l where l.id = i.unidade_medida) unidade_medida_texto
+						    from tab_lote_item i, tab_cultura c, tab_cultura_cultivar cc
+						    where c.id = i.cultura and cc.id = i.cultivar 
+                group by i.lote, i.unidade_medida, i.exibe_kilos, c.id, c.texto, cc.id, cc.cultivar, cc.tipo_producao) c
+				    where ls.id = l.situacao and c.lote = l.id and emp.id = l.empreendimento) d where d.quantidade > 0 and d.id > 0" + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -401,7 +399,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                 comandtxt = String.Format(@"select * from 
                     (select l.id, l.tid, l.codigo_uc, l.ano, lpad(l.numero, 4, '0') numero,
 					        l.codigo_uc || l.ano || lpad(l.numero, 4, '0') numero_completo, l.data_criacao, l.situacao, ls.texto situacao_texto, l.empreendimento, 
-					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar,c.quantidade as saldo_total,  c.quantidade - (
+					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar, c.quantidade - (
                              select nvl(sum(cfoc.quantidade),0) from tab_cfoc_produto cfoc 
                                                                inner join tab_cfoc tc on tc.id = cfoc.cfoc
                                                                where tc.situacao = 2 and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
@@ -445,7 +443,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						item.Item.UnidadeMedidaTexto = reader.GetValue<string>("unidade_medida_texto");
 						item.Item.Quantidade = reader.GetValue<decimal>("quantidade");
                         item.Item.ExibeKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false;
-                        item.SaldoTotal = reader.GetValue<decimal>("saldo_total");
+                        
 
 						retorno.Itens.Add(item);
 					}
