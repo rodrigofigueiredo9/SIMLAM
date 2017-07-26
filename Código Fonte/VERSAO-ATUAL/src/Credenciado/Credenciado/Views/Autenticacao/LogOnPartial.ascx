@@ -69,6 +69,11 @@
                             <%} %>
                             <% if (!Model.IsAjaxRequest && Model.EsqueciSenha==true){ %>
                                 <%= Html.Hidden("verificarTrocarSenha", false)%>
+                                <div class="msgSis">
+								    <p>
+									    <%= Model.AlterarSenhaMsg %>
+								    </p>
+							    </div>
                                 <p style="float:left">
 								    <label for="cpf" class="fonteBrancaLabel">CPF:</label><br/>
 								    <%= Html.TextBox("CPF", null, new { @class = "cpfTxt maskCpf"})%>

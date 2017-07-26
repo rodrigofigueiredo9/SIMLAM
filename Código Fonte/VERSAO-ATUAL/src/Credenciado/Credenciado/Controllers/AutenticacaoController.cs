@@ -57,6 +57,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             if (!GerenciarAutenticacao.ValidarRecuperacaoSenha(cpf, email))
             {
                 viewModel.EsqueciSenha = true;
+                viewModel.AlterarSenhaMsg = "Será gerada nova chave de validação que lhe permitirá restabelecer o acesso ao sistema. A chave será enviada ao e-mail registrado no seu cadastro do SIMLAM.";
                 return viewModel;
             }
 
@@ -77,6 +78,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
             if (esqueciSenha == true)
             {
+                viewModel.AlterarSenhaMsg = "Será gerada nova chave de validação que lhe permitirá restabelecer o acesso ao sistema. A chave será enviada ao e-mail registrado no seu cadastro do SIMLAM.";
+
                 if (Request.IsAjaxRequest())
                     return this.getAjaxLogOnPartial();
 
