@@ -224,7 +224,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		public bool Salvar(ConfigFiscalizacao configuracao)
+        #region Produtos Apreendidos / Destinação
+
+        public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
+        {
+            if (listaProdutos == null)
+            {
+                return Validacao.EhValido;
+            }
+
+            foreach (var item in listaProdutos)
+            {
+                if (String.IsNullOrWhiteSpace(item.Item.Trim()))
+                {
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
+                }
+
+                if (String.IsNullOrWhiteSpace(item.Unidade.Trim()))
+                {
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
+                }
+            }
+
+
+            return Validacao.EhValido;
+        }
+
+        #endregion Produtos Apreendidos / Destinação
+
+        public bool Salvar(ConfigFiscalizacao configuracao)
 		{
 			Mensagem msg = null;
 			List<string> lstMsg = new List<string>();

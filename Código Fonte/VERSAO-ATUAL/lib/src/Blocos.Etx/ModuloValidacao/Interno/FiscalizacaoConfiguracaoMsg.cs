@@ -152,6 +152,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem UnidadeProdutoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_UnidadeProduto, .erroUnidade", Texto = "Unidade é obrigatória." }; } }
         public Mensagem ProdutoDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_NomeProduto, .erroItem", Texto = "Produto já adicionado." }; } }
 
+        public Mensagem SalvarProdutosDestinos { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Produtos Apreendidos/Destinação salvo com sucesso." }; } }
+
         #endregion Produtos Apreendidos/Destinação
 
         public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }

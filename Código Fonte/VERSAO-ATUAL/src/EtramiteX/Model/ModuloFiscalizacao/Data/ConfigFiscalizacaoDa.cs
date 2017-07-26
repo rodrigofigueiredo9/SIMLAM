@@ -1022,11 +1022,91 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#endregion
 
-		#endregion
+        #region Produtos Apreendidos/Destinação
 
-		#region Obter / Filtrar
+        internal void SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos, BancoDeDados banco = null)
+        {
+            if (listaProdutos == null)
+            {
+                throw new Exception("Objeto Produto Apreendido é nulo.");
+            }
 
-		internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando;
+
+                bancoDeDados.IniciarTransacao();
+
+                eHistoricoAcao acao;
+
+                foreach (var produto in listaProdutos)
+                {
+                    comando = null;
+
+                    if (produto.Id == 0)    //produto novo, incluir
+                    {
+                        acao = eHistoricoAcao.criar;
+
+                        comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infracao_produto(id, item, unidade, ativo, tid)
+                                                              values(seq_cnf_fisc_infracao_produto.nextval, :item, :unidade, :ativo, :tid)
+                                                              returning id into :id", EsquemaBanco);
+
+                        comando.AdicionarParametroSaida("id", DbType.Int32);
+                    }
+                    else if (produto.Excluir == false)  //produto existente, editar
+                    {
+                        acao = eHistoricoAcao.atualizar;
+
+                        comando = bancoDeDados.CriarComando(@"update cnf_fisc_infracao_produto
+                                                              set item = :item,
+                                                                  unidade = :unidade,
+                                                                  ativo = :ativo,
+                                                                  tid = :tid
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+                    }
+                    else    //produto existente, excluir
+                    {
+                        acao = eHistoricoAcao.excluir;
+
+                        comando = bancoDeDados.CriarComando(@"delete from cnf_fisc_infracao_produto
+                                                              where id = :id", EsquemaBanco);
+                    }
+
+                    comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
+                    comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
+                    comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    if (produto.Id == 0)
+                    {
+                        produto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+                    }
+
+                    //TODO
+                    //#region Histórico
+
+                    //Historico.Gerar(produto.Id, eHistoricoArtefato.campoinfracao, acao, bancoDeDados, null);
+
+                    //#endregion
+                }
+
+                bancoDeDados.Commit();
+
+                //return Convert.ToInt32(entidade.Id);
+            }
+        }
+
+        #endregion Produtos Apreendidos/Destinação
+
+        #endregion
+
+        #region Obter / Filtrar
+
+        internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao configFiscalizacao = new ConfigFiscalizacao();
 

@@ -2108,6 +2108,32 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return View(vm);
         }
 
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+        public ActionResult ConfigurarProdutosDestinacao(List<ProdutoApreendido> listaProdutos, List<DestinacaoProduto> listaDestinos)
+        {
+            if (listaProdutos == null)
+            {
+                listaProdutos = new List<ProdutoApreendido>();
+            }
+            if (listaDestinos == null)
+            {
+                listaDestinos = new List<DestinacaoProduto>();
+            }
+
+            _busConfiguracao.SalvarProdutosApreendidos(listaProdutos);
+            //String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "FiscalizacaoCampos", new CampoInfracaoVM(_busConfiguracao.ObterCampoInfracao(), new List<Lista>(), new List<Lista>()));
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                //@Html = html,
+                @Url = Url.Action("ConfigurarProdutosDestinacao", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
         #endregion Produtos Apreendidos/Destinação
 
         #region Auxiliares

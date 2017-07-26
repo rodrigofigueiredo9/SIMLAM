@@ -446,12 +446,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#endregion
+        #region Produtos Apreendidos / Destinação
 
-		#region Obter
+        public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
+        {
+            try
+            {
+                if (_validar.SalvarProdutosApreendidos(listaProdutos))
+                {
+
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    {
+                        bancoDeDados.IniciarTransacao();
+
+                        _da.SalvarProdutosApreendidos(listaProdutos, bancoDeDados);
+
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarProdutosDestinos);
+
+                        bancoDeDados.Commit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        #endregion Produtos Apreendidos / Destinação
+
+        #endregion
+
+        #region Obter
 
 
-		public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+        public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao entidade = null;
 
