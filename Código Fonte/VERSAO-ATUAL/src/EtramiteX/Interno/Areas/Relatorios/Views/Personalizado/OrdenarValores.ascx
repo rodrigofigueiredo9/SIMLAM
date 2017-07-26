@@ -9,7 +9,8 @@
 		</p>
 	</div>
 </div>
-<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+
 <h5>Odenar Valores das Colunas</h5>
 
 <div class="block margem0">
@@ -38,7 +39,8 @@
 				<% } %>
 			</ul>
 		<% } %>
-	</div>
+	</div>
+
 	<div class="coluna48 ultima colunaB">
 		<strong>Coluna B</strong>
 		<% bool semItens = (Model.ConfiguracaoRelatorio.Ordenacoes == null || Model.ConfiguracaoRelatorio.Ordenacoes.Count <= 0); %>
