@@ -2104,6 +2104,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         public ActionResult ConfigurarProdutosDestinacao()
         {
             ProdutoDestinacaoVM vm = new ProdutoDestinacaoVM();
+            vm.ListaProdutos = _busConfiguracao.ObterProdutosApreendidos();
             
             return View(vm);
         }

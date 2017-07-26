@@ -711,6 +711,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return lista;
 		}
 
+        public List<ProdutoApreendido> ObterProdutosApreendidos()
+        {
+            List<ProdutoApreendido> listaProdutos = new List<ProdutoApreendido>();
+
+            try
+            {
+                listaProdutos = _da.ObterProdutosApreendidos();
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return listaProdutos;
+        }
+
 		public List<Lista> ObterItensConfig(bool? isAtivo)
 		{
 			List<Lista> lista = null;

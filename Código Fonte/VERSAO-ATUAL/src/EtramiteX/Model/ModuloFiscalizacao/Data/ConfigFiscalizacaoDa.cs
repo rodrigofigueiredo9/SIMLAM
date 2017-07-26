@@ -1749,6 +1749,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return lista;
 		}
 
+        internal List<ProdutoApreendido> ObterProdutosApreendidos(BancoDeDados banco = null)
+        {
+            List<ProdutoApreendido> listaProdutos = new List<ProdutoApreendido>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                comando = bancoDeDados.CriarComando(@"select id, item, unidade, ativo, tid
+                                                      from cnf_fisc_infracao_produto
+                                                      order by item, unidade", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        ProdutoApreendido produto = new ProdutoApreendido();
+
+                        produto.Id = reader.GetValue<int>("id");
+                        produto.Item = reader.GetValue<string>("item");
+                        produto.Unidade = reader.GetValue<string>("unidade");
+                        produto.Ativo = reader.GetValue<bool>("ativo");
+                        produto.Tid = reader.GetValue<string>("tid");
+
+                        listaProdutos.Add(produto);
+                    }
+                }
+            }
+
+            return listaProdutos;
+        }
+
 		internal List<Lista> ObterItensConfig(bool? isAtivo)
 		{
 			List<Lista> lista = new List<Lista>();
