@@ -79,12 +79,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 				#region Produtos
 
-				comando = bancoDeDados.CriarComando(@"select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura, d.cultivar, sum(d.quantidade) as quantidade , d.unidade_medida, d.exibe_kilos 
+				comando = bancoDeDados.CriarComando(@"select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura, d.cultivar, sum(d.quantidade) quantidade, d.unidade_medida 
 					from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.texto cultura, 
-					cc.cultivar, cp.quantidade, cp.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida 
+					cc.cultivar, li.quantidade, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc where l.id = cp.lote and li.lote = 
 					l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d group by d.id, d.tid, d.lote, d.codigo_lote, 
-					d.data_criacao, d.cultura, d.cultivar, d.unidade_medida, d.exibe_kilos", EsquemaBanco);
+					d.data_criacao, d.cultura, d.cultivar, d.unidade_medida", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 
@@ -100,8 +100,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 							CultivarTexto = reader.GetValue<string>("cultivar"),
 							UnidadeMedida = reader.GetValue<string>("unidade_medida"),
 							Quantidade = reader.GetValue<decimal>("quantidade"),
-							DataConsolidacao = reader.GetValue<DateTime>("data_criacao").ToShortDateString(),
-                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false
+							DataConsolidacao = reader.GetValue<DateTime>("data_criacao").ToShortDateString()
 						});
 					}
 
@@ -295,17 +294,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				select d.lote_id,
 					d.codigo_lote,
 					d.data_criacao,
-					sum(d.quantidade) as quantidade,
+					sum(d.quantidade) quantidade,
 					d.unidade_medida_texto,
-                    d.exibe_kilos,
 					d.cultura,
 					d.cultivar_nome
 				from (select cp.lote_id,
 							l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote,
 							l.data_criacao,
-							cp.quantidade,
+							li.quantidade,
 							li.unidade_medida_texto,
-                            cp.exibe_kilos,
 							c.texto cultura,
 							cc.cultivar_nome
 						from hst_cfoc_produto     cp,
@@ -325,7 +322,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 						d.codigo_lote,
 						d.data_criacao,
 						d.unidade_medida_texto,
-                        d.exibe_kilos,
 						d.cultura,
 						d.cultivar_nome", EsquemaBanco);
 
@@ -342,7 +338,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 							CultivarTexto = reader.GetValue<string>("cultivar_nome"),
 							UnidadeMedida = reader.GetValue<string>("unidade_medida_texto"),
 							Quantidade = reader.GetValue<decimal>("quantidade"),
-                            ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false,
 							DataConsolidacao = reader.GetValue<DateTime>("data_criacao").ToShortDateString()
 						});
 					}

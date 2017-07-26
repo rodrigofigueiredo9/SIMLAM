@@ -96,21 +96,11 @@ Lote = {
 			$('.divVerificarNumero', Lote.container).addClass('hide');
 			$('.divObterCultura', Lote.container).removeClass('hide');
 			$('.txtNumeroOrigem', Lote.container).attr("maxlength", 20);
-
-			$('.txtQuantidade', Lote.container).removeClass('disabled');
-			$('.txtQuantidade', Lote.container).removeAttr('disabled');
-			//$('label[for="Quantidade"]').show();
 		}
 		else {
 			$('.divVerificarNumero', Lote.container).removeClass('hide');
 			$('.divObterCultura', Lote.container).addClass('hide');
 			$('.txtNumeroOrigem', Lote.container).attr("maxlength", 10);
-
-			$('.txtQuantidade', Lote.container).addClass('disabled');
-			$('.txtQuantidade', Lote.container).attr('disabled','disabled');
-			//$('label[for="Quantidade"]').hide();
-
-			
 		}
 
 		Mascara.load($('.txtNumeroOrigem', Lote.container).closest('div'));
@@ -141,8 +131,6 @@ Lote = {
 					}
 				}
 
-
-				
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Lote.container, response.Msg);
 				}
@@ -220,22 +208,7 @@ Lote = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-				    $('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
-
-				    var txtUnd = $('select[name=UnidadeMedida] option:selected').text();
-
-				    var total = $('select[name=UnidadeMedida]').children('option').length;
-
-				    if (txtUnd == "T") {
-
-				        $('select[name=UnidadeMedida]').append(new Option('KG', 2));
-				    }
-
-				    
-				    $('.txtQuantidade', Lote.container).val(response.QtdDocOrigem);
-				    $('.txtQuantidade', Lote.container).change();
-				    //alert(response.QtdDocOrigem);
-
+					$('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
 					$('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
 				}
 
@@ -255,13 +228,6 @@ Lote = {
 		var DataCriacao = { DataTexto: $('.txtDataCriacao', Lote.container).val() };
 		var IdEmpreendimeto = $('.ddlEmpreemdimento', Lote.container).val();
 		var unidadeMedida = $('.ddlUnidadeMedida', container).ddlSelecionado();
-
-		var txtUnidMedida = $('.ddlUnidadeMedida :selected', container).text();
-
-		var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
-
-	
-
 		var item = {
 			Numero: $('.txtNumeroOrigem', container).val(),
 			Origem: $('.hdnOrigemID', container).val() || 0,
@@ -273,8 +239,7 @@ Lote = {
 			Cultivar: $('.ddlCultivar', container).val(),
 			CultivarTexto: $('.ddlCultivar option:selected', container).text(),
 			UnidadeMedida: unidadeMedida.Id,
-			Quantidade: $('.txtQuantidade', container).val(),
-            ExibeKg : bExibeKg
+			Quantidade: $('.txtQuantidade', container).val()
 		};
 
 		//Valida Item já adicionado na Grid		
@@ -287,18 +252,14 @@ Lote = {
 			_objeto.Lotes = null;
 		}
 
-		var Ret = MasterPage.validarAjax(
+		var ehValido = MasterPage.validarAjax(
 			Lote.settings.urls.urlAdicionarLoteItem,
 			{ item: item, dataCriacao: DataCriacao, empreendimentoID: IdEmpreendimeto, lista: _objeto.Lotes, loteID: $('.hdLoteId', Lote.container).val() },
-			Lote.container, false);
+			Lote.container, false).EhValido;
 
-		if (!Ret.EhValido) {
+		if (!ehValido) {
 			return;
 		}
-
-	    
-        if (item.OrigemTipo < 5)
-		    item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
 		var linha = $('.trTemplate', tabela).clone();
 		$(linha).removeClass('hide trTemplate');
@@ -344,11 +305,6 @@ Lote = {
 		$('.gridLote tbody tr:not(.trTemplate)', Lote.container).each(function (i, linha) {
 			objeto.Lotes.push(JSON.parse($('.hdnItemJson', linha).val()));
 		});
-
-		for (var i = 0; i < objeto.Lotes.length; i++)
-		    if (objeto.Lotes[i].ExibeKg) {
-		        objeto.Lotes[i].Quantidade = parseInt(objeto.Lotes[i].Quantidade) / 1000;
-		    }
 
 		return objeto;
 	},

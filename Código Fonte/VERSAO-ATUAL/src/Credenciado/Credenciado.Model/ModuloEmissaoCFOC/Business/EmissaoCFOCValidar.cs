@@ -196,12 +196,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				return;
 			}
 
-            //string aux = _da.LoteUtilizado(item.LoteId, cfoc);
-            //if (!string.IsNullOrEmpty(aux))
-            //{
-            //    Validacao.Add(Mensagem.EmissaoCFOC.LoteUtilizado(item.LoteCodigo, aux));
-            //    return;
-            //}
+			string aux = _da.LoteUtilizado(item.LoteId, cfoc);
+			if (!string.IsNullOrEmpty(aux))
+			{
+				Validacao.Add(Mensagem.EmissaoCFOC.LoteUtilizado(item.LoteCodigo, aux));
+				return;
+			}
 
 			TituloInternoBus tituloBus = new TituloInternoBus();
 			if (!tituloBus.UnidadeConsolidacaoPossuiAberturaConcluido(empreendimento, item.CulturaId))
@@ -216,15 +216,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				return;
 			}
 
-            var somaQuantidadeRemanescente = _da.ObterSaldoRemanescente(item.LoteId, empreendimento);
-            //var somaQuantidade = lista.Where(x => !x.Equals(item) && x.CultivarId == item.CultivarId).Sum(x => x.Quantidade);
+			var somaQuantidadeCFOC = _da.ObterCapacidadeMes(cfoc, empreendimento, item.CultivarId);
+			var somaQuantidade = lista.Where(x => !x.Equals(item) && x.CultivarId == item.CultivarId).Sum(x => x.Quantidade);
 
-            
-            if (somaQuantidadeRemanescente < ( item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade) )
-            {
-                Validacao.Add(Mensagem.EmissaoCFOC.LoteSaldoInsuficiente);
-                return;
-            }
+			if (cultivar.CapacidadeMes < somaQuantidadeCFOC + item.Quantidade + somaQuantidade)
+			{
+				Validacao.Add(Mensagem.EmissaoCFOC.QuantidadeMensalInvalida);
+				return;
+			}
 
 			if (lista.Count(x => !x.Equals(item)) >= 5)
 			{

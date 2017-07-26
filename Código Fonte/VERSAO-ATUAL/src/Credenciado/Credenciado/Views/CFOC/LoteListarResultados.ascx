@@ -14,7 +14,7 @@
 				<th width="15%">Número do lote</th>
 				<th width="15%">Data de criação</th>
 				<th>Cultivar</th>
-				<th width="13%">Saldo Remanescente</th>
+				<th width="13%">Situação</th>
 				<th class="semOrdenacao" width="19%">Ações</th>
 			</tr>
 		</thead>
@@ -25,7 +25,7 @@
 				<td title="<%: item.NumeroCompleto %>"><%: item.NumeroCompleto %></td>
 				<td title="<%: item.DataCriacao.DataTexto %>"><%: item.DataCriacao.DataTexto %></td>
 				<td title="<%: item.CulturaCultivar %>"><%: item.CulturaCultivar %></td>
-				<td title="<%: item.Item.Quantidade + " " + item.Item.UnidadeMedidaTexto %>"><%: item.Item.Quantidade + " " + item.Item.UnidadeMedidaTexto %></td>
+				<td title="<%: item.SituacaoTexto%>"><%: item.SituacaoTexto%></td>
 				<td>
 					<input type="hidden" class="itemJson" value="<%= HttpUtility.HtmlEncode(ViewModelHelper.Json(item)) %>" />
 

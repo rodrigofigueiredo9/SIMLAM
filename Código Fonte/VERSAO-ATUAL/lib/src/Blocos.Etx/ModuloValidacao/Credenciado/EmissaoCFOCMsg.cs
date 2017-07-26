@@ -56,8 +56,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem QuantidadeMensalInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A soma da quantidade do cultivar em todos os CFOC deste empreendimento ultrapassa a quantidade prevista na caracterização de UC para o mês." }; } }
 
-        public Mensagem LoteSaldoInsuficiente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Lote com saldo insuficiente." }; } }
-
 
 		public Mensagem PragaAssociadaCulturaObrigatorio { get { return new Mensagem() { Texto = "Pragas associadas a cultura é obrigatório.", Tipo = eTipoMensagem.Advertencia, Campo = "Container_Praga" }; } }
 

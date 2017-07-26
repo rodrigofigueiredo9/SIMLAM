@@ -42,8 +42,6 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC
 		public List<Praga> Pragas { get; set; }
 		public List<TratamentoFitossanitario> TratamentosFitossanitarios { get; set; }
 
-        public decimal Quantidade { get; set; }
-
 		public EmissaoCFOC()
 		{
 			DataEmissao = new DateTecno();

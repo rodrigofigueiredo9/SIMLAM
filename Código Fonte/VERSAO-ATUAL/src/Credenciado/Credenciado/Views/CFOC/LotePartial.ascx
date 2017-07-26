@@ -87,7 +87,7 @@
 		</div>
 		<div class="coluna15 prepend1">
 			<label for="Quantidade">Quantidade *</label>
-			<%= Html.TextBox("Quantidade",(object)String.Empty, ViewModelHelper.SetaDisabled(true,   new { @maxlength="12",  @class = "text maskDecimalPonto4 txtQuantidade" }))%>
+			<%= Html.TextBox("Quantidade",(object)String.Empty, new { @maxlength="12",  @class = "text maskDecimalPonto4 txtQuantidade" })%>
 		</div>
 		<div class="coluna1 prepend1">
 			<button type="button" class="inlineBotao bloco btnAdicionar">Adicionar</button>

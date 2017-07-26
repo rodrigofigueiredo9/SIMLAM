@@ -169,11 +169,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				{
 					bancoDeDados.IniciarTransacao();
 
-                    //LoteBus loteBus = new LoteBus();
-                    //foreach (var item in entidadeBanco.Produtos)
-                    //{
-                    //    loteBus.AlterarSituacaoLote(item.LoteId, eLoteSituacao.Utilizado, bancoDeDados);
-                    //}
+					LoteBus loteBus = new LoteBus();
+					foreach (var item in entidadeBanco.Produtos)
+					{
+						loteBus.AlterarSituacaoLote(item.LoteId, eLoteSituacao.Utilizado, bancoDeDados);
+					}
 
 					_da.Ativar(entidadeBanco, bancoDeDados);
 

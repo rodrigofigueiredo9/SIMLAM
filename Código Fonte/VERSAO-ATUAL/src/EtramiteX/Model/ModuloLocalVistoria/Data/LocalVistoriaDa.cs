@@ -414,7 +414,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
         {
             List<Setor> lst = new List<Setor>();
             IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select s.id, s.nome, s.sigla, s.responsavel, s.unidade_convenio from tab_setor s, tab_setor_grupo g 
-                                                                      where s.id=g.setor order by s.nome");
+                                                                      where g.grupo=2 and s.id=g.setor order by s.nome");
             foreach (var item in daReader)
             {
                 lst.Add(new Setor()

@@ -213,19 +213,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 			return null;
 		}
 
-		public List<Lista> ObterUnidadeMedida(int origemTipo, int origemID, int culturaID, int cultivarID, out decimal Quantidade)
+		public List<Lista> ObterUnidadeMedida(int origemTipo, int origemID, int culturaID, int cultivarID)
 		{
-            Quantidade = 0;
 			try
 			{
-               
 				if (origemTipo == (int)eDocumentoFitossanitarioTipo.CFCFR || origemTipo == (int)eDocumentoFitossanitarioTipo.TF)
 				{
 					return ListaCredenciadoBus.PTVUnidadeMedida;
 				}
 				else
 				{
-					return _da.ObterUnidadeMedida(origemTipo, origemID, culturaID, cultivarID, out Quantidade);
+					return _da.ObterUnidadeMedida(origemTipo, origemID, culturaID, cultivarID);
 				}
 			}
 			catch (Exception exc)

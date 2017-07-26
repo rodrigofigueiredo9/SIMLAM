@@ -40,7 +40,10 @@
 						<label for="Filtros_Cultivar">Cultivar</label>
 						<%= Html.TextBox("Filtros.CulturaCultivar", null, new { @class = "text", @maxlength = "80" })%>
 					</div>
-					
+					<div class="coluna18 prepend1">
+						<label for="Filtros_SituacaoId">Situação</label>
+						<%= Html.DropDownList("Filtros.SituacaoId", Model.SituacaoLista, new { @class = "text" })%>
+					</div>
 				</div>
 			</div>
 		</div>
