@@ -501,7 +501,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 				comando = bancoDeDados.CriarComando(@"
 				select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, sum(d.quantidade) quantidade, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto 
-				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, cp.quantidade, 
+				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar,
+                case when li.exibe_kilos is null then li.quantidade else cp.quantidade end as quantidade, 
 					li.unidade_medida, li.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
 					where l.id = cp.lote and li.lote = l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d 
