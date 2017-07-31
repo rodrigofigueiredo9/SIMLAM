@@ -147,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Security
                 {
                     eCredenciadoSituacao situacao = cred.Situacao == 2 ? eCredenciadoSituacao.Ativo : eCredenciadoSituacao.SenhaVencida;
 
-                    _busCred.RegerarChave(cred.Id, bancoDeDados);
+                    _busCred.CredenciadoRegerarChave(cred.Id, bancoDeDados);
                 }
                 else
                 {
