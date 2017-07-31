@@ -385,7 +385,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 		public void RegerarChave(int id, BancoDeDados banco = null, eCredenciadoSituacao situacao = eCredenciadoSituacao.AguardandoChave)
 		{
-			try
+			try 
 			{
 				CredenciadoPessoa credenciado = Obter(id, true, banco);
 
@@ -404,7 +404,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 				credenciado.Chave = GerarChaveAcesso(email, nome);
 
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 				{
 					bancoDeDados.IniciarTransacao();
 
@@ -424,6 +424,48 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 				Validacao.AddErro(exc);
 			}
 		}
+
+        public void CredenciadoRegerarChave(int id, BancoDeDados banco = null, eCredenciadoSituacao situacao = eCredenciadoSituacao.AguardandoChave)
+        {
+            try
+            {
+                CredenciadoPessoa credenciado = Obter(id, true, banco);
+
+                credenciado.Id = id;
+                credenciado.Situacao = (int)situacao;
+
+                credenciado.Pessoa = ObterPessoaCredenciado(credenciado.Pessoa.Id, banco);
+
+                if (!_validar.RegerarChave(credenciado.Pessoa))
+                {
+                    return;
+                }
+
+                string nome = credenciado.Pessoa.NomeRazaoSocial;
+                string email = credenciado.Pessoa.MeiosContatos.Find(x => x.TipoContato == eTipoContato.Email).Valor;
+
+                credenciado.Chave = GerarChaveAcesso(email, nome);
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    _da.RegerarChave(credenciado, bancoDeDados);
+
+                    EnviarEmail(credenciado, email, false);
+
+                    bancoDeDados.Commit();
+
+                    Validacao.Add(Mensagem.Credenciado.RegerarChave);
+                }
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+        }
 
 		public bool Ativar(CredenciadoPessoa credenciado, String senha, String confirmarSenha)
 		{
