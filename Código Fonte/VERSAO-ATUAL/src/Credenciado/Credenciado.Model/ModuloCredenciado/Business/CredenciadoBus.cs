@@ -404,7 +404,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 				credenciado.Chave = GerarChaveAcesso(email, nome);
 
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 				{
 					bancoDeDados.IniciarTransacao();
 
