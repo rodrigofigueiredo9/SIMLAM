@@ -54,6 +54,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
         private LogonVM RecuperarSenha(LogonVM viewModel, string cpf, string email)
         {
+            Validacao.Erros.Clear();
+
             if (!GerenciarAutenticacao.ValidarRecuperacaoSenha(cpf, email))
             {
                 viewModel.EsqueciSenha = true;
