@@ -95,40 +95,7 @@ namespace Tecnomapas.Blocos.Autenticacao
 			}
 		}
 
-        internal Int32 ObterUsuarioIdCPF(String cpf, BancoDeDados banco = null)
-        {
-            int? idUsuario = 0;
-
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaBanco))
-            {
-                Comando comando = bancoDeDados.CriarComando(@"select tu.id id_usuario
-                                                              from tab_pessoa tp,
-                                                                   tab_credenciado tc,
-                                                                   tab_usuario tu,
-                                                                   lov_credenciado_situacao ls
-                                                              where tp.cpf = :cpf
-                                                                    and tp.usuario = 1
-                                                                    and tc.pessoa = tp.id
-                                                                    and tu.id = tc.usuario
-                                                                    and ls.id = tc.SITUACAO
-                                                                    and (ls.texto = 'Ativo' or ls.texto = 'Senha vencida')", EsquemaBanco);
-                
-                comando.AdicionarParametroEntrada("cpf", DbType.String, 15, cpf);
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    while (reader.Read())
-                    {
-                        idUsuario = Convert.ToInt32(reader["id_usuario"]);
-                    }
-                    reader.Close();
-                }
-            }
-
-            return idUsuario ?? 0;
-        }
-
-        internal Int32 ObterUsuarioIdEmail(String email, BancoDeDados banco = null)
+        internal Int32 ObterUsuarioIdEmailCPF(String email, String cpf, BancoDeDados banco = null)
         {
             int? idUsuario = 0;
 
@@ -144,14 +111,19 @@ namespace Tecnomapas.Blocos.Autenticacao
                                                               where tmc.texto = 'Email'
                                                                     and tpc.meio_contato = tmc.id
                                                                     and tpc.valor = :email
+                                                                    and tp.cpf = :cpf
                                                                     and tp.id = tpc.pessoa
                                                                     and tp.usuario = 1
                                                                     and tc.pessoa = tp.id
                                                                     and tu.id = tc.usuario
                                                                     and ls.id = tc.situacao
-                                                                    and (ls.texto = 'Ativo' or ls.texto = 'Senha vencida')", EsquemaBanco);
+                                                                    and (ls.texto = 'Ativo'
+                                                                         or ls.texto = 'Bloqueado'
+                                                                         or ls.texto = 'Senha vencida'
+                                                                         or ls.texto = 'Aguardando chave')", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("email", DbType.String, 100, email);
+                comando.AdicionarParametroEntrada("cpf", DbType.String, 15, cpf);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
