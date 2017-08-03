@@ -383,6 +383,46 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return empreendimento;
 		}
 
+        public Empreendimento ObterNovoEmpreendimento(int id, int internoId = 0, bool simplificado = false)
+        {
+            Empreendimento empreendimento;
+            Pessoa aux;
+
+            EmpreendimentoInternoBus busInterno = new EmpreendimentoInternoBus();
+
+            empreendimento = busInterno.ObterSimplificado(internoId);
+
+            PessoaCredenciadoBus pessoaCredenciadoBus = new PessoaCredenciadoBus();
+
+            foreach (Responsavel responsavel in empreendimento.Responsaveis)
+            {
+                aux = pessoaCredenciadoBus.Obter(responsavel.CpfCnpj, simplificado: true, credenciadoId: User.FuncionarioId);
+
+                if (aux.Id > 0)
+                {
+                    responsavel.Id = aux.Id;
+                    responsavel.InternoId = aux.InternoId.GetValueOrDefault();
+                    responsavel.NomeRazao = aux.NomeRazaoSocial;
+                }
+                else
+                {
+                    responsavel.InternoId = responsavel.Id.GetValueOrDefault();
+                    responsavel.Id = 0;
+                }
+            }
+
+            foreach (var item in empreendimento.Enderecos)
+            {
+                item.Id = 0;
+            }
+
+            empreendimento.InternoId = empreendimento.Id;
+            empreendimento.Id = 0;
+
+
+            return empreendimento;
+        }
+
 		public List<EmpreendimentoAtividade> Atividades
 		{
 			get { return _da.Atividades(); }

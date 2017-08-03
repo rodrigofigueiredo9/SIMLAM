@@ -159,6 +159,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return Validacao.EhValido;
 		}
 
+        
+
 		public Requerimento Importar(Requerimento requerimento, BancoDeDados bancoInterno, BancoDeDados bancoCredenciado)
 		{
 			try
@@ -172,6 +174,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 				#region Empreendimento Cadastrado no Interno
 
 				empCredenciado.Id = 0;
+
+                if (requerimento == null || requerimento.Empreendimento == null)
+                {
+                    try
+                    {
+                        empCredenciado = bus.ObterNovoEmpreendimento(requerimento.Empreendimento.Id); //Faça nova busca pelo credenciado
+                    }
+                    catch (Exception ex)
+                    {
+                        empCredenciado = bus.Obter(requerimento.Empreendimento.Id);
+                    }
+                }
 
 				if (empCredenciado.InternoId.GetValueOrDefault() > 0)
 				{
