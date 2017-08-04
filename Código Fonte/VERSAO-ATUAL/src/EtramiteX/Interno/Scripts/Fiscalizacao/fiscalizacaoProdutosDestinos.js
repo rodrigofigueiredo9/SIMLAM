@@ -6,9 +6,7 @@
 ConfigurarProdutosDestinos = {
     settings: {
         urls: {
-            salvar: '',
-            //validarIntervalo: '',
-            //editar: '',
+            salvar: ''
             //salvarEdicao: '',
             //excluir: '',
             //validarEdicao: '',
@@ -25,9 +23,7 @@ ConfigurarProdutosDestinos = {
 
         container.delegate('.btnAdicionarProduto', 'click', ConfigurarProdutosDestinos.adicionarProduto);
         container.delegate('.btnSalvar', 'click', ConfigurarProdutosDestinos.salvar);
-        //container.delegate('.btnEditar', 'click', ConfigDocFitossanitario.editarIntervalo);
-        //container.delegate('.btnExcluir', 'click', ConfigDocFitossanitario.abrirModalConfirmarExcluir);
-        //container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
+        container.delegate('.btnEditarProduto', 'click', ConfigurarProdutosDestinos.editarProduto);
 
         Listar.atualizarEstiloTable('.tabProdutos', ConfigurarProdutosDestinos.container)
         Aux.setarFoco(container);
@@ -39,8 +35,8 @@ ConfigurarProdutosDestinos = {
 
         //Pega os campos para adicionar na tabela
         var container = $(this).closest('fieldset');
-        var item = container.find('.txtProdutoItem').val();
-        var unidade = container.find('.txtProdutoUnidade').val();
+        var item = container.find('.txtProdutoItem').val().toString().trim();
+        var unidade = container.find('.txtProdutoUnidade').val().toString().trim();
         var id = container.find('.hdnItemId').val();
         var ehAtivo = container.find('.hdnItemIsAtivo').val();
 
@@ -60,7 +56,12 @@ ConfigurarProdutosDestinos = {
         //Verifica se o produto (item+unidade) já existe na tabela
         var tabelaProdutos = $('.tabProdutos tbody tr', container);
         $(tabelaProdutos).each(function (i, prod) {
-            if ($('.nomeItem', prod).text() == item && $('.unidadeMedida', prod).text() == unidade) {
+
+            /*Aqui, além de comparar item e unidade, ele verifica se o id do produto na linha
+            é igual ao que está sendo adicionado, porque pode se tratar de um produto editado*/
+            if ($('.nomeItem', prod).text() == item
+                  && $('.unidadeMedida', prod).text() == unidade
+                  && $('.produtoId', prod).val() != id) {
                 mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.ProdutoDuplicado);
             }
         });
@@ -70,24 +71,47 @@ ConfigurarProdutosDestinos = {
 
         //monta o objeto
         var objeto = {
-            Id: 0,
+            Id: id,
             Tid: '',
             Item: item,
             Unidade: unidade,
-            Ativo: 1,
-            Excluir: 0
+            Ativo: ehAtivo,
+            Excluir: false
         };
 
-        //Monta a nova linha e insere na tabela
-        var linha = $('.trTemplateRow', container).clone();
-        linha.find('.hdnItemJSon').val(JSON.stringify(objeto));
-        linha.find('.nomeItem').text(item);
-        linha.find('.nomeItem').attr('title', item);
-        linha.find('.unidadeMedida').text(unidade);
-        linha.find('.unidadeMedida').attr('title', unidade);
-        linha.find('.itemId').val(id);
-        linha.removeClass('trTemplateRow hide');
-        $('.tabProdutos > tbody:last', container).append(linha);
+        var linha = '';
+        if (objeto.Id == 0) {   //Produto novo
+            linha = $('.trTemplateRow', container).clone();
+
+            //Monta a nova linha e insere na tabela
+            linha.find('.hdnItemJSon').val(JSON.stringify(objeto));
+            linha.find('.nomeItem').text(item);
+            linha.find('.nomeItem').attr('title', item);
+            linha.find('.unidadeMedida').text(unidade);
+            linha.find('.unidadeMedida').attr('title', unidade);
+            linha.find('.produtoId').val(id);
+            linha.find('.produtoAtivo').val(ehAtivo);
+
+            linha.removeClass('trTemplateRow hide');
+            $('.tabProdutos > tbody:last', container).append(linha);
+
+        } else {    //Produto editado
+            $(tabelaProdutos).each(function (i, prod) {
+
+                //Procura a linha que tem o mesmo id do produto
+                if ($('.produtoId', prod).val() == id) {
+                    
+                    //Edita a linha
+                    $('.hdnItemJSon', prod).val(JSON.stringify(objeto));
+                    $('.nomeItem', prod).text(item);
+                    $('.nomeItem', prod).attr('title', item);
+                    $('.unidadeMedida', prod).text(unidade);
+                    $('.unidadeMedida', prod).attr('title', unidade);
+                    $('.produtoId', prod).val(id);
+                    $('.produtoAtivo', prod).val(ehAtivo);
+                }
+            });
+        }
 
         Listar.atualizarEstiloTable($('.tabProdutos', container));
 
@@ -95,7 +119,7 @@ ConfigurarProdutosDestinos = {
         $('.txtProdutoItem', container).val('');
         $('.txtProdutoUnidade', container).val('');
         $('.hdnItemId', container).val('0');
-        $('.hdnItemIsAtivo', container).val('1');
+        $('.hdnItemIsAtivo', container).val('true');
     },
 
     publicarMensagem: function (mensagens) {
@@ -157,6 +181,23 @@ ConfigurarProdutosDestinos = {
         //});
 
         return lista;
+    },
+
+    editarProduto: function () {
+
+        //Pega os campos que serão editados, e o id
+        var container = $(this).closest('tr');
+        var item = container.find('.nomeItem').text();
+        var unidade = container.find('.unidadeMedida').text();
+        var id = container.find('.produtoId').val();
+        var ehAtivo = container.find('.produtoAtivo').val();
+
+        //preenche os textbox
+        container = $(this).closest('fieldset');
+        container.find('.txtProdutoItem').val(item);
+        container.find('.txtProdutoUnidade').val(unidade);
+        container.find('.hdnItemId').val(id);
+        container.find('.hdnItemIsAtivo').val(ehAtivo);
     },
 
 

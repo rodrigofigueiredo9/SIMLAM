@@ -13,34 +13,44 @@
 			</thead>
 			
 			<tbody>
-                <% foreach (var item in Model.ListaProdutos){ %>
+                <% foreach (var produto in Model.ListaProdutos){ %>
 				    <tr>
 					    <td>
-						    <span class="nomeItem" title="<%:item.Item%>"><%:item.Item%></span>
+						    <span class="nomeItem" title="<%:produto.Item%>"><%:produto.Item%></span>
 					    </td>
 					    <td>
-						    <span class="unidadeMedida" title="<%:item.Unidade%>"><%:item.Unidade%></span>
+						    <span class="unidadeMedida" title="<%:produto.Unidade%>"><%:produto.Unidade%></span>
 					    </td>
 					    <td class="tdAcoes">
-						    <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
-						    <input type="hidden" value="<%= item.Id %>" class="itemId" />
-						    <input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
-						    <input title="Desativar campo" type="button" class="icone cancelar btnDesativarItem" value="" />
-						    <input title="Ativar campo" type="button" class="icone recebido btnAtivarItem" value="" />
-						    <input title="Excluir campo" type="button" class="icone excluir btnExcluirItem" value="" />
+						    <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(produto)%>' />
+						    <input type="hidden" value="<%= produto.Id %>" class="produtoId" />
+                            <input type="hidden" value="<%= produto.Ativo %>" class="produtoAtivo" />
+
+						    <input title="Editar produto" type="button" class="icone editar btnEditarProduto" value="" />
+                            <% if (produto.Ativo){ %>
+						        <input title="Desativar produto" type="button" class="icone cancelar btnDesativarProduto" value="" />
+						        <input title="Ativar produto" type="button" class="icone recebido btnAtivarProduto" disabled="disabled" value="" />
+                            <% }else{ %>
+						        <input title="Desativar produto" type="button" class="icone cancelar btnDesativarProduto" disabled="disabled" value="" />
+						        <input title="Ativar produto" type="button" class="icone recebido btnAtivarProduto" value="" />
+                            <% } %>
+						    <input title="Excluir produto" type="button" class="icone excluir btnExcluirProduto" value="" />
 					    </td>
 				    </tr>
                 <%} %>
+
 				<tr class="trTemplateRow hide">
 					<td><span class="nomeItem"></span></td>
 					<td><span class="unidadeMedida"></span></td>
 					<td class="tdAcoes">
 						<input type="hidden" class="hdnItemJSon" value="" />
-                        <input type="hidden" value="" class="itemId" />
-						<input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
-						<input title="Desativar campo" type="button" class="icone cancelar btnDesativarItem" value="" />
-						<input title="Ativar campo" type="button" class="icone recebido btnAtivarItem" value="" />
-						<input title="Excluir campo" type="button" class="icone excluir btnExcluirItem" value="" />
+						<input type="hidden" value="" class="produtoId" />
+                        <input type="hidden" value="" class="produtoAtivo" />
+
+						<input title="Editar produto" type="button" class="icone editar btnEditarProduto" disabled="disabled" value="" />
+						<input title="Desativar produto" type="button" class="icone cancelar btnDesativarProduto" disabled="disabled" value="" />
+						<input title="Ativar produto" type="button" class="icone recebido btnAtivarProduto" disabled="disabled" value="" />
+						<input title="Excluir produto" type="button" class="icone excluir btnExcluirProduto" value="" />
 					</td>
 				</tr>
 			</tbody>

@@ -10,12 +10,7 @@
 		$(function () {
 		    ConfigurarProdutosDestinos.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("ConfigurarProdutosDestinacao", "Fiscalizacao") %>',
-					<%--podeDesativar: '<%= Url.Action("ConfiguracaoIsAssociadoCampoInfracao", "Fiscalizacao") %>',
-					podeEditar: '<%= Url.Action("PodeEditarCampoInfracao", "Fiscalizacao") %>',
-					Excluir: '<%= Url.Action("ExcluirCampoInfracao", "Fiscalizacao") %>',
-					ExcluirConfirm: '<%= Url.Action("ExcluirCampoInfracaoConfirm", "Fiscalizacao") %>',
-					alterarSituacao: '<%= Url.Action("AlterarSituacaoCampoInfracao", "Fiscalizacao") %>'--%>
+					salvar: '<%= Url.Action("ConfigurarProdutosDestinacao", "Fiscalizacao") %>'
 				},
 				Mensagens: <%= Model.Mensagens %>
 			});
@@ -48,7 +43,7 @@
 				</div>
 
 				<input type="hidden" class="hdnItemId" value='0' />
-				<input type="hidden" class="hdnItemIsAtivo" value='1' />
+				<input type="hidden" class="hdnItemIsAtivo" value='true' />
 			</div>
 
             <div class="DivItens">
@@ -63,20 +58,20 @@
 			<div class="block">
 				<div class="coluna35 append2">
 					<label for="Item_NomeProduto">Item</label>
-					<%= Html.TextBox("Item", String.Empty, new { @class = "text txtProdutoItem", @maxlength = "100" } )%>
+					<%= Html.TextBox("Item", String.Empty, new { @class = "text txtProdutoItem2", @maxlength = "100" } )%>
 				</div>
 
 				<div class="coluna15 append1">
 					<label for="Item_UnidadeProduto">Unidade</label>
-					<%= Html.TextBox("Unidade",String.Empty, new { @class = "text txtProdutoUnidade", @maxlength = "50"})%>
+					<%= Html.TextBox("Unidade",String.Empty, new { @class = "text txtProdutoUnidade2", @maxlength = "50"})%>
 				</div>
 
 				<div class="coluna7">
-                    <button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProduto" title="Adicionar Produto">+</button>
+                    <button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProduto2" title="Adicionar Produto">+</button>
 				</div>
 
-				<input type="hidden" class="hdnItemId" value='0' />
-				<input type="hidden" class="hdnItemIsAtivo" value='1' />
+				<input type="hidden" class="hdnItemId2" value='0' />
+				<input type="hidden" class="hdnItemIsAtivo2" value='true' />
 			</div>
 
             <%--<div class="DivItens">
