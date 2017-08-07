@@ -26,6 +26,7 @@ ConfigurarProdutosDestinos = {
         container.delegate('.btnEditarProduto', 'click', ConfigurarProdutosDestinos.editarProduto);
         container.delegate('.btnDesativarProduto', 'click', ConfigurarProdutosDestinos.desativarProduto);
         container.delegate('.btnAtivarProduto', 'click', ConfigurarProdutosDestinos.ativarProduto);
+        container.delegate('.btnExcluirProduto', 'click', ConfigurarProdutosDestinos.excluirProduto);
 
         Listar.atualizarEstiloTable('.tabProdutos', ConfigurarProdutosDestinos.container)
         Aux.setarFoco(container);
@@ -251,6 +252,24 @@ ConfigurarProdutosDestinos = {
         //altera o valor da propriedade no objeto
         $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
         $(this).closest('tr').find('.produtoAtivo').val(objeto.Ativo);
+    },
+
+    excluirProduto: function () {
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.produtoId').val(),
+            Tid: '',
+            Item: '',
+            Unidade: '',
+            Ativo: false,
+            Excluir: true
+        };
+        if (objeto.Id != 0) {
+            $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+            $(this).closest('tr').hide();
+        } else {
+            $(this).closest('tr').remove();
+        }
     },
 
 

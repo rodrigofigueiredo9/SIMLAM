@@ -235,14 +235,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
             foreach (var item in listaProdutos)
             {
-                if (String.IsNullOrWhiteSpace(item.Item.Trim()))
+                if (item.Excluir == false)
                 {
-                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
-                }
+                    if (String.IsNullOrWhiteSpace(item.Item))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
+                    }
 
-                if (String.IsNullOrWhiteSpace(item.Unidade.Trim()))
-                {
-                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
+                    if (String.IsNullOrWhiteSpace(item.Unidade))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
+                    }
                 }
             }
 

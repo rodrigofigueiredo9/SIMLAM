@@ -2123,7 +2123,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
 
             _busConfiguracao.SalvarProdutosApreendidos(listaProdutos);
-            //String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "FiscalizacaoCampos", new CampoInfracaoVM(_busConfiguracao.ObterCampoInfracao(), new List<Lista>(), new List<Lista>()));
 
             return Json(new
             {

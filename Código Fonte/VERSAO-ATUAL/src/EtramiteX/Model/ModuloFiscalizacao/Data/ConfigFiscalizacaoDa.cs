@@ -1052,6 +1052,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                               returning id into :id", EsquemaBanco);
 
                         comando.AdicionarParametroSaida("id", DbType.Int32);
+                        comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
+                        comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                     }
                     else if (produto.Excluir == false)  //produto existente, editar
                     {
@@ -1065,6 +1069,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                               where id = :id", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
+                        comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                     }
                     else    //produto existente, excluir
                     {
@@ -1072,12 +1080,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                         comando = bancoDeDados.CriarComando(@"delete from cnf_fisc_infracao_produto
                                                               where id = :id", EsquemaBanco);
-                    }
 
-                    comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
-                    comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
-                    comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                        comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+                    }
 
                     bancoDeDados.ExecutarNonQuery(comando);
 
@@ -1093,6 +1098,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                     //#endregion
                 }
+
+                
 
                 bancoDeDados.Commit();
 
