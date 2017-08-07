@@ -2100,7 +2100,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #region Produtos Apreendidos/Destinação
 
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
         public ActionResult ConfigurarProdutosDestinacao()
         {
             ProdutoDestinacaoVM vm = new ProdutoDestinacaoVM();
@@ -2110,7 +2110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         }
 
         [HttpPost]
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
         public ActionResult ConfigurarProdutosDestinacao(List<ProdutoApreendido> listaProdutos, List<DestinacaoProduto> listaDestinos)
         {
             if (listaProdutos == null)
