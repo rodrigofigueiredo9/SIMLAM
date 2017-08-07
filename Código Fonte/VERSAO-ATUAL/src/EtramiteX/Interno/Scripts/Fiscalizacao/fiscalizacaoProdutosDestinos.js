@@ -24,6 +24,8 @@ ConfigurarProdutosDestinos = {
         container.delegate('.btnAdicionarProduto', 'click', ConfigurarProdutosDestinos.adicionarProduto);
         container.delegate('.btnSalvar', 'click', ConfigurarProdutosDestinos.salvar);
         container.delegate('.btnEditarProduto', 'click', ConfigurarProdutosDestinos.editarProduto);
+        container.delegate('.btnDesativarProduto', 'click', ConfigurarProdutosDestinos.desativarProduto);
+        container.delegate('.btnAtivarProduto', 'click', ConfigurarProdutosDestinos.ativarProduto);
 
         Listar.atualizarEstiloTable('.tabProdutos', ConfigurarProdutosDestinos.container)
         Aux.setarFoco(container);
@@ -198,6 +200,36 @@ ConfigurarProdutosDestinos = {
         container.find('.txtProdutoUnidade').val(unidade);
         container.find('.hdnItemId').val(id);
         container.find('.hdnItemIsAtivo').val(ehAtivo);
+    },
+
+    ativarProduto: function () {
+        alert('here');
+    },
+
+    desativarProduto: function () {
+        
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.produtoId').val(),
+            Tid: '',
+            Item: $(this).closest('tr').find('.nomeItem').text(),
+            Unidade: $(this).closest('tr').find('.unidadeMedida').text(),
+            Ativo: false,
+            Excluir: false
+        };
+
+        //desabilita o botão de desativar
+        $(this).closest('tr').find('.btnDesativarProduto').attr('disabled', 'disabled');
+        $(this).closest('tr').find('.btnDesativarProduto').attr('aria-disabled', true);
+        $(this).closest('tr').find('.btnDesativarProduto').addClass('disabled').addClass('ui-button-disabled').addClass('ui-state-disabled');
+
+        //habilita o botão de ativar
+        $(this).closest('tr').find('.btnAtivarProduto').removeAttr('disabled');
+        $(this).closest('tr').find('.btnAtivarProduto').removeAttr('aria-disabled');
+        $(this).closest('tr').find('.btnAtivarProduto').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
+
+        //altera o valor da propriedade no objeto
+        $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
     },
 
 
