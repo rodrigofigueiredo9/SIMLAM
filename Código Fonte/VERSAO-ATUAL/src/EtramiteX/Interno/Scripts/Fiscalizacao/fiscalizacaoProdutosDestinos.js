@@ -203,11 +203,31 @@ ConfigurarProdutosDestinos = {
     },
 
     ativarProduto: function () {
-        alert('here');
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.produtoId').val(),
+            Tid: '',
+            Item: $(this).closest('tr').find('.nomeItem').text(),
+            Unidade: $(this).closest('tr').find('.unidadeMedida').text(),
+            Ativo: true,
+            Excluir: false
+        };
+
+        //desabilita o botão de ativar
+        $(this).closest('tr').find('.btnAtivarProduto').attr('disabled', 'disabled');
+        $(this).closest('tr').find('.btnAtivarProduto').attr('aria-disabled', true);
+        $(this).closest('tr').find('.btnAtivarProduto').addClass('disabled').addClass('ui-button-disabled').addClass('ui-state-disabled');
+
+        //habilita o botão de desativar
+        $(this).closest('tr').find('.btnDesativarProduto').removeAttr('disabled');
+        $(this).closest('tr').find('.btnDesativarProduto').removeAttr('aria-disabled');
+        $(this).closest('tr').find('.btnDesativarProduto').removeClass('disabled').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
+
+        //altera o valor da propriedade no objeto
+        $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
     },
 
     desativarProduto: function () {
-        
         //recria o objeto
         var objeto = {
             Id: $(this).closest('tr').find('.produtoId').val(),
@@ -226,10 +246,11 @@ ConfigurarProdutosDestinos = {
         //habilita o botão de ativar
         $(this).closest('tr').find('.btnAtivarProduto').removeAttr('disabled');
         $(this).closest('tr').find('.btnAtivarProduto').removeAttr('aria-disabled');
-        $(this).closest('tr').find('.btnAtivarProduto').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
+        $(this).closest('tr').find('.btnAtivarProduto').removeClass('disabled').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
 
         //altera o valor da propriedade no objeto
         $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+        $(this).closest('tr').find('.produtoAtivo').val(objeto.Ativo);
     },
 
 
