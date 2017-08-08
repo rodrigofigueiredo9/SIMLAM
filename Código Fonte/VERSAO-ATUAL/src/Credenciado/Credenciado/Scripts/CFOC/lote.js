@@ -113,6 +113,12 @@ Lote = {
 			
 		}
 
+		if (origem.Id == Lote.settings.idsTela.TipoCFO) {
+
+		    $('.txtQuantidade', Lote.container).removeClass('disabled');
+		    $('.txtQuantidade', Lote.container).removeAttr('disabled');
+		}
+
 		Mascara.load($('.txtNumeroOrigem', Lote.container).closest('div'));
 	},
 
@@ -223,9 +229,13 @@ Lote = {
 				    $('.ddlUnidadeMedida', Lote.container).ddlLoad(response.Lista);
 
 				    var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
-				    
-				    $('.txtQuantidade', Lote.container).val(quantidade);
-				    $('.txtQuantidade', Lote.container).change();
+
+
+				    if (origemTipo != Lote.settings.idsTela.TipoCFO) {
+
+				        $('.txtQuantidade', Lote.container).val(quantidade);
+				        $('.txtQuantidade', Lote.container).change();
+				    }
 
 				    $('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
 				    $('.ddlUnidadeMedida', Lote.container).attr('disabled', 'disabled').addClass('disaled');
@@ -271,7 +281,7 @@ Lote = {
 		var _objeto = { Lotes: [] }
 		$($('.gridLote tbody tr:not(.trTemplate) .hdnItemJson', container)).each(function () {
 			_objeto.Lotes.push(JSON.parse($(this).val()));
-		});
+		});1
 
 		if (_objeto.Lotes.length <= 0) {
 			_objeto.Lotes = null;
@@ -286,8 +296,8 @@ Lote = {
 			return;
 		}
 
-	    
-        if (item.OrigemTipo < 5)
+		
+        if (item.OrigemTipo < 5 && item.OrigemTipo != 1 )
 		    item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
 		var linha = $('.trTemplate', tabela).clone();
@@ -335,10 +345,12 @@ Lote = {
 			objeto.Lotes.push(JSON.parse($('.hdnItemJson', linha).val()));
 		});
 
-		for (var i = 0; i < objeto.Lotes.length; i++)
+		for (var i = 0; i < objeto.Lotes.length; i++) {
+		    
 		    if (objeto.Lotes[i].ExibeKg) {
 		        objeto.Lotes[i].Quantidade = parseInt(objeto.Lotes[i].Quantidade) / 1000;
 		    }
+		}
 
 		return objeto;
 	},

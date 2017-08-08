@@ -1121,7 +1121,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			{
                 //Situação 2 (ativo) e 3 (inativo) são as únicas situações de CFO que devem ser consideradas no cálculo
 				Comando comando = bancoDeDados.CriarComando(@"
-				select nvl((select sum(cp.quantidade) 
+				select nvl((select sum(case when cp.exibe_kilos = 1 then cp.quantidade / 1000 else cp.quantidade end) 
                             from tab_cfo c,
                                  tab_cfo_produto cp,
                                  ins_crt_unidade_prod_unidade u

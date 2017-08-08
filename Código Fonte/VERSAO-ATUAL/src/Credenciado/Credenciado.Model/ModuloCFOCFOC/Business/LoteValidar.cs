@@ -95,10 +95,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				Validacao.Add(Mensagem.Lote.OrigemObrigatorio);
 			}
 
-			if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && _da.VerificarSeCfoJaAssociadaALote(item.Origem) && !_da.VerificarSeDocumentoUtilizadoPorMesmaUC(item.Origem, empreendimentoID))
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-			}
+            //if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && _da.VerificarSeCfoJaAssociadaALote(item.Origem) && !_da.VerificarSeDocumentoUtilizadoPorMesmaUC(item.Origem, empreendimentoID))
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
+            //}
 
 			if (item.Cultura <= 0)
 			{
@@ -458,7 +458,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                     }
                 }
 
-                item.Quantidade = saldoDocOrigem;
+                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO)
+                    item.Quantidade = saldoDocOrigem;
+
             }
         }
 
