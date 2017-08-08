@@ -1037,10 +1037,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 bancoDeDados.IniciarTransacao();
 
-                eHistoricoAcao acao;
+                eHistoricoAcao? acao;
 
                 foreach (var produto in listaProdutos)
                 {
+                    acao = null;
                     comando = null;
 
                     if (produto.Id == 0)    //produto novo, incluir
@@ -1056,8 +1057,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
                         comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
                         comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        produto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+                        #region Histórico
+
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
                     }
-                    else if (produto.Excluir == false)  //produto existente, editar
+                    else if (produto.Excluir == false && produto.Editado == true)  //produto existente, editar
                     {
                         acao = eHistoricoAcao.atualizar;
 
@@ -1073,8 +1084,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
                         comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
                         comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        #region Histórico
+
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
                     }
-                    else    //produto existente, excluir
+                    else if (produto.Excluir == true)   //produto existente, excluir
                     {
                         acao = eHistoricoAcao.excluir;
 
@@ -1082,24 +1101,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                               where id = :id", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+
+                        #region Histórico
+
+                        //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+
+                        bancoDeDados.ExecutarNonQuery(comando);
                     }
-
-                    bancoDeDados.ExecutarNonQuery(comando);
-
-                    if (produto.Id == 0)
-                    {
-                        produto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-                    }
-
-                    //TODO
-                    //#region Histórico
-
-                    //Historico.Gerar(produto.Id, eHistoricoArtefato.campoinfracao, acao, bancoDeDados, null);
-
-                    //#endregion
                 }
-
-                
 
                 bancoDeDados.Commit();
 

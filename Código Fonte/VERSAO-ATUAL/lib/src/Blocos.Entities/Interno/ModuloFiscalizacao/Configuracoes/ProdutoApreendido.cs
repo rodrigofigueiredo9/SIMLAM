@@ -11,5 +11,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes
         public String Unidade { get; set; }
         public bool Ativo { get; set; }
         public bool Excluir { get; set; }
+        public bool? Editado { get; set; }
 	}
 }

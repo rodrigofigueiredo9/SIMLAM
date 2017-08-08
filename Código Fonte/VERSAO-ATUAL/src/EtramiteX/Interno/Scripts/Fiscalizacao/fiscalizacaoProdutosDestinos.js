@@ -79,7 +79,8 @@ ConfigurarProdutosDestinos = {
             Item: item,
             Unidade: unidade,
             Ativo: ehAtivo,
-            Excluir: false
+            Excluir: false,
+            Editado: false
         };
 
         var linha = '';
@@ -99,6 +100,7 @@ ConfigurarProdutosDestinos = {
             $('.tabProdutos > tbody:last', container).append(linha);
 
         } else {    //Produto editado
+            objeto.Editado = true;
             $(tabelaProdutos).each(function (i, prod) {
 
                 //Procura a linha que tem o mesmo id do produto
@@ -211,7 +213,8 @@ ConfigurarProdutosDestinos = {
             Item: $(this).closest('tr').find('.nomeItem').text(),
             Unidade: $(this).closest('tr').find('.unidadeMedida').text(),
             Ativo: true,
-            Excluir: false
+            Excluir: false,
+            Editado: true
         };
 
         //desabilita o botão de ativar
@@ -236,7 +239,8 @@ ConfigurarProdutosDestinos = {
             Item: $(this).closest('tr').find('.nomeItem').text(),
             Unidade: $(this).closest('tr').find('.unidadeMedida').text(),
             Ativo: false,
-            Excluir: false
+            Excluir: false,
+            Editado: true
         };
 
         //desabilita o botão de desativar
