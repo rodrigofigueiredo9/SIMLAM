@@ -22,6 +22,19 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
             }
         }
 
+        private List<DestinacaoProduto> _listaDestinos;
+        public List<DestinacaoProduto> ListaDestinos
+        {
+            get
+            {
+                return _listaDestinos;
+            }
+            set
+            {
+                _listaDestinos = value;
+            }
+        }
+
         public String Mensagens
         {
             get
@@ -35,14 +48,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
             }
         }
 
-        public ProdutoDestinacaoVM(List<ProdutoApreendido> listaProdutos)
-        {
-            ListaProdutos = listaProdutos;
-        }
-
         public ProdutoDestinacaoVM()
         {
             ListaProdutos = new List<ProdutoApreendido>();
+            ListaDestinos = new List<DestinacaoProduto>();
         }
 
 	}

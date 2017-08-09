@@ -57,26 +57,21 @@
 
 			<div class="block">
 				<div class="coluna35 append2">
-					<label for="Item_NomeProduto">Item</label>
-					<%= Html.TextBox("Item", String.Empty, new { @class = "text txtProdutoItem2", @maxlength = "100" } )%>
-				</div>
-
-				<div class="coluna15 append1">
-					<label for="Item_UnidadeProduto">Unidade</label>
-					<%= Html.TextBox("Unidade",String.Empty, new { @class = "text txtProdutoUnidade2", @maxlength = "50"})%>
+					<label for="Item_NomeProduto">Destino</label>
+					<%= Html.TextBox("Destino", String.Empty, new { @class = "text txtDestino", @maxlength = "100" } )%>
 				</div>
 
 				<div class="coluna7">
-                    <button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProduto2" title="Adicionar Produto">+</button>
+                    <button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarDestino" title="Adicionar Destino">+</button>
 				</div>
 
-				<input type="hidden" class="hdnItemId2" value='0' />
-				<input type="hidden" class="hdnItemIsAtivo2" value='true' />
+				<input type="hidden" class="hdnDestinoId" value='0' />
+				<input type="hidden" class="hdnDestinoIsAtivo" value='true' />
 			</div>
 
-            <%--<div class="DivItens">
-				<% Html.RenderPartial("FiscalizacaoProdutos"); %>
-			</div>--%>
+            <div class="DivItens">
+				<% Html.RenderPartial("FiscalizacaoDestinos"); %>
+			</div>
 		</fieldset>
 
         <div class="block box">
