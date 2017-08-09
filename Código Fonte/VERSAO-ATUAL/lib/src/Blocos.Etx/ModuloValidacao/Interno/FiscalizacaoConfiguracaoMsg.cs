@@ -146,7 +146,19 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#endregion
 
-		public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
+        #region Produtos Apreendidos/Destinação
+
+        public Mensagem ItemProdutoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_NomeProduto, .erroItem", Texto = "Nome do Item é obrigatório." }; } }
+        public Mensagem UnidadeProdutoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_UnidadeProduto, .erroUnidade", Texto = "Unidade é obrigatória." }; } }
+        public Mensagem ProdutoDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_NomeProduto, .erroItem", Texto = "Produto já adicionado." }; } }
+        public Mensagem DestinoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DestinoProduto, .erroDestino", Texto = "Destino é obrigatório." }; } }
+        public Mensagem DestinoDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DestinoProduto, .erroDestino", Texto = "Destinação já adicionada." }; } }
+
+        public Mensagem SalvarProdutosDestinos { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Produtos Apreendidos/Destinação salvo com sucesso." }; } }
+
+        #endregion Produtos Apreendidos/Destinação
+
+        public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Tipo", Texto = "Tipo de infração é obrigatório." }; } }
 		public Mensagem ItemObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Item", Texto = "Item é obrigatório." }; } }
 		public Mensagem ItemDesativado(string strCampo, string strNome, bool isPlural = false) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format((isPlural ? "Os (as)" : "O (a)") + " {0} \"{1}\" " + (isPlural ? "estão" : "está") + " na situação desativado.", strCampo, strNome) }; }

@@ -241,6 +241,7 @@
 		ConfigurarCampo,
 		ConfigurarPergunta,
 		ConfigurarResposta,
+        ConfigurarProdutosDestinacao,
 		ConfigurarFiscCriar,
 		ConfigurarFiscEditar,
 		ConfigurarFiscVisualizar,
