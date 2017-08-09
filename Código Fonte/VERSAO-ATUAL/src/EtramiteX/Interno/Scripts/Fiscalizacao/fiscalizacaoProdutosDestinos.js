@@ -29,8 +29,13 @@ ConfigurarProdutosDestinos = {
         container.delegate('.btnExcluirProduto', 'click', ConfigurarProdutosDestinos.excluirProduto);
 
         container.delegate('.btnAdicionarDestino', 'click', ConfigurarProdutosDestinos.adicionarDestino);
+        container.delegate('.btnEditarDestino', 'click', ConfigurarProdutosDestinos.editarDestino);
+        container.delegate('.btnDesativarDestino', 'click', ConfigurarProdutosDestinos.desativarDestino);
+        container.delegate('.btnAtivarDestino', 'click', ConfigurarProdutosDestinos.ativarDestino);
+        container.delegate('.btnExcluirDestino', 'click', ConfigurarProdutosDestinos.excluirDestino);
 
         Listar.atualizarEstiloTable('.tabProdutos', ConfigurarProdutosDestinos.container)
+        Listar.atualizarEstiloTable('.tabDestinos', ConfigurarProdutosDestinos.container)
         Aux.setarFoco(container);
     },
 
@@ -287,6 +292,21 @@ ConfigurarProdutosDestinos = {
         container.find('.hdnItemIsAtivo').val(ehAtivo);
     },
 
+    editarDestino: function () {
+
+        //Pega os campos que serão editados, e o id
+        var container = $(this).closest('tr');
+        var destino = container.find('.nomeDestino').text();
+        var id = container.find('.destinoId').val();
+        var ehAtivo = container.find('.destinoAtivo').val();
+
+        //preenche o textbox
+        container = $(this).closest('fieldset');
+        container.find('.txtDestino').val(destino);
+        container.find('.hdnDestinoId').val(id);
+        container.find('.hdnDestinoIsAtivo').val(ehAtivo);
+    },
+
     ativarProduto: function () {
         //recria o objeto
         var objeto = {
@@ -311,6 +331,33 @@ ConfigurarProdutosDestinos = {
 
         //altera o valor da propriedade no objeto
         $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+        $(this).closest('tr').find('.produtoAtivo').val(objeto.Ativo);
+    },
+
+    ativarDestino: function () {
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.destinoId').val(),
+            Tid: '',
+            Destino: $(this).closest('tr').find('.nomeDestino').text(),
+            Ativo: true,
+            Excluir: false,
+            Editado: true
+        };
+
+        //desabilita o botão de ativar
+        $(this).closest('tr').find('.btnAtivarDestino').attr('disabled', 'disabled');
+        $(this).closest('tr').find('.btnAtivarDestino').attr('aria-disabled', true);
+        $(this).closest('tr').find('.btnAtivarDestino').addClass('disabled').addClass('ui-button-disabled').addClass('ui-state-disabled');
+
+        //habilita o botão de desativar
+        $(this).closest('tr').find('.btnDesativarDestino').removeAttr('disabled');
+        $(this).closest('tr').find('.btnDesativarDestino').removeAttr('aria-disabled');
+        $(this).closest('tr').find('.btnDesativarDestino').removeClass('disabled').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
+
+        //altera o valor da propriedade no objeto
+        $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+        $(this).closest('tr').find('.destinoAtivo').val(objeto.Ativo);
     },
 
     desativarProduto: function () {
@@ -340,10 +387,54 @@ ConfigurarProdutosDestinos = {
         $(this).closest('tr').find('.produtoAtivo').val(objeto.Ativo);
     },
 
+    desativarDestino: function () {
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.destinoId').val(),
+            Tid: '',
+            Destino: $(this).closest('tr').find('.nomeDestino').text(),
+            Ativo: false,
+            Excluir: false,
+            Editado: true
+        };
+
+        //desabilita o botão de desativar
+        $(this).closest('tr').find('.btnDesativarDestino').attr('disabled', 'disabled');
+        $(this).closest('tr').find('.btnDesativarDestino').attr('aria-disabled', true);
+        $(this).closest('tr').find('.btnDesativarDestino').addClass('disabled').addClass('ui-button-disabled').addClass('ui-state-disabled');
+
+        //habilita o botão de ativar
+        $(this).closest('tr').find('.btnAtivarDestino').removeAttr('disabled');
+        $(this).closest('tr').find('.btnAtivarDestino').removeAttr('aria-disabled');
+        $(this).closest('tr').find('.btnAtivarDestino').removeClass('disabled').removeClass('ui-button-disabled').removeClass('ui-state-disabled');
+
+        //altera o valor da propriedade no objeto
+        $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+        $(this).closest('tr').find('.destinoAtivo').val(objeto.Ativo);
+    },
+
     excluirProduto: function () {
         //recria o objeto
         var objeto = {
             Id: $(this).closest('tr').find('.produtoId').val(),
+            Tid: '',
+            Item: '',
+            Unidade: '',
+            Ativo: false,
+            Excluir: true
+        };
+        if (objeto.Id != 0) {
+            $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto));
+            $(this).closest('tr').hide();
+        } else {
+            $(this).closest('tr').remove();
+        }
+    },
+
+    excluirDestino: function () {
+        //recria o objeto
+        var objeto = {
+            Id: $(this).closest('tr').find('.destinoId').val(),
             Tid: '',
             Item: '',
             Unidade: '',
