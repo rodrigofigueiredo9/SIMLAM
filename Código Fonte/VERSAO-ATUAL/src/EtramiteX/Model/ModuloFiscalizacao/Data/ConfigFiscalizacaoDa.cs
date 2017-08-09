@@ -1158,7 +1158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                         #region Histórico
 
-                        //Historico.Gerar(destinacao.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
 
                         #endregion
                     }
@@ -1181,7 +1181,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                         #region Histórico
 
-                        //Historico.Gerar(destinacao.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
 
                         #endregion
                     }
@@ -1197,7 +1197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         #region Histórico
 
                         //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído
-                        //Historico.Gerar(destinacao.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
 
                         #endregion
 

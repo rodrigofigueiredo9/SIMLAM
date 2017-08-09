@@ -1,9 +1,9 @@
 --ATENÇÃO!!! QUANDO FOR COPIAR ISSO PARA O PACKAGE HISTORICO BODY, O CABEÇALHO TAMBÉM TEM QUE SER COPIADO PARA O PACKAGE HISTORICO!
 
 ---------------------------------------------------------
-	-- Configuracao Fiscalizacao - Produto Apreendido
+	-- Configuracao Fiscalizacao - Destinação
 ---------------------------------------------------------
-procedure produtoapreendido(p_id               number,
+procedure fiscdestinacao(p_id               number,
 							p_acao             number,
 							p_executor_id      number,
 							p_executor_nome    varchar2,
@@ -13,21 +13,19 @@ procedure produtoapreendido(p_id               number,
 		v_sucesso boolean := false;
 	begin
 		----------------------------------------------------------------------------------------------------------------
-		-- Produto Apreendido
+		-- Destinação
 		----------------------------------------------------------------------------------------------------------------
 		for i in (select t.id,
-						 t.item,
-						 t.unidade,
+						 t.destino,
 						 t.ativo,
 						 t.tid
-					from cnf_fisc_infracao_produto t
+					from cnf_fisc_infr_destinacao t
 				   where t.id = p_id) loop
 			-- Inserindo na histórico
-			insert into hst_cnf_fisc_infracao_produto
+			insert into hst_cnf_fisc_infr_destinacao
 				(id,
-				 produto_id,
-				 item,
-				 unidade,
+				 destinacao_id,
+				 destino,
 				 ativo,
 				 tid,
 				 executor_id,
@@ -39,10 +37,9 @@ procedure produtoapreendido(p_id               number,
 				 acao_executada,
 				 data_execucao)
 			values
-				(seq_hst_cnf_fisc_infr_produto.nextval,
+				(seq_hst_cnf_fisc_infr_destin.nextval,
 				 i.id,
-				 i.item,
-				 i.unidade,
+				 i.destino,
 				 i.ativo,
 				 i.tid,
 				 p_executor_id,
@@ -58,7 +55,7 @@ procedure produtoapreendido(p_id               number,
                 lov_historico_artefato art
 				  where la.acao = p_acao
                 and la.artefato = art.id
-                and art.texto like 'produtoapreendido'),
+                and art.texto like 'fiscdestinacao'),
 				 systimestamp);
 		end loop;
 		----------------------------------------------------------------------------------------------------------------
@@ -67,7 +64,7 @@ procedure produtoapreendido(p_id               number,
 	
 		if (not v_sucesso) then
 			Raise_application_error(-20000,
-									'Erro ao gerar o Histórico de Configuração Fiscalizacao - Produto Apreendido. Mensagem: ' ||
+									'Erro ao gerar o Histórico de Configuração Fiscalizacao - Destinação. Mensagem: ' ||
 									dbms_utility.format_error_stack ||
 									dbms_utility.format_call_stack);
 		end if;
@@ -75,7 +72,7 @@ procedure produtoapreendido(p_id               number,
 	exception
 		when others then
 			Raise_application_error(-20000,
-									'Erro ao gerar o Histórico de Configuração Fiscalizacao - Produto Apreendido. Mensagem: ' ||
+									'Erro ao gerar o Histórico de Configuração Fiscalizacao - Destinação. Mensagem: ' ||
 									dbms_utility.format_error_stack ||
 									dbms_utility.format_call_stack);
 	end;
