@@ -43,7 +43,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
                 {
                     @ItemProdutoObrigatorio = Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio,
                     @UnidadeProdutoObrigatoria = Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria,
-                    @ProdutoDuplicado = Mensagem.FiscalizacaoConfiguracao.ProdutoDuplicado
+                    @ProdutoDuplicado = Mensagem.FiscalizacaoConfiguracao.ProdutoDuplicado,
+                    @DestinoObrigatorio = Mensagem.FiscalizacaoConfiguracao.DestinoObrigatorio,
+                    @DestinoDuplicado = Mensagem.FiscalizacaoConfiguracao.DestinoDuplicado
                 });
             }
         }

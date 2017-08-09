@@ -448,13 +448,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
         #region Produtos Apreendidos / Destinação
 
-        public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
+        public bool SalvarProdutosDestinacao(List<ProdutoApreendido> listaProdutos, List<DestinacaoProduto> listaDestinos)
         {
             try
             {
-                if (_validar.SalvarProdutosApreendidos(listaProdutos))
+                if (_validar.SalvarProdutosApreendidos(listaProdutos)
+                    && _validar.SalvarDestinacao(listaDestinos))
                 {
-
                     GerenciadorTransacao.ObterIDAtual();
 
                     using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
@@ -462,6 +462,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                         bancoDeDados.IniciarTransacao();
 
                         _da.SalvarProdutosApreendidos(listaProdutos, bancoDeDados);
+                       
+                        _da.SalvarDestinacao(listaDestinos, bancoDeDados);
 
                         Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarProdutosDestinos);
 
@@ -725,6 +727,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
 
             return listaProdutos;
+        }
+
+        public List<DestinacaoProduto> ObterDestinacao()
+        {
+            List<DestinacaoProduto> listaDestinacao = new List<DestinacaoProduto>();
+
+            try
+            {
+                listaDestinacao = _da.ObterDestinacao();
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return listaDestinacao;
         }
 
 		public List<Lista> ObterItensConfig(bool? isAtivo)

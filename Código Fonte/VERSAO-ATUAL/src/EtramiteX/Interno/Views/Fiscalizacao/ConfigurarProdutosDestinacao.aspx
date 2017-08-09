@@ -57,7 +57,7 @@
 
 			<div class="block">
 				<div class="coluna35 append2">
-					<label for="Item_NomeProduto">Destino</label>
+					<label for="DestinoProduto">Destino</label>
 					<%= Html.TextBox("Destino", String.Empty, new { @class = "text txtDestino", @maxlength = "100" } )%>
 				</div>
 

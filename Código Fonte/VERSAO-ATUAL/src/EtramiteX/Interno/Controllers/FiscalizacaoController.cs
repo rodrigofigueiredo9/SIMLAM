@@ -2105,6 +2105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             ProdutoDestinacaoVM vm = new ProdutoDestinacaoVM();
             vm.ListaProdutos = _busConfiguracao.ObterProdutosApreendidos();
+            vm.ListaDestinos = _busConfiguracao.ObterDestinacao();
             
             return View(vm);
         }
@@ -2117,18 +2118,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 listaProdutos = new List<ProdutoApreendido>();
             }
+
             if (listaDestinos == null)
             {
                 listaDestinos = new List<DestinacaoProduto>();
             }
-
-            _busConfiguracao.SalvarProdutosApreendidos(listaProdutos);
-
+            
+            _busConfiguracao.SalvarProdutosDestinacao(listaProdutos, listaDestinos);
+            
             return Json(new
             {
                 @EhValido = Validacao.EhValido,
                 @Msg = Validacao.Erros,
-                //@Html = html,
                 @Url = Url.Action("ConfigurarProdutosDestinacao", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
             }, JsonRequestBehavior.AllowGet);
 
