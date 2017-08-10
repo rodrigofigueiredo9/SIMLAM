@@ -1275,10 +1275,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
-                Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo =: codigo and id <> :id", EsquemaCredenciadoBanco);
+                Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo = :codigo and interno_id <> :id and interno_tid <> :interno_tid", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
 				comando.AdicionarParametroEntrada("id", caracterizacao.InternoID, DbType.Int32);
+                comando.AdicionarParametroEntrada("interno_tid", caracterizacao.InternoTID, DbType.String);
 
 				existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
 			}
