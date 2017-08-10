@@ -95,11 +95,11 @@ Fiscalizacao = {
 				break;
 
 			case 3:
-				Fiscalizacao.onObterStep(FiscalizacaoComplementacaoDados.settings.urls.visualizar, objeto.params, function () {
-					FiscalizacaoComplementacaoDados.callBackObterComplementacaoDadosVisualizar();
-					Fiscalizacao.gerenciarVisualizacao('.hdnComplementacaoDadosId');
-				});
-				break;
+				//Fiscalizacao.onObterStep(FiscalizacaoComplementacaoDados.settings.urls.visualizar, objeto.params, function () {
+				//	FiscalizacaoComplementacaoDados.callBackObterComplementacaoDadosVisualizar();
+				//	Fiscalizacao.gerenciarVisualizacao('.hdnComplementacaoDadosId');
+				//});
+				//break;
 
 			case 4:
 				Fiscalizacao.onObterStep(FiscalizacaoEnquadramento.settings.urls.visualizar, objeto.params, function () {
@@ -169,8 +169,8 @@ Fiscalizacao = {
 
 	obterStep: function (container) {
 
-		if ($(container).data('step') !== null && $(container).data('step') !== NaN && $(container).data('step') !== undefined) {
-			return +$(container).data('step');
+	    if ($(container).data('step') !== null && $(container).data('step') !== NaN && $(container).data('step') !== undefined) {
+		    return +$(container).data('step');
 		}
 
 		if ($(container).hasClass('btnVoltar')) {
