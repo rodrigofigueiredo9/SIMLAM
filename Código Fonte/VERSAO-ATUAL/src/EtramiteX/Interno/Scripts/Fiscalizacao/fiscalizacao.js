@@ -876,6 +876,7 @@ FiscalizacaoProjetoGeografico = {
 	callBackObterProjetoGeograficoVisualizar: function () {
 
 		Fiscalizacao.stepAtual = 2;
+		Fiscalizacao.salvarTelaAtual = ProjetoGeografico.onSalvar;
 		Fiscalizacao.alternarAbas();
 
 		$('.rblProjGeo', Fiscalizacao.container).click(FiscalizacaoProjetoGeografico.onClickRadioProjGeo);
@@ -900,10 +901,8 @@ FiscalizacaoProjetoGeografico = {
 		}
 
 		$('.projetoGeograficoContainer', Fiscalizacao.container).addClass('hide');
-		Fiscalizacao.salvarTelaAtual = FiscalizacaoProjetoGeografico.onSalvarProjetoEmBranco;
 		if ($('.hdnProjetoNivelPrecisao', Fiscalizacao.container).val().toString() != "0") {
 		    $('.projetoGeograficoContainer', Fiscalizacao.container).removeClass('hide');
-		    Fiscalizacao.salvarTelaAtual = ProjetoGeografico.onSalvar;
 		}
 
 		MasterPage.carregando(false);
@@ -957,16 +956,10 @@ FiscalizacaoProjetoGeografico = {
 		//return Fiscalizacao.onSalvarStep(FiscalizacaoResponsavel.urlCriarResponsavel, params, arrayMensagem);
 	},
 
-	onSalvarProjetoEmBranco: function(){
-	    return true;
-	},
-
 	onClickRadioProjGeo: function () {
 	    $('.projetoGeograficoContainer', Fiscalizacao.container).addClass('hide');
-	    Fiscalizacao.salvarTelaAtual = FiscalizacaoProjetoGeografico.onSalvarProjetoEmBranco;
 	    if ($(this).val().toString() != "0") {
 	        $('.projetoGeograficoContainer', Fiscalizacao.container).removeClass('hide');
-	        Fiscalizacao.salvarTelaAtual = ProjetoGeografico.onSalvar;
 	    }
 	}
 }
