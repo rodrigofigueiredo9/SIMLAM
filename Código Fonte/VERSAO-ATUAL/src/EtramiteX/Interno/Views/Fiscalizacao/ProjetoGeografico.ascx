@@ -66,16 +66,6 @@
 	});
 </script>
 
-<div class="coluna100">
-    <div class="box block">
-        <input type="hidden" class="hdnProjetoNivelPrecisao" value="<%= Model.ProjetoGeoVM.Projeto.NivelPrecisaoId %>" />
-
-        <label for="">Fiscalização com Projeto Geográfico?</label><br />
-        <label><%= Html.RadioButton("rblProjGeo", 0, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId == 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo" }))%>Não</label>
-	    <label><%= Html.RadioButton("rblProjGeo", 1, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId > 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo prepend2" }))%>Sim</label>
-    </div>
-</div>
-
 <div class="projetoGeograficoContainer">
 
 <div class="box block">
