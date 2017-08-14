@@ -51,32 +51,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.Fiscalizacao.SetorNaoPertenceFuncionario);
 			}
 
-            bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
-            lstCadastroVazio.Remove("Projeto Geográfico");
 			if (lstCadastroVazio.Count > 0)
 			{
 				Validacao.Add(Mensagem.Fiscalizacao.CadastroObrigatorio(Mensagem.Concatenar(lstCadastroVazio)));
 				return Validacao.EhValido;
 			}
 
-            if (contemProjGeo)
-            {
-                projetoGeo = _projetoGeoDa.ObterProjetoGeograficoPorFiscalizacao(id);
-                projetoGeo.FiscalizacaoEasting = localInfracao.LonEastingToDecimal;
-                projetoGeo.FiscalizacaoNorthing = localInfracao.LatNorthingToDecimal;
+			projetoGeo = _projetoGeoDa.ObterProjetoGeograficoPorFiscalizacao(id);
+			projetoGeo.FiscalizacaoEasting = localInfracao.LonEastingToDecimal;
+			projetoGeo.FiscalizacaoNorthing = localInfracao.LatNorthingToDecimal;
 
-                if (!_projetoGeoDa.VerificarProjetoGeograficoProcessado(projetoGeo.Id))
-                {
-                    Validacao.Add(Mensagem.Fiscalizacao.ProjetoGeoProcessado);
-                }
-                else
-                {
-                    if (!projetoGeo.FiscalizacaoEstaDentroAreaAbrangencia)
-                    {
-                        Validacao.Add(Mensagem.ProjetoGeografico.EmpreendimentoForaAbrangencia);
-                    }
-                }
-            }
+			if (!_projetoGeoDa.VerificarProjetoGeograficoProcessado(projetoGeo.Id))
+			{
+				Validacao.Add(Mensagem.Fiscalizacao.ProjetoGeoProcessado);
+			}
+			else
+			{
+				if (!projetoGeo.FiscalizacaoEstaDentroAreaAbrangencia)
+				{
+					Validacao.Add(Mensagem.ProjetoGeografico.EmpreendimentoForaAbrangencia);
+				}
+			}
 
 			infracao = _infracaoDa.Obter(id);
 

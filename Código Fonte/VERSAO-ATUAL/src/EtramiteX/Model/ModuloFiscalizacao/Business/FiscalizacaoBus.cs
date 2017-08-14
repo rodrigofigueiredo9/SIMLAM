@@ -223,13 +223,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 						_da.ConcluirCadastro(fiscalizacao, gerarAutosTermo, bancoDeDados);
 
-                        List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacaoId);
-                        bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
-
-                        if (contemProjGeo)
-                        {
-                            _daPrjGeo.ConcluirCadastro(fiscalizacao.Id, bancoDeDados);
-                        }
+						_daPrjGeo.ConcluirCadastro(fiscalizacao.Id, bancoDeDados);
 
 						ArquivoDa arquivoDa = new ArquivoDa();
 						ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
@@ -326,14 +320,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						if (fiscalizacao.SituacaoNovaTipo == (int)eFiscalizacaoSituacao.CancelarConclusao)
 						{
 							fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.EmAndamento;
-
-                            List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacao.Id);
-                            bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
-
-                            if (contemProjGeo)
-                            {
-                                _daPrjGeo.Refazer(fiscalizacao.Id, bancoDeDados);
-                            }
+							_daPrjGeo.Refazer(fiscalizacao.Id, bancoDeDados);
 						}
 
 						_da.AlterarSituacao(fiscalizacao, bancoDeDados);
