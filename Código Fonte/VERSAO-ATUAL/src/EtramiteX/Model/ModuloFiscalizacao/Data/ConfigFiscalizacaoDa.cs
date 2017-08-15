@@ -1022,11 +1022,139 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#endregion
 
-		#endregion
+        #region Códigos da Receita Infracao
 
-		#region Obter / Filtrar
+        internal void SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita, BancoDeDados banco = null)
+        {
+            if (listaCodigosReceita == null)
+            {
+                throw new Exception("Objeto Códigos da Receita é nulo.");
+            }
 
-		internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando;
+
+                bancoDeDados.IniciarTransacao();
+
+                eHistoricoAcao? acao;
+
+                foreach (var codReceita in listaCodigosReceita)
+                {
+                    acao = null;
+                    comando = null;
+
+                    if (codReceita.Id == 0)    //código da receita novo, incluir 
+                    {
+                        acao = eHistoricoAcao.criar;
+
+                        comando = bancoDeDados.CriarComando(@"insert into lov_fisc_infracao_codigo_rece(id, texto, descricao, ativo, tid) 
+                                                              values(seq_lov_fisc_infr_cod_receita.nextval, :codigo, :descricao, :ativo, :tid)", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("codigo", codReceita.Codigo, DbType.String);
+                        comando.AdicionarParametroEntrada("descricao", codReceita.Descricao, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", codReceita.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        #region Histórico
+
+                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null); 
+
+                        #endregion
+                    }
+                    else if (codReceita.Excluir == false && codReceita.Editado == true)  //produto existente, editar 
+                    {
+                        acao = eHistoricoAcao.atualizar;
+
+                        comando = bancoDeDados.CriarComando(@"update lov_fisc_infracao_codigo_rece
+                                                              set texto = :codigo,
+                                                                  descricao = :descricao,
+                                                                  ativo = :ativo,
+                                                                  tid = :tid
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", codReceita.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("codigo", codReceita.Codigo, DbType.String);
+                        comando.AdicionarParametroEntrada("descricao", codReceita.Descricao, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", codReceita.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        #region Histórico
+
+                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null); 
+
+                        #endregion
+                    }
+                    else if (codReceita.Excluir == true)   //produto existente, excluir 
+                    {
+                        acao = eHistoricoAcao.excluir;
+
+                        comando = bancoDeDados.CriarComando(@"delete from lov_fisc_infracao_codigo_rece
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", codReceita.Id, DbType.Int32);
+
+                        #region Histórico
+
+                        //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído 
+                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                bancoDeDados.Commit();
+            }
+        } 
+
+         internal List<CodigoReceita> ObterCodigosReceita(BancoDeDados banco = null) 
+        { 
+            List<CodigoReceita> listaCodigosReceita = new List<CodigoReceita>(); 
+ 
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco)) 
+            { 
+                Comando comando = null; 
+ 
+                bancoDeDados.IniciarTransacao(); 
+ 
+                comando = bancoDeDados.CriarComando(@"select id, texto, descricao, ativo, tid 
+                                                      from lov_fisc_infracao_codigo_rece
+                                                      order by texto, descricao", EsquemaBanco); 
+ 
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando)) 
+                { 
+                    while (reader.Read()) 
+                    {
+                        CodigoReceita codReceita = new CodigoReceita();
+ 
+                        codReceita.Id = reader.GetValue<int>("id"); 
+                        codReceita.Codigo = reader.GetValue<string>("texto"); 
+                        codReceita.Descricao = reader.GetValue<string>("descricao") ?? string.Empty; 
+                        codReceita.Ativo = reader.GetValue<bool>("ativo");
+                        codReceita.Tid = reader.GetValue<string>("tid");
+
+                        listaCodigosReceita.Add(codReceita);
+                    }
+                }
+            }
+
+            return listaCodigosReceita;
+        }
+ 
+
+        #endregion Códigos da Receita Infracao
+
+        #endregion
+
+        #region Obter / Filtrar
+
+        internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao configFiscalizacao = new ConfigFiscalizacao();
 

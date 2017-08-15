@@ -2,11 +2,11 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="block dataGrid"> 
-  <div class="coluna80"> 
+  <div class="coluna70"> 
     <table class="dataGridTable tabCodigosReceita" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all"> 
       <thead> 
         <tr> 
-          <th width="20%">Código da Receita</th> 
+          <th width="15%">Código da Receita</th> 
           <th>Descrição</th> 
           <th width="25%">Ações</th> 
         </tr>

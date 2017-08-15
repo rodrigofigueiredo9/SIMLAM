@@ -224,7 +224,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		public bool Salvar(ConfigFiscalizacao configuracao)
+        #region Códigos da Receita
+
+        public bool SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
+        {
+            if (listaCodigosReceita == null)
+            {
+                return Validacao.EhValido;
+            }
+
+            foreach (var item in listaCodigosReceita)
+            {
+                if (item.Excluir == false)
+                {
+                    if (String.IsNullOrWhiteSpace(item.Codigo))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio);
+                    }
+
+                    //Não estou verificando a descrição para não obrigar que os códigos já cadastrados sejam todos editados
+                    //if (String.IsNullOrWhiteSpace(item.Descricao))
+                    //{
+                    //    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria);
+                    //}
+                }
+            }
+
+
+            return Validacao.EhValido;
+        } 
+ 
+
+        #endregion Códigos da Receita
+
+        public bool Salvar(ConfigFiscalizacao configuracao)
 		{
 			Mensagem msg = null;
 			List<string> lstMsg = new List<string>();

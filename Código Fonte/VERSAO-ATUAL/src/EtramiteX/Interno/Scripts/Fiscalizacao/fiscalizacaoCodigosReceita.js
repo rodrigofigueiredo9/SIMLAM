@@ -140,8 +140,7 @@ ConfigurarCodigosReceita = {
         $.ajax({ 
             url: ConfigurarCodigosReceita.settings.urls.salvar, 
             data: JSON.stringify({ 
-                listaCodigoReceitas: ConfigurarCodigosReceita.obterListaCodigoReceitas(), 
-                listaDestinos: ConfigurarCodigosReceita.obterListaDestinos() 
+                listaCodigosReceita: ConfigurarCodigosReceita.obterListaCodigoReceitas()
             }), 
             cache: false, 
             async: false, 
@@ -164,7 +163,7 @@ ConfigurarCodigosReceita = {
     obterListaCodigoReceitas: function () { 
         var lista = []; 
  
-        $($('.tabCodigoReceitas tbody tr:not(.trTemplateRow) .hdnItemJSon', ConfigurarCodigosReceita.container)).each(function () { 
+        $($('.tabCodigosReceita tbody tr:not(.trTemplateRow) .hdnItemJSon', ConfigurarCodigosReceita.container)).each(function () { 
             lista.push(JSON.parse($(this).val())); 
         }); 
  

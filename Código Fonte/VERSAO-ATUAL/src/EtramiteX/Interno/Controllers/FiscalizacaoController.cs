@@ -2104,9 +2104,29 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         public ActionResult ConfigurarCodigosReceita()
         {
             CodigosReceitaVM vm = new CodigosReceitaVM();
-            //vm.ListaProdutos = _busConfiguracao.ObterProdutosApreendidos();
+            vm.ListaCodigosReceita = _busConfiguracao.ObterCodigosReceita();
 
             return View(vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+        public ActionResult ConfigurarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
+        {
+            if (listaCodigosReceita == null)
+            {
+                listaCodigosReceita = new List<CodigoReceita>();
+            }
+
+            _busConfiguracao.SalvarCodigosReceita(listaCodigosReceita);
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Url = Url.Action("ConfigurarCodigosReceita", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
+
         } 
 
         #endregion Códigos da Receita

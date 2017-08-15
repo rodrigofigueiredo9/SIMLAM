@@ -446,12 +446,60 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#endregion
+        #region Códigos da Receita
 
-		#region Obter
+        public bool SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
+        {
+            try
+            {
+                if (_validar.SalvarCodigosReceita(listaCodigosReceita))
+                {
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    {
+                        bancoDeDados.IniciarTransacao();
+
+                        _da.SalvarCodigosReceita(listaCodigosReceita, bancoDeDados);
+
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarCodigoReceita);
+
+                        bancoDeDados.Commit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        public List<CodigoReceita> ObterCodigosReceita()
+        {
+            List<CodigoReceita> listaCodigosReceita = new List<CodigoReceita>();
+
+            try
+            {
+                listaCodigosReceita = _da.ObterCodigosReceita();
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return listaCodigosReceita;
+        } 
+
+        #endregion Códigos da Receita
+
+        #endregion
+
+        #region Obter
 
 
-		public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+        public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao entidade = null;
 
