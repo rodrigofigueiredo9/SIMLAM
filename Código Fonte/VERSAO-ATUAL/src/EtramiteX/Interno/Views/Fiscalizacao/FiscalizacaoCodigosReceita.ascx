@@ -9,14 +9,14 @@
           <th width="20%">Código da Receita</th> 
           <th>Descrição</th> 
           <th width="25%">Ações</th> 
-        </tr> 
-      </thead> 
+        </tr>
+      </thead>
        
       <tbody>
           <% foreach (var codReceita in Model.ListaCodigosReceita){ %>
             <tr> 
               <td> 
-                <span class="codigoReceita" title="<%:codReceita.Codigo%>"><%:codReceita.Codigo%></span> 
+                <span class="codigo" title="<%:codReceita.Codigo%>"><%:codReceita.Codigo%></span> 
               </td> 
               <td> 
                 <span class="descricao" title="<%:codReceita.Descricao%>"><%:codReceita.Descricao%></span> 
@@ -40,7 +40,7 @@
           <%} %> 
  
         <tr class="trTemplateRow hide"> 
-          <td><span class="codigoReceita" title=""></span></td> 
+          <td><span class="codigo" title=""></span></td> 
           <td><span class="descricao" title=""></span></td> 
           <td class="tdAcoes"> 
                 <input type="hidden" value="" class="hdnItemJSon" /> 

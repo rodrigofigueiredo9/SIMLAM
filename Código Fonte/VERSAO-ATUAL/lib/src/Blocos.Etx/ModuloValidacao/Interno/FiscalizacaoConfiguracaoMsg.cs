@@ -146,7 +146,14 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#endregion
 
-		public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
+        #region Códigos da Receita
+
+        public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "Código da Receita é obrigatório." }; } }
+        public Mensagem DescricaoCodigoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_Descricao", Texto = "Descrição é obrigatória." }; } }
+
+        #endregion Códigos da Receita
+
+        public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Tipo", Texto = "Tipo de infração é obrigatório." }; } }
 		public Mensagem ItemObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Item", Texto = "Item é obrigatório." }; } }
 		public Mensagem ItemDesativado(string strCampo, string strNome, bool isPlural = false) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format((isPlural ? "Os (as)" : "O (a)") + " {0} \"{1}\" " + (isPlural ? "estão" : "está") + " na situação desativado.", strCampo, strNome) }; }

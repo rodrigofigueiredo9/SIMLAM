@@ -21,21 +21,18 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
                 _listaCodigosReceita = value; 
             } 
         }
- 
-        //public String Mensagens 
-        //{ 
-        //    get 
-        //    { 
-        //        return ViewModelHelper.Json(new 
-        //        { 
-        //            @ItemProdutoObrigatorio = Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio, 
-        //            @UnidadeProdutoObrigatoria = Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria, 
-        //            @ProdutoDuplicado = Mensagem.FiscalizacaoConfiguracao.ProdutoDuplicado, 
-        //            @DestinoObrigatorio = Mensagem.FiscalizacaoConfiguracao.DestinoObrigatorio, 
-        //            @DestinoDuplicado = Mensagem.FiscalizacaoConfiguracao.DestinoDuplicado 
-        //        }); 
-        //    } 
-        //}
+
+        public String Mensagens
+        {
+            get
+            {
+                return ViewModelHelper.Json(new
+                {
+                    @CodigoReceitaObrigatorio = Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio,
+                    @DescricaoCodigoObrigatoria = Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria
+                });
+            }
+        }
 
         public CodigosReceitaVM() 
         {

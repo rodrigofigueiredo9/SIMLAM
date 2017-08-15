@@ -670,6 +670,7 @@
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
+    <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\habilitacaoEmissaoPTV.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\listar.js" />
     <Content Include="Scripts\Agrotoxico\listar.js" />
