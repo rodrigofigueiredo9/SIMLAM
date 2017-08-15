@@ -244,10 +244,10 @@ ConfigurarCodigosReceita = {
     excluirCodigoReceita: function () { 
         //recria o objeto 
         var objeto = { 
-            Id: $(this).closest('tr').find('.CodigoReceitaId').val(), 
+            Id: $(this).closest('tr').find('.codigoReceitaId').val(), 
             Tid: '', 
-            Item: '', 
-            Unidade: '', 
+            Codigo: '', 
+            Descricao: '', 
             Ativo: false, 
             Excluir: true 
         }; 
