@@ -2098,9 +2098,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Auxiliares
+        #region Códigos da Receita
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarCodigoReceita })]
+        public ActionResult ConfigurarCodigosReceita()
+        {
+            CodigosReceitaVM vm = new CodigosReceitaVM();
+            //vm.ListaProdutos = _busConfiguracao.ObterProdutosApreendidos();
+
+            return View(vm);
+        } 
+
+        #endregion Códigos da Receita
+
+        #region Auxiliares
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
 		public ActionResult AlterarSituacaoTipoInfracao(int tipoId, int situacaoNova)
 		{
 			_busConfiguracao.AlterarSituacaoTipoInfracao(tipoId, situacaoNova);

@@ -363,6 +363,7 @@
 				<siteMapNode url="~/Fiscalizacao/ConfigurarPerguntaVisualizar"></siteMapNode>
 			</siteMapNode>
 			<siteMapNode url="~/Fiscalizacao/ConfigurarPergunta" title="Cadastrar Pergunta" description="linkMenu" roles="ConfigurarPergunta"></siteMapNode>
+      <siteMapNode url="~/Fiscalizacao/ConfigurarCodigosReceita" title="Códigos da Receita" description="linkMenu" roles="ConfigurarCodigoReceita"></siteMapNode>
 		</siteMapNode>
 
 		<siteMapNode url="~/Relatorios/Personalizado" title="Relatório" description="linkMenu relatorios" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoEditar,RelatorioPersonalizadoExcluir,RelatorioPersonalizadoExecutar,RelatorioPersonalizadoCriar,RelatorioPersonalizadoExportar,RelatorioPersonalizadoImportar,RelatorioMapa">

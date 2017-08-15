@@ -273,6 +273,7 @@
     <Compile Include="Interno\ModuloCredenciado\Praga.cs" />
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\CodigoReceita.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\ConsultaFiltro.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\eCFOCFOCTipoNumero.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\LiberaracaoNumeroCFOCFOC.cs" />
