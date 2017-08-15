@@ -148,8 +148,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         #region Códigos da Receita
 
-        public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "Código da Receita é obrigatório." }; } }
+        public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "Código da receita é obrigatório." }; } }
         public Mensagem DescricaoCodigoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_Descricao", Texto = "Descrição é obrigatória." }; } }
+        public Mensagem CodigoReceitaDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "O código da receita já existe." }; } }
 
         #endregion Códigos da Receita
 

@@ -54,21 +54,21 @@ ConfigurarCodigosReceita = {
         } 
  
         //Verifica se o CodigoReceita já existe na tabela 
-        //var tabelaCodigoReceitas = $('.tabCodigoReceitas tbody tr', container); 
-        //$(tabelaCodigoReceitas).each(function (i, prod) { 
+        var tabelaCodigosReceita = $('.tabCodigosReceita tbody tr', container);
+        $(tabelaCodigosReceita).each(function (i, cod) { 
  
-        //    /*Aqui, além de comparar item e unidade, ele verifica se o id do CodigoReceita na linha 
-        //    é igual ao que está sendo adicionado, porque pode se tratar de um CodigoReceita editado*/ 
-        //    if ($('.nomeItem', prod).text() == item 
-        //          && $('.unidadeMedida', prod).text() == unidade 
-        //          && ((id != 0 && $('.CodigoReceitaId', prod).val() != id) 
-        //              || id == 0)) { 
-        //        mensagens.push(ConfigurarCodigosReceita.settings.Mensagens.CodigoReceitaDuplicado); 
-        //    } 
-        //}); 
-        //if (ConfigurarCodigosReceita.publicarMensagem(mensagens)) { 
-        //    return false; 
-        //} 
+            /*Aqui, além de comparar codigo e descriçãoo, ele verifica se o id do CodigoReceita na linha 
+            é igual ao que está sendo adicionado, porque pode se tratar de um CodigoReceita editado*/ 
+            if ($('.codigo', cod).text().toLowerCase() == codigo.toLowerCase()
+                  && $('.descricao', cod).text().toLowerCase() == descricao.toLowerCase()
+                  && ((id != 0 && $('.codigoReceitaId', cod).val() != id) 
+                      || id == 0)) { 
+                mensagens.push(ConfigurarCodigosReceita.settings.Mensagens.CodigoReceitaDuplicado); 
+            } 
+        }); 
+        if (ConfigurarCodigosReceita.publicarMensagem(mensagens)) { 
+            return false; 
+        } 
  
         //monta o objeto 
         var objeto = { 
@@ -99,7 +99,6 @@ ConfigurarCodigosReceita = {
  
         } else {    //CodigoReceita editado 
             objeto.Editado = true;
-            var tabelaCodigosReceita = $('.tabCodigosReceita tbody tr', container);
             $(tabelaCodigosReceita).each(function (i, cod) {
  
                 //Procura a linha que tem o mesmo id do CodigoReceita 

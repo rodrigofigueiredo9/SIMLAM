@@ -29,7 +29,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
                 return ViewModelHelper.Json(new
                 {
                     @CodigoReceitaObrigatorio = Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio,
-                    @DescricaoCodigoObrigatoria = Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria
+                    @DescricaoCodigoObrigatoria = Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria,
+                    @CodigoReceitaDuplicado = Mensagem.FiscalizacaoConfiguracao.CodigoReceitaDuplicado
                 });
             }
         }
