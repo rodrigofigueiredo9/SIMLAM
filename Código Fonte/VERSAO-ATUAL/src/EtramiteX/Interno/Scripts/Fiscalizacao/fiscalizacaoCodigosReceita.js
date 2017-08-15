@@ -190,10 +190,10 @@ ConfigurarCodigosReceita = {
     ativarCodigoReceita: function () { 
         //recria o objeto 
         var objeto = { 
-            Id: $(this).closest('tr').find('.CodigoReceitaId').val(), 
+            Id: $(this).closest('tr').find('.codigoReceitaId').val(), 
             Tid: '', 
-            Item: $(this).closest('tr').find('.nomeItem').text(), 
-            Unidade: $(this).closest('tr').find('.unidadeMedida').text(), 
+            Codigo: $(this).closest('tr').find('.codigo').text(), 
+            Descricao: $(this).closest('tr').find('.descricao').text(), 
             Ativo: true, 
             Excluir: false, 
             Editado: true 
@@ -211,16 +211,16 @@ ConfigurarCodigosReceita = {
  
         //altera o valor da propriedade no objeto 
         $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto)); 
-        $(this).closest('tr').find('.CodigoReceitaAtivo').val(objeto.Ativo); 
+        $(this).closest('tr').find('.codigoReceitaAtivo').val(objeto.Ativo); 
     },
  
     desativarCodigoReceita: function () { 
         //recria o objeto 
         var objeto = { 
-            Id: $(this).closest('tr').find('.CodigoReceitaId').val(), 
+            Id: $(this).closest('tr').find('.codigoReceitaId').val(), 
             Tid: '', 
-            Item: $(this).closest('tr').find('.nomeItem').text(), 
-            Unidade: $(this).closest('tr').find('.unidadeMedida').text(), 
+            Codigo: $(this).closest('tr').find('.codigo').text(), 
+            Descricao: $(this).closest('tr').find('.descricao').text(), 
             Ativo: false, 
             Excluir: false, 
             Editado: true 
@@ -238,7 +238,7 @@ ConfigurarCodigosReceita = {
  
         //altera o valor da propriedade no objeto 
         $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto)); 
-        $(this).closest('tr').find('.CodigoReceitaAtivo').val(objeto.Ativo); 
+        $(this).closest('tr').find('.codigoReceitaAtivo').val(objeto.Ativo); 
     },
  
     excluirCodigoReceita: function () { 
