@@ -44,7 +44,7 @@
       </div> 
  
       <div class="DivItens"> 
-        <%--<% Html.RenderPartial("FiscalizacaoProdutos"); %> --%>
+        <% Html.RenderPartial("FiscalizacaoCodigosReceita"); %> 
       </div> 
     </fieldset>
 
