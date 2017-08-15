@@ -174,15 +174,15 @@ ConfigurarCodigosReceita = {
  
         //Pega os campos que serão editados, e o id 
         var container = $(this).closest('tr'); 
-        var item = container.find('.nomeItem').text(); 
-        var unidade = container.find('.unidadeMedida').text(); 
-        var id = container.find('.CodigoReceitaId').val(); 
-        var ehAtivo = container.find('.CodigoReceitaAtivo').val(); 
+        var codigo = container.find('.codigo').text(); 
+        var descricao = container.find('.descricao').text(); 
+        var id = container.find('.codigoReceitaId').val(); 
+        var ehAtivo = container.find('.codigoReceitaAtivo').val(); 
  
         //preenche os textbox 
         container = $(this).closest('fieldset'); 
-        container.find('.txtCodigoReceitaItem').val(item); 
-        container.find('.txtCodigoReceitaUnidade').val(unidade); 
+        container.find('.txtCodigo').val(codigo); 
+        container.find('.txtDescricao').val(descricao); 
         container.find('.hdnItemId').val(id); 
         container.find('.hdnItemIsAtivo').val(ehAtivo); 
     },
