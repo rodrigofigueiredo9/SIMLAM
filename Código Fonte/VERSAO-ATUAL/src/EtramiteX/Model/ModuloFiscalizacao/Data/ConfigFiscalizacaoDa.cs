@@ -745,8 +745,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 if (campoId <= 0)
                 {
-                    comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infracao_penalidade (id, artigo, item, descricao, tid, situacao) 
-														values(seq_cnf_fisc_inf_penalidade.nextval, :artigo, :item, :descricao, :tid, :situacao) 
+                    comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infracao_penalidade (id, artigo, item, descricao, tid, ativo) 
+														values(seq_cnf_fisc_inf_penalidade.nextval, :artigo, :item, :descricao, :tid, :ativo) 
 														returning id into :id", EsquemaBanco);
 
                     comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -754,7 +754,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 else
                 {
                     comando = bancoDeDados.CriarComando(@"update cnf_fisc_infracao_penalidade c set c.artigo = :artigo, c.item = :item,
-														c.descricao = :descricao, c.tid = :tid, c.situacao = :situacao 
+														c.descricao = :descricao, c.tid = :tid, c.ativo = :ativo 
 														where c.id = :id", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("id", campoId, DbType.Int32);
@@ -764,7 +764,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("artigo", entidade.Artigo, DbType.String);
                 comando.AdicionarParametroEntrada("item", entidade.Item, DbType.String);
                 comando.AdicionarParametroEntrada("descricao", entidade.Descricao, DbType.String);
-                comando.AdicionarParametroEntrada("situacao", entidade.IsAtivo, DbType.UInt32);
+                comando.AdicionarParametroEntrada("ativo", entidade.IsAtivo, DbType.UInt32);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 
