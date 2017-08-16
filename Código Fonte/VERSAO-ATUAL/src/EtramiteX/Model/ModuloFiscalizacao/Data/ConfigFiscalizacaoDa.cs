@@ -1049,8 +1049,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         acao = eHistoricoAcao.criar;
 
                         comando = bancoDeDados.CriarComando(@"insert into lov_fisc_infracao_codigo_rece(id, texto, descricao, ativo, tid) 
-                                                              values(seq_lov_fisc_infr_cod_receita.nextval, :codigo, :descricao, :ativo, :tid)", EsquemaBanco);
+                                                              values(seq_lov_fisc_infr_cod_receita.nextval, :codigo, :descricao, :ativo, :tid)
+                                                              returning id into :id", EsquemaBanco);
 
+                        comando.AdicionarParametroSaida("id", DbType.Int32); 
                         comando.AdicionarParametroEntrada("codigo", codReceita.Codigo, DbType.String);
                         comando.AdicionarParametroEntrada("descricao", codReceita.Descricao, DbType.String);
                         comando.AdicionarParametroEntrada("ativo", codReceita.Ativo, DbType.Int32);
@@ -1058,9 +1060,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                         bancoDeDados.ExecutarNonQuery(comando);
 
+                        codReceita.Id = Convert.ToInt32(comando.ObterValorParametro("id")); 
+
                         #region Histórico
 
-                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null); 
+                        Historico.Gerar(codReceita.Id, eHistoricoArtefato.codigoreceita, (eHistoricoAcao)acao, bancoDeDados, null); 
 
                         #endregion
                     }
@@ -1085,7 +1089,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                         #region Histórico
 
-                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null); 
+                        Historico.Gerar(codReceita.Id, eHistoricoArtefato.codigoreceita, (eHistoricoAcao)acao, bancoDeDados, null); 
 
                         #endregion
                     }
@@ -1101,7 +1105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         #region Histórico
 
                         //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído 
-                        //Historico.Gerar(codReceita.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+                        Historico.Gerar(codReceita.Id, eHistoricoArtefato.codigoreceita, (eHistoricoAcao)acao, bancoDeDados, null);
 
                         #endregion
 
