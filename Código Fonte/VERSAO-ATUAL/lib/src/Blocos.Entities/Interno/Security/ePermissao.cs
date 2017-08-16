@@ -390,6 +390,5 @@
         DeclaracaoAdicional,
 
         ConfigurarPenalidade
-        ConfigurarCodigoReceita
 	}
 }

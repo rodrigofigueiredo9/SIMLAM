@@ -76,6 +76,5 @@
         produtoapreendido = 147,
         fiscdestinacao = 148,
         penalidadeinfracao = 150
-        codigoreceita = 149
 	}
 }
