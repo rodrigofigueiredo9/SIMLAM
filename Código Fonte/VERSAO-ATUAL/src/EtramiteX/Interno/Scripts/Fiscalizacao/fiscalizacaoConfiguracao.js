@@ -348,11 +348,11 @@ ConfigurarPenalidade = {
     },
 
     limparCampos: function () {
-      
+        var possuiTipo = Item.settings.possuiTipo;
 
-        $('.txtArtigo', ConfigurarPenalidade.settings.container).val('');
-        $('.txtItem', ConfigurarPenalidade.settings.container).val('');
-        $('.txtDescricao', ConfigurarPenalidade.settings.container).val('');
+        $('.txtArtigo', ConfigurarPenalidade.container).val('');
+        $('.txtItem', ConfigurarPenalidade.container).val('');
+        $('.txtDescricao', ConfigurarPenalidade.container).val('');
         $('.hdnItemId', ConfigurarPenalidade.container).val(0);
 
        
@@ -491,8 +491,6 @@ ConfigurarPenalidade = {
                 if (response.EhValido) {
                     $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
                     $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
-
-                    ConfigurarPenalidade.limparCampos();
                 }
                 if (response.Msg && response.Msg.length > 0) {
                     Mensagem.gerar(Item.settings.container, response.Msg);
