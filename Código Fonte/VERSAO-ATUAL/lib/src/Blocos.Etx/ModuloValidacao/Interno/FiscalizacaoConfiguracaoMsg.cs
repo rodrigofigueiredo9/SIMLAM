@@ -79,9 +79,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#endregion
 
-		#region Campo
+        #region Penalidade
+        public Mensagem ExcluirPenaliadadeMensagem(String strTmp) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir a penaliade com artigo {0}?", strTmp) }; }
+        public Mensagem ExcluirPenalidade { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Penalidade excluída com sucesso." }; } }
+        #endregion
 
-		public Mensagem SalvarCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração do campo da infração salva com sucesso." }; } }
+        #region Campo
+
+        public Mensagem SalvarCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração do campo da infração salva com sucesso." }; } }
+        public Mensagem SalvarPenalidade { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Penalidade da infração salva com sucesso." }; } }
 		public Mensagem ExcluirCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Campo de infração excluído com sucesso." }; } }
 		public Mensagem ExcluirCampoInfracaoMensagem(String strCampo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir o campo {0}?", strCampo) }; }
 		public Mensagem ExcluirCampoInfracaoDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Campo não pode ser excluído, pois está na situação desativado." }; } }
