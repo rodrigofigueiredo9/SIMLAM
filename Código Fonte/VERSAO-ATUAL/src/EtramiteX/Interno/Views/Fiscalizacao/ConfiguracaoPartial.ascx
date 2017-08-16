@@ -259,5 +259,4 @@
 			<% } %>
 		</div>
 	</div>
-
 </fieldset>
