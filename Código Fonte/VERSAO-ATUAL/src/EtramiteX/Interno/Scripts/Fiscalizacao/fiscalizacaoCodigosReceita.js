@@ -26,8 +26,12 @@ ConfigurarCodigosReceita = {
         container.delegate('.btnExcluirCodigoReceita', 'click', ConfigurarCodigosReceita.excluirCodigoReceita);
  
         Listar.atualizarEstiloTable('.tabCodigosReceita', ConfigurarCodigosReceita.container)
+
+        //Coloca a máscara no texbox Código da Receita
+        $(".txtCodigo").mask("999-9");
+
         Aux.setarFoco(container); 
-    }, 
+    },
  
     adicionarCodigoReceita: function () { 
         Mensagem.limpar(ConfigurarCodigosReceita.container); 
