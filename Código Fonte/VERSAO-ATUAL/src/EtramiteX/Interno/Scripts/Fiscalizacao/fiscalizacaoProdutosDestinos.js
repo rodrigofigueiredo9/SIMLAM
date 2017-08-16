@@ -7,6 +7,9 @@ ConfigurarProdutosDestinos = {
     settings: {
         urls: {
             salvar: ''
+            //salvarEdicao: '',
+            //excluir: '',
+            //validarEdicao: '',
         },
         Mensagens: null
     },
@@ -66,8 +69,8 @@ ConfigurarProdutosDestinos = {
 
             /*Aqui, além de comparar item e unidade, ele verifica se o id do produto na linha
             é igual ao que está sendo adicionado, porque pode se tratar de um produto editado*/
-            if ($('.nomeItem', prod).text().toLowerCase() == item.toLowerCase()
-                  && $('.unidadeMedida', prod).text().toLowerCase() == unidade.toLowerCase()
+            if ($('.nomeItem', prod).text() == item
+                  && $('.unidadeMedida', prod).text() == unidade
                   && ((id != 0 && $('.produtoId', prod).val() != id)
                       || id == 0)) {
                 mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.ProdutoDuplicado);
@@ -157,7 +160,7 @@ ConfigurarProdutosDestinos = {
 
             /*Aqui, além de comparar o destino, verifica se o id na linha é igual ao que está
             sendo adicionado, porque pode se tratar de um destino editado*/
-            if ($('.nomeDestino', prod).text().toLowerCase() == destino.toLowerCase()
+            if ($('.nomeDestino', prod).text() == destino
                   && ((id != 0 && $('.destinoId', prod).val() != id)
                       || id == 0)) {
                 mensagens.push(ConfigurarProdutosDestinos.settings.Mensagens.DestinoDuplicado);

@@ -26,20 +26,6 @@
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
   TABLESPACE "IDAF_TBS" ;
  
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."ID" IS 'Chave primária. Utiliza a sequência seq_hst_cnf_fisc_infr_produto.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."PRODUTO_ID" IS 'Chave estrangeira para cnf_fisc_infracao_produto.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."ITEM" IS 'Nome do produto.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."UNIDADE" IS 'Unidade do produto.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."ATIVO" IS 'Ativo: 1 - sim | 0 - não.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_ID" IS 'Chave estrangeira para tab_funcionario. Campo (ID).';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_TID" IS 'Referencia ao campo (TID) da tabela tab_funcionario.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_NOME" IS 'Nome do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_LOGIN" IS 'Login do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_TIPO_ID" IS 'Chave estrangeira para lov_executor_tipo. Campo(ID).';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."EXECUTOR_TIPO_TEXTO" IS 'Texto do tipo do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."ACAO_EXECUTADA" IS 'Ação que foi disparada pelo sistema a qual gerou essa linha de histórico.';
-   COMMENT ON COLUMN "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"."DATA_EXECUCAO" IS 'Data que foi gerada essa linha de histórico.';
 
    COMMENT ON TABLE "IDAF"."HST_CNF_FISC_INFRACAO_PRODUTO"  IS 'Tabela do historico da Configuracao de Fiscalizacao - Produtos Apreendidos.';
  
