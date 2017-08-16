@@ -1737,9 +1737,79 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Item
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
+        #region Penalidade
+
+
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
+        public ActionResult AlterarSituacaoPenalidade(int tipoId, int situacaoNova)
+        {
+            _busConfiguracao.AlterarSituacaoPenalidade(tipoId, situacaoNova);
+            String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "FiscalizacaoPenalidade", new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "", "", ""));
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = html }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
+        public ActionResult ExcluirPenalidadeConfirm(int id)
+        {
+            ExcluirVM vm = new ExcluirVM();
+            List<Penalidade> itens = _busConfiguracao.ObterPenalidades();
+
+            String nome = itens.FirstOrDefault(x => x.Id == id.ToString()).Artigo;
+
+            vm.Id = id;
+            vm.Mensagem = Mensagem.FiscalizacaoConfiguracao.ExcluirPenaliadadeMensagem(nome);
+            vm.Titulo = "Excluir Penalidade";
+
+            return PartialView("Excluir", vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
+        public ActionResult ExcluirPenalidade(int id)
+        {
+            string urlRedireciona = string.Empty;
+
+            if (_busConfiguracao.ExcluirPenalidade(id))
+            {
+                urlRedireciona = Url.Action("ConfigurarPenalidade", "Fiscalizacao", new { id = id, Msg = Validacao.QueryParam() });
+            }
+
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
+        public ActionResult ConfigurarPenalidade()
+        {
+            PenalidadeVM vm = new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "","","");
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
+        public ActionResult ConfigurarPenalidade(Penalidade entidade)
+        {
+            _busConfiguracao.SalvarPenalidade(entidade);
+            String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "FiscalizacaoPenalidade", new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "", "", ""));
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Html = html,
+                @UrlRedirecionar = Url.Action("ConfiguracaoIndex", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        #endregion  
+
+        #region Item
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
 		public ActionResult ConfigurarItem()
 		{
 			ItemInfracaoVM vm = new ItemInfracaoVM(_busConfiguracao.ObterItemInfracao());

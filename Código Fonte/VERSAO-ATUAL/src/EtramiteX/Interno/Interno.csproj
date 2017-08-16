@@ -271,6 +271,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
@@ -1692,7 +1693,9 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarPenalidade.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarProdutosDestinacao.aspx" />
+    <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoDestinos.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoProdutos.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />

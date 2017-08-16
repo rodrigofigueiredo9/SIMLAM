@@ -387,6 +387,8 @@
 
 		RelatorioMapa,
 
-        DeclaracaoAdicional
+        DeclaracaoAdicional,
+
+        ConfigurarPenalidade
 	}
 }

@@ -265,9 +265,69 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#region Campo Infracao
+		#region Penalidade
 
-		public bool SalvarCampoInfracao(Item entidade)
+        public bool ExcluirPenalidade(int id)
+        {
+            try
+            {
+                GerenciadorTransacao.ObterIDAtual();
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                {
+                    bancoDeDados.IniciarTransacao();
+
+                   
+                    _da.ExcluirPenalidade(id, bancoDeDados);
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ExcluirPenalidade);
+                 
+
+                    bancoDeDados.Commit();
+                }
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        public bool SalvarPenalidade(Penalidade entidade)
+        {
+            try
+            {
+                if (_validar.SalvarPenalidade(entidade))
+                {
+
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    {
+                        bancoDeDados.IniciarTransacao();
+
+                        _da.SalvarPenalidade(entidade, bancoDeDados);
+
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarPenalidade);
+
+                        bancoDeDados.Commit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return Validacao.EhValido;
+
+        }
+
+        #endregion
+
+        #region Campo Infração
+        public bool SalvarCampoInfracao(Item entidade)
 		{
 			try
 			{
@@ -531,6 +591,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return lista;
 		}
+
+
+        public List<Penalidade> ObterPenalidades()
+        {
+            List<Penalidade> lista = null;
+            try
+            {
+                lista = _da.ObterPenalidades();
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return lista;
+        }
 
 		public List<Item> ObterItemInfracao()
 		{
@@ -915,6 +991,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SubItemSituacaoAlterada);
 			}
 		}
+
+        public void AlterarSituacaoPenalidade(int Id, int situacaoNova)
+        {
+            _da.AlterarSituacaoPenalidade(Id, situacaoNova);
+        }
 
 		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova)
 		{

@@ -38,6 +38,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _subitens = value; }
 		}
 
+
+        private List<SelectListItem> _penalidades = new List<SelectListItem>();
+        public List<SelectListItem> Penalidades
+        {
+            get { return _penalidades; }
+            set { _penalidades = value; }
+        }
+
 		private List<SelectListItem> _campos = new List<SelectListItem>();
 		public List<SelectListItem> Campos
 		{

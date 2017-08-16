@@ -21,6 +21,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes
 			set { _campos = value; }
 		}
 
+       
 		private List<ConfigFiscalizacaoPergunta> _perguntas = new List<ConfigFiscalizacaoPergunta>();
 		public List<ConfigFiscalizacaoPergunta> Perguntas
 		{
