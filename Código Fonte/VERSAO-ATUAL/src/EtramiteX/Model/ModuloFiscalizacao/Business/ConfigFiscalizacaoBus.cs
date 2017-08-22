@@ -168,15 +168,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
             catch (Exception e)
             {
-                //TODO: alterar isso quando o resto das telas estiver pronto
-                if (e.Message.Contains("integrity constraint"))
-                {
-                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ErroCodigoUsado);
-                }
-                else
-                {
-                    Validacao.AddErro(e);
-                }
+                Validacao.AddErro(e);
             }
 
             return Validacao.EhValido;
