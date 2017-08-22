@@ -170,6 +170,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem DescricaoCodigoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_Descricao", Texto = "Descrição é obrigatória." }; } }
         public Mensagem CodigoReceitaDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "O código da receita já existe." }; } }
         public Mensagem SalvarCodigoReceita { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de Códigos da Receita salva com sucesso." }; } }
+        public Mensagem ErroCodigoUsado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir. O código da receita já está sendo usado no sistema." }; } }
 
         #endregion Códigos da Receita
 
