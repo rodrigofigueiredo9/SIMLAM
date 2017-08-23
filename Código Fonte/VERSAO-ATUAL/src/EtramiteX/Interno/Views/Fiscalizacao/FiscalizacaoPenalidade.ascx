@@ -44,6 +44,7 @@
 					<td><span class="artigo"></span></td>
 					<td><span class="item"></span></td>
 					<td><span class="descricao"></span></td>
+                    <td><span class="situacao"></span></td>
 					<td class="tdAcoes">
 						<input type="hidden" class="hdnItemJSon" value="" />
 						<input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
@@ -55,4 +56,10 @@
 			</tbody>
 		</table>
 	</div>
+</div>
+<div class="block box">
+
+	<input class="floatLeft btnSalvar" type="button" value="Salvar" />
+		
+
 </div>
