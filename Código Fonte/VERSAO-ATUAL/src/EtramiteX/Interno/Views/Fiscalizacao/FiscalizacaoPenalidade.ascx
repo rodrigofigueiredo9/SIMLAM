@@ -6,9 +6,9 @@
 		<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 			<thead>
 				<tr>
-					<th width="10%">Artigo</th>
+					<th width="30%">Artigo</th>
 					<th width="15%">Item</th>
-					<th width="40%">Descrição</th>
+					<th width="20%">Descrição</th>
                     <th>Situação</th>
 					<%if (!Model.IsVisualizar){%><th width="22%">Ações</th><%} %>
 				</tr>

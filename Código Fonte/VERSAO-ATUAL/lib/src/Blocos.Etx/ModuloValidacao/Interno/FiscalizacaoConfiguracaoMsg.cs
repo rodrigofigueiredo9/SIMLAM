@@ -82,10 +82,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         #region Penalidade
         public Mensagem ExcluirPenaliadadeMensagem(String strTmp) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir a penaliade com artigo {0}?", strTmp) }; }
         public Mensagem ExcluirPenalidade { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Penalidade excluída com sucesso." }; } }
-        public Mensagem PenalidadeJaAdicionada {  get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Artigo", Texto = "Penalidade já adicionada" }; } }
-        public Mensagem ArtigoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Artigo", Texto = "Artigo é obrigatório." }; } }
-        public Mensagem ItemCampoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item", Texto = "Item é obrigatório." }; } }
-        public Mensagem DescricaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Descricao", Texto = "Descrição é obrigatório." }; } }
         #endregion
 
         #region Campo

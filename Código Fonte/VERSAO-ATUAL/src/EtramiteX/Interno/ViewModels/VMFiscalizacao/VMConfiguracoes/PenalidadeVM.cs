@@ -27,10 +27,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
             {
                 return ViewModelHelper.Json(new
                 {
-                    @ArtigoObrigatorio = Mensagem.FiscalizacaoConfiguracao.ArtigoObrigatorio,
-                    @PenalidadeJaAdicionada = Mensagem.FiscalizacaoConfiguracao.PenalidadeJaAdicionada,
-                    @ItemObrigatorio = Mensagem.FiscalizacaoConfiguracao.ItemCampoObrigatorio,
-                    @DescricaoObrigatorio = Mensagem.FiscalizacaoConfiguracao.DescricaoObrigatorio
+                    @NomeItemObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoNomeObrigatorio,
+                    @ItemDuplicado = Mensagem.FiscalizacaoConfiguracao.CampoJaAdicionado,
+                    @UnidadeCampoObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoUnidadeObrigatorio,
+                    @TipoCampoObrigatorio = Mensagem.FiscalizacaoConfiguracao.CampoTipoObrigatorio,
+                    @EditarItemDesativado = Mensagem.FiscalizacaoConfiguracao.EditarCampoInfracaoDesativado
                 });
             }
         }
