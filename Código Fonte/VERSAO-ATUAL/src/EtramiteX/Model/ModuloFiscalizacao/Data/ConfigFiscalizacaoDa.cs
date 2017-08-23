@@ -714,7 +714,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 bancoDeDados.ExecutarNonQuery(comando);
 
-                Historico.Gerar(id, eHistoricoArtefato.penalidadeinfracao, eHistoricoAcao.excluir, bancoDeDados, null);
+                Historico.Gerar(id, eHistoricoArtefato.campoinfracao, eHistoricoAcao.excluir, bancoDeDados, null);
 
                 #endregion
 
@@ -722,25 +722,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);
-
-                bancoDeDados.Commit();
-            }
-        }
-
-
-        public void ExcluirPenalidades(List<Penalidade> lstAtivadas, BancoDeDados banco = null)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                bancoDeDados.IniciarTransacao();
-
-                Comando comando = null;
-
-                comando = bancoDeDados.CriarComando(@"delete {0}cnf_fisc_infracao_penalidade t ", EsquemaBanco);
-                comando.DbCommand.CommandText += String.Format("where 0=0{0}",
-                comando.AdicionarNotIn("and", "t.id", DbType.Int32, lstAtivadas.Select(x => x.Id).ToList()));
-                bancoDeDados.ExecutarNonQuery(comando);
-
 
                 bancoDeDados.Commit();
             }

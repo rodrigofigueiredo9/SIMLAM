@@ -7,7 +7,6 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
-using System.Linq;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -303,34 +302,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return Validacao.EhValido;
         }
 
-        public bool SalvarPenalidade(List<Penalidade> penalidades)
+        public bool SalvarPenalidade(Penalidade entidade)
         {
             try
             {
-                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                if (_validar.SalvarPenalidade(entidade))
                 {
-                    bancoDeDados.IniciarTransacao();
-                    _da.ExcluirPenalidades(penalidades.Where(p => p.Id != "0").ToList(), bancoDeDados);
-                    bancoDeDados.Commit();
-                }
 
-                foreach (Penalidade entidade in penalidades)
-                {
-                    if (_validar.SalvarPenalidade(entidade))
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                     {
+                        bancoDeDados.IniciarTransacao();
 
-                        GerenciadorTransacao.ObterIDAtual();
+                        _da.SalvarPenalidade(entidade, bancoDeDados);
 
-                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-                        {
-                            bancoDeDados.IniciarTransacao();
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarPenalidade);
 
-                            _da.SalvarPenalidade(entidade, bancoDeDados);
-
-                            Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarPenalidade);
-
-                            bancoDeDados.Commit();
-                        }
+                        bancoDeDados.Commit();
                     }
                 }
             }

@@ -1790,7 +1790,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
-        public ActionResult ConfigurarPenalidade(List<Penalidade> entidade)
+        public ActionResult ConfigurarPenalidade(Penalidade entidade)
         {
             _busConfiguracao.SalvarPenalidade(entidade);
             String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "FiscalizacaoPenalidade", new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "", "", ""));
