@@ -498,6 +498,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
 
             return listaCodigosReceita;
+        }
+
+        public bool PermiteExcluirCodigo(CodigoReceita codigo)
+        {
+            bool podeExcluir = false;
+
+            try
+            {
+                podeExcluir = _da.PermiteExcluirCodigo(codigo);
+
+                if (!podeExcluir)
+                {
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ErroCodigoUsado);
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return podeExcluir;
         } 
 
         #endregion Códigos da Receita
