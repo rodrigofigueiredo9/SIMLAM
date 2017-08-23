@@ -305,8 +305,8 @@ ConfigurarPenalidade = {
 
     load: function (container, options) {
         if (options) { $.extend(ConfigurarPenalidade.settings, options); }
-        ConfigurarPenalidade.container = container;
-        
+        ConfigurarPenalidade.settings.container = container;
+       
        container.delegate('.btnSalvar', 'click', ConfigurarPenalidade.salvar);
        container.delegate('.btnEditarItem', 'click', ConfigurarPenalidade.editar);
        container.delegate('.btnExcluirItem', 'click', ConfigurarPenalidade.excluir);
@@ -400,6 +400,7 @@ ConfigurarPenalidade = {
 
     ativar: function () {
         var container = $(this).closest('tr');
+        var mensagens = new Array();
         Mensagem.limpar(ConfigurarPenalidade.settings.container);
         var item = JSON.parse($('.hdnItemJSon', container).val());
         
@@ -461,18 +462,37 @@ ConfigurarPenalidade = {
             Descricao: $('.txtDescricao', container).val()
         }
 
-
+        var duplicado = false;
+        $('.hdnItemJSon', ConfigurarPenalidade.settings.container).each(function () {
+            var obj = String($(this).val());
+            if (obj != '') {
+                var resp = (JSON.parse(obj));
+               
+                if (resp.Artigo == item.Artigo && resp.Item == item.Item) {
+                    mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.PenalidadeJaAdicionada));
+                    return;
+                }
+            }
+        });
+       
+       
         if (item.Artigo == '') {
-            return;
+            mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.ArtigoObrigatorio));
         }
 
         if (item.Item == '') {
-            return;
+            mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.ItemObrigatorio));
         }
 
         if (item.Descricao == '') {
+            mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.DescricaoObrigatorio));
+        }
+
+        if (mensagens.length > 0) {
+            Mensagem.gerar(container, mensagens);
             return;
         }
+
 
 
         MasterPage.carregando(true);
@@ -495,7 +515,7 @@ ConfigurarPenalidade = {
                     ConfigurarPenalidade.limparCampos();
                 }
                 if (response.Msg && response.Msg.length > 0) {
-                    Mensagem.gerar(Item.settings.container, response.Msg);
+                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
                 }
             }
         });
