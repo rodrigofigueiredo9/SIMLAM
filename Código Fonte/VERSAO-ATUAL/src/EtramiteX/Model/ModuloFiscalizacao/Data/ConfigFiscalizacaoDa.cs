@@ -1437,6 +1437,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return listaCodigosReceita;
         }
 
+         internal bool PermiteExcluirCodigo(CodigoReceita codigo, BancoDeDados banco = null)
+         {
+             bool podeExcluir = false;
+
+             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+             {
+                 Comando comando = null;
+
+                 bancoDeDados.IniciarTransacao();
+
+                 comando = bancoDeDados.CriarComando(@"select count(*) total
+                                                      from tab_fisc_infracao
+                                                      where codigo_receita = :idCodigo", EsquemaBanco);
+                 
+                 comando.AdicionarParametroEntrada("idCodigo", codigo.Id, DbType.Int32);
+
+                 var total = bancoDeDados.ExecutarScalar<int>(comando);
+
+                 podeExcluir = total > 0 ? false : true;
+             }
+
+             return podeExcluir;
+         }
+ 
+
 
         #endregion Códigos da Receita Infracao
 

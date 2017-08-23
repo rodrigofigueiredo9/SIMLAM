@@ -6,7 +6,8 @@
 ConfigurarCodigosReceita = { 
     settings: { 
         urls: { 
-            salvar: ''
+            salvar: '',
+            excluir: '',
         }, 
         Mensagens: null 
     }, 
@@ -246,6 +247,7 @@ ConfigurarCodigosReceita = {
     },
  
     excluirCodigoReceita: function () { 
+
         //recria o objeto 
         var objeto = { 
             Id: $(this).closest('tr').find('.codigoReceitaId').val(), 
@@ -254,10 +256,42 @@ ConfigurarCodigosReceita = {
             Descricao: '', 
             Ativo: false, 
             Excluir: true 
-        }; 
-        if (objeto.Id != 0) { 
-            $(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto)); 
-            $(this).closest('tr').hide(); 
+        };
+
+        if (objeto.Id != 0) {
+            $(this).closest('tr').addClass('excluirLinha');
+
+            Mensagem.limpar(ConfigurarCodigosReceita.container);
+            MasterPage.carregando(true);
+
+            $.ajax({
+                url: ConfigurarCodigosReceita.settings.urls.excluir,
+                data: JSON.stringify({
+                    codigoExcluido: objeto
+                }),
+                cache: false,
+                async: false,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: Aux.error,
+                success: function (response, textStatus, XMLHttpRequest) {
+                    if (response.EhValido) {
+                        $('.excluirLinha').find('.hdnItemJSon').val(JSON.stringify(objeto));
+                        $('.excluirLinha').hide();
+                    } else if (response.Msg && response.Msg.length > 0) {
+                        Mensagem.gerar(ConfigurarCodigosReceita.container, response.Msg);
+                    }
+                }
+            });
+
+            $(this).closest('tr').removeClass('excluirLinha');
+
+            MasterPage.carregando(false);
+
+
+            //$(this).closest('tr').find('.hdnItemJSon').val(JSON.stringify(objeto)); 
+            //$(this).closest('tr').hide(); 
         } else { 
             $(this).closest('tr').remove(); 
         } 
