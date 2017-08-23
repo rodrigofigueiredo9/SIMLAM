@@ -2238,24 +2238,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         }
 
-        [HttpPost]
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
-        public ActionResult ExcluirCodigoReceita(CodigoReceita codigoExcluido)
-        {
-            if (codigoExcluido != null && codigoExcluido.Id != 0)
-            {
-                _busConfiguracao.PermiteExcluirCodigo(codigoExcluido);
-            }
-
-            return Json(new
-            {
-                @EhValido = Validacao.EhValido,
-                @Msg = Validacao.Erros,
-                @Url = Url.Action("ConfigurarCodigosReceita", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
-            }, JsonRequestBehavior.AllowGet);
-
-        } 
-
         #endregion Códigos da Receita
 
         #region Auxiliares

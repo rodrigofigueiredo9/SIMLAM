@@ -10,8 +10,7 @@
       $(function () { 
           ConfigurarCodigosReceita.load($('#central'), { 
               urls: { 
-                  salvar: '<%= Url.Action("ConfigurarCodigosReceita", "Fiscalizacao") %>',
-                  excluir: '<%= Url.Action("ExcluirCodigoReceita", "Fiscalizacao") %>'
+                  salvar: '<%= Url.Action("ConfigurarCodigosReceita", "Fiscalizacao") %>' 
               }, 
               Mensagens: <%= Model.Mensagens %>
           }); 
