@@ -21,6 +21,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes
         public string Item { get; set; }
         public string Descricao { get; set; }
 
+        public int Ativo { get; set; }
+
         private List<Penalidade> _itens = new List<Penalidade>();
         public List<Penalidade> Itens
         {

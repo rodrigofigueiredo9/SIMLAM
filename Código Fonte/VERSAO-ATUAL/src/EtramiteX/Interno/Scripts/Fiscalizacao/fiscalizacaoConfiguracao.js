@@ -371,7 +371,8 @@ ConfigurarPenalidade = {
             Id: $('.hdnItemId', container).val(),
             Artigo: $('.txtArtigo', container).val(),
             Item: $('.txtItem', container).val(),
-            Descricao: $('.txtDescricao', container).val()
+            Descricao: $('.txtDescricao', container).val(),
+            Valido:0
         }
 
         var tr = container.find('.linhaSelecionada');
@@ -498,37 +499,12 @@ ConfigurarPenalidade = {
         var container = $(this).closest('tr');
         Mensagem.limpar(ConfigurarPenalidade.settings.container);
         var item = JSON.parse($('.hdnItemJSon', container).val());
-        
-        MasterPage.carregando(true);
-        $.ajax({
-            url: ConfigurarPenalidade.settings.urls.alterarSituacao,
-            data: JSON.stringify({ tipoId: item.Id, situacaoNova: 0 }),
-            cache: false,
-            async: false,
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            error: function (XMLHttpRequest, textStatus, erroThrown) {
-                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarItemInfracao.container);
-            },
-            success: function (response, textStatus, XMLHttpRequest) {
-                if (response.EhValido) {
-                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
-                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
-
-                    Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
-                }
-                if (response.Msg && response.Msg.length > 0) {
-                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
-                }
-            }
-        });
-
-        MasterPage.carregando(false);
+        item.IsAtivo = false;
+        item.SituacaoTexto = "Desativado";
+        $('.hdnItemJSon', container).val(JSON.stringify(item));
 
         ConfigurarPenalidade.gerenciarBotoes();
-
-        ConfigurarPenalidade.limparCampos();
+    
     },
 
     ativar: function () {
@@ -536,36 +512,12 @@ ConfigurarPenalidade = {
         var mensagens = new Array();
         Mensagem.limpar(ConfigurarPenalidade.settings.container);
         var item = JSON.parse($('.hdnItemJSon', container).val());
-        
-        MasterPage.carregando(true);
-        $.ajax({
-            url: ConfigurarPenalidade.settings.urls.alterarSituacao,
-            data: JSON.stringify({ tipoId: item.Id, situacaoNova: 1 }),
-            cache: false,
-            async: false,
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            error: function (XMLHttpRequest, textStatus, erroThrown) {
-                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarItemInfracao.container);
-            },
-            success: function (response, textStatus, XMLHttpRequest) {
-                if (response.EhValido) {
-                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
-                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
-
-                    Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
-                }
-                if (response.Msg && response.Msg.length > 0) {
-                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
-                }
-            }
-        });
-        MasterPage.carregando(false);
+        item.IsAtivo = true;
+        item.SituacaoTexto = "Ativado";
+        $('.hdnItemJSon', container).val(JSON.stringify(item));
 
         ConfigurarPenalidade.gerenciarBotoes();
-
-        ConfigurarPenalidade.limparCampos();
+    
     },
 
     excluir: function () {

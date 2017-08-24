@@ -33,9 +33,10 @@
 						<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 						<input type="hidden" value="<%= item.Id %>" class="itemId" />
 						<input title="Editar penalidade" type="button" class="icone editar btnEditarItem" value="" />
+                        <input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
                          <input title="Desativar penalidade" type="button" class="icone cancelar btnDesativarItem" value="" />
 						<input title="Ativar penalidade" type="button" class="icone recebido btnAtivarItem" value="" />
-						<input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
+						
                        
 					</td>
 					<%} %>
