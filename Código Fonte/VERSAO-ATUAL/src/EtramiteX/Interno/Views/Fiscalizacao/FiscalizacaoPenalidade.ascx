@@ -33,10 +33,10 @@
 						<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 						<input type="hidden" value="<%= item.Id %>" class="itemId" />
 						<input title="Editar penalidade" type="button" class="icone editar btnEditarItem" value="" />
-                        
+                        <input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
                          <input title="Desativar penalidade" type="button" class="icone cancelar btnDesativarItem" value="" />
 						<input title="Ativar penalidade" type="button" class="icone recebido btnAtivarItem" value="" />
-						<input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
+						
                        
 					</td>
 					<%} %>
@@ -48,11 +48,10 @@
                     <td><span class="situacao"></span></td>
 					<td class="tdAcoes">
 						<input type="hidden" class="hdnItemJSon" value="" />
-						<input title="Editar penalidade" type="button" class="icone editar btnEditarItem" value="" />
-						
-                        <input title="Desativar penalidade" type="button" class="icone cancelar btnDesativarItem" value="" />
-						<input title="Ativar penalidade" type="button" class="icone recebido btnAtivarItem" value="" />
-                        <input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
+						<input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
+						<input title="Excluir campo" type="button" class="icone excluir btnExcluirItem" value="" />
+                        <input title="Desativar campo" type="button" class="icone cancelar btnDesativarItem" value="" />
+						<input title="Ativar campo" type="button" class="icone recebido btnAtivarItem" value="" />
 					</td>
 				</tr>
 			</tbody>
