@@ -108,7 +108,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			FiscalizacaoId = fiscalizacao.Id;
 
 			PossuiAreaEmbargadaOuAtividadeInterditada = (fiscalizacao.ObjetoInfracao.AreaEmbargadaAtvIntermed.HasValue ? (fiscalizacao.ObjetoInfracao.AreaEmbargadaAtvIntermed.Value == 1) : new Nullable<Boolean>());
-			HouveApreensaoMaterial = fiscalizacao.MaterialApreendido.IsApreendido;
+            //HouveApreensaoMaterial = fiscalizacao.MaterialApreendido.IsApreendido;
 
 			AreaTotal = fiscalizacao.ComplementacaoDados.AreaTotalInformada;
 			AreaFlorestalNativa = fiscalizacao.ComplementacaoDados.AreaCoberturaFlorestalNativa;

@@ -9,7 +9,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 Id { get; set; }
 		public Int32 FiscalizacaoId { get; set; }
 		public Int32? SerieId { get; set; }
-		public Boolean? IsApreendido { get; set; }
+        //public Boolean? IsApreendido { get; set; }
+        public Boolean? IsDigital { get; set; }
 		public Boolean? IsTadGeradoSistema { get; set; }
 		public String NumeroTad { get; set; }
 		public String Descricao { get; set; }

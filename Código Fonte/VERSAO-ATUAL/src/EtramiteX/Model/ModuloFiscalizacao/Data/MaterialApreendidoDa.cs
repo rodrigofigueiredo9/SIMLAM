@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					:endereco_distrito, :endereco_estado, :endereco_municipio, :opiniao, :arquivo, :tid) returning id into :id ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
+                //comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
 				comando.AdicionarParametroEntrada("tad_gerado", materialApreendido.IsTadGeradoSistema, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
@@ -152,7 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					:endereco_municipio, opiniao = :opiniao, arquivo = :arquivo, tid = :tid where id = :id ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
+                //comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
 				comando.AdicionarParametroEntrada("tad_gerado", materialApreendido.IsTadGeradoSistema, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
@@ -286,7 +286,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
-							IsApreendido = reader.GetValue<bool>("houve_material"),
+                            //IsApreendido = reader.GetValue<bool>("houve_material"),
 							NumeroTad = reader.GetValue<string>("tad_numero"),
 							ValorProdutos = reader.GetValue<string>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),

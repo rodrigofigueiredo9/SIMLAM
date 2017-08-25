@@ -1986,22 +1986,22 @@ FiscalizacaoMaterialApreendido = {
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
 
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarMaterial', 'click', FiscalizacaoMaterialApreendido.adicionarMaterial);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirMaterial', 'click', FiscalizacaoMaterialApreendido.excluirMaterial);
+		//FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
+		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarMaterial', 'click', FiscalizacaoMaterialApreendido.adicionarMaterial);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirMaterial', 'click', FiscalizacaoMaterialApreendido.excluirMaterial);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
+		//FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
+		//FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
 
 		Mascara.load(FiscalizacaoMaterialApreendido.container);
 

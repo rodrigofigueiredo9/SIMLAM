@@ -10,14 +10,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 	{
 		public bool Salvar(MaterialApreendido materialApreendido)
 		{
-			if (!materialApreendido.IsApreendido.HasValue)
-			{
-				Validacao.Add(Mensagem.MaterialApreendidoMsg.IsApreendidoObritatorio);
-				return Validacao.EhValido;
-			}
+            //if (!materialApreendido.IsApreendido.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.MaterialApreendidoMsg.IsApreendidoObritatorio);
+            //    return Validacao.EhValido;
+            //}
 
-			if (materialApreendido.IsApreendido.Value)
-			{
+            //if (materialApreendido.IsApreendido.Value)
+            //{
 				if (!materialApreendido.IsTadGeradoSistema.HasValue)
 				{
 					Validacao.Add(Mensagem.MaterialApreendidoMsg.IsTadGeradoSistemaObrigatorio);
@@ -94,7 +94,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				{
 					Validacao.Add(Mensagem.MaterialApreendidoMsg.MaterialApreendidoObrigatorio);
 				}
-			}
+            //}
 
 			return Validacao.EhValido;
 		}
