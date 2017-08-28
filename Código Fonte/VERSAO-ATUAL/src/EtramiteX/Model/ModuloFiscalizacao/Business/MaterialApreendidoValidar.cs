@@ -25,17 +25,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				else if (!materialApreendido.IsTadGeradoSistema.Value)
 				{
 					
-					if (string.IsNullOrWhiteSpace(materialApreendido.NumeroTad))
-					{
-						if (materialApreendido.SerieId == (int)eSerie.C)
-						{
-							Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroObrigatorio);
-						}
-						else
-						{
-							Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroBlocoObrigatorio);
-						}
-					}
+                    //if (string.IsNullOrWhiteSpace(materialApreendido.NumeroTad))
+                    //{
+                    //    if (materialApreendido.SerieId == (int)eSerie.C)
+                    //    {
+                    //        Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroObrigatorio);
+                    //    }
+                    //    else
+                    //    {
+                    //        Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroBlocoObrigatorio);
+                    //    }
+                    //}
 
 					ValidacoesGenericasBus.DataMensagem(materialApreendido.DataLavratura, "MaterialApreendido_DataLavratura", "Data da lavratura do termo");
 

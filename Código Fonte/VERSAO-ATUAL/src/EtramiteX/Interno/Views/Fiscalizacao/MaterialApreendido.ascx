@@ -29,15 +29,15 @@
         <div class="block">
             <div class="coluna20">
                 <label>IUF para Apreensão</label><br />
-		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
-		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 0, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
+		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 0, (Model.MaterialApreendido.IsDigital == null ? false : Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
+		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
         </div>
 
         <div class="block">
             <div class="coluna15">
 		        <label>Número do IUF</label>
-		        <%= Html.TextBox("MaterialApreendido.NumeroTad", Model.MaterialApreendido.NumeroTad, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroTad", @maxlength = "8" }))%>
+		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", Model.MaterialApreendido.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna15">
@@ -51,7 +51,7 @@
 			</div>
         </div>
 
-        <div class="block">
+        <div class="block divPDF">
             <div class="coluna50 inputFileDiv">
 				<label>PDF do IUF</label>
 				<div class="block">
@@ -87,7 +87,7 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimal txtValorProdutos", @maxlength = "15" }))%>
+				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimal txtValorProdutos", @maxlength = "15" }))%>
 			</div>
 		</div>
 

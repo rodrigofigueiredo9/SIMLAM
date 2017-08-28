@@ -76,7 +76,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.Decimal);
 				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
-				comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
+                //comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
 				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
@@ -160,7 +160,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.Decimal);
 				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
-				comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
+                //comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
 				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
@@ -287,7 +287,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
                             //IsApreendido = reader.GetValue<bool>("houve_material"),
-							NumeroTad = reader.GetValue<string>("tad_numero"),
+                            //NumeroTad = reader.GetValue<string>("tad_numero"),
 							ValorProdutos = reader.GetValue<string>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),
 							Opiniao = reader.GetValue<string>("opiniao"),

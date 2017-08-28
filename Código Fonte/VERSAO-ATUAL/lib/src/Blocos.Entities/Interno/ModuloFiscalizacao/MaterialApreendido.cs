@@ -12,9 +12,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
         //public Boolean? IsApreendido { get; set; }
         public Boolean? IsDigital { get; set; }
 		public Boolean? IsTadGeradoSistema { get; set; }
-		public String NumeroTad { get; set; }
+        //public String NumeroTad { get; set; }
+        public String NumeroIUF { get; set; }
 		public String Descricao { get; set; }
 		public String ValorProdutos { get; set; }
+        public String NumeroLacre { get; set; }
 		public String Opiniao { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
 		public String Tid { get; set; }

@@ -1986,6 +1986,9 @@ FiscalizacaoMaterialApreendido = {
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
 
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
+	    FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
+
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
@@ -2014,8 +2017,43 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
 
+		$('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
+		FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+
 		MasterPage.botoes();
 		MasterPage.carregando(false);
+	},
+
+	onSelecionarIsDigital: function(){
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).hide();
+	},
+
+	onSelecionarIsBloco: function () {
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeAttr('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
+
+	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
+
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).show();
 	},
 
 	configurarBtnEditar: function () {
@@ -2035,19 +2073,19 @@ FiscalizacaoMaterialApreendido = {
 		});
 	},
 
-	onSelecionarIsApreendidoSim: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
-	},
+	//onSelecionarIsApreendidoSim: function () {
+	//	$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
+	//},
 
-	onSelecionarIsApreendidoNao: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).hide();
+	//onSelecionarIsApreendidoNao: function () {
+	//	$('.divApreensao', FiscalizacaoMaterialApreendido.container).hide();
 
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
-		$('.rdoIsGeradoSistemaNao', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.rdoIsGeradoSistemaSim', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.txtNumeroTad', FiscalizacaoMaterialApreendido.container).val('');
-		$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
-	},
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
+	//	$('.rdoIsGeradoSistemaNao', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
+	//	$('.rdoIsGeradoSistemaSim', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
+	//	$('.txtNumeroTad', FiscalizacaoMaterialApreendido.container).val('');
+	//	$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
+	//},
 
 	gerenciarSerie: function () {
 		var container = FiscalizacaoMaterialApreendido.container;
