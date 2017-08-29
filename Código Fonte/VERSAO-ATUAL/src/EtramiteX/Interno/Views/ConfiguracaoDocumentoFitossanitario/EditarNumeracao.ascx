@@ -17,26 +17,13 @@
 			<label>Tipo do Documento*</label>
 			<%= Html.TextBox("BlocoTipoDocumento", Model.TipoDocumentoTexto, new { @class = "text ddlBloco ddlTipoDocumento", @readonly="readonly" })%>
 		</div>
-		<% if (Model.Tipo == 1){ %>
-        <div class="coluna20">
+		<div class="coluna20">
 			<label>Número inicial*</label>
-			<%= Html.TextBox("BlocoNumeroInicial", Model.NumeroInicial, new { @class = "text txtNumeroInicial txtNumeroInicialBloco txtBloco maskNum8"}) %>
+			<%= Html.TextBox("BlocoNumeroInicial", Model.NumeroInicial, new { @class = "text txtNumeroInicial txtBloco maskNum8"}) %>
 		</div>
 		<div class="coluna20">
 			<label>Número final*</label>
-			<%= Html.TextBox("BlocoNumeroFinal", Model.NumeroFinal, new { @class = "text txtNumeroFinal txtNumeroFinalBloco txtBloco maskNum8"} ) %>
+			<%= Html.TextBox("BlocoNumeroFinal", Model.NumeroFinal, new { @class = "text txtNumeroFinal txtBloco maskNum8"} ) %>
 		</div>
-        <%} %>
-
-        <%else{ %>
-        <div class="coluna20">
-			<label>Número inicial*</label>
-			<%= Html.TextBox("BlocoNumeroInicial", Model.NumeroInicial, new { @class = "text txtNumeroInicial txtNumeroInicialDigital txtBloco maskNum10"}) %>
-		</div>
-		<div class="coluna20">
-			<label>Número final*</label>
-			<%= Html.TextBox("BlocoNumeroFinal", Model.NumeroFinal, new { @class = "text txtNumeroFinal txtNumeroFinalDigital txtBloco maskNum10"} ) %>
-		</div>
-        <%} %>
 	</div>
 </fieldset>
