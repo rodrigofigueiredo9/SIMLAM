@@ -1987,7 +1987,8 @@ FiscalizacaoMaterialApreendido = {
 		Fiscalizacao.alternarAbas();
 
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
-	    FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
@@ -2055,6 +2056,37 @@ FiscalizacaoMaterialApreendido = {
 
 	    $('.divPDF', FiscalizacaoMaterialApreendido.container).show();
 	},
+
+	onAssociarDepositario: function () {
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+
+	    //Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+        //Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+	    var dataPessoa = {
+	        cpfCnpj: null,
+            tipoPessoa: null,
+            tipoCadastro: '1'
+	    };
+
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, dataPessoa, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
+	        });
+	    });
+	},
+
+	callBackEditarDepositario: function (Pessoa) {
+	    $('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
+	    $('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    return true;
+	},
+
+    ///////////////////////OLD////////////////////////////
 
 	configurarBtnEditar: function () {
 		$(".btnEditar", Fiscalizacao.container).unbind('click');
@@ -2183,19 +2215,6 @@ FiscalizacaoMaterialApreendido = {
 		return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
 	},
 
-	onAssociarDepositario: function () {
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
-
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
-			});
-		});
-	},
-
 	onEditarDepositario: function () {
 		var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
 		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
@@ -2209,14 +2228,6 @@ FiscalizacaoMaterialApreendido = {
 				editarVisualizar: Fiscalizacao.salvarEdicao
 			});
 		});
-	},
-
-	callBackEditarDepositario: function (Pessoa) {
-		$('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
-		$('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
-		$('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
-		return true;
 	},
 
 	onSelecionarTipo: function () {

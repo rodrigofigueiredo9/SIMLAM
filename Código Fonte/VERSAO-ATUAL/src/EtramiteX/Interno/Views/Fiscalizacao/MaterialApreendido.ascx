@@ -93,4 +93,60 @@
 
     </fieldset>
 
+    <fieldset class="block box">
+		<legend>Depositário</legend>
+
+		<input type="hidden" class="hdnDepositarioId" value="<%= Html.Encode(Model.MaterialApreendido.Depositario.Id) %>" />
+
+		<div class="block" >
+			<div class="coluna60">
+				<label>Nome do Depositário *</label>
+				<%= Html.TextBox("Depositario.NomeRazaoSocial", Model.MaterialApreendido.Depositario.NomeRazaoSocial, new { @class = "text disabled txtNome", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna16 prepend2">
+				<label>CPF *</label>
+				<%= Html.TextBox("Depositario.CPFCNPJ", Model.MaterialApreendido.Depositario.CPFCNPJ, new { @class = "text disabled txtCnpj", @disabled = "disabled" })%>
+			</div>
+
+			<div class="prepend2">
+				<% if (!Model.IsVisualizar) { %>
+				<button type="button" title="Buscar depositario" class="floatLeft inlineBotao botaoBuscar btnAssociarDepositario">Buscar</button>
+				<% } %>
+				<span class="spanVisualizarDepositario <%= (Model.MaterialApreendido.Depositario.Id > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarDepositario" title="Visualizar depositario"></button></span>
+			</div>
+		</div>
+
+		<div class="block" >
+			<div class="coluna60">
+				<label>Logradouro / Rua / Rodovia *</label>
+				<%= Html.TextBox("Depositario.Logradouro", Model.MaterialApreendido.Depositario.Logradouro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtLogradouro", @maxlength = "500" }))%>
+			</div>
+		</div>
+
+		<div class="block" >
+			<div class="coluna30 append2">
+				<label>Bairro / Gleba / Comunidade *</label>
+				<%= Html.TextBox("Depositario.Bairro", Model.MaterialApreendido.Depositario.Bairro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtBairro", @maxlength = "100" }))%>
+			</div>
+
+			<div class="coluna27">
+				<label>Distrito / Localidade *</label>
+				<%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDistrito", @maxlength = "100" }))%>
+			</div>
+		</div>
+
+		<div class="block divEndereco" >
+			<div class="coluna20 append2">
+				<label>UF *</label><br />
+				<%= Html.DropDownList("Depositario.Estado", Model.Ufs, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Ufs.Count <= 1, new { @class = "text ddlEstado" }))%>
+			</div>
+			<div class="coluna37">
+				<label>Município *</label><br />
+				<%= Html.DropDownList("Depositario.Municipio", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Municipios.Count <= 1, new { @class = "text ddlMunicipio" }))%>
+			</div>
+		</div>
+
+	</fieldset>
+
 </div>
