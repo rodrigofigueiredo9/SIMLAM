@@ -10,7 +10,7 @@
 	<div class="block">
 		<div class="coluna20">
 			<label>Tipo do Documento*</label>
-			<%= Html.DropDownList("BlocoTipoDocumento", Model.TiposDocumento, new { @class = "text ddlBloco ddlTipoDocumento setarFoco" })%>
+			<%= Html.DropDownList("BlocoTipoDocumento", Model.TiposDocumento, new { @class = "text ddlBloco ddlTipoDocumento ddlTipoDocumentoBloco setarFoco" })%>
 		</div>
 		<div class="coluna20">
 			<label>Número inicial*</label>
@@ -78,7 +78,7 @@
 	<div class="block">
 		<div class="coluna20">
 			<label>Tipo do Documento*</label>
-			<%= Html.DropDownList("DigitalTipoDocumento", Model.TiposDocumento, new { @class= "text ddlDigital ddlTipoDocumento " }) %>
+			<%= Html.DropDownList("DigitalTipoDocumento", Model.TiposDocumento, new { @class= "text ddlDigital ddlTipoDocumento ddlTipoDocumentoDigital" }) %>
 		</div>
 		<div class="coluna20">
 			<label>Número inicial*</label>

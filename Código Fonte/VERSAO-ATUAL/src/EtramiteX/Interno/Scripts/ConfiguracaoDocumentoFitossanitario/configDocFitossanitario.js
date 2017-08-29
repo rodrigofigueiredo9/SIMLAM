@@ -29,7 +29,8 @@ ConfigDocFitossanitario = {
 		container.delegate('.btnSalvar', 'click', ConfigDocFitossanitario.salvar);
 		container.delegate('.btnEditar', 'click', ConfigDocFitossanitario.editarIntervalo);
 		container.delegate('.btnExcluir', 'click', ConfigDocFitossanitario.abrirModalConfirmarExcluir);
-		container.delegate('.ddlTipoDocumento', 'change', ConfigDocFitossanitario.toggleMask);
+		container.delegate('.ddlTipoDocumentoBloco', 'change', ConfigDocFitossanitario.toggleMaskBloco);
+		container.delegate('.ddlTipoDocumentoDigital', 'change', ConfigDocFitossanitario.toggleMaskDigital);
 
 		Aux.setarFoco(container);
 	},
@@ -257,7 +258,8 @@ ConfigDocFitossanitario = {
 	    MasterPage.carregando(false);
 	},
 
-	toggleMask: function (evt) {
+	toggleMaskBloco: function (evt) {
+        
         function toggleClass(element, txt) {
 	        switch (txt) {
 	            case "CFO":
@@ -270,8 +272,7 @@ ConfigDocFitossanitario = {
 	                element.classList.remove("maskNum8");
 	                element.classList.add("maskNum10");
 	        }
-        }
-
+        }        
         var target = evt.target
         var txt = target.selectedOptions[0].text
 
@@ -313,7 +314,63 @@ ConfigDocFitossanitario = {
             .val("");
 	},
 
-	toggleMaskModal: function (tipo) {
+	toggleMaskDigital: function (evt) {
+
+	    function toggleClass(element, txt) {
+	        switch (txt) {
+	            case "CFO":
+	            case "CFOC":
+	                element.classList.remove("maskNum10");
+	                element.classList.add("maskNum10");
+	                break;
+
+	            default:
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
+	        }
+	    }
+	    var target = evt.target
+	    var txt = target.selectedOptions[0].text
+
+	    var isBloco = target.classList.contains("ddlBloco")
+	    var isDigital = target.classList.contains("ddlDigital")
+	    var complemento = isBloco ? ".txtBloco" : ".txtDigital"
+
+	    var campoInicial = document.querySelector(".txtNumeroInicial" + complemento)
+	    var campoFinal = document.querySelector(".txtNumeroFinal" + complemento)
+
+	    toggleClass(campoInicial, txt)
+	    toggleClass(campoFinal, txt)
+
+	    //Oculta as linhas que não são do mesmo tipo de documento selecionado
+
+	    $(this).closest('fieldset').find('.Linha').each(function () {
+	        if (txt == "CFO" || txt == "CFOC" || txt == "PTV") {
+	            var linha = $(this);
+	            if (linha.find('.TipoDocumentoTexto').text() != txt) {
+	                linha.hide();
+	            } else {
+	                linha.show();
+	            }
+
+	        } else {
+	            var linha = $(this);
+	            linha.show();
+	        }
+	    });
+
+	    $(".maskNum8" + complemento)
+            .unmask()
+            .mask("99999999")
+            .val("");
+
+	    $(".maskNum10" + complemento)
+            .unmask()
+            .mask("9999999999")
+            .val("");
+	},
+
+	toggleMaskModalBloco: function (tipo) {
 	    function toggleClass(element, tipo) {
 	        switch (tipo) {
 	            case "CFO":
@@ -328,8 +385,38 @@ ConfigDocFitossanitario = {
 	        }
 	    }
 
-	    var campoInicial = document.querySelector(".txtNumeroInicial")
-	    var campoFinal = document.querySelector(".txtNumeroFinal")
+	    var campoInicial = document.querySelector(".txtNumeroInicialBloco")
+	    var campoFinal = document.querySelector(".txtNumeroFinalBloco")
+
+	    toggleClass(campoInicial, tipo)
+	    toggleClass(campoFinal, tipo)
+
+	    $(".maskNum8")
+            .unmask()
+            .mask("99999999");
+
+	    $(".maskNum10")
+            .unmask()
+            .mask("9999999999");
+	},
+
+	toggleMaskModalDigital: function (tipo) {
+	    function toggleClass(element, tipo) {
+	        switch (tipo) {
+	            case "CFO":
+	            case "CFOC":
+	                element.classList.remove("maskNum10");
+	                element.classList.add("maskNum10");
+	                break;
+
+	            default:
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
+	        }
+	    }
+
+	    var campoInicial = document.querySelector(".txtNumeroInicialDigital")
+	    var campoFinal = document.querySelector(".txtNumeroFinalDigital")
 
 	    toggleClass(campoInicial, tipo)
 	    toggleClass(campoFinal, tipo)
@@ -342,4 +429,8 @@ ConfigDocFitossanitario = {
             .unmask()
             .mask("9999999999");
 	}
+
+
+
+
 }
