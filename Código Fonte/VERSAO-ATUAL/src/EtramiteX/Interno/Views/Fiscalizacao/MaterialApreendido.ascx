@@ -149,4 +149,77 @@
 
 	</fieldset>
 
+    <fieldset class="fsMateriais block box">
+		<legend>Produtos Apreendidos / Destinação</legend>
+
+		<%if (!Model.IsVisualizar){%>
+
+			<div class="block" >
+				<div class="coluna30">
+					<label>Produtos Apreendidos</label><br />
+					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
+				</div>
+
+                <div class="coluna10">
+                    <label>Unidade</label>
+				    <%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDistrito", @maxlength = "100" }))%>
+                </div>
+
+                <div class="coluna10">
+                    <label>Quantidade</label>
+				    <%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDistrito", @maxlength = "100" }))%>
+                </div>
+
+                <div class="coluna30">
+					<label>Destino</label><br />
+					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
+				</div>
+			</div>
+
+		<%} %>
+
+		<div class="block dataGrid divMateriais">
+			<div class="coluna70 ">
+				<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
+					<thead>
+						<tr>
+							<th width="45%">Tipo de material apreendido</th>
+							<th width="46%">Especificação</th>
+							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
+						</tr>
+					</thead>
+					<% foreach (var item in Model.MaterialApreendido.Materiais) { %>
+					<tbody>
+						<tr>
+							<td>
+								<span class="tipo" title="<%:item.TipoTexto%>"><%:item.TipoTexto%></span>
+							</td>
+							<td>
+								<span class="especificacao" title="<%:item.Especificacao%>"><%:item.Especificacao%></span>
+							</td>
+							<%if (!Model.IsVisualizar){%>
+								<td class="tdAcoes">
+									<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
+									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
+								</td>
+							<%} %>
+						</tr>
+						<% } %>
+						<% if(!Model.IsVisualizar) { %>
+							<tr class="trTemplateRow hide">
+								<td><span class="tipo"></span></td>
+								<td><span class="especificacao"></span></td>
+								<td class="tdAcoes">
+									<input type="hidden" class="hdnItemJSon" value="" />
+									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
+								</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</fieldset>
+
 </div>

@@ -1225,7 +1225,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			MaterialApreendido materialApreendido = new MaterialApreendido();
 			List<ListaValor> ufs = new List<ListaValor>();
 			List<ListaValor> municipios = new List<ListaValor>();
-			List<ListaValor> tipos = new List<ListaValor>();
+            //List<ListaValor> tipos = new List<ListaValor>();
 
 			if (id != 0)
 			{
@@ -1235,7 +1235,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.MaterialApreendidoVM = new MaterialApreendidoVM
 			{
 				MaterialApreendido = materialApreendido,
-				Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true)
