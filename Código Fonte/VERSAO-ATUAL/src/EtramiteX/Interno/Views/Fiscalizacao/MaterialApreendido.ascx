@@ -157,12 +157,12 @@
 			<div class="block" >
 				<div class="coluna30">
 					<label>Produtos Apreendidos</label><br />
-					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
+					<%= Html.DropDownList("MaterialApreendido.ProdutosApreendidos", Model.ListaProdutosApreendidos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlProdutosApreendidos" }))%>
 				</div>
 
                 <div class="coluna10">
                     <label>Unidade</label>
-				    <%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDistrito", @maxlength = "100" }))%>
+                    <input type="text" disabled ="disabled" maxlength="50" class="text txtUnidade disabled" />
                 </div>
 
                 <div class="coluna10">

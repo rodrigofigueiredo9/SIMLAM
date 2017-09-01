@@ -1988,9 +1988,9 @@ FiscalizacaoMaterialApreendido = {
 
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
-	    FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
 
-		//FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
@@ -2084,6 +2084,33 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
 	    $('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
 	    return true;
+	},
+
+	onSelecionarProdutoApreendido: function () {
+	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container);
+
+	    //alert(JSON.stringify(produto));
+	    //$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('');
+
+	    //switch (produto) {
+
+	    //    case '1':
+	    //    case '7':
+	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar a quantidade');
+	    //        break;
+
+	    //    case '2':
+	    //    case '3':
+	    //    case '4':
+	    //    case '6':
+	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar o volume em (m³) e como foi medido');
+	    //        break;
+
+	    //    case '5':
+	    //    case '8':
+	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar');
+	    //        break;
+	    //}
 	},
 
     ///////////////////////OLD////////////////////////////
@@ -2228,31 +2255,6 @@ FiscalizacaoMaterialApreendido = {
 				editarVisualizar: Fiscalizacao.salvarEdicao
 			});
 		});
-	},
-
-	onSelecionarTipo: function () {
-		var tipo = $('.ddlTipos :selected', FiscalizacaoMaterialApreendido.container).val();
-		$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('');
-
-		switch (tipo) {
-
-			case '1':
-			case '7':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar a quantidade');
-				break;
-
-			case '2':
-			case '3':
-			case '4':
-			case '6':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar o volume em (m³) e como foi medido');
-				break;
-
-			case '5':
-			case '8':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar');
-				break;
-		}
 	},
 
 	adicionarMaterial: function () {

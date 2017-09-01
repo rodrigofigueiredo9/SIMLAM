@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
@@ -368,6 +369,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				return (retorno == null || Convert.IsDBNull(retorno)) ? 0 : Convert.ToInt32(retorno);
 			}
 		}
+
+        internal List<ProdutoApreendidoLst> ObterProdutosApreendidosLst(BancoDeDados banco = null)
+        {
+            List<ProdutoApreendidoLst> listaProdutos = new List<ProdutoApreendidoLst>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                comando = bancoDeDados.CriarComando(@"select id, item, unidade, ativo, tid
+                                                      from cnf_fisc_infracao_produto
+                                                      where ativo = 1
+                                                      order by item, unidade", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        ProdutoApreendidoLst produto = new ProdutoApreendidoLst();
+
+                        produto.Id = reader.GetValue<int>("id");
+                        produto.Texto = reader.GetValue<string>("item");
+                        produto.Unidade = reader.GetValue<string>("unidade");
+                        produto.IsAtivo = reader.GetValue<bool>("ativo");
+
+                        listaProdutos.Add(produto);
+                    }
+                }
+            }
+
+            return listaProdutos;
+        }
 
 		#endregion
 	}

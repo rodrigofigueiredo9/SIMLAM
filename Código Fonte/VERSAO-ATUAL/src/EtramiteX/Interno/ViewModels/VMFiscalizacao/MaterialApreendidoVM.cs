@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 {
@@ -13,7 +14,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		public Boolean IsVisualizar { get; set; }
 		public MaterialApreendido MaterialApreendido { get; set; }
 		public List<SelectListItem> Series { get; set; }
-		public List<SelectListItem> Tipos { get; set; }
+		public List<SelectListItem> Tipos { get; set; } //vai deixar de existir
+        public List<SelectListItem> ListaProdutosApreendidos { get; set; }
 		public List<SelectListItem> Ufs { get; set; }
 		public List<SelectListItem> Municipios { get; set; }
 		public String ArquivoJSon { get; set; }
@@ -51,6 +53,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			this.Tipos = new List<SelectListItem>();
 			this.Ufs = new List<SelectListItem>();
 			this.Municipios = new List<SelectListItem>();
+            this.ListaProdutosApreendidos = new List<SelectListItem>();
 		}
 	}
 }
