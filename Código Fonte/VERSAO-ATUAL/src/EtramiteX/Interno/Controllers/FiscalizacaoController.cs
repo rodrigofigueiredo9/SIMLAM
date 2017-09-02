@@ -1285,6 +1285,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				IsVisualizar = materialApreendido.Id > 0,
 				MaterialApreendido = materialApreendido,
 				Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
                 ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),

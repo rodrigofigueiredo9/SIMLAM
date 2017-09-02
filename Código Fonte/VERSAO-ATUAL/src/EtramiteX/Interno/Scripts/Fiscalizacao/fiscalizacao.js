@@ -2087,30 +2087,12 @@ FiscalizacaoMaterialApreendido = {
 	},
 
 	onSelecionarProdutoApreendido: function () {
-	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container);
+	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container).val();
+	    var unidade = $('.hdnUnidade' + produto, FiscalizacaoMaterialApreendido.container).val();
 
-	    //alert(JSON.stringify(produto));
-	    //$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('');
-
-	    //switch (produto) {
-
-	    //    case '1':
-	    //    case '7':
-	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar a quantidade');
-	    //        break;
-
-	    //    case '2':
-	    //    case '3':
-	    //    case '4':
-	    //    case '6':
-	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar o volume em (m³) e como foi medido');
-	    //        break;
-
-	    //    case '5':
-	    //    case '8':
-	    //        $('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar');
-	    //        break;
-	    //}
+	    //alert(produto);
+	    //alert(unidade);
+	    $('.txtUnidade', FiscalizacaoMaterialApreendido.container).val(unidade);
 	},
 
     ///////////////////////OLD////////////////////////////

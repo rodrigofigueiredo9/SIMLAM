@@ -15,6 +15,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		public MaterialApreendido MaterialApreendido { get; set; }
 		public List<SelectListItem> Series { get; set; }
 		public List<SelectListItem> Tipos { get; set; } //vai deixar de existir
+        public List<ProdutoApreendidoLst> produtosUnidades { get; set; }
         public List<SelectListItem> ListaProdutosApreendidos { get; set; }
 		public List<SelectListItem> Ufs { get; set; }
 		public List<SelectListItem> Municipios { get; set; }

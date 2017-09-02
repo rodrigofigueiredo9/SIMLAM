@@ -161,6 +161,10 @@
 				</div>
 
                 <div class="coluna10">
+                    <% foreach (var item in Model.produtosUnidades){ %>
+                        <input type="hidden" class="text hdnUnidade<%:item.Id%>" value="<%: item.Unidade %>" />
+                    <% } %>
+
                     <label>Unidade</label>
                     <input type="text" disabled ="disabled" maxlength="50" class="text txtUnidade disabled" />
                 </div>
