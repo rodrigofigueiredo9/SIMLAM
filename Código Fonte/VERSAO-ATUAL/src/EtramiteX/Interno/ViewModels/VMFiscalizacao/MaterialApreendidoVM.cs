@@ -17,6 +17,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		public List<SelectListItem> Tipos { get; set; } //vai deixar de existir
         public List<ProdutoApreendidoLst> produtosUnidades { get; set; }
         public List<SelectListItem> ListaProdutosApreendidos { get; set; }
+        public List<SelectListItem> ListaDestinos { get; set; }
 		public List<SelectListItem> Ufs { get; set; }
 		public List<SelectListItem> Municipios { get; set; }
 		public String ArquivoJSon { get; set; }
@@ -55,6 +56,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			this.Ufs = new List<SelectListItem>();
 			this.Municipios = new List<SelectListItem>();
             this.ListaProdutosApreendidos = new List<SelectListItem>();
+            this.ListaDestinos = new List<SelectListItem>();
 		}
 	}
 }

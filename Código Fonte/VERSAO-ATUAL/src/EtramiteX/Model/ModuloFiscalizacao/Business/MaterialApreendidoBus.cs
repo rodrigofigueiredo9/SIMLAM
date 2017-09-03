@@ -130,6 +130,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return entidade;
         }
 
+        public List<Lista> ObterDestinosLst(BancoDeDados banco = null)
+        {
+            List<Lista> entidade = new List<Lista>();
+            try
+            {
+                entidade = _da.ObterDestinosLst(banco);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return entidade;
+        }
+
 		#endregion
 	}
 }

@@ -380,7 +380,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 bancoDeDados.IniciarTransacao();
 
-                comando = bancoDeDados.CriarComando(@"select id, item, unidade, ativo, tid
+                comando = bancoDeDados.CriarComando(@"select id, item, unidade, ativo
                                                       from cnf_fisc_infracao_produto
                                                       where ativo = 1
                                                       order by item, unidade", EsquemaBanco);
@@ -402,6 +402,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             }
 
             return listaProdutos;
+        }
+
+        internal List<Lista> ObterDestinosLst(BancoDeDados banco = null)
+        {
+            List<Lista> listaDestinos = new List<Lista>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                comando = bancoDeDados.CriarComando(@"select id, destino, ativo
+                                                      from cnf_fisc_infr_destinacao
+                                                      where ativo = 1
+                                                      order by destino", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        Lista destino = new Lista();
+
+                        destino.Id = reader.GetValue<string>("id");
+                        destino.Texto = reader.GetValue<string>("destino");
+                        destino.IsAtivo = reader.GetValue<bool>("ativo");
+
+                        listaDestinos.Add(destino);
+                    }
+                }
+            }
+
+            return listaDestinos;
         }
 
 		#endregion

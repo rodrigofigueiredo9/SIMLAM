@@ -1236,7 +1236,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				MaterialApreendido = materialApreendido,
                 Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
                 ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true)
@@ -1287,6 +1289,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
                 produtosUnidades = produtosApreendidos,
                 ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())

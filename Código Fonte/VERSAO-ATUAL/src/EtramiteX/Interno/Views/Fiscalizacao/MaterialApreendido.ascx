@@ -171,12 +171,12 @@
 
                 <div class="coluna10">
                     <label>Quantidade</label>
-				    <%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDistrito", @maxlength = "100" }))%>
+				    <input type="text" maxlength="50" class="text txtQuantidade maskNum8" />
                 </div>
 
                 <div class="coluna30">
 					<label>Destino</label><br />
-					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
+					<%= Html.DropDownList("MaterialApreendido.Destinos", Model.ListaDestinos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlDestinos" }))%>
 				</div>
 			</div>
 
