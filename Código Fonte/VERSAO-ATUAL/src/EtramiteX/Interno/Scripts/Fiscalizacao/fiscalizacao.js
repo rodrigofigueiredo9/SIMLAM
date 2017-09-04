@@ -1990,6 +1990,8 @@ FiscalizacaoMaterialApreendido = {
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
 		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
@@ -1998,8 +2000,6 @@ FiscalizacaoMaterialApreendido = {
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
 		//FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
 		//FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarMaterial', 'click', FiscalizacaoMaterialApreendido.adicionarMaterial);
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirMaterial', 'click', FiscalizacaoMaterialApreendido.excluirMaterial);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
 		//FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
@@ -2090,9 +2090,91 @@ FiscalizacaoMaterialApreendido = {
 	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container).val();
 	    var unidade = $('.hdnUnidade' + produto, FiscalizacaoMaterialApreendido.container).val();
 
-	    //alert(produto);
-	    //alert(unidade);
 	    $('.txtUnidade', FiscalizacaoMaterialApreendido.container).val(unidade);
+	},
+
+	adicionarProdutoApreendido: function () {
+	    var mensagens = new Array();
+	    Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
+	    var container = $('.fsProdutosApreendidos');
+
+        //Monta o objeto
+	    var item = {
+	        Id: 0,
+	        ProdutoId: $('.ddlProdutosApreendidos :selected', container).val(),
+	        ProdutoTexto: $('.ddlProdutosApreendidos :selected', container).text(),
+	        UnidadeTexto: $('.txtUnidade', container).val(),
+	        Quantidade: $('.txtQuantidade', container).val(),
+	        DestinoId: $('.ddlDestinos :selected', container).val(),
+	        DestinoTexto: $('.ddlDestinos :selected', container).text()
+	    };
+
+        //Verifica se todos os campos foram preenchidos, e se  objeto não está repetido
+	    if (item.ProdutoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoObrigatorio));
+	    }
+	    if (item.Quantidade.trim() == '') {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.QuantidadeObrigatoria));
+	    }
+	    if (item.DestinoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.DestinoObrigatorio));
+	    }
+	    $('.hdnItemJSon', container).each(function () {
+	        var obj = String($(this).val());
+	        if (obj != '') {
+	            var itemAdd = (JSON.parse(obj));
+	            if (item.ProdutoId == itemAdd.ProdutoId
+                    && item.DestinoId == itemAdd.DestinoId) {
+	                mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoJaAdicionado));
+	            }
+	        }
+	    });
+
+	    //Se alguma obrigatoriedade não for atendida, retorna uma mensagem de erro
+	    if (mensagens.length > 0) {
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
+	        return;
+	    }
+
+        //Monta a nova linha
+	    var numItem = 0;
+	    $('.hdnItemJSon', container).each(function(){
+	        numItem++;
+	    });
+	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    linha.find('.hdnItemJSon').val(JSON.stringify(item));
+	    linha.find('.item').text(numItem).attr('title', numItem);
+	    linha.find('.produto').text(item.ProdutoTexto).attr('title', item.ProdutoTexto);
+	    linha.find('.unidade').text(item.UnidadeTexto).attr('title', item.UnidadeTexto);
+	    linha.find('.quantidade').text(item.Quantidade).attr('title', item.Quantidade);
+	    linha.find('.destino').text(item.DestinoTexto).attr('title', item.DestinoTexto);
+
+        //Adiciona a nova linha na tabela
+	    $('.dataGridTable tbody:last', container).append(linha);
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+
+        //Limpa os controles
+	    $('.ddlProdutosApreendidos', container).ddlFirst();
+	    $('.txtUnidade', container).val('');
+	    $('.txtQuantidade', container).val('');
+	    $('.ddlDestinos', container).ddlFirst();
+	},
+
+	excluirProdutoApreendido: function () {
+        //remove a linha
+	    $(this).closest('tr').remove();
+
+	    var container = $('.fsProdutosApreendidos');
+
+	    //atualiza o número na coluna item das outras linhas
+	    var numItem = 0;
+	    container.find('tr').each(function () {
+	        if ($(this).find('.item').text() != '') {
+	            $(this).find('.item').text(++numItem);
+	        }
+	    });
+
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 	},
 
     ///////////////////////OLD////////////////////////////
@@ -2237,55 +2319,6 @@ FiscalizacaoMaterialApreendido = {
 				editarVisualizar: Fiscalizacao.salvarEdicao
 			});
 		});
-	},
-
-	adicionarMaterial: function () {
-		var mensagens = new Array();
-		Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
-		var container = $('.fsMateriais');
-
-		var item = { Id: '', TipoId: $('.ddlTipos :selected', container).val(), TipoTexto: $('.ddlTipos :selected', container).text(), Especificacao: $('.txtEspecificacao', container).val() };
-
-		if (item.TipoId == 0) {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.TipoObrigatorio));
-		}
-
-		if (jQuery.trim(item.Especificacao) == '') {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.EspecificacaoObrigatorio));
-		}
-
-		$('.hdnItemJSon', container).each(function () {
-			var obj = String($(this).val());
-			if (obj != '') {
-				var itemAdd = (JSON.parse(obj));
-				if (item.TipoId == itemAdd.TipoId) {
-					mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.MaterialJaAdicionado));
-				}
-			}
-		});
-
-		if (mensagens.length > 0) {
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
-			return;
-		}
-
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
-		linha.find('.hdnItemJSon').val(JSON.stringify(item));
-		linha.find('.tipo').html(item.TipoTexto).attr('title', item.TipoTexto);
-		linha.find('.especificacao').html(item.Especificacao).attr('title', item.Especificacao);
-
-		$('.dataGridTable tbody:last', container).append(linha);
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-
-		$('.ddlTipos', container).ddlFirst();
-		$('.txtEspecificacao', container).val('');
-	},
-
-	excluirMaterial: function () {
-		var container = $('.fsMateriais');
-		var linha = $(this).closest('tr');
-		linha.remove();
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 	},
 
 	onEnviarArquivoClick: function () {

@@ -149,7 +149,7 @@
 
 	</fieldset>
 
-    <fieldset class="fsMateriais block box">
+    <fieldset class="fsProdutosApreendidos block box">
 		<legend>Produtos Apreendidos / Destinação</legend>
 
 		<%if (!Model.IsVisualizar){%>
@@ -171,51 +171,73 @@
 
                 <div class="coluna10">
                     <label>Quantidade</label>
-				    <input type="text" maxlength="50" class="text txtQuantidade maskNum8" />
+				    <input type="text" maxlength="8" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
                 </div>
 
                 <div class="coluna30">
 					<label>Destino</label><br />
 					<%= Html.DropDownList("MaterialApreendido.Destinos", Model.ListaDestinos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlDestinos" }))%>
 				</div>
+
+                <div class="coluna10">
+					<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProdutoApreendido btnAddItem" title="Adicionar">+</button>
+				</div>
 			</div>
 
 		<%} %>
 
-		<div class="block dataGrid divMateriais">
-			<div class="coluna70 ">
+		<div class="block dataGrid divProdutosApreendidos">
+			<div class="coluna90">
 				<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					<thead>
 						<tr>
-							<th width="45%">Tipo de material apreendido</th>
-							<th width="46%">Especificação</th>
-							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
+							<th width="5%">Item</th>
+							<th>Produtos Apreendidos</th>
+                            <th width="10%">Unidade</th>
+                            <th width="10%">Quantidade</th>
+                            <th width="25%">Destino</th>
+							<%if (!Model.IsVisualizar){%><th width="15%">Ação</th><%} %>
 						</tr>
 					</thead>
-					<% foreach (var item in Model.MaterialApreendido.Materiais) { %>
 					<tbody>
-						<tr>
-							<td>
-								<span class="tipo" title="<%:item.TipoTexto%>"><%:item.TipoTexto%></span>
-							</td>
-							<td>
-								<span class="especificacao" title="<%:item.Especificacao%>"><%:item.Especificacao%></span>
-							</td>
-							<%if (!Model.IsVisualizar){%>
-								<td class="tdAcoes">
-									<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
-									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
-								</td>
-							<%} %>
-						</tr>
+                        <% int cont = 0; %>
+					    <% foreach (var prod in Model.MaterialApreendido.ProdutosApreendidos) { %>
+						    <tr>
+                                <td>
+                                    <span class="item" title="<%:cont++%>"><%:cont%></span>
+                                </td>
+                                <td>
+                                    <span class="produto" title="<%:prod.ProdutoTexto%>"><%:prod.ProdutoTexto%></span>
+                                </td>
+                                <td>
+                                    <span class="unidade" title="<%:prod.UnidadeTexto%>"><%:prod.UnidadeTexto%></span>
+                                </td>
+                                <td>
+                                    <span class="quantidade" title="<%:prod.Quantidade%>"><%:prod.Quantidade%></span>
+                                </td>
+                                <td>
+                                    <span class="produto" title="<%:prod.DestinoTexto%>"><%:prod.DestinoTexto%></span>
+                                </td>
+							    <%if (!Model.IsVisualizar){%>
+								    <td class="tdAcoes">
+									    <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(prod)%>' />
+                                        <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
+									    <input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
+								    </td>
+							    <%} %>
+						    </tr>
 						<% } %>
 						<% if(!Model.IsVisualizar) { %>
 							<tr class="trTemplateRow hide">
-								<td><span class="tipo"></span></td>
-								<td><span class="especificacao"></span></td>
+								<td><span class="item"></span></td>
+								<td><span class="produto"></span></td>
+                                <td><span class="unidade"></span></td>
+                                <td><span class="quantidade"></span></td>
+                                <td><span class="destino"></span></td>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value="" />
-									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
+                                    <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
+									<input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
 								</td>
 							</tr>
 						<% } %>

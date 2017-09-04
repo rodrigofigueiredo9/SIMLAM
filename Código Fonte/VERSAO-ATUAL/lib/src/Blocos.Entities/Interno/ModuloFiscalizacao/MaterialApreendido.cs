@@ -28,12 +28,27 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			set { _dataLavratura = value; }
 		}
 
+        //deletar
 		private List<MaterialApreendidoMaterial> _materiais = new List<MaterialApreendidoMaterial>();
-		public List<MaterialApreendidoMaterial> Materiais
+		//deletar
+        public List<MaterialApreendidoMaterial> Materiais
 		{
 			get { return _materiais; }
 			set { _materiais = value; }
 		}
+        
+        private List<ApreensaoProdutoApreendido> _produtosapreendidos = new List<ApreensaoProdutoApreendido>();
+        public List<ApreensaoProdutoApreendido> ProdutosApreendidos
+        {
+            get
+            {
+                return _produtosapreendidos;
+            }
+            set
+            {
+                _produtosapreendidos = value;
+            }
+        }
 
 		private MaterialApreendidoDepositario _depositario = new MaterialApreendidoDepositario();
 		public MaterialApreendidoDepositario Depositario

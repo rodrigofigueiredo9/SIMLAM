@@ -35,6 +35,10 @@
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Tipo", Tipo = eTipoMensagem.Advertencia, Texto = "Tipo do material é obrigatório." }; } }
 		public Mensagem EspecificacaoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Especificacao", Tipo = eTipoMensagem.Advertencia, Texto = "Especificação do material é obrigatório." }; } }
 		public Mensagem MaterialJaAdicionado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Material ja adicionado." }; } }
+        public Mensagem ProdutoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_ProdutosApreendidos", Tipo = eTipoMensagem.Advertencia, Texto = "Produto é obrigatório." }; } }
+        public Mensagem QuantidadeObrigatoria { get { return new Mensagem() { Campo = "MaterialApreendido_Quantidade", Tipo = eTipoMensagem.Advertencia, Texto = "Quantidade é obrigatória." }; } }
+        public Mensagem DestinoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Destinos", Tipo = eTipoMensagem.Advertencia, Texto = "Destino é obrigatório." }; } }
+        public Mensagem ProdutoJaAdicionado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Produto ja adicionado." }; } }
 
 		public Mensagem ArquivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Arquivo_Nome", Texto = "Arquivo é obrigatório." }; } }
 		public Mensagem ArquivoNaoEhPdf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Arquivo_Nome", Texto = "Arquivo não é do tipo pdf" }; } }
