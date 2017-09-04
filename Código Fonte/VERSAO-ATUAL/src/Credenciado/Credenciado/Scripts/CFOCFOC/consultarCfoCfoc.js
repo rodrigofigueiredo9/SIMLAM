@@ -110,8 +110,6 @@ ConsultarNumeroCFOCFOCLiberado = {
 
 		$(container).find('.numerosPag').empty();
 
-		
-
 		if (qtdPaginas <= 10) {						
 		    for (var i = 0; i < qtdPaginas; i++) {
 		        $(container).find('.numerosPag').append("<a class='" + (i + 1) + " paginar pag'>" + (i + 1) + "</a>");
@@ -128,9 +126,7 @@ ConsultarNumeroCFOCFOCLiberado = {
 		    } else {
 		        for (i = numeroPagina - 5; i < numeroPagina + 4; i++) {
 		            $(container).find('.numerosPag').append("<a class='" + (i + 1) + " paginar pag'>" + (i + 1) + "</a>");
-
 		        }
-		        console.log("ENTROU");
 		    }																
 		}
 
