@@ -149,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				return false;
 			}
 
-			if (numero.Length != 8)
+			if (numero.Length != 10)
 			{
 				Validacao.Add(Mensagem.EmissaoCFOC.NumeroInvalido);
 				return false;

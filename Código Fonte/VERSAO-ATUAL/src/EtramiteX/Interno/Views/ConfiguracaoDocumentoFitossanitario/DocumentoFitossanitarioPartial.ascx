@@ -14,11 +14,11 @@
 		</div>
 		<div class="coluna20">
 			<label>Número inicial*</label>
-			<%= Html.TextBox("BlocoNumeroInicial", null, new { @class = "text txtNumeroInicial txtBloco maskNum8"}) %>
+			<%= Html.TextBox("BlocoNumeroInicial", null, new { @class = "text txtNumeroInicial txtBloco maskNum10"}) %>
 		</div>
 		<div class="coluna20">
 			<label>Número final*</label>
-			<%= Html.TextBox("BlocoNumeroFinal", null, new { @class = "text txtNumeroFinal txtBloco maskNum8"} ) %>
+			<%= Html.TextBox("BlocoNumeroFinal", null, new { @class = "text txtNumeroFinal txtBloco maskNum10"} ) %>
 		</div>
 		<div class="coluna20">
 			<button type="button" class="inlineBotao botaoAdicionarIcone btnAdicionarNumero btnAddItem" title="Adicionar">+</button>
@@ -82,11 +82,11 @@
 		</div>
 		<div class="coluna20">
 			<label>Número inicial*</label>
-			<%= Html.TextBox("DigitalNumeroInicial", null, new { @class = "text txtNumeroInicial txtDigital maskNum8"}) %>
+			<%= Html.TextBox("DigitalNumeroInicial", null, new { @class = "text txtNumeroInicial txtDigital maskNum10"}) %>
 		</div>
 		<div class="coluna20">
 			<label>Número final*</label>
-			<%= Html.TextBox("DigitalNumeroFinal", null, new {@class = "text txtNumeroFinal txtDigital maskNum8"}) %>
+			<%= Html.TextBox("DigitalNumeroFinal", null, new {@class = "text txtNumeroFinal txtDigital maskNum10"}) %>
 		</div>
 		<div class="coluna20">
 			<button type="button" class="inlineBotao botaoAdicionarIcone btnAdicionarNumero btnAddItem" title="Adicionar">+</button>

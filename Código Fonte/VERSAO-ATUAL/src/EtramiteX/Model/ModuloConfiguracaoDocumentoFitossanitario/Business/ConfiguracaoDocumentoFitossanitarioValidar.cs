@@ -60,17 +60,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
-            else if (intervalo.NumeroInicial.ToString().Length != 8 && intervalo.Tipo == 1
+            else if (intervalo.NumeroInicial.ToString().Length != 10
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
                 && (intervalo.ID <= 0) )
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
-            }
-            if (intervalo.NumeroInicial.ToString().Length != 10 && intervalo.Tipo == 2
-            && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
-            && (intervalo.ID <= 0))
-            {
-                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
             else if ((intervalo.NumeroFinal.ToString().Length != 8 && intervalo.NumeroFinal.ToString().Length != 10)
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))
@@ -87,17 +81,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
-            else if (intervalo.NumeroFinal.ToString().Length != 8 && intervalo.Tipo == 1
+            else if (intervalo.NumeroFinal.ToString().Length != 10
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
                 && (intervalo.ID <= 0))
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
-            }
-            if (intervalo.NumeroFinal.ToString().Length != 10 && intervalo.Tipo == 2
-            && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
-            && (intervalo.ID <= 0))
-            {
-                Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalido(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
             else if ((intervalo.NumeroFinal.ToString().Length != 8 && intervalo.NumeroFinal.ToString().Length != 10)
                 && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC"))

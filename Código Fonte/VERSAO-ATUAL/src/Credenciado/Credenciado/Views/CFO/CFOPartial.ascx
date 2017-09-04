@@ -47,7 +47,7 @@
 		</div>
 		<div class="coluna22 prepend1 divNumeroEnter">
 			<label>Número CFO *</label>
-			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="8" }))%>
+			<%=Html.TextBox("CFO.Numero", Model.CFO.Numero, ViewModelHelper.SetaDisabled(Model.CFO.Id > 0 || Model.CFO.TipoNumero != (int)eDocumentoFitossanitarioTipoNumero.Bloco, new { @class="text txtNumero maskNumInt", @maxlength="10" }))%>
 		</div>
 
 		<% if (Model.CFO.Id <= 0) { %>
