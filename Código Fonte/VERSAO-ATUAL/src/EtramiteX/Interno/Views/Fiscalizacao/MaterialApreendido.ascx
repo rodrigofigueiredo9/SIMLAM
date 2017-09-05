@@ -80,14 +80,14 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Valor dos bens apreendidos (R$ e por extenso)</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimal txtValorProdutos", @maxlength = "15" }))%>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "15" }))%>
 			</div>
 		</div>
 
         <div class="block">
 			<div class="coluna75">
 				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
-				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimal txtValorProdutos", @maxlength = "15" }))%>
+				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
 			</div>
 		</div>
 

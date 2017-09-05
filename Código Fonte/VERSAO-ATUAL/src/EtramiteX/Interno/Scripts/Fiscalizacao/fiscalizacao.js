@@ -1991,7 +1991,8 @@ FiscalizacaoMaterialApreendido = {
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
 		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
-	    FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
@@ -2175,6 +2176,18 @@ FiscalizacaoMaterialApreendido = {
 	    });
 
 	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+	},
+
+	mascaraLacre: function (evt) {
+	    //Permite apenas números, vírgulas e espaços.
+	    if ((evt.originalEvent.key >= 0
+             && evt.originalEvent.key <= 9)
+            || evt.originalEvent.key == ','
+            || evt.originalEvent.key == ' ') {
+	        return true;
+	    } else {
+	        return false;
+	    }
 	},
 
     ///////////////////////OLD////////////////////////////
