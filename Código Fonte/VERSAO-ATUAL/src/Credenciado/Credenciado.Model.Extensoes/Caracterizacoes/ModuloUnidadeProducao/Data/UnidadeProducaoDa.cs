@@ -1271,23 +1271,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal bool CodigoPropriedadeExistente(UnidadeProducao caracterizacao, BancoDeDados banco = null)
 		{
-			bool existe = false;
+            //bool existe = false;
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
-			{
-                Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo = :codigo and interno_id <> :id and interno_tid <> :interno_tid", EsquemaCredenciadoBanco);
+            //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
+            //{
+            //    Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}crt_unidade_producao where propriedade_codigo = :codigo and interno_id <> :id and interno_tid <> :interno_tid", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
-				comando.AdicionarParametroEntrada("id", caracterizacao.InternoID, DbType.Int32);
-                comando.AdicionarParametroEntrada("interno_tid", caracterizacao.InternoTID, DbType.String);
+            //    comando.AdicionarParametroEntrada("codigo", caracterizacao.CodigoPropriedade, DbType.Int64);
+            //    comando.AdicionarParametroEntrada("id", caracterizacao.InternoID, DbType.Int32);
+            //    comando.AdicionarParametroEntrada("interno_tid", caracterizacao.InternoTID, DbType.String);
 
-				existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
-			}
+            //    existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
+            //}
 
-			if (existe)
-			{
-				return true;
-			}
+            //if (existe)
+            //{
+            //    return true;
+            //}
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
@@ -1319,32 +1319,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal bool CodigoUPExistente(UnidadeProducaoItem unidade, int empreendimentoID)
 		{
-			bool existe = false;
-			int empreendimentoInternoID = 0;
+//            bool existe = false;
+//            int empreendimentoInternoID = 0;
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select nvl((select e.interno from tab_empreendimento e where e.id = :empreendimento), 0) from dual", EsquemaCredenciadoBanco);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
+//            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
+//            {
+//                Comando comando = bancoDeDados.CriarComando(@"select nvl((select e.interno from tab_empreendimento e where e.id = :empreendimento), 0) from dual", EsquemaCredenciadoBanco);
+//                comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 
-				empreendimentoInternoID = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
-			}
+//                empreendimentoInternoID = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+//            }
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e
-				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
+//            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
+//            {
+//                Comando comando = bancoDeDados.CriarComando(@"select count(i.id) from {0}crt_unidade_producao_unidade i, {0}crt_unidade_producao c, {0}tab_empreendimento e
+//				where i.unidade_producao = c.id and c.empreendimento = e.id and i.codigo_up = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("codigo", unidade.CodigoUP, DbType.Int64);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimentoInternoID, DbType.Int32);
+//                comando.AdicionarParametroEntrada("codigo", unidade.CodigoUP, DbType.Int64);
+//                comando.AdicionarParametroEntrada("empreendimento", empreendimentoInternoID, DbType.Int32);
 
-				existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
-			}
+//                existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
+//            }
 
-			if (existe)
-			{
-				return true;
-			}
+//            if (existe)
+//            {
+//                return true;
+//            }
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{

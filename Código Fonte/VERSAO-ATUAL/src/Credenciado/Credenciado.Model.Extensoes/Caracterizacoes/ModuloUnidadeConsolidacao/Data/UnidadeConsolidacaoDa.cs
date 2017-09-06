@@ -805,32 +805,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal bool CodigoUCExiste(UnidadeConsolidacao unidade)
 		{
-			bool existe = false;
-			int empreendimentoInternoID = 0;
+//            bool existe = false;
+//            int empreendimentoInternoID = 0;
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select nvl((select e.interno from tab_empreendimento e where e.id = :empreendimento), 0) from dual", EsquemaCredenciadoBanco);
-				comando.AdicionarParametroEntrada("empreendimento", unidade.Empreendimento.Id, DbType.Int32);
+//            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
+//            {
+//                Comando comando = bancoDeDados.CriarComando(@"select nvl((select e.interno from tab_empreendimento e where e.id = :empreendimento), 0) from dual", EsquemaCredenciadoBanco);
+//                comando.AdicionarParametroEntrada("empreendimento", unidade.Empreendimento.Id, DbType.Int32);
 
-				empreendimentoInternoID = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
-			}
+//                empreendimentoInternoID = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+//            }
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(c.id) from {0}crt_unidade_consolidacao c, {0}tab_empreendimento e 
-				where c.empreendimento = e.id and c.codigo_uc = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
+//            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+//            {
+//                Comando comando = bancoDeDados.CriarComando(@"select count(c.id) from {0}crt_unidade_consolidacao c, {0}tab_empreendimento e 
+//				where c.empreendimento = e.id and c.codigo_uc = :codigo and c.empreendimento <> :empreendimento", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("codigo", unidade.CodigoUC, DbType.Int64);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimentoInternoID, DbType.Int32);
+//                comando.AdicionarParametroEntrada("codigo", unidade.CodigoUC, DbType.Int64);
+//                comando.AdicionarParametroEntrada("empreendimento", empreendimentoInternoID, DbType.Int32);
 
-				existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
-			}
+//                existe = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
+//            }
 
-			if (existe)
-			{
-				return true;
-			}
+//            if (existe)
+//            {
+//                return true;
+//            }
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 			{
