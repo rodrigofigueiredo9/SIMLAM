@@ -2190,6 +2190,56 @@ FiscalizacaoMaterialApreendido = {
 	    }
 	},
 
+	onSalvarFiscalizacaoMaterialApreendido: function () {
+	    var container = FiscalizacaoMaterialApreendido.container;
+
+        //Criação do objeto (da classe MaterialApreendido)
+	    var obj = {
+	        Id: Number($('.hdnMaterialApreendidoId', container).val()),
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
+	        ProdutosApreendidos: []
+	    };
+
+        //Preenchendo o objeto com os itens da sessão Apreensão
+	    if ($('.rdoIsBloco', container).attr('checked')) {
+	        obj.IsDigital = false;
+	        obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+	        obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+	    } else {
+	        obj.IsDigital = true;
+	    }
+	    obj.SerieId = $('.ddlSeries :selected', container).val();
+	    obj.Descricao = $('.txtDescricao', container).val();
+	    obj.ValorProdutos = $('.txtValorProdutos', container).val();
+	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
+
+	    //Preenchendo o objeto com os itens da sessão Depositário
+	    obj.Depositario = {
+	        Id: $('.hdnDepositarioId', container).val(),
+	        Logradouro: $('.txtLogradouro', container).val(),
+	        Bairro: $('.txtBairro', container).val(),
+	        Distrito: $('.txtDistrito', container).val(),
+	        Estado: $('.ddlEstado :selected', container).val(),
+	        Municipio: $('.ddlMunicipio :selected', container).val()
+	    };
+
+	    //Preenchendo o objeto com os itens da sessão Produtos Apreendidos / Destinação
+	    $('.hdnItemJSon', container.find('.divProdutosApreendidos')).each(function () {
+	        var objProdutoApreendido = String($(this).val());
+	        if (objProdutoApreendido != '') {
+	            obj.ProdutosApreendidos.push(JSON.parse(objProdutoApreendido));
+	        }
+	    });
+	    obj.Opiniao = $('.txtOpiniao', container).val();
+
+	    var arrayMensagem = [];
+
+	    arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
+
+	    return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
+	},
+
     ///////////////////////OLD////////////////////////////
 
 	configurarBtnEditar: function () {
@@ -2259,64 +2309,6 @@ FiscalizacaoMaterialApreendido = {
 		$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
 		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
 		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
-
-	onSalvarFiscalizacaoMaterialApreendido: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-
-		var obj = {
-			Id: Number($('.hdnMaterialApreendidoId', container).val()),
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
-			IsApreendido: '',
-			Materiais: []
-		};
-
-		if ($('.rdoIsApreendidoSim', container).attr('checked')) {
-			obj.IsApreendido = true;
-
-			obj.SerieId = $('.ddlSeries :selected', container).val();
-
-			if ($('.rdoIsGeradoSistemaNao', container).attr('checked')) {
-				obj.IsTadGeradoSistema = false;
-				obj.NumeroTad = $('.txtNumeroTad', container).val();
-				obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-				obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
-			}
-
-			if ($('.rdoIsGeradoSistemaSim', container).attr('checked')) {
-				obj.IsTadGeradoSistema = true;
-			}
-
-
-			obj.Depositario = {
-				Id: $('.hdnDepositarioId', container).val(),
-				Estado: $('.ddlEstado :selected', container).val(),
-				Municipio: $('.ddlMunicipio :selected', container).val(),
-				Logradouro: $('.txtLogradouro', container).val(),
-				Bairro: $('.txtBairro', container).val(),
-				Distrito: $('.txtDistrito', container).val()
-			};
-			obj.Descricao = $('.txtDescricao', container).val();
-			obj.ValorProdutos = $('.txtValorProdutos', container).val();
-			obj.Opiniao = $('.txtOpiniao', container).val();
-
-			$('.hdnItemJSon', container.find('.divMateriais')).each(function () {
-				var objMaterial = String($(this).val());
-				if (objMaterial != '') {
-					obj.Materiais.push(JSON.parse(objMaterial));
-				}
-			});
-		}
-
-		if ($('.rdoIsApreendidoNao', container).attr('checked')) {
-			obj.IsApreendido = false;
-		}
-
-		var arrayMensagem = [];
-
-		arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
 	},
 
 	onEditarDepositario: function () {

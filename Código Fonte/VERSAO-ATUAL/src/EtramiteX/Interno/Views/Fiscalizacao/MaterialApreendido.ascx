@@ -80,7 +80,7 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Valor dos bens apreendidos (R$ e por extenso)</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "15" }))%>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "200" }))%>
 			</div>
 		</div>
 
@@ -154,7 +154,7 @@
 
 		<%if (!Model.IsVisualizar){%>
 
-			<div class="block" >
+			<div class="block">
 				<div class="coluna30">
 					<label>Produtos Apreendidos</label><br />
 					<%= Html.DropDownList("MaterialApreendido.ProdutosApreendidos", Model.ListaProdutosApreendidos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlProdutosApreendidos" }))%>
@@ -171,12 +171,12 @@
 
                 <div class="coluna10">
                     <label>Quantidade</label>
-				    <input type="text" maxlength="8" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
+				    <input type="text" id="MaterialApreendido_ProdutosApreendidos" maxlength="8" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
                 </div>
 
                 <div class="coluna30">
 					<label>Destino</label><br />
-					<%= Html.DropDownList("MaterialApreendido.Destinos", Model.ListaDestinos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlDestinos" }))%>
+					<%= Html.DropDownList("MaterialApreendido.ProdutosApreendidos", Model.ListaDestinos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlDestinos" }))%>
 				</div>
 
                 <div class="coluna10">

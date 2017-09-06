@@ -1272,6 +1272,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+        //Carrega a sessão, em uma fiscalização já salva
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult MaterialApreendidoVisualizar(int id)
 		{
@@ -1320,6 +1321,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+        //Salva a sessão
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)
