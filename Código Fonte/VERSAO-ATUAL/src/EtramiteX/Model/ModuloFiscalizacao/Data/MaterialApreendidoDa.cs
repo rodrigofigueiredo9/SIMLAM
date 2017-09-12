@@ -63,21 +63,54 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Material Apreendido
 
-				Comando comando = bancoDeDados.CriarComando(@" insert into tab_fisc_material_apreendido (id, fiscalizacao, houve_material, tad_gerado, tad_numero, tad_data, serie, 
-					descricao, valor_produtos, depositario, endereco_logradouro, endereco_bairro, endereco_distrito, endereco_estado, endereco_municipio, opiniao, arquivo, tid) values (seq_fisc_material_apreendido.nextval, 
-					:fiscalizacao, :houve_material, :tad_gerado, :tad_numero, :tad_data, :serie, :descricao, :valor_produtos, :depositario, :endereco_logradouro, :endereco_bairro, 
-					:endereco_distrito, :endereco_estado, :endereco_municipio, :opiniao, :arquivo, :tid) returning id into :id ", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"
+                                   insert into tab_fisc_apreensao (id,
+                                                            fiscalizacao,
+                                                            iuf_digital,
+                                                            iuf_numero,
+                                                            iuf_data,
+                                                            numero_lacres,
+                                                            arquivo,
+                                                            serie,
+                                                            descricao,
+                                                            valor_produtos,
+                                                            depositario,
+                                                            endereco_logradouro,
+                                                            endereco_bairro,
+                                                            endereco_distrito,
+                                                            endereco_estado,
+                                                            endereco_municipio,
+                                                            opiniao,
+                                                            tid)
+                                   values (seq_tab_fisc_apreensao.nextval, 
+                                          :fiscalizacao,
+                                          :eh_digital,
+                                          :iuf_numero,
+                                          :iuf_data,
+                                          :numero_lacres,
+                                          :arquivo,
+                                          :serie,
+                                          :descricao,
+                                          :valor_produtos,
+                                          :depositario,
+                                          :endereco_logradouro,
+                                          :endereco_bairro, 
+                                          :endereco_distrito,
+                                          :endereco_estado,
+                                          :endereco_municipio,
+                                          :opiniao,
+                                          :tid) returning id into :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
-                //comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
-				comando.AdicionarParametroEntrada("tad_gerado", materialApreendido.IsTadGeradoSistema, DbType.Int32);
+                comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("eh_digital", materialApreendido.IsDigital, DbType.Boolean);
+				comando.AdicionarParametroEntrada("iuf_numero", materialApreendido.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("numero_lacres", materialApreendido.NumeroLacre, DbType.String);
 				comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
-				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.Decimal);
+				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.String);
 				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
-                //comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
 				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
@@ -97,11 +130,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				if (materialApreendido.DataLavratura.IsEmpty)
 				{
-					comando.AdicionarParametroEntrada("tad_data", DBNull.Value, DbType.Date);
+					comando.AdicionarParametroEntrada("iuf_data", DBNull.Value, DbType.Date);
 				}
 				else
 				{
-					comando.AdicionarParametroEntrada("tad_data", materialApreendido.DataLavratura.Data.Value, DbType.Date);
+					comando.AdicionarParametroEntrada("iuf_data", materialApreendido.DataLavratura.Data.Value, DbType.Date);
 				}
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -112,27 +145,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Materiais
 
-				comando = bancoDeDados.CriarComando(@" insert into tab_fisc_mater_apree_material (id, material_apreendido, tipo, especificacao, tid) values (seq_fisc_mater_apree_material.nextval, 
-					:material_apreendido, :tipo, :especificacao, :tid) ", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"
+                           insert into tab_fisc_apreensao_produto (id,
+                                                            apreensao,
+                                                            produto,
+                                                            quantidade,
+                                                            destinacao,
+                                                            tid)
+                           values (seq_tab_fisc_apreensao_produto.nextval,
+                                   :apreensao,
+                                   :produto,
+                                   :quantidade,
+                                   :destinacao,
+                                   :tid) ", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("material_apreendido", materialApreendido.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroEntrada("tipo", DbType.Int32);
-				comando.AdicionarParametroEntrada("especificacao", DbType.String);
+				comando.AdicionarParametroEntrada("apreensao", materialApreendido.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("produto", DbType.Int32);
+				comando.AdicionarParametroEntrada("quantidade", DbType.Int32);
+                comando.AdicionarParametroEntrada("destinacao", DbType.Int32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-				foreach (MaterialApreendidoMaterial material in materialApreendido.Materiais)
+				foreach (ApreensaoProdutoApreendido produto in materialApreendido.ProdutosApreendidos)
 				{
-					comando.SetarValorParametro("tipo", material.TipoId);
-					comando.SetarValorParametro("especificacao", material.Especificacao);
+					comando.SetarValorParametro("produto", produto.ProdutoId);
+                    comando.SetarValorParametro("quantidade", produto.Quantidade);
+					comando.SetarValorParametro("destinacao", produto.DestinoId);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 				}
 
 				#endregion
 
-				Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+                //Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
-				Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                //Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -147,25 +193,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Material Apreendido
 
-				Comando comando = bancoDeDados.CriarComando(@" update tab_fisc_material_apreendido set fiscalizacao = :fiscalizacao, houve_material = :houve_material,
-					tad_gerado = :tad_gerado, tad_numero = :tad_numero, tad_data = :tad_data, serie = :serie, descricao = :descricao, valor_produtos = :valor_produtos, depositario = :depositario, 
-					endereco_logradouro = :endereco_logradouro, endereco_bairro = :endereco_bairro, endereco_distrito = :endereco_distrito, endereco_estado = :endereco_estado, endereco_municipio =
-					:endereco_municipio, opiniao = :opiniao, arquivo = :arquivo, tid = :tid where id = :id ", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"
+                                   update tab_fisc_apreensao
+                                   set fiscalizacao = :fiscalizacao,
+                                       iuf_digital = :eh_digital,
+                                       iuf_numero = :iuf_numero,
+                                       iuf_data = :iuf_data,
+                                       numero_lacres = :numero_lacres,
+                                       arquivo = :arquivo,
+                                       serie = :serie,
+                                       descricao = :descricao,
+                                       valor_produtos = :valor_produtos,
+                                       depositario = :depositario,
+                                       endereco_logradouro = :endereco_logradouro,
+                                       endereco_bairro = :endereco_bairro, 
+                                       endereco_distrito = :endereco_distrito,
+                                       endereco_estado = :endereco_estado,
+                                       endereco_municipio = :endereco_municipio,
+                                       opiniao = :opiniao,
+                                       tid = :tid
+                                   where id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
-                //comando.AdicionarParametroEntrada("houve_material", materialApreendido.IsApreendido, DbType.Int32);
-				comando.AdicionarParametroEntrada("tad_gerado", materialApreendido.IsTadGeradoSistema, DbType.Int32);
-				comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
-				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
-				comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
-				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.Decimal);
-				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
-                //comando.AdicionarParametroEntrada("tad_numero", materialApreendido.NumeroTad, DbType.String);
-				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
-				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
-				comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
-				comando.AdicionarParametroEntrada("endereco_distrito", materialApreendido.Depositario.Distrito, DbType.String);
+                comando.AdicionarParametroEntrada("fiscalizacao", materialApreendido.FiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("eh_digital", materialApreendido.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", materialApreendido.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("numero_lacres", materialApreendido.NumeroLacre, DbType.String);
+                comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
+                comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
+                comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
+                comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.String);
+                comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
+                comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
+                comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
+                comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
+                comando.AdicionarParametroEntrada("endereco_distrito", materialApreendido.Depositario.Distrito, DbType.String);
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", materialApreendido.Id, DbType.Int32);
@@ -181,11 +243,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				if (materialApreendido.DataLavratura.IsEmpty)
 				{
-					comando.AdicionarParametroEntrada("tad_data", DBNull.Value, DbType.Date);
+					comando.AdicionarParametroEntrada("iuf_data", DBNull.Value, DbType.Date);
 				}
 				else
 				{
-					comando.AdicionarParametroEntrada("tad_data", materialApreendido.DataLavratura.Data.Value, DbType.Date);
+					comando.AdicionarParametroEntrada("iuf_data", materialApreendido.DataLavratura.Data.Value, DbType.Date);
 				}
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -194,44 +256,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Materiais
 
-				comando = bancoDeDados.CriarComando(@"delete from {0}tab_fisc_mater_apree_material c where c.material_apreendido = :material_apreendido", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format(" {0}", comando.AdicionarNotIn("and", "c.id", DbType.Int32, materialApreendido.Materiais.Select(x => x.Id).ToList()));
-				comando.AdicionarParametroEntrada("material_apreendido", materialApreendido.Id, DbType.Int32);
+				comando = bancoDeDados.CriarComando(@"
+                            delete from {0}tab_fisc_apreensao_produto c
+                            where c.apreensao = :apreensao", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format(" {0}", comando.AdicionarNotIn("and", "c.id", DbType.Int32, materialApreendido.ProdutosApreendidos.Select(x => x.Id).ToList()));
+				comando.AdicionarParametroEntrada("apreensao", materialApreendido.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				foreach (MaterialApreendidoMaterial material in materialApreendido.Materiais)
+				foreach (ApreensaoProdutoApreendido produto in materialApreendido.ProdutosApreendidos)
 				{
-					if (material.Id == 0)
+					if (produto.Id == 0)
 					{
-						comando = bancoDeDados.CriarComando(@" insert into tab_fisc_mater_apree_material (id, material_apreendido, tipo, especificacao, tid) values (seq_fisc_mater_apree_material.nextval, 
-							:material_apreendido, :tipo, :especificacao, :tid) returning id into :id ", EsquemaBanco);
+						comando = bancoDeDados.CriarComando(@"
+                                    insert into tab_fisc_apreensao_produto (id,
+                                                                            apreensao,
+                                                                            produto,
+                                                                            quantidade,
+                                                                            destinacao,
+                                                                            tid)
+                                           values (seq_tab_fisc_apreensao_produto.nextval, 
+							                       :apreensao,
+                                                   :produto,
+                                                   :quantidade,
+                                                   :destinacao,
+                                                   :tid) returning id into :id ", EsquemaBanco);
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 					}
 					else
 					{
-						comando = bancoDeDados.CriarComando(@" update tab_fisc_mater_apree_material set material_apreendido = :material_apreendido, tipo = :tipo, especificacao = :especificacao, tid = :tid
-							where id = :id ", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id", material.Id, DbType.Int32);
+						comando = bancoDeDados.CriarComando(@"
+                                    update tab_fisc_apreensao_produto
+                                    set apreensao = :apreensao,
+                                        produto = :produto,
+                                        quantidade = :quantidade,
+                                        destinacao = :destinacao,
+                                        tid = :tid
+							        where id = :id ", EsquemaBanco);
+						comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
 					}
 
-					comando.AdicionarParametroEntrada("material_apreendido", materialApreendido.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-					comando.AdicionarParametroEntrada("tipo", material.TipoId, DbType.Int32);
-					comando.AdicionarParametroEntrada("especificacao", material.Especificacao, DbType.String);
+					comando.AdicionarParametroEntrada("apreensao", materialApreendido.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("produto", produto.ProdutoId, DbType.Int32);
+					comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Int32);
+                    comando.AdicionarParametroEntrada("destinacao", produto.DestinoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
-					if (material.Id == 0)
+					if (produto.Id == 0)
 					{
-						material.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+						produto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 					}
 				}
 
 				#endregion
 
-				Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+                //Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
-				Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                //Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -252,6 +334,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando(
+                                                    "begin "
+                                                        + "delete {0}tab_fisc_apreensao_produto t where t.apreensao = (select id from {0}tab_fisc_apreensao where fiscalizacao = :fiscalizacao); "
+                                                        + "delete {0}tab_fisc_apreensao t where t.fiscalizacao = :fiscalizacao; "
+                                                    + "end;", EsquemaBanco);
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
 
 				bancoDeDados.Commit();
 			}
