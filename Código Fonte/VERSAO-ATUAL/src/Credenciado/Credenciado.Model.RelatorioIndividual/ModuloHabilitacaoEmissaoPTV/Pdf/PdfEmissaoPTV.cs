@@ -36,6 +36,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 			dataSource = _da.Obter(ptvID);
 			situacao = dataSource.Situacao;
 
+            foreach (PTVProdutoRelatorio prod in dataSource.Produtos)
+            {
+                if (prod.ExibeQtdKg)
+                {
+                    prod.Quantidade *= 1000;
+                    prod.UnidadeMedida = "KG";
+                }
+            }
+
 			if (dataSource.AssinaturaDigital.Id.HasValue && dataSource.AssinaturaDigital.Id.Value > 0)
 			{
 				dataSource.AssinaturaDigital.Conteudo = AsposeImage.RedimensionarImagemPNG(File.ReadAllBytes(dataSource.AssinaturaDigital.Caminho), 4);
