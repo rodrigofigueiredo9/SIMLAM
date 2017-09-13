@@ -106,6 +106,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			try
 			{
 				entidade = _da.Obter(fiscalizacaoId);
+
+                if (entidade == null)
+                {
+                    _da.ObterAntigo(fiscalizacaoId);
+                }
 			}
 			catch (Exception exc)
 			{

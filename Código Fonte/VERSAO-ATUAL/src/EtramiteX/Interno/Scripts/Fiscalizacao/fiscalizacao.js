@@ -73,7 +73,7 @@ Fiscalizacao = {
 	},
 
 	gerarObjetoWizard: function () {
-		var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
+	    var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
 		return { step: 0, params: param };
 	},
 
@@ -211,10 +211,9 @@ Fiscalizacao = {
 				MasterPage.carregando(false);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
-				Fiscalizacao.containerAba.empty().hide();
-				Fiscalizacao.containerAba.append(response);
-				callBack();
+			    Fiscalizacao.containerAba.empty().hide();
+			    Fiscalizacao.containerAba.append(response);
+			    callBack();
 			}
 		});
 	},
@@ -1978,14 +1977,14 @@ FiscalizacaoMaterialApreendido = {
 
 	callBackObterFiscalizacaoMaterialApreendido: function () {
 		FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendidoDefault();
-		FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema();
+	    //FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema();
 	},
 
 	callBackObterFiscalizacaoMaterialApreendidoDefault: function () {
 		Fiscalizacao.stepAtual = 7;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
-
+		
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
 		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
@@ -2009,7 +2008,7 @@ FiscalizacaoMaterialApreendido = {
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
 
 		Mascara.load(FiscalizacaoMaterialApreendido.container);
-
+		
 		if (parseInt($('.hdnMaterialApreendidoId', FiscalizacaoMaterialApreendido.container).val()) > 0) {
 			Fiscalizacao.salvarEdicao = false;
 			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
@@ -2018,19 +2017,34 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
-
-		$('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
-		FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		
+		//$('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
+		//FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
 
 		MasterPage.botoes();
 		MasterPage.carregando(false);
+	},
+
+	configurarBtnEditar: function () {
+	    $(".btnEditar", Fiscalizacao.container).unbind('click');
+	    $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
+	},
+
+	onBtnEditar: function () {
+	    Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+	        FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
+	        Fiscalizacao.salvarEdicao = true;
+	        Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+	        Fiscalizacao.configurarBtnCancelarStep(7);
+	        Fiscalizacao.gerenciarVisualizacao();
+	    });
 	},
 
 	onSelecionarIsDigital: function(){
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
-
+	    
 	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
@@ -2046,7 +2060,7 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeAttr('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
-
+	    
 	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
@@ -2211,7 +2225,7 @@ FiscalizacaoMaterialApreendido = {
 	    }
 	    obj.SerieId = $('.ddlSeries :selected', container).val();
 	    obj.Descricao = $('.txtDescricao', container).val();
-	    obj.ValorProdutos = $('.txtValorProdutos', container).val();
+	    obj.ValorProdutos = $('.txtValorBensApreendidos', container).val();
 	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
 
 	    //Preenchendo o objeto com os itens da sessão Depositário
@@ -2242,23 +2256,6 @@ FiscalizacaoMaterialApreendido = {
 
     ///////////////////////OLD////////////////////////////
 
-	configurarBtnEditar: function () {
-		$(".btnEditar", Fiscalizacao.container).unbind('click');
-		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
-	},
-
-	onBtnEditar: function () {
-
-		Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
-
-			FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
-			Fiscalizacao.salvarEdicao = true;
-			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(7);
-			Fiscalizacao.gerenciarVisualizacao();
-		});
-	},
-
 	//onSelecionarIsApreendidoSim: function () {
 	//	$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
 	//},
@@ -2273,43 +2270,43 @@ FiscalizacaoMaterialApreendido = {
 	//	$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
 	//},
 
-	gerenciarSerie: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-		var rdb = $('.rbdIsGeradoSistema:checked', container).val();
-		if (rdb == 0) {
-			var serie = $('.ddlSeries :selected').val();
-			if (serie == 3) {
-				$('.lblNumTAD', container).text('Nº do TAD *');
-			} else {
-				$('.lblNumTAD', container).text('Nº do TAD - bloco *');
-			}
-		}
-	},
+	//gerenciarSerie: function () {
+	//	var container = FiscalizacaoMaterialApreendido.container;
+	//	var rdb = $('.rbdIsGeradoSistema:checked', container).val();
+	//	if (rdb == 0) {
+	//		var serie = $('.ddlSeries :selected').val();
+	//		if (serie == 3) {
+	//			$('.lblNumTAD', container).text('Nº do TAD *');
+	//		} else {
+	//			$('.lblNumTAD', container).text('Nº do TAD - bloco *');
+	//		}
+	//	}
+	//},
 
-	gerenciarIsGeradaSistema: function () {
-		var rdb = $('.rbdIsGeradoSistema:checked', FiscalizacaoMaterialApreendido.container).val();
-		if (rdb == 0) {
-			FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao();
-		} else {
-			if (rdb == 1) {
-				FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim();
-			}
-		}
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
+	//gerenciarIsGeradaSistema: function () {
+	//	var rdb = $('.rbdIsGeradoSistema:checked', FiscalizacaoMaterialApreendido.container).val();
+	//	if (rdb == 0) {
+	//		FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao();
+	//	} else {
+	//		if (rdb == 1) {
+	//			FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim();
+	//		}
+	//	}
+	//	FiscalizacaoMaterialApreendido.gerenciarSerie();
+	//},
 
-	onSelecionarIsGeradaSistemaSim: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
+	//onSelecionarIsGeradaSistemaSim: function () {
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
 
-		$('.ddlSeries option:eq(3)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
-	},
+	//	$('.ddlSeries option:eq(3)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	//	$('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	//},
 
-	onSelecionarIsGeradaSistemaNao: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
+	//onSelecionarIsGeradaSistemaNao: function () {
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
+	//	$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	//	FiscalizacaoMaterialApreendido.gerenciarSerie();
+	//},
 
 	onEditarDepositario: function () {
 		var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();

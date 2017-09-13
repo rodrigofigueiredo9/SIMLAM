@@ -47,7 +47,7 @@
 
             <div class="coluna15">
 				<label>Data da lavratura do IUF</label>
-				<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.DataConclusaoFiscalizacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
+				<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.MaterialApreendido.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>
 

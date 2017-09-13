@@ -40,7 +40,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 		{
 			if (materialApreendido == null)
 			{
-				throw new Exception("Material apreendido é nulo.");
+				throw new Exception("Apreensão é nula.");
 			}
 
 			if (materialApreendido.Id <= 0)
@@ -61,7 +61,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				#region Material Apreendido
+				#region Apreensão
 
                 Comando comando = bancoDeDados.CriarComando(@"
                                    insert into tab_fisc_apreensao (id,
@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				materialApreendido.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				#region Materiais
+				#region Produtos
 
                 comando = bancoDeDados.CriarComando(@"
                            insert into tab_fisc_apreensao_produto (id,
@@ -191,7 +191,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				#region Material Apreendido
+				#region Apreensão
 
                 Comando comando = bancoDeDados.CriarComando(@"
                                    update tab_fisc_apreensao
@@ -254,7 +254,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-				#region Materiais
+				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
                             delete from {0}tab_fisc_apreensao_produto c
@@ -352,7 +352,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#region Obter / Filtrar
 
-		public MaterialApreendido Obter(int fiscalizacaoId, BancoDeDados banco = null)
+		public MaterialApreendido ObterAntigo(int fiscalizacaoId, BancoDeDados banco = null)
 		{
 			MaterialApreendido materialApreendido = new MaterialApreendido();
 
@@ -378,8 +378,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
-                            //IsApreendido = reader.GetValue<bool>("houve_material"),
-                            //NumeroTad = reader.GetValue<string>("tad_numero"),
 							ValorProdutos = reader.GetValue<string>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),
 							Opiniao = reader.GetValue<string>("opiniao"),
@@ -403,49 +401,170 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("arquivo"),
 							Nome = reader.GetValue<string>("arquivo_nome")
 						};
-
-						if (!Convert.IsDBNull(reader["tad_gerado"]))
-						{
-							materialApreendido.IsTadGeradoSistema = reader.GetValue<bool>("tad_gerado");
-						}
-
-						if (!Convert.IsDBNull(reader["tad_data"]))
-						{
-							materialApreendido.DataLavratura.DataTexto = reader.GetValue<string>("tad_data");
-						}
 					}
 					reader.Close();
 				}
 
 				#endregion
 
-				#region Materiais
+//                #region Materiais
 
-				comando = bancoDeDados.CriarComando(@" select tfmam.id, tfmam.material_apreendido, tfmam.tipo, lfmat.texto tipo_texto, tfmam.especificacao, tfmam.tid from tab_fisc_mater_apree_material
-					tfmam, lov_fisc_mate_apreendido_tipo lfmat where tfmam.tipo = lfmat.id and tfmam.material_apreendido = :material_apreendido ", EsquemaBanco);
-				comando.AdicionarParametroEntrada("material_apreendido", materialApreendido.Id, DbType.Int32);
+//                comando = bancoDeDados.CriarComando(@" select tfmam.id, tfmam.material_apreendido, tfmam.tipo, lfmat.texto tipo_texto, tfmam.especificacao, tfmam.tid from tab_fisc_mater_apree_material
+//					tfmam, lov_fisc_mate_apreendido_tipo lfmat where tfmam.tipo = lfmat.id and tfmam.material_apreendido = :material_apreendido ", EsquemaBanco);
+//                comando.AdicionarParametroEntrada("material_apreendido", materialApreendido.Id, DbType.Int32);
 
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-					materialApreendido.Materiais = new List<MaterialApreendidoMaterial>();
-					while (reader.Read())
-					{
-						materialApreendido.Materiais.Add(new MaterialApreendidoMaterial
-						{
-							Id = reader.GetValue<int>("id"),
-							TipoId = reader.GetValue<int>("tipo"),
-							TipoTexto = reader.GetValue<string>("tipo_texto"),
-							Especificacao = reader.GetValue<string>("especificacao")
-						});
-					}
-					reader.Close();
-				}
+//                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+//                {
+//                    materialApreendido.Materiais = new List<MaterialApreendidoMaterial>();
+//                    while (reader.Read())
+//                    {
+//                        materialApreendido.Materiais.Add(new MaterialApreendidoMaterial
+//                        {
+//                            Id = reader.GetValue<int>("id"),
+//                            TipoId = reader.GetValue<int>("tipo"),
+//                            TipoTexto = reader.GetValue<string>("tipo_texto"),
+//                            Especificacao = reader.GetValue<string>("especificacao")
+//                        });
+//                    }
+//                    reader.Close();
+//                }
 
-				#endregion
+//                #endregion
 			}
 
 			return materialApreendido;
 		}
+
+        public MaterialApreendido Obter(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            MaterialApreendido materialApreendido = new MaterialApreendido();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Apreensão
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select t.id,
+                                           t.fiscalizacao,
+                                           f.situacao situacao_id,
+                                           t.iuf_digital,
+                                           t.iuf_numero,
+                                           t.iuf_data,
+                                           t.numero_lacres,
+                                           t.serie,
+                                           t.descricao,
+                                           t.valor_produtos,
+                                           t.depositario,
+                                           nvl(p.nome, p.razao_social) nome,
+                                           nvl(p.cpf, p.cnpj) cpf,
+                                           t.endereco_logradouro,
+                                           t.endereco_bairro,
+                                           t.endereco_distrito,
+                                           t.endereco_estado,
+                                           t.endereco_municipio,
+                                           t.opiniao,
+                                           t.arquivo,
+                                           a.nome arquivo_nome,
+                                           t.tid 
+                                    from tab_fisc_apreensao t,
+                                         tab_pessoa p,
+                                         tab_arquivo a,
+                                         tab_fiscalizacao f
+                                    where t.depositario = p.id(+)
+                                          and t.arquivo = a.id(+)
+                                          and t.fiscalizacao = :fiscalizacao
+                                          and f.id = t.fiscalizacao", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        materialApreendido = new MaterialApreendido
+                        {
+                            Id = reader.GetValue<int>("id"),
+                            FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
+                            FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
+                            IsDigital = reader.GetValue<bool>("iuf_digital"),
+                            NumeroIUF = reader.GetValue<string>("iuf_numero"),
+                            NumeroLacre = reader.GetValue<string>("numero_lacres"),
+                            SerieId = reader.GetValue<int>("serie"),
+                            Descricao = reader.GetValue<string>("descricao"),
+                            ValorProdutos = reader.GetValue<string>("valor_produtos"),
+                            Opiniao = reader.GetValue<string>("opiniao"),
+                            Tid = reader.GetValue<string>("tid"),
+                            Depositario = new MaterialApreendidoDepositario
+                            {
+                                Id = reader.GetValue<int>("depositario"),
+                                NomeRazaoSocial = reader.GetValue<string>("nome"),
+                                CPFCNPJ = reader.GetValue<string>("cpf"),
+                                Logradouro = reader.GetValue<string>("endereco_logradouro"),
+                                Bairro = reader.GetValue<string>("endereco_bairro"),
+                                Distrito = reader.GetValue<string>("endereco_distrito"),
+                                Estado = reader.GetValue<int>("endereco_estado"),
+                                Municipio = reader.GetValue<int>("endereco_municipio")
+                            }
+                        };
+
+                        materialApreendido.Arquivo = new Arquivo
+                        {
+                            Id = reader.GetValue<int>("arquivo"),
+                            Nome = reader.GetValue<string>("arquivo_nome")
+                        };
+
+                        if (!Convert.IsDBNull(reader["iuf_data"]))
+                        {
+                            materialApreendido.DataLavratura.DataTexto = reader.GetValue<string>("iuf_data");
+                        }
+                    }
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Produtos
+
+                comando = bancoDeDados.CriarComando(@"
+                            select tfap.id,
+                                   cfip.id id_produto,
+                                   cfip.item produto,
+                                   cfip.unidade,
+                                   tfap.quantidade,
+                                   cfid.id id_destino,
+                                   cfid.destino
+                            from tab_fisc_apreensao_produto tfap,
+                                 cnf_fisc_infracao_produto cfip,
+                                 cnf_fisc_infr_destinacao cfid
+                            where tfap.apreensao = :apreensao
+                                  and tfap.produto = cfip.id
+                                  and tfap.destinacao = cfid.id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("apreensao", materialApreendido.Id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    materialApreendido.ProdutosApreendidos = new List<ApreensaoProdutoApreendido>();
+                    while (reader.Read())
+                    {
+                        materialApreendido.ProdutosApreendidos.Add(new ApreensaoProdutoApreendido
+                        {
+                            Id = reader.GetValue<int>("id"),
+                            ProdutoId = reader.GetValue<int>("id_produto"),
+                            ProdutoTexto = reader.GetValue<string>("produto"),
+                            UnidadeTexto = reader.GetValue<string>("unidade"),
+                            Quantidade = reader.GetValue<decimal>("quantidade"),
+                            DestinoId = reader.GetValue<int>("id_destino"),
+                            DestinoTexto = reader.GetValue<string>("destino")
+                        });
+                    }
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return materialApreendido;
+        }
 
 		internal int ObterID(int fiscalizacao, BancoDeDados banco = null)
 		{

@@ -35,15 +35,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
             }
 
-            if (!string.IsNullOrWhiteSpace(materialApreendido.ValorProdutos))
-            {
-                Decimal aux = 0;
-                if (!Decimal.TryParse(materialApreendido.ValorProdutos, out aux))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosInvalido);
-                }
-            }
-
             if (!string.IsNullOrWhiteSpace(materialApreendido.NumeroLacre))
             {
                 String[] lacresString = materialApreendido.NumeroLacre.Split(',');
