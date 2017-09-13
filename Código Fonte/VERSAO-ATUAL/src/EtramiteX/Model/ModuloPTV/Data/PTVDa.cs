@@ -416,14 +416,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				#region Insert
 
-				comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv
-														(id, tid, tipo_numero, numero, data_emissao, situacao, data_ativacao, empreendimento, partida_lacrada_origem, numero_lacre, numero_porao, 
-														numero_container, destinatario, possui_laudo_laboratorial, tipo_transporte, veiculo_identificacao_numero, rota_transito_definida, itinerario, apresentacao_nota_fiscal, 
-														numero_nota_fiscal, valido_ate, responsavel_tecnico, responsavel_emp, municipio_emissao, eptv_id)
-													values
-														(seq_tab_ptv.nextval,:tid,:tipo_numero,:numero,:data_emissao,:situacao, sysdate,:empreendimento,:partida_lacrada_origem,:numero_lacre,:numero_porao,
-														:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,
-														:numero_nota_fiscal,:valido_ate,:responsavel_tecnico,:responsavel_emp,:municipio_emissao, :eptv_id) returning id into :id", EsquemaBanco);
+				
+                
+
+                string sqlCmd = @"insert into {0}tab_ptv
+								(id, tid, tipo_numero, numero, data_emissao, situacao, data_ativacao, empreendimento, partida_lacrada_origem, numero_lacre, numero_porao, 
+								numero_container, destinatario, possui_laudo_laboratorial, tipo_transporte, veiculo_identificacao_numero, rota_transito_definida, itinerario, apresentacao_nota_fiscal, 
+								numero_nota_fiscal, valido_ate, responsavel_tecnico, responsavel_emp, municipio_emissao, eptv_id, dua_numero,dua_tipo_pessoa,dua_cpf_cnpj, empreendimento_sem_doc, responsavel_sem_doc)
+							values
+								(seq_tab_ptv.nextval,:tid,:tipo_numero,:numero,:data_emissao,:situacao, sysdate,:empreendimento,:partida_lacrada_origem,:numero_lacre,:numero_porao,
+								:numero_container,:destinatario,:possui_laudo_laboratorial,:tipo_transporte,:veiculo_identificacao_numero,:rota_transito_definida,:itinerario,:apresentacao_nota_fiscal,
+								:numero_nota_fiscal,:valido_ate,:responsavel_tecnico,:responsavel_emp,:municipio_emissao, :eptv_id, :dua_numero,:dua_tipo_pessoa,:dua_cpf_cnpj, :empreendimento_sem_doc, :responsavel_sem_doc) returning id into :id";
+
+
+
+                if (PTV.Produtos.Count > 0 && ((PTV.Produtos[0].SemDoc) ||
+                       PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado))
+                {
+                    sqlCmd = sqlCmd.Replace(":empreendimento,", "");
+                    sqlCmd = sqlCmd.Replace(":responsavel_emp,", "");
+
+                    sqlCmd = sqlCmd.Replace("empreendimento,", "");
+                    sqlCmd = sqlCmd.Replace("responsavel_emp,", "");
+
+                }
+
+                comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+
 				#endregion
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -431,7 +450,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("numero", PTV.Numero > 0 ? PTV.Numero : (object)DBNull.Value, DbType.Int64);
 				comando.AdicionarParametroEntrada("data_emissao", PTV.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("situacao", (int)ePTVSituacao.Valido, DbType.Int32);
-				comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+
+                if (PTV.Produtos.Count > 0 && ((!PTV.Produtos[0].SemDoc) &&
+                    PTV.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado))
+                {
+                    comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+                    comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
+                }
+				
 				comando.AdicionarParametroEntrada("partida_lacrada_origem", PTV.PartidaLacradaOrigem, DbType.Int32);
 				comando.AdicionarParametroEntrada("numero_lacre", PTV.LacreNumero, DbType.String);
 				comando.AdicionarParametroEntrada("numero_porao", PTV.PoraoNumero, DbType.String);
@@ -446,9 +472,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("numero_nota_fiscal", PTV.NotaFiscalNumero, DbType.String);
 				comando.AdicionarParametroEntrada("valido_ate", PTV.ValidoAte.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("responsavel_tecnico", PTV.ResponsavelTecnicoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio_emissao", PTV.LocalEmissaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("eptv_id", PTV.Id, DbType.Int32);
+
+                comando.AdicionarParametroEntrada("dua_numero", PTV.NumeroDua, DbType.String);
+                comando.AdicionarParametroEntrada("dua_cpf_cnpj", PTV.CPFCNPJDUA, DbType.String);
+                comando.AdicionarParametroEntrada("dua_tipo_pessoa", PTV.TipoPessoa, DbType.Int32);
+
+                comando.AdicionarParametroEntrada("responsavel_sem_doc", PTV.ResponsavelSemDoc, DbType.String);
+                comando.AdicionarParametroEntrada("empreendimento_sem_doc", PTV.EmpreendimentoSemDoc, DbType.String);
 
 				//ID de retorno
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -1146,7 +1178,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						query = @"
 						select (
 						/*LOTE*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from tab_lote t, tab_lote_item i
 						where i.lote = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1156,7 +1188,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and extract (year from t.data_criacao) = :anoEmissao), 0)
 						+
 						/*EPTV*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from tab_ptv t, tab_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1167,7 +1199,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from ins_ptv t, ins_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1182,7 +1214,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						query = @"
 						select (
 						/*LOTE*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from tab_lote t, tab_lote_item i
 						where i.lote = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1191,7 +1223,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.unidade_medida = :unidade_medida), 0)
 						+
 						/*EPTV*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from tab_ptv t, tab_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1201,7 +1233,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
-						nvl((select sum(i.quantidade) quantidade
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
 						from ins_ptv t, ins_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
