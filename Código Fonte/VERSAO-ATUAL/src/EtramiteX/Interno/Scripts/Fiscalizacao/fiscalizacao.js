@@ -1992,17 +1992,16 @@ FiscalizacaoMaterialApreendido = {
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
 		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
-		//FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
 		//FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
 		//FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
@@ -2018,8 +2017,13 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
 		
-		//$('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
-		//FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == false
+            && $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == false) {
+		    $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
+		}
+		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		}
 
 		MasterPage.botoes();
 		MasterPage.carregando(false);
@@ -2254,6 +2258,89 @@ FiscalizacaoMaterialApreendido = {
 	    return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
 	},
 
+	onEditarDepositario: function () {
+	    var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
+	},
+
+	onEnviarArquivoClick: function () {
+	    var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
+
+	    erroMsg = new Array();
+
+	    if (nomeArquivo == '') {
+	        erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
+	    } else {
+	        var tam = nomeArquivo.length - 4;
+	        if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+	            erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
+	        }
+	    }
+
+	    if (erroMsg.length > 0) {
+	        Mensagem.gerar(Fiscalizacao.container, erroMsg);
+	        return;
+	    }
+
+	    MasterPage.carregando(true);
+	    var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
+	    FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
+	},
+
+	onLimparArquivoClick: function () {
+	    $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
+	    $('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
+
+	    $('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
+
+	    $('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	},
+
+	validarTipoArquivo: function (tipo) {
+
+	    var tipoValido = false;
+	    $(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
+	        if (tipoItem == tipo) {
+	            tipoValido = true;
+	        }
+	    });
+
+	    return tipoValido;
+	},
+
+	callBackArqEnviado: function (controle, retorno, isHtml) {
+	    var ret = eval('(' + retorno + ')');
+	    if (ret.Arquivo != null) {
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
+	        $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+
+	        $('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+
+	        $('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    } else {
+	        FiscalizacaoMaterialApreendido.onLimparArquivoClick();
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
+	    }
+	    MasterPage.carregando(false);
+
+	    Mensagem.limpar(Fiscalizacao.container);
+	},
+
     ///////////////////////OLD////////////////////////////
 
 	//onSelecionarIsApreendidoSim: function () {
@@ -2306,90 +2393,7 @@ FiscalizacaoMaterialApreendido = {
 	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
 	//	$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
 	//	FiscalizacaoMaterialApreendido.gerenciarSerie();
-	//},
-
-	onEditarDepositario: function () {
-		var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
-
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
-				editarVisualizar: Fiscalizacao.salvarEdicao
-			});
-		});
-	},
-
-	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
-
-		erroMsg = new Array();
-
-		if (nomeArquivo == '') {
-			erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
-			}
-		}
-
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
-
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
-		FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
-	},
-
-	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
-		$('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
-
-		$('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
-
-		$('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
-	},
-
-	validarTipoArquivo: function (tipo) {
-
-		var tipoValido = false;
-		$(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
-
-		return tipoValido;
-	},
-
-	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
-
-			$('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-
-			$('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		} else {
-			FiscalizacaoMaterialApreendido.onLimparArquivoClick();
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
-
-		Mensagem.limpar(Fiscalizacao.container);
-	}
+	//}
 }
 
 // 8ª Aba

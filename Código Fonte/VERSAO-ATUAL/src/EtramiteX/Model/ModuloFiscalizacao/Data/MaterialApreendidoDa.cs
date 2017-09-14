@@ -297,7 +297,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 					comando.AdicionarParametroEntrada("apreensao", materialApreendido.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("produto", produto.ProdutoId, DbType.Int32);
-					comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Int32);
+					comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Decimal);
                     comando.AdicionarParametroEntrada("destinacao", produto.DestinoId, DbType.Int32);
                     comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -519,6 +519,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         }
                     }
                     reader.Close();
+                }
+
+                if (materialApreendido.Id == 0)
+                {
+                    return null;
                 }
 
                 #endregion

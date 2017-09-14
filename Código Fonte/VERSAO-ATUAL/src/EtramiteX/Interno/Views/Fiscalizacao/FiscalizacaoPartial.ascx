@@ -9,7 +9,7 @@
 		<li class="step4"><a>Enquadramento</a></li>
 		<li class="step5"><a>Infração</a></li>
 		<li class="step6"><a>Objeto da infração</a> </li>
-		<li class="step7"><a>Material apreendido</a> </li>
+		<li class="step7"><a>Apreensão</a> </li>
 		<li class="step8"><a>Considerações finais</a> </li>
 		<li class="step9"><a class="ultima">Concluir Cadastro</a></li>
 	</ul>
