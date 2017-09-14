@@ -389,6 +389,7 @@
 
         DeclaracaoAdicional,
 
-        ConfigurarPenalidade
+        ConfigurarPenalidade,
+        ConfigurarCodigoReceita
 	}
 }

@@ -175,21 +175,26 @@ PTVEmitir = {
 		    e.preventDefault();
 		    return false;
 		});
-	    
-		$('#DataVistoria').change(function (e) {
-		        
-		    PTVEmitir.onChangeLocalVistoria();
-		    $(this).blur();
-		});
+
 
 		
-	   if (window.location.href.indexOf("Visualizar") == -1)
-	        PTVEmitir.onChangeLocalVistoria();
+	    
+		
 
+		
+		if (window.location.href.indexOf("Visualizar") == -1) {
 		   
-		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+		    $('#DataVistoria').change(function (e) {
+		        
+		            PTVEmitir.onChangeLocalVistoria();
+		            $(this).blur();
+		    });
+		}
 
-		$('#DataVistoria').change();
+		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+		
+        $('#DataVistoria').change();
+		
 
 	},
 
@@ -234,6 +239,7 @@ PTVEmitir = {
 			    datelist = lstDatas; // populate the array
 			   
 			    $("#DataVistoria").datepicker("refresh"); // 
+			 
 
 			}
 		});
