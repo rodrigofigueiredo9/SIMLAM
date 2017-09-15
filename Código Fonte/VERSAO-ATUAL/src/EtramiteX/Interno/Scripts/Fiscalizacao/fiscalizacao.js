@@ -73,7 +73,7 @@ Fiscalizacao = {
 	},
 
 	gerarObjetoWizard: function () {
-		var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
+	    var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
 		return { step: 0, params: param };
 	},
 
@@ -211,10 +211,9 @@ Fiscalizacao = {
 				MasterPage.carregando(false);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
-				Fiscalizacao.containerAba.empty().hide();
-				Fiscalizacao.containerAba.append(response);
-				callBack();
+			    Fiscalizacao.containerAba.empty().hide();
+			    Fiscalizacao.containerAba.append(response);
+			    callBack();
 			}
 		});
 	},
@@ -1999,33 +1998,37 @@ FiscalizacaoMaterialApreendido = {
 
 	callBackObterFiscalizacaoMaterialApreendido: function () {
 		FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendidoDefault();
-		FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema();
+	    //FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema();
 	},
 
 	callBackObterFiscalizacaoMaterialApreendidoDefault: function () {
 		Fiscalizacao.stepAtual = 7;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
-
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
+		
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarMaterial', 'click', FiscalizacaoMaterialApreendido.adicionarMaterial);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirMaterial', 'click', FiscalizacaoMaterialApreendido.excluirMaterial);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
+		//FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
+		//FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
+		//FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
 
 		Mascara.load(FiscalizacaoMaterialApreendido.container);
-
+		
 		if (parseInt($('.hdnMaterialApreendidoId', FiscalizacaoMaterialApreendido.container).val()) > 0) {
 			Fiscalizacao.salvarEdicao = false;
 			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
@@ -2034,315 +2037,384 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
+		
+		if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == false
+            && $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == false) {
+		    $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
+		}
+		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		}
 
 		MasterPage.botoes();
 		MasterPage.carregando(false);
 	},
 
 	configurarBtnEditar: function () {
-		$(".btnEditar", Fiscalizacao.container).unbind('click');
-		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
+	    $(".btnEditar", Fiscalizacao.container).unbind('click');
+	    $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
 	},
 
 	onBtnEditar: function () {
-
-		Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
-
-			FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
-			Fiscalizacao.salvarEdicao = true;
-			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(7);
-			Fiscalizacao.gerenciarVisualizacao();
-		});
+	    Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+	        FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
+	        Fiscalizacao.salvarEdicao = true;
+	        Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+	        Fiscalizacao.configurarBtnCancelarStep(7);
+	        Fiscalizacao.gerenciarVisualizacao();
+	    });
 	},
 
-	onSelecionarIsApreendidoSim: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
+	onSelecionarIsDigital: function(){
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+	    
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).hide();
 	},
 
-	onSelecionarIsApreendidoNao: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).hide();
+	onSelecionarIsBloco: function () {
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeAttr('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
+	    
+	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
-		$('.rdoIsGeradoSistemaNao', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.rdoIsGeradoSistemaSim', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.txtNumeroTad', FiscalizacaoMaterialApreendido.container).val('');
-		$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
-	},
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
 
-	gerenciarSerie: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-		var rdb = $('.rbdIsGeradoSistema:checked', container).val();
-		if (rdb == 0) {
-			var serie = $('.ddlSeries :selected').val();
-			if (serie == 3) {
-				$('.lblNumTAD', container).text('Nº do TAD *');
-			} else {
-				$('.lblNumTAD', container).text('Nº do TAD - bloco *');
-			}
-		}
-	},
-
-	gerenciarIsGeradaSistema: function () {
-		var rdb = $('.rbdIsGeradoSistema:checked', FiscalizacaoMaterialApreendido.container).val();
-		if (rdb == 0) {
-			FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao();
-		} else {
-			if (rdb == 1) {
-				FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim();
-			}
-		}
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
-
-	onSelecionarIsGeradaSistemaSim: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
-
-		$('.ddlSeries option:eq(3)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
-	},
-
-	onSelecionarIsGeradaSistemaNao: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
-
-	onSalvarFiscalizacaoMaterialApreendido: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-
-		var obj = {
-			Id: Number($('.hdnMaterialApreendidoId', container).val()),
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
-			IsApreendido: '',
-			Materiais: []
-		};
-
-		if ($('.rdoIsApreendidoSim', container).attr('checked')) {
-			obj.IsApreendido = true;
-
-			obj.SerieId = $('.ddlSeries :selected', container).val();
-
-			if ($('.rdoIsGeradoSistemaNao', container).attr('checked')) {
-				obj.IsTadGeradoSistema = false;
-				obj.NumeroTad = $('.txtNumeroTad', container).val();
-				obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-				obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
-			}
-
-			if ($('.rdoIsGeradoSistemaSim', container).attr('checked')) {
-				obj.IsTadGeradoSistema = true;
-			}
-
-
-			obj.Depositario = {
-				Id: $('.hdnDepositarioId', container).val(),
-				Estado: $('.ddlEstado :selected', container).val(),
-				Municipio: $('.ddlMunicipio :selected', container).val(),
-				Logradouro: $('.txtLogradouro', container).val(),
-				Bairro: $('.txtBairro', container).val(),
-				Distrito: $('.txtDistrito', container).val()
-			};
-			obj.Descricao = $('.txtDescricao', container).val();
-			obj.ValorProdutos = $('.txtValorProdutos', container).val();
-			obj.Opiniao = $('.txtOpiniao', container).val();
-
-			$('.hdnItemJSon', container.find('.divMateriais')).each(function () {
-				var objMaterial = String($(this).val());
-				if (objMaterial != '') {
-					obj.Materiais.push(JSON.parse(objMaterial));
-				}
-			});
-		}
-
-		if ($('.rdoIsApreendidoNao', container).attr('checked')) {
-			obj.IsApreendido = false;
-		}
-
-		var arrayMensagem = [];
-
-		arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).show();
 	},
 
 	onAssociarDepositario: function () {
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
 
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
-			});
-		});
-	},
+	    //Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+        //Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+	    var dataPessoa = {
+	        cpfCnpj: null,
+            tipoPessoa: null,
+            tipoCadastro: '1'
+	    };
 
-	onEditarDepositario: function () {
-		var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
-
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
-				editarVisualizar: Fiscalizacao.salvarEdicao
-			});
-		});
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, dataPessoa, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
+	        });
+	    });
 	},
 
 	callBackEditarDepositario: function (Pessoa) {
-		$('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
-		$('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
-		$('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
-		return true;
+	    $('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
+	    $('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    return true;
 	},
 
-	onSelecionarTipo: function () {
-		var tipo = $('.ddlTipos :selected', FiscalizacaoMaterialApreendido.container).val();
-		$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('');
+	onSelecionarProdutoApreendido: function () {
+	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container).val();
+	    var unidade = $('.hdnUnidade' + produto, FiscalizacaoMaterialApreendido.container).val();
 
-		switch (tipo) {
-
-			case '1':
-			case '7':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar a quantidade');
-				break;
-
-			case '2':
-			case '3':
-			case '4':
-			case '6':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar o volume em (m³) e como foi medido');
-				break;
-
-			case '5':
-			case '8':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar');
-				break;
-		}
+	    $('.txtUnidade', FiscalizacaoMaterialApreendido.container).val(unidade);
 	},
 
-	adicionarMaterial: function () {
-		var mensagens = new Array();
-		Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
-		var container = $('.fsMateriais');
+	adicionarProdutoApreendido: function () {
+	    var mensagens = new Array();
+	    Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
+	    var container = $('.fsProdutosApreendidos');
 
-		var item = { Id: '', TipoId: $('.ddlTipos :selected', container).val(), TipoTexto: $('.ddlTipos :selected', container).text(), Especificacao: $('.txtEspecificacao', container).val() };
+        //Monta o objeto
+	    var item = {
+	        Id: 0,
+	        ProdutoId: $('.ddlProdutosApreendidos :selected', container).val(),
+	        ProdutoTexto: $('.ddlProdutosApreendidos :selected', container).text(),
+	        UnidadeTexto: $('.txtUnidade', container).val(),
+	        Quantidade: $('.txtQuantidade', container).val(),
+	        DestinoId: $('.ddlDestinos :selected', container).val(),
+	        DestinoTexto: $('.ddlDestinos :selected', container).text()
+	    };
 
-		if (item.TipoId == 0) {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.TipoObrigatorio));
-		}
+        //Verifica se todos os campos foram preenchidos, e se  objeto não está repetido
+	    if (item.ProdutoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoObrigatorio));
+	    }
+	    if (item.Quantidade.trim() == '') {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.QuantidadeObrigatoria));
+	    }
+	    if (item.DestinoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.DestinoObrigatorio));
+	    }
+	    $('.hdnItemJSon', container).each(function () {
+	        var obj = String($(this).val());
+	        if (obj != '') {
+	            var itemAdd = (JSON.parse(obj));
+	            if (item.ProdutoId == itemAdd.ProdutoId
+                    && item.DestinoId == itemAdd.DestinoId) {
+	                mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoJaAdicionado));
+	            }
+	        }
+	    });
 
-		if (jQuery.trim(item.Especificacao) == '') {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.EspecificacaoObrigatorio));
-		}
+	    //Se alguma obrigatoriedade não for atendida, retorna uma mensagem de erro
+	    if (mensagens.length > 0) {
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
+	        return;
+	    }
 
-		$('.hdnItemJSon', container).each(function () {
-			var obj = String($(this).val());
-			if (obj != '') {
-				var itemAdd = (JSON.parse(obj));
-				if (item.TipoId == itemAdd.TipoId) {
-					mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.MaterialJaAdicionado));
-				}
-			}
-		});
+        //Monta a nova linha
+	    var numItem = 0;
+	    $('.hdnItemJSon', container).each(function(){
+	        numItem++;
+	    });
+	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    linha.find('.hdnItemJSon').val(JSON.stringify(item));
+	    linha.find('.item').text(numItem).attr('title', numItem);
+	    linha.find('.produto').text(item.ProdutoTexto).attr('title', item.ProdutoTexto);
+	    linha.find('.unidade').text(item.UnidadeTexto).attr('title', item.UnidadeTexto);
+	    linha.find('.quantidade').text(item.Quantidade).attr('title', item.Quantidade);
+	    linha.find('.destino').text(item.DestinoTexto).attr('title', item.DestinoTexto);
 
-		if (mensagens.length > 0) {
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
-			return;
-		}
+        //Adiciona a nova linha na tabela
+	    $('.dataGridTable tbody:last', container).append(linha);
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
-		linha.find('.hdnItemJSon').val(JSON.stringify(item));
-		linha.find('.tipo').html(item.TipoTexto).attr('title', item.TipoTexto);
-		linha.find('.especificacao').html(item.Especificacao).attr('title', item.Especificacao);
-
-		$('.dataGridTable tbody:last', container).append(linha);
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-
-		$('.ddlTipos', container).ddlFirst();
-		$('.txtEspecificacao', container).val('');
+        //Limpa os controles
+	    $('.ddlProdutosApreendidos', container).ddlFirst();
+	    $('.txtUnidade', container).val('');
+	    $('.txtQuantidade', container).val('');
+	    $('.ddlDestinos', container).ddlFirst();
 	},
 
-	excluirMaterial: function () {
-		var container = $('.fsMateriais');
-		var linha = $(this).closest('tr');
-		linha.remove();
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+	excluirProdutoApreendido: function () {
+        //remove a linha
+	    $(this).closest('tr').remove();
+
+	    var container = $('.fsProdutosApreendidos');
+
+	    //atualiza o número na coluna item das outras linhas
+	    var numItem = 0;
+	    container.find('tr').each(function () {
+	        if ($(this).find('.item').text() != '') {
+	            $(this).find('.item').text(++numItem);
+	        }
+	    });
+
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+	},
+
+	mascaraLacre: function (evt) {
+	    //Permite apenas números, vírgulas e espaços.
+	    if ((evt.originalEvent.key >= 0
+             && evt.originalEvent.key <= 9)
+            || evt.originalEvent.key == ','
+            || evt.originalEvent.key == ' ') {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	},
+
+	onSalvarFiscalizacaoMaterialApreendido: function () {
+	    var container = FiscalizacaoMaterialApreendido.container;
+
+        //Criação do objeto (da classe MaterialApreendido)
+	    var obj = {
+	        Id: Number($('.hdnMaterialApreendidoId', container).val()),
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
+	        ProdutosApreendidos: []
+	    };
+
+        //Preenchendo o objeto com os itens da sessão Apreensão
+	    if ($('.rdoIsBloco', container).attr('checked')) {
+	        obj.IsDigital = false;
+	        obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+	        obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+	    } else {
+	        obj.IsDigital = true;
+	    }
+	    obj.SerieId = $('.ddlSeries :selected', container).val();
+	    obj.Descricao = $('.txtDescricao', container).val();
+	    obj.ValorProdutos = $('.txtValorBensApreendidos', container).val();
+	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
+
+	    //Preenchendo o objeto com os itens da sessão Depositário
+	    obj.Depositario = {
+	        Id: $('.hdnDepositarioId', container).val(),
+	        Logradouro: $('.txtLogradouro', container).val(),
+	        Bairro: $('.txtBairro', container).val(),
+	        Distrito: $('.txtDistrito', container).val(),
+	        Estado: $('.ddlEstado :selected', container).val(),
+	        Municipio: $('.ddlMunicipio :selected', container).val()
+	    };
+
+	    //Preenchendo o objeto com os itens da sessão Produtos Apreendidos / Destinação
+	    $('.hdnItemJSon', container.find('.divProdutosApreendidos')).each(function () {
+	        var objProdutoApreendido = String($(this).val());
+	        if (objProdutoApreendido != '') {
+	            obj.ProdutosApreendidos.push(JSON.parse(objProdutoApreendido));
+	        }
+	    });
+	    obj.Opiniao = $('.txtOpiniao', container).val();
+
+	    var arrayMensagem = [];
+
+	    arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
+
+	    return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
+	},
+
+	onEditarDepositario: function () {
+	    var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
 	},
 
 	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
+	    var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
 
-		erroMsg = new Array();
+	    erroMsg = new Array();
 
-		if (nomeArquivo == '') {
-			erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
-			}
-		}
+	    if (nomeArquivo == '') {
+	        erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
+	    } else {
+	        var tam = nomeArquivo.length - 4;
+	        if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+	            erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
+	        }
+	    }
 
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
+	    if (erroMsg.length > 0) {
+	        Mensagem.gerar(Fiscalizacao.container, erroMsg);
+	        return;
+	    }
 
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
-		FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
+	    MasterPage.carregando(true);
+	    var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
+	    FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
 	},
 
 	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
-		$('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
+	    $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
+	    $('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
 
-		$('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	    $('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
 
-		$('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	    $('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
 	},
 
 	validarTipoArquivo: function (tipo) {
 
-		var tipoValido = false;
-		$(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
+	    var tipoValido = false;
+	    $(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
+	        if (tipoItem == tipo) {
+	            tipoValido = true;
+	        }
+	    });
 
-		return tipoValido;
+	    return tipoValido;
 	},
 
 	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+	    var ret = eval('(' + retorno + ')');
+	    if (ret.Arquivo != null) {
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
+	        $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
 
-			$('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	        $('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
 
-			$('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		} else {
-			FiscalizacaoMaterialApreendido.onLimparArquivoClick();
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
+	        $('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    } else {
+	        FiscalizacaoMaterialApreendido.onLimparArquivoClick();
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
+	    }
+	    MasterPage.carregando(false);
 
-		Mensagem.limpar(Fiscalizacao.container);
-	}
+	    Mensagem.limpar(Fiscalizacao.container);
+	},
+
+    ///////////////////////OLD////////////////////////////
+
+	//onSelecionarIsApreendidoSim: function () {
+	//	$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
+	//},
+
+	//onSelecionarIsApreendidoNao: function () {
+	//	$('.divApreensao', FiscalizacaoMaterialApreendido.container).hide();
+
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
+	//	$('.rdoIsGeradoSistemaNao', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
+	//	$('.rdoIsGeradoSistemaSim', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
+	//	$('.txtNumeroTad', FiscalizacaoMaterialApreendido.container).val('');
+	//	$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
+	//},
+
+	//gerenciarSerie: function () {
+	//	var container = FiscalizacaoMaterialApreendido.container;
+	//	var rdb = $('.rbdIsGeradoSistema:checked', container).val();
+	//	if (rdb == 0) {
+	//		var serie = $('.ddlSeries :selected').val();
+	//		if (serie == 3) {
+	//			$('.lblNumTAD', container).text('Nº do TAD *');
+	//		} else {
+	//			$('.lblNumTAD', container).text('Nº do TAD - bloco *');
+	//		}
+	//	}
+	//},
+
+	//gerenciarIsGeradaSistema: function () {
+	//	var rdb = $('.rbdIsGeradoSistema:checked', FiscalizacaoMaterialApreendido.container).val();
+	//	if (rdb == 0) {
+	//		FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao();
+	//	} else {
+	//		if (rdb == 1) {
+	//			FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim();
+	//		}
+	//	}
+	//	FiscalizacaoMaterialApreendido.gerenciarSerie();
+	//},
+
+	//onSelecionarIsGeradaSistemaSim: function () {
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
+
+	//	$('.ddlSeries option:eq(3)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	//	$('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	//},
+
+	//onSelecionarIsGeradaSistemaNao: function () {
+	//	$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
+	//	$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	//	FiscalizacaoMaterialApreendido.gerenciarSerie();
+	//}
 }
 
 // 8ª Aba

@@ -1223,22 +1223,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			FiscalizacaoVM vm = new FiscalizacaoVM();
 			MaterialApreendido materialApreendido = new MaterialApreendido();
-			List<ListaValor> ufs = new List<ListaValor>();
-			List<ListaValor> municipios = new List<ListaValor>();
-			List<ListaValor> tipos = new List<ListaValor>();
+            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
 
 			if (id != 0)
 			{
 				materialApreendido = _busMaterialApreendido.Obter(id);
 			}
 
+            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
+
 			vm.MaterialApreendidoVM = new MaterialApreendidoVM
 			{
 				MaterialApreendido = materialApreendido,
-				Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
+                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),
-				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true)
+				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
 			};
 
 			if (id != 0)
@@ -1269,22 +1272,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+        //Carrega a sessão, em uma fiscalização já salva
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult MaterialApreendidoVisualizar(int id)
 		{
 			FiscalizacaoVM vm = new FiscalizacaoVM();
 			MaterialApreendido materialApreendido = new MaterialApreendido();
-			List<ListaValor> ufs = new List<ListaValor>();
-			List<ListaValor> municipios = new List<ListaValor>();
-			List<ListaValor> tipos = new List<ListaValor>();
+            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
 
 			materialApreendido = _busMaterialApreendido.Obter(id);
+            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
 
 			vm.MaterialApreendidoVM = new MaterialApreendidoVM
 			{
 				IsVisualizar = materialApreendido.Id > 0,
 				MaterialApreendido = materialApreendido,
 				Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
+                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
 				Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
 				Municipios = new List<SelectListItem>(),
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
@@ -1315,6 +1321,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+        //Salva a sessão
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)

@@ -1695,6 +1695,7 @@
     <Content Include="Views\Fiscalizacao\ConfigurarProdutosDestinacao.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoDestinos.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoProdutos.ascx" />
+    <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
