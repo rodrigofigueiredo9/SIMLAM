@@ -287,6 +287,260 @@ ConfigurarItemInfracao = {
 	}
 }
 
+ConfigurarPenalidade = {
+    settings: {
+        urls: {
+            salvar: '',
+            podeDesativar: '',
+            podeEditar: '',
+            alterarSituacao: '',
+            ExcluirConfirm: '',
+            Excluir: ''
+        },
+
+        mensagens: null
+    },
+
+    container: null,
+
+    load: function (container, options) {
+        if (options) { $.extend(ConfigurarPenalidade.settings, options); }
+        ConfigurarPenalidade.container = container;
+        
+       container.delegate('.btnSalvar', 'click', ConfigurarPenalidade.salvar);
+       container.delegate('.btnEditarItem', 'click', ConfigurarPenalidade.editar);
+       container.delegate('.btnExcluirItem', 'click', ConfigurarPenalidade.excluir);
+       container.delegate('.btnDesativarItem', 'click', ConfigurarPenalidade.desativar);
+       container.delegate('.btnAtivarItem', 'click', ConfigurarPenalidade.ativar);
+   
+       ConfigurarPenalidade.gerenciarBotoes();
+    },
+
+    gerenciarBotoes: function () {
+        $('.hdnItemJSon', ConfigurarPenalidade.settings.container).each(function () {
+            var strJSON = $(this).val().toString();
+            if (strJSON != '') {
+                var item = JSON.parse(strJSON);
+                var containerAux = $(this).closest('tr');
+
+                if (item.IsAtivo) {
+                    $('.btnDesativarItem', containerAux).button({
+                        disabled: false
+                    });
+
+                    $('.btnAtivarItem', containerAux).button({
+                        disabled: true
+                    });
+                } else {
+                    $('.btnDesativarItem', containerAux).button({
+                        disabled: true
+                    });
+
+                    $('.btnAtivarItem', containerAux).button({
+                        disabled: false
+                    });
+                }
+
+            }
+
+        });
+
+    },
+
+    limparCampos: function () {
+        var possuiTipo = Item.settings.possuiTipo;
+
+        $('.txtArtigo', ConfigurarPenalidade.container).val('');
+        $('.txtItem', ConfigurarPenalidade.container).val('');
+        $('.txtDescricao', ConfigurarPenalidade.container).val('');
+        $('.hdnItemId', ConfigurarPenalidade.container).val(0);
+
+       
+        $(ConfigurarPenalidade.settings.container).removeClass('edit');
+        //$(ConfigurarPenalidade.settings.container.find('.linhaSelecionada')).removeClass('linhaSelecionada');
+
+    },
+
+    desativar: function () {
+        var container = $(this).closest('tr');
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+        
+        MasterPage.carregando(true);
+        $.ajax({
+            url: ConfigurarPenalidade.settings.urls.alterarSituacao,
+            data: JSON.stringify({ tipoId: item.Id, situacaoNova: 0 }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarItemInfracao.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
+
+                    Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
+                }
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
+                }
+            }
+        });
+
+        MasterPage.carregando(false);
+
+        ConfigurarPenalidade.gerenciarBotoes();
+
+        ConfigurarPenalidade.limparCampos();
+    },
+
+    ativar: function () {
+        var container = $(this).closest('tr');
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+        
+        MasterPage.carregando(true);
+        $.ajax({
+            url: ConfigurarPenalidade.settings.urls.alterarSituacao,
+            data: JSON.stringify({ tipoId: item.Id, situacaoNova: 1 }),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarItemInfracao.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
+
+                    Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
+                }
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
+                }
+            }
+        });
+        MasterPage.carregando(false);
+
+        ConfigurarPenalidade.gerenciarBotoes();
+
+        ConfigurarPenalidade.limparCampos();
+    },
+
+    excluir: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        Modal.excluir({
+            'urlConfirm': ConfigurarPenalidade.settings.urls.ExcluirConfirm,
+            'urlAcao': ConfigurarPenalidade.settings.urls.Excluir,
+            'id': $(this).closest('tr').find('.itemId:first').val(),
+            'callBack': Item.callBackExcluir,
+            'naoExecutarUltimaBusca': true
+        });
+    },
+
+    callBackExcluir: function (data) {
+        MasterPage.redireciona(data.urlRedireciona);
+    },
+
+    salvar: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var mensagens = new Array();
+        var container = ConfigurarPenalidade.settings.container;
+    
+        var item = {
+            Id: $('.hdnItemId', container).val(),
+            Artigo: $('.txtArtigo', container).val(),
+            Item: $('.txtItem', container).val(),
+            Descricao: $('.txtDescricao', container).val()
+        }
+
+
+        if (item.Artigo == '') {
+            return;
+        }
+
+        if (item.Item == '') {
+            return;
+        }
+
+        if (item.Descricao == '') {
+            return;
+        }
+
+
+        MasterPage.carregando(true);
+        $.ajax({
+            url: ConfigurarPenalidade.settings.urls.salvar,
+            data: JSON.stringify(item),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarPenalidade.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
+                }
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(Item.settings.container, response.Msg);
+                }
+            }
+        });
+
+        MasterPage.carregando(false);
+
+        Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
+
+        ConfigurarPenalidade.limparCampos();
+
+    },
+
+    editar: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+
+        ConfigurarPenalidade.cancelarEdicao();
+
+        var container = $(this).closest('tr');
+        var mensagens = new Array();
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+   
+        $(ConfigurarPenalidade.settings.container).addClass('edit');
+        //$(ConfigurarPenalidade.settings.container.find('.linhaSelecionada')).removeClass('linhaSelecionada');
+
+                   
+
+        $(container).addClass('linhaSelecionada');
+
+        $('.txtArtigo', ConfigurarPenalidade.settings.container).val(item.Artigo);
+        $('.txtItem', ConfigurarPenalidade.settings.container).val(item.Item);
+        $('.txtDescricao', ConfigurarPenalidade.settings.container).val(item.Descricao);
+        $('.hdnItemId', ConfigurarPenalidade.settings.container).val(item.Id);
+        $('.hdnItemIsAtivo', ConfigurarPenalidade.settings.container).val(item.IsAtivo ? 1 : 0);
+
+        $('.txtArtigo', ConfigurarPenalidade.settings.container).focus();
+
+      
+              
+               
+    },
+
+    cancelarEdicao: function () {
+        ConfigurarPenalidade.limparCampos();
+    }
+
+}
+
 ConfigurarSubItemInfracao = {
 	settings: {
 		urls: {

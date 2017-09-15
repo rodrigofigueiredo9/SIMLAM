@@ -265,14 +265,74 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
         #endregion
 
-        #region Campo Infracao
+		#region Penalidade
 
-        public bool SalvarCampoInfracao(Item entidade)
+        public bool ExcluirPenalidade(int id)
         {
             try
             {
-                if (_validar.SalvarCampoInfracao(entidade))
+                GerenciadorTransacao.ObterIDAtual();
+
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                 {
+                    bancoDeDados.IniciarTransacao();
+
+                   
+                    _da.ExcluirPenalidade(id, bancoDeDados);
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ExcluirPenalidade);
+                 
+
+                    bancoDeDados.Commit();
+                }
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        public bool SalvarPenalidade(Penalidade entidade)
+        {
+            try
+            {
+                if (_validar.SalvarPenalidade(entidade))
+                {
+
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    {
+                        bancoDeDados.IniciarTransacao();
+
+                        _da.SalvarPenalidade(entidade, bancoDeDados);
+
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarPenalidade);
+
+                        bancoDeDados.Commit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return Validacao.EhValido;
+
+        }
+
+        #endregion
+
+        #region Campo Infração
+        public bool SalvarCampoInfracao(Item entidade)
+		{
+			try
+			{
+				if (_validar.SalvarCampoInfracao(entidade))
+				{
 
                     GerenciadorTransacao.ObterIDAtual();
 
@@ -609,17 +669,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return lista;
         }
 
-        public List<Item> ObterItemInfracao()
+
+        public List<Penalidade> ObterPenalidades()
         {
-            List<Item> lista = null;
+            List<Penalidade> lista = null;
             try
             {
-                lista = _da.ObterItemInfracao();
+                lista = _da.ObterPenalidades();
             }
             catch (Exception exc)
             {
                 Validacao.AddErro(exc);
             }
+
+            return lista;
+        }
+
+		public List<Item> ObterItemInfracao()
+		{
+			List<Item> lista = null;
+			try
+			{
+				lista = _da.ObterItemInfracao();
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
             return lista;
         }
@@ -993,9 +1069,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
         }
 
-        public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova)
+        public void AlterarSituacaoPenalidade(int Id, int situacaoNova)
         {
-            List<String> configAssociadas = _da.ObterIdsConfiguracoesAssociadasCampoInfracao(campoId);
+            _da.AlterarSituacaoPenalidade(Id, situacaoNova);
+        }
+
+		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova)
+		{
+			List<String> configAssociadas = _da.ObterIdsConfiguracoesAssociadasCampoInfracao(campoId);
 
             if (configAssociadas.Count > 0 && situacaoNova == 0)
             {

@@ -695,14 +695,109 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
         #endregion
 
-        #region Campo Infracao
 
-        internal int SalvarCampoInfracao(Item entidade, BancoDeDados banco = null)
+        #region Penalidade
+
+        public void ExcluirPenalidade(int id, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                Comando comando = null;
+
+                #region Histórico
+
+                //Atualizar o tid para a nova ação
+                comando = bancoDeDados.CriarComando(@"update {0}cnf_fisc_infracao_penalidade t set t.tid = :tid where t.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                Historico.Gerar(id, eHistoricoArtefato.campoinfracao, eHistoricoAcao.excluir, bancoDeDados, null);
+
+                #endregion
+
+                comando = bancoDeDados.CriarComando(@"delete {0}cnf_fisc_infracao_penalidade t where t.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                bancoDeDados.Commit();
+            }
+        }
+
+        internal int SalvarPenalidade(Penalidade entidade, BancoDeDados banco = null)
         {
             if (entidade == null)
             {
-                throw new Exception("Objeto Campo é nulo.");
+                throw new Exception("Objeto penalidade é nulo.");
             }
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                int campoId = Convert.ToInt32(entidade.Id);
+                eHistoricoAcao acao = eHistoricoAcao.criar;
+
+                if (campoId <= 0)
+                {
+                    comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infracao_penalidade (id, artigo, item, descricao, tid, situacao) 
+														values(seq_cnf_fisc_inf_penalidade.nextval, :artigo, :item, :descricao, :tid, :situacao) 
+														returning id into :id", EsquemaBanco);
+
+                    comando.AdicionarParametroSaida("id", DbType.Int32);
+                }
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"update cnf_fisc_infracao_penalidade c set c.artigo = :artigo, c.item = :item,
+														c.descricao = :descricao, c.tid = :tid, c.situacao = :situacao 
+														where c.id = :id", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("id", campoId, DbType.Int32);
+                    acao = eHistoricoAcao.atualizar;
+                }
+
+                comando.AdicionarParametroEntrada("artigo", entidade.Artigo, DbType.String);
+                comando.AdicionarParametroEntrada("item", entidade.Item, DbType.String);
+                comando.AdicionarParametroEntrada("descricao", entidade.Descricao, DbType.String);
+                comando.AdicionarParametroEntrada("situacao", entidade.IsAtivo, DbType.UInt32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                if (campoId <= 0)
+                {
+                    entidade.Id = comando.ObterValorParametro("id").ToString();
+                }
+
+                #region Histórico
+
+                Historico.Gerar(Convert.ToInt32(entidade.Id), eHistoricoArtefato.penalidadeinfracao, acao, bancoDeDados, null);
+
+                #endregion
+
+                bancoDeDados.Commit();
+
+                return Convert.ToInt32(entidade.Id);
+            }
+        }
+
+        #endregion
+
+
+        #region Campo Infracao
+
+        internal int SalvarCampoInfracao(Item entidade, BancoDeDados banco = null)
+		{
+			if (entidade == null)
+			{
+				throw new Exception("Objeto Campo é nulo.");
+			}
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
@@ -1578,9 +1673,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return lista;
         }
 
-        internal List<Item> ObterCampoInfracao()
+        internal List<Penalidade> ObterPenalidades()
         {
-            List<Item> lista = new List<Item>();
+            List<Penalidade> lista = new List<Penalidade>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select id , artigo, item, descricao, tid, ativo
+															from {0}cnf_fisc_infracao_penalidade t
+															order by t.descricao", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        
+                        lista.Add(new Penalidade
+                        {
+                            Id = reader.GetValue<string>("id"),
+                            Artigo = reader.GetValue<string>("artigo"),
+                            Item = reader.GetValue<string>("item"),
+                            Descricao = reader.GetValue<string>("descricao"),
+                            Tid = reader.GetValue<string>("tid"),
+                            Texto = reader.GetValue<string>("artigo"),
+                            IsAtivo = reader.GetValue<Boolean>("ativo")
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return lista;
+        }
+
+		internal List<Item> ObterCampoInfracao()
+		{
+			List<Item> lista = new List<Item>();
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
@@ -2527,11 +2656,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             }
         }
 
-        public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova, BancoDeDados banco = null)
+        public void AlterarSituacaoPenalidade(int Id, int situacaoNova, BancoDeDados banco = null)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 bancoDeDados.IniciarTransacao();
+
+                Comando comando = bancoDeDados.CriarComando(@"update {0}cnf_fisc_infracao_penalidade t set t.ativo = :situacao, t.tid = :tid where t.id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("situacao", situacaoNova, DbType.Int32);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroEntrada("id", Id, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                Historico.Gerar(Id, eHistoricoArtefato.campoinfracao, eHistoricoAcao.atualizar, bancoDeDados, null);
+
+                bancoDeDados.Commit();
+            }
+        }
+
+
+
+
+		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
 
                 Comando comando = bancoDeDados.CriarComando(@"update {0}cnf_fisc_infracao_campo t set t.ativo = :situacao, t.tid = :tid where t.id = :id", EsquemaBanco);
                 comando.AdicionarParametroEntrada("situacao", situacaoNova, DbType.Int32);

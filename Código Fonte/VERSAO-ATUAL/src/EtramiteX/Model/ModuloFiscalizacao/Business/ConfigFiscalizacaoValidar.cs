@@ -112,9 +112,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#region Campo
+        #region Penalidade
+        public bool SalvarPenalidade(Penalidade penalidade)
+        {
+            return Validacao.EhValido;
+        }
 
-		public bool SalvarCampoInfracao(Item campo)
+
+        #endregion
+
+        #region Campo
+
+        public bool SalvarCampoInfracao(Item campo)
 		{
 			return Validacao.EhValido;
 		}
