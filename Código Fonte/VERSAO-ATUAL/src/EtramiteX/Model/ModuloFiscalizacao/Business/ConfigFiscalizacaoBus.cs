@@ -446,12 +446,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#endregion
+        #region Produtos Apreendidos / Destinação
 
-		#region Obter
+        public bool SalvarProdutosDestinacao(List<ProdutoApreendido> listaProdutos, List<DestinacaoProduto> listaDestinos)
+        {
+            try
+            {
+                if (_validar.SalvarProdutosApreendidos(listaProdutos)
+                    && _validar.SalvarDestinacao(listaDestinos))
+                {
+                    GerenciadorTransacao.ObterIDAtual();
+
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    {
+                        bancoDeDados.IniciarTransacao();
+
+                        _da.SalvarProdutosApreendidos(listaProdutos, bancoDeDados);
+                       
+                        _da.SalvarDestinacao(listaDestinos, bancoDeDados);
+
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarProdutosDestinos);
+
+                        bancoDeDados.Commit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return Validacao.EhValido;
+        }
+
+        #endregion Produtos Apreendidos / Destinação
+
+        #endregion
+
+        #region Obter
 
 
-		public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+        public ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao entidade = null;
 
@@ -677,6 +712,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return lista;
 		}
+
+        public List<ProdutoApreendido> ObterProdutosApreendidos()
+        {
+            List<ProdutoApreendido> listaProdutos = new List<ProdutoApreendido>();
+
+            try
+            {
+                listaProdutos = _da.ObterProdutosApreendidos();
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return listaProdutos;
+        }
+
+        public List<DestinacaoProduto> ObterDestinacao()
+        {
+            List<DestinacaoProduto> listaDestinacao = new List<DestinacaoProduto>();
+
+            try
+            {
+                listaDestinacao = _da.ObterDestinacao();
+            }
+            catch (Exception e)
+            {
+                Validacao.AddErro(e);
+            }
+
+            return listaDestinacao;
+        }
 
 		public List<Lista> ObterItensConfig(bool? isAtivo)
 		{

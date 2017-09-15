@@ -2098,9 +2098,48 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Auxiliares
+        #region Produtos Apreendidos/Destinação
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+        public ActionResult ConfigurarProdutosDestinacao()
+        {
+            ProdutoDestinacaoVM vm = new ProdutoDestinacaoVM();
+            vm.ListaProdutos = _busConfiguracao.ObterProdutosApreendidos();
+            vm.ListaDestinos = _busConfiguracao.ObterDestinacao();
+            
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+        public ActionResult ConfigurarProdutosDestinacao(List<ProdutoApreendido> listaProdutos, List<DestinacaoProduto> listaDestinos)
+        {
+            if (listaProdutos == null)
+            {
+                listaProdutos = new List<ProdutoApreendido>();
+            }
+
+            if (listaDestinos == null)
+            {
+                listaDestinos = new List<DestinacaoProduto>();
+            }
+            
+            _busConfiguracao.SalvarProdutosDestinacao(listaProdutos, listaDestinos);
+            
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Url = Url.Action("ConfigurarProdutosDestinacao", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        #endregion Produtos Apreendidos/Destinação
+
+        #region Auxiliares
+
+        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarTipoInfracao })]
 		public ActionResult AlterarSituacaoTipoInfracao(int tipoId, int situacaoNova)
 		{
 			_busConfiguracao.AlterarSituacaoTipoInfracao(tipoId, situacaoNova);

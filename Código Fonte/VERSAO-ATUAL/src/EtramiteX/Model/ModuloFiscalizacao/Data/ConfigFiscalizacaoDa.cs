@@ -1022,11 +1022,202 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#endregion
 
-		#endregion
+        #region Produtos Apreendidos/Destinação
 
-		#region Obter / Filtrar
+        internal void SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos, BancoDeDados banco = null)
+        {
+            if (listaProdutos == null)
+            {
+                throw new Exception("Objeto Produto Apreendido é nulo.");
+            }
 
-		internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando;
+
+                bancoDeDados.IniciarTransacao();
+
+                eHistoricoAcao? acao;
+
+                foreach (var produto in listaProdutos)
+                {
+                    acao = null;
+                    comando = null;
+
+                    if (produto.Id == 0)    //produto novo, incluir
+                    {
+                        acao = eHistoricoAcao.criar;
+
+                        comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infracao_produto(id, item, unidade, ativo, tid)
+                                                              values(seq_cnf_fisc_infracao_produto.nextval, :item, :unidade, :ativo, :tid)
+                                                              returning id into :id", EsquemaBanco);
+
+                        comando.AdicionarParametroSaida("id", DbType.Int32);
+                        comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
+                        comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        produto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+                        #region Histórico
+
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+                    }
+                    else if (produto.Excluir == false && produto.Editado == true)  //produto existente, editar
+                    {
+                        acao = eHistoricoAcao.atualizar;
+
+                        comando = bancoDeDados.CriarComando(@"update cnf_fisc_infracao_produto
+                                                              set item = :item,
+                                                                  unidade = :unidade,
+                                                                  ativo = :ativo,
+                                                                  tid = :tid
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("item", produto.Item, DbType.String);
+                        comando.AdicionarParametroEntrada("unidade", produto.Unidade, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", produto.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        #region Histórico
+
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+                    }
+                    else if (produto.Excluir == true)   //produto existente, excluir
+                    {
+                        acao = eHistoricoAcao.excluir;
+
+                        comando = bancoDeDados.CriarComando(@"delete from cnf_fisc_infracao_produto
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
+
+                        #region Histórico
+
+                        //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído
+                        Historico.Gerar(produto.Id, eHistoricoArtefato.produtoapreendido, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                bancoDeDados.Commit();
+
+                //return Convert.ToInt32(entidade.Id);
+            }
+        }
+
+        internal void SalvarDestinacao(List<DestinacaoProduto> listaDestinacao, BancoDeDados banco = null)
+        {
+            if (listaDestinacao == null)
+            {
+                throw new Exception("Objeto Destinação é nulo.");
+            }
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando;
+
+                bancoDeDados.IniciarTransacao();
+
+                eHistoricoAcao? acao;
+
+                foreach (var destinacao in listaDestinacao)
+                {
+                    acao = null;
+                    comando = null;
+
+                    if (destinacao.Id == 0)    //destinação nova, incluir
+                    {
+                        acao = eHistoricoAcao.criar;
+
+                        comando = bancoDeDados.CriarComando(@"insert into cnf_fisc_infr_destinacao(id, destino, ativo, tid)
+                                                              values(seq_cnf_fisc_infr_destinacao.nextval, :destino, :ativo, :tid)
+                                                              returning id into :id", EsquemaBanco);
+
+                        comando.AdicionarParametroSaida("id", DbType.Int32);
+                        comando.AdicionarParametroEntrada("destino", destinacao.Destino, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", destinacao.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        destinacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+                        #region Histórico
+
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+                    }
+                    else if (destinacao.Excluir == false && destinacao.Editado == true)  //destinação existente, editar
+                    {
+                        acao = eHistoricoAcao.atualizar;
+
+                        comando = bancoDeDados.CriarComando(@"update cnf_fisc_infr_destinacao
+                                                              set destino = :destino,
+                                                                  ativo = :ativo,
+                                                                  tid = :tid
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", destinacao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("destino", destinacao.Destino, DbType.String);
+                        comando.AdicionarParametroEntrada("ativo", destinacao.Ativo, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+
+                        #region Histórico
+
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+                    }
+                    else if (destinacao.Excluir == true)   //destinação existente, excluir
+                    {
+                        acao = eHistoricoAcao.excluir;
+
+                        comando = bancoDeDados.CriarComando(@"delete from cnf_fisc_infr_destinacao
+                                                              where id = :id", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("id", destinacao.Id, DbType.Int32);
+
+                        #region Histórico
+
+                        //No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído
+                        Historico.Gerar(destinacao.Id, eHistoricoArtefato.fiscdestinacao, (eHistoricoAcao)acao, bancoDeDados, null);
+
+                        #endregion
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                bancoDeDados.Commit();
+
+                //return Convert.ToInt32(entidade.Id);
+            }
+        }
+
+        #endregion Produtos Apreendidos/Destinação
+
+        #endregion
+
+        #region Obter / Filtrar
+
+        internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
 		{
 			ConfigFiscalizacao configFiscalizacao = new ConfigFiscalizacao();
 
@@ -1668,6 +1859,73 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 			return lista;
 		}
+
+        internal List<ProdutoApreendido> ObterProdutosApreendidos(BancoDeDados banco = null)
+        {
+            List<ProdutoApreendido> listaProdutos = new List<ProdutoApreendido>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                comando = bancoDeDados.CriarComando(@"select id, item, unidade, ativo, tid
+                                                      from cnf_fisc_infracao_produto
+                                                      order by item, unidade", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        ProdutoApreendido produto = new ProdutoApreendido();
+
+                        produto.Id = reader.GetValue<int>("id");
+                        produto.Item = reader.GetValue<string>("item");
+                        produto.Unidade = reader.GetValue<string>("unidade");
+                        produto.Ativo = reader.GetValue<bool>("ativo");
+                        produto.Tid = reader.GetValue<string>("tid");
+
+                        listaProdutos.Add(produto);
+                    }
+                }
+            }
+
+            return listaProdutos;
+        }
+
+        internal List<DestinacaoProduto> ObterDestinacao(BancoDeDados banco = null)
+        {
+            List<DestinacaoProduto> listaDestinacao = new List<DestinacaoProduto>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
+
+                bancoDeDados.IniciarTransacao();
+
+                comando = bancoDeDados.CriarComando(@"select id, destino, ativo, tid
+                                                      from cnf_fisc_infr_destinacao
+                                                      order by destino", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        DestinacaoProduto destinacao = new DestinacaoProduto();
+
+                        destinacao.Id = reader.GetValue<int>("id");
+                        destinacao.Destino = reader.GetValue<string>("destino");
+                        destinacao.Ativo = reader.GetValue<bool>("ativo");
+                        destinacao.Tid = reader.GetValue<string>("tid");
+
+                        listaDestinacao.Add(destinacao);
+                    }
+                }
+            }
+
+            return listaDestinacao;
+        }
 
 		internal List<Lista> ObterItensConfig(bool? isAtivo)
 		{
