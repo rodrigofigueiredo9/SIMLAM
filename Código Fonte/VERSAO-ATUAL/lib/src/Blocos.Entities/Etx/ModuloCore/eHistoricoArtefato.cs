@@ -74,6 +74,7 @@
         ptvcomunicador = 145,
         declaracaoadicional = 146,
         produtoapreendido = 147,
-        fiscdestinacao = 148
+        fiscdestinacao = 148,
+        codigoreceita = 149
 	}
 }

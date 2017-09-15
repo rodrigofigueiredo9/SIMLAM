@@ -158,6 +158,16 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         #endregion Produtos Apreendidos/Destinação
 
+        #region Códigos da Receita
+
+        public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "Código da receita é obrigatório." }; } }
+        public Mensagem DescricaoCodigoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_Descricao", Texto = "Descrição é obrigatória." }; } }
+        public Mensagem CodigoReceitaDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "O código da receita já existe." }; } }
+        public Mensagem SalvarCodigoReceita { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de Códigos da Receita salva com sucesso." }; } }
+        public Mensagem ErroCodigoUsado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir. O código da receita já está sendo usado no sistema." }; } }
+
+        #endregion Códigos da Receita
+
         public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Tipo", Texto = "Tipo de infração é obrigatório." }; } }
 		public Mensagem ItemObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Item", Texto = "Item é obrigatório." }; } }
