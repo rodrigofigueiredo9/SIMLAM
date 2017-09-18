@@ -17,7 +17,7 @@ Fiscalizacao = {
 		autuado: '',
 		projetoGeografico: '',
 		complementacaoDados: '',
-		enquadramento: '',
+		//enquadramento: '',
 		objetoInfracao: '',
 		diagnostico: '',
 		consideracaoFinalVisualizar: '',
@@ -54,7 +54,7 @@ Fiscalizacao = {
 		}
 
 		if (Fiscalizacao.modo == 1) {
-			if (Fiscalizacao.stepAtual != 9 && Fiscalizacao.salvarEdicao) {
+			if (Fiscalizacao.stepAtual != 8 && Fiscalizacao.salvarEdicao) {
 				if (!Fiscalizacao.salvarTelaAtual()) {
 					return;
 				}
@@ -101,42 +101,42 @@ Fiscalizacao = {
 				//});
 				//break;
 
-			case 4:
-				Fiscalizacao.onObterStep(FiscalizacaoEnquadramento.settings.urls.visualizar, objeto.params, function () {
-					FiscalizacaoEnquadramento.callBackObterEnquadramentoVisualizar();
-					Fiscalizacao.gerenciarVisualizacao('.hdnEnquadramentoId');
-				});
-				break;
+			//case 4:
+			//	Fiscalizacao.onObterStep(FiscalizacaoEnquadramento.settings.urls.visualizar, objeto.params, function () {
+			//		FiscalizacaoEnquadramento.callBackObterEnquadramentoVisualizar();
+			//		Fiscalizacao.gerenciarVisualizacao('.hdnEnquadramentoId');
+			//	});
+			//	break;
 
-			case 5:
+			case 4:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.infracao, objeto.params, function () {
 					Infracao.callBackObterInfracaoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnInfracaoId');
 				});
 				break;
 
-			case 6:
+			case 5:
 				Fiscalizacao.onObterStep(FiscalizacaoObjetoInfracao.settings.urls.visualizar, objeto.params, function () {
 					FiscalizacaoObjetoInfracao.callBackObterObjetoInfracaoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnObjetoInfracaoId');
 				});
 				break;
 
-			case 7:
+			case 6:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.materialApreendido, objeto.params, function () {
 					FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendidoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnMaterialApreendidoId');
 				});
 				break;
 
-			case 8:
+			case 7:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.consideracaoFinalVisualizar, objeto.params, function () {
 					FiscalizacaoConsideracaoFinal.callBackObterConsideracaoFinalVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnConsideracaoFinalId');
 				});
 				break;
 
-			case 9:
+			case 8:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.finalizar, objeto.params, function () {
 					FiscalizacaoFinalizar.callBackObterFiscalizacaoFinalizar();
 					Fiscalizacao.gerenciarVisualizacao();
@@ -151,7 +151,7 @@ Fiscalizacao = {
 			return;
 		}
 
-		if (Fiscalizacao.stepAtual != 9) {
+		if (Fiscalizacao.stepAtual != 8) {
 			if (!Fiscalizacao.salvarTelaAtual()) {
 				return;
 			}
@@ -1306,7 +1306,7 @@ Infracao = {
 
 	callBackObterInfracaoVisualizar: function () {
 
-		Fiscalizacao.stepAtual = 5;
+		Fiscalizacao.stepAtual = 4;
 		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
 		Fiscalizacao.alternarAbas();
 
@@ -1373,7 +1373,7 @@ Infracao = {
 			Infracao.callBackObterInfracaoVisualizar();
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(5);
+			Fiscalizacao.configurarBtnCancelarStep(4);
 			Fiscalizacao.gerenciarVisualizacao();
 		});
 	},
@@ -1391,13 +1391,13 @@ Infracao = {
 
 	callBackObterInfracao: function () {
 
-		Fiscalizacao.stepAtual = 5;
+		Fiscalizacao.stepAtual = 4;
 		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
 		Fiscalizacao.alternarAbas();
 
 		Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
 
-		Fiscalizacao.configurarBtnCancelarStep(5);
+		Fiscalizacao.configurarBtnCancelarStep(4);
 		MasterPage.carregando(false);
 	},
 
@@ -1745,7 +1745,7 @@ FiscalizacaoObjetoInfracao = {
 
 	callBackObterObjetoInfracaoDefault: function () {
 		FiscalizacaoObjetoInfracao.container = $('.FiscalizacaoObjetoInfracaoContainer', Fiscalizacao.container);
-		Fiscalizacao.stepAtual = 6;
+		Fiscalizacao.stepAtual = 5;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoObjetoInfracao.onSalvarFiscalizacaoObjetoInfracao;
 		Fiscalizacao.alternarAbas();
 
@@ -1763,7 +1763,7 @@ FiscalizacaoObjetoInfracao = {
 		FiscalizacaoObjetoInfracao.gerenciarSerie();
 
 		Mascara.load(FiscalizacaoObjetoInfracao.container);
-		Fiscalizacao.configurarBtnCancelarStep(6);
+		Fiscalizacao.configurarBtnCancelarStep(5);
 		MasterPage.carregando(false);
 		MasterPage.botoes();
 		Fiscalizacao.gerenciarVisualizacao();
@@ -2002,7 +2002,7 @@ FiscalizacaoMaterialApreendido = {
 	},
 
 	callBackObterFiscalizacaoMaterialApreendidoDefault: function () {
-		Fiscalizacao.stepAtual = 7;
+		Fiscalizacao.stepAtual = 6;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
 		
@@ -2060,7 +2060,7 @@ FiscalizacaoMaterialApreendido = {
 	        FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
 	        Fiscalizacao.salvarEdicao = true;
 	        Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-	        Fiscalizacao.configurarBtnCancelarStep(7);
+	        Fiscalizacao.configurarBtnCancelarStep(6);
 	        Fiscalizacao.gerenciarVisualizacao();
 	    });
 	},
@@ -2439,7 +2439,7 @@ FiscalizacaoConsideracaoFinal = {
 		if (options) { $.extend(FiscalizacaoLocalInfracao.settings, options); }
 		FiscalizacaoConsideracaoFinal.container = MasterPage.getContent(container);
 
-		Fiscalizacao.stepAtual = 8;
+		Fiscalizacao.stepAtual = 7;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoConsideracaoFinal.onSalvar;
 		Fiscalizacao.alternarAbas();
 
@@ -2572,7 +2572,7 @@ FiscalizacaoConsideracaoFinal = {
 			Mascara.load(context);
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(8);
+			Fiscalizacao.configurarBtnCancelarStep(7);
 			MasterPage.carregando(false);
 			Fiscalizacao.gerenciarVisualizacao();
 		});
@@ -2911,13 +2911,13 @@ FiscalizacaoFinalizar = {
 	isLoad: true,
 	callBackObterFiscalizacaoFinalizar: function () {
 		FiscalizacaoFinalizar.container = $('.divFinalizar', Fiscalizacao.container); 
-		Fiscalizacao.stepAtual = 9;
+		Fiscalizacao.stepAtual = 8;
 		Fiscalizacao.alternarAbas();
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoFinalizar.onFinalizar;
 
 		Fiscalizacao.botoes({ btnFinalizar: true, spnCancelarCadastro: true });
 
-		Fiscalizacao.configurarBtnCancelarStep(9);
+		Fiscalizacao.configurarBtnCancelarStep(8);
 
 		if (FiscalizacaoFinalizar.isLoad) {
 			FiscalizacaoFinalizar.isLoad = false;

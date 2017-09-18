@@ -2321,7 +2321,7 @@
     <Content Include="Views\Fiscalizacao\ProjetoGeoBaseReferenciaPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeoDesenhadorPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeoEnviarProjetoPartial.ascx" />
-    <Content Include="Views\Fiscalizacao\Enquadramento.ascx" />
+    <Content Include="Views\Fiscalizacao\Enquadramento_old.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoPartial.ascx" />
     <Content Include="Views\Fiscalizacao\Infracao.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeografico.ascx" />
