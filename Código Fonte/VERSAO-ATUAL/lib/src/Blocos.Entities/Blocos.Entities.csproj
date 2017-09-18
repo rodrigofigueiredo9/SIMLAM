@@ -60,6 +60,7 @@
     <Compile Include="Autenticacao\HistoricoAplicacao.cs" />
     <Compile Include="Autenticacao\Usuario.cs" />
     <Compile Include="Configuracao\Interno.Extensoes\ePermissaoTipo.cs" />
+    <Compile Include="Configuracao\Interno\ProdutoApreendidoLst.cs" />
     <Compile Include="Configuracao\Interno\TituloModeloTipoDocumento.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\EmissaoCFOC.cs" />
     <Compile Include="Credenciado\ModuloCFOCFOC\Lote\ListarFiltroLote.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\Penalidade.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ProdutoApreendido.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\CodigoReceita.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\ApreensaoProdutoApreendido.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\ConsultaFiltro.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\eCFOCFOCTipoNumero.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\LiberaracaoNumeroCFOCFOC.cs" />

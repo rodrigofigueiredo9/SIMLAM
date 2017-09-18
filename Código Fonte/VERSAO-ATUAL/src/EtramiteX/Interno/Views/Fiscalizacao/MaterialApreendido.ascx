@@ -21,101 +21,91 @@
 
 <div class="divContainer" >
 
-<input type="hidden" class="hdnMaterialApreendidoId" value="<%:Model.MaterialApreendido.Id %>" />
+    <input type="hidden" class="hdnMaterialApreendidoId" value="<%:Model.MaterialApreendido.Id %>" />
 
-<div class="block box">
-	<div class="coluna40">
-		<label>Houve a apreensão de algum material? *</label><br />
-		<label><%= Html.RadioButton("MaterialApreendido.IsApreendido", 1, (Model.MaterialApreendido.IsApreendido == null ? false : Model.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsApreendidoSim" }))%>Sim</label>
-		<label class="append5"><%= Html.RadioButton("MaterialApreendido.IsApreendido", 0, (Model.MaterialApreendido.IsApreendido == null ? false : !Model.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsApreendidoNao" }))%>Não</label>
-	</div>
-</div>
+    <fieldset class="block box">
+        <legend>Apreensão</legend>
 
-<div class="divApreensao <%= (Model.MaterialApreendido.IsApreendido == null || !Model.MaterialApreendido.IsApreendido.Value? "hide" : "") %> " >
+        <div class="block">
+            <div class="coluna20">
+                <label>IUF para Apreensão</label><br />
+		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 0, (Model.MaterialApreendido.IsDigital == null ? false : Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
+		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
+            </div>
+        </div>
 
-	<div class="box">
-		<div class="block">
-			<div class="coluna22">
-				<label>Gerar TAD? *</label><br />
-				<label><%= Html.RadioButton("MaterialApreendido.IsTadGeradoSistema", 1, (Model.MaterialApreendido.IsTadGeradoSistema == null ? false : Model.MaterialApreendido.IsTadGeradoSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradoSistemaSim rbdIsGeradoSistema" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("MaterialApreendido.IsTadGeradoSistema", 0, (Model.MaterialApreendido.IsTadGeradoSistema == null ? false : !Model.MaterialApreendido.IsTadGeradoSistema.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsGeradoSistemaNao rbdIsGeradoSistema" }))%>Não</label>
-			</div>
-			<div class="coluna15 append2">
-				<label>Série *</label><br />
+        <div class="block">
+            <div class="coluna15">
+		        <label>Número do IUF</label>
+		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", Model.MaterialApreendido.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+	        </div>
+
+            <div class="coluna15">
+				<label>Série</label><br />
 				<%= Html.DropDownList("MaterialApreendido.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
 
-
-			<%if ((Model.MaterialApreendido.FiscalizacaoSituacaoId != (int)eFiscalizacaoSituacao.EmAndamento) && Model.MaterialApreendido.IsTadGeradoSistema.GetValueOrDefault()){%>
-				<div class="coluna24">
-					<label>Data da lavratura do termo *</label>
-					<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.DataConclusaoFiscalizacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
-				</div>
-
-			<%}else{ %>
-				<div class="coluna24 divIsTad <%= (Model.MaterialApreendido.IsTadGeradoSistema == null || Model.MaterialApreendido.IsTadGeradoSistema.Value? "hide" : "") %>">
-					<label>Data da lavratura do termo *</label>
-					<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.MaterialApreendido.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
-				</div>
-			<%} %>
-
-		</div>
-
-		<div class=" <%= (Model.MaterialApreendido.IsTadGeradoSistema == null || Model.MaterialApreendido.IsTadGeradoSistema.Value? "hide" : "") %> divIsTad">
-			<div class="block" >
-				<div class="coluna20 append2">
-					<label class="lblNumTAD">Nº do TAD - bloco *</label>
-					<%= Html.TextBox("MaterialApreendido.NumeroTad", Model.MaterialApreendido.NumeroTad, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroTad", @maxlength = "10" }))%>
-				</div>
+            <div class="coluna15">
+				<label>Data da lavratura do IUF</label>
+				<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.MaterialApreendido.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
-			<div class="block">
-				<div class="coluna40 inputFileDiv">
-					<label>PDF do termo de apreensão e depósito</label>
-					<div class="block">
-						<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.MaterialApreendido.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.MaterialApreendido.Arquivo.Nome)%></a>
-					</div>
-					<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
-					<span class="spanInputFile <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>">
-						<input type="file" id="file" class="inputFile" style="display: block" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
-					</span>
-				</div>
-				<% if (!Model.IsVisualizar) { %>
-				<div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
-					<button type="button" class="inlineBotao botaoAdicionar btnAddArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
-					<button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
-				</div>
-				<% } %>
-			</div>
-		</div>
+        </div>
 
-		<div class="block">
-			<div class="coluna76">
+        <div class="block divPDF">
+            <div class="coluna50 inputFileDiv">
+				<label>PDF do IUF</label>
+				<div class="block">
+					<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.MaterialApreendido.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.MaterialApreendido.Arquivo.Nome)%></a>
+				</div>
+				<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
+				<span class="spanInputFile <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>">
+					<input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
+				</span>
+			</div>
+			<% if (!Model.IsVisualizar) { %>
+			    <div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
+				    <button type="button" class="inlineBotao btnAddArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
+				    <button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
+			    </div>
+			<% } %>
+        </div>
+
+        <div class="block">
+			<div class="coluna75">
 				<label>Descrever a apreensão *</label>
 				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "250" }))%>
 			</div>
 		</div>
 
-		<div class="block">
-			<div class="coluna40">
-				<label>Valor do(s) bem(s) e produto(s) arbritado(s) (Reais)</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimal txtValorProdutos", @maxlength = "15" }))%>
+        <div class="block">
+			<div class="coluna75">
+				<label>Valor dos bens apreendidos (R$ e por extenso)</label>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "200" }))%>
 			</div>
 		</div>
-	</div>
 
-	<fieldset class="block box">
+        <div class="block">
+			<div class="coluna75">
+				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
+				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
+			</div>
+		</div>
+
+    </fieldset>
+
+    <fieldset class="block box">
 		<legend>Depositário</legend>
 
 		<input type="hidden" class="hdnDepositarioId" value="<%= Html.Encode(Model.MaterialApreendido.Depositario.Id) %>" />
 
 		<div class="block" >
 			<div class="coluna60">
-				<label>Nome/Razão social *</label>
+				<label>Nome do Depositário *</label>
 				<%= Html.TextBox("Depositario.NomeRazaoSocial", Model.MaterialApreendido.Depositario.NomeRazaoSocial, new { @class = "text disabled txtNome", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna16 prepend2">
-				<label>CPF/CNPJ *</label>
+				<label>CPF *</label>
 				<%= Html.TextBox("Depositario.CPFCNPJ", Model.MaterialApreendido.Depositario.CPFCNPJ, new { @class = "text disabled txtCnpj", @disabled = "disabled" })%>
 			</div>
 
@@ -159,64 +149,95 @@
 
 	</fieldset>
 
-	<fieldset class="fsMateriais block box">
-		<legend>Materiais</legend>
+    <fieldset class="fsProdutosApreendidos block box">
+		<legend>Produtos Apreendidos / Destinação</legend>
 
 		<%if (!Model.IsVisualizar){%>
 
-			<div class="block" >
-				<div class="coluna40">
-					<label>Tipo de material apreendido *</label><br />
-					<%= Html.DropDownList("MaterialApreendido.Tipo", Model.Tipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Tipos.Count <= 1, new { @class = "text ddlTipos" }))%>
-				</div>
-			</div>
-
 			<div class="block">
-				<div class="coluna76">
-					<label class="labEspecificacao" ></label>
-					<textarea id="MaterialApreendido_Especificacao" maxlength="250" cols="10" rows="10" class="text media  txtEspecificacao" ></textarea>
+				<div class="coluna30">
+					<label>Produtos Apreendidos</label><br />
+					<%= Html.DropDownList("MaterialApreendido.ProdutosApreendidos", Model.ListaProdutosApreendidos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlProdutosApreendidos" }))%>
 				</div>
-				<div class="coluna10">
-					<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarMaterial btnAddItem" title="Adicionar">+</button>
+
+                <div class="coluna10">
+                    <% foreach (var item in Model.produtosUnidades){ %>
+                        <input type="hidden" class="text hdnUnidade<%:item.Id%>" value="<%: item.Unidade %>" />
+                    <% } %>
+
+                    <label>Unidade</label>
+                    <input type="text" disabled ="disabled" maxlength="50" class="text txtUnidade disabled" />
+                </div>
+
+                <div class="coluna10">
+                    <label>Quantidade</label>
+				    <input type="text" id="MaterialApreendido_ProdutosApreendidos" maxlength="8" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
+                </div>
+
+                <div class="coluna30">
+					<label>Destino</label><br />
+					<%= Html.DropDownList("MaterialApreendido.ProdutosApreendidos", Model.ListaDestinos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.ListaProdutosApreendidos.Count <= 1, new { @class = "text ddlDestinos" }))%>
+				</div>
+
+                <div class="coluna10">
+					<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProdutoApreendido btnAddItem" title="Adicionar">+</button>
 				</div>
 			</div>
 
 		<%} %>
 
-		<div class="block dataGrid divMateriais">
-			<div class="coluna70 ">
+		<div class="block dataGrid divProdutosApreendidos">
+			<div class="coluna90">
 				<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					<thead>
 						<tr>
-							<th width="45%">Tipo de material apreendido</th>
-							<th width="46%">Especificação</th>
-							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
+							<th width="5%">Item</th>
+							<th>Produtos Apreendidos</th>
+                            <th width="10%">Unidade</th>
+                            <th width="10%">Quantidade</th>
+                            <th width="25%">Destino</th>
+							<%if (!Model.IsVisualizar){%><th width="15%">Ação</th><%} %>
 						</tr>
 					</thead>
-					<% foreach (var item in Model.MaterialApreendido.Materiais) { %>
 					<tbody>
-						<tr>
-							<td>
-								<span class="tipo" title="<%:item.TipoTexto%>"><%:item.TipoTexto%></span>
-							</td>
-							<td>
-								<span class="especificacao" title="<%:item.Especificacao%>"><%:item.Especificacao%></span>
-							</td>
-							<%if (!Model.IsVisualizar){%>
-								<td class="tdAcoes">
-									<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
-									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
-								</td>
-							<%} %>
-						</tr>
+                        <% int cont = 0; %>
+					    <% foreach (var prod in Model.MaterialApreendido.ProdutosApreendidos) { %>
+						    <tr>
+                                <td>
+                                    <span class="item" title="<%:cont++%>"><%:cont%></span>
+                                </td>
+                                <td>
+                                    <span class="produto" title="<%:prod.ProdutoTexto%>"><%:prod.ProdutoTexto%></span>
+                                </td>
+                                <td>
+                                    <span class="unidade" title="<%:prod.UnidadeTexto%>"><%:prod.UnidadeTexto%></span>
+                                </td>
+                                <td>
+                                    <span class="quantidade" title="<%:prod.Quantidade%>"><%:prod.Quantidade%></span>
+                                </td>
+                                <td>
+                                    <span class="produto" title="<%:prod.DestinoTexto%>"><%:prod.DestinoTexto%></span>
+                                </td>
+							    <%if (!Model.IsVisualizar){%>
+								    <td class="tdAcoes">
+									    <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(prod)%>' />
+                                        <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
+									    <input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
+								    </td>
+							    <%} %>
+						    </tr>
 						<% } %>
 						<% if(!Model.IsVisualizar) { %>
 							<tr class="trTemplateRow hide">
-								<td><span class="tipo"></span></td>
-								<td><span class="especificacao"></span></td>
+								<td><span class="item"></span></td>
+								<td><span class="produto"></span></td>
+                                <td><span class="unidade"></span></td>
+                                <td><span class="quantidade"></span></td>
+                                <td><span class="destino"></span></td>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value="" />
-									<input title="Excluir" type="button" class="icone excluir btnExcluirMaterial" value="" />
+                                    <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
+									<input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
 								</td>
 							</tr>
 						<% } %>
@@ -224,20 +245,16 @@
 				</table>
 			</div>
 		</div>
-
 	</fieldset>
-
-	<div class="block box">
-		<div class="coluna76">
-			<label>
-				Opinar pelo destino (permanência no local, doação, uso pela instituição, entre outros) do material e/ou bens apreendidos, levando-se em
-				consideração os seguintes itens: localização e sua dispersão no local, potencial impacto que a retirada do material possa causar à área, valor
-				econômico, diâmetro médio das espécies, entre outros.
-			</label>
-			<%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
-		</div>
-	</div>
-
-</div>
+    <fieldset>
+        <div class="block box">
+		    <div class="coluna76">
+			    <label>
+				    Descrever ou opinar quanto a destinação do material apreendido:
+			    </label>
+			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
+		    </div>
+	    </div>
+    </fieldset>
 
 </div>

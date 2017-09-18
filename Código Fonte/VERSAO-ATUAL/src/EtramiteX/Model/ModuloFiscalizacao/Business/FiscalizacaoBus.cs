@@ -414,7 +414,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
 					entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
 					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
-					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
+					entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
 					entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
 					entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
 
@@ -449,7 +449,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
 					entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
 					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
-					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
+					entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
 					entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
 					entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
 
