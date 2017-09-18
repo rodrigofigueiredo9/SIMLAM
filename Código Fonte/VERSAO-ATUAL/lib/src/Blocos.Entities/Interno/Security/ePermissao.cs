@@ -388,7 +388,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Security
 		RelatorioMapa,
 
         DeclaracaoAdicional,
-        ConfigurarCodigoReceita
-        ConfigurarPenalidade
+        ConfigurarCodigoReceita,
+        ConfigurarPenalidade,
 	}
 }

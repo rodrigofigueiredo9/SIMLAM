@@ -1822,13 +1822,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View(vm);
 		}
 
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
-        public ActionResult ConfigurarItem()
-        {
-            ItemInfracaoVM vm = new ItemInfracaoVM(_busConfiguracao.ObterItemInfracao());
-            return View(vm);
-        }
-
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
         public ActionResult ConfigurarItem(Item entidade)
