@@ -22,7 +22,8 @@ Fiscalizacao = {
 		finalizar: '',
 		infracao: '',
 		materialApreendido: '',
-		documentosGerados: ''
+		documentosGerados: '',
+		multa: '',
 	},
 
 	load: function (container) {
@@ -100,11 +101,10 @@ Fiscalizacao = {
 				break;
 
 		    case 4:
-                //MULTA
-		        //Fiscalizacao.onObterStep(Fiscalizacao.urls.infracao, objeto.params, function () {
-		        //    Infracao.callBackObterInfracaoVisualizar();
-		        //    Fiscalizacao.gerenciarVisualizacao('.hdnInfracaoId');
-		        //});
+		        Fiscalizacao.onObterStep(Fiscalizacao.urls.multa, objeto.params, function () {
+		            FiscalizacaoMulta.callBackObterFiscalizacaoMultaVisualizar();
+		            Fiscalizacao.gerenciarVisualizacao('.hdnMultaId');
+		        });
 		        break;
 
 			case 5:
@@ -1374,6 +1374,62 @@ Infracao = {
 }
 
 // 4ª aba - Multa
+FiscalizacaoMulta = {
+    settings: {
+        urls: {
+            salvar: '',
+            obterSerie: '',
+            enviarArquivo: '',
+        },
+    },
+    container: null,
+    mensagens: null,
+    TiposArquivo: [],
+
+    callBackObterFiscalizacaoMultaVisualizar: function () {
+        FiscalizacaoMulta.callBackObterFiscalizacaoMultaDefault();
+    },
+
+    callBackObterFiscalizacaoMultaDefault: function () {
+        Fiscalizacao.stepAtual = 4;
+        //Fiscalizacao.salvarTelaAtual = FiscalizacaoMulta.onSalvarFiscalizacaoMulta;
+        Fiscalizacao.alternarAbas();
+        
+        //FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
+        //FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+        //FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+        //FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
+        //FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
+
+        Mascara.load(FiscalizacaoMulta.container);
+
+        //if (parseInt($('.hdnMultaId', FiscalizacaoMulta.container).val()) > 0) {
+        //    Fiscalizacao.salvarEdicao = false;
+        //    Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
+        //    FiscalizacaoMaterialApreendido.configurarBtnEditar();
+        //} else {
+        //    Fiscalizacao.salvarEdicao = true;
+        //    Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+        //}
+
+        //if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == false
+        //    && $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == false) {
+        //    $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
+        //}
+        //if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+        //    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+        //}
+
+        MasterPage.botoes();
+        MasterPage.carregando(false);
+    },
+}
 
 // 5ª Aba - Objeto da Infração
 FiscalizacaoObjetoInfracao = {
@@ -1645,7 +1701,7 @@ FiscalizacaoObjetoInfracao = {
 			$('.divTxtErosao', FiscalizacaoObjetoInfracao.container).removeClass('hide');
 		}
 	}
-},
+}
 
 // 6ª Aba - Apreensão
 FiscalizacaoMaterialApreendido = {

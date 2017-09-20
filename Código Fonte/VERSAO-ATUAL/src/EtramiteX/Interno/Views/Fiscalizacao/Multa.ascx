@@ -5,42 +5,42 @@
 
 <script>
 
-	FiscalizacaoMaterialApreendido.settings.urls.salvar = '<%= Url.Action("CriarMaterialApreendido") %>';
-	FiscalizacaoMaterialApreendido.settings.urls.obterSerie = '<%= Url.Action("ObterInfracaoSeries") %>';
-	FiscalizacaoMaterialApreendido.settings.urls.associarDepositario = '<%= Url.Action("PessoaModal", "Pessoa") %>';
-	FiscalizacaoMaterialApreendido.settings.urls.editarDepositario = '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>';
-	FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo= '<%= Url.Action("Arquivo", "Arquivo") %>';
-	FiscalizacaoMaterialApreendido.settings.urls.obter = '<%= Url.Action("MaterialApreendido") %>';
+	<%--FiscalizacaoMaterialApreendido.settings.urls.salvar = '<%= Url.Action("CriarMaterialApreendido") %>';--%>
+	FiscalizacaoMulta.settings.urls.obterSerie = '<%= Url.Action("ObterInfracaoSeries") %>';
+	FiscalizacaoMulta.settings.urls.enviarArquivo= '<%= Url.Action("Arquivo", "Arquivo") %>';
+	<%--FiscalizacaoMaterialApreendido.settings.urls.obter = '<%= Url.Action("MaterialApreendido") %>';--%>
 
-	FiscalizacaoMaterialApreendido.container = $('.divContainer');
+	FiscalizacaoMulta.container = $('.divContainer');
 
-	FiscalizacaoMaterialApreendido.settings.mensagens = <%= Model.Mensagens %>;
-	FiscalizacaoMaterialApreendido.TiposArquivo = <%= Model.TiposArquivoValido %>;
+	FiscalizacaoMulta.settings.mensagens = <%= Model.Mensagens %>;
+	FiscalizacaoMulta.TiposArquivo = <%= Model.TiposArquivoValido %>;
 
 </script>
 
 <div class="divContainer" >
 
-    <input type="hidden" class="hdnMaterialApreendidoId" value="<%:Model.MaterialApreendido.Id %>" />
+    <input type="hidden" class="hdnMultaId" value="<%:Model.MaterialApreendido.Id %>" />
 
     <fieldset class="block box">
         <legend>Multa</legend>
 
         <div class="block">
             <div class="coluna20">
-                <label>IUF para Apreensão</label><br />
-		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 0, (Model.MaterialApreendido.IsDigital == null ? false : Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
-		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
+                <label>IUF para Multa</label><br />
+		        <label><%= Html.RadioButton("Multa.IsDigital", 0, (Model.MaterialApreendido.IsDigital == null ? false : Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
+		        <label><%= Html.RadioButton("Multa.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
         </div>
+    </fieldset>
 
+    <fieldset class="block box">
         <div class="block">
-            <div class="coluna15">
+            <div class="coluna20">
 		        <label>Número do IUF</label>
 		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", Model.MaterialApreendido.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
-            <div class="coluna15">
+            <div class="coluna17">
 				<label>Série</label><br />
 				<%= Html.DropDownList("MaterialApreendido.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
@@ -49,6 +49,16 @@
 				<label>Data da lavratura do IUF</label>
 				<%= Html.TextBox("MaterialApreendido.DataLavratura", Model.MaterialApreendido.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
+
+            <div class="coluna17">
+				<label>Código da receita *</label><br />
+				<%= Html.DropDownList("MaterialApreendido.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
+			</div>
+
+            <div class="coluna20">
+		        <label>Valor da multa (Reais) *</label>
+		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", Model.MaterialApreendido.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumDecimal txtNumeroIUF", @maxlength = "8" }))%>
+	        </div>
         </div>
 
         <div class="block divPDF">
@@ -69,40 +79,16 @@
 			    </div>
 			<% } %>
         </div>
-
+        
+        <br />
+        
         <div class="block">
-			<div class="coluna75">
-				<label>Descrever a apreensão *</label>
+			<div class="coluna85">
+				<label>Justificar o valor da penalidade pecuniária atribuída, levando-se em consideração os parâmetros legais *</label>
 				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "250" }))%>
 			</div>
 		</div>
 
-        <div class="block">
-			<div class="coluna75">
-				<label>Valor dos bens apreendidos (R$ e por extenso)</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "200" }))%>
-			</div>
-		</div>
-
-        <div class="block">
-			<div class="coluna75">
-				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
-				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
-			</div>
-		</div>
-
-    </fieldset>
-
-
-    <fieldset>
-        <div class="block box">
-		    <div class="coluna76">
-			    <label>
-				    Descrever ou opinar quanto a destinação do material apreendido:
-			    </label>
-			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
-		    </div>
-	    </div>
     </fieldset>
 
 </div>

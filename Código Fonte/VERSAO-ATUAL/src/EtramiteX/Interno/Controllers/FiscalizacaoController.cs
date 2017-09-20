@@ -1333,6 +1333,58 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
+        #region Multa
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult MultaVisualizar(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            MaterialApreendido materialApreendido = new MaterialApreendido();
+            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
+
+            materialApreendido = _busMaterialApreendido.Obter(id);
+            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
+
+            vm.MaterialApreendidoVM = new MaterialApreendidoVM
+            {
+                IsVisualizar = materialApreendido.Id > 0,
+                MaterialApreendido = materialApreendido,
+                Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
+                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
+                Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
+                Municipios = new List<SelectListItem>(),
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
+            };
+
+            vm.MaterialApreendidoVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (materialApreendido.IsTadGeradoSistema.HasValue)
+            {
+                vm.MaterialApreendidoVM.Municipios = ViewModelHelper.CriarSelectList(_busLista.Municipios(materialApreendido.Depositario.Estado.GetValueOrDefault()), true, selecionado: materialApreendido.Depositario.Municipio.GetValueOrDefault().ToString());
+            }
+
+            vm.MaterialApreendidoVM.Municipios = ViewModelHelper.CriarSelectList(_busLista.Municipios(materialApreendido.Depositario.Estado.GetValueOrDefault()), true, selecionado: materialApreendido.Depositario.Municipio.GetValueOrDefault().ToString());
+
+            if (vm.MaterialApreendidoVM.MaterialApreendido.Arquivo == null)
+            {
+                vm.MaterialApreendidoVM.MaterialApreendido.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MaterialApreendidoVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        #endregion Multa
+
         #region Finalizar
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar, ePermissao.FiscalizacaoEditar })]

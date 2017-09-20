@@ -47,7 +47,8 @@
 	Fiscalizacao.urls.infracao = '<%= Url.Action("InfracaoVisualizar", "Fiscalizacao") %>';
 	Fiscalizacao.urls.materialApreendido = '<%= Url.Action("MaterialApreendidoVisualizar", "Fiscalizacao") %>';
 	Fiscalizacao.urls.finalizar = '<%= Url.Action("Finalizar", "Fiscalizacao") %>';
-	Fiscalizacao.urls.documentosGerados = '<%= Url.Action("DownloadDocumentosGerados", "Fiscalizacao") %>';
+    Fiscalizacao.urls.documentosGerados = '<%= Url.Action("DownloadDocumentosGerados", "Fiscalizacao") %>';
+    Fiscalizacao.urls.multa = '<%= Url.Action("MultaVisualizar", "Fiscalizacao") %>';
     
 	FiscalizacaoLocalInfracao.urlCoordenadaGeo = '<%= Url.Action("AreaAbrangenciaPartial", "Mapa", new {area="GeoProcessamento"}) %>';
 	FiscalizacaoLocalInfracao.urlsObterEstadosMunicipiosPorCoordenada = '<%= Url.Action("obterEstadosMunicipiosPorCoordenada", "Mapa", new {area="GeoProcessamento"}) %>';
