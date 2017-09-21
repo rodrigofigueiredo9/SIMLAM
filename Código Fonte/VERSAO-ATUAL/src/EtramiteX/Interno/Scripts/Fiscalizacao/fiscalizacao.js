@@ -1394,18 +1394,20 @@ FiscalizacaoMulta = {
         Fiscalizacao.stepAtual = 4;
         //Fiscalizacao.salvarTelaAtual = FiscalizacaoMulta.onSalvarFiscalizacaoMulta;
         Fiscalizacao.alternarAbas();
+
+        $('.fsCamposMulta', FiscalizacaoMulta.container).hide();
         
-        //FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
-        //FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-        //FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
-        //FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
-        //FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
+        FiscalizacaoMulta.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMulta.onSelecionarIsDigital);
+        FiscalizacaoMulta.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMulta.onSelecionarIsBloco);
+        FiscalizacaoMulta.container.delegate('.btnAddArq', 'click', FiscalizacaoMulta.onEnviarArquivoClick);
+        FiscalizacaoMulta.container.delegate('.btnLimparArq', 'click', FiscalizacaoMulta.onLimparArquivoClick);
+        //FiscalizacaoMulta.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+        //FiscalizacaoMulta.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
+        //FiscalizacaoMulta.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
+        //FiscalizacaoMulta.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+        //FiscalizacaoMulta.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
+        //FiscalizacaoMulta.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+        //FiscalizacaoMulta.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
 
         Mascara.load(FiscalizacaoMulta.container);
 
@@ -1428,6 +1430,110 @@ FiscalizacaoMulta = {
 
         MasterPage.botoes();
         MasterPage.carregando(false);
+    },
+
+    onSelecionarIsDigital: function () {
+        $('.fsCamposMulta', FiscalizacaoMulta.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).addClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).val('Gerado automaticamente');
+
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoMulta.container).addClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).addClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).val('Gerado automaticamente');
+
+        $('.divPDF', FiscalizacaoMulta.container).hide();
+    },
+
+    onSelecionarIsBloco: function () {
+        $('.fsCamposMulta', FiscalizacaoMulta.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).removeAttr('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).removeClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).val('');
+
+        $('.ddlSeries option:eq(0)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoMulta.container).removeClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).removeClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).val('');
+
+        $('.divPDF', FiscalizacaoMulta.container).show();
+    },
+
+    onEnviarArquivoClick: function () {
+        var nomeArquivo = $('.inputFile', FiscalizacaoMulta.container).val();
+
+        erroMsg = new Array();
+
+        if (nomeArquivo == '') {
+            erroMsg.push(FiscalizacaoMulta.settings.mensagens.ArquivoObrigatorio);
+        } else {
+            var tam = nomeArquivo.length - 4;
+            if (!FiscalizacaoMulta.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+                erroMsg.push(FiscalizacaoMulta.settings.mensagens.ArquivoNaoEhPdf);
+            }
+        }
+
+        if (erroMsg.length > 0) {
+            Mensagem.gerar(Fiscalizacao.container, erroMsg);
+            return;
+        }
+
+        MasterPage.carregando(true);
+        var inputFile = $('.inputFile', FiscalizacaoMulta.container);
+        FileUpload.upload(FiscalizacaoMulta.settings.urls.enviarArquivo, inputFile, FiscalizacaoMulta.callBackArqEnviado);
+    },
+
+    onLimparArquivoClick: function () {
+        $('.hdnArquivoJson', FiscalizacaoMulta.container).val('');
+        $('.inputFile', FiscalizacaoMulta.container).val('');
+
+        $('.spanInputFile', FiscalizacaoMulta.container).removeClass('hide');
+        $('.txtArquivoNome', FiscalizacaoMulta.container).addClass('hide');
+
+        $('.btnAddArq', FiscalizacaoMulta.container).removeClass('hide');
+        $('.btnLimparArq', FiscalizacaoMulta.container).addClass('hide');
+    },
+
+    validarTipoArquivo: function (tipo) {
+
+        var tipoValido = false;
+        $(FiscalizacaoMulta.TiposArquivo).each(function (i, tipoItem) {
+            if (tipoItem == tipo) {
+                tipoValido = true;
+            }
+        });
+
+        return tipoValido;
+    },
+
+    callBackArqEnviado: function (controle, retorno, isHtml) {
+        var ret = eval('(' + retorno + ')');
+        if (ret.Arquivo != null) {
+            $('.txtArquivoNome', FiscalizacaoMulta.container).text(ret.Arquivo.Nome);
+            $('.hdnArquivoJson', FiscalizacaoMulta.container).val(JSON.stringify(ret.Arquivo));
+            $('.txtArquivoNome', FiscalizacaoMulta.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+
+            $('.spanInputFile', FiscalizacaoMulta.container).addClass('hide');
+            $('.txtArquivoNome', FiscalizacaoMulta.container).removeClass('hide');
+
+            $('.btnAddArq', FiscalizacaoMulta.container).addClass('hide');
+            $('.btnLimparArq', FiscalizacaoMulta.container).removeClass('hide');
+        } else {
+            FiscalizacaoMulta.onLimparArquivoClick();
+            Mensagem.gerar(FiscalizacaoMulta.container, ret.Msg);
+        }
+        MasterPage.carregando(false);
+
+        Mensagem.limpar(Fiscalizacao.container);
     },
 }
 

@@ -1460,7 +1460,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<Lista> ObterInfracaoCodigoReceita()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@" select l.id, l.texto from lov_fisc_infracao_codigo_rece l order by l.texto ");
+            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@" select l.id, (l.texto || ' - ' || l.descricao) texto from lov_fisc_infracao_codigo_rece l order by l.texto ");
 
 			foreach (var item in daReader)
 			{

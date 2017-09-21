@@ -1339,42 +1339,28 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         public ActionResult MultaVisualizar(int id)
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
-            MaterialApreendido materialApreendido = new MaterialApreendido();
-            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
+            Multa multa = new Multa();
 
-            materialApreendido = _busMaterialApreendido.Obter(id);
-            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
+            //multa = _busMaterialApreendido.Obter(id);
 
-            vm.MaterialApreendidoVM = new MaterialApreendidoVM
+            vm.MultaVM = new MultaVM
             {
-                IsVisualizar = materialApreendido.Id > 0,
-                MaterialApreendido = materialApreendido,
-                Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
-                produtosUnidades = produtosApreendidos,
-                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
-                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
-                Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
-                Municipios = new List<SelectListItem>(),
-                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
+                IsVisualizar = multa.Id > 0,
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
             };
 
-            vm.MaterialApreendidoVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
 
-            if (materialApreendido.IsTadGeradoSistema.HasValue)
+            if (vm.MultaVM.Multa.Arquivo == null)
             {
-                vm.MaterialApreendidoVM.Municipios = ViewModelHelper.CriarSelectList(_busLista.Municipios(materialApreendido.Depositario.Estado.GetValueOrDefault()), true, selecionado: materialApreendido.Depositario.Municipio.GetValueOrDefault().ToString());
-            }
-
-            vm.MaterialApreendidoVM.Municipios = ViewModelHelper.CriarSelectList(_busLista.Municipios(materialApreendido.Depositario.Estado.GetValueOrDefault()), true, selecionado: materialApreendido.Depositario.Municipio.GetValueOrDefault().ToString());
-
-            if (vm.MaterialApreendidoVM.MaterialApreendido.Arquivo == null)
-            {
-                vm.MaterialApreendidoVM.MaterialApreendido.Arquivo = new Arquivo();
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
             }
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView("Multa", vm.MaterialApreendidoVM);
+                return PartialView("Multa", vm.MultaVM);
             }
             else
             {
