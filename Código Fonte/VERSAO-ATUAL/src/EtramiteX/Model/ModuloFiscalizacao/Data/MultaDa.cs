@@ -175,154 +175,107 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#region Obter / Filtrar
 
-//        public Infracao Obter(int fiscalizacaoId, BancoDeDados banco = null)
-//        {
-//            Infracao infracao = new Infracao();
-//            InfracaoPergunta questionario = new InfracaoPergunta();
+        public Multa Obter(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            Multa multa = new Multa();
+            
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select tfm.id,
+                                           f.situacao situacao_id,
+                                           tfm.valor_multa,
+                                           tfm.codigo_receita,
+                                           tfm.justificar,
+                                           tfm.arquivo,
+                                           a.nome arquivo_nome
+                                    from {0}tab_fisc_multa tfm,
+                                         {0}tab_fiscalizacao f,
+                                         {0}tab_arquivo a
+                                    where tfm.arquivo = a.id(+)
+                                          and tfm.fiscalizacao = :fiscalizacao
+                                          and f.id = tfm.fiscalizacao", EsquemaBanco);
 
-//            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-//            {
-//                #region Infração
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-//                Comando comando = bancoDeDados.CriarComando(@"select tfi.id, tfi.classificacao, lc.texto classificacao_texto, tfi.tipo, f.situacao situacao_id,
-//															lt.texto tipo_texto, tfi.item, cfi.texto item_texto, tfi.subitem, cfs.texto subitem_texto, tfi.infracao_autuada,
-//															tfi.gerado_sistema, tfi.valor_multa, tfi.codigo_receita, tfi.numero_auto_infracao_bloco, tfi.descricao_infracao,
-//															tfi.data_lavratura_auto, tfi.serie, tfi.configuracao, tfi.arquivo, a.nome arquivo_nome, tfi.configuracao_tid
-//															from {0}tab_fisc_infracao tfi, {0}tab_fiscalizacao f, {0}tab_arquivo a, {0}lov_cnf_fisc_infracao_classif lc,
-//															{0}cnf_fisc_infracao_tipo lt, {0}cnf_fisc_infracao_item cfi, {0}cnf_fisc_infracao_subitem cfs where 
-//															tfi.arquivo = a.id(+) and tfi.classificacao = lc.id(+) and tfi.tipo = lt.id(+) and tfi.item = cfi.id(+)
-//															and tfi.subitem = cfs.id(+) and tfi.fiscalizacao = :fiscalizacao and f.id = tfi.fiscalizacao", EsquemaBanco);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        multa = new Multa
+                        {
+                            Id = reader.GetValue<int>("id"),
+                            ValorMulta = reader.GetValue<decimal>("valor_multa"),
+                            CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
+                            FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
+                            Justificativa = reader.GetValue<string>("justificar")
+                        };
 
-//                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+                        multa.Arquivo = new Arquivo
+                        {
+                            Id = reader.GetValue<int>("arquivo"),
+                            Nome = reader.GetValue<string>("arquivo_nome")
+                        };
+                    }
+                    else
+                    {
+                        multa = null;
+                    }
+                    reader.Close();
+                }
+            }
 
-//                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-//                {
-//                    if (reader.Read())
-//                    {
-//                        infracao = new Infracao
-//                        {
-//                            Id = reader.GetValue<int>("id"),
-//                            ClassificacaoId = reader.GetValue<int>("classificacao"),
-//                            ClassificacaoTexto = reader.GetValue<string>("classificacao_texto"),							
-//                            TipoId = reader.GetValue<int>("tipo"),
-//                            TipoTexto = reader.GetValue<string>("tipo_texto"),							
-//                            ItemId = reader.GetValue<int>("item"),
-//                            ItemTexto = reader.GetValue<string>("item_texto"),							
-//                            SubitemId = reader.GetValue<int>("subitem"),
-//                            SubitemTexto = reader.GetValue<string>("subitem_texto"),							
-//                            SerieId = reader.GetValue<int>("serie"),
-//                            ConfiguracaoId = reader.GetValue<int>("configuracao"),
-//                            IsAutuada = reader.GetValue<bool>("infracao_autuada"),
-//                            IsGeradaSistema = reader.GetValue<bool?>("gerado_sistema"),
-//                            ValorMulta = reader.GetValue<string>("valor_multa"),
-//                            CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
-//                            NumeroAutoInfracaoBloco = reader.GetValue<string>("numero_auto_infracao_bloco"),
-//                            DescricaoInfracao = reader.GetValue<string>("descricao_infracao"),
-//                            ConfiguracaoTid = reader.GetValue<string>("configuracao_tid"),
-//                            FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id")
-//                        };
+            return multa;
+        }
 
-//                        infracao.Arquivo = new Arquivo
-//                        {
-//                            Id = reader.GetValue<int>("arquivo"),
-//                            Nome = reader.GetValue<string>("arquivo_nome")
-//                        };
+        public Multa ObterAntigo(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            Multa multa = new Multa();
 
-//                        if (!string.IsNullOrWhiteSpace(reader.GetValue<string>("data_lavratura_auto")))
-//                        {
-//                            infracao.DataLavraturaAuto.DataTexto = reader.GetValue<string>("data_lavratura_auto");
-//                        }
-//                    }
-//                    reader.Close();
-//                }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select f.situacao situacao_id,
+                                           tfi.valor_multa,
+                                           tfi.codigo_receita,
+                                           tfcf.justificar,
+                                           tfi.arquivo,
+                                           a.nome arquivo_nome
+                                    from {0}tab_fisc_infracao tfi,
+                                         {0}tab_fisc_consid_final tfcf,
+                                         {0}tab_fiscalizacao f,
+                                         {0}tab_arquivo a
+                                    where tfi.arquivo = a.id(+)
+                                          and tfi.fiscalizacao = :fiscalizacao
+                                          and tfcf.fiscalizacao = :fiscalizacao
+                                          and f.id = tfi.fiscalizacao", EsquemaBanco);
 
-//                #endregion
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-//                #region Campos
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        multa = new Multa
+                        {
+                            ValorMulta = reader.GetValue<decimal>("valor_multa"),
+                            CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
+                            FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
+                            Justificativa = reader.GetValue<string>("justificar")
+                        };
 
-//                comando = bancoDeDados.CriarComando(@"
-//					select tfic.id      Id,
-//						   tfic.campo   CampoId,
-//						   tfic.texto   Texto,
-//						   cfic.texto   CampoIdentificacao,
-//						   cfic.unidade CampoUnidade,
-//						   lu.texto     CampoUnidadeTexto,
-//						   cfic.Tipo    CampoTipo,
-//						   lt.texto     CampoTipoTexto
-//					  from {0}tab_fisc_infracao_campo        tfic,
-//						   {0}lov_cnf_fisc_infracao_camp_tip lt,
-//						   {0}lov_cnf_fisc_infracao_camp_uni lu,
-//						   {0}cnf_fisc_infracao_campo        cfic
-//					 where tfic.campo = cfic.id
-//					   and cfic.tipo = lt.id(+)
-//					   and cfic.unidade = lu.id(+)
-//					   and tfic.infracao = :infracao", EsquemaBanco);
+                        multa.Arquivo = new Arquivo
+                        {
+                            Id = reader.GetValue<int>("arquivo"),
+                            Nome = reader.GetValue<string>("arquivo_nome")
+                        };
+                    }
+                    reader.Close();
+                }
+            }
 
-//                comando.AdicionarParametroEntrada("infracao", infracao.Id, DbType.Int32);
-
-//                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-//                {
-//                    infracao.Campos = new List<InfracaoCampo>();
-//                    while (reader.Read())
-//                    {
-//                        infracao.Campos.Add(new InfracaoCampo
-//                        {
-//                            Id = reader.GetValue<int>("Id"),
-//                            CampoId = reader.GetValue<int>("CampoId"),
-//                            Identificacao = reader.GetValue<string>("CampoIdentificacao"),
-//                            Tipo = reader.GetValue<int>("CampoTipo"),
-//                            TipoTexto = reader.GetValue<string>("CampoTipoTexto"),
-//                            Unidade = reader.GetValue<int>("CampoUnidade"),
-//                            UnidadeTexto = reader.GetValue<string>("CampoUnidadeTexto"),
-//                            Texto = reader.GetValue<string>("Texto")
-//                        });
-//                    }
-//                    reader.Close();
-//                }
-
-//                #endregion
-
-//                #region Questionário
-
-//                comando = bancoDeDados.CriarComando(@"select tfiq.id Id,
-//													tfiq.pergunta      PerguntaId,
-//													tfiq.pergunta_tid  PerguntaTid,
-//													cfip.texto         PerguntaIdentificacao,
-//													tfiq.resposta      RespostaId,
-//													tfiq.resposta_tid  RespostaTid,
-//													tfiq.Especificacao
-//													from {0}tab_fisc_infracao_pergunta tfiq,
-//													{0}cnf_fisc_infracao_pergunta cfip
-//													where tfiq.pergunta = cfip.id
-//													and tfiq.infracao = :infracao order by tfiq.pergunta", EsquemaBanco);
-
-//                comando.AdicionarParametroEntrada("infracao", infracao.Id, DbType.Int32);
-
-//                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-//                {
-//                    infracao.Perguntas = new List<InfracaoPergunta>();
-//                    while (reader.Read())
-//                    {
-//                        infracao.Perguntas.Add(new InfracaoPergunta
-//                        {
-//                            Id = reader.GetValue<int>("Id"),
-//                            PerguntaId = reader.GetValue<int>("PerguntaId"),
-//                            PerguntaTid = reader.GetValue<string>("PerguntaTid"),
-//                            RespostaId = reader.GetValue<int>("RespostaId"),
-//                            RespostaTid = reader.GetValue<string>("RespostaTid"),
-//                            Identificacao = reader.GetValue<string>("PerguntaIdentificacao"),
-//                            Especificacao = reader.GetValue<string>("Especificacao"),
-//                            Respostas = _configuracaoDa.ObterRespostas(reader.GetValue<int>("PerguntaId"))
-//                        });
-//                    }
-//                    reader.Close();
-//                }
-
-//                #endregion
-//            }
-
-//            return infracao;
-//        }
+            return multa;
+        }
 
 //        public Infracao ObterHistoricoPorFiscalizacao(int fiscalizacaoId, BancoDeDados banco = null)
 //        {

@@ -1337,12 +1337,60 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         #region Multa
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult Multa(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            Multa multa = new Multa();
+
+            if (id != 0)
+            {
+                multa = _busMulta.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
+
+            vm.MultaVM = new MultaVM
+            {
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+            };
+
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.MultaVM.Multa.Arquivo == null)
+            {
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MultaVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
         public ActionResult MultaVisualizar(int id)
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
             Multa multa = new Multa();
 
-            //multa = _busMaterialApreendido.Obter(id);
+            multa = _busMulta.Obter(id);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
 
             vm.MultaVM = new MultaVM
             {

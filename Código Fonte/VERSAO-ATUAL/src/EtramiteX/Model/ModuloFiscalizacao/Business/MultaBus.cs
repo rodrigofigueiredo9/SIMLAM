@@ -99,42 +99,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#region Obter
 
-        //public Infracao Obter(int fiscalizacaoId, bool isVerificarConfig = false, BancoDeDados banco = null)
-        //{
-        //    Infracao entidadeAtual = new Infracao();
-        //    Infracao entidadeNovoConfig = new Infracao();
+        public Multa Obter(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            Multa entidade = new Multa();
 
-        //    try
-        //    {
-        //        entidadeAtual = _da.Obter(fiscalizacaoId, banco);
+            try
+            {
+                entidade = _da.Obter(fiscalizacaoId, banco);
 
-        //        entidadeAtual.ConfigAlterou = _da.ConfigAlterada(entidadeAtual.ConfiguracaoId, entidadeAtual.ConfiguracaoTid, banco);
-        //        entidadeAtual.ConfigAlterou = _da.PerguntaRespostaAlterada(entidadeAtual.Id) || entidadeAtual.ConfigAlterou;
+                if (entidade == null)
+                {
+                    entidade = _da.ObterAntigo(fiscalizacaoId, banco);
+                }
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
 
-
-        //        if (isVerificarConfig)
-        //        {
-        //            if (entidadeAtual.ConfigAlterou)
-        //            {
-        //                entidadeNovoConfig = _da.ObterConfig(entidadeAtual.ConfiguracaoId, banco);
-        //                Mergear(entidadeAtual, entidadeNovoConfig);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (entidadeAtual.ConfigAlterou)
-        //            {
-        //                entidadeAtual = _da.ObterHistorico(entidadeAtual.Id, banco);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        Validacao.AddErro(exc);
-        //    }
-
-        //    return entidadeAtual;
-        //}
+            return entidade;
+        }
 
         //public Infracao ObterHistoricoPorFiscalizacao(int fiscalizacaoId, BancoDeDados banco = null)
         //{

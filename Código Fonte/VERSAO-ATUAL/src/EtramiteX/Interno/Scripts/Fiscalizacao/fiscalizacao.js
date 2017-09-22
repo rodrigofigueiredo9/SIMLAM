@@ -1380,6 +1380,7 @@ FiscalizacaoMulta = {
             salvar: '',
             obterSerie: '',
             enviarArquivo: '',
+            obter: '',
         },
     },
     container: null,
@@ -1387,6 +1388,10 @@ FiscalizacaoMulta = {
     TiposArquivo: [],
 
     callBackObterFiscalizacaoMultaVisualizar: function () {
+        FiscalizacaoMulta.callBackObterFiscalizacaoMultaDefault();
+    },
+
+    callBackObterFiscalizacaoMulta: function () {
         FiscalizacaoMulta.callBackObterFiscalizacaoMultaDefault();
     },
 
@@ -1401,32 +1406,23 @@ FiscalizacaoMulta = {
         FiscalizacaoMulta.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMulta.onSelecionarIsBloco);
         FiscalizacaoMulta.container.delegate('.btnAddArq', 'click', FiscalizacaoMulta.onEnviarArquivoClick);
         FiscalizacaoMulta.container.delegate('.btnLimparArq', 'click', FiscalizacaoMulta.onLimparArquivoClick);
-        //FiscalizacaoMulta.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-        //FiscalizacaoMulta.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
-        //FiscalizacaoMulta.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
-        //FiscalizacaoMulta.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
-        //FiscalizacaoMulta.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
-        //FiscalizacaoMulta.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
-        //FiscalizacaoMulta.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
 
         Mascara.load(FiscalizacaoMulta.container);
 
-        //if (parseInt($('.hdnMultaId', FiscalizacaoMulta.container).val()) > 0) {
-        //    Fiscalizacao.salvarEdicao = false;
-        //    Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
-        //    FiscalizacaoMaterialApreendido.configurarBtnEditar();
-        //} else {
-        //    Fiscalizacao.salvarEdicao = true;
-        //    Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
-        //}
+        if (parseInt($('.hdnMultaId', FiscalizacaoMulta.container).val()) > 0) {
+            Fiscalizacao.salvarEdicao = false;
+            Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
+            FiscalizacaoMulta.configurarBtnEditar();
+        } else {
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+        }
 
-        //if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == false
-        //    && $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == false) {
-        //    $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
-        //}
-        //if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
-        //    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
-        //}
+        if ($('.rdoIsDigital', FiscalizacaoMulta.container).attr('checked') == true) {
+            FiscalizacaoMulta.onSelecionarIsDigital();
+        } else if ($('.rdoIsBloco', FiscalizacaoMulta.container).attr('checked') == true) {
+            FiscalizacaoMulta.onSelecionarIsBloco();
+        }
 
         MasterPage.botoes();
         MasterPage.carregando(false);
@@ -1437,7 +1433,7 @@ FiscalizacaoMulta = {
 
         //Criação do objeto (da classe Multa)
         var obj = {
-            Id: Number($('.hdnMaterialApreendidoId', container).val()),
+            Id: Number($('.hdnMultaId', container).val()),
             FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
         };
 
@@ -1460,6 +1456,21 @@ FiscalizacaoMulta = {
         arrayMensagem.push(FiscalizacaoMulta.settings.mensagens.Salvar);
 
         return Fiscalizacao.onSalvarStep(FiscalizacaoMulta.settings.urls.salvar, obj, arrayMensagem);
+    },
+
+    configurarBtnEditar: function () {
+        $(".btnEditar", Fiscalizacao.container).unbind('click');
+        $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMulta.onBtnEditar);
+    },
+
+    onBtnEditar: function () {
+        Fiscalizacao.onObterStep(FiscalizacaoMulta.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+            FiscalizacaoMulta.callBackObterFiscalizacaoMulta();
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+            Fiscalizacao.configurarBtnCancelarStep(6);
+            Fiscalizacao.gerenciarVisualizacao();
+        });
     },
 
     onSelecionarIsDigital: function () {
