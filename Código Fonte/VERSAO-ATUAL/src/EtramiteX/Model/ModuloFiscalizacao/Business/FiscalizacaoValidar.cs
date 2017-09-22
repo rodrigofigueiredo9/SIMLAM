@@ -82,12 +82,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (_infracaoDa.ConfigAlterada(infracao.ConfiguracaoId, infracao.ConfiguracaoTid))
 			{
-				Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaConcluir);
+				Validacao.Add(Mensagem.MultaMsg.ConfigAlteradaConcluir);
 			}
 
 			if (_infracaoDa.PerguntaRespostaAlterada(infracao))
 			{
-				Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaConcluir);
+				Validacao.Add(Mensagem.MultaMsg.ConfigAlteradaConcluir);
 			}
 
 			return Validacao.EhValido;

@@ -1392,7 +1392,7 @@ FiscalizacaoMulta = {
 
     callBackObterFiscalizacaoMultaDefault: function () {
         Fiscalizacao.stepAtual = 4;
-        //Fiscalizacao.salvarTelaAtual = FiscalizacaoMulta.onSalvarFiscalizacaoMulta;
+        Fiscalizacao.salvarTelaAtual = FiscalizacaoMulta.onSalvarFiscalizacaoMulta;
         Fiscalizacao.alternarAbas();
 
         $('.fsCamposMulta', FiscalizacaoMulta.container).hide();
@@ -1430,6 +1430,36 @@ FiscalizacaoMulta = {
 
         MasterPage.botoes();
         MasterPage.carregando(false);
+    },
+
+    onSalvarFiscalizacaoMulta: function () {
+        var container = FiscalizacaoMulta.container;
+
+        //Criação do objeto (da classe Multa)
+        var obj = {
+            Id: Number($('.hdnMaterialApreendidoId', container).val()),
+            FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
+        };
+
+        //Preenchendo o objeto
+        if ($('.rdoIsBloco', container).attr('checked')) {
+            obj.IsDigital = false;
+            obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+            obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+            obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+        } else {
+            obj.IsDigital = true;
+        }
+        obj.SerieId = $('.ddlSeries :selected', container).val();
+        obj.CodigoReceitaId = $('.ddlCodigosReceita :selected', container).val();
+        obj.ValorMulta = $('.txtValorMulta', container).val();
+        obj.Justificativa = $('.txtJustificativa', container).val();
+
+        var arrayMensagem = [];
+
+        arrayMensagem.push(FiscalizacaoMulta.settings.mensagens.Salvar);
+
+        return Fiscalizacao.onSalvarStep(FiscalizacaoMulta.settings.urls.salvar, obj, arrayMensagem);
     },
 
     onSelecionarIsDigital: function () {

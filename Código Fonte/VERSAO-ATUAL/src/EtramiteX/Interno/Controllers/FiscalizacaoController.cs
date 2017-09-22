@@ -52,6 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         ObjetoInfracaoBus _busObjetoInfracao = new ObjetoInfracaoBus();
         MaterialApreendidoBus _busMaterialApreendido = new MaterialApreendidoBus();
         ConsideracaoFinalBus _busConsideracaoFinal = new ConsideracaoFinalBus();
+        MultaBus _busMulta = new MultaBus();
 
         ListaBus _busLista = new ListaBus();
         FuncionarioBus _busFuncionario = new FuncionarioBus();
@@ -1367,6 +1368,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 vm.PartialInicial = "Multa";
                 return View("Salvar", vm);
             }
+        }
+
+        //Salva a sessão
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult CriarMulta(Multa entidade)
+        {
+            _busMulta.Salvar(entidade);
+
+            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
         }
 
         #endregion Multa

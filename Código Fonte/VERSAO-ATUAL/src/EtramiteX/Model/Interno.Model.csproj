@@ -85,7 +85,10 @@
     <Compile Include="ModuloFichaFundiaria\Pdf\FichaFundiariaPDF.cs" />
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoBus.cs" />
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\MultaValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\MultaBus.cs" />
     <Compile Include="ModuloFiscalizacao\Data\AcompanhamentoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\MultaDa.cs" />
     <Compile Include="ModuloLocalVistoria\Business\LocalVistoriaBus.cs" />
     <Compile Include="ModuloLocalVistoria\Business\LocalVistoriaValidar.cs" />
     <Compile Include="ModuloLocalVistoria\Data\LocalVistoriaDa.cs" />

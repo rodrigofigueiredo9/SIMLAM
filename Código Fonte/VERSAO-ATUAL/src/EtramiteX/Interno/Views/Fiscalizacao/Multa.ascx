@@ -5,10 +5,10 @@
 
 <script>
 
-	<%--FiscalizacaoMaterialApreendido.settings.urls.salvar = '<%= Url.Action("CriarMaterialApreendido") %>';--%>
+	FiscalizacaoMulta.settings.urls.salvar = '<%= Url.Action("CriarMulta") %>';
 	FiscalizacaoMulta.settings.urls.obterSerie = '<%= Url.Action("ObterInfracaoSeries") %>';
 	FiscalizacaoMulta.settings.urls.enviarArquivo= '<%= Url.Action("Arquivo", "Arquivo") %>';
-	<%--FiscalizacaoMaterialApreendido.settings.urls.obter = '<%= Url.Action("MaterialApreendido") %>';--%>
+	FiscalizacaoMulta.settings.urls.obter = '<%= Url.Action("Multa") %>';
 
 	FiscalizacaoMulta.container = $('.divContainer');
 
