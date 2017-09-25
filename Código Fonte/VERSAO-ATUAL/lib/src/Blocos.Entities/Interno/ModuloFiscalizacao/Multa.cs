@@ -15,7 +15,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Decimal ValorMulta { get; set; }
 		public String Justificativa { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
-		public String Tid { get; set; }
 
         private DateTecno _dataLavratura = new DateTecno();
         public DateTecno DataLavratura

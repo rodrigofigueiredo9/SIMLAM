@@ -9,9 +9,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
 	public class MultaValidar
 	{
-        //MultaDa _da = new MultaDa();
-
-		public bool Salvar(Multa multa)
+        public bool Salvar(Multa multa)
 		{
 			if (multa.IsDigital == null)
 			{
@@ -37,11 +35,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 if (multa.CodigoReceitaId == null || multa.CodigoReceitaId == 0)
                 {
                     Validacao.Add(Mensagem.MultaMsg.CodigoReceitaObrigatorio);
-                }
-
-                if (multa.ValorMulta == null)
-                {
-                    Validacao.Add(Mensagem.MultaMsg.ValorMultaObrigatorio);
                 }
 
                 if (multa.ValorMulta <= 0)

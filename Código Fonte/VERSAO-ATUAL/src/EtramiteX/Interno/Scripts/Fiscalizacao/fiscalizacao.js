@@ -1443,7 +1443,7 @@ FiscalizacaoMulta = {
             obj.NumeroIUF = $('.txtNumeroIUF', container).val();
             obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
             obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
-        } else {
+        } else if ($('.rdoIsDigital', container).attr('checked')) {
             obj.IsDigital = true;
         }
         obj.SerieId = $('.ddlSeries :selected', container).val();

@@ -30,12 +30,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			{
 				return ViewModelHelper.Json(new
 				{
-                    //@ProdutoObrigatorio = Mensagem.MaterialApreendidoMsg.ProdutoObrigatorio,
-                    //@QuantidadeObrigatoria = Mensagem.MaterialApreendidoMsg.QuantidadeObrigatoria,
-                    //@DestinoObrigatorio = Mensagem.MaterialApreendidoMsg.DestinoObrigatorio,
-                    //@ProdutoJaAdicionado = Mensagem.MaterialApreendidoMsg.ProdutoJaAdicionado,
-
-					@Salvar = Mensagem.MultaMsg.Salvar,
+                    @Salvar = Mensagem.MultaMsg.Salvar,
 
 					@ArquivoObrigatorio = Mensagem.MultaMsg.ArquivoObrigatorio,
 					@ArquivoNaoEhPdf = Mensagem.MaterialApreendidoMsg.ArquivoNaoEhPdf
