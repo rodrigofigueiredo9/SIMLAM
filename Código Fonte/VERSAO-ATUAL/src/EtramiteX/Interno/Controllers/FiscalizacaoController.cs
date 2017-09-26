@@ -52,6 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         ObjetoInfracaoBus _busObjetoInfracao = new ObjetoInfracaoBus();
         MaterialApreendidoBus _busMaterialApreendido = new MaterialApreendidoBus();
         ConsideracaoFinalBus _busConsideracaoFinal = new ConsideracaoFinalBus();
+        MultaBus _busMulta = new MultaBus();
 
         ListaBus _busLista = new ListaBus();
         FuncionarioBus _busFuncionario = new FuncionarioBus();
@@ -1332,6 +1333,102 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         }
 
         #endregion
+
+        #region Multa
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult Multa(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            Multa multa = new Multa();
+
+            if (id != 0)
+            {
+                multa = _busMulta.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
+
+            vm.MultaVM = new MultaVM
+            {
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+            };
+
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.MultaVM.Multa.Arquivo == null)
+            {
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MultaVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult MultaVisualizar(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            Multa multa = new Multa();
+
+            multa = _busMulta.Obter(id);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
+
+            vm.MultaVM = new MultaVM
+            {
+                IsVisualizar = multa.Id > 0,
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+            };
+
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.MultaVM.Multa.Arquivo == null)
+            {
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MultaVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        //Salva a sessão
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult CriarMulta(Multa entidade)
+        {
+            _busMulta.Salvar(entidade);
+
+            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
+        }
+
+        #endregion Multa
 
         #region Finalizar
 

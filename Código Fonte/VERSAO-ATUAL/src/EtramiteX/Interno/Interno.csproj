@@ -271,6 +271,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
@@ -1700,6 +1701,8 @@
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoDestinos.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoProdutos.ascx" />
+    <Content Include="Views\Fiscalizacao\Multa.ascx" />
+    <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
     <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
