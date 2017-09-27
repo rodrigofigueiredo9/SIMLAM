@@ -113,7 +113,7 @@ Lote = {
 
         }
 
-        if (origem.Id == Lote.settings.idsTela.TipoCFO) {
+        if (origem.Id == Lote.settings.idsTela.TipoCFO || origem.Id == Lote.settings.idsTela.TipoCFOC) {
 
             $('.txtQuantidade', Lote.container).removeClass('disabled');
             $('.txtQuantidade', Lote.container).removeAttr('disabled');
@@ -231,11 +231,13 @@ Lote = {
                     var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
 
 
-                    if (origemTipo != Lote.settings.idsTela.TipoCFO) {
+                    if (origemTipo != Lote.settings.idsTela.TipoCFO || origemTipo != Lote.settings.idsTela.TipoCFOC) {
 
                         $('.txtQuantidade', Lote.container).val(quantidade);
                         $('.txtQuantidade', Lote.container).change();
                     }
+
+                   
 
                     if (origemTipo == Lote.settings.idsTela.TipoCFCFR || origemTipo == Lote.settings.idsTela.TipoTF)
                         $('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
