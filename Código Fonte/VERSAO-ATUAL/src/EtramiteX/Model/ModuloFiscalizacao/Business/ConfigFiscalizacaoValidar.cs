@@ -112,9 +112,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#region Campo
+        #region Penalidade
+        public bool SalvarPenalidade(Penalidade penalidade)
+        {
+            return Validacao.EhValido;
+        }
 
-		public bool SalvarCampoInfracao(Item campo)
+
+        #endregion
+
+        #region Campo
+
+        public bool SalvarCampoInfracao(Item campo)
 		{
 			return Validacao.EhValido;
 		}
@@ -276,6 +285,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
         }
 
         #endregion Produtos Apreendidos / Destinação
+
+        #region Códigos da Receita
+
+        public bool SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
+        {
+            if (listaCodigosReceita == null)
+            {
+                return Validacao.EhValido;
+            }
+
+            foreach (var item in listaCodigosReceita)
+            {
+                if (item.Excluir == false)
+                {
+                    if (String.IsNullOrWhiteSpace(item.Codigo))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio);
+                    }
+
+                    //Não estou verificando a descrição para não obrigar que os códigos já cadastrados sejam todos editados
+                    //if (String.IsNullOrWhiteSpace(item.Descricao))
+                    //{
+                    //    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria);
+                    //}
+                }
+            }
+
+
+            return Validacao.EhValido;
+        } 
+ 
+
+        #endregion Códigos da Receita
 
         public bool Salvar(ConfigFiscalizacao configuracao)
 		{

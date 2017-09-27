@@ -79,9 +79,19 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#endregion
 
-		#region Campo
+        #region Penalidade
+        public Mensagem ExcluirPenaliadadeMensagem(String strTmp) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir a penaliade com artigo {0}?", strTmp) }; }
+        public Mensagem ExcluirPenalidade { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Penalidade excluída com sucesso." }; } }
+        public Mensagem PenalidadeJaAdicionada {  get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Artigo", Texto = "Penalidade já adicionada" }; } }
+        public Mensagem ArtigoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Artigo", Texto = "Artigo é obrigatório." }; } }
+        public Mensagem ItemCampoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item", Texto = "Item é obrigatório." }; } }
+        public Mensagem DescricaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Descricao", Texto = "Descrição é obrigatório." }; } }
+        #endregion
 
-		public Mensagem SalvarCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração do campo da infração salva com sucesso." }; } }
+        #region Campo
+
+        public Mensagem SalvarCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração do campo da infração salva com sucesso." }; } }
+        public Mensagem SalvarPenalidade { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Penalidade da infração salva com sucesso." }; } }
 		public Mensagem ExcluirCampoInfracao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Campo de infração excluído com sucesso." }; } }
 		public Mensagem ExcluirCampoInfracaoMensagem(String strCampo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir o campo {0}?", strCampo) }; }
 		public Mensagem ExcluirCampoInfracaoDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Campo não pode ser excluído, pois está na situação desativado." }; } }
@@ -157,6 +167,16 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem SalvarProdutosDestinos { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Produtos Apreendidos/Destinação salvo com sucesso." }; } }
 
         #endregion Produtos Apreendidos/Destinação
+
+        #region Códigos da Receita
+
+        public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "Código da receita é obrigatório." }; } }
+        public Mensagem DescricaoCodigoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_Descricao", Texto = "Descrição é obrigatória." }; } }
+        public Mensagem CodigoReceitaDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Item_CodigoReceita", Texto = "O código da receita já existe." }; } }
+        public Mensagem SalvarCodigoReceita { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de Códigos da Receita salva com sucesso." }; } }
+        public Mensagem ErroCodigoUsado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir. O código da receita já está sendo usado no sistema." }; } }
+
+        #endregion Códigos da Receita
 
         public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Tipo", Texto = "Tipo de infração é obrigatório." }; } }

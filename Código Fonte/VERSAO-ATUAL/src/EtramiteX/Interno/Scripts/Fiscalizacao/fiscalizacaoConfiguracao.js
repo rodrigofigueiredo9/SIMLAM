@@ -287,6 +287,332 @@ ConfigurarItemInfracao = {
 	}
 }
 
+ConfigurarPenalidade = {
+    settings: {
+        urls: {
+            salvar: '',
+            podeDesativar: '',
+            podeEditar: '',
+            alterarSituacao: '',
+            ExcluirConfirm: '',
+            Excluir: ''
+        },
+
+        mensagens: null
+    },
+
+    container: null,
+
+    load: function (container, options) {
+        if (options) { $.extend(ConfigurarPenalidade.settings, options); }
+        ConfigurarPenalidade.settings.container = container;
+       
+       container.delegate('.btnSalvar', 'click', ConfigurarPenalidade.salvar);
+       container.delegate('.btnEditarItem', 'click', ConfigurarPenalidade.editar);
+       container.delegate('.btnExcluirItem', 'click', ConfigurarPenalidade.excluirPenalidade);
+       container.delegate('.btnDesativarItem', 'click', ConfigurarPenalidade.desativar);
+       container.delegate('.btnAtivarItem', 'click', ConfigurarPenalidade.ativar);
+       container.delegate('.btnAdicionarPenalidade', 'click', ConfigurarPenalidade.adicionarPenalidade);
+   
+       ConfigurarPenalidade.gerenciarBotoes();
+    },
+
+    gerenciarBotoes: function () {
+        $('.hdnItemJSon', ConfigurarPenalidade.settings.container).each(function () {
+            var strJSON = $(this).val().toString();
+            if (strJSON != '') {
+                var item = JSON.parse(strJSON);
+                var containerAux = $(this).closest('tr');
+
+                if (item.IsAtivo) {
+                    $('.btnDesativarItem', containerAux).button({
+                        disabled: false
+                    });
+
+                    $('.btnAtivarItem', containerAux).button({
+                        disabled: true
+                    });
+                } else {
+                    $('.btnDesativarItem', containerAux).button({
+                        disabled: true
+                    });
+
+                    $('.btnAtivarItem', containerAux).button({
+                        disabled: false
+                    });
+                }
+
+            }
+
+        });
+
+    },
+
+    limparCampos: function () {
+      
+
+        $('.txtArtigo', ConfigurarPenalidade.settings.container).val('');
+        $('.txtItem', ConfigurarPenalidade.settings.container).val('');
+        $('.txtDescricao', ConfigurarPenalidade.settings.container).val('');
+        $('.hdnItemId', ConfigurarPenalidade.container).val(0);
+
+       
+        $(ConfigurarPenalidade.settings.container).removeClass('edit');
+        //$(ConfigurarPenalidade.settings.container.find('.linhaSelecionada')).removeClass('linhaSelecionada');
+
+    },
+
+    adicionarPenalidade: function () {
+        var container = ConfigurarPenalidade.settings.container;
+        Mensagem.limpar(container);
+        var mensagens = new Array();
+
+        var penalidade = {
+            Id: $('.hdnItemId', container).val(),
+            Artigo: $('.txtArtigo', container).val(),
+            Item: $('.txtItem', container).val(),
+            Descricao: $('.txtDescricao', container).val(),
+            Valido:0
+        }
+
+        var tr = container.find('.linhaSelecionada');
+
+        
+
+        var duplicado = false;
+        $('.hdnItemJSon', ConfigurarPenalidade.settings.container).each(function () {
+            var obj = String($(this).val());
+            if (obj != '') {
+                var resp = (JSON.parse(obj));
+
+                if (resp.Artigo == penalidade.Artigo && resp.Item == penalidade.Item) {
+                    mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.PenalidadeJaAdicionada));
+                    return;
+                }
+            }
+        });
+
+
+        var hasField = tr.hasClass("linhaSelecionada");
+        
+        if (!hasField) {
+
+            if (penalidade.Artigo == '') {
+                mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.ArtigoObrigatorio));
+            }
+
+            if (penalidade.Item == '') {
+                mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.ItemObrigatorio));
+            }
+
+            if (penalidade.Descricao == '') {
+                mensagens.push(jQuery.extend(true, {}, ConfigurarPenalidade.settings.mensagens.DescricaoObrigatorio));
+            }
+
+            if (mensagens.length > 0) {
+                Mensagem.gerar(container, mensagens);
+                return;
+            }
+        }
+
+
+        $('.linhaSelecionada', container).remove();
+
+        ConfigurarPenalidade.settings.container.find('.linhaSelecionada').removeClass('linhaSelecionada');
+
+
+        var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+        linha.find('.hdnItemJSon').val(JSON.stringify(penalidade));
+
+        linha.find('.artigo').html(penalidade.Artigo).attr('title', penalidade.Artigo);
+        linha.find('.item').html(penalidade.Item).attr('title', penalidade.Item);
+        linha.find('.descricao').html(penalidade.Descricao).attr('title', penalidade.Descricao);
+        linha.find('.situacao').html('Desativado').attr('title', 'Desativado');
+        
+
+        $('.dataGridTable tbody:last', container).append(linha);
+        Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+
+        ConfigurarPenalidade.limparCampos();
+
+        if (penalidade.Id == "0") {
+            linha.find('.btnDesativarItem').button({
+                disabled: true
+            });
+
+            linha.find('.btnAtivarItem').button({
+                disabled: true
+            });
+
+        }
+        else {
+
+            var item = JSON.parse(linha.find('.hdnItemJSon').val());
+            
+            if (item.SituacaoTexto=="Ativado") {
+                linha.find('.btnDesativarItem').button({
+                    disabled: false
+                });
+
+                linha.find('.btnAtivarItem').button({
+                    disabled: true
+                });
+            } else {
+                linha.find('.btnDesativarItem').button({
+                    disabled: true
+                });
+
+                linha.find('.btnAtivarItem').button({
+                    disabled: false
+                });
+            }
+
+        }
+
+       
+    },
+
+    excluirPenalidade: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var linha = $(this).closest('tr');
+        linha.remove();
+        Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
+    },
+
+    obter: function () {
+        var container = ConfigurarPenalidade.settings.container;
+
+        var Penalidades = [];
+
+        $('.hdnItemJSon', container).each(function () {
+            var objPenalidade = String($(this).val());
+            if (objPenalidade != '') {
+                Penalidades.push(JSON.parse(objPenalidade));
+            }
+        });
+
+        return Penalidades;
+
+    },
+
+    desativar: function () {
+        var container = $(this).closest('tr');
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+        item.IsAtivo = false;
+        item.SituacaoTexto = "Desativado";
+        $('.hdnItemJSon', container).val(JSON.stringify(item));
+
+        ConfigurarPenalidade.gerenciarBotoes();
+    
+    },
+
+    ativar: function () {
+        var container = $(this).closest('tr');
+        var mensagens = new Array();
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+        item.IsAtivo = true;
+        item.SituacaoTexto = "Ativado";
+        $('.hdnItemJSon', container).val(JSON.stringify(item));
+
+        ConfigurarPenalidade.gerenciarBotoes();
+    
+    },
+
+    excluir: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        Modal.excluir({
+            'urlConfirm': ConfigurarPenalidade.settings.urls.ExcluirConfirm,
+            'urlAcao': ConfigurarPenalidade.settings.urls.Excluir,
+            'id': $(this).closest('tr').find('.itemId:first').val(),
+            'callBack': Item.callBackExcluir,
+            'naoExecutarUltimaBusca': true
+        });
+    },
+
+    callBackExcluir: function (data) {
+        MasterPage.redireciona(data.urlRedireciona);
+    },
+
+    salvar: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+        var mensagens = new Array();
+        var container = ConfigurarPenalidade.settings.container;
+    
+      
+
+
+        MasterPage.carregando(true);
+        $.ajax({
+            url: ConfigurarPenalidade.settings.urls.salvar,
+            data: JSON.stringify(ConfigurarPenalidade.obter()),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (XMLHttpRequest, textStatus, erroThrown) {
+                Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarPenalidade.container);
+            },
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).empty();
+                    $('.DivPenalidades', ConfigurarPenalidade.settings.container).append(response.Html);
+
+                    ConfigurarPenalidade.limparCampos();
+                }
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(ConfigurarPenalidade.settings.container, response.Msg);
+                }
+            }
+        });
+
+        MasterPage.carregando(false);
+
+        Listar.atualizarEstiloTable(ConfigurarPenalidade.settings.container.find('.dataGridTable'));
+
+        ConfigurarPenalidade.limparCampos();
+
+        ConfigurarPenalidade.gerenciarBotoes();
+
+    },
+
+    editar: function () {
+        Mensagem.limpar(ConfigurarPenalidade.settings.container);
+
+        ConfigurarPenalidade.cancelarEdicao();
+
+        var container = $(this).closest('tr');
+        var mensagens = new Array();
+        var item = JSON.parse($('.hdnItemJSon', container).val());
+   
+        $(ConfigurarPenalidade.settings.container).addClass('edit');
+        //$(ConfigurarPenalidade.settings.container.find('.linhaSelecionada')).removeClass('linhaSelecionada');
+
+                   
+
+        $(container).addClass('linhaSelecionada');
+
+        $('.txtArtigo', ConfigurarPenalidade.settings.container).val(item.Artigo);
+        $('.txtItem', ConfigurarPenalidade.settings.container).val(item.Item);
+        $('.txtDescricao', ConfigurarPenalidade.settings.container).val(item.Descricao);
+        $('.hdnItemId', ConfigurarPenalidade.settings.container).val(item.Id);
+        $('.hdnItemIsAtivo', ConfigurarPenalidade.settings.container).val(item.IsAtivo ? 1 : 0);
+
+        $('.txtArtigo', ConfigurarPenalidade.settings.container).focus();
+
+      
+              
+               
+    },
+
+    cancelarEdicao: function () {
+        ConfigurarPenalidade.limparCampos();
+    }
+
+}
+
 ConfigurarSubItemInfracao = {
 	settings: {
 		urls: {
