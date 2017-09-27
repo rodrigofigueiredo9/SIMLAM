@@ -42,6 +42,19 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _infracaoVM = value; }
 		}
 
+        private MultaVM _multaVM = new MultaVM();
+        public MultaVM MultaVM
+        {
+            get
+            {
+                return _multaVM;
+            }
+            set
+            {
+                _multaVM = value;
+            }
+        }
+
 		private MaterialApreendidoVM _materialapreendidoVM = new MaterialApreendidoVM();
 		public MaterialApreendidoVM MaterialApreendidoVM
 		{
