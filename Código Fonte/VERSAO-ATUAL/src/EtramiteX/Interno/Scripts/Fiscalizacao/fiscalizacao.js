@@ -1897,8 +1897,10 @@ FiscalizacaoMaterialApreendido = {
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
-		Mascara.load(FiscalizacaoMaterialApreendido.container);
-		
+	    Mascara.load(FiscalizacaoMaterialApreendido.container);
+
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).hide();
+
 		if (parseInt($('.hdnMaterialApreendidoId', FiscalizacaoMaterialApreendido.container).val()) > 0) {
 			Fiscalizacao.salvarEdicao = false;
 			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
@@ -1908,12 +1910,10 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
 		
-		if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == false
-            && $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == false) {
-		    $('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked', 'checked');
-		}
 		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
 		    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		} else if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    FiscalizacaoMaterialApreendido.onSelecionarIsBloco();
 		}
 
 		MasterPage.botoes();
@@ -1935,7 +1935,9 @@ FiscalizacaoMaterialApreendido = {
 	    });
 	},
 
-	onSelecionarIsDigital: function(){
+	onSelecionarIsDigital: function () {
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).show();
+
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
@@ -1952,6 +1954,8 @@ FiscalizacaoMaterialApreendido = {
 	},
 
 	onSelecionarIsBloco: function () {
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).show();
+
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeAttr('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');

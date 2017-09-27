@@ -33,7 +33,9 @@
 		        <label><%= Html.RadioButton("MaterialApreendido.IsDigital", 1, (Model.MaterialApreendido.IsDigital == null ? false : !Model.MaterialApreendido.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
         </div>
+    </fieldset>
 
+    <fieldset class="block box fsCorpo">
         <div class="block">
             <div class="coluna15">
 		        <label>Número do IUF</label>
@@ -93,7 +95,7 @@
 
     </fieldset>
 
-    <fieldset class="block box">
+    <fieldset class="block box fsCorpo">
 		<legend>Depositário</legend>
 
 		<input type="hidden" class="hdnDepositarioId" value="<%= Html.Encode(Model.MaterialApreendido.Depositario.Id) %>" />
@@ -149,7 +151,7 @@
 
 	</fieldset>
 
-    <fieldset class="fsProdutosApreendidos block box">
+    <fieldset class="fsProdutosApreendidos block box fsCorpo">
 		<legend>Produtos Apreendidos / Destinação</legend>
 
 		<%if (!Model.IsVisualizar){%>
@@ -246,7 +248,8 @@
 			</div>
 		</div>
 	</fieldset>
-    <fieldset>
+    
+    <fieldset class="fsCorpo">
         <div class="block box">
 		    <div class="coluna76">
 			    <label>
