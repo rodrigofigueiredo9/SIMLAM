@@ -812,11 +812,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
         #region Campo Infracao
 
         internal int SalvarCampoInfracao(Item entidade, BancoDeDados banco = null)
-        {
-            if (entidade == null)
-            {
-                throw new Exception("Objeto Campo é nulo.");
-            }
+		{
+			if (entidade == null)
+			{
+				throw new Exception("Objeto Campo é nulo.");
+			}
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
@@ -1456,30 +1456,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return listaCodigosReceita;
         }
 
-         internal bool PermiteExcluirCodigo(CodigoReceita codigo, BancoDeDados banco = null)
-         {
-             bool podeExcluir = false;
+        internal bool PermiteExcluirCodigo(CodigoReceita codigo, BancoDeDados banco = null)
+        {
+            bool podeExcluir = false;
 
-             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-             {
-                 Comando comando = null;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = null;
 
-                 bancoDeDados.IniciarTransacao();
+                bancoDeDados.IniciarTransacao();
 
-                 comando = bancoDeDados.CriarComando(@"select count(*) total
-                                                      from tab_fisc_infracao
+                comando = bancoDeDados.CriarComando(@"select count(*) total 
+                                                      from tab_fisc_infracao 
                                                       where codigo_receita = :idCodigo", EsquemaBanco);
-                 
-                 comando.AdicionarParametroEntrada("idCodigo", codigo.Id, DbType.Int32);
 
-                 var total = bancoDeDados.ExecutarScalar<int>(comando);
+                comando.AdicionarParametroEntrada("idCodigo", codigo.Id, DbType.Int32);
 
-                 podeExcluir = total > 0 ? false : true;
-             }
+                var total = bancoDeDados.ExecutarScalar<int>(comando);
 
-             return podeExcluir;
-         }
- 
+                podeExcluir = total > 0 ? false : true;
+            }
+
+            return podeExcluir;
+        }
 
 
         #endregion Códigos da Receita Infracao
@@ -1707,7 +1706,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 {
                     while (reader.Read())
                     {
-
+                        
                         lista.Add(new Penalidade
                         {
                             Id = reader.GetValue<string>("id"),
@@ -1727,9 +1726,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return lista;
         }
 
-        internal List<Item> ObterCampoInfracao()
-        {
-            List<Item> lista = new List<Item>();
+		internal List<Item> ObterCampoInfracao()
+		{
+			List<Item> lista = new List<Item>();
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
@@ -2698,11 +2697,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 
 
-        public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova, BancoDeDados banco = null)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                bancoDeDados.IniciarTransacao();
+		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
 
                 Comando comando = bancoDeDados.CriarComando(@"update {0}cnf_fisc_infracao_campo t set t.ativo = :situacao, t.tid = :tid where t.id = :id", EsquemaBanco);
                 comando.AdicionarParametroEntrada("situacao", situacaoNova, DbType.Int32);
