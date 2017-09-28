@@ -314,7 +314,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					t.tid,
 					t.numero,
 					t.situacao_id,
-					e.denominador,
+					nvl(e.denominador, t.empreendimento_sem_doc) as denominador,
 					e.cnpj,
 					le.sigla as uf,
 					ee.municipio_texto as municipio,

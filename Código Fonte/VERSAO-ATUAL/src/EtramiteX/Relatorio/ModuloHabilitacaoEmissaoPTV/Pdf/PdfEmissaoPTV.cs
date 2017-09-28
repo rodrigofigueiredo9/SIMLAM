@@ -187,6 +187,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 							stream = PdfMetodosAuxiliares.TarjaVermelha(msTemp, mensagemTarja, "Inválida");
 						}
 						break;
+                    case ePTVSituacao.Valido:
+                        using (MemoryStream msTemp = new MemoryStream(stream.ToArray()))
+                        {
+                            stream.Close();
+                            stream.Dispose();
+
+                            string urlOrigem = HttpContext.Current.Request.Url.ToString();
+
+                            if (urlOrigem.IndexOf("publico") >= 0)
+                            {
+                                
+                                stream = PdfMetodosAuxiliares.TarjaVermelha(msTemp, mensagemTarja, "Válida");
+                            }
+                        }
+                        break;
 					default:
 						break;
 				}
