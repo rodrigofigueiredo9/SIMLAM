@@ -277,8 +277,8 @@
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\DestinacaoProduto.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\Penalidade.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ProdutoApreendido.cs" />
-    <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\CodigoReceita.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\ApreensaoProdutoApreendido.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\CodigoReceita.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Multa.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\ConsultaFiltro.cs" />
     <Compile Include="Interno\ModuloLiberacaoCFOCFOC\eCFOCFOCTipoNumero.cs" />
