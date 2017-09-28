@@ -780,7 +780,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
             else
             {
-                vm.PartialInicial = "ObjetoInfracao";
+                vm.PartialInicial = "InterdicaoEmbargo";
                 return View("Salvar", vm);
             }
         }
@@ -798,11 +798,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView("ObjetoInfracao", vm.ObjetoInfracaoVM);
+                return PartialView("InterdicaoEmbargo", vm.ObjetoInfracaoVM);
             }
             else
             {
-                vm.PartialInicial = "ObjetoInfracao";
+                vm.PartialInicial = "InterdicaoEmbargo";
                 return View("Visualizar", vm);
             }
         }
