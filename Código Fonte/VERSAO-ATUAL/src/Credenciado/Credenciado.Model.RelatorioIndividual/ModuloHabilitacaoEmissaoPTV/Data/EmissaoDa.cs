@@ -121,7 +121,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
                             left join tab_empreendimento_endereco ee on ee.empreendimento = e.id and ee.correspondencia = 0
                             left join lov_estado le on ee.estado = le.id
                             left join lov_municipio  lm on ee.municipio = lm.id
-                            left join lov_municipio lme on t.municipio = lme.id
+                            left join lov_municipio lme on t.municipio_emissao = lme.id
                             left join tab_pessoa pr on pr.id = t.responsavel_emp
                             left join tab_destinatario_ptv d on d.id = t.destinatario
                             left join lov_estado led on led.id = d.uf
