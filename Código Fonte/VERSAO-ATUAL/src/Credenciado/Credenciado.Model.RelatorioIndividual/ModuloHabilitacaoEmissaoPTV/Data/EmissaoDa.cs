@@ -186,7 +186,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
 			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.orgao_classe, h.registro_orgao_classe, f.arquivo arquivo_id, le.sigla from {0}tab_hab_emi_ptv h, {0}tab_funcionario f, {0}lov_estado le
-			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
+			    where f.id = h.funcionario and h.uf_habilitacao = le.id and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
 
