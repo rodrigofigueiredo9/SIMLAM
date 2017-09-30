@@ -39,6 +39,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 		public const string TipoArlTotal = "ARL_TOTAL";
 		public const string TipoArlARecuperar = "ARL_A_RECUPERAR";
 		public const string TipoAppARecuperar = "APP_A_RECUPERAR";
+        public const string TipoAppCalculada = "APP_CALCULADA";
+        public const string TipoEscadinhaCalculada = "ESCADINHA_CALCULADA";
 
 		[DefaultValue("")]
 		public string tipo { get; set; }

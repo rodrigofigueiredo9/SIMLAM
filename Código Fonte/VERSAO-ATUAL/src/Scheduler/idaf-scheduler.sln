@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "idaf-scheduler", "idaf-scheduler\idaf-scheduler.csproj", "{4B6F4648-D376-4C7D-B89A-C87AA2324688}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJSON.Net", "GeoJSON.Net\GeoJSON.Net.csproj", "{7C0D45ED-681E-4DEC-9910-BAE1211E4889}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Etx", "..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj", "{7F898E80-F828-4618-B27B-2D039DCB461E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuracao", "..\..\lib\src\Configuracao\Configuracao.csproj", "{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocos.Entities", "..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj", "{707F196A-8A05-4B96-92E1-E60335DDC933}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -21,12 +21,24 @@ Global
 		{4B6F4648-D376-4C7D-B89A-C87AA2324688}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B6F4648-D376-4C7D-B89A-C87AA2324688}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B6F4648-D376-4C7D-B89A-C87AA2324688}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C0D45ED-681E-4DEC-9910-BAE1211E4889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C0D45ED-681E-4DEC-9910-BAE1211E4889}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C0D45ED-681E-4DEC-9910-BAE1211E4889}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C0D45ED-681E-4DEC-9910-BAE1211E4889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F898E80-F828-4618-B27B-2D039DCB461E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73EDCC9-8660-4AE7-B2D4-56F907F5DB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{707F196A-8A05-4B96-92E1-E60335DDC933}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

@@ -44,105 +44,97 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		public void Execute(IJobExecutionContext context)
 		{
 			//logging
-            //var jobKey = context.JobDetail.Key;
-            //Log.InfoFormat("BEGIN {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
+			var jobKey = context.JobDetail.Key;
+			Log.InfoFormat("BEGIN {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 
-            //using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
-            //{
-            //    conn.Open();
-            //    string tid = string.Empty;
+			using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
+			{
+				conn.Open();
+				string tid = string.Empty;
 
-            //    //Veja se 
-            //    var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+				//Veja se 
+				var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 
-            //    while (nextItem != null)
-            //    {
-            //        //Update item as Started
-            //        //LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
+				while (nextItem != null)
+				{
+					//Update item as Started
 
-            //        var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
-            //        //var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
+					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
+					var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
+                    //if (controleSicar == null) controleSicar.solicitacao_passivo = 0;
 
-            //        //TODO:PROCESSAR APENAS SOLICITACOES PASSIVOS
-            //        if (controleSicar != null && controleSicar.solicitacao_passivo == 0)
-            //        {
-            //            break;
-            //        }
+					ObterDadosRequisicao(conn, requisicao);
+					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
+                    
+					try
+					{
+                        CAR car;	
+                        //REQUISIÇÃO CAR
+						if (requisicao.tem_titulo || requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+						{
+							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
+						}
+						else
+						{
+							using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
+							{
+								connCredendicado.Open();
 
-            //        ObterDadosRequisicao(conn, requisicao);
-            //        tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
+								car = ObterDadosCar(connCredendicado, requisicao, CarUtils.GetEsquemaCredenciado());
+							}
+						}
 
-            //        try
-            //        {
-            //            CAR car;
-
-            //            if (requisicao.tem_titulo || requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-            //            {
-            //                car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
-            //            }
-            //            else
-            //            {
-            //                using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
-            //                {
-            //                    connCredendicado.Open();
-
-            //                    car = ObterDadosCar(connCredendicado, requisicao, CarUtils.GetEsquemaCredenciado());
-            //                }
-            //            }
-
-            //            Pessoa declarante = null;
-
-            //            if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-            //                declarante = ObterDadosDeclarante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
-            //            else
-            //                using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
-            //                {
-            //                    connCredendicado.Open();
-            //                    declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
-            //                }
-
-            //            car.cadastrante = new Cadastrante()
-            //            {
-            //                cpf = declarante.cpf,
-            //                dataNascimento = declarante.dataNascimento,
-            //                nome = declarante.nome,
-            //                nomeMae = declarante.nomeMae
-            //            };
+						Pessoa declarante = null;
+                        //REQUISIÇÃO DECLARANTE
+						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+							declarante = ObterDadosDeclarante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+						else
+							using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
+							{
+								connCredendicado.Open();
+								declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+							}
+                        //ATRIBUI OBJETO CADASTRANTE AO CAR
+						car.cadastrante = new Cadastrante()
+						{
+							cpf = declarante.cpf,
+							dataNascimento = declarante.dataNascimento,
+							nome = declarante.nome,
+							nomeMae = declarante.nomeMae
+						};
 
 
-            //            if (controleSicar.solicitacao_passivo > 0)
-            //                PreencherCampos(car);
-            //            else
-            //                ValidarCampos(car);
+						if (controleSicar.solicitacao_passivo > 0)
+							PreencherCampos(car);
+						else
+							ValidarCampos(car);
 
-            //            //Salvar o arquivo .CAR
-            //            var arquivoCar = GerarArquivoCAR(car, conn);
+						//Salvar o arquivo .CAR
+						var arquivoCar = GerarArquivoCAR(car, conn);
 
-            //            //Marcar como processado
-            //            LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, true, "Processado");
+						//Marcar como processado
+						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, true, "Processado");
 
-            //            //Atualizar o Controle do SICAR
-            //            //var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
-            //            var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
+						//Atualizar o Controle do SICAR
+						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
+						var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
 
-            //            //var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
+						//Adicionar na fila pedido para Enviar Arquivo SICAR
+						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
+					}
+					catch (Exception ex)
+					{
+						//Marcar como processado registrando a mensagem de erro
+						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
+						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
+					}
 
-            //            //Adicionar na fila pedido para Enviar Arquivo SICAR
-            //            LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            //Marcar como processado registrando a mensagem de erro
-            //            LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
-            //            ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-            //            ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
-            //        }
+					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+				}
+			}
 
-            //        nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
-            //    }
-            //}
-
-            //Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
+			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 		}
 
 		private void ValidarCampos(CAR car)
@@ -465,7 +457,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			car.imovel = new Imovel()
 			{
-				nome = imovel.denominador,
+				nome = imovel.denominador ?? string.Empty,
 				codigoMunicipio = imovel.municipio,
 				cep = imovel.cep,
 				descricaoAcesso = (descricaoAcesso.Length > 1000 ? descricaoAcesso.Substring(0, 1000) : descricaoAcesso),
@@ -473,18 +465,19 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
 				telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
 				modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
-				enderecoCorrespondencia = new EnderecoCorrespondencia()
-				{
-					logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro),
-					numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero),
-					complemento =
-						(complementoCorrespondencia.Length > 100
-							? complementoCorrespondencia.Substring(0, 100)
-							: complementoCorrespondencia),
-					bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia),
-					cep = imovel.cep,
-					codigoMunicipio = imovel.municipio
-				}
+                enderecoCorrespondencia = new EnderecoCorrespondencia()
+                {
+                    logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro),
+                    numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero),
+                    complemento =
+                        (complementoCorrespondencia.Length > 100
+                            ? complementoCorrespondencia.Substring(0, 100)
+                            : complementoCorrespondencia),
+                    bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia),
+                    cep = imovel.cep,
+                    codigoMunicipio = imovel.municipio
+                }
+				
 			};
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
@@ -562,15 +555,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						{
 							correspondencia = dr.GetValue<Int32>("correspondencia"),
 							zona = dr.GetValue<Int32>("zona"),
-							logradouro = dr.GetValue<string>("logradouro"),
-							bairro = dr.GetValue<string>("bairro"),
+                            logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
+                            bairro = dr.GetValue<string>("bairro") ?? string.Empty,
 							municipio = dr.GetValue<Int32>("municipio_id"),
-							cep = dr.GetValue<string>("cep"),
-							numero = dr.GetValue<string>("numero"),
-							caixaPostal = dr.GetValue<string>("caixa_postal"),
-							distrito = dr.GetValue<string>("distrito"),
-							corrego = dr.GetValue<string>("corrego"),
-							complemento = dr.GetValue<string>("complemento")
+                            cep = dr.GetValue<string>("cep") ?? string.Empty,
+                            numero = dr.GetValue<string>("numero") ?? string.Empty,
+                            caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
+                            distrito = dr.GetValue<string>("distrito") ?? string.Empty,
+                            corrego = dr.GetValue<string>("corrego") ?? string.Empty,
+                            complemento = dr.GetValue<string>("complemento") ?? string.Empty
 						};
 
 						enderecos.Add(empTemporario);
@@ -1230,6 +1223,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				geo.AddRange(ObterGeometriaBordaChapada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaAreaConsolidada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaAppTotal(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
+                geo.AddRange(ObterGeometriaAppCalculada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
+                geo.AddRange(ObterGeometriaEscadinhaCalculada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
+                                    
 
 				//Areas que dependem da identificacao da Reserva Legal
 				identificacaoReserva.ForEach((item) =>
@@ -1293,13 +1289,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
 			{
+                //PARAMETROS DO SELECT
 				cmd.Parameters.Add(new OracleParameter("projeto", projetoGeoId));
 				cmd.Parameters.Add(new OracleParameter("tid", projetoGeoTid));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
-					{
+					                                                                                                         {
 						var geo = new Geo() { tipo = tipoGeometriaCar };
 
 						try
@@ -1672,6 +1669,80 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			return geometrias;
 		}
+
+        /// <summary>
+        /// Obters the geometria application total calculada.
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="schema">The schema.</param>
+        /// <param name="projetoGeoId">The projeto geo identifier.</param>
+        /// <param name="projetoGeoTid">The projeto geo tid.</param>
+        /// <returns></returns>
+        private static IEnumerable<Geo> ObterGeometriaAppCalculada(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
+        {
+            var tabela = schema + ".GEO_CAR_APP_CALCULADAS";
+
+            var geometrias = new List<Geo>();
+
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RIO_ATE_10'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RIO_10_A_50'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RIO_50_A_200'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_200_A_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RIO_ACIMA_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_BORDA_CHAPADA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_RESTINGA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+                "tipo = 'APP_AREA_DECLIVIDADE_MAIOR_45'"));
+
+            //Remover geometrias nulas para envio
+            geometrias.RemoveAll(x => x == null);
+
+            return geometrias;
+        }
+
+        /// <summary>
+        /// Obters the geometria application total escadinha calculada.
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="schema">The schema.</param>
+        /// <param name="projetoGeoId">The projeto geo identifier.</param>
+        /// <param name="projetoGeoTid">The projeto geo tid.</param>
+        /// <returns></returns>
+        private static IEnumerable<Geo> ObterGeometriaEscadinhaCalculada(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
+        {
+            var tabela = schema + ".GEO_CAR_ESCADINHA_CALCULADAS";
+
+            var geometrias = new List<Geo>();
+
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                "tipo = 'APP_RIO_ATE_10'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                "tipo = 'APP_RIO_10_A_50'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                "tipo = 'APP_RIO_50_A_200'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                "tipo = 'APP_200_A_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
+                "tipo = 'APP_RIO_ACIMA_600'"));
+
+            //Remover geometrias nulas para envio
+            geometrias.RemoveAll(x => x == null);
+
+            return geometrias;
+        }
 
 		/// <summary>
 		/// Obters the geometria area consolidada.

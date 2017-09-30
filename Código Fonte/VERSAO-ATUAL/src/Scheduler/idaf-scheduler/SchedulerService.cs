@@ -45,6 +45,10 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 			Log.Info("Criando Jobs");
 
+            ScheduleJobIntegrar();
+
+            Log.Info("Integrando...");
+
 			ScheduleJobs();
 
 			Log.Info("Agendando Jobs");
@@ -52,6 +56,9 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 		private static void CreateJobs()
 		{
+            var IntegracaoCar = JobBuilder.Create<IntegracaoCarJob>().WithIdentity("IntegracaoCarJob").Build();
+            JobDictionary.Add("IntegracaoCarJob", IntegracaoCar);
+            
 			var gerarArquivoCar = JobBuilder.Create<GerarArquivoCarJob>().WithIdentity("GerarArquivoCarJob").Build();
 			JobDictionary.Add("GerarArquivoCarJob", gerarArquivoCar);
 			
@@ -72,6 +79,11 @@ namespace Tecnomapas.EtramiteX.Scheduler
 			_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
 			_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}
+
+        private static void ScheduleJobIntegrar()
+        {
+            _scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 15 Segundos"));
+        }
 
 		private static ITrigger CreateTrigger(string key)
 		{
