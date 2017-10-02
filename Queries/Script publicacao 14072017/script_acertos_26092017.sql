@@ -1,0 +1,33 @@
+ALTER TABLE IDAFCREDENCIADO.tab_ptv
+MODIFY
+   (empreendimento NULL);
+   
+ALTER TABLE IDAFCREDENCIADO.tab_ptv
+       ADD (
+       	RESPONSAVEL_SEM_DOC VARCHAR2(3000 BYTE), 
+        EMPREENDIMENTO_SEM_DOC VARCHAR2(3000 BYTE)
+      );
+      
+commit;
+
+ALTER TABLE IDAFCREDENCIADO.hst_ptv
+       ADD (
+       	RESPONSAVEL_SEM_DOC VARCHAR2(3000 BYTE), 
+        EMPREENDIMENTO_SEM_DOC VARCHAR2(3000 BYTE)
+      );
+
+commit;
+
+ALTER TABLE IDAFCREDENCIADO.tab_ptv
+       ADD (
+       DATA_VISTORIA date 
+      );
+      
+commit;
+
+ALTER TABLE IDAFCREDENCIADO.tab_ptv
+       ADD (
+       DECLARACAOADICIONAL VARCHAR2(200 BYTE) 
+      );
+      
+commit;
