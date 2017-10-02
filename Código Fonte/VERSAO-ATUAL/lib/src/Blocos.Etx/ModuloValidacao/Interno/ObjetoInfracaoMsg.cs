@@ -30,6 +30,13 @@
 
 		public Mensagem DescricaoTermoEmbargoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_DescricaoTermoEmbargo", Texto = "Descrição do termo de embargo/interdição é obrigatório." }; } }
 
+        public Mensagem IUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_IsDigital", Texto = "IUF para Multa é obrigatório." }; } }
+        public Mensagem NumeroIUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_NumeroIUF", Texto = "Número do IUF é obrigatório." }; } }
+        public Mensagem SerieObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_Serie", Texto = "Série é obrigatório." }; } }
+        public Mensagem DataLavraturaIUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_DataLavratura", Texto = "Data da Lavratura é obrigatório." }; } }
+
+        public Mensagem InterditadoEmbargadoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_Interditado", Texto = "Interditado/Embargado é obrigatório." }; } }
+
 		public Mensagem ExisteAtvAreaDegradObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_ExisteAtvAreaDegrad, #SpanExisteAtvAreaDegrad", Texto = "Está sendo desenvolvida alguma atividade na área degradada é obrigatório." }; } }
 		public Mensagem ExisteAtvAreaDegradEspecificarTextoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_ExisteAtvAreaDegradEspecificarTexto", Texto = "Especificar da atividade na área degradada é obrigatório." }; } }
 

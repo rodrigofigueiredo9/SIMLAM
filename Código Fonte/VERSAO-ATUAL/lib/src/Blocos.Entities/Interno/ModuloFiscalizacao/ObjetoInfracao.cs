@@ -9,12 +9,16 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public String Tid { get; set; }
 		public Int32 FiscalizacaoId { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
-
+        public Boolean? IsDigital { get; set; }
+        public String NumeroIUF { get; set; }
+        public Int32? SerieId { get; set; }
+        public Boolean? Interditado { get; set; }
 		public Int32? AreaEmbargadaAtvIntermed { get; set; }
 		public Int32? TeiGeradoPeloSistema { get; set; }
 		public Int32 TeiGeradoPeloSistemaSerieTipo { get; set; }
 		public String TeiGeradoPeloSistemaSerieTipoTexto { get; set; }
 		public String NumTeiBloco { get; set; }
+        public String NumeroLacre { get; set; }
 
 		private DateTecno _dataLavraturaTermo = new DateTecno();
 		public DateTecno DataLavraturaTermo

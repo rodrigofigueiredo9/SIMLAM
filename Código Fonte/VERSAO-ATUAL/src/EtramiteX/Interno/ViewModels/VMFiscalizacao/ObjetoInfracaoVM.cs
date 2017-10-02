@@ -66,19 +66,12 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 
 		public ObjetoInfracaoVM(){}
 
-		public ObjetoInfracaoVM(ObjetoInfracao entidade, List<Lista> series, List<CaracteristicaSoloAreaDanificada> caracteristicasSolo, bool isVisualizar = false)
+		public ObjetoInfracaoVM(ObjetoInfracao entidade, List<Lista> series, bool isVisualizar = false)
 		{
 			IsVisualizar = isVisualizar;
 			Entidade = entidade;
 
-			List<Lista> resultouErosaoLst = new List<Lista>();
-			resultouErosaoLst.Add(new Lista() { Id = "1", Texto = "Sim", IsAtivo = true });
-			resultouErosaoLst.Add(new Lista() { Id = "2", Texto = "Não", IsAtivo = true });
-
-
-			CaracteristicasSolo = caracteristicasSolo;
-			Series = ViewModelHelper.CriarSelectList(series, true, true, selecionado: entidade.TeiGeradoPeloSistemaSerieTipo.ToString());
-			ResultouErosao = ViewModelHelper.CriarSelectList(resultouErosaoLst , true, true, selecionado: entidade.InfracaoResultouErosaoTipo.ToString());
+			Series = ViewModelHelper.CriarSelectList(series, true, true, selecionado: entidade.SerieId.ToString());
 		}
 	}
 }

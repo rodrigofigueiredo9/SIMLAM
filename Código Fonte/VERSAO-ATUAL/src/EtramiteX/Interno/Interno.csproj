@@ -1705,6 +1705,7 @@
     <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
+    <Content Include="Views\Fiscalizacao\ObjetoInfracao_old.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
@@ -2317,7 +2318,7 @@
     <Content Include="Views\Fiscalizacao\ListarResultados.ascx" />
     <Content Include="Views\Fiscalizacao\MaterialApreendido.ascx" />
     <Content Include="Views\Fiscalizacao\ConsideracaoFinal.ascx" />
-    <Content Include="Views\Fiscalizacao\ObjetoInfracao.ascx" />
+    <Content Include="Views\Fiscalizacao\InterdicaoEmbargo.ascx" />
     <Content Include="Views\Fiscalizacao\ComplementacaoDados.ascx" />
     <Content Include="Views\Fiscalizacao\InfracaoCamposPerguntas.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeoBaseReferenciaPartial.ascx" />
