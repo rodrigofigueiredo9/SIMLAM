@@ -766,17 +766,35 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
-        #region Objeto da Infração
+        #region Interdição/Embargo
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
         public ActionResult ObjetoInfracao(int id)
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
-            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(_busObjetoInfracao.Obter(id), _busLista.FiscalizacaoObjetoInfracaoSerie, _busLista.FiscalizacaoObjetoInfracaoCaracteristicaSolo);
+            ObjetoInfracao entidade = new ObjetoInfracao();
+
+            if (id != 0)
+            {
+                entidade = _busObjetoInfracao.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (entidade.Id > 0)
+            {
+                entidade.IsDigital = true;
+            }
+
+            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
+
+            if (vm.ObjetoInfracaoVM.Entidade.Arquivo == null)
+            {
+                vm.ObjetoInfracaoVM.Entidade.Arquivo = new Arquivo();
+            }
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView(vm.ObjetoInfracaoVM);
+                return PartialView("InterdicaoEmbargo", vm.ObjetoInfracaoVM);
             }
             else
             {
@@ -791,7 +809,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             FiscalizacaoVM vm = new FiscalizacaoVM();
 
             ObjetoInfracao entidade = _busObjetoInfracao.Obter(id);
-            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoObjetoInfracaoSerie, _busLista.FiscalizacaoObjetoInfracaoCaracteristicaSolo);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (entidade.Id > 0)
+            {
+                entidade.IsDigital = true;
+            }
+            
+            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
             vm.ObjetoInfracaoVM.IsVisualizar = entidade.Id > 0;
             vm.ObjetoInfracaoVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
 

@@ -13,8 +13,8 @@
         <div class="block">
             <div class="coluna20">
                 <label>IUF para Multa</label><br />
-		        <label><%= Html.RadioButton("Multa.IsDigital", 0, (Model.Entidade.TeiGeradoPeloSistema == null ? false : true), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
-		        <label><%= Html.RadioButton("Multa.IsDigital", 1, (Model.Entidade.TeiGeradoPeloSistema == null ? false : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
+		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 0, (Model.Entidade.IsDigital == null ? false : Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
+		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 1, (Model.Entidade.IsDigital == null ? false : !Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
         </div>
     </fieldset>
@@ -23,28 +23,47 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF</label>
-		        <%= Html.TextBox("Multa.NumeroIUF", 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("ObjetoInfracao.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
 				<label>Série</label><br />
-				<%= Html.DropDownList("Multa.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
+				<%= Html.DropDownList("ObjetoInfracao.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
 
             <div class="coluna15">
 				<label>Data da lavratura do IUF</label>
-				<%= Html.TextBox("Multa.DataLavratura", Model.Entidade.DataLavraturaTermo.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
+				<%= Html.TextBox("ObjetoInfracao.DataLavratura", Model.Entidade.DataLavraturaTermo.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
+        </div>
+
+        <div class="block divPDF">
+            <div class="coluna50 inputFileDiv">
+				<label>PDF do IUF</label>
+				<div class="block">
+					<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.Entidade.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.Entidade.Arquivo.Nome)%></a>
+				</div>
+				<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
+				<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "" : "hide" %>">
+					<input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
+				</span>
+			</div>
+			<% if (!Model.IsVisualizar) { %>
+			    <div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
+				    <button type="button" class="inlineBotao btnAddArq <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
+				    <button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
+			    </div>
+			<% } %>
         </div>
     </fieldset>
 
-    <fieldset class="block box">
+    <fieldset class="block box fsCamposInterdicaoEmbargo">
         <div class="block">
 		    <div class="coluna10">
-			    <label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 1, (Model.Entidade.ExisteAtvAreaDegrad == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Interditado</label>
+			    <label><%= Html.RadioButton("ObjetoInfracao.Interditado", 1, (Model.Entidade.Interditado == null ? false : Model.Entidade.Interditado.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbInterditado" }))%>Interditado</label>
 		    </div>
             <div class="coluna10">
-			    <label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 0, (Model.Entidade.ExisteAtvAreaDegrad == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Embargado</label>
+			    <label><%= Html.RadioButton("ObjetoInfracao.Interditado", 0, (Model.Entidade.Interditado == null ? false : !Model.Entidade.Interditado.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbEmbargado" }))%>Embargado</label>
 		    </div>
         </div>
 
@@ -65,7 +84,7 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
-				<%= Html.TextBox("MaterialApreendido.NumeroLacre", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
+				<%= Html.TextBox("ObjetoInfracao.NumeroLacre", Model.Entidade.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
 			</div>
 		</div>
         
