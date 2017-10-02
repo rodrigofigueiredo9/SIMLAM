@@ -214,10 +214,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         //objetoInfracao.FundamentoInfracao = reader["fundament_infracao"].ToString();
                         //objetoInfracao.UsoSoloAreaDanificada = reader["uso_solo_area_danif"].ToString();
                         //objetoInfracao.AreaDeclividadeMedia = reader.GetValue<decimal>("declividade_media_area").ToStringTrunc();
-                        objetoInfracao.Interditado = Convert.ToBoolean(reader["interditado"]);
                         objetoInfracao.NumeroLacre = reader["numero_lacre"].ToString();
 						
 						objetoInfracao.Tid = reader["tid"].ToString();
+
+                        if (reader["interditado"] != null && !Convert.IsDBNull(reader["interditado"]))
+                        {
+                            objetoInfracao.Interditado = Convert.ToBoolean(reader["interditado"]);
+                        }
+                        else
+                        {
+                            objetoInfracao.Interditado = null;
+                        }
 
                         //if (reader["infracao_result_erosao"] != null && !Convert.IsDBNull(reader["infracao_result_erosao"]))
                         //{
