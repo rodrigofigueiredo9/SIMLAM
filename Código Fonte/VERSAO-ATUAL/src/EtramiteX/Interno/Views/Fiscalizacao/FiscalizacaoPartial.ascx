@@ -7,7 +7,7 @@
 		<li class="step2"><a>Projeto Geográfico</a> </li>
 		<li class="step3"><a>Infração</a></li>
         <li class="step4"><a>Multa</a></li>
-		<li class="step5"><a>Objeto da infração</a> </li>
+		<li class="step5"><a>Interdição/Embargo</a> </li>
 		<li class="step6"><a>Apreensão</a> </li>
 		<li class="step7"><a>Considerações finais</a> </li>
 		<li class="step8"><a class="ultima">Concluir Cadastro</a></li>
