@@ -2251,14 +2251,12 @@ FiscalizacaoOutrasPenalidades = {
         Fiscalizacao.alternarAbas();
 
         $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).hide();
-        alert('here01');
 
         FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsDigital', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsDigital);
         FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsBloco', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsBloco);
         FiscalizacaoOutrasPenalidades.container.delegate('.btnAddArq', 'click', FiscalizacaoOutrasPenalidades.onEnviarArquivoClick);
         FiscalizacaoOutrasPenalidades.container.delegate('.btnLimparArq', 'click', FiscalizacaoOutrasPenalidades.onLimparArquivoClick);
-        alert('here02');
-
+        
         Mascara.load(FiscalizacaoOutrasPenalidades.container);
 
         if (parseInt($('.hdnOutrasPenalidadesId', FiscalizacaoOutrasPenalidades.container).val()) > 0) {
@@ -2269,49 +2267,45 @@ FiscalizacaoOutrasPenalidades = {
             Fiscalizacao.salvarEdicao = true;
             Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
         }
-        alert('here03');
-
+        
         if ($('.rdoIsDigital', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
             FiscalizacaoOutrasPenalidades.onSelecionarIsDigital();
         } else if ($('.rdoIsBloco', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
             FiscalizacaoOutrasPenalidades.onSelecionarIsBloco();
         }
-        alert('here04');
-
+        
         MasterPage.botoes();
         MasterPage.carregando(false);
-        alert('here05');
+
+        //alert('here');
     },
 
     onSalvarFiscalizacaoOutrasPenalidades: function () {
-        alert('FALTA FAZER');
-        //var container = FiscalizacaoOutrasPenalidades.container;
+        var container = FiscalizacaoOutrasPenalidades.container;
 
-        ////Criação do objeto (da classe OutrasPenalidades)
-        //var obj = {
-        //    Id: Number($('.hdnOutrasPenalidadesId', container).val()),
-        //    FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
-        //};
+        //Criação do objeto (da classe OutrasPenalidades)
+        var obj = {
+            Id: Number($('.hdnOutrasPenalidadesId', container).val()),
+            FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
+        };
 
-        ////Preenchendo o objeto
-        //if ($('.rdoIsBloco', container).attr('checked')) {
-        //    obj.IsDigital = false;
-        //    obj.NumeroIUF = $('.txtNumeroIUF', container).val();
-        //    obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-        //    obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
-        //} else if ($('.rdoIsDigital', container).attr('checked')) {
-        //    obj.IsDigital = true;
-        //}
-        //obj.SerieId = $('.ddlSeries :selected', container).val();
-        //obj.CodigoReceitaId = $('.ddlCodigosReceita :selected', container).val();
-        //obj.ValorOutrasPenalidades = $('.txtValorOutrasPenalidades', container).val();
-        //obj.Justificativa = $('.txtJustificativa', container).val();
+        //Preenchendo o objeto
+        if ($('.rdoIsBloco', container).attr('checked')) {
+            obj.IsDigital = false;
+            obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+            obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+            obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+        } else if ($('.rdoIsDigital', container).attr('checked')) {
+            obj.IsDigital = true;
+        }
+        obj.SerieId = $('.ddlSeries :selected', container).val();
+        obj.Descricao = $('.txtDescricao', container).val();
 
-        //var arrayMensagem = [];
+        var arrayMensagem = [];
 
-        //arrayMensagem.push(FiscalizacaoOutrasPenalidades.settings.mensagens.Salvar);
+        arrayMensagem.push(FiscalizacaoOutrasPenalidades.settings.mensagens.Salvar);
 
-        //return Fiscalizacao.onSalvarStep(FiscalizacaoOutrasPenalidades.settings.urls.salvar, obj, arrayMensagem);
+        return Fiscalizacao.onSalvarStep(FiscalizacaoOutrasPenalidades.settings.urls.salvar, obj, arrayMensagem);
     },
 
     configurarBtnEditar: function () {
@@ -2337,6 +2331,7 @@ FiscalizacaoOutrasPenalidades = {
         $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
 
         $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).show();
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
 
@@ -2355,6 +2350,7 @@ FiscalizacaoOutrasPenalidades = {
         $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('');
 
         $('.ddlSeries option:eq(0)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).hide();
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
 

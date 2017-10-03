@@ -30,10 +30,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			{
 				return ViewModelHelper.Json(new
 				{
-                    @Salvar = Mensagem.MultaMsg.Salvar,
+                    @Salvar = Mensagem.OutrasPenalidadesMsg.Salvar,
 
-					@ArquivoObrigatorio = Mensagem.MultaMsg.ArquivoObrigatorio,
-					@ArquivoNaoEhPdf = Mensagem.MaterialApreendidoMsg.ArquivoNaoEhPdf
+                    @ArquivoObrigatorio = Mensagem.OutrasPenalidadesMsg.ArquivoObrigatorio,
+                    @ArquivoNaoEhPdf = Mensagem.OutrasPenalidadesMsg.ArquivoNaoEhPdf
 				});
 			}
 		}

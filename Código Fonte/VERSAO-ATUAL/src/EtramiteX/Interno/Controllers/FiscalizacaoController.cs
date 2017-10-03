@@ -53,6 +53,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         MaterialApreendidoBus _busMaterialApreendido = new MaterialApreendidoBus();
         ConsideracaoFinalBus _busConsideracaoFinal = new ConsideracaoFinalBus();
         MultaBus _busMulta = new MultaBus();
+        OutrasPenalidadesBus _busOutrasPenalidades = new OutrasPenalidadesBus();
 
         ListaBus _busLista = new ListaBus();
         FuncionarioBus _busFuncionario = new FuncionarioBus();
@@ -1465,7 +1466,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             if (id != 0)
             {
-                //outrasPenalidades = _busMulta.Obter(id);
+                outrasPenalidades = _busOutrasPenalidades.Obter(id);
             }
 
             //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
@@ -1504,7 +1505,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             FiscalizacaoVM vm = new FiscalizacaoVM();
             OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
 
-            //outrasPenalidades = _busMulta.Obter(id);
+            outrasPenalidades = _busOutrasPenalidades.Obter(id);
 
             //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
             if (outrasPenalidades.Id > 0)
@@ -1542,7 +1543,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
         public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
         {
-            //_busMulta.Salvar(entidade);
+            _busOutrasPenalidades.Salvar(entidade);
 
             return Json(new { id = entidade.Id, Msg = Validacao.Erros });
         }
