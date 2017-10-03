@@ -76,6 +76,19 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _objetoInfracaoVM = value; }
 		}
 
+        private OutrasPenalidadesVM _outraspenalidadesVM = new OutrasPenalidadesVM();
+        public OutrasPenalidadesVM OutrasPenalidadesVM
+        {
+            get
+            {
+                return _outraspenalidadesVM;
+            }
+            set
+            {
+                _outraspenalidadesVM = value;
+            }
+        }
+
 		private ConsideracaoFinalVM _consideracaoFinalVM = new ConsideracaoFinalVM();
 		public ConsideracaoFinalVM ConsideracaoFinalVM
 		{

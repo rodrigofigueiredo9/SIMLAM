@@ -53,6 +53,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         MaterialApreendidoBus _busMaterialApreendido = new MaterialApreendidoBus();
         ConsideracaoFinalBus _busConsideracaoFinal = new ConsideracaoFinalBus();
         MultaBus _busMulta = new MultaBus();
+        OutrasPenalidadesBus _busOutrasPenalidades = new OutrasPenalidadesBus();
 
         ListaBus _busLista = new ListaBus();
         FuncionarioBus _busFuncionario = new FuncionarioBus();
@@ -1454,6 +1455,100 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         }
 
         #endregion Multa
+
+        #region Outras Penalidades
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult OutrasPenalidades(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
+
+            if (id != 0)
+            {
+                outrasPenalidades = _busOutrasPenalidades.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (outrasPenalidades.Id > 0)
+            {
+                outrasPenalidades.IsDigital = true;
+            }
+
+            vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
+            {
+                OutrasPenalidades = outrasPenalidades,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: outrasPenalidades.SerieId.ToString())
+            };
+
+            vm.OutrasPenalidadesVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo == null)
+            {
+                vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("OutrasPenalidades", vm.OutrasPenalidadesVM);
+            }
+            else
+            {
+                vm.PartialInicial = "OutrasPenalidades";
+                return View("Salvar", vm);
+            }
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult OutrasPenalidadesVisualizar(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
+
+            outrasPenalidades = _busOutrasPenalidades.Obter(id);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (outrasPenalidades.Id > 0)
+            {
+                outrasPenalidades.IsDigital = true;
+            }
+
+            vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
+            {
+                IsVisualizar = outrasPenalidades.Id > 0,
+                OutrasPenalidades = outrasPenalidades,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: outrasPenalidades.SerieId.ToString())
+            };
+
+            vm.OutrasPenalidadesVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo == null)
+            {
+                vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("OutrasPenalidades", vm.OutrasPenalidadesVM);
+            }
+            else
+            {
+                vm.PartialInicial = "OutrasPenalidades";
+                return View("Salvar", vm);
+            }
+        }
+
+        //Salva a sessão
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
+        {
+            _busOutrasPenalidades.Salvar(entidade);
+
+            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
+        }
+
+        #endregion Outras Penalidades
 
         #region Finalizar
 

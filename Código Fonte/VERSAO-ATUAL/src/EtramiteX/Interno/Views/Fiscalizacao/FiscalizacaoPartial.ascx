@@ -9,8 +9,9 @@
         <li class="step4"><a>Multa</a></li>
 		<li class="step5"><a>Interdição/Embargo</a> </li>
 		<li class="step6"><a>Apreensão</a> </li>
-		<li class="step7"><a>Considerações finais</a> </li>
-		<li class="step8"><a class="ultima">Concluir Cadastro</a></li>
+        <li class="step7"><a>Outras Penalidades</a> </li>
+		<li class="step8"><a>Considerações finais</a> </li>
+		<li class="step9"><a class="ultima">Concluir Cadastro</a></li>
 	</ul>
 </div>
 
