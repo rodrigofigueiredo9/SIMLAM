@@ -26,7 +26,7 @@
 
         <div class="block">
             <div class="coluna20">
-                <label>IUF para Multa</label><br />
+                <label>IUF para multa</label><br />
 		        <label><%= Html.RadioButton("Multa.IsDigital", 0, (Model.Multa.IsDigital == null ? false : Model.Multa.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
 		        <label><%= Html.RadioButton("Multa.IsDigital", 1, (Model.Multa.IsDigital == null ? false : !Model.Multa.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
