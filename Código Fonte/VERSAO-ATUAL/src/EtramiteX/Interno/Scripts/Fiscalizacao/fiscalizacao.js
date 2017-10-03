@@ -18,6 +18,7 @@ Fiscalizacao = {
 		projetoGeografico: '',
 		objetoInfracao: '',
 		diagnostico: '',
+        outrasPenalidadesVisualizar: '',
 		consideracaoFinalVisualizar: '',
 		finalizar: '',
 		infracao: '',
@@ -121,14 +122,21 @@ Fiscalizacao = {
 				});
 				break;
 
-			case 7:
+		    case 7:
+		        Fiscalizacao.onObterStep(Fiscalizacao.urls.outrasPenalidadesVisualizar, objeto.params, function () {
+		            FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesVisualizar();
+		            Fiscalizacao.gerenciarVisualizacao('.hdnOutrasPenalidadesId');
+		        });
+		        break;
+
+            case 8:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.consideracaoFinalVisualizar, objeto.params, function () {
 					FiscalizacaoConsideracaoFinal.callBackObterConsideracaoFinalVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnConsideracaoFinalId');
 				});
 				break;
 
-			case 8:
+			case 9:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.finalizar, objeto.params, function () {
 					FiscalizacaoFinalizar.callBackObterFiscalizacaoFinalizar();
 					Fiscalizacao.gerenciarVisualizacao();
@@ -1468,7 +1476,7 @@ FiscalizacaoMulta = {
             FiscalizacaoMulta.callBackObterFiscalizacaoMulta();
             Fiscalizacao.salvarEdicao = true;
             Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-            Fiscalizacao.configurarBtnCancelarStep(6);
+            Fiscalizacao.configurarBtnCancelarStep(4);
             Fiscalizacao.gerenciarVisualizacao();
         });
     },
@@ -1830,79 +1838,6 @@ FiscalizacaoObjetoInfracao = {
 	        Mensagem.gerar(Fiscalizacao.container, ret.Msg);
 	    }
 	    MasterPage.carregando(false);
-	},
-
-
-
-
-    ///////////OLD///////////////////
-
-	gerenciarAreaEmbarcadaAtvIntermed: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbAreaEmbargadaAtvIntermed:checked', container).val();
-
-		$('.divAreaEmbarcada', container).addClass('hide');
-		if (rdb == 1) {
-			$('.divAreaEmbarcada', container).removeClass('hide');
-		}
-
-		if (rdb == 0) {
-			$('.divTeiGeradoPeloSistema', container).addClass('hide');
-
-			//Limpa campos
-			$('.rdbTeiGeradoPeloSistema:checked', container).removeAttr('checked');
-			$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(0)', container).attr('selected', 'selected');
-			$('.txtDataLavraturaTermo', container).val('');
-			$('.txtDescricaoTermoEmbargo', container).val('');
-			$('.txtNumTeiBloco', container).val('');
-
-		}
-	},
-
-	gerenciarTeiGeradoPeloSistema: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbTeiGeradoPeloSistema:checked', container).val();
-
-		$('.divTeiGeradoPeloSistema', container).addClass('hide');
-		$('.ddlTeiGeradoPeloSistemaSerieTipo', container).attr('disabled', 'disabled');
-
-		if (rdb == 0) {
-			$('.divTeiGeradoPeloSistema', container).removeClass('hide');
-
-			if ($('.hdnIsVisualizar', container).val() != 'true')
-				$('.ddlTeiGeradoPeloSistemaSerieTipo', container).removeAttr('disabled', 'disabled');
-			FiscalizacaoObjetoInfracao.gerenciarSerie();
-		} else {
-
-			if (rdb == 1) {
-				$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(3)', container).attr('selected', 'selected');
-				$('.ddlTeiGeradoPeloSistemaSerieTipo', container).attr('disabled', 'disabled');
-			} else {
-				$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(0)', container).attr('selected', 'selected');
-			}
-		}
-
-	},
-
-	gerenciarSerie: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbTeiGeradoPeloSistema:checked', container).val();
-		if (rdb == 0) {
-			var serie = $('.ddlTeiGeradoPeloSistemaSerieTipo :selected').val();
-			if (serie == 3) {
-				$('.lblNumTEI', container).text('Nº do TEI *');
-			} else {
-				$('.lblNumTEI', container).text('Nº do TEI - bloco *');
-			}
-		}
-	},
-
-	onChangeErosao: function () {
-		$('.divTxtErosao', FiscalizacaoObjetoInfracao.container).addClass('hide');
-		$('.txtErosao', FiscalizacaoObjetoInfracao.container).val('');
-		if ($(this).val() === "1") {
-			$('.divTxtErosao', FiscalizacaoObjetoInfracao.container).removeClass('hide');
-		}
 	}
 }
 
@@ -2294,7 +2229,212 @@ FiscalizacaoMaterialApreendido = {
 	},
 }
 
-// 7ª Aba - Considerações Finais
+// 7ª aba - Outras Penalidades
+FiscalizacaoOutrasPenalidades = {
+    settings: {
+        urls: {
+            salvar: '',
+            obterSerie: '',
+            enviarArquivo: '',
+            obter: '',
+        },
+    },
+    container: null,
+    mensagens: null,
+    TiposArquivo: [],
+
+    callBackObterFiscalizacaoOutrasPenalidadesVisualizar: function () {
+        FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesDefault();
+    },
+
+    callBackObterFiscalizacaoOutrasPenalidades: function () {
+        FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesDefault();
+    },
+
+    callBackObterFiscalizacaoOutrasPenalidadesDefault: function () {
+        Fiscalizacao.stepAtual = 7;
+        Fiscalizacao.salvarTelaAtual = FiscalizacaoOutrasPenalidades.onSalvarFiscalizacaoOutrasPenalidades;
+        Fiscalizacao.alternarAbas();
+
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).hide();
+
+        FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsDigital', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsDigital);
+        FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsBloco', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsBloco);
+        FiscalizacaoOutrasPenalidades.container.delegate('.btnAddArq', 'click', FiscalizacaoOutrasPenalidades.onEnviarArquivoClick);
+        FiscalizacaoOutrasPenalidades.container.delegate('.btnLimparArq', 'click', FiscalizacaoOutrasPenalidades.onLimparArquivoClick);
+        
+        Mascara.load(FiscalizacaoOutrasPenalidades.container);
+
+        if (parseInt($('.hdnOutrasPenalidadesId', FiscalizacaoOutrasPenalidades.container).val()) > 0) {
+            Fiscalizacao.salvarEdicao = false;
+            Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
+            FiscalizacaoOutrasPenalidades.configurarBtnEditar();
+        } else {
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+        }
+        
+        if ($('.rdoIsDigital', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
+            FiscalizacaoOutrasPenalidades.onSelecionarIsDigital();
+        } else if ($('.rdoIsBloco', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
+            FiscalizacaoOutrasPenalidades.onSelecionarIsBloco();
+        }
+        
+        MasterPage.botoes();
+        MasterPage.carregando(false);
+    },
+
+    onSalvarFiscalizacaoOutrasPenalidades: function () {
+        var container = FiscalizacaoOutrasPenalidades.container;
+
+        //Criação do objeto (da classe OutrasPenalidades)
+        var obj = {
+            Id: Number($('.hdnOutrasPenalidadesId', container).val()),
+            FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
+        };
+
+        //Preenchendo o objeto
+        if ($('.rdoIsBloco', container).attr('checked')) {
+            obj.IsDigital = false;
+            obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+            obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+            obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+        } else if ($('.rdoIsDigital', container).attr('checked')) {
+            obj.IsDigital = true;
+        }
+        obj.SerieId = $('.ddlSeries :selected', container).val();
+        obj.Descricao = $('.txtDescricao', container).val();
+
+        var arrayMensagem = [];
+
+        arrayMensagem.push(FiscalizacaoOutrasPenalidades.settings.mensagens.Salvar);
+
+        return Fiscalizacao.onSalvarStep(FiscalizacaoOutrasPenalidades.settings.urls.salvar, obj, arrayMensagem);
+    },
+
+    configurarBtnEditar: function () {
+        $(".btnEditar", Fiscalizacao.container).unbind('click');
+        $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoOutrasPenalidades.onBtnEditar);
+    },
+
+    onBtnEditar: function () {
+        Fiscalizacao.onObterStep(FiscalizacaoOutrasPenalidades.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+            FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidades();
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+            Fiscalizacao.configurarBtnCancelarStep(7);
+            Fiscalizacao.gerenciarVisualizacao();
+        });
+    },
+
+    onSelecionarIsDigital: function () {
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
+
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).show();
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
+
+        $('.divPDF', FiscalizacaoOutrasPenalidades.container).hide();
+    },
+
+    onSelecionarIsBloco: function () {
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.ddlSeries option:eq(0)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).hide();
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.divPDF', FiscalizacaoOutrasPenalidades.container).show();
+    },
+
+    onEnviarArquivoClick: function () {
+        var nomeArquivo = $('.inputFile', FiscalizacaoOutrasPenalidades.container).val();
+
+        erroMsg = new Array();
+
+        if (nomeArquivo == '') {
+            erroMsg.push(FiscalizacaoOutrasPenalidades.settings.mensagens.ArquivoObrigatorio);
+        } else {
+            var tam = nomeArquivo.length - 4;
+            if (!FiscalizacaoOutrasPenalidades.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+                erroMsg.push(FiscalizacaoOutrasPenalidades.settings.mensagens.ArquivoNaoEhPdf);
+            }
+        }
+
+        if (erroMsg.length > 0) {
+            Mensagem.gerar(Fiscalizacao.container, erroMsg);
+            return;
+        }
+
+        MasterPage.carregando(true);
+        var inputFile = $('.inputFile', FiscalizacaoOutrasPenalidades.container);
+        FileUpload.upload(FiscalizacaoOutrasPenalidades.settings.urls.enviarArquivo, inputFile, FiscalizacaoOutrasPenalidades.callBackArqEnviado);
+    },
+
+    onLimparArquivoClick: function () {
+        $('.hdnArquivoJson', FiscalizacaoOutrasPenalidades.container).val('');
+        $('.inputFile', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.spanInputFile', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+
+        $('.btnAddArq', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        $('.btnLimparArq', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+    },
+
+    validarTipoArquivo: function (tipo) {
+
+        var tipoValido = false;
+        $(FiscalizacaoOutrasPenalidades.TiposArquivo).each(function (i, tipoItem) {
+            if (tipoItem == tipo) {
+                tipoValido = true;
+            }
+        });
+
+        return tipoValido;
+    },
+
+    callBackArqEnviado: function (controle, retorno, isHtml) {
+        var ret = eval('(' + retorno + ')');
+        if (ret.Arquivo != null) {
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).text(ret.Arquivo.Nome);
+            $('.hdnArquivoJson', FiscalizacaoOutrasPenalidades.container).val(JSON.stringify(ret.Arquivo));
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+
+            $('.spanInputFile', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+
+            $('.btnAddArq', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+            $('.btnLimparArq', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        } else {
+            FiscalizacaoOutrasPenalidades.onLimparArquivoClick();
+            Mensagem.gerar(FiscalizacaoOutrasPenalidades.container, ret.Msg);
+        }
+        MasterPage.carregando(false);
+
+        Mensagem.limpar(Fiscalizacao.container);
+    },
+}
+
+// 8ª Aba - Considerações Finais
 FiscalizacaoConsideracaoFinal = {
 	settings: {
 		urls: {
@@ -2316,7 +2456,7 @@ FiscalizacaoConsideracaoFinal = {
 		if (options) { $.extend(FiscalizacaoLocalInfracao.settings, options); }
 		FiscalizacaoConsideracaoFinal.container = MasterPage.getContent(container);
 
-		Fiscalizacao.stepAtual = 7;
+		Fiscalizacao.stepAtual = 8;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoConsideracaoFinal.onSalvar;
 		Fiscalizacao.alternarAbas();
 
@@ -2449,7 +2589,7 @@ FiscalizacaoConsideracaoFinal = {
 			Mascara.load(context);
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(7);
+			Fiscalizacao.configurarBtnCancelarStep(8);
 			MasterPage.carregando(false);
 			Fiscalizacao.gerenciarVisualizacao();
 		});
@@ -2774,7 +2914,7 @@ FiscalizacaoConsideracaoFinal = {
 	}
 }
 
-// 8ª Aba - Concluir Cadastro
+// 9ª Aba - Concluir Cadastro
 FiscalizacaoFinalizar = {
 	settings: {
 		urls: {
@@ -2788,13 +2928,13 @@ FiscalizacaoFinalizar = {
 	isLoad: true,
 	callBackObterFiscalizacaoFinalizar: function () {
 		FiscalizacaoFinalizar.container = $('.divFinalizar', Fiscalizacao.container); 
-		Fiscalizacao.stepAtual = 8;
+		Fiscalizacao.stepAtual = 9;
 		Fiscalizacao.alternarAbas();
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoFinalizar.onFinalizar;
 
 		Fiscalizacao.botoes({ btnFinalizar: true, spnCancelarCadastro: true });
 
-		Fiscalizacao.configurarBtnCancelarStep(8);
+		Fiscalizacao.configurarBtnCancelarStep(9);
 
 		if (FiscalizacaoFinalizar.isLoad) {
 			FiscalizacaoFinalizar.isLoad = false;

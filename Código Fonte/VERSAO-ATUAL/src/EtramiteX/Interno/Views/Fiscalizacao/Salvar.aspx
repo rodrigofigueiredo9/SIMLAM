@@ -36,8 +36,6 @@
 <script>
     
 	Fiscalizacao.urls.localInfracaoVisualizar = '<%= Url.Action("LocalInfracaoVisualizar", "Fiscalizacao") %>';
-	Fiscalizacao.urls.complementacaoDados = '<%= Url.Action("ComplementacaoDados", "Fiscalizacao") %>';
-	Fiscalizacao.urls.enquadramento = '<%= Url.Action("Enquadramento", "Fiscalizacao") %>';
 	Fiscalizacao.urls.objetoInfracao = '<%= Url.Action("ObjetoInfracao", "Fiscalizacao") %>';
 	Fiscalizacao.urls.autuado = '<%= Url.Action("Autuado", "Fiscalizacao") %>';
 	Fiscalizacao.urls.projetoGeografico = '<%= Url.Action("ProjetoGeograficoVisualizar", "Fiscalizacao") %>';
@@ -49,6 +47,7 @@
 	Fiscalizacao.urls.finalizar = '<%= Url.Action("Finalizar", "Fiscalizacao") %>';
     Fiscalizacao.urls.documentosGerados = '<%= Url.Action("DownloadDocumentosGerados", "Fiscalizacao") %>';
     Fiscalizacao.urls.multa = '<%= Url.Action("MultaVisualizar", "Fiscalizacao") %>';
+    Fiscalizacao.urls.outrasPenalidadesVisualizar = '<%= Url.Action("OutrasPenalidadesVisualizar", "Fiscalizacao") %>';
     
 	FiscalizacaoLocalInfracao.urlCoordenadaGeo = '<%= Url.Action("AreaAbrangenciaPartial", "Mapa", new {area="GeoProcessamento"}) %>';
 	FiscalizacaoLocalInfracao.urlsObterEstadosMunicipiosPorCoordenada = '<%= Url.Action("obterEstadosMunicipiosPorCoordenada", "Mapa", new {area="GeoProcessamento"}) %>';
