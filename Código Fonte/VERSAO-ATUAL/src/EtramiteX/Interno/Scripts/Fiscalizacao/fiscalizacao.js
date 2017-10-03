@@ -1481,6 +1481,7 @@ FiscalizacaoMulta = {
         $('.txtNumeroIUF', FiscalizacaoMulta.container).val('Gerado automaticamente');
 
         $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).show();
         $('.ddlSeries', FiscalizacaoMulta.container).attr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoMulta.container).addClass('disabled');
 
@@ -1499,6 +1500,7 @@ FiscalizacaoMulta = {
         $('.txtNumeroIUF', FiscalizacaoMulta.container).val('');
 
         $('.ddlSeries option:eq(0)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).hide();
         $('.ddlSeries', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoMulta.container).removeClass('disabled');
 
@@ -1712,6 +1714,7 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
 
 	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).show();
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 
@@ -1730,6 +1733,7 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('');
 
 	    $('.ddlSeries option:eq(0)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).hide();
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeAttr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
 
@@ -1994,6 +1998,7 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
 	    
 	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).show();
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
 
@@ -2012,6 +2017,7 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
 	    
 	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).hide();
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 

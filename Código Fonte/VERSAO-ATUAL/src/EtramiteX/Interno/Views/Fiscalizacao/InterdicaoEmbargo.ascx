@@ -12,7 +12,7 @@
 
         <div class="block">
             <div class="coluna20">
-                <label>IUF para Multa</label><br />
+                <label>IUF para interdição/embargo</label><br />
 		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 0, (Model.Entidade.IsDigital == null ? false : Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
 		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 1, (Model.Entidade.IsDigital == null ? false : !Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
@@ -69,28 +69,28 @@
 
         <div class="block">
 			<div style="margin-top:7px" class="coluna75">
-				<label for="ObjetoInfracao_DescricaoTermoEmbargo">Descrição de embargo/interdição *</label>
+				<label for="ObjetoInfracao_DescricaoTermoEmbargo">Descrição da interdição/embargo *</label>
 				<%= Html.TextBox("ObjetoInfracao.DescricaoTermoEmbargo", Model.Entidade.DescricaoTermoEmbargo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoTermoEmbargo", @maxlength = "150" }))%>
 			</div>
 		</div>
         
         <div class="block">
 			<div class="coluna75">
-				<label for="ObjetoInfracao_OpniaoAreaDanificada">Opinar quanto ao embargo/interdição da área/atividade/produto, justificando sua manutenção ou a possibilidade de desembargo/desinterdição</label>
+				<label for="ObjetoInfracao_OpniaoAreaDanificada">Opinar quanto à interdição/embargo da área/atividade/produto, justificando sua manutenção ou a possibilidade de desinterdição/desembargo</label>
 				<%= Html.TextArea("ObjetoInfracao.OpniaoAreaDanificada", Model.Entidade.OpniaoAreaDanificada, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtOpniaoAreaDanificada", @maxlength = "1000" }))%>
 			</div>
 		</div>
 
         <div class="block">
 			<div class="coluna75">
-				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
+				<label>Número(s) do(s) Lacre(s) da interdição/embargo</label>
 				<%= Html.TextBox("ObjetoInfracao.NumeroLacre", Model.Entidade.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
 			</div>
 		</div>
         
         <div class="block">
 			<div class="coluna52">
-				<label for="ObjetoInfracao_ExisteAtvAreaDegrad">Está sendo desenvolvida alguma atividade na área embargada/interditada? *</label><br />
+				<label for="ObjetoInfracao_ExisteAtvAreaDegrad">Está sendo desenvolvida alguma atividade na área interditada/embargada? *</label><br />
 				<span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpanExisteAtvAreaDegrad">
 					<label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 1, (Model.Entidade.ExisteAtvAreaDegrad == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Sim</label>
 					<label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 0, (Model.Entidade.ExisteAtvAreaDegrad == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Não</label>
