@@ -9,49 +9,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 	{
 		public bool Salvar(ObjetoInfracao objetoInfracao)
         {
-
-            #region IUF
-
             if (objetoInfracao.IsDigital == null)
             {
                 Validacao.Add(Mensagem.ObjetoInfracao.IUFObrigatorio);
             }
-
-            if (objetoInfracao.IsDigital == false)
+            else
             {
-                if (String.IsNullOrWhiteSpace(objetoInfracao.NumeroIUF))
+                if (objetoInfracao.IsDigital == false)
                 {
-                    Validacao.Add(Mensagem.ObjetoInfracao.NumeroIUFObrigatorio);
+                    if (String.IsNullOrWhiteSpace(objetoInfracao.NumeroIUF))
+                    {
+                        Validacao.Add(Mensagem.ObjetoInfracao.NumeroIUFObrigatorio);
+                    }
+
+                    if (objetoInfracao.SerieId == null || objetoInfracao.SerieId <= 0)
+                    {
+                        Validacao.Add(Mensagem.ObjetoInfracao.SerieObrigatorio);
+                    }
+
+                    ValidacoesGenericasBus.DataMensagem(objetoInfracao.DataLavraturaTermo, "ObjetoInfracao_DataLavratura", "lavratura do IUF");
                 }
-                if (objetoInfracao.SerieId == null || objetoInfracao.SerieId <= 0)
+
+                if (objetoInfracao.Interditado == null)
                 {
-                    Validacao.Add(Mensagem.ObjetoInfracao.SerieObrigatorio);
+                    Validacao.Add(Mensagem.ObjetoInfracao.InterditadoEmbargadoObrigatorio);
                 }
-                if (objetoInfracao.DataLavraturaTermo.Data == null)
+
+                if (String.IsNullOrWhiteSpace(objetoInfracao.DescricaoTermoEmbargo))
                 {
-                    Validacao.Add(Mensagem.ObjetoInfracao.DataLavraturaIUFObrigatorio);
+                    Validacao.Add(Mensagem.ObjetoInfracao.DescricaoTermoEmbargoObrigatorio);
                 }
-            }
 
-            #endregion
-
-            if (objetoInfracao.Interditado == null)
-            {
-                Validacao.Add(Mensagem.ObjetoInfracao.InterditadoEmbargadoObrigatorio);
-            }
-
-            if (String.IsNullOrWhiteSpace(objetoInfracao.DescricaoTermoEmbargo))
-            {
-                Validacao.Add(Mensagem.ObjetoInfracao.DescricaoTermoEmbargoObrigatorio);
-            }
-
-            if (objetoInfracao.ExisteAtvAreaDegrad == null)
-            {
-                Validacao.Add(Mensagem.ObjetoInfracao.ExisteAtvAreaDegradObrigatorio);
-            }
-            else if (objetoInfracao.ExisteAtvAreaDegrad == 1 && String.IsNullOrWhiteSpace(objetoInfracao.ExisteAtvAreaDegradEspecificarTexto))
-            {
-                Validacao.Add(Mensagem.ObjetoInfracao.ExisteAtvAreaDegradEspecificarTextoObrigatorio);
+                if (objetoInfracao.ExisteAtvAreaDegrad == null)
+                {
+                    Validacao.Add(Mensagem.ObjetoInfracao.ExisteAtvAreaDegradObrigatorio);
+                }
+                else if (objetoInfracao.ExisteAtvAreaDegrad == 1 && String.IsNullOrWhiteSpace(objetoInfracao.ExisteAtvAreaDegradEspecificarTexto))
+                {
+                    Validacao.Add(Mensagem.ObjetoInfracao.ExisteAtvAreaDegradEspecificarTextoObrigatorio);
+                }
             }
 
 			return Validacao.EhValido;
