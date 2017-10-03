@@ -12,7 +12,7 @@
 
         <div class="block">
             <div class="coluna20">
-                <label>IUF para interdição/embargo</label><br />
+                <label>IUF para interdição/embargo *</label><br />
 		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 0, (Model.Entidade.IsDigital == null ? false : Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
 		        <label><%= Html.RadioButton("ObjetoInfracao.IsDigital", 1, (Model.Entidade.IsDigital == null ? false : !Model.Entidade.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
@@ -22,17 +22,17 @@
     <fieldset class="block box fsCamposInterdicaoEmbargo">
         <div class="block">
             <div class="coluna20">
-		        <label>Número do IUF</label>
+		        <label>Número do IUF *</label>
 		        <%= Html.TextBox("ObjetoInfracao.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
-				<label>Série</label><br />
+				<label>Série *</label><br />
 				<%= Html.DropDownList("ObjetoInfracao.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
 
             <div class="coluna15">
-				<label>Data da lavratura do IUF</label>
+				<label>Data da lavratura do IUF *</label>
 				<%= Html.TextBox("ObjetoInfracao.DataLavratura", Model.Entidade.DataLavraturaTermo.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>

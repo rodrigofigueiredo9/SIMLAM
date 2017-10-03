@@ -1722,7 +1722,7 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
 
-	    $('.divPDF', FiscalizacaoMulta.container).hide();
+	    $('.divPDF', FiscalizacaoObjetoInfracao.container).hide();
 	},
 
 	onSelecionarIsBloco: function () {
@@ -1741,7 +1741,7 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('');
 
-	    $('.divPDF', FiscalizacaoMulta.container).show();
+	    $('.divPDF', FiscalizacaoObjetoInfracao.container).show();
 	},
 
 	gerenciarExisteAtvAreaDegradEspecificarTexto: function () {
