@@ -41,6 +41,7 @@
         public Mensagem DestinoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Destinos", Tipo = eTipoMensagem.Advertencia, Texto = "Destino é obrigatório." }; } }
         public Mensagem ProdutoJaAdicionado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Produto ja adicionado." }; } }
         public Mensagem NumeroIUFObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_NumeroIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Nº do IUF é obrigatório." }; } }
+        public Mensagem DigitalOuBlocoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_IsDigital", Tipo = eTipoMensagem.Advertencia, Texto = "É obrigatório selecionar Digital ou Bloco." }; } }
 
 		public Mensagem ArquivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Arquivo_Nome", Texto = "Arquivo é obrigatório." }; } }
 		public Mensagem ArquivoNaoEhPdf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Arquivo_Nome", Texto = "Arquivo não é do tipo pdf" }; } }

@@ -30,7 +30,7 @@
 
 		public Mensagem DescricaoTermoEmbargoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_DescricaoTermoEmbargo", Texto = "Descrição do termo de interdição/embargo é obrigatório." }; } }
 
-        public Mensagem IUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_IsDigital", Texto = "IUF para Multa é obrigatório." }; } }
+        public Mensagem IUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_IsDigital", Texto = "IUF para interdição/embargo é obrigatório." }; } }
         public Mensagem NumeroIUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_NumeroIUF", Texto = "Número do IUF é obrigatório." }; } }
         public Mensagem SerieObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_Serie", Texto = "Série é obrigatório." }; } }
         public Mensagem DataLavraturaIUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_DataLavratura", Texto = "Data da Lavratura é obrigatório." }; } }

@@ -24,12 +24,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                         Validacao.Add(Mensagem.MultaMsg.NumeroIUFObrigatorio);
                     }
 
-                    ValidacoesGenericasBus.DataMensagem(multa.DataLavratura, "Multa_DataLavratura", "lavratura do IUF");
-                }
+                    if (multa.SerieId == null || multa.SerieId == 0)
+                    {
+                        Validacao.Add(Mensagem.MultaMsg.SerieObrigatorio);
+                    }
 
-                if (multa.SerieId == null || multa.SerieId == 0)
-                {
-                    Validacao.Add(Mensagem.MultaMsg.SerieObrigatorio);
+                    ValidacoesGenericasBus.DataMensagem(multa.DataLavratura, "Multa_DataLavratura", "lavratura do IUF");
                 }
 
                 if (multa.CodigoReceitaId == null || multa.CodigoReceitaId == 0)

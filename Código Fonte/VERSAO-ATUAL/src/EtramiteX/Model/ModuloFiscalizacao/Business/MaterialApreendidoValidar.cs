@@ -11,77 +11,66 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 	{
         public bool Salvar(MaterialApreendido materialApreendido)
         {
-            if (materialApreendido.IsDigital == false)
+            if (materialApreendido.IsDigital == null)
             {
-                if (String.IsNullOrWhiteSpace(materialApreendido.NumeroIUF))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.NumeroIUFObrigatorio);
-                }
-
-                if (materialApreendido.DataLavratura.Data == null
-                || materialApreendido.DataLavratura.Data == DateTime.MinValue)
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DataLavraturaObrigatorio);
-                }
+                Validacao.Add(Mensagem.MaterialApreendidoMsg.DigitalOuBlocoObrigatorio);
             }
-
-            if (materialApreendido.SerieId.GetValueOrDefault() == 0)
+            else
             {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.SerieObrigatorio);
-            }
-
-            if (string.IsNullOrWhiteSpace(materialApreendido.Descricao))
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
-            }
-
-            if (!string.IsNullOrWhiteSpace(materialApreendido.NumeroLacre))
-            {
-                String[] lacresString = materialApreendido.NumeroLacre.Split(',');
-
-                foreach (String lacre in lacresString)
+                if (materialApreendido.IsDigital == false)
                 {
-                    Int32 aux = 0;
-                    if (!Int32.TryParse(lacre, out aux))
+                    if (String.IsNullOrWhiteSpace(materialApreendido.NumeroIUF))
                     {
-                        Validacao.Add(Mensagem.MaterialApreendidoMsg.NumeroLacreInvalido);
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.NumeroIUFObrigatorio);
                     }
+
+                    if (materialApreendido.SerieId == null || materialApreendido.SerieId == 0)
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.SerieObrigatorio);
+                    }
+
+                    ValidacoesGenericasBus.DataMensagem(materialApreendido.DataLavratura, "MaterialApreendido_DataLavratura", "lavratura do IUF");
                 }
-            }
 
-            if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
-            }
+                if (string.IsNullOrWhiteSpace(materialApreendido.Descricao))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
+                }
 
-            if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
-            }
+                if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
+                }
 
-            if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
-            }
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
+                }
 
-            if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
-            }
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
+                }
 
-            if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
-            }
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
+                }
 
-            if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
-            }
+                if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
+                }
 
-            if (materialApreendido.ProdutosApreendidos.Count == 0)
-            {
-                Validacao.Add(Mensagem.MaterialApreendidoMsg.ProdutoApreendidoObrigatorio);
+                if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
+                }
+
+                if (materialApreendido.ProdutosApreendidos.Count == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ProdutoApreendidoObrigatorio);
+                }
             }
 
             return Validacao.EhValido;
