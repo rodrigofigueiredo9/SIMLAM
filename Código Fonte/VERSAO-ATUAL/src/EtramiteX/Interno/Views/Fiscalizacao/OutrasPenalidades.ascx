@@ -26,7 +26,7 @@
 
         <div class="block">
             <div class="coluna20">
-                <label>IUF para Outras Penalidades</label><br />
+                <label>IUF para Outras Penalidades *</label><br />
 		        <label><%= Html.RadioButton("OutrasPenalidades.IsDigital", 0, (Model.OutrasPenalidades.IsDigital == null ? false : Model.OutrasPenalidades.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsDigital" }))%>Digital</label><br />
 		        <label><%= Html.RadioButton("OutrasPenalidades.IsDigital", 1, (Model.OutrasPenalidades.IsDigital == null ? false : !Model.OutrasPenalidades.IsDigital.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsBloco" }))%>Bloco</label>
             </div>
@@ -36,17 +36,17 @@
     <fieldset class="block box fsCamposOutrasPenalidades">
         <div class="block">
             <div class="coluna20">
-		        <label>Número do IUF</label>
+		        <label>Número do IUF *</label>
 		        <%= Html.TextBox("OutrasPenalidades.NumeroIUF", Model.OutrasPenalidades.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
-				<label>Série</label><br />
+				<label>Série *</label><br />
 				<%= Html.DropDownList("OutrasPenalidades.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
 			</div>
 
             <div class="coluna15">
-				<label>Data da lavratura do IUF</label>
+				<label>Data da lavratura do IUF *</label>
 				<%= Html.TextBox("OutrasPenalidades.DataLavratura", Model.OutrasPenalidades.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>

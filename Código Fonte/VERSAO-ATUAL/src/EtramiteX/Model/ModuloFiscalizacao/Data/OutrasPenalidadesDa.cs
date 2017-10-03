@@ -184,10 +184,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
                     }
-                    else
-                    {
-                        outrasPenalidades = null;
-                    }
                     reader.Close();
                 }
             }

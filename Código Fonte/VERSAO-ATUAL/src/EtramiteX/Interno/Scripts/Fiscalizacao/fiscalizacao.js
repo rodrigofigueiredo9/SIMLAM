@@ -125,7 +125,7 @@ Fiscalizacao = {
 		    case 7:
 		        Fiscalizacao.onObterStep(Fiscalizacao.urls.outrasPenalidadesVisualizar, objeto.params, function () {
 		            FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesVisualizar();
-		            Fiscalizacao.gerenciarVisualizacao('.hdnOutrasFinalidadesId');
+		            Fiscalizacao.gerenciarVisualizacao('.hdnOutrasPenalidadesId');
 		        });
 		        break;
 
@@ -2276,8 +2276,6 @@ FiscalizacaoOutrasPenalidades = {
         
         MasterPage.botoes();
         MasterPage.carregando(false);
-
-        //alert('here');
     },
 
     onSalvarFiscalizacaoOutrasPenalidades: function () {
