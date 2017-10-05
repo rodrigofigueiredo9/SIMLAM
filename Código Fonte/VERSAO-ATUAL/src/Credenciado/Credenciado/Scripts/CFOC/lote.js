@@ -300,7 +300,7 @@ Lote = {
         }
 
 
-        if (item.OrigemTipo < 5 && item.OrigemTipo != 1)
+        if (item.OrigemTipo < 5 && item.OrigemTipo != 1 && item.OrigemTipo != 2)
             item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
         var linha = $('.trTemplate', tabela).clone();

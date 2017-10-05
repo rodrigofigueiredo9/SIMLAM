@@ -1,6 +1,6 @@
 ALTER TABLE IDAFCREDENCIADO.tab_ptv
 MODIFY
-   (empreendimento NULL);
+   (EMPREENDIMENTO NULL);
    
 ALTER TABLE IDAFCREDENCIADO.tab_ptv
        ADD (
@@ -30,4 +30,4 @@ ALTER TABLE IDAFCREDENCIADO.tab_ptv
        DECLARACAOADICIONAL VARCHAR2(200 BYTE) 
       );
       
-commit;
+commit; 

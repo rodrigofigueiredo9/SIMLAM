@@ -192,7 +192,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				#region Update
 
-				comando = bancoDeDados.CriarComando(@"update {0}tab_ptv
+				string sqlCmd = (@"update {0}tab_ptv
 															set tid = :tid,
 																empreendimento = :empreendimento,
 																partida_lacrada_origem = :partida_lacrada_origem,
@@ -214,16 +214,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                                                                 dua_numero = :dua_numero,
                                                                 dua_tipo_pessoa = :dua_tipo_pessoa,
                                                                 dua_cpf_cnpj = :dua_cpf_cnpj,
-                                                                empreedimento_sem_doc = :empreedimento_sem_doc,
+                                                                empreendimento_sem_doc = :empreendimento_sem_doc,
                                                                 responsavel_sem_doc = :responsavel_sem_doc
-															where id = :id", EsquemaBanco);
+															where id = :id");
 				#endregion
 
+
+                if (PTV.Produtos.Count > 0 && ((PTV.Produtos[0].SemDoc) ||
+                 PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado))
+                {
+                    sqlCmd = sqlCmd.Replace("empreendimento = :empreendimento,", "");
+                    sqlCmd = sqlCmd.Replace("responsavel_emp = :responsavel_emp,", "");
+
+                }
+
+                comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+             
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+				
 				comando.AdicionarParametroEntrada("partida_lacrada_origem", PTV.PartidaLacradaOrigem, DbType.Int32);
 				comando.AdicionarParametroEntrada("numero_lacre", PTV.LacreNumero, DbType.String);
 				comando.AdicionarParametroEntrada("numero_porao", PTV.PoraoNumero, DbType.String);
+
+                if (PTV.Produtos.Count > 0 && ((!PTV.Produtos[0].SemDoc) &&
+                    PTV.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado))
+                {
+                    comando.AdicionarParametroEntrada("empreendimento", PTV.Empreendimento, DbType.Int32);
+                    comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
+                }
+               
+
 				comando.AdicionarParametroEntrada("numero_container", PTV.ContainerNumero, DbType.String);
 				comando.AdicionarParametroEntrada("destinatario", PTV.DestinatarioID, DbType.Int32);
 				comando.AdicionarParametroEntrada("possui_laudo_laboratorial", PTV.PossuiLaudoLaboratorial, DbType.Int32);
@@ -235,7 +255,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("numero_nota_fiscal", PTV.NotaFiscalNumero, DbType.String);
 				comando.AdicionarParametroEntrada("valido_ate", PTV.ValidoAte.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("responsavel_tecnico", PTV.ResponsavelTecnicoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("responsavel_emp", PTV.ResponsavelEmpreendimento, DbType.Int32);
+				
 				comando.AdicionarParametroEntrada("municipio_emissao", PTV.LocalEmissaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
 

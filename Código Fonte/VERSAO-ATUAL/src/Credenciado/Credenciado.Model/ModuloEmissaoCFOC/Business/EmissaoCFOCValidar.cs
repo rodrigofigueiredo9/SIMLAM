@@ -191,10 +191,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			}
 
 
-            if (lista != null && lista.Count > 0 && !lista.Any(x => x.Quantidade == item.Quantidade && x.UnidadeMedida == item.UnidadeMedida && x.LoteCodigo == item.LoteCodigo))
-            {
-                Validacao.Add(Mensagem.EmissaoCFOC.ProdutoUnico);
-            }
+            //if (lista != null && lista.Count > 0 && !lista.Any(x => x.Quantidade == item.Quantidade && x.UnidadeMedida == item.UnidadeMedida && x.LoteCodigo == item.LoteCodigo))
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFOC.ProdutoUnico);
+            //}
 
             if (item.Quantidade <= 0)
             {
