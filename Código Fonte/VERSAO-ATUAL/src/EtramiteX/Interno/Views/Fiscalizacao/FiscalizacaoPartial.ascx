@@ -5,7 +5,7 @@
 	<ul>
 		<li class="step1 ativo"><a class="primeira">Local da Infração</a> </li>
 		<li class="step2"><a>Projeto Geográfico</a> </li>
-		<li class="step3"><a>Infração</a></li>
+		<li class="step3"><a>Infração/Fiscalização</a></li>
         <li class="step4"><a>Multa</a></li>
 		<li class="step5"><a>Interdição/Embargo</a> </li>
 		<li class="step6"><a>Apreensão</a> </li>

@@ -1702,6 +1702,7 @@
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoDestinos.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoProdutos.ascx" />
+    <Content Include="Views\Fiscalizacao\Infracao_old.ascx" />
     <Content Include="Views\Fiscalizacao\OutrasPenalidades.ascx" />
     <Content Include="Views\Fiscalizacao\Multa.ascx" />
     <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
