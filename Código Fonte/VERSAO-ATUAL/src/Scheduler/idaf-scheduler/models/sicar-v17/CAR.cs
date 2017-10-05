@@ -24,7 +24,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 
 			informacoes = new List<Resposta>
 			{
-				new Resposta() {codigo = "DESEJA_ADERIR_PRA", respostas = new List<object>() {"Não Informado"}},
+				new Resposta() {codigo = "DESEJA_ADERIR_PRA", respostas = new List<object>() {"Sim"}}, //{"Não Informado"}},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL", respostas = new List<object>() {"Não Informado"}},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL_REGULARIZAR", respostas = new List<object>()},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL_COMPENSAR", respostas = new List<object>()},

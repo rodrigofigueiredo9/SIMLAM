@@ -151,16 +151,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				UseDefaultCredentials = false,
 			};
 
-			var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
+            var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
 
-			if (!String.IsNullOrWhiteSpace(proxyUrl))
-			{
-				httpClientHandler.Proxy = new WebProxy(proxyUrl, false)
-				{
-					UseDefaultCredentials = false,
-					Credentials = CredentialCache.DefaultCredentials
-				};
-			}
+            if (!String.IsNullOrWhiteSpace(proxyUrl))
+            {
+                httpClientHandler.Proxy = new WebProxy(proxyUrl, false)
+                {
+                    UseDefaultCredentials = false,
+                    Credentials = CredentialCache.DefaultCredentials
+                };
+            }
 
 			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
@@ -171,15 +171,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 					client.BaseAddress = new Uri(sicarUrl);
 					client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
-					
-					using (var content = new MultipartFormDataContent())
-					{
-						content.Add(new StreamContent(stream), "car", fileName);
-						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-						var response = await client.PostAsync("/sincronia/quick", content);
 
-						return await response.Content.ReadAsStringAsync();
-					}
+                    try
+                    {
+                        using (var content = new MultipartFormDataContent())
+                        {
+                            content.Add(new StreamContent(stream), "car", fileName);
+                            content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
+                            var response = await client.PostAsync("/sincronia/quick", content);
+
+                            return await response.Content.ReadAsStringAsync();
+                        }
+                    }
+                    catch (Exception ex) 
+                    {
+                        var x = ex.Message;
+
+                        return null;
+                    }
 				}
 			}
 		}

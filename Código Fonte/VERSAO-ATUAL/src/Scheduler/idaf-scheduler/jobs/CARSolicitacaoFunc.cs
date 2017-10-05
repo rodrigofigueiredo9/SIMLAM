@@ -48,21 +48,21 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         {
             CARSolicita solicitacao = null;
 
-            if (origem == 2)
-                solicitacao = ObterCred(solicitacaoId, conn);
-            else
+            if (origem == 1)  //OBTEM AS INFORMAÇÕES DO CAR INSTITUCIONAL
                 solicitacao = ObterInst(solicitacaoId, conn);
+            else              //OBTEM AS INFORMAÇÕES DO CAR CREDENCIADO  
+                solicitacao = ObterCred(solicitacaoId, conn);
 
-            if (AcessoEnviarReenviarArquivoSICAR(solicitacao, origem))
+            if (!AcessoEnviarReenviarArquivoSICAR(solicitacao, origem)) //VERIFICAR SE O ARQUIVO .CAR "PASSIVO" É INVALIDO OU EM CADASTRO
             {
                 return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
             }
 
-            if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
+            if (origem == (int)eCARSolicitacaoOrigem.Credenciado)   // Com dados do credenciado: INSERE NA TABELA TAB_SCHEDULER_FILA
             {
                 EnviarReenviarArquivoSICARCred(solicitacaoId, isEnviar, conn);
             }
-            else
+            else  // Com dados do Institucional: INSERE NA TABELA TAB_SCHEDULER_FILA
             {
                 EnviarReenviarArquivoSICARInst(solicitacaoId, isEnviar, conn);
             }
@@ -239,12 +239,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         internal CARSolicita ObterHistoricoInst(int id, string tid, OracleConnection conn, bool simplificado = false) //BancoDeDados banco = null)
         {
+            #region Solicitação
             CARSolicita solicitacao = new CARSolicita();
 
             //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             //{
             using (OracleCommand command = new OracleCommand(
-            #region Solicitação
+           
 
                 //Comando comando = bancoDeDados.CriarComando(@"
                 "select s.tid," +
@@ -484,7 +485,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 return false;
             }
 
-            var situacaoArquivo = BuscaSituacaoAtualArquivoSICAR(entidade.Id, origem);
+            //var situacaoArquivo = BuscaSituacaoAtualArquivoSICAR(entidade.Id, origem);
 
             /*if (situacaoArquivo.Item1 == eStatusArquivoSICAR.ArquivoEntregue)
             {
@@ -520,7 +521,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 //Validacao.Add(Mensagem.CARSolicitacao.SolicitacaEnviarSituacaoArquivoSICARInvalida(situacaoArquivo.Item2));
             }*/
 
-            return Validacao.EhValido;
+            return true;
         }
         //
         public Tuple<eStatusArquivoSICAR, string> BuscaSituacaoAtualArquivoSICAR(int solicitacaoId, int origem, BancoDeDados banco = null)
@@ -544,7 +545,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         }
         //
         public void EnviarReenviarArquivoSICARCred(int solicitacaoId, bool isEnviar, OracleConnection conn)//, BancoDeDados banco = null)
-        {
+        {/*
             try
             {
                 GerenciadorTransacao.ObterIDAtual();
@@ -552,18 +553,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
                 {
                     bancoDeDados.IniciarTransacao();
-                
+                */
                     InserirFilaArquivoCarSicarCred(solicitacaoId, eCARSolicitacaoOrigem.Credenciado, conn);//, bancoDeDados);
 
-                    bancoDeDados.Commit();
-
+                    //bancoDeDados.Commit();
+            /*
                     Validacao.Add(Mensagem.CARSolicitacao.SucessoEnviarReenviarArquivoSICAR(isEnviar));
                 }
             }
             catch (Exception exc)
             {
                 Validacao.AddErro(exc);
-            }
+            }*/
         }
         //
         internal void InserirFilaArquivoCarSicarCred(int solicitacaoId, eCARSolicitacaoOrigem solicitacaoOrigem, OracleConnection conn)//, BancoDeDados banco = null)
@@ -576,7 +577,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             //Comando comando = bancoDeDados.CriarComando(@
             using (OracleCommand command = new OracleCommand("select s.solicitacao_id solic_id, s.tid solic_tid, s.empreendimento_id emp_id, s.empreendimento_tid emp_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
-                    "and s.tid = (select ss.tid from bkp_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
+                    "and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
             {
                 //comando.AdicionarParametroEntrada("idSolicitacao", solicitacaoId, DbType.Int32);
 
@@ -602,139 +603,165 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 if (requisicao_fila != string.Empty)
                 {
                     //comando = bancoDeDados.CriarComando(@"
-                    using (OracleCommand commando = new OracleCommand("insert into bkp_scheduler_fila (id, tipo, requisitante, requisicao, empreendimento, data_criacao, data_conclusao, resultado, sucesso) " +
+                    using (OracleCommand commando = new OracleCommand("insert into tab_scheduler_fila (id, tipo, requisitante, requisicao, empreendimento, data_criacao, data_conclusao, resultado, sucesso) " +
                    " values (seq_tab_scheduler_fila.nextval, 'gerar-car', 0, :requisicao, 0, NULL, NULL, '', '')", conn))
                     {
                         //comando.AdicionarParametroEntrada("requisicao", requisicao_fila, DbType.String);
                         commando.Parameters.Add(new OracleParameter("requisicao", requisicao_fila));
                         //bancoDeDados.ExecutarNonQuery(comando);
                         commando.ExecuteNonQuery();
-                        //SalvarControleArquivoCarSicarCred(solicitacaoId, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, banco);
+                        SalvarControleArquivoCarSicarCred(solicitacaoId, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, conn);
 
                         //bancoDeDados.Commit();
                     }
                 }
             }
         }
-
-        internal void SalvarControleArquivoCarSicarCred(int solicitacaoId, eStatusArquivoSICAR statusArquivoSICAR, eCARSolicitacaoOrigem solicitacaoOrigem, BancoDeDados banco = null)
+             
+        internal void SalvarControleArquivoCarSicarCred(int solicitacaoId, eStatusArquivoSICAR statusArquivoSICAR, eCARSolicitacaoOrigem solicitacaoOrigem, OracleConnection conn) //BancoDeDados banco = null)
         {
             ControleArquivoSICAR controleArquivoSICAR = new ControleArquivoSICAR();
             controleArquivoSICAR.SolicitacaoCarId = solicitacaoId;
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
-            {
-                bancoDeDados.IniciarTransacao();
+            #region Coleta de dados
 
-                #region Coleta de dados
-                Comando comando = bancoDeDados.CriarComando(@"select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid, tcrls.id controle_id
-                    from tab_car_solicitacao tcs, tab_empreendimento te, (select tcsicar.id, tcsicar.solicitacao_car from tab_controle_sicar tcsicar 
-                    where tcsicar.solicitacao_car_esquema = :esquema) tcrls where tcs.empreendimento = te.id and tcs.id = tcrls.solicitacao_car(+)
-                    and tcs.id = :idSolicitacao", UsuarioCredenciado);
+            using (OracleCommand command = new OracleCommand("select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid, DECODE( tcrls.id, null, 0, tcrls.id) controle_id " +
+                    " from tab_car_solicitacao tcs, tab_empreendimento te, (select tcsicar.id, tcsicar.solicitacao_car from tab_controle_sicar tcsicar  " +
+                    " where tcsicar.solicitacao_car_esquema = :esquema) tcrls where tcs.empreendimento = te.id and tcs.id = tcrls.solicitacao_car(+) " +
+                    " and tcs.id = :idSolicitacao", conn))
+              {
+                
+                command.Parameters.Add(new OracleParameter("esquema", (int)solicitacaoOrigem));
+                command.Parameters.Add(new OracleParameter("idSolicitacao", controleArquivoSICAR.SolicitacaoCarId));
 
-                comando.AdicionarParametroEntrada("esquema", (int)solicitacaoOrigem, DbType.Int32);
-                comando.AdicionarParametroEntrada("idSolicitacao", controleArquivoSICAR.SolicitacaoCarId, DbType.Int32);
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        controleArquivoSICAR.SolicitacaoCarTid = Convert.ToString(reader["solic_id"]); // reader.GetValue<String>("solic_tid");
+                        controleArquivoSICAR.SolicitacaoCarTid = Convert.ToString(reader["solic_tid"]); //reader.GetValue<String>("solic_tid");
                         controleArquivoSICAR.EmpreendimentoId = Convert.ToInt32(reader["emp_id"]); //reader.GetValue<Int32>("emp_id");
                         controleArquivoSICAR.EmpreendimentoTid = Convert.ToString(reader["emp_tid"]); //reader.GetValue<String>("emp_tid");
-                        controleArquivoSICAR.Id = Convert.ToInt32(Convert.ToString(reader["emp_id"])); //reader.GetValue<String>("controle_id"));
+                        controleArquivoSICAR.Id = Convert.ToInt32(Convert.ToString(reader["controle_id"])); //(reader.GetValue<String>("controle_id"));
+                        //controleArquivoSICAR.Id = Convert.ToInt32(Convert.ToString(reader["emp_id"])); // Wilson: NÃO SEI PQ USARAM EMP_ID??
                     }
                     reader.Close();
                 }
 
-                #endregion
+              }                            
 
-                if (controleArquivoSICAR.Id == 0)
+               #endregion
+
+                if (controleArquivoSICAR.Id == 0) //Wilson: Verificar se todos estão retornando 0, fiz alteração na consulta (DECODE)
                 {
                     #region Criar controle arquivo SICAR
-                    comando = bancoDeDados.CriarComando(@"
-				    insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema)
-                    values
-                    (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema)
-                     returning id into :id", UsuarioCredenciado);
+                    using (OracleCommand comand = new OracleCommand(
+                        " insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema) " +
+                        "  values " +
+                        "  (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema) " +
+                        "  returning id into :id", conn)) 
+                     {
 
-                    comando.AdicionarParametroEntrada("empreendimento", controleArquivoSICAR.EmpreendimentoId, DbType.Int32);
-                    comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
-                    comando.AdicionarParametroEntrada("solicitacao_car", controleArquivoSICAR.SolicitacaoCarId, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
-                    comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_esquema", (int)solicitacaoOrigem, DbType.Int32);
+                         comand.Parameters.Add(new OracleParameter("tid", GerenciadorTransacao.ObterIDAtual()));
+                        comand.Parameters.Add(new OracleParameter("empreendimento", Convert.ToInt32(controleArquivoSICAR.EmpreendimentoId)));
+                        comand.Parameters.Add(new OracleParameter("empreendimento_tid", Convert.ToString(controleArquivoSICAR.EmpreendimentoTid)));
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car", Convert.ToInt32(controleArquivoSICAR.SolicitacaoCarId)));
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car_tid", Convert.ToString(controleArquivoSICAR.SolicitacaoCarTid)));
+                        comand.Parameters.Add(new OracleParameter("situacao_envio", Convert.ToInt32(statusArquivoSICAR))); //(int)statusArquivoSICAR);
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car_esquema", Convert.ToInt32(solicitacaoOrigem))); //(int)solicitacaoOrigem);
+                        comand.Parameters.Add(new OracleParameter("id", OracleDbType.Int32, ParameterDirection.Output)); //DbType.Int32
+                                                
+                        comand.ExecuteNonQuery();
 
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                    comando.AdicionarParametroSaida("id", DbType.Int32);
+                        controleArquivoSICAR.Id = int.Parse(comand.Parameters["id"].Value.ToString()); 
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-
-                    controleArquivoSICAR.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-
+                    }
+                    
                     #endregion
                 }
                 else
                 {
                     #region Editar controle arquivo SICAR
+                    using (OracleCommand comand = new OracleCommand(
+                       " update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, " +
+                       " r.tid = :tid, r.arquivo = null where r.id = :id", conn))
+                    {
+                        comand.Parameters.Add("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid);
+                        comand.Parameters.Add("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid);
+                        comand.Parameters.Add("situacao_envio", (int)statusArquivoSICAR);
+                        comand.Parameters.Add("tid", GerenciadorTransacao.ObterIDAtual());
+                        comand.Parameters.Add("id", controleArquivoSICAR.Id);
 
-                    comando = bancoDeDados.CriarComando(@"
-				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, 
-                    r.tid = :tid, r.arquivo = null where r.id = :id", UsuarioCredenciado);
-
-                    comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
-                    comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
-                    comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                    comando.AdicionarParametroEntrada("id", controleArquivoSICAR.Id, DbType.Int32);
-
-                    bancoDeDados.ExecutarNonQuery(comando);
-
+                        comand.ExecuteNonQuery();
+                    }
+                    
                     #endregion
                 }
-
-                GerarHistoricoControleArquivoCarSicarCred(controleArquivoSICAR.Id, banco);
-
-                bancoDeDados.Commit();
-            }
+                
+                GerarHistoricoControleArquivoCarSicarCred(controleArquivoSICAR.Id, conn);             
         }
-        //
-        internal void GerarHistoricoControleArquivoCarSicarCred(int controleArquivoId, BancoDeDados banco = null)
+        
+      
+        internal void GerarHistoricoControleArquivoCarSicarCred(int controleArquivoId, OracleConnection conn) //BancoDeDados banco = null)
         {
+            #region Histórico do controle de arquivo SICAR
             if (controleArquivoId > 0)
             {
-                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+                using (OracleCommand comando2 = new OracleCommand(
+                "begin " +
+                "  for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid, " +
+                "           tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias, " +
+                "           tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema  " +
+                "           from tab_controle_sicar tcs " +
+                "           where tcs.id = :id) loop   " +
+                "    INSERT INTO HST_CONTROLE_SICAR " +
+                "      (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, " +
+                "       chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao, " +
+                "       solicitacao_car_esquema, data_execucao) " +
+                "    values  " +
+                "      (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid, " +
+                "       j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo, " +
+                "       j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP); " +
+                "  end loop; " +
+                " end;", conn))
                 {
-                    #region Histórico do controle de arquivo SICAR
 
-                    bancoDeDados.IniciarTransacao();
+                    comando2.Parameters.Add("id", controleArquivoId);
+                    comando2.ExecuteNonQuery();
 
-                    Comando comando = bancoDeDados.CriarComandoPlSql(@"
-					begin
-						for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid,
-										 tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias,
-										 tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema
-								  from tab_controle_sicar tcs
-								  where tcs.id = :id) loop  
-						   INSERT INTO HST_CONTROLE_SICAR
-							 (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio,
-							  chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao,
-							  solicitacao_car_esquema, data_execucao)
-						   values
-							 (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid,
-							  j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo,
-							  j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP);
-						end loop;
-					end;", UsuarioCredenciado);
+                }                   
+//                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+//                {
+//                    #region Histórico do controle de arquivo SICAR
 
-                    comando.AdicionarParametroEntrada("id", controleArquivoId, DbType.Int32);
+//                    bancoDeDados.IniciarTransacao();
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-                    bancoDeDados.Commit();
+//                    Comando comando = bancoDeDados.CriarComandoPlSql(@"
+//					begin
+//						for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid,
+//										 tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias,
+//										 tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema
+//								  from tab_controle_sicar tcs
+//								  where tcs.id = :id) loop  
+//						   INSERT INTO HST_CONTROLE_SICAR
+//							 (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio,
+//							  chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao,
+//							  solicitacao_car_esquema, data_execucao)
+//						   values
+//							 (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid,
+//							  j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo,
+//							  j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP);
+//						end loop;
+//					end;", UsuarioCredenciado);
 
-                    #endregion
-                }
+//                    comando.AdicionarParametroEntrada("id", controleArquivoId, DbType.Int32);
+
+//                    bancoDeDados.ExecutarNonQuery(comando);
+//                    bancoDeDados.Commit();
+
+//                    #endregion
+                //                }            
             }
+            #endregion
         }
         //
         public void EnviarReenviarArquivoSICARInst(int solicitacaoId, bool isEnviar, OracleConnection conn)//, BancoDeDados banco = null)
@@ -796,7 +823,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     if (requisicao_fila != string.Empty)
                     {
                         //comando = bancoDeDados.CriarComando(@"
-				        using (OracleCommand commando = new OracleCommand("insert into bkp_scheduler_fila (id, tipo, requisitante, requisicao, empreendimento, data_criacao, data_conclusao, resultado, sucesso) "+
+				        using (OracleCommand commando = new OracleCommand("insert into tab_scheduler_fila (id, tipo, requisitante, requisicao, empreendimento, data_criacao, data_conclusao, resultado, sucesso) "+
                         "values (seq_tab_scheduler_fila.nextval, 'gerar-car', 0, :requisicao, 0, NULL, NULL, '', '')", conn))
                         {
                             //comando.AdicionarParametroEntrada("requisicao", requisicao_fila, DbType.String);
@@ -812,27 +839,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
              }
          }
         
-        //
+        
         internal void SalvarControleArquivoCarSicarInst(int solicitacaoId, eStatusArquivoSICAR statusArquivoSICAR, eCARSolicitacaoOrigem solicitacaoOrigem, OracleConnection conn)//, BancoDeDados banco = null)
         {
             ControleArquivoSICAR controleArquivoSICAR = new ControleArquivoSICAR();
             controleArquivoSICAR.SolicitacaoCarId = solicitacaoId;
-            /* // ESTA COMENTADO PARA TESTE, TEM QUE IMPLEMENTAR ESSA FUNÇÃO COM AS FUNÇÕES DO BANCO ORACLE
-             * 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            
+            #region Coleta de dados
+            //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            using (OracleCommand comando = new OracleCommand("select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid, DECODE( tcrls.id, null, 0, tcrls.id) controle_id " +
+                    " from tab_car_solicitacao tcs, tab_empreendimento te, (select tcsicar.id, tcsicar.solicitacao_car from tab_controle_sicar tcsicar  "+
+                    " where tcsicar.solicitacao_car_esquema = :esquema) tcrls where tcs.empreendimento = te.id and tcs.id = tcrls.solicitacao_car(+) "+
+                    " and tcs.id = :idSolicitacao", conn))
             {
-                bancoDeDados.IniciarTransacao();
+                //bancoDeDados.IniciarTransacao();            
 
-                #region Coleta de dados
-                Comando comando = bancoDeDados.CriarComando(@"select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid, tcrls.id controle_id
-                    from tab_car_solicitacao tcs, tab_empreendimento te, (select tcsicar.id, tcsicar.solicitacao_car from tab_controle_sicar tcsicar 
-                    where tcsicar.solicitacao_car_esquema = :esquema) tcrls where tcs.empreendimento = te.id and tcs.id = tcrls.solicitacao_car(+)
-                    and tcs.id = :idSolicitacao");
+                comando.Parameters.Add(new OracleParameter("esquema", (int)solicitacaoOrigem));
+                comando.Parameters.Add(new OracleParameter("idSolicitacao", controleArquivoSICAR.SolicitacaoCarId));
 
-                comando.AdicionarParametroEntrada("esquema", (int)solicitacaoOrigem, DbType.Int32);
-                comando.AdicionarParametroEntrada("idSolicitacao", controleArquivoSICAR.SolicitacaoCarId, DbType.Int32);
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                using (var reader = comando.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -843,31 +868,43 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     }
                     reader.Close();
                 }
-
+                
                 #endregion
 
-                if (controleArquivoSICAR.Id == 0)
+                if (controleArquivoSICAR.Id == 0) //Wilson: Verificar se todos estão retornando 0, fiz alteração na consulta (DECODE)
                 {
+                    
+                    int Emp = Convert.ToInt32(controleArquivoSICAR.EmpreendimentoId);
+
+                    if (Emp == 13417)
+                    {
+                        Emp = 13417;
+
+                    }
                     #region Criar controle arquivo SICAR
-                    comando = bancoDeDados.CriarComando(@"
-				    insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema)
-                    values
-                    (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema)
-                     returning id into :id");
+                    using (OracleCommand comand = new OracleCommand(
+                        " insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema) " +
+                        "  values " +
+                        "  (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema) " + //, conn))
+                        "  returning id into :id", conn)) 
 
-                    comando.AdicionarParametroEntrada("empreendimento", controleArquivoSICAR.EmpreendimentoId, DbType.Int32);
-                    comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
-                    comando.AdicionarParametroEntrada("solicitacao_car", controleArquivoSICAR.SolicitacaoCarId, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
-                    comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_esquema", (int)solicitacaoOrigem, DbType.Int32);
+                    {
 
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                    comando.AdicionarParametroSaida("id", DbType.Int32);
+                        comand.Parameters.Add(new OracleParameter("tid", GerenciadorTransacao.ObterIDAtual()));
+                        comand.Parameters.Add(new OracleParameter("empreendimento", Convert.ToInt32(controleArquivoSICAR.EmpreendimentoId)));
+                        comand.Parameters.Add(new OracleParameter("empreendimento_tid", Convert.ToString(controleArquivoSICAR.EmpreendimentoTid)));
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car", Convert.ToInt32(controleArquivoSICAR.SolicitacaoCarId)));
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car_tid", Convert.ToString(controleArquivoSICAR.SolicitacaoCarTid)));
+                        comand.Parameters.Add(new OracleParameter("situacao_envio", Convert.ToInt32(statusArquivoSICAR))); //(int)statusArquivoSICAR);
+                        comand.Parameters.Add(new OracleParameter("solicitacao_car_esquema", Convert.ToInt32(solicitacaoOrigem))); //(int)solicitacaoOrigem);
+                        comand.Parameters.Add(new OracleParameter("id", OracleDbType.Int32, ParameterDirection.Output)); //DbType.Int32
+                                                                         
+                        comand.ExecuteNonQuery();
 
-                    bancoDeDados.ExecutarNonQuery(comando);
+                        //int.Parse(cmd.Parameters["successCount"].Value.ToString());
+                        controleArquivoSICAR.Id = int.Parse(comand.Parameters["id"].Value.ToString()); 
 
-                    controleArquivoSICAR.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+                    }
 
                     #endregion
                 }
@@ -875,64 +912,72 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 {
                     #region Editar controle arquivo SICAR
 
-                    comando = bancoDeDados.CriarComando(@"
-				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, 
-                    r.tid = :tid, r.arquivo = null where r.id = :id");
+                    using (OracleCommand comand = new OracleCommand(
+                        " update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, " +
+                        " r.tid = :tid, r.arquivo = null where r.id = :id", conn))
+                    {
+                        comand.Parameters.Add("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid);
+                        comand.Parameters.Add("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid);
+                        comand.Parameters.Add("situacao_envio", (int)statusArquivoSICAR);
+                        comand.Parameters.Add("tid", Blocos.Data.GerenciadorTransacao.ObterIDAtual());
+                        comand.Parameters.Add("id", controleArquivoSICAR.Id);
 
-                    comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
-                    comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
-                    comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                    comando.AdicionarParametroEntrada("id", controleArquivoSICAR.Id, DbType.Int32);
-
-                    bancoDeDados.ExecutarNonQuery(comando);
-
+                        comand.ExecuteNonQuery();
+                    }
                     #endregion
                 }
 
-                GerarHistoricoControleArquivoCarSicarInst(controleArquivoSICAR.Id, banco);
+                GerarHistoricoControleArquivoCarSicarInst(controleArquivoSICAR.Id, conn);
 
-                bancoDeDados.Commit();
-            }*/
+                //bancoDeDados.Commit();
+            }
+            
         }
-        //
-        internal void GerarHistoricoControleArquivoCarSicarInst(int controleArquivoId, BancoDeDados banco = null)
+        
+        internal void GerarHistoricoControleArquivoCarSicarInst(int controleArquivoId, OracleConnection conn) //BancoDeDados banco = null)
         {
-            if (controleArquivoId > 0)
-            {
-                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            //using (OracleCommand comando = new OracleCommand("select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid, tcrls.id controle_id "+
+            //    " from tab_car_solicitacao tcs, tab_empreendimento te, (select tcsicar.id, tcsicar.solicitacao_car from tab_controle_sicar tcsicar  "+
+            //    " where tcsicar.solicitacao_car_esquema = :esquema) tcrls where tcs.empreendimento = te.id and tcs.id = tcrls.solicitacao_car(+) "+
+            //    " and tcs.id = :idSolicitacao", conn))
+            //{
+            //    //bancoDeDados.IniciarTransacao();            
+
+            //    comando.Parameters.Add(new OracleParameter("esquema", 1)); //1: Institucional
+            //    comando.Parameters.Add(new OracleParameter("idSolicitacao", controleArquivoId));
+
+                #region Histórico do controle de arquivo SICAR
+                if (controleArquivoId > 0)
                 {
-                    #region Histórico do controle de arquivo SICAR
+                    //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+                    using (OracleCommand comando2 = new OracleCommand(
+                        "begin " +
+                          "  for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid, " +
+                          "           tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias, " +
+                          "           tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema  " +
+                          "           from tab_controle_sicar tcs " +
+                          "           where tcs.id = :id) loop   " +
+                          "    INSERT INTO HST_CONTROLE_SICAR " +
+                          "      (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, " +
+                          "       chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao, " +
+                          "       solicitacao_car_esquema, data_execucao) " +
+                          "    values  " +
+                          "      (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid, " +
+                          "       j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo, " +
+                          "       j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP); " +
+                          "  end loop; " +
+                        " end;", conn))
+                    {
 
-                    bancoDeDados.IniciarTransacao();
+                        comando2.Parameters.Add("id", controleArquivoId);
+                        comando2.ExecuteNonQuery();
+                    
+                    }                   
 
-                    Comando comando = bancoDeDados.CriarComandoPlSql(@"
-					begin
-                      for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid,
-                                       tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias,
-                                       tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema 
-                                from tab_controle_sicar tcs
-                                where tcs.id = :id) loop  
-                         INSERT INTO HST_CONTROLE_SICAR
-                           (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio,
-                            chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao,
-                            solicitacao_car_esquema, data_execucao)
-                         values 
-                           (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid,
-                            j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo,
-                            j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP);
-                      end loop;
-                    end;");
-
-                    comando.AdicionarParametroEntrada("id", controleArquivoId, DbType.Int32);
-
-                    bancoDeDados.ExecutarNonQuery(comando);
-                    bancoDeDados.Commit();
-
-                    #endregion
-                }
+                        #endregion
+                //}
             }
         }
-        //
+        
     }
 }

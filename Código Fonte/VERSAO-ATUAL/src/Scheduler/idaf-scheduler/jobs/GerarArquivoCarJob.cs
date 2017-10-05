@@ -104,7 +104,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						};
 
 
-						if (controleSicar.solicitacao_passivo > 0)
+						 if (controleSicar.solicitacao_passivo > 0)
 							PreencherCampos(car);
 						else
 							ValidarCampos(car);
@@ -1278,6 +1278,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				case Geometria.LINESTRING:
 					sqlBuilder.Append("largura,");
 					break;
+                case Geometria.MULTIPOLYGON:
+                    sqlBuilder.Append("area_m2,");
+                    break;
+
 			}
 			sqlBuilder.Append(" (CASE WHEN TEMARCO(t.geometry)='TRUE' THEN SDO_CS.TRANSFORM(sdo_geom.sdo_arc_densify(t.geometry, 0.01001, 'arc_tolerance=0,00001'), 4674).get_wkt() ");
 			sqlBuilder.Append(" ELSE SDO_CS.TRANSFORM(t.geometry, 4674).get_wkt() END) as wkt FROM ");
@@ -1328,6 +1332,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								//geo.geoJson.type = Geometria.MULTIPOLYGON;
 								geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
 								break;
+                            case Geometria.MULTIPOLYGON:
+                                //geo.largura = 0;
+                                geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                                //geo.geoJson.type = Geometria.MULTIPOLYGON;
+                                //geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
+                                break;
 						}
 
 						//Criar arquivo geojson para testes
@@ -1684,25 +1694,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             var geometrias = new List<Geo>();
 
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaNascente,
                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRioAte10,
                 "tipo = 'APP_RIO_ATE_10'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRio10A50,
                 "tipo = 'APP_RIO_10_A_50'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRio50A200,
                 "tipo = 'APP_RIO_50_A_200'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRio200A600,
                 "tipo = 'APP_200_A_600'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRio600,
                 "tipo = 'APP_RIO_ACIMA_600'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaReservatorio,
                 "tipo = 'APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaBordaChapada,
                 "tipo = 'APP_BORDA_CHAPADA'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRestinga,
                 "tipo = 'APP_RESTINGA'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculada,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaDeclividade,
                 "tipo = 'APP_AREA_DECLIVIDADE_MAIOR_45'"));
 
             //Remover geometrias nulas para envio
@@ -1725,18 +1735,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             var geometrias = new List<Geo>();
 
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                "tipo = 'APP_RIO_ATE_10'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                "tipo = 'APP_RIO_10_A_50'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                "tipo = 'APP_RIO_50_A_200'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                "tipo = 'APP_200_A_600'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculada,
-                "tipo = 'APP_RIO_ACIMA_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaNascente,
+                 "tipo = 'APP_ESCADINHA_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaLago,
+                "tipo = 'APP_ESCADINHA_LAGO_NATURAL'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRioAte10,
+                "tipo = 'APP_ESCADINHA_RIO_ATE_10'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio10A50,
+                "tipo = 'APP_ESCADINHA_RIO_10_A_50'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio50A200,
+                "tipo = 'APP_ESCADINHA_RIO_50_A_200'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio200A600,
+                "tipo = 'APP_ESCADINHA_200_A_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio600,
+                "tipo = 'APP_ESCADINHA_RIO_ACIMA_600'"));
 
             //Remover geometrias nulas para envio
             geometrias.RemoveAll(x => x == null);

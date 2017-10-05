@@ -31,16 +31,21 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         {
             //INSTITUCIONAL
             int origem = 1;
-            using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
+            using (var connInst = new OracleConnection(CarUtils.GetBancoInstitucional()))
             {
-                conn.Open();
-                ChamadaEnviarCarInterno(origem, conn);
-                conn.Close();
+                connInst.Open();
+                ChamadaEnviarCarInterno(origem, connInst);
+                connInst.Close();
             }
             
             //CREDENCIADO
-            //origem = 2;
-            //ChamadaEnviarCarInterno(origem);
+            origem = 2;            
+            using (var connCre = new OracleConnection(CarUtils.GetBancoCredenciado()))
+            {
+                connCre.Open();
+                ChamadaEnviarCarInterno(origem, connCre);
+                connCre.Close();
+            }
         }
 
         private void ChamadaEnviarCarInterno(int origem, OracleConnection conn)
@@ -53,7 +58,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 {
 
                     CARSolicitacaoFunc cr = new CARSolicitacaoFunc();
-                    cr.EnviarReenviarArquivoSICAR(solicitacaoID, origem, false, conn);
+                    cr.EnviarReenviarArquivoSICAR(solicitacaoID, origem, true, conn);
 
                     //CARSolicitacaoController variavel = new CARSolicitacaoController();
                     //ar.EnviarReenviarArquivoSICAR(solicitacaoID, origem, false);
@@ -72,8 +77,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
-            string BuildSQl = "SELECT ID FROM BKP_CAR_SOLICITACAO";
-            var arrayIDS = new List<int>();
+            //Busca os IDs para fazer o loop nos cadastros CAR passivo
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE ID = 39242  OR" +
+                //" ID = 60885 OR"+
+                                                                        " ID = 43080 OR" +
+                //" ID = 48836 OR"+
+                //" ID = 54266 OR"+
+                                                                        " ID = 36565 OR" +
+                                                                        " ID = 40597";
+                                                                        //" ID = 767  ";
+            var arrayIDS = new List<int>();	
 
             //using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
             //{

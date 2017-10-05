@@ -39,8 +39,23 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 		public const string TipoArlTotal = "ARL_TOTAL";
 		public const string TipoArlARecuperar = "ARL_A_RECUPERAR";
 		public const string TipoAppARecuperar = "APP_A_RECUPERAR";
-        public const string TipoAppCalculada = "APP_CALCULADA";
-        public const string TipoEscadinhaCalculada = "ESCADINHA_CALCULADA";
+        public const string TipoAppCalculadaNascente = "APP_NASCENTE_OLHO_DAGUA";
+        public const string TipoAppCalculadaRioAte10 = "APP_RIO_ATE_10";
+        public const string TipoAppCalculadaRio10A50 = "APP_RIO_10_A_50";
+        public const string TipoAppCalculadaRio50A200 = "APP_RIO_50_A_200";
+        public const string TipoAppCalculadaRio200A600 = "APP_200_A_600";
+        public const string TipoAppCalculadaRio600 = "APP_RIO_ACIMA_600";
+        public const string TipoAppCalculadaReservatorio = "APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO";
+        public const string TipoAppCalculadaBordaChapada = "APP_BORDA_CHAPADA";
+        public const string TipoAppCalculadaRestinga = "APP_RESTINGA";
+        public const string TipoAppCalculadaDeclividade = "APP_AREA_DECLIVIDADE_MAIOR_45";
+        public const string TipoEscadinhaCalculadaNascente = "APP_ESCADINHA_NASCENTE_OLHO_DAGUA";
+        public const string TipoEscadinhaCalculadaLago = "APP_ESCADINHA_LAGO_NATURAL";
+        public const string TipoEscadinhaCalculadaRioAte10 = "APP_ESCADINHA_RIO_ATE_10";
+        public const string TipoEscadinhaCalculadaRio10A50 = "APP_ESCADINHA_RIO_10_A_50";
+        public const string TipoEscadinhaCalculadaRio50A200 = "APP_ESCADINHA_RIO_50_A_200";
+        public const string TipoEscadinhaCalculadaRio200A600 = "APP_ESCADINHA_200_A_600";
+        public const string TipoEscadinhaCalculadaRio600 = "APP_ESCADINHA_RIO_ACIMA_600";
 
 		[DefaultValue("")]
 		public string tipo { get; set; }
