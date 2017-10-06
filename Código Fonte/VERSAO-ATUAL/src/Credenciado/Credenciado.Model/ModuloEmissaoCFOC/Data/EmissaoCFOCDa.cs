@@ -697,6 +697,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			}
 		}
 
+        internal List<Lista> ObterEmpreendimentosListaEtramiteX(BancoDeDados banco = null)
+        {
+            List<Lista> retorno = null;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select distinct emp.id, emp.denominador from crt_unidade_consolidacao c, crt_unidade_cons_cultivar u,
+                tab_empreendimento emp, tab_titulo t, esp_abertura_livro_uc uc, esp_aber_livro_uc_cultura ucu  
+                where  emp.id = c.empreendimento and c.id = u.unidade_consolidacao and ucu.especificidade = uc.id
+                and c.empreendimento = t.empreendimento ");
+
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    retorno = new List<Lista>();
+
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("denominador") });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
 		internal List<Lista> ObterEmpreendimentosLista(int credenciadoID, BancoDeDados banco = null)
 		{
 			List<Lista> retorno = null;

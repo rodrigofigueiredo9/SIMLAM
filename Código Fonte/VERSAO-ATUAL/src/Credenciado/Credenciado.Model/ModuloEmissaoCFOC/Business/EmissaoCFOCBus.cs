@@ -295,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 					credenciadoID = User.FuncionarioId;
 				}
 
-				return _da.ObterEmpreendimentosLista(credenciadoID);
+                return _da.ObterEmpreendimentosListaEtramiteX();
 			}
 			catch (Exception exc)
 			{
