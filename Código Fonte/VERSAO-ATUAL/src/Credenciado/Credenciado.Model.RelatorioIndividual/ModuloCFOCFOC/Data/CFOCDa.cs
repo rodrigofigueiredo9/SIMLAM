@@ -292,10 +292,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				select d.lote_id,
+				select distinct d.lote_id,
 					d.codigo_lote,
 					d.data_criacao,
-					sum(d.quantidade) as quantidade,
+					d.quantidade as quantidade,
 					d.unidade_medida_texto,
                     d.exibe_kilos,
 					d.cultura,
@@ -321,13 +321,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 						and li.cultivar_id = cc.cultivar_id
 						and li.cultivar_tid = cc.tid
 						and cp.id_hst = :hst_id) d
-				group by d.lote_id,
-						d.codigo_lote,
-						d.data_criacao,
-						d.unidade_medida_texto,
-                        d.exibe_kilos,
-						d.cultura,
-						d.cultivar_nome", EsquemaBanco);
+				", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("hst_id", hst_id, DbType.Int32);
 
