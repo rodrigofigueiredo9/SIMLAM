@@ -280,6 +280,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		public ActionResult EnviarReenviarArquivoSICAR(int solicitacaoId, int origem, bool isEnviar)
 		{
+
 			CARSolicitacao solicitacao = null;
 
 			if (origem == (int)eCARSolicitacaoOrigem.Credenciado)

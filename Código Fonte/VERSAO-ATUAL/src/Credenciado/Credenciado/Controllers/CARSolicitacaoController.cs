@@ -286,18 +286,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		public ActionResult EnviarReenviarArquivoSICAR(int solicitacaoId, int origem, bool isEnviar)
 		{
 			CARSolicitacao carSolicitacao = null;
+            origem = 2;
 			if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
 			{
 				carSolicitacao = _bus.Obter(solicitacaoId);
 			}
 
-			if (_validar.AcessoEnviarArquivoSICAR(carSolicitacao, origem))
+			if (!_validar.AcessoEnviarArquivoSICAR(carSolicitacao, origem))
 			{
-				if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
-				{
-					_bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
-				}
+                return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros}, JsonRequestBehavior.AllowGet);
 			}
+
+            if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
+            {
+                _bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+            }
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRetorno = urlRetorno }, JsonRequestBehavior.AllowGet);

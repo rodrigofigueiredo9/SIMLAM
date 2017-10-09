@@ -59,7 +59,7 @@
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Blocos.Etx\Blocos.Etx.csproj">
-      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
       <Name>Blocos.Etx</Name>
     </ProjectReference>
   </ItemGroup>

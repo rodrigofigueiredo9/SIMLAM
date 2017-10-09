@@ -38,6 +38,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 		public const string TipoArlAprovadaNaoAverbada = "ARL_APROVADA_NAO_AVERBADA";
 		public const string TipoArlTotal = "ARL_TOTAL";
 		public const string TipoArlARecuperar = "ARL_A_RECUPERAR";
+        //
 		public const string TipoAppARecuperar = "APP_A_RECUPERAR";
         public const string TipoAppCalculadaNascente = "APP_NASCENTE_OLHO_DAGUA";
         public const string TipoAppCalculadaRioAte10 = "APP_RIO_ATE_10";
@@ -49,6 +50,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
         public const string TipoAppCalculadaBordaChapada = "APP_BORDA_CHAPADA";
         public const string TipoAppCalculadaRestinga = "APP_RESTINGA";
         public const string TipoAppCalculadaDeclividade = "APP_AREA_DECLIVIDADE_MAIOR_45";
+        //
         public const string TipoEscadinhaCalculadaNascente = "APP_ESCADINHA_NASCENTE_OLHO_DAGUA";
         public const string TipoEscadinhaCalculadaLago = "APP_ESCADINHA_LAGO_NATURAL";
         public const string TipoEscadinhaCalculadaRioAte10 = "APP_ESCADINHA_RIO_ATE_10";
