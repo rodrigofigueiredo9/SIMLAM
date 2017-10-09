@@ -993,23 +993,25 @@ Infracao = {
 		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
 		Fiscalizacao.alternarAbas();
 
-		Infracao.container.delegate('.ddlClassificacoes', 'change', Infracao.onSelecionarClassificacao);
-		Infracao.container.delegate('.ddlTipos', 'change', Infracao.onSelecionarTipo);
-		Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
-		Infracao.container.delegate('.rdoIsGeradaSistemaSim', 'change', Infracao.onSelecionarIsGeradaSistemaSim);
-		Infracao.container.delegate('.rdoIsGeradaSistemaNao', 'change', Infracao.onSelecionarIsGeradaSistemaNao);
-		Infracao.container.delegate('.rdoIsAutuadaSim', 'change', Infracao.onSelecionarIsAutuadaSim);
-		Infracao.container.delegate('.rdoIsAutuadaNao', 'change', Infracao.onSelecionarrdoIsAutuadaNao);
-		Infracao.container.delegate('.rdoIsEspecificar', 'change', Infracao.onSelecionarIsEspecificar);
-		Infracao.container.delegate('.rdoIsNotEspecificar', 'change', Infracao.onSelecionarIsNotEspecificar);
+		$('.fsInfracao', Infracao.container).hide()
 
-		Infracao.container.delegate('.rdbIsGeradaSistema', 'click', Infracao.gerenciarIsGeradaSistema);
-		Infracao.container.delegate('.ddlSeries', 'change', Infracao.gerenciarSerie);
-
-		Infracao.gerenciarSerie();
-
-		Infracao.container.delegate('.btnAddArq', 'click', Infracao.onEnviarArquivoClick);
-		Infracao.container.delegate('.btnLimparArq', 'click', Infracao.onLimparArquivoClick);
+	    Infracao.container.delegate('.rdoComInfracao', 'change', Infracao.onSelecionarComInfracao);
+	    Infracao.container.delegate('.rdoSemInfracao', 'change', Infracao.onSelecionarSemInfracao);
+	    Infracao.container.delegate('.ddlClassificacoes', 'change', Infracao.onSelecionarClassificacao);
+	    Infracao.container.delegate('.ddlTipos', 'change', Infracao.onSelecionarTipo);
+	    Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
+		
+		//Infracao.container.delegate('.rdoIsGeradaSistemaSim', 'change', Infracao.onSelecionarIsGeradaSistemaSim);
+		//Infracao.container.delegate('.rdoIsGeradaSistemaNao', 'change', Infracao.onSelecionarIsGeradaSistemaNao);
+		//Infracao.container.delegate('.rdoIsAutuadaSim', 'change', Infracao.onSelecionarIsAutuadaSim);
+		//Infracao.container.delegate('.rdoIsAutuadaNao', 'change', Infracao.onSelecionarrdoIsAutuadaNao);
+		//Infracao.container.delegate('.rdoIsEspecificar', 'change', Infracao.onSelecionarIsEspecificar);
+		//Infracao.container.delegate('.rdoIsNotEspecificar', 'change', Infracao.onSelecionarIsNotEspecificar);
+		//Infracao.container.delegate('.rdbIsGeradaSistema', 'click', Infracao.gerenciarIsGeradaSistema);
+		//Infracao.container.delegate('.ddlSeries', 'change', Infracao.gerenciarSerie);
+		//Infracao.gerenciarSerie();
+		//Infracao.container.delegate('.btnAddArq', 'click', Infracao.onEnviarArquivoClick);
+		//Infracao.container.delegate('.btnLimparArq', 'click', Infracao.onLimparArquivoClick);
 
 		Mascara.load(Infracao.container);
 
@@ -1044,6 +1046,84 @@ Infracao = {
 		MasterPage.carregando(false);
 	},
 
+	onSalvarInfracao: function () {
+
+	    var container = Infracao.container;
+
+	    var obj = {
+	        Id: Number($('.hdnInfracaoId', container).val()),
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
+	        ClassificacaoId: $('.ddlClassificacoes :selected', container).val(),
+	        TipoId: $('.ddlTipos :selected', container).val(),
+	        ItemId: $('.ddlItens :selected', container).val(),
+	        IsAutuada: '',
+	        ConfiguracaoId: $('.hdnConfiguracaoId', container).val(),
+	        ConfiguracaoTid: $('.hdnConfiguracaoTid', container).val(),
+	        Campos: [],
+	        Perguntas: []
+	    }
+
+	    if ($('.rdoIsAutuadaSim', container).attr('checked')) {
+	        obj.IsAutuada = true;
+	        obj.SerieId = $('.ddlSeries :selected', container).val();
+	        obj.CodigoReceitaId = $('.ddlCodigoReceitas :selected', container).val();
+	        obj.IsGeradaSistema = $('.rdoIsGeradaSistemaSim', container).attr('checked');
+	        obj.ValorMulta = $('.txtValorMulta', container).val();
+	        obj.CodigoReceita = $('.txtCodigoReceita', container).val();
+	        obj.NumeroAutoInfracaoBloco = $('.txtNumeroAutoInfracaoBloco', container).val();
+	        obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val();
+	        obj.DataLavraturaAuto = { DataTexto: $('.txtDataLavraturaAuto', container).val() };
+	        obj.ValorExtenso = $('.txtValorExtenso', container).val();
+	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+	    }
+
+	    if ($('.rdoIsAutuadaNao', container).attr('checked')) {
+	        obj.IsAutuada = false;
+	    }
+
+	    if ($('.ddlSubitens :selected', container).val() != '0') {
+	        obj.SubitemId = $('.ddlSubitens :selected', container).val();
+	    }
+
+	    $('.divCampos .divCampo', container).each(function (index, item) {
+	        obj.Campos.push({
+	            Id: $('.hdnCampoInfracaoId', item).val(),
+	            CampoId: $('.hdnCampoId', item).val(),
+	            Texto: $('.txtTexto', item).val()
+	        });
+	    });
+
+	    $('.divQuestionarios .divQuestionario', container).each(function (index, item) {
+
+	        var respostaId = $('.rdoResposta:checked', item).val();
+	        var perguntaId = $('.hdnPerguntaId', item).val();
+	        var especificar = $('.hdnRespostaEspecificar' + perguntaId, item).val() == "1";
+
+	        obj.Perguntas.push({
+	            Id: $('.hdnQuestionarioId', item).val(),
+	            PerguntaId: perguntaId,
+	            PerguntaTid: $('.hdnPerguntaTid', item).val(),
+	            RespostaId: respostaId,
+	            RespostaTid: $('.hdnRespostaTid' + respostaId, item).val(),
+	            Especificacao: (especificar) ? $('.txtEspecificar', item).val() : '',
+	            IsEspecificar: especificar
+	        });
+	    });
+
+	    //Limpando dados de campos
+	    if (obj.IsGeradaSistema) {
+	        obj.DataLavraturaAuto.DataTexto = '';
+	        obj.NumeroAutoInfracaoBloco = '';
+	    }
+
+	    var arrayMensagem = [];
+
+	    arrayMensagem.push(Infracao.settings.mensagens.Salvar);
+
+	    return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem);
+
+	},
+
 	configurarBtnEditar: function () {
 		$(".btnEditar", Fiscalizacao.container).unbind('click');
 		$(".btnEditar", Fiscalizacao.container).click(Infracao.onBtnEditar);
@@ -1060,6 +1140,135 @@ Infracao = {
 			Fiscalizacao.gerenciarVisualizacao();
 		});
 	},
+
+	onSelecionarClassificacao: function () {
+
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+
+	    if (classificacao) {
+
+	        $('.ddlTipos', Infracao.container).ddlClear();
+	        $('.ddlItens', Infracao.container).ddlClear();
+	        $('.ddlSubitens', Infracao.container).ddlClear();
+	        $('.divCamposPerguntas', Infracao.container).html('');
+
+	        $.ajax({
+	            url: Infracao.settings.urls.obterTipo,
+	            data: JSON.stringify({ classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
+
+	                if (response.EhValido) {
+	                    $('.ddlTipos', Infracao.container).ddlLoad(response.Tipos);
+
+	                    if (response.Tipos.length == 2) {
+	                        Infracao.onSelecionarTipo();
+	                    }
+	                }
+	            }
+	        });
+	    }
+
+	},
+
+	onSelecionarTipo: function () {
+
+	    var tipo = $('.ddlTipos', Infracao.container).val();
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+
+	    if (tipo && classificacao) {
+
+	        $('.ddlItens', Infracao.container).ddlClear();
+
+	        $.ajax({
+	            url: Infracao.settings.urls.obterItem,
+	            data: JSON.stringify({ tipoId: tipo, classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
+
+	                if (response.EhValido) {
+	                    $('.ddlItens', Infracao.container).ddlLoad(response.Itens, { disabled: false });
+	                    $('.ddlSubitens', Infracao.container).ddlClear();
+	                    $('.divCamposPerguntas', Infracao.container).html('');
+
+	                    if (response.Itens.length == 2) {
+	                        Infracao.onSelecionarItem();
+	                    }
+	                }
+	            }
+	        });
+	    }
+
+	},
+
+	onSelecionarItem: function () {
+
+	    var item = $('.ddlItens', Infracao.container).val();
+	    var tipo = $('.ddlTipos', Infracao.container).val();
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+
+	    if (item && tipo && classificacao) {
+
+	        $('.ddlSubitens', Infracao.container).ddlClear();
+
+	        $.ajax({
+	            url: Infracao.settings.urls.obterConfiguracao,
+	            data: JSON.stringify({ tipoId: tipo, itemId: item, classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
+
+	                if (response.EhValido) {
+	                    $('.ddlSubitens', Infracao.container).ddlLoad(response.Subitens);
+	                    $('.divCamposPerguntas', Infracao.container).html(response.Html);
+	                    Mascara.load($('.divCamposPerguntas', Infracao.container));
+	                }
+	            }
+	        });
+	    }
+	},
+
+	onSelecionarComInfracao: function () {
+	    $('.fsInfracao', Infracao.container).show();
+
+	    $('.divDescricaoInfracao', Infracao.container).show();
+	    $('.divClassificacao', Infracao.container).show();
+	},
+
+	onSelecionarSemInfracao: function () {
+	    $('.fsInfracao', Infracao.container).hide();
+
+	    $('.fsCaracterizacao', Infracao.container).show();
+	    $('.fsDadosInfracao', Infracao.container).show();
+
+	    $('.divDescricaoInfracao', Infracao.container).hide();
+	    $('.divClassificacao', Infracao.container).hide();
+	},
+
+
+
+
+    /////////////OLD/////////////////////
 
 	gerenciarIsGeradaSistema: function () {
 		var rdb = $('.rdbIsGeradaSistema:checked', Infracao.container).val();
@@ -1130,188 +1339,6 @@ Infracao = {
 		var perguntaId = $(this, Infracao.container).attr('perguntaId');
 		$('.divEspecificacao' + perguntaId, Infracao.container).hide();
 		$('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('0');
-	},
-
-	onSelecionarClassificacao: function () {
-
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
-
-		if (classificacao) {
-
-			$('.ddlTipos', Infracao.container).ddlClear();
-			$('.ddlItens', Infracao.container).ddlClear();
-			$('.ddlSubitens', Infracao.container).ddlClear();
-			$('.divCamposPerguntas', Infracao.container).html('');
-
-			$.ajax({ url: Infracao.settings.urls.obterTipo,
-				data: JSON.stringify({ classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
-
-					if (response.EhValido) {
-						$('.ddlTipos', Infracao.container).ddlLoad(response.Tipos);
-
-						if (response.Tipos.length == 2) {
-							Infracao.onSelecionarTipo();
-						}
-					}
-				}
-			});
-		}
-
-	},
-
-	onSelecionarTipo: function () {
-
-		var tipo = $('.ddlTipos', Infracao.container).val();
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
-
-		if (tipo && classificacao) {
-
-			$('.ddlItens', Infracao.container).ddlClear();
-
-			$.ajax({ url: Infracao.settings.urls.obterItem,
-				data: JSON.stringify({ tipoId: tipo, classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
-
-					if (response.EhValido) {
-						$('.ddlItens', Infracao.container).ddlLoad(response.Itens, { disabled: false });
-						$('.ddlSubitens', Infracao.container).ddlClear();
-						$('.divCamposPerguntas', Infracao.container).html('');
-
-						if (response.Itens.length == 2) {
-							Infracao.onSelecionarItem();
-						}
-					}
-				}
-			});
-		}
-
-	},
-
-	onSelecionarItem: function () {
-
-		var item = $('.ddlItens', Infracao.container).val();
-		var tipo = $('.ddlTipos', Infracao.container).val();
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
-
-		if (item && tipo && classificacao) {
-
-			$('.ddlSubitens', Infracao.container).ddlClear();
-
-			$.ajax({ url: Infracao.settings.urls.obterConfiguracao,
-				data: JSON.stringify({ tipoId: tipo, itemId: item, classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
-
-					if (response.EhValido) {
-						$('.ddlSubitens', Infracao.container).ddlLoad(response.Subitens);
-						$('.divCamposPerguntas', Infracao.container).html(response.Html);
-						Mascara.load($('.divCamposPerguntas', Infracao.container));
-					}
-				}
-			});
-		}
-	},
-
-	onSalvarInfracao: function () {
-
-		var container = Infracao.container;
-
-		var obj = {
-			Id: Number($('.hdnInfracaoId', container).val()),
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
-			ClassificacaoId: $('.ddlClassificacoes :selected', container).val(),
-			TipoId: $('.ddlTipos :selected', container).val(),
-			ItemId: $('.ddlItens :selected', container).val(),
-			IsAutuada: '',
-			ConfiguracaoId: $('.hdnConfiguracaoId', container).val(),
-			ConfiguracaoTid: $('.hdnConfiguracaoTid', container).val(),
-			Campos: [],
-			Perguntas: []
-		}
-
-		if ($('.rdoIsAutuadaSim', container).attr('checked')) {
-			obj.IsAutuada = true;
-			obj.SerieId = $('.ddlSeries :selected', container).val();
-			obj.CodigoReceitaId = $('.ddlCodigoReceitas :selected', container).val();
-			obj.IsGeradaSistema = $('.rdoIsGeradaSistemaSim', container).attr('checked');
-			obj.ValorMulta = $('.txtValorMulta', container).val();
-			obj.CodigoReceita = $('.txtCodigoReceita', container).val();
-			obj.NumeroAutoInfracaoBloco = $('.txtNumeroAutoInfracaoBloco', container).val();
-			obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val();
-			obj.DataLavraturaAuto = { DataTexto: $('.txtDataLavraturaAuto', container).val() };
-			obj.ValorExtenso = $('.txtValorExtenso', container).val();
-			obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-		}
-
-		if ($('.rdoIsAutuadaNao', container).attr('checked')) {
-			obj.IsAutuada = false;
-		}
-
-		if ($('.ddlSubitens :selected', container).val() != '0') {
-			obj.SubitemId = $('.ddlSubitens :selected', container).val();
-		}
-
-		$('.divCampos .divCampo', container).each(function (index, item) {
-			obj.Campos.push({
-				Id: $('.hdnCampoInfracaoId', item).val(),
-				CampoId: $('.hdnCampoId', item).val(),
-				Texto: $('.txtTexto', item).val()
-			});
-		});
-
-		$('.divQuestionarios .divQuestionario', container).each(function (index, item) {
-
-			var respostaId = $('.rdoResposta:checked', item).val();
-			var perguntaId = $('.hdnPerguntaId', item).val();
-			var especificar = $('.hdnRespostaEspecificar' + perguntaId, item).val() == "1";
-
-			obj.Perguntas.push({
-				Id: $('.hdnQuestionarioId', item).val(),
-				PerguntaId: perguntaId,
-				PerguntaTid: $('.hdnPerguntaTid', item).val(),
-				RespostaId: respostaId,
-				RespostaTid: $('.hdnRespostaTid' + respostaId, item).val(),
-				Especificacao: (especificar) ? $('.txtEspecificar', item).val() : '',
-				IsEspecificar: especificar
-			});
-		});
-
-		//Limpando dados de campos
-		if (obj.IsGeradaSistema) {
-			obj.DataLavraturaAuto.DataTexto = '';
-			obj.NumeroAutoInfracaoBloco = '';
-		}
-
-		var arrayMensagem = [];
-
-		arrayMensagem.push(Infracao.settings.mensagens.Salvar);
-
-		return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem);
-
 	},
 
 	onEnviarArquivoClick: function () {

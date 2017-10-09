@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -81,6 +82,32 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			get { return _codigoReceitas; }
 			set { _codigoReceitas = value; }
 		}
+
+        private List<Lista> _penalidades = new List<Lista>();
+        public List<Lista> Penalidades
+        {
+            get
+            {
+                return _penalidades;
+            }
+            set
+            {
+                _penalidades = value;
+            }
+        }
+
+        private List<SelectListItem> _listaPenalidades = new List<SelectListItem>();
+        public List<SelectListItem> ListaPenalidades
+        {
+            get
+            {
+                return _listaPenalidades;
+            }
+            set
+            {
+                _listaPenalidades = value;
+            }
+        }
 
 		public String TiposArquivoValido = ViewModelHelper.Json(new ArrayList { ".pdf" });
 
