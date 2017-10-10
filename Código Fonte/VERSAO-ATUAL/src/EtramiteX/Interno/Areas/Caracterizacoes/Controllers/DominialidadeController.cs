@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Data;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloProjetoDigital;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -34,6 +36,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
+
+
 		
 		#endregion
 
@@ -361,6 +365,42 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Msg = Validacao.Erros,
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
 			}, JsonRequestBehavior.AllowGet);
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE :empreendimentoID", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", caracterizacao.EmpreendimentoId, DbType.Int32);
+                var emp = 0.0;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        emp = reader.GetValue<int>("ATP_QTD_MODULO_FISCAL");
+                    }
+
+                    reader.Close();
+                }
+            }/*
+                bancoDeDados.IniciarTransacao();
+                Comando comando = bancoDeDados.CriarComando(@"begin {0}OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:id); end;", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id",caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                bancoDeDados.Commit();
+
+                bancoDeDados.IniciarTransacao();
+                Comando comando = bancoDeDados.CriarComando(@"begin {0}OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id); end;", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                bancoDeDados.Commit();
+            }*/
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]
