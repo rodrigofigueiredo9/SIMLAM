@@ -293,9 +293,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				eUnidadeProducaoTipoProducao tipoProducao = ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedidaId);
 
 				DateTime dataSaldo = titulo.DataSituacao.Data.GetValueOrDefault();
-				if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
+                DateTime dataValidade = dataSaldo.AddYears(1); 
+				//if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
+                /*
+                 * Cálculo do saldo do CFO acrescenta a diferença de datas
+                 */
+                while (dataValidade < DateTime.Today)
+                {
+                    dataSaldo = dataValidade;
+                    dataValidade = dataValidade.AddYears(1);
+                }
+
+
+                if (dataValidade < DateTime.Today)
 				{
-					dataSaldo = new DateTime(DateTime.Today.Year - 1, dataSaldo.Month, dataSaldo.Day);
+					//dataSaldo = new DateTime(DateTime.Today.Year - 1, dataSaldo.Month, dataSaldo.Day);
+                    dataSaldo = dataValidade;
 				}
 
                 //Converte todas as quantidades para tonelada, para calcular o saldo
