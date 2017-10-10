@@ -970,7 +970,7 @@ FiscalizacaoProjetoGeografico = {
 	}
 }
 
-// 3ª Aba - Infração
+// 3ª Aba - Infração/Fiscalização
 Infracao = {
 	settings: {
 		urls: {
@@ -993,13 +993,17 @@ Infracao = {
 		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
 		Fiscalizacao.alternarAbas();
 
-		$('.fsInfracao', Infracao.container).hide()
+		$('.fsInfracao', Infracao.container).hide();
+		$('.ddlTiposPenalidade', Infracao.container).attr('disabled', 'disable');
+		$('.ddlTiposPenalidade', Infracao.container).addClass('disabled');
 
 	    Infracao.container.delegate('.rdoComInfracao', 'change', Infracao.onSelecionarComInfracao);
 	    Infracao.container.delegate('.rdoSemInfracao', 'change', Infracao.onSelecionarSemInfracao);
 	    Infracao.container.delegate('.ddlClassificacoes', 'change', Infracao.onSelecionarClassificacao);
 	    Infracao.container.delegate('.ddlTipos', 'change', Infracao.onSelecionarTipo);
 	    Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
+	    Infracao.container.delegate('.cbPenalidade', 'change', Infracao.onMarcarPenalidade);
+	    Infracao.container.delegate('.ddlTiposPenalidade', 'change', Infracao.onSelecionarPenalidade);
 		
 		//Infracao.container.delegate('.rdoIsGeradaSistemaSim', 'change', Infracao.onSelecionarIsGeradaSistemaSim);
 		//Infracao.container.delegate('.rdoIsGeradaSistemaNao', 'change', Infracao.onSelecionarIsGeradaSistemaNao);
@@ -1263,6 +1267,31 @@ Infracao = {
 
 	    $('.divDescricaoInfracao', Infracao.container).hide();
 	    $('.divClassificacao', Infracao.container).hide();
+	},
+
+	onMarcarPenalidade: function(){
+	    var marcado = $(this).closest('.cbPenalidade').attr('checked');
+	    var container = $(this).closest('.block');
+	    
+	    if (marcado == true) {
+	        $('.ddlTiposPenalidade', container).removeAttr('disabled');
+	        $('.ddlTiposPenalidade', container).removeClass('disabled');
+	    } else {
+	        $('.ddlTiposPenalidade option:eq(0)', container).attr('selected', 'selected');
+	        $('.ddlTiposPenalidade', container).attr('disabled', 'disable');
+	        $('.ddlTiposPenalidade', container).addClass('disabled');
+
+	        $('.txtDescricaoPenalidade', container).val('');
+	    }
+	},
+
+	onSelecionarPenalidade: function () {
+	    var container = $(this).closest('.block');
+
+	    var penalidade = $('.ddlTiposPenalidade :selected', container).val();
+	    var descricao = $('.hdnPenalidade' + penalidade, Infracao.container).val();
+
+	    $('.txtDescricaoPenalidade', container).val(descricao);
 	},
 
 
