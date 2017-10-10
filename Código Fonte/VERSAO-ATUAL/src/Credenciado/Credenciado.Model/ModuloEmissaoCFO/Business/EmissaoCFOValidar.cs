@@ -305,11 +305,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
                 }
 
 
-                if (dataValidade < DateTime.Today)
-				{
-					//dataSaldo = new DateTime(DateTime.Today.Year - 1, dataSaldo.Month, dataSaldo.Day);
-                    dataSaldo = dataValidade;
-				}
+               
 
                 //Converte todas as quantidades para tonelada, para calcular o saldo
                 var quantidadeItem = item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade;
