@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using System.Data;
 using System.Threading.Tasks;
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.misc.WKT;
@@ -49,50 +50,157 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         }
 
         private void ChamadaEnviarCarInterno(int origem, OracleConnection conn)
-        {
-            var listID = GetIdCar(origem, conn);              
+      {
+            var listIDCar = GetIdCar(origem, conn);
+            var listEmpreendimento = GetEmpreendimento(origem, conn);
 
-            foreach(int solicitacaoID in listID)
+            
+            foreach (int solicitacaoEmp in listEmpreendimento)
             {
                 try
                 {
+                    #region Carga das tabelas APP Caculada e APP Escadinha
+                    var qtdModuloFiscal = 0.0;
 
-                    CARSolicitacaoFunc cr = new CARSolicitacaoFunc();
-                    cr.EnviarReenviarArquivoSICAR(solicitacaoID, origem, true, conn);
+                    string buildSQL = "SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID";
 
-                    //CARSolicitacaoController variavel = new CARSolicitacaoController();
-                    //ar.EnviarReenviarArquivoSICAR(solicitacaoID, origem, false);
-                }
-                catch (Exception ex)
+                    using (OracleCommand command = new OracleCommand(buildSQL, conn))
+                    {
+                        command.Parameters.Add(new OracleParameter("empreendimentoID", solicitacaoEmp));
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                            }
+
+                            reader.Close();
+                        }
+                    }
+                    if (origem == 1)
+                    {
+                        #region Chamada Procedure
+                        using (var connInst = new OracleConnection(CarUtils.GetBancoInstitucionalGeo()))
+                        {
+                            connInst.Open();
+                            OracleCommand command = connInst.CreateCommand();
+                            OracleTransaction transaction;
+
+                            // Start a local transaction
+                            transaction = connInst.BeginTransaction(IsolationLevel.Serializable);
+                            // Assign transaction object for a pending local transaction
+                            command.Transaction = transaction;
+                            command.CommandText = "BEGIN OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); END;";
+                            
+                            command.Parameters.Add(new OracleParameter("emp", solicitacaoEmp));
+
+                            command.ExecuteNonQuery();
+
+                            transaction.Commit();
+                        
+                            connInst.Close();
+                        }
+
+                        using (var connInst = new OracleConnection(CarUtils.GetBancoInstitucionalGeo()))
+                        {
+                            connInst.Open();
+                            OracleCommand command = connInst.CreateCommand();
+                            OracleTransaction transaction;
+
+                            // Start a local transaction
+                            transaction = connInst.BeginTransaction(IsolationLevel.Serializable);
+                            // Assign transaction object for a pending local transaction
+                            command.Transaction = transaction;
+                            command.CommandText = "BEGIN OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); END;";
+
+                            command.Parameters.Add(new OracleParameter("emp", solicitacaoEmp));
+                            command.Parameters.Add(new OracleParameter("moduloFiscal", qtdModuloFiscal));
+
+                            command.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            connInst.Close();
+                        }
+                        #endregion
+                    }
+                    else
+                    {
+                        #region Chamada Procedure
+                        using (var connCred = new OracleConnection(CarUtils.GetEsquemaCredenciadoGeo()))
+                        {
+                            connCred.Open();
+                            OracleCommand command = connCred.CreateCommand();
+                            OracleTransaction transaction;
+
+                            // Start a local transaction
+                            transaction = connCred.BeginTransaction(IsolationLevel.Serializable);
+                            // Assign transaction object for a pending local transaction
+                            command.Transaction = transaction;
+                            //connInst.BeginTransaction();
+                            command.CommandText = "BEGIN OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); END;";
+                            //using (OracleCommand command = new OracleCommand(sql, conn))
+                            //{
+                            command.Parameters.Add(new OracleParameter("emp", solicitacaoEmp));
+
+                            command.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            //bancoDeDados.Commit();
+                            //}
+                            command.Transaction = transaction;
+                            //connInst.BeginTransaction();
+                            command.CommandText = "BEGIN OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); END;";
+
+                            //using (OracleCommand command = new OracleCommand(sql, conn))
+                            //{
+                            command.Parameters.Add(new OracleParameter("emp", solicitacaoEmp));
+                            command.Parameters.Add(new OracleParameter("moduloFiscal", qtdModuloFiscal));
+
+                            command.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            //}
+
+                            connCred.Close();
+                        }
+                        #endregion
+                    }
+                    #endregion
+                }catch(Exception ex)
                 {
-
-                    String i = ex.Message;
+                    string excecao = ex.Message;
                 }
-                
-                
             }
 
-            
+
+          /*foreach(int solicitacaoID in listIDCar)
+          {
+            // Percorre todos os registros da tab_car_solicitacao (passivo) e monta *.car de cada empreendimento e insere tab_schedule_fila
+              try
+              {
+                  CARSolicitacaoFunc cr = new CARSolicitacaoFunc();
+                  // Monta o json na coluna REQUISÃO da tab_schedule_fila 
+                  cr.EnviarReenviarArquivoSICAR(solicitacaoID, origem, true, conn);
+
+                  //CARSolicitacaoController variavel = new CARSolicitacaoController();
+                  //ar.EnviarReenviarArquivoSICAR(solicitacaoID, origem, false);
+              }
+              catch (Exception ex)
+              {
+
+                  String i = ex.Message;
+              }              
+          }*/
         }
 
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE ID = 39242  OR" +
-                //" ID = 60885 OR"+
-                                                                        " ID = 43080 OR" +
-                //" ID = 48836 OR"+
-                //" ID = 54266 OR"+
-                                                                        " ID = 36565 OR" +
-                                                                        " ID = 40597";
-                                                                        //" ID = 767  ";
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO";                
             var arrayIDS = new List<int>();	
 
-            //using (var conn = new OracleConnection(CarUtils.GetBancoInstitucional()))
-            //{
                 using (OracleCommand command = new OracleCommand(BuildSQl, conn))
                 {
-                    //conn.Open();
                     using (var dr = command.ExecuteReader())
                     {
                         while (dr.Read())
@@ -100,10 +208,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             arrayIDS.Add(dr.GetValue<int>("ID"));
                         }
                     }
-                    //conn.Close();
+                }            
+            return arrayIDS;
+        }
+
+        public List<int> GetEmpreendimento(int origem, OracleConnection conn)
+        {
+            string BuildSQl = "SELECT EMPREENDIMENTO FROM TAB_CAR_SOLICITACAO WHERE SITUACAO NOT IN (1,3) " ;
+            var arrayIDS = new List<int>();
+
+            using (OracleCommand command = new OracleCommand(BuildSQl, conn))
+            {
+                using (var dr = command.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        arrayIDS.Add(dr.GetValue<int>("EMPREENDIMENTO"));
+                    }
                 }
-            //}
-            
+            }
             return arrayIDS;
         }
     }

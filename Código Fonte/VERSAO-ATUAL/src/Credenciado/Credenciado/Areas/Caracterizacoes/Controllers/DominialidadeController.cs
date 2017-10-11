@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Credenciado.Security;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -345,6 +347,57 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			_bus.ObterDominialidadeARL(caracterizacao);
 			DominialidadeVM vm = new DominialidadeVM(caracterizacao, new List<Lista>());
+
+            #region Carga das tabelas APP Caculada e APP Escadinha
+            var qtdModuloFiscal = 0.0;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", caracterizacao.EmpreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        //emp = reader.GetValue<int>("ATP_QTD_MODULO_FISCAL");
+                        qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                    }
+
+                    reader.Close();
+                }
+            }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+            {
+                #region Chamada Procedure
+                bancoDeDados.IniciarTransacao();
+                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:id, :emp, :tid); end;");
+
+                command.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                command.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                command.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.String);
+
+                bancoDeDados.ExecutarNonQuery(command);
+
+                bancoDeDados.Commit();
+
+                bancoDeDados.IniciarTransacao();
+                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id, :emp, :moduloFiscal, :tid); end;");
+
+                com.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
+                com.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(com);
+
+                bancoDeDados.Commit();
+                #endregion
+
+            }
+            #endregion
+
 
 			return Json(new
 			{

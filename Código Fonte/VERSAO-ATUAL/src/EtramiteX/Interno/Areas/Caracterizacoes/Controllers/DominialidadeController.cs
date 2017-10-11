@@ -37,7 +37,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 
-
+        //private string EsquemaBanco { get; set; }
 		
 		#endregion
 
@@ -359,49 +359,64 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			_bus.ObterDominialidadeARL(caracterizacao);
 			DominialidadeVM vm = new DominialidadeVM(caracterizacao, new List<Lista>());
 
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
-			}, JsonRequestBehavior.AllowGet);
-
+            var qtdModuloFiscal = 0.0;
+            #region Carga das tabelas APP Caculada e APP Escadinha
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
 
-                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE :empreendimentoID", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("empreendimentoID", caracterizacao.EmpreendimentoId, DbType.Int32);
-                var emp = 0.0;
+                
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
                     while (reader.Read())
                     {
-                        emp = reader.GetValue<int>("ATP_QTD_MODULO_FISCAL");
+                        //emp = reader.GetValue<int>("ATP_QTD_MODULO_FISCAL");
+                        qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
                     }
 
                     reader.Close();
                 }
-            }/*
+            }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+            {
+                #region Chamada Procedure
                 bancoDeDados.IniciarTransacao();
-                Comando comando = bancoDeDados.CriarComando(@"begin {0}OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:id); end;", EsquemaBanco);
+                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:id, :emp, :tid); end;");
 
-                comando.AdicionarParametroEntrada("id",caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
-                
-                bancoDeDados.ExecutarNonQuery(comando);
+                command.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                command.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                command.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.String);
+
+                bancoDeDados.ExecutarNonQuery(command);
 
                 bancoDeDados.Commit();
 
                 bancoDeDados.IniciarTransacao();
-                Comando comando = bancoDeDados.CriarComando(@"begin {0}OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id); end;", EsquemaBanco);
+                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id, :emp, :moduloFiscal, :tid); end;");
 
-                comando.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
+                com.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.Int32);
 
-                bancoDeDados.ExecutarNonQuery(comando);
+                bancoDeDados.ExecutarNonQuery(com);
 
                 bancoDeDados.Commit();
-            }*/
-		}
+                #endregion
+
+            }
+            #endregion
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
+            }, JsonRequestBehavior.AllowGet);
+
+        }
 
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]
 		private List<Lista> LocalizacoesReserva(ReservaLegal reserva, int dominioTipo = 0)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
+using System.Data;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -101,7 +103,54 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			solicitacao.DataEmissao.Data = DateTime.Now;
 			List<Protocolos> lstProcessosDocumentos = _busTitulo.ObterProcessosDocumentos(solicitacao.Protocolo.Id.GetValueOrDefault(0));
 			CARSolicitacaoVM vm = new CARSolicitacaoVM(solicitacao, _busLista.CadastroAmbientalRuralSolicitacaoSituacao, lstProcessosDocumentos, new List<ProcessoAtividadeItem>(), new List<PessoaLst>());
-			return View(vm);
+
+            
+            #region Carga das tabelas APP Caculada e APP Escadinha
+            var qtdModuloFiscal = 0.0;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", vm.Solicitacao.Empreendimento, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                    }
+
+                    reader.Close();
+                }
+            }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+            {
+                #region Chamada Procedure
+                bancoDeDados.IniciarTransacao();
+                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
+                                
+                command.AdicionarParametroEntrada("emp", vm.Solicitacao.Empreendimento, System.Data.DbType.Int32);
+                
+                bancoDeDados.ExecutarNonQuery(command);
+
+                bancoDeDados.Commit();
+
+                bancoDeDados.IniciarTransacao();
+                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id, :emp, :moduloFiscal, :tid); end;");
+
+                com.AdicionarParametroEntrada("emp", vm.Solicitacao.Empreendimento, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
+                
+                bancoDeDados.ExecutarNonQuery(com);
+
+                bancoDeDados.Commit();
+                #endregion
+
+            }
+            #endregion
+            
+            return View(vm);
 		}
 
 		[HttpPost]
