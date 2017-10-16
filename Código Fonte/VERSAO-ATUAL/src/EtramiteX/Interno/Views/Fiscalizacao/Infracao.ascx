@@ -78,6 +78,7 @@
 
         <div class="block dataGrid divQuadroEnquadramento">
 			    <div class="coluna90">
+                    <input type="hidden" class="enquadramentoId" value="<%=Model.Infracao.EnquadramentoInfracao.Id%>" />
 				    <table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					    <thead>
 						    <tr>
@@ -88,16 +89,15 @@
 					    </thead>
 					    <tbody>
 					        <% for (int linha = 0; linha < 3; linha++) { %>
-						        <tr>
+						        <tr id="Infracao_Enquadramento" >
                                     <td>
-                                        <input type="hidden" class="enquadramentoId" value="" />
-                                        <input type="text" class="text txtArtigoEnquadramento" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
                                     </td>
                                     <td>
-                                        <input type="text" class="text txtItemEnquadramento" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <input type="text" class="text txtItemEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
                                     </td>
                                     <td>
-                                        <input type="text" class="text txtLeiEnquadramento" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
                                     </td>
 						        </tr>
 						    <% } %>
@@ -118,21 +118,21 @@
         <div class="block">
             <div class="coluna20 append2">
 			    <label>Data da constatação/vistoria *</label>
-			    <%= Html.TextBox("Infracao.DataLavraturaAuto", Model.DataConclusaoFiscalizacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavraturaAuto maskData" }))%>
+			    <%= Html.TextBox("Infracao.DataConstatacao", Model.DataConclusaoFiscalizacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataConstatacao" }))%>
 		    </div>
 
             <div class="coluna15 append2">
 			    <label>Hora da constatação *</label>
-			    <%= Html.TextBox("Infracao.DataLavraturaAuto", Model.DataConclusaoFiscalizacao.DataHoraTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskHoraMinuto txtDataLavraturaAuto" }))%>
+			    <%= Html.TextBox("Infracao.HoraConstatacao", Model.DataConclusaoFiscalizacao.DataHoraTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskHoraMinuto txtHoraConstatacao" }))%>
 		    </div>
 
             <div class="coluna40 divClassificacao">
                 <label>Classificação da infração *</label>
                 <br />
-                <label><%= Html.RadioButton("Infracao.IsAutuada", 1, (Model.Infracao.IsAutuada == null ? false : Model.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsAutuadaSim" }))%>Leve</label>
-			    <label><%= Html.RadioButton("Infracao.IsAutuada", 0, (Model.Infracao.IsAutuada == null ? false : !Model.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsAutuadaNao" }))%>Média</label>
-                <label><%= Html.RadioButton("Infracao.IsAutuada", 1, (Model.Infracao.IsAutuada == null ? false : Model.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsAutuadaSim" }))%>Grave</label>
-			    <label><%= Html.RadioButton("Infracao.IsAutuada", 0, (Model.Infracao.IsAutuada == null ? false : !Model.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoIsAutuadaNao" }))%>Gravíssima</label>
+                <label><%= Html.RadioButton("Infracao.ClassificacaoInfracao", 0, (Model.Infracao.ClassificacaoInfracao == null ? false : Model.Infracao.ClassificacaoInfracao.Value == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoClassificacaoLeve" }))%>Leve</label>
+			    <label><%= Html.RadioButton("Infracao.ClassificacaoInfracao", 1, (Model.Infracao.ClassificacaoInfracao == null ? false : Model.Infracao.ClassificacaoInfracao.Value == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoClassificacaoMedia" }))%>Média</label>
+                <label><%= Html.RadioButton("Infracao.ClassificacaoInfracao", 2, (Model.Infracao.ClassificacaoInfracao == null ? false : Model.Infracao.ClassificacaoInfracao.Value == 2), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoClassificacaoGrave" }))%>Grave</label>
+			    <label><%= Html.RadioButton("Infracao.ClassificacaoInfracao", 3, (Model.Infracao.ClassificacaoInfracao == null ? false : Model.Infracao.ClassificacaoInfracao.Value == 3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rdoClassificacaoGravissima" }))%>Gravíssima</label>
             </div>
         </div>
     </fieldset>
@@ -144,10 +144,10 @@
 
         <div class="block"  style="padding-top: 5px;">
             <div class="block coluna30">
-                <label><%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem1" }))%>Art.2º Item I - Advertência</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem2" }))%>Art.2º Item II - Multa</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem3" }))%>Art.2º Item III - Apreensão</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem4" }))%>Art.2º Item IV - Interdição ou embargo</label>
+                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiAdvertencia == null ? false : Model.Infracao.PossuiAdvertencia.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeAdvertencia" }))%>Art.2º Item I - Advertência</label><br />
+                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiMulta == null ? false : Model.Infracao.PossuiMulta.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeMulta" }))%>Art.2º Item II - Multa</label><br />
+                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiApreensao == null ? false : Model.Infracao.PossuiApreensao.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeApreensao" }))%>Art.2º Item III - Apreensão</label><br />
+                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiInterdicaoEmbargo == null ? false : Model.Infracao.PossuiInterdicaoEmbargo.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeInterdicaoEmbargo" }))%>Art.2º Item IV - Interdição ou embargo</label>
             </div>
 
             <div class="block coluna65">
@@ -156,53 +156,51 @@
                     <input type="hidden" class="hdnPenalidade<%:item.Id%>" value="<%:item.Codigo %>" />
                 <% } %>
 
-                <%--<input type="hidden" class="hdnPenalidade" value="<%:ViewModelHelper.Json(Model.Penalidades) %>" />--%>
-
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem5" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeItem5" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
-                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeItem5" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem6" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeItem6" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
-                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeItem6" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem7" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeItem7" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
-                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeItem7" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeItem8" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeItem8" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
-                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeItem8" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
             </div>

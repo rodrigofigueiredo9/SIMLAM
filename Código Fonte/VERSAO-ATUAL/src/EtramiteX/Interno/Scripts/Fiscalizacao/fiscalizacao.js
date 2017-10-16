@@ -1060,30 +1060,70 @@ Infracao = {
 	        ClassificacaoId: $('.ddlClassificacoes :selected', container).val(),
 	        TipoId: $('.ddlTipos :selected', container).val(),
 	        ItemId: $('.ddlItens :selected', container).val(),
-	        IsAutuada: '',
 	        ConfiguracaoId: $('.hdnConfiguracaoId', container).val(),
 	        ConfiguracaoTid: $('.hdnConfiguracaoTid', container).val(),
 	        Campos: [],
-	        Perguntas: []
+	        Perguntas: [],
 	    }
 
-	    if ($('.rdoIsAutuadaSim', container).attr('checked')) {
-	        obj.IsAutuada = true;
-	        obj.SerieId = $('.ddlSeries :selected', container).val();
-	        obj.CodigoReceitaId = $('.ddlCodigoReceitas :selected', container).val();
-	        obj.IsGeradaSistema = $('.rdoIsGeradaSistemaSim', container).attr('checked');
-	        obj.ValorMulta = $('.txtValorMulta', container).val();
-	        obj.CodigoReceita = $('.txtCodigoReceita', container).val();
-	        obj.NumeroAutoInfracaoBloco = $('.txtNumeroAutoInfracaoBloco', container).val();
-	        obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val();
-	        obj.DataLavraturaAuto = { DataTexto: $('.txtDataLavraturaAuto', container).val() };
-	        obj.ValorExtenso = $('.txtValorExtenso', container).val();
-	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-	    }
+	    if ($('.rdoComInfracao', container).attr('checked')) {
+	        obj.ComInfracao = true;
 
-	    if ($('.rdoIsAutuadaNao', container).attr('checked')) {
-	        obj.IsAutuada = false;
-	    }
+	        //Quadro de Enquadramento
+	        var EnquadramentoInfracao = {
+	            Id: $('.enquadramentoId', container).val(),
+	            Artigos: []
+	        };
+
+	        $('.divQuadroEnquadramento .dataGridTable tbody tr', container).each(function () {
+	            var item = {
+	                ArtigoTexto: $(this).find('.txtArtigoEnquadramento').val().trim(),
+	                ArtigoParagrafo: $(this).find('.txtItemEnquadramento').val().trim(),
+	                DaDo: $(this).find('.txtLeiEnquadramento').val().trim(),
+	            };
+
+	            if (item.ArtigoTexto != '' && item.ArtigoParagrafo != '' && item.DaDo != '') {
+	                EnquadramentoInfracao.Artigos.push(item);
+	            }
+	        });
+
+	        obj.EnquadramentoInfracao = EnquadramentoInfracao;
+
+            //Informações da fiscalização
+	        obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val(); 
+	        obj.DataConstatacao = { DataTexto: $('.txtDataConstatacao', container).val() };
+	        obj.HoraConstatacao = $('.txtHoraConstatacao', container).val();
+            
+	        if ($('.rdoClassificacaoLeve', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 0;
+	        } else if ($('.rdoClassificacaoMedia', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 1;
+	        } else if ($('.rdoClassificacaoGrave', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 2;
+	        } else if ($('.rdoClassificacaoGravissima', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 3;
+	        }
+
+	        //Penalidades - Itens fixos
+	        obj.PossuiAdvertencia = $('.cbPenalidadeAdvertencia', container).attr('checked');
+	        obj.PossuiMulta = $('.cbPenalidadeMulta', container).attr('checked');
+	        obj.PossuiApreensao = $('.cbPenalidadeApreensao', container).attr('checked');
+	        obj.PossuiInterdicaoEmbargo = $('.cbPenalidadeInterdicaoEmbargo', container).attr('checked');
+
+	        //Penalidades - Outros
+	        obj.IdsOutrasPenalidades = [];
+	        $('.ddlTiposPenalidadeOutras', container).each(function () {
+	            if ($(this).val() > 0) {
+	                obj.IdsOutrasPenalidades.push($(this).val());
+	            }
+	        });
+	    } else if ($('.rdoSemInfracao', container).attr('checked')) { 
+	        obj.ComInfracao = false;
+
+	        //Informações da fiscalização
+	        obj.DataConstatacao = { DataTexto: $('.txtDataConstatacao', container).val() };
+	        obj.HoraConstatacao = $('.txtHoraConstatacao', container).val();
+	    } 
 
 	    if ($('.ddlSubitens :selected', container).val() != '0') {
 	        obj.SubitemId = $('.ddlSubitens :selected', container).val();
@@ -1113,12 +1153,6 @@ Infracao = {
 	            IsEspecificar: especificar
 	        });
 	    });
-
-	    //Limpando dados de campos
-	    if (obj.IsGeradaSistema) {
-	        obj.DataLavraturaAuto.DataTexto = '';
-	        obj.NumeroAutoInfracaoBloco = '';
-	    }
 
 	    var arrayMensagem = [];
 
