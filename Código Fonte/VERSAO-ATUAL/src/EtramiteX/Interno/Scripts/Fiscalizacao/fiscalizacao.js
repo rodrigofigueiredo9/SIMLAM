@@ -45,6 +45,11 @@ Fiscalizacao = {
 		}
 		Fiscalizacao.containerAba = $('.conteudoFiscalizacao', Fiscalizacao.container);
 
+        //esconde as abas das infrações. Só deverão ser exibidas se as infrações correspondentes forem selecionadas.
+		$('.step4', Fiscalizacao.container).hide();
+		$('.step5', Fiscalizacao.container).hide();
+		$('.step6', Fiscalizacao.container).hide();
+		$('.step7', Fiscalizacao.container).hide();
 	},
 
 	gerenciarWizardAbas: function () {
@@ -170,16 +175,28 @@ Fiscalizacao = {
 	obterStep: function (container) {
 
 	    if ($(container).data('step') !== null && $(container).data('step') !== NaN && $(container).data('step') !== undefined) {
-		    return +$(container).data('step');
+	        var step = +$(container).data('step');
+
+	        return step;
 		}
 
 		if ($(container).hasClass('btnVoltar')) {
-			return Fiscalizacao.stepAtual - 1;
+		    var step = Fiscalizacao.stepAtual - 1;
+
+		    while ($('.step' + step, Fiscalizacao.container).hasClass('isOculta')) {
+		        step--;
+		    }
 		}
 
 		if ($(container).hasClass('btnAvancar') || $(container).hasClass('btnSalvar')) {
-			return Fiscalizacao.stepAtual + 1;
+		    var step = Fiscalizacao.stepAtual + 1;
+
+		    while ($('.step' + step, Fiscalizacao.container).hasClass('isOculta')) {
+		        step++;
+		    }
 		}
+
+		return step;
 	},
 
 	configurarStepWizard: function () {
@@ -218,7 +235,7 @@ Fiscalizacao = {
 		});
 	},
 
-	onSalvarStep: function (url, objetoStep, msg) {
+	onSalvarStep: function (url, objetoStep, msg, abas) {
 
 		var isSalvo = false;
 
@@ -234,7 +251,6 @@ Fiscalizacao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Fiscalizacao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Fiscalizacao.containerMensagem, response.Msg);
 					return;
@@ -244,7 +260,61 @@ Fiscalizacao = {
 				isSalvo = true;
 			}
 		});
+		
+		Fiscalizacao.ocultarAbas(abas);
+
 		return isSalvo;
+	},
+
+	ocultarAbas: function(abas){
+	    var multa = false;
+	    var interdicao = false;
+	    var apreensao = false;
+	    var outras = false;
+
+	    abas.forEach(function (aba) {
+	        if (aba == 'multa') {
+	            $('.step4', Fiscalizacao.container).show();
+	            $('.step4', Fiscalizacao.container).removeClass('isOculta');
+	            multa = true;
+	        } else if (aba == 'interdicaoembargo') {
+	            $('.step5', Fiscalizacao.container).show();
+	            $('.step5', Fiscalizacao.container).removeClass('isOculta');
+	            interdicao = true;
+	        } else if (aba == 'apreensao') {
+	            $('.step6', Fiscalizacao.container).show();
+	            $('.step6', Fiscalizacao.container).removeClass('isOculta');
+	            apreensao = true;
+	        } else if (aba == 'outras') {
+	            $('.step7', Fiscalizacao.container).show();
+	            $('.step7', Fiscalizacao.container).removeClass('isOculta');
+	            outras = true;
+	        } else if (aba == 'advertencia') {
+	            $('.step7', Fiscalizacao.container).show();
+	            $('.step7', Fiscalizacao.container).removeClass('isOculta');
+	            outras = true;
+	        }
+	    });
+
+	    if (multa == false) {
+	        $('.step4', Fiscalizacao.container).hide();
+	        $('.step4', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (interdicao == false) {
+	        $('.step5', Fiscalizacao.container).hide();
+	        $('.step5', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (apreensao == false) {
+	        $('.step6', Fiscalizacao.container).hide();
+	        $('.step6', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (outras == false) {
+	        $('.step7', Fiscalizacao.container).hide();
+	        $('.step7', Fiscalizacao.container).addClass('isOculta');
+	    }
 	},
 
 	obterReqInterEmp: function (urlBuscar, params) {
@@ -1004,18 +1074,6 @@ Infracao = {
 	    Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
 	    Infracao.container.delegate('.cbPenalidade', 'change', Infracao.onMarcarPenalidade);
 	    Infracao.container.delegate('.ddlTiposPenalidade', 'change', Infracao.onSelecionarPenalidade);
-		
-		//Infracao.container.delegate('.rdoIsGeradaSistemaSim', 'change', Infracao.onSelecionarIsGeradaSistemaSim);
-		//Infracao.container.delegate('.rdoIsGeradaSistemaNao', 'change', Infracao.onSelecionarIsGeradaSistemaNao);
-		//Infracao.container.delegate('.rdoIsAutuadaSim', 'change', Infracao.onSelecionarIsAutuadaSim);
-		//Infracao.container.delegate('.rdoIsAutuadaNao', 'change', Infracao.onSelecionarrdoIsAutuadaNao);
-		//Infracao.container.delegate('.rdoIsEspecificar', 'change', Infracao.onSelecionarIsEspecificar);
-		//Infracao.container.delegate('.rdoIsNotEspecificar', 'change', Infracao.onSelecionarIsNotEspecificar);
-		//Infracao.container.delegate('.rdbIsGeradaSistema', 'click', Infracao.gerenciarIsGeradaSistema);
-		//Infracao.container.delegate('.ddlSeries', 'change', Infracao.gerenciarSerie);
-		//Infracao.gerenciarSerie();
-		//Infracao.container.delegate('.btnAddArq', 'click', Infracao.onEnviarArquivoClick);
-		//Infracao.container.delegate('.btnLimparArq', 'click', Infracao.onLimparArquivoClick);
 
 		Mascara.load(Infracao.container);
 
@@ -1046,6 +1104,13 @@ Infracao = {
 				tamanhoModal: Modal.tamanhoModalMedia
 			});
 		}
+
+		if ($('.rdoComInfracao', Infracao.container).attr('checked') == true) {
+		    Infracao.onSelecionarComInfracao();
+		} else if ($('.rdoSemInfracao', Infracao.container).attr('checked') == true) {
+		    Infracao.onSelecionarSemInfracao();
+		}
+
 		MasterPage.botoes();
 		MasterPage.carregando(false);
 	},
@@ -1065,6 +1130,8 @@ Infracao = {
 	        Campos: [],
 	        Perguntas: [],
 	    }
+        
+	    var abas = [];
 
 	    if ($('.rdoComInfracao', container).attr('checked')) {
 	        obj.ComInfracao = true;
@@ -1110,13 +1177,32 @@ Infracao = {
 	        obj.PossuiApreensao = $('.cbPenalidadeApreensao', container).attr('checked');
 	        obj.PossuiInterdicaoEmbargo = $('.cbPenalidadeInterdicaoEmbargo', container).attr('checked');
 
+	        if (obj.PossuiAdvertencia) {
+	            abas.push('advertencia');
+	        }
+	        if (obj.PossuiMulta) {
+	            abas.push('multa');
+	        }
+	        if (obj.PossuiApreensao) {
+	            abas.push('apreensao');
+	        }
+	        if (obj.PossuiInterdicaoEmbargo) {
+	            abas.push('interdicaoembargo');
+	        }
+
 	        //Penalidades - Outros
 	        obj.IdsOutrasPenalidades = [];
+	        var possuiOutras = false;
 	        $('.ddlTiposPenalidadeOutras', container).each(function () {
 	            if ($(this).val() > 0) {
+	                possuiOutras = true;
 	                obj.IdsOutrasPenalidades.push($(this).val());
 	            }
 	        });
+	        if (possuiOutras) {
+	            abas.push('outras');
+	        }
+
 	    } else if ($('.rdoSemInfracao', container).attr('checked')) { 
 	        obj.ComInfracao = false;
 
@@ -1158,8 +1244,7 @@ Infracao = {
 
 	    arrayMensagem.push(Infracao.settings.mensagens.Salvar);
 
-	    return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem);
-
+	    return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem, abas);
 	},
 
 	configurarBtnEditar: function () {
@@ -1180,7 +1265,6 @@ Infracao = {
 	},
 
 	onSelecionarClassificacao: function () {
-
 	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
 
 	    if (classificacao) {
@@ -1327,148 +1411,6 @@ Infracao = {
 
 	    $('.txtDescricaoPenalidade', container).val(descricao);
 	},
-
-
-
-
-    /////////////OLD/////////////////////
-
-	gerenciarIsGeradaSistema: function () {
-		var rdb = $('.rdbIsGeradaSistema:checked', Infracao.container).val();
-		if (rdb == 0) {
-			Infracao.onSelecionarIsGeradaSistemaNao();
-		} else {
-			if (rdb == 1) {
-				Infracao.onSelecionarIsGeradaSistemaSim();
-			}
-		}
-	},
-
-	callBackObterInfracao: function () {
-
-		Fiscalizacao.stepAtual = 3;
-		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
-		Fiscalizacao.alternarAbas();
-
-		Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-
-		Fiscalizacao.configurarBtnCancelarStep(3);
-		MasterPage.carregando(false);
-	},
-
-	onSelecionarIsGeradaSistemaSim: function () {
-		$('.divIsGeradoSistema', Infracao.container).hide();
-		$('.ddlSeries option:eq(3)', Infracao.container).attr('selected', 'selected');
-		$('.ddlSeries', Infracao.container).attr('disabled', 'disabled');
-
-		Infracao.onLimparArquivoClick();
-	},
-
-	onSelecionarIsGeradaSistemaNao: function () {
-		$('.divIsGeradoSistema', Infracao.container).show();
-		$('.ddlSeries', Infracao.container).removeAttr('disabled', 'disabled').val(0);
-		Infracao.gerenciarSerie();
-	},
-
-	gerenciarSerie: function () {
-		if ($('.rdbIsGeradaSistema:checked', Infracao.container).val() == 0) {
-			var serie = $('.ddlSeries :selected', Infracao.container).val();
-			if (serie == 3) {
-				$('.lblNumAutoInfracao', Infracao.container).text('Nº do auto de infração *');
-			} else {
-				$('.lblNumAutoInfracao', Infracao.container).text('Nº do auto de infração - bloco *');
-			}
-		} else {
-			Infracao.onSelecionarIsGeradaSistemaSim();
-		}
-
-	},
-
-	onSelecionarIsAutuadaSim: function () {
-		$('.divInfracaoAutuada', Infracao.container).show();
-	},
-
-	onSelecionarrdoIsAutuadaNao: function () {
-		$('.divInfracaoAutuada', Infracao.container).hide();
-	},
-
-	onSelecionarIsEspecificar: function () {
-		var perguntaId = $(this, Infracao.container).attr('perguntaId');
-		$('.divEspecificacao' + perguntaId, Infracao.container).show();
-		$('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('1');
-	},
-
-	onSelecionarIsNotEspecificar: function () {
-		var perguntaId = $(this, Infracao.container).attr('perguntaId');
-		$('.divEspecificacao' + perguntaId, Infracao.container).hide();
-		$('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('0');
-	},
-
-	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', Infracao.container).val();
-
-		erroMsg = new Array();
-
-		if (nomeArquivo == '') {
-			erroMsg.push(Infracao.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!Infracao.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(Infracao.settings.mensagens.ArquivoNaoEhDoc);
-			}
-		}
-
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
-
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', Infracao.container);
-		FileUpload.upload(Infracao.settings.urls.enviarArquivo, inputFile, Infracao.callBackArqEnviado);
-	},
-
-	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', Infracao.container).val('');
-		$('.inputFile', Infracao.container).val('');
-
-		$('.spanInputFile', Infracao.container).removeClass('hide');
-		$('.txtArquivoNome', Infracao.container).addClass('hide');
-
-		$('.btnAddArq', Infracao.container).removeClass('hide');
-		$('.btnLimparArq', Infracao.container).addClass('hide');
-	},
-
-	validarTipoArquivo: function (tipo) {
-
-		var tipoValido = false;
-		$(Infracao.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
-
-		return tipoValido;
-	},
-
-	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', Infracao.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', Infracao.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', Infracao.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
-
-			$('.spanInputFile', Infracao.container).addClass('hide');
-			$('.txtArquivoNome', Infracao.container).removeClass('hide');
-
-			$('.btnAddArq', Infracao.container).addClass('hide');
-			$('.btnLimparArq', Infracao.container).removeClass('hide');
-		} else {
-			Infracao.onLimparArquivoClick();
-			Mensagem.gerar(Infracao.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
-	}
 }
 
 // 4ª aba - Multa

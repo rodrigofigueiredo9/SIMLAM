@@ -89,15 +89,27 @@
 					    </thead>
 					    <tbody>
 					        <% for (int linha = 0; linha < 3; linha++) { %>
-						        <tr id="Infracao_Enquadramento" >
+						        <tr id="Infracao_Enquadramento">
                                     <td>
-                                        <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% if (!Model.IsVisualizar) { %>
+                                            <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } else { %>
+                                            <input type="text" class="text txtArtigoEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } %>
                                     </td>
                                     <td>
-                                        <input type="text" class="text txtItemEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% if (!Model.IsVisualizar) { %>
+                                            <input type="text" class="text txtItemEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } else { %>
+                                            <input type="text" class="text txtItemEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } %>
                                     </td>
                                     <td>
-                                        <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha+1 ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% if (!Model.IsVisualizar) { %>
+                                            <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } else { %>
+                                            <input type="text" class="text txtLeiEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                        <% } %>
                                     </td>
 						        </tr>
 						    <% } %>
@@ -118,12 +130,12 @@
         <div class="block">
             <div class="coluna20 append2">
 			    <label>Data da constatação/vistoria *</label>
-			    <%= Html.TextBox("Infracao.DataConstatacao", Model.DataConclusaoFiscalizacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataConstatacao" }))%>
+			    <%= Html.TextBox("Infracao.DataConstatacao", Model.Infracao.DataConstatacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataConstatacao" }))%>
 		    </div>
 
             <div class="coluna15 append2">
 			    <label>Hora da constatação *</label>
-			    <%= Html.TextBox("Infracao.HoraConstatacao", Model.DataConclusaoFiscalizacao.DataHoraTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskHoraMinuto txtHoraConstatacao" }))%>
+			    <%= Html.TextBox("Infracao.HoraConstatacao", Model.Infracao.HoraConstatacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskHoraMinuto txtHoraConstatacao" }))%>
 		    </div>
 
             <div class="coluna40 divClassificacao">
@@ -158,7 +170,7 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
@@ -170,7 +182,7 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 1 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
@@ -182,7 +194,7 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 2 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
@@ -194,7 +206,7 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 3 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
