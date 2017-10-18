@@ -28,7 +28,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 			else
 			{
-				if (consideracao.HaReparacao.Value)
+				if (consideracao.HaReparacao.Value == 1)
 				{
 					if (string.IsNullOrWhiteSpace(consideracao.Reparacao))
 					{
@@ -47,7 +47,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						}
 					}
 				}
-				else if (!consideracao.HaReparacao.Value && string.IsNullOrWhiteSpace(consideracao.Reparacao))
+				else if (consideracao.HaReparacao.Value != -1 && string.IsNullOrWhiteSpace(consideracao.Reparacao))
 				{
 					Validacao.Add(Mensagem.ConsideracaoFinalMsg.OpinarReparacaoJustificarObrigatorio);
 				}
