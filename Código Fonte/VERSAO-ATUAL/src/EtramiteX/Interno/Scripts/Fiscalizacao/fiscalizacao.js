@@ -78,7 +78,7 @@ Fiscalizacao = {
 		}
 
 		if (Fiscalizacao.modo == 1) {
-			if (Fiscalizacao.stepAtual != 8 && Fiscalizacao.salvarEdicao) {
+			if (Fiscalizacao.salvarEdicao) {
 				if (!Fiscalizacao.salvarTelaAtual()) {
 					return;
 				}
@@ -175,12 +175,8 @@ Fiscalizacao = {
 			return;
 		}
 
-		if (Fiscalizacao.stepAtual != 8) {
-			if (!Fiscalizacao.salvarTelaAtual()) {
-				return;
-			}
-		} else {
-			Mensagem.limpar(Fiscalizacao.containerMensagem);
+		if (!Fiscalizacao.salvarTelaAtual()) {
+			return;
 		}
 
 		MasterPage.carregando(true);
@@ -2547,7 +2543,6 @@ FiscalizacaoConsideracaoFinal = {
 		var consideracaoFinal = {
 			Id: $('.hdnConsideracaoFinalId', FiscalizacaoConsideracaoFinal.container).val(),
 			FiscalizacaoId: $('.hdnFiscalizacaoId', Fiscalizacao.container).val(),
-			Justificar: $('.txtJustificar', FiscalizacaoConsideracaoFinal.container).val().trim(),
 			Descrever: $('.txtDescrever', FiscalizacaoConsideracaoFinal.container).val().trim(),
 			HaReparacao: parseInt($('.rblOpinar:checked', FiscalizacaoConsideracaoFinal.container).val()),
 			Reparacao: '',
@@ -2681,7 +2676,6 @@ FiscalizacaoConsideracaoFinal = {
 		}
 	},
 	onChangeFunc: function () {
-
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
 		var txtTestemunhaEndereco = $('.txtTestemunhaEndereco', context);

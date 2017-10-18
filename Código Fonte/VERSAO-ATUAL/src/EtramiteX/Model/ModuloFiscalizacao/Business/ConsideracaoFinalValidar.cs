@@ -22,11 +22,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool Salvar(ConsideracaoFinal consideracao)
 		{
-			if (string.IsNullOrWhiteSpace(consideracao.Justificar))
-			{
-				Validacao.Add(Mensagem.ConsideracaoFinalMsg.JustificarObrigatorio);
-			}
-
 			if (!consideracao.HaReparacao.HasValue)
 			{
 				Validacao.Add(Mensagem.ConsideracaoFinalMsg.OpinarObrigatorio);
