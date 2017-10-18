@@ -14,5 +14,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossan
 		public int Tipo { get; set; }
 		public long NumeroInicial { get; set; }
 		public long NumeroFinal { get; set; }
+        public string Serie { get; set; }
 	}
 }

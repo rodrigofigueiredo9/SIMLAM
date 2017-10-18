@@ -137,7 +137,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 			int auxiliar = 0;
 			decimal saldoDocOrigem = 0;
-			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
+			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, item.Serie, out auxiliar);
 			if (produtos != null)
 			{
 				switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
@@ -337,7 +337,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
             int auxiliar = 0;
             decimal saldoDocOrigem = 0;
-            List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
+            List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, item.Serie, out auxiliar);
             if (produtos != null)
             {
                 switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
@@ -464,7 +464,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
             }
         }
 
-		public List<IdentificacaoProduto> OrigemNumero(string numero, int origemTipo, out int origemID)
+		public List<IdentificacaoProduto> OrigemNumero(string numero, int origemTipo, string serieNumeral, out int origemID)
 		{
 			if (origemTipo == 0)
 			{
@@ -481,7 +481,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
-						EmissaoCFO CFO = emissaoCFOBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false);
+                        EmissaoCFO CFO = emissaoCFOBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false, serieNumero: serieNumeral);
 
 						if (CFO.Id > 0)
 						{

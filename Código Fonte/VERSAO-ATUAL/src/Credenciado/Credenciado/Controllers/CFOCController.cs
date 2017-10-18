@@ -503,10 +503,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.LoteCriar, ePermissao.LoteEditar })]
-		public ActionResult LoteVerificarNumero(int origemTipo, string origemNumero)
+        public ActionResult LoteVerificarNumero(int origemTipo, string origemNumero, string serieNumeral)
 		{
 			int origemID = 0;
-			List<IdentificacaoProduto> produtos = _loteValidar.OrigemNumero(origemNumero, origemTipo, out origemID);
+			List<IdentificacaoProduto> produtos = _loteValidar.OrigemNumero(origemNumero, origemTipo, serieNumeral, out origemID);
 			List<Lista> culturas = new List<Lista>();
 			string selecionado = "0";
 

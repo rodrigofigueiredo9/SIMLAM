@@ -36,7 +36,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 				Comando comando = bancoDeDados.CriarComando(@"select t.tid, t.situacao, t.numero, p.tipo produtor_tipo, nvl(p.nome, p.razao_social) produtor_nome_razao, nvl(p.cpf, p.cnpj) produtor_cpf_cnpj, 
 				t.empreendimento, t.nome_laboratorio, t.numero_laudo_resultado_analise, le.sigla estado_sigla, lm.texto municipio, t.numero_lacre, t.numero_porao, t.numero_container, 
-				t.produto_especificacao, t.partida_lacrada_origem, t.validade_certificado, t.informacoes_complement_html, lee.sigla estado_emissao_sigla, lme.texto municipio_emissao, t.data_ativacao 
+				t.produto_especificacao, t.partida_lacrada_origem, t.validade_certificado, t.informacoes_complement_html, lee.sigla estado_emissao_sigla, lme.texto municipio_emissao, t.data_ativacao , t.serie
 				from tab_cfo t, ins_pessoa p, lov_estado le, lov_municipio lm, lov_estado lee, lov_municipio lme 
 				where t.produtor = p.id and le.id(+) = t.estado and lm.id(+) = t.municipio and lee.id(+) = t.estado_emissao and lme.id(+) = t.municipio_emissao and t.id = :id", EsquemaBanco);
 
@@ -49,7 +49,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 						entidade.Id = id;
 						entidade.Tid = reader.GetValue<string>("tid");
 						entidade.Situacao = reader.GetValue<int>("situacao");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.Produtor.Tipo = reader.GetValue<int>("produtor_tipo");
 						entidade.Produtor.NomeRazaoSocial = reader.GetValue<string>("produtor_nome_razao");
 						entidade.Produtor.CPFCNPJ = reader.GetValue<string>("produtor_cpf_cnpj");
@@ -246,7 +246,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 					t.validade_certificado,
 					t.informacoes_complement_html,
 					t.data_ativacao,
-					t.data_execucao
+					t.data_execucao,
+                    t.serie
 				from hst_cfo t, lov_estado le, lov_estado lee
 				where le.id(+) = t.estado_id
 				and lee.id(+) = t.estado_emissao_id
@@ -264,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 						entidade.Id = id;
 						entidade.Situacao = reader.GetValue<int>("situacao_id");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.Produtor.Id = reader.GetValue<int>("produtor_id");
 						entidade.Produtor.Tid = reader.GetValue<string>("produtor_tid");
 						entidade.Empreendimento.Id = reader.GetValue<int>("empreendimento_id");
