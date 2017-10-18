@@ -832,6 +832,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return lista;
         }
 
+        public List<Lista> ObterPenalidadesLista()
+        {
+            List<Lista> lista = null;
+            try
+            {
+                lista = _da.ObterPenalidadesLista();
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return lista;
+        }
+
         public List<Lista> ObterSeries(bool isSim)
         {
             List<Lista> lista = null;

@@ -15,6 +15,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public String ArtigoParagrafo { get; set; }
 		public String CombinadoArtigo { get; set; }
 		public String CombinadoArtigoParagrafo { get; set; }
-		public String DaDo { get; set; }
+		public String DaDo { get; set; }    //Equivalente ao campo "Lei" na nova fiscalização
 	}
 }
