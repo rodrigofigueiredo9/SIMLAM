@@ -101,14 +101,24 @@ ConfigDocFitossanitario = {
 		var container = $(this).closest('fieldset');
 		var ehBloco = container.find('.dgNumerosBloco').length > 0;
 		var ddl = container.find('.ddlTipoDocumento');
+
 		var ddlSelecionado = ddl.ddlSelecionado();
+
+		var ddlSerieSelecionado = container.find('.ddlDigitalSerie').ddlSelecionado();
+
+		var valSerie = "";
+
+		if (ddlSerieSelecionado.Texto != "") {
+		    valSerie = " / " + ddlSerieSelecionado.Texto;
+		}
 
 		var item = {
 			TipoDocumentoID: ddlSelecionado.Id,
 			TipoDocumentoTexto: ddlSelecionado.Texto,
 			Tipo: (ehBloco ? 1 : 2),
 			NumeroInicial: $('.txtNumeroInicial', container).val(),
-			NumeroFinal: $('.txtNumeroFinal', container).val()
+			NumeroFinal: $('.txtNumeroFinal', container).val(),
+			Serie: ddlSerieSelecionado.Texto
 		};
 
 		var itens = [];
@@ -132,10 +142,19 @@ ConfigDocFitossanitario = {
 	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide').addClass('Linha');
 	    var btnEdit = $('<button type="button" title="Editar" class="icone editar btnEditar"></button><button type="button" title="Excluir" class="icone excluir btnExcluir"></button>');
 
+	    var valSerieInicial = item.NumeroInicial;
+	    var valSerieFinal = item.NumeroFinal;
+	    if (item.Serie != "") {
+	        valSerieInicial += " / " + item.Serie;
+	        valSerieFinal += " / " + item.Serie;
+	    }
+
+	
+
 		linha.find('.hdnItemJSon').val(JSON.stringify(item));
 		linha.find('.TipoDocumentoTexto').html(item.TipoDocumentoTexto).attr('title', item.TipoDocumentoTexto);
-		linha.find('.NumeroInicial').html(item.NumeroInicial).attr('title', item.NumeroInicial);
-		linha.find('.NumeroFinal').html(item.NumeroFinal).attr('title', item.NumeroFinal);
+		linha.find('.NumeroInicial').html(valSerieInicial).attr('title', valSerieInicial);
+		linha.find('.NumeroFinal').html(valSerieFinal).attr('title', valSerieFinal);
 		linha.find('.Acoes').html(btnEdit);
 
 		$('tbody:last', container).append(linha);
@@ -264,8 +283,8 @@ ConfigDocFitossanitario = {
 	        switch (txt) {
 	            case "CFO":
 	            case "CFOC":
-	                element.classList.remove("maskNum10");
-	                element.classList.add("maskNum8");
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
 	                break;
 
 	            default:
@@ -375,8 +394,8 @@ ConfigDocFitossanitario = {
 	        switch (tipo) {
 	            case "CFO":
 	            case "CFOC":
-	                element.classList.remove("maskNum10");
-	                element.classList.add("maskNum8");
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
 	                break;
 
 	            default:

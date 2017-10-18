@@ -127,10 +127,19 @@ Lote = {
         var origemTipo = $('.ddlOrigem', Lote.container).val();
         var numero = $('.txtNumeroOrigem', Lote.container).val();
 
+        var textoNumeral = numero;
+        var serieNumeral = "";
+        if (textoNumeral.indexOf("/") >= 0) {
+
+            var arrTexto = textoNumeral.split("/");
+            textoNumeral = arrTexto[0];
+            serieNumeral = arrTexto[1];
+        }
+
         MasterPage.carregando(true);
         $.ajax({
             url: Lote.settings.urls.urlVefiricar,
-            data: JSON.stringify({ origemTipo: origemTipo, origemNumero: numero }),
+            data: JSON.stringify({ origemTipo: origemTipo, origemNumero: textoNumeral, serieNumeral: serieNumeral }),
             cache: false,
             async: false,
             type: 'POST',
@@ -263,10 +272,21 @@ Lote = {
 
         var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
 
+        var textoNumeroOrigem = $('.txtNumeroOrigem', container).val();
+
+        var textoNumeral = textoNumeroOrigem;
+        var serieNumeral = "";
+        if (textoNumeroOrigem.indexOf("/") >= 0) {
+
+            var arrTexto = textoNumeroOrigem.split("/");
+            textoNumeral = arrTexto[0];
+            serieNumeral = arrTexto[1];
+        }
+
         var item = {
             Numero: $('.txtNumeroOrigem', container).val(),
             Origem: $('.hdnOrigemID', container).val() || 0,
-            OrigemNumero: $('.txtNumeroOrigem', container).val(),
+            OrigemNumero: textoNumeral,
             OrigemTipo: $('.ddlOrigem', container).val(),
             OrigemTipoTexto: $('.ddlOrigem option:selected', container).text(),
             Cultura: $('.ddlCultura', container).val(),
@@ -275,7 +295,8 @@ Lote = {
             CultivarTexto: $('.ddlCultivar option:selected', container).text(),
             UnidadeMedida: unidadeMedida.Id,
             Quantidade: $('.txtQuantidade', container).val(),
-            ExibeKg: bExibeKg
+            ExibeKg: bExibeKg,
+            Serie: serieNumeral
         };
 
         //Valida Item já adicionado na Grid		

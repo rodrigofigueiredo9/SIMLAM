@@ -69,14 +69,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 				foreach (var item in configuracao.DocumentoFitossanitarioIntervalos)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final) 
-					values(seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final)");
+					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final, serie) 
+					values(seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final, :serie)");
 
 					comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", item.TipoDocumentoID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo", item.Tipo, DbType.Int32);
 					comando.AdicionarParametroEntrada("numero_inicial", item.NumeroInicial, DbType.Int64);
 					comando.AdicionarParametroEntrada("numero_final", item.NumeroFinal, DbType.Int64);
+                    comando.AdicionarParametroEntrada("serie", item.Serie, DbType.String);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -115,14 +116,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 					}
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final) 
-					values (seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final)");
+					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final, serie) 
+					values (seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final, :serie)");
 
 					comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", item.TipoDocumentoID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo", item.Tipo, DbType.Int32);
 					comando.AdicionarParametroEntrada("numero_inicial", item.NumeroInicial, DbType.Int64);
 					comando.AdicionarParametroEntrada("numero_final", item.NumeroFinal, DbType.Int64);
+                    comando.AdicionarParametroEntrada("serie", item.Serie, DbType.String);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -160,7 +162,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                     }
 
                     comando = bancoDeDados.CriarComando(@"
-					update cnf_doc_fito_intervalo set numero_inicial=" + item.NumeroInicial + ", numero_final=" + item.NumeroFinal + " where id = " + item.ID);
+					update cnf_doc_fito_intervalo set numero_inicial=" + item.NumeroInicial + ", numero_final=" + item.NumeroFinal + ", serie='"+ item.Serie +"' where id = " + item.ID);
 
                     bancoDeDados.ExecutarNonQuery(comando);
                 }
@@ -297,7 +299,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 string anoStr = ano.ToString().Substring(2, 2);
 
-                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
+                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final, i.serie 
 				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
                                                       where lt.id = i.tipo_documento
                                                             and i.configuracao = :configuracao
@@ -320,6 +322,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                         item.Tipo = reader.GetValue<int>("tipo");
                         item.NumeroInicial = reader.GetValue<long>("numero_inicial");
                         item.NumeroFinal = reader.GetValue<long>("numero_final");
+                        item.Serie = reader.GetValue<string>("serie");
                         retorno.DocumentoFitossanitarioIntervalos.Add(item);
                     }
 

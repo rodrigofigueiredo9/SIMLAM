@@ -82,10 +82,23 @@ CFOEmitir = {
 	},
 
 	verificarNumero: function () {
-		Mensagem.limpar();
+	    Mensagem.limpar();
+
+
+	    var tmpNumero = $('.txtNumero', CFOEmitir.container).val();
+
+	    var textoNumeral = tmpNumero;
+	    var serieNumero = "";
+	    if (tmpNumero.indexOf("/") >= 0) {
+
+	        var arNumero = tmpNumero.split("/");
+	        textoNumeral = arNumero[0];
+	        serieNumero = arNumero[1];
+	    }
+
 		$.ajax({
 			url: CFOEmitir.settings.urls.verificarNumeroCFO,
-			data: JSON.stringify({ numero: $('.txtNumero', CFOEmitir.container).val(), tipoNumero: +$('.rbTipoNumero:checked', CFOEmitir.container).val() || 0 }),
+			data: JSON.stringify({ numero: textoNumeral, tipoNumero: +$('.rbTipoNumero:checked', CFOEmitir.container).val() || 0, serieNumero: serieNumero }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -493,10 +506,20 @@ CFOEmitir = {
 		var produtor = $('.ddlProdutores', CFOEmitir.container).ddlSelecionado();
 		var empreendimento = $('.ddlEmpreendimentos', CFOEmitir.container).ddlSelecionado();
 
+		var textoNumeral = $('.txtNumero', CFOEmitir.container).val();
+		var serieNumeral = "";
+		if (textoNumeral.indexOf("/") >= 0) {
+
+		    var arrTexto = textoNumeral.split("/");
+		    textoNumeral = arrTexto[0];
+		    serieNumeral = arrTexto[1];
+		}
+
+
 		var objeto = {
 			Id: +$('.hdnEmissaoId', CFOEmitir.container).val(),
 			TipoNumero: +$('.rbTipoNumero:checked', CFOEmitir.container).val(),
-			Numero: $('.txtNumero', CFOEmitir.container).val(),
+			Numero: textoNumeral,
 			SituacaoId: $('.ddlSituacoes :selected', CFOEmitir.container).val(),
 			DataEmissao: { DataTexto: $('.txtDataEmissao', CFOEmitir.container).val() },
 			ProdutorId: produtor.Id,
@@ -520,7 +543,8 @@ CFOEmitir = {
 			MunicipioEmissaoId: $('.ddlMunicipioEmissao', CFOEmitir.container).val(),
 			Produtos: [],
 			Pragas: [],
-			TratamentosFitossanitarios: []
+			TratamentosFitossanitarios: [],
+			Serie: serieNumeral
 		};
 
 		objeto.Produtos = CFOEmitir.obterIdentificacoes();

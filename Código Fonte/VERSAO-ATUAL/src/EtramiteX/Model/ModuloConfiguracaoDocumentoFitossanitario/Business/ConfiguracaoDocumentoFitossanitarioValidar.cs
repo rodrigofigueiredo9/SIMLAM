@@ -66,7 +66,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
-            if (intervalo.NumeroInicial.ToString().Length != 10 && intervalo.Tipo == 2
+            if (intervalo.NumeroInicial.ToString().Length != 8 && intervalo.Tipo == 2
             && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
             && (intervalo.ID <= 0))
             {
@@ -93,7 +93,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             {
                 Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroFinalInvalidoCFOeCFOC(((eDocumentoFitossanitarioTipoNumero)intervalo.Tipo).ToString()));
             }
-            if (intervalo.NumeroFinal.ToString().Length != 10 && intervalo.Tipo == 2
+            if (intervalo.NumeroFinal.ToString().Length != 8 && intervalo.Tipo == 2
             && (intervalo.TipoDocumentoTexto == "CFO" || intervalo.TipoDocumentoTexto == "CFOC")
             && (intervalo.ID <= 0))
             {
@@ -118,9 +118,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				intervalos.ForEach(item =>
 				{
-					if (!intervalo.Equals(item) && intervalo.TipoDocumentoID == item.TipoDocumentoID
-						&& ((intervalo.NumeroInicial >= item.NumeroInicial && intervalo.NumeroInicial <= item.NumeroFinal) ||
-							(item.NumeroInicial >= intervalo.NumeroInicial && item.NumeroInicial <= intervalo.NumeroFinal)))
+                    if (!intervalo.Equals(item) && intervalo.TipoDocumentoID == item.TipoDocumentoID && intervalo.Tipo == item.Tipo
+                        && ((intervalo.NumeroInicial >= item.NumeroInicial && intervalo.NumeroInicial <= item.NumeroFinal) && intervalo.Serie == item.Serie ||
+                            (item.NumeroInicial >= intervalo.NumeroInicial && item.NumeroInicial <= intervalo.NumeroFinal) && intervalo.Serie == item.Serie))
 					{
 						Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialExiste(intervalo.TipoDocumentoTexto));
 					}

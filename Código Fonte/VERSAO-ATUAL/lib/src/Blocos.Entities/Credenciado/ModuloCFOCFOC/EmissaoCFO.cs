@@ -38,6 +38,8 @@ namespace Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC
 		public int MunicipioEmissaoId { get; set; }
 		public string CulturaCultivar { get; set; }
 
+        public string Serie { get; set; }
+
 		public DateTecno DataEmissao { get; set; }
 		public DateTecno DataAtivacao { get; set; }
 		public List<IdentificacaoProduto> Produtos { get; set; }
