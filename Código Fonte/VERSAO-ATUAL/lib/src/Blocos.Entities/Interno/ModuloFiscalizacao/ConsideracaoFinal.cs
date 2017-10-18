@@ -9,7 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public int FiscalizacaoId { get; set; }
 		public string Justificar { get; set; }
 		public string Descrever { get; set; }
-		public bool? HaReparacao { get; set; }
+		public int? HaReparacao { get; set; }
 		public string Reparacao { get; set; }
 		public bool? HaTermoCompromisso { get; set; }
 		public string TermoCompromissoJustificar { get; set; }

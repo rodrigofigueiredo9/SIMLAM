@@ -1975,6 +1975,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return lista;
         }
 
+        internal List<Lista> ObterPenalidadesLista()
+        {
+            List<Lista> lista = new List<Lista>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select id,
+                                           concat(artigo, concat(' - ', item)) texto,
+                                           descricao codigo,
+                                           ativo
+                                    from cnf_fisc_infracao_penalidade
+                                    order by texto", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        lista.Add(new Lista
+                        {
+                            Id = reader.GetValue<string>("id"),
+                            Texto = reader.GetValue<string>("texto"),
+                            Codigo = reader.GetValue<string>("codigo"),
+                            IsAtivo = reader.GetValue<bool>("ativo"),
+                        });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return lista;
+        }
+
         internal List<Lista> ObterSeries(bool isSim)
         {
             List<Lista> lista = new List<Lista>();

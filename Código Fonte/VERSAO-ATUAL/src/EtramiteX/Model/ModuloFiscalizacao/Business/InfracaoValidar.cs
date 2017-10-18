@@ -13,107 +13,105 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool Salvar(Infracao infracao)
 		{
-			#region Classificação da infração
+            if (infracao.ComInfracao == null)
+            {
+                Validacao.Add(Mensagem.InfracaoMsg.TipoInfracaoFiscalizacaoObrigatorio);
+            }
+            else
+            {
+                #region Caracterização da infração
 
-			if (infracao.ClassificacaoId == 0)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.ClassificacaoObrigatorio);
-			}
+                if (infracao.ClassificacaoId == 0)
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.ClassificacaoObrigatorio);
+                }
 
-			if (infracao.TipoId == 0)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.TipoInfracaoObrigatorio);
-			}
+                if (infracao.TipoId == 0)
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.TipoInfracaoObrigatorio);
+                }
 
-			if (infracao.ItemId == 0)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.ItemObrigatorio);
-			}
+                if (infracao.ItemId == 0)
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.ItemObrigatorio);
+                }
 
-			if (infracao.Campos.Count > 0 && infracao.Campos.Count(x => string.IsNullOrWhiteSpace(x.Texto)) > 0)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.CamposObrigatorioo);
-			}
+                if (infracao.Campos.Count > 0 && infracao.Campos.Count(x => string.IsNullOrWhiteSpace(x.Texto)) > 0)
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.CamposObrigatorioo);
+                }
 
-			if (infracao.Perguntas.Count > 0 && infracao.Perguntas.Count(x => x.RespostaId == 0 || (x.IsEspecificar && string.IsNullOrWhiteSpace(x.Especificacao))) > 0)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.QuestionariosObrigatorio);
-			}
+                if (infracao.Perguntas.Count > 0 && infracao.Perguntas.Count(x => x.RespostaId == 0 || (x.IsEspecificar && string.IsNullOrWhiteSpace(x.Especificacao))) > 0)
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.QuestionariosObrigatorio);
+                }
 
-			#endregion
+                #endregion
 
-			#region Dados do auto de infração
+                if (_da.ConfigAlterada(infracao.ConfiguracaoId, infracao.ConfiguracaoTid))
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaSemAtualizar);
+                }
 
-			if (infracao.IsAutuada == null)
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.InfracaoAutuadaObrigatorio);
-			}
-			else if (infracao.IsAutuada.Value)
-			{
-				if (infracao.IsGeradaSistema == null)
-				{
-					Validacao.Add(Mensagem.InfracaoMsg.AutoGeradoSistemaObrigatorio);
-				}
-				else if (!infracao.IsGeradaSistema.GetValueOrDefault())
-				{
-					if (string.IsNullOrWhiteSpace(infracao.NumeroAutoInfracaoBloco))
-					{
-						if (infracao.SerieId == (int)eSerie.C)
-						{
-							Validacao.Add(Mensagem.InfracaoMsg.NumeroAutoInfracaoObrigatorio);
-						}
-						else
-						{
-							Validacao.Add(Mensagem.InfracaoMsg.NumeroAutoInfracaoBlocoObrigatorio);
-						}
-					}
+                if (_da.PerguntaRespostaAlterada(infracao))
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaSemAtualizar);
+                }
 
-					ValidacoesGenericasBus.DataMensagem(infracao.DataLavraturaAuto, "Infracao_DataLavraturaAuto", "lavratura do auto");
+                if (infracao.ComInfracao == true)
+                {
+                    if (infracao.EnquadramentoInfracao.Artigos.Count == 0)
+                    {
+                        Validacao.Add(Mensagem.InfracaoMsg.EnquadramentoInfracaoObrigatorio);
+                    }
 
-				}
+                    if (string.IsNullOrWhiteSpace(infracao.DescricaoInfracao))
+                    {
+                        Validacao.Add(Mensagem.InfracaoMsg.DescricaoInfracaoObrigatorio);
+                    }
+                }
 
-				if (infracao.SerieId == 0)
-				{
-					Validacao.Add(Mensagem.InfracaoMsg.SerieObrigatorio);
-				}
+                ValidacoesGenericasBus.DataMensagem(infracao.DataConstatacao, "Infracao_DataConstatacao", "constatação/vistoria");
 
-				if (string.IsNullOrWhiteSpace(infracao.DescricaoInfracao))
-				{
-					Validacao.Add(Mensagem.InfracaoMsg.DescricaoInfracaoObrigatorio);
-				}
+                DateTime hora = new DateTime();
+                if (!DateTime.TryParse(infracao.HoraConstatacao, out hora))
+                {
+                    Validacao.Add(Mensagem.InfracaoMsg.HoraConstatacaoObrigatorio);
+                }
 
-				if (infracao.CodigoReceitaId == 0)
-				{
-					Validacao.Add(Mensagem.InfracaoMsg.CodigoReceitaObrigatorio);
-				}
+                //OBS: foi colocado esse if duas vezes para poder exibir as mensagens de acordo com a ordem dos campos na tela
+                if (infracao.ComInfracao == true)
+                {
+                    if (infracao.ClassificacaoInfracao == null)
+                    {
+                        Validacao.Add(Mensagem.InfracaoMsg.ClassificacaoInfracaoObrigatorio);
+                    }
 
-				if (string.IsNullOrWhiteSpace(infracao.ValorMulta))
-				{
-					Validacao.Add(Mensagem.InfracaoMsg.ValorMultaObrigatorio);
-				}
-				else 
-				{
-					Decimal aux = 0;
-					if (!Decimal.TryParse(infracao.ValorMulta, out aux))
-					{
-						Validacao.Add(Mensagem.InfracaoMsg.ValorMultaInvalido);
-					}
-				}
-			}
+                    if (!PenalidadeSelecionada(infracao))
+                    {
+                        Validacao.Add(Mensagem.InfracaoMsg.PenalidadeObrigatorio);
 
-			#endregion
-
-			if (_da.ConfigAlterada(infracao.ConfiguracaoId, infracao.ConfiguracaoTid))
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaSemAtualizar);
-			}
-
-			if (_da.PerguntaRespostaAlterada(infracao))
-			{
-				Validacao.Add(Mensagem.InfracaoMsg.ConfigAlteradaSemAtualizar);
-			}
+                    }
+                }
+            }
 
 			return Validacao.EhValido;
 		}
+
+        private bool PenalidadeSelecionada(Infracao infracao)
+        {
+            bool penalidadeSelecionada = true;
+
+            if (infracao.PossuiAdvertencia != true
+                && infracao.PossuiApreensao != true
+                && infracao.PossuiInterdicaoEmbargo != true
+                && infracao.PossuiMulta != true
+                && infracao.IdsOutrasPenalidades.Count == 0)
+            {
+                penalidadeSelecionada = false;
+            }
+
+            return penalidadeSelecionada;
+        }
 	}
 }

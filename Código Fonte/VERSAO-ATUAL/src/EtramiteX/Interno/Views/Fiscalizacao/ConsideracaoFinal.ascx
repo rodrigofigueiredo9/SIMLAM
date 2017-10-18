@@ -21,23 +21,18 @@
 	<div class="block box">
 		<div class="block">
 			<div class="ultima">
-				<label for="ConsideracaoFinal_Justificar">Justificar o valor da penalidade pecuniária atribuída, levando-se em consideração os parâmetros legais *</label>
-				<%= Html.TextArea("ConsideracaoFinal.Justificar", Model.ConsideracaoFinal.Justificar, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media textarea txtJustificar", @maxlength = "500" }))%>
-			</div>
-		</div>
-		<div class="block">
-			<div class="ultima">
 				<label for="ConsideracaoFinal_Descrever">Descrever outras informações que julgar relevante para um maior detalhamento e esclarecimento do processo</label>
 				<%= Html.TextArea("ConsideracaoFinal.Descrever", Model.ConsideracaoFinal.Descrever, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text textarea txtDescrever" }))%>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna42">
-				<label for="">Há necessidade de reparação do dano ambiental? *</label><br />
+				<label for="">Há necessidade de reparação do dano? *</label><br />
 
 				<span style="border-style: solid; border-width: 1px; border-color: transparent;" class="text" id="rblOpinar">
-					<label><%= Html.RadioButton("rblOpinar", 1, Model.ConsideracaoFinal.HaReparacao.HasValue && Model.ConsideracaoFinal.HaReparacao.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar prepend2" }))%>Sim</label>
-					<label><%= Html.RadioButton("rblOpinar", 0, Model.ConsideracaoFinal.HaReparacao.HasValue && !Model.ConsideracaoFinal.HaReparacao.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar" }))%>Não</label>
+					<label><%= Html.RadioButton("rblOpinar", 1, Model.ConsideracaoFinal.HaReparacao == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar prepend2" }))%>Sim</label>
+					<label><%= Html.RadioButton("rblOpinar", 0, Model.ConsideracaoFinal.HaReparacao == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar" }))%>Não</label>
+                    <label><%= Html.RadioButton("rblOpinar", -1, Model.ConsideracaoFinal.HaReparacao == -1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblOpinar" }))%>Não se aplica</label>
 				</span>
 			</div>
 		</div>
@@ -47,7 +42,7 @@
 				<%= Html.TextArea("ConsideracaoFinal.Reparacao", Model.ConsideracaoFinal.Reparacao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media textarea txtOpinarReparacao", @maxlength = "2000" }))%>
 			</div>
 		</div>
-		<div class="block divTermo<%= Model.ConsideracaoFinal.HaReparacao.HasValue && Model.ConsideracaoFinal.HaReparacao.Value ? "" : " hide"%>">
+		<div class="block divTermo<%= Model.ConsideracaoFinal.HaReparacao.HasValue && Model.ConsideracaoFinal.HaReparacao.Value == 1 ? "" : " hide"%>">
 			<div class="block">
 				<div class="coluna60">
 					<label for="">Firmou termo de compromisso para reparação do dano de acordo com a forma sugerida? *</label><br />

@@ -160,6 +160,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis);
             vm.LocalInfracaoVM.IsVisualizar = true;
             vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
+            vm.InfracaoVM = new InfracaoVM();
+            vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
+
+            if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;   //apenas para carregar a aba
 
             return View("Salvar", vm);
         }
@@ -1041,6 +1045,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> itens = new List<Lista>();
             List<Lista> subitens = new List<Lista>();
             List<Lista> series = new List<Lista>();
+            List<Lista> penalidades = new List<Lista>();
 
             if (id != 0)
             {
@@ -1052,6 +1057,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     itens = _busConfiguracao.ObterItens(infracao.ClassificacaoId, infracao.TipoId);
                     subitens = _busConfiguracao.ObterSubitens(infracao.ClassificacaoId, infracao.TipoId, infracao.ItemId);
                     series = _busLista.FiscalizacaoSerie;
+                    penalidades = _busConfiguracao.ObterPenalidadesLista();
                 }
                 else
                 {
@@ -1067,7 +1073,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Itens = ViewModelHelper.CriarSelectList(itens, true, selecionado: infracao.ItemId.ToString()),
                 Subitens = ViewModelHelper.CriarSelectList(subitens, true, selecionado: infracao.SubitemId.GetValueOrDefault().ToString()),
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
-                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
+                Penalidades = penalidades,
+                ListaPenalidades = ViewModelHelper.CriarSelectList(penalidades, true)
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;
@@ -1101,13 +1109,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> itens = new List<Lista>();
             List<Lista> subitens = new List<Lista>();
             List<Lista> series = new List<Lista>();
+            List<Lista> penalidades = new List<Lista>();
 
-            infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            //infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            infracao = _busInfracao.Obter(id, true);
 
             tipos = _busConfiguracao.ObterTipos(infracao.ClassificacaoId);
             itens = _busConfiguracao.ObterItens(infracao.ClassificacaoId, infracao.TipoId);
             subitens = _busConfiguracao.ObterSubitens(infracao.ClassificacaoId, infracao.TipoId, infracao.ItemId);
             series = _busLista.FiscalizacaoSerie;
+            penalidades = _busConfiguracao.ObterPenalidadesLista();
 
             if (_busInfracao.ConfigAlterada(infracao.ConfiguracaoId, infracao.ConfiguracaoTid))
             {
@@ -1136,7 +1147,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Itens = ViewModelHelper.CriarSelectList(itens, true, selecionado: infracao.ItemId.ToString()),
                 Subitens = ViewModelHelper.CriarSelectList(subitens, true, selecionado: infracao.SubitemId.GetValueOrDefault().ToString()),
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
-                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
+                Penalidades = penalidades,
+                ListaPenalidades = ViewModelHelper.CriarSelectList(penalidades, true)
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;

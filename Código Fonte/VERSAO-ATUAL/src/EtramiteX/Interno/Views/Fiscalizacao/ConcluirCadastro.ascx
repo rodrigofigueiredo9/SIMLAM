@@ -170,11 +170,6 @@
 				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 1, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 1), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Sim</label>
 				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 0, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
 			</div>
-			<div class="coluna30">
-				<label>Houve a apreensão de algum material?</label><br />
-				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.IsApreendido", 1, (Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido == null ? false : Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsApreendidoSim" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.IsApreendido", 0, (Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido == null ? false : !Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsApreendidoNao" }))%>Não</label>
-			</div>
 		</div>
 
 	</fieldset>
@@ -214,26 +209,6 @@
 			<div class="coluna22">
 				<label>Data da lavratura do termo</label><br />
 				<%= Html.TextBox("N_TEI_DataTermo", Model.N_TEI_DataTermo, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
-
-	</fieldset>
-
-	<fieldset class="box<%= Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.GetValueOrDefault() ? "" : " hide" %>">
-		<legend>Termo de apreensão e depósito</legend>
-
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº TAD</label><br />
-				<%= Html.TextBox("N_TAD", Model.N_TAD, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_TAD_EmitidoPor", Model.N_TAD_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do termo</label><br />
-				<%= Html.TextBox("N_TAD_DataTermo", Model.N_TAD_DataTermo, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
 			</div>
 		</div>
 
