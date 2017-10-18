@@ -50,6 +50,25 @@ Fiscalizacao = {
 		$('.step5', Fiscalizacao.container).hide();
 		$('.step6', Fiscalizacao.container).hide();
 		$('.step7', Fiscalizacao.container).hide();
+
+		var abas = [];
+
+		var infracao = JSON.parse($('.hdnInfracoes', Fiscalizacao.container).val());
+
+		if (infracao.PossuiAdvertencia == true) {
+		    abas.push('advertencia');
+		}
+		if (infracao.PossuiMulta == true) {
+		    abas.push('multa');
+		}
+		if (infracao.PossuiApreensao == true) {
+		    abas.push('apreensao');
+		}
+		if (infracao.PossuiInterdicaoEmbargo == true) {
+		    abas.push('interdicaoembargo');
+		}
+
+		Fiscalizacao.ocultarAbas(abas);
 	},
 
 	gerenciarWizardAbas: function () {
@@ -261,7 +280,9 @@ Fiscalizacao = {
 			}
 		});
 		
-		Fiscalizacao.ocultarAbas(abas);
+		if (abas != null) {
+		    Fiscalizacao.ocultarAbas(abas);
+		}
 
 		return isSalvo;
 	},

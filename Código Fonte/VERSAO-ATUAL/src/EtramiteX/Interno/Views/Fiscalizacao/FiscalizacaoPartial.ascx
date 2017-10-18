@@ -1,4 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<FiscalizacaoVM>" %>
 
 <div id="abasNav" class="AbasFiscalizacao subContMenu">
@@ -18,6 +19,7 @@
 <input type="hidden" class="hdnFiscalizacaoId" id="hdnFiscalizacaoId" value="<%= Model.Id %>" />
 <input type="hidden" class="hdnFiscalizacaoSituacaoId" id="hdnFiscalizacaoSituacaoId" value="<%= Model.Fiscalizacao.SituacaoId %>" />
 <input type="hidden" class="hdnEmpreendimentoId" value="0" />
+<input type="hidden" class="hdnInfracoes" value="<%:ViewModelHelper.Json(Model.InfracaoVM.Infracao)%>" />
 
 <div class="conteudoFiscalizacao block">	
 	<%  Html.RenderPartial("LocalInfracao", Model.LocalInfracaoVM); %>
