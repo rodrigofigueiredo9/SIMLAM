@@ -2532,6 +2532,7 @@ FiscalizacaoConsideracaoFinal = {
 		$('.btnExcluirAssinante', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onExcluirAssinante);
 
 		MasterPage.botoes(FiscalizacaoConsideracaoFinal.container);
+		FiscalizacaoConsideracaoFinal.onClickRadioOpinar();
 	},
 	configurarBtnEditar: function () {
 
@@ -2555,10 +2556,8 @@ FiscalizacaoConsideracaoFinal = {
 		};
 
 		if (consideracaoFinal.HaReparacao == 1) {
-			consideracaoFinal.HaReparacao = true;
 			consideracaoFinal.Reparacao = $('.txtOpinarReparacao', FiscalizacaoConsideracaoFinal.container).val().trim();
 		} else if (consideracaoFinal.HaReparacao == 0) {
-			consideracaoFinal.HaReparacao = false;
 			consideracaoFinal.Reparacao = $('.txtOpinarReparacao', FiscalizacaoConsideracaoFinal.container).val().trim();
 			consideracaoFinal.HaTermoCompromisso = null;
 			consideracaoFinal.TermoCompromissoJustificar = '';
@@ -2643,9 +2642,16 @@ FiscalizacaoConsideracaoFinal = {
 		});
 	},
 	onClickRadioOpinar: function () {
+	    var haReparacao = parseInt($('.rblOpinar:checked', FiscalizacaoConsideracaoFinal.container).val());
+
 		$('.divTermo', FiscalizacaoConsideracaoFinal.container).addClass('hide');
-		if ($(this).val().toString() != "0") {
+		if (haReparacao == 1) {
 			$('.divTermo', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
+		}
+
+		$('.divReparacaoSim', FiscalizacaoConsideracaoFinal.container).addClass('hide');
+		if (haReparacao == 1 || haReparacao == 0) {
+		    $('.divReparacaoSim', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		}
 	},
 	onClickRadioTermos: function () {
