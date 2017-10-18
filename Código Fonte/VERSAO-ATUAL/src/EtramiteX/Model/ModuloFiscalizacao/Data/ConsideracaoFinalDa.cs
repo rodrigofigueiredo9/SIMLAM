@@ -68,7 +68,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					insert into {0}tab_fisc_consid_final
 					  (id,
 					   fiscalizacao,
-					   justificar,
 					   descrever,
 					   tem_reparacao,
 					   reparacao,
@@ -79,7 +78,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					values
 					  ({0}seq_tab_fisc_consid_final.nextval,
 					   :fiscalizacao,
-					   :justificar,
 					   :descrever,
 					   :tem_reparacao,
 					   :reparacao,
@@ -90,7 +88,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					returning id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", consideracaoFinal.FiscalizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("justificar", DbType.String, 500, consideracaoFinal.Justificar);
 				comando.AdicionarParametroEntClob("descrever", consideracaoFinal.Descrever);
 				comando.AdicionarParametroEntrada("tem_reparacao", consideracaoFinal.HaReparacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("reparacao", DbType.String, 2000, consideracaoFinal.Reparacao);
@@ -216,8 +213,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				  update {0}tab_fisc_consid_final t
-					 set t.justificar                = :justificar,
-						 t.descrever                 = :descrever,
+					 set t.descrever                 = :descrever,
 						 t.tem_reparacao             = :tem_reparacao,
 						 t.reparacao                 = :reparacao,
 						 t.tem_termo_comp            = :tem_termo_comp,
@@ -226,7 +222,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						 t.arquivo_termo             = :arquivo_termo
 				   where t.id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("justificar", DbType.String, 500, consideracaoFinal.Justificar);
 				comando.AdicionarParametroEntClob("descrever", consideracaoFinal.Descrever);
 				comando.AdicionarParametroEntrada("tem_reparacao", consideracaoFinal.HaReparacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("reparacao", DbType.String, 2000, consideracaoFinal.Reparacao);

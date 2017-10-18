@@ -21,12 +21,6 @@
 	<div class="block box">
 		<div class="block">
 			<div class="ultima">
-				<label for="ConsideracaoFinal_Justificar">Justificar o valor da penalidade pecuniária atribuída, levando-se em consideração os parâmetros legais *</label>
-				<%= Html.TextArea("ConsideracaoFinal.Justificar", Model.ConsideracaoFinal.Justificar, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media textarea txtJustificar", @maxlength = "500" }))%>
-			</div>
-		</div>
-		<div class="block">
-			<div class="ultima">
 				<label for="ConsideracaoFinal_Descrever">Descrever outras informações que julgar relevante para um maior detalhamento e esclarecimento do processo</label>
 				<%= Html.TextArea("ConsideracaoFinal.Descrever", Model.ConsideracaoFinal.Descrever, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text textarea txtDescrever" }))%>
 			</div>
