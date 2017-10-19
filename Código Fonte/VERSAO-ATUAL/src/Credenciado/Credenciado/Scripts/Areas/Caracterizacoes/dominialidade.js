@@ -99,6 +99,15 @@ Dominialidade = {
 					$(container).toggleClass('hide', !response.MostrarDiv);
 					container.empty();
 					container.append(response.Html);
+					if (response.Empty)
+					{
+					    Modal.confirma(
+                            {
+                                conteudo: response.Html,
+                                btnOkLabel: "Confirmar",
+                                tamanhoModal: Modal.tamanhoModalMedia
+                            });
+					}
 				}
 
 				if (response.Msg && response.Msg.length > 0) {

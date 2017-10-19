@@ -35,6 +35,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		EmpreendimentoCredenciadoBus _busEmpreendimento = new EmpreendimentoCredenciadoBus();
 
+        public static double globalModuloFiscal;
+
 		#endregion
 
 		#region Criar
@@ -237,9 +239,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]
-		public ActionResult Dominio(Dominio dominio)
+		public ActionResult Dominio(Dominio dominio, int empreendimento)
 		{
 			DominioVM vm = new DominioVM(ListaCredenciadoBus.DominialidadeComprovacoes, dominio, dominio.ComprovacaoId);
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                #region Select QTD Modulo Fiscal GLOBAL
+                Comando comando = bancoDeDados.CriarComando(@"SELECT 
+                                                          (round((SELECT (t.croqui_area/10000) FROM CRT_DOMINIALIDADE t WHERE t.empreendimento = D.EMPREENDIMENTO) /
+                                                          (SELECT m.modulo_ha FROM idaf.CNF_MUNICIPIO_MOD_FISCAL m WHERE m.municipio = (SELECT e.municipio FROM
+                                                          TAB_EMPREENDIMENTO_ENDERECO e WHERE e.empreendimento = D.EMPREENDIMENTO AND e.correspondencia = 0)),2)) as ATP_QTD_MODULO_FISCAL
+                                                            FROM  CRT_DOMINIALIDADE D  
+                                                              WHERE D.EMPREENDIMENTO = :empreendimentoID");
+                                                        //Consulta calculo qtd_Modulo_Fiscal
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimento, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        //SET VARIAVEL GLOBAL
+                        globalModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                    }
+
+                    reader.Close();
+                }
+                #endregion
+            }
 			return PartialView("DominioPartial", vm);
 		}
 
@@ -352,11 +379,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             var qtdModuloFiscal = 0.0;
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
-
-                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
-
+                #region Select QTD Modulo Fiscal
+                Comando comando = bancoDeDados.CriarComando(@"SELECT 
+                                                          (round((SELECT (t.croqui_area/10000) FROM CRT_DOMINIALIDADE t WHERE t.empreendimento = D.EMPREENDIMENTO) /
+                                                          (SELECT m.modulo_ha FROM idaf.CNF_MUNICIPIO_MOD_FISCAL m WHERE m.municipio = (SELECT e.municipio FROM
+                                                          TAB_EMPREENDIMENTO_ENDERECO e WHERE e.empreendimento = D.EMPREENDIMENTO AND e.correspondencia = 0)),2)) as ATP_QTD_MODULO_FISCAL
+                                                            FROM  CRT_DOMINIALIDADE D  
+                                                              WHERE D.EMPREENDIMENTO = :empreendimentoID");
+                                                            //Consulta calculo qtd_Modulo_Fiscal
                 comando.AdicionarParametroEntrada("empreendimentoID", caracterizacao.EmpreendimentoId, DbType.Int32);
-
+                
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
                     while (reader.Read())
@@ -367,42 +399,52 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
                     reader.Close();
                 }
+                #endregion
             }
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
             {
                 #region Chamada Procedure
                 bancoDeDados.IniciarTransacao();
-                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:id, :emp, :tid); end;");
+                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
 
-                command.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
                 command.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
-                command.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.String);
-
+                
                 bancoDeDados.ExecutarNonQuery(command);
-
                 bancoDeDados.Commit();
 
                 bancoDeDados.IniciarTransacao();
-                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:id, :emp, :moduloFiscal, :tid); end;");
+                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); end;");
 
-                com.AdicionarParametroEntrada("id", caracterizacao.ProjetoDigitalId, System.Data.DbType.Int32);
                 com.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
                 com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
-                com.AdicionarParametroEntrada("tid", caracterizacao.Tid, System.Data.DbType.Int32);
-
+                
                 bancoDeDados.ExecutarNonQuery(com);
-
                 bancoDeDados.Commit();
                 #endregion
 
             }
             #endregion
+            
+            if (globalModuloFiscal == qtdModuloFiscal)
+            {
+                ConfirmarVM mv = new ConfirmarVM();
 
+                mv.Id = caracterizacao.EmpreendimentoId;
+                mv.Mensagem = Mensagem.Caracterizacao.retificacaoCAR(" ");
+                mv.Titulo = "Confirmação da Retificação";
+                return Json(new
+                {
+                    @EhValido = Validacao.EhValido,
+                    @Empty = true,  //Variavel para abrir o modal
+                    @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "Confirmar", mv)
+                }, JsonRequestBehavior.AllowGet);
+            }
 
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
+                @Empty = false,
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
 			}, JsonRequestBehavior.AllowGet);
 		}

@@ -105,7 +105,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
 
-                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");
 
                 comando.AdicionarParametroEntrada("empreendimentoID", car.Empreendimento.Id, DbType.Int32);
 

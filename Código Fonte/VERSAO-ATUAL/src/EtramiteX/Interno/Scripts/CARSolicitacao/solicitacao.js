@@ -172,7 +172,7 @@ Solicitacao = {
 	},
 
 	salvar: function () {
-		Mensagem.limpar(Solicitacao.container);
+	    Mensagem.limpar(Solicitacao.container);
 
 		MasterPage.carregando(true);
 		$.ajax({

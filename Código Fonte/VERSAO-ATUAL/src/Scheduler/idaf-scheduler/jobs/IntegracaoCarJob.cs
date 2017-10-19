@@ -52,9 +52,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         private void ChamadaEnviarCarInterno(int origem, OracleConnection conn)
       {
             var listIDCar = GetIdCar(origem, conn);
-            var listEmpreendimento = GetEmpreendimento(origem, conn);
+            //var listEmpreendimento = GetEmpreendimento(origem, conn);
 
-            
+            /*
             foreach (int solicitacaoEmp in listEmpreendimento)
             {
                 try
@@ -171,9 +171,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     string excecao = ex.Message;
                 }
             }
+            */
 
-
-          /*foreach(int solicitacaoID in listIDCar)
+          foreach(int solicitacaoID in listIDCar)
           {
             // Percorre todos os registros da tab_car_solicitacao (passivo) e monta *.car de cada empreendimento e insere tab_schedule_fila
               try
@@ -190,13 +190,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
                   String i = ex.Message;
               }              
-          }*/
+          }
         }
 
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO";                
+            //string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO";                
+            string BuildSQl = @"SELECT CAR.ID
+                                FROM TAB_CAR_SOLICITACAO CAR
+                                    INNER JOIN IDAFGEO.GEO_CAR_APP_CALCULADAS GEOAPP
+                                        ON GEOAPP.EMPREENDIMENTO = CAR.EMPREENDIMENTO
+                                  WHERE ROWNUM < 1000";
+            
+
+            /*string BuildSQl = @"SELECT CAR.ID
+                FROM TAB_CAR_SOLICITACAO CAR
+                    INNER JOIN IDAFGEO.GEO_CAR_ESCADINHA_CALCULADAS GEOAPP
+                        ON GEOAPP.EMPREENDIMENTO = CAR.EMPREENDIMENTO
+                  WHERE ROWNUM < 1000
+                ";
+              */
             var arrayIDS = new List<int>();	
 
                 using (OracleCommand command = new OracleCommand(BuildSQl, conn))
