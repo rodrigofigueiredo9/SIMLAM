@@ -1,7 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ConsideracaoFinalVM>" %>
-<script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/arquivoFiscalizacao.js") %>"></script>
 <script>
 
 	FiscalizacaoConsideracaoFinal.settings.urls.salvar = '<%: Url.Action("SalvarConsideracaoFinal", "Fiscalizacao") %>';
@@ -92,7 +92,7 @@
 
 	<fieldset class="block box fsArquivos">
 		<legend>Relatório fotográfico</legend>
-		<% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
+		<% Html.RenderPartial("~/Views/Arquivo/ArquivoFiscalizacao.ascx", Model.ArquivoVM); %>
 	</fieldset>
 </div>
 
