@@ -1015,6 +1015,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Endereco = setorLocalizacao.FormatarEndereco() });
         }
 
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar })]
+        public ActionResult ObterCPF(int funcionarioId)
+        {
+            var cpf = _busFuncionario.Obter(funcionarioId).Cpf;
+            
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @CPF = cpf });
+        }
+
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar, ePermissao.AcompanhamentoCriar, ePermissao.AcompanhamentoEditar })]
         public ActionResult ObterAssinanteCargos(int setorId)
         {

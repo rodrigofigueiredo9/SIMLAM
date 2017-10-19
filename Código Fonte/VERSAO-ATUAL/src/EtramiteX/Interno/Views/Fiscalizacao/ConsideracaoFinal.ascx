@@ -7,7 +7,8 @@
 	FiscalizacaoConsideracaoFinal.settings.urls.salvar = '<%: Url.Action("SalvarConsideracaoFinal", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obter = '<%: Url.Action("ConsideracaoFinal", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterSetores = '<%: Url.Action("ObterSetores", "Fiscalizacao") %>';
-	FiscalizacaoConsideracaoFinal.settings.urls.obterEnderecoSetor = '<%: Url.Action("ObterEnderecoSetor", "Fiscalizacao") %>';
+    FiscalizacaoConsideracaoFinal.settings.urls.obterEnderecoSetor = '<%: Url.Action("ObterEnderecoSetor", "Fiscalizacao") %>';
+    FiscalizacaoConsideracaoFinal.settings.urls.obterCPF = '<%: Url.Action("ObterCPF", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.enviarArquivo = '<%= Url.Action("Arquivo", "Arquivo") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteCargos = '<%= Url.Action("ObterAssinanteCargos", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteFuncionarios = '<%= Url.Action("ObterAssinanteFuncionarios", "Fiscalizacao") %>';
@@ -82,14 +83,9 @@
 		</div>
 	</div>
 
-	<fieldset class="block box">
-		<legend>Testemunhas</legend>
-		<%foreach (var item in Model.ConsideracaoFinalTestemunhaVM) { %>
-			<fieldset class="block box boxBranca fdsTestemunhas">
-				<legend><%= item.Testemunha.Colocacao %>ª Testemunha</legend>
-				<% Html.RenderPartial("ConsideracaoFinalTestemunha", item); %>
-			</fieldset>
-	   <% } %>
+	<fieldset class="block box fdsTestemunhas">
+		<legend>Testemunha</legend>
+	    <% Html.RenderPartial("ConsideracaoFinalTestemunha", Model.ConsideracaoFinalTestemunhaVM.First()); %>
    </fieldset>
 
    <% Html.RenderPartial("Assinantes", Model.AssinantesVM); %>

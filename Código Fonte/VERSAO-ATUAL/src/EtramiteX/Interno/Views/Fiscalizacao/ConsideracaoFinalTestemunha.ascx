@@ -2,7 +2,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ConsideracaoFinalTestemunhaVM>" %>
 
-<div class="block box" style="margin-bottom: 7px !important;">
+<div class="block">
 	<%= Html.Hidden("hdnColocacao", Model.Testemunha.Colocacao, new { @class = "hdnColocacao" })%>
 	<div class="block">
 		<div class="coluna19">
@@ -21,8 +21,8 @@
 			<%= Html.DropDownList("Testemunha.TestemunhaId" + Model.Testemunha.Colocacao, Model.Funcionarios, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTestemunha" }))%> 
 		</div>
 		<div class="coluna42">
-			<label for="Testemunha_TestemunhaSetorId<%= Model.Testemunha.Colocacao%>">Setor *</label>
-			<%= Html.DropDownList("Testemunha.TestemunhaSetorId" + Model.Testemunha.Colocacao, Model.Setores, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Setores.Count == 2, new { @class = "text ddlSetor" }))%> 
+			<label for="Testemunha_TestemunhaCPF<%= Model.Testemunha.Colocacao%>">CPF *</label>
+			<%= Html.TextBox("Testemunha.TestemunhaCPF" + Model.Testemunha.Colocacao, Model.Testemunha.TestemunhaCPF, ViewModelHelper.SetaDisabled(true, new { @class = "text txtTestemunhaCPF", maxlength = "200" }))%> 
 		</div>
 	</div>
 	<div class="block divDadosTestemunha<%= Model.Testemunha.TestemunhaIDAF.HasValue && !Model.Testemunha.TestemunhaIDAF.Value ? "" : " hide" %>">
@@ -31,10 +31,10 @@
 			<%= Html.TextBox("Testemunha.TestemunhaNome" + Model.Testemunha.Colocacao, Model.Testemunha.TestemunhaNome, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtTestemunhaNome", maxlength = "80" }))%> 
 		</div>			
 	</div><%  %>
-	<div class="block divDadosEndereco<%= Model.Testemunha.TestemunhaIDAF.HasValue ? "" : " hide" %>">
+	<%--<div class="block divDadosEndereco<%= Model.Testemunha.TestemunhaIDAF.HasValue ? "" : " hide" %>">
 		<div class="coluna87">
 			<label for="Testemunha_TestemunhaEndereco<%= Model.Testemunha.Colocacao%>">Endereço *</label>
 			<%= Html.TextBox("Testemunha.TestemunhaEndereco" + Model.Testemunha.Colocacao, Model.Testemunha.TestemunhaEndereco, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Testemunha.TestemunhaIDAF.GetValueOrDefault(), new { @class = "text txtTestemunhaEndereco", maxlength = "200" }))%> 
 		</div>			
-	</div>
+	</div>--%>
 </div>

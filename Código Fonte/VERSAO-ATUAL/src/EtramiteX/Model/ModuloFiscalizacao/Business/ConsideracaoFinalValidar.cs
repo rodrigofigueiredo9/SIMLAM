@@ -65,11 +65,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						{
 							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaObrigatorio, item.Colocacao.ToString());
 						}
-
-						if (item.TestemunhaSetorId.GetValueOrDefault() == 0)
-						{
-							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.SetorObrigatorio, item.Colocacao.ToString());
-						}
 					}
 					else
 					{
