@@ -1015,6 +1015,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Endereco = setorLocalizacao.FormatarEndereco() });
         }
 
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar })]
+        public ActionResult ObterCPF(int funcionarioId)
+        {
+            var cpf = _busFuncionario.Obter(funcionarioId).Cpf;
+            
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @CPF = cpf });
+        }
+
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar, ePermissao.AcompanhamentoCriar, ePermissao.AcompanhamentoEditar })]
         public ActionResult ObterAssinanteCargos(int setorId)
         {
@@ -1065,6 +1074,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 }
             }
 
+            for (int i = 0; i < 4; i++)
+            {
+                if (infracao.IdsOutrasPenalidades.Count <= i)
+                {
+                    infracao.IdsOutrasPenalidades.Add(0);
+                }
+            }
+
             vm.InfracaoVM = new InfracaoVM
             {
                 Infracao = infracao,
@@ -1075,7 +1092,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
                 CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
                 Penalidades = penalidades,
-                ListaPenalidades = ViewModelHelper.CriarSelectList(penalidades, true)
+                ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[0].ToString()),
+                ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[1].ToString()),
+                ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[2].ToString()),
+                ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[3].ToString())
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;
@@ -1114,7 +1134,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             //infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
             infracao = _busInfracao.Obter(id, true);
 
-            tipos = _busConfiguracao.ObterTipos(infracao.ClassificacaoId);
+            for (int i = 0; i < 4; i++)
+            {
+                if (infracao.IdsOutrasPenalidades.Count <= i)
+                {
+                    infracao.IdsOutrasPenalidades.Add(0);
+                }
+            }
+
+                tipos = _busConfiguracao.ObterTipos(infracao.ClassificacaoId);
             itens = _busConfiguracao.ObterItens(infracao.ClassificacaoId, infracao.TipoId);
             subitens = _busConfiguracao.ObterSubitens(infracao.ClassificacaoId, infracao.TipoId, infracao.ItemId);
             series = _busLista.FiscalizacaoSerie;
@@ -1149,7 +1177,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
                 CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
                 Penalidades = penalidades,
-                ListaPenalidades = ViewModelHelper.CriarSelectList(penalidades, true)
+                ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[0].ToString()),
+                ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[1].ToString()),
+                ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[2].ToString()),
+                ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[3].ToString())
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;

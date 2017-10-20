@@ -1128,6 +1128,22 @@ Infracao = {
 		    Infracao.onSelecionarSemInfracao();
 		}
 
+		$('.cbPenalidadeOutras', Infracao.container).each(function () {
+		    if ($(this).attr('checked')) {
+		        if ($(this).attr('disabled') == false) {
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeAttr('disabled');
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeClass('disabled');
+		        }
+
+		        var container = $(this).closest('.block');
+
+		        var penalidade = $('.ddlTiposPenalidade :selected', container).val();
+		        var descricao = $('.hdnPenalidade' + penalidade, Infracao.container).val();
+
+		        $('.txtDescricaoPenalidade', container).val(descricao);
+		    }
+		});
+
 		MasterPage.botoes();
 		MasterPage.carregando(false);
 	},
@@ -2491,6 +2507,7 @@ FiscalizacaoConsideracaoFinal = {
 			obter: '',
 			obterSetores: '',
 			obterEnderecoSetor: '',
+            obterCPF: '',
 			enviarArquivo: '',
 			obterAssinanteCargos: '',
 			obterAssinanteFuncionarios: ''
@@ -2578,9 +2595,8 @@ FiscalizacaoConsideracaoFinal = {
 				TestemunhaIDAF: parseInt($('.ddlFuncIDAF', item).val()),
 				TestemunhaId: parseInt($('.ddlTestemunha', item).val()),
 				TestemunhaNome: $('.txtTestemunhaNome', item).val().trim(),
-				TestemunhaEndereco: $('.txtTestemunhaEndereco', item).val().trim(),
-				Colocacao: $('.hdnColocacao', item).val(),
-				TestemunhaSetorId: parseInt($('.ddlSetor', item).val())
+				TestemunhaCPF: $('.txtTestemunhaCPF', item).val().trim(),
+				Colocacao: $('.hdnColocacao', item).val()
 			};
 
 			if (testemunha.TestemunhaIDAF == 1) {
@@ -2672,11 +2688,10 @@ FiscalizacaoConsideracaoFinal = {
 		$('.divFuncionario, .divDadosTestemunha, .divDadosEndereco', context).addClass('hide');
 		$('input[type="text"]', context).val('').removeAttr('disabled').removeClass('disabled');
 		$('.ddlTestemunha, .ddlSetor', context).val(0);
-		$('.ddlSetor', context).val(0).attr('disabled', 'disabled').addClass('disabled');
 
 		if (ddlFuncIDAF.val().toString() == "1") {
-			$('.divFuncionario, .divDadosEndereco', context).removeClass('hide');
-			$('.txtTestemunhaEndereco', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
+			$('.divFuncionario', context).removeClass('hide');
+			$('.txtTestemunhaCPF', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
 		} else if (ddlFuncIDAF.val().toString() == "2") {
 			$('.divDadosTestemunha, .divDadosEndereco', context).removeClass('hide');
 		}
@@ -2684,11 +2699,9 @@ FiscalizacaoConsideracaoFinal = {
 	onChangeFunc: function () {
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
-		var txtTestemunhaEndereco = $('.txtTestemunhaEndereco', context);
-		var ddlSetor = $('.ddlSetor', context);
+		var txtTestemunhaCPF = $('.txtTestemunhaCPF', context);
 
-		txtTestemunhaEndereco.val('');
-		ddlSetor.val(0).attr('disabled', 'disabled').addClass('disabled')
+		txtTestemunhaCPF.val('');
 
 		if (!value) {
 			return;
@@ -2696,7 +2709,8 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(true);
 
-		$.ajax({ url: FiscalizacaoConsideracaoFinal.settings.urls.obterSetores,
+		$.ajax({
+		    url: FiscalizacaoConsideracaoFinal.settings.urls.obterCPF,
 			data: $.toJSON({ funcionarioId: value }),
 			cache: false,
 			async: false,
@@ -2710,9 +2724,9 @@ FiscalizacaoConsideracaoFinal = {
 
 				if (response.EhValido) {
 					Mensagem.limpar(Fiscalizacao.container);
-					ddlSetor.ddlLoad(response.Setores);
-					if (response.Endereco) {
-						txtTestemunhaEndereco.val(response.Endereco).attr('disabled', 'disabled');
+					if (response.CPF) {
+					    txtTestemunhaCPF.val(response.CPF).attr('disabled', 'disabled');
+					    txtTestemunhaCPF.val(response.CPF).addClass('disabled');
 					}
 				}
 

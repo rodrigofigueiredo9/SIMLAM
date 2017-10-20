@@ -115,7 +115,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   nome, 
 						   endereco, 
 						   tid,
-						   testemunha_setor)
+						   testemunha_setor,
+                           cpf)
 						values
 						  ({0}seq_tab_fiscconsidfinaltest.nextval, 
 						   :consid_final, 
@@ -124,7 +125,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   :nome, 
 						   :endereco, 
 						   :tid,
-						   :testemunha_setor)
+						   :testemunha_setor,
+                           :cpf)
 						returning id into :id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
@@ -134,6 +136,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comando.AdicionarParametroEntrada("endereco", DbType.String, 200, item.TestemunhaEndereco);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("testemunha_setor", item.TestemunhaSetorId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cpf", item.TestemunhaCPF, DbType.String);
 					comando.AdicionarParametroSaida("id", DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -253,7 +256,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 								   t.nome				= :nome, 
 								   t.endereco			= :endereco, 
 								   t.tid				= :tid,
-								   t.testemunha_setor	= :testemunha_setor
+								   t.testemunha_setor	= :testemunha_setor,
+                                   t.cpf                = :cpf
 							 where t.id = :id", EsquemaBanco);
 						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 					}
@@ -268,7 +272,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							   nome, 
 							   endereco, 
 							   tid,
-						       testemunha_setor)
+						       testemunha_setor,
+                               cpf)
 							values
 							  ({0}seq_tab_fiscconsidfinaltest.nextval, 
 							   :consid_final, 
@@ -277,7 +282,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							   :nome, 
 							   :endereco, 
 							   :tid,
-						       :testemunha_setor)
+						       :testemunha_setor,
+                               :cpf)
 							returning id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
@@ -290,6 +296,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comando.AdicionarParametroEntrada("endereco", DbType.String, 80, item.TestemunhaEndereco);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("testemunha_setor", item.TestemunhaSetorId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cpf", item.TestemunhaCPF, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -470,7 +477,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.nome             TestemunhaNome,
 						   t.endereco         TestemunhaEndereco,
 						   t.tid              Tid,
-						   t.testemunha_setor TestemunhaSetorId
+						   t.testemunha_setor TestemunhaSetorId,
+                           t.cpf              TestemunhaCPF
 					  from {0}tab_fisc_consid_final_test t
 					 where t.consid_final = :consid_final", EsquemaBanco);
 
@@ -546,7 +554,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					select t.id   Id, 
-						   t.nome Texto, 
+						   t.nome Texto,
 						   1      IsAtivo
 					  from {0}tab_funcionario t
 					 where t.situacao not in (2 /*Bloqueado*/, 4 /*Ausente*/)

@@ -122,7 +122,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					if (x.TestemunhaIDAF.Value)
 					{
 						var setorLocalizacao = _busSetorLocalizacao.Obter(x.TestemunhaSetorId.Value);
-						x.TestemunhaEndereco = setorLocalizacao.FormatarEndereco();						
+						x.TestemunhaEndereco = setorLocalizacao.FormatarEndereco();
 					}
 				});
 				

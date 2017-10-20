@@ -8,6 +8,7 @@
 		public int? TestemunhaId { get; set; }
 		public string TestemunhaNome { get; set; }
 		public string TestemunhaEndereco { get; set; }
+        public string TestemunhaCPF { get; set; }
 		public string Tid { get; set; }
 		public int Colocacao { get; set; }
 		public int? TestemunhaSetorId { get; set; }
