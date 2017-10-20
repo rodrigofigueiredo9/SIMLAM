@@ -170,10 +170,10 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[0] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades01, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
@@ -182,10 +182,10 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 1 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[1] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades02, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
@@ -194,10 +194,10 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 2 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[2] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades03, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
@@ -206,10 +206,10 @@
 
                 <div class="block">
                     <div class="coluna2 append2">
-                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades.Count > 3 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                        <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[3] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna30 append2">
-                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades04, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
