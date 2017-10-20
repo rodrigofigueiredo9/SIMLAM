@@ -77,38 +77,38 @@
         <legend>Enquadramento da infração</legend>
 
         <div class="block dataGrid divQuadroEnquadramento">
-			    <div class="coluna90">
+			    <div class="coluna80">
                     <input type="hidden" class="enquadramentoId" value="<%=Model.Infracao.EnquadramentoInfracao.Id%>" />
 				    <table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					    <thead>
 						    <tr>
-							    <th style="text-align:center; width:15%">Artigo</th>
-                                <th style="text-align: center; width: 15%">Item/Parágrafo/Alínea</th>
-                                <th style="text-align:center">Lei/Decreto/Resolução/Portaria/Instrução Normativa</th>
+							    <th style="width:12%">Artigo</th>
+                                <th style="width: 15%">Item/Parágrafo/Alínea</th>
+                                <th>Lei/Decreto/Resolução/Portaria/Instrução Normativa</th>
 						    </tr>
 					    </thead>
 					    <tbody>
 					        <% for (int linha = 0; linha < 3; linha++) { %>
-						        <tr id="Infracao_Enquadramento">
+						        <tr id="Infracao_Enquadramento" >
                                     <td>
                                         <% if (!Model.IsVisualizar) { %>
-                                            <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="13" style="border:none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } else { %>
-                                            <input type="text" class="text txtArtigoEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtArtigoEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border:none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } %>
                                     </td>
                                     <td>
                                         <% if (!Model.IsVisualizar) { %>
-                                            <input type="text" class="text txtItemEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtItemEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } else { %>
-                                            <input type="text" class="text txtItemEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtItemEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoParagrafo : string.Empty)%>" maxlength="16" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } %>
                                     </td>
                                     <td>
                                         <% if (!Model.IsVisualizar) { %>
-                                            <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
                                         <% } else { %>
-                                            <input type="text" class="text txtLeiEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; padding-top:10px;" />
+                                            <input type="text" class="text txtLeiEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
                                         <% } %>
                                     </td>
 						        </tr>
