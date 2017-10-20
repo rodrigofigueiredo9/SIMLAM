@@ -233,15 +233,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				string empreendimento = string.Empty;
 				switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
 				{
-					case eDocumentoFitossanitarioTipo.CFO:
-					case eDocumentoFitossanitarioTipo.CFOC:
-						empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
 
-						if (!string.IsNullOrEmpty(empreendimento) &&  ((eDocumentoFitossanitarioTipo)item.OrigemTipo) != eDocumentoFitossanitarioTipo.CFO)
-						{
-							Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
-						}
-						break;
+                    //    if (!string.IsNullOrEmpty(empreendimento) &&  ((eDocumentoFitossanitarioTipo)item.OrigemTipo) != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
 
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
@@ -443,15 +443,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                 string empreendimento = string.Empty;
                 switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
                 {
-                    case eDocumentoFitossanitarioTipo.CFO:
-                    case eDocumentoFitossanitarioTipo.CFOC:
-                        empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
 
-                        if (!string.IsNullOrEmpty(empreendimento) && (eDocumentoFitossanitarioTipo)item.OrigemTipo != eDocumentoFitossanitarioTipo.CFO)
-                        {
-                            Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
-                        }
-                        break;
+                    //    if (!string.IsNullOrEmpty(empreendimento) && (eDocumentoFitossanitarioTipo)item.OrigemTipo != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
 
                     case eDocumentoFitossanitarioTipo.PTVOutroEstado:
                         empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
@@ -473,7 +473,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                     }
                 }
 
-                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO)
+                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
                     item.Quantidade = saldoDocOrigem;
 
             }

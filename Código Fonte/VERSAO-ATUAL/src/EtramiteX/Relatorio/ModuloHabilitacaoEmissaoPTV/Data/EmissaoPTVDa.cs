@@ -548,7 +548,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
 						listDeclaracoesAdicionais.AddRange(listDeclaracoesAdicionaisAux);
 					}
-					emissaoPTV.DeclaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
+                    emissaoPTV.DeclaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList());
 				}
 
 				#endregion

@@ -284,7 +284,7 @@ Lote = {
         var _objeto = { Lotes: [] }
         $($('.gridLote tbody tr:not(.trTemplate) .hdnItemJson', container)).each(function () {
             _objeto.Lotes.push(JSON.parse($(this).val()));
-        }); 1
+        }); 
 
         if (_objeto.Lotes.length <= 0) {
             _objeto.Lotes = null;

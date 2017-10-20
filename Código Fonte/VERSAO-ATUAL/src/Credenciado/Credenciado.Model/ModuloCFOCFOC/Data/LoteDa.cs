@@ -781,7 +781,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 
 						comando = bancoDeDados.CriarComando(@"
-						select lu.id, lu.texto
+						select distinct lu.id, lu.texto
 						from tab_cfoc_produto            cp,
 							tab_lote                     l,
 							tab_lote_item                li,
