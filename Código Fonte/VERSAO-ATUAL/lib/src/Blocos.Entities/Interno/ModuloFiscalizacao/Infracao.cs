@@ -50,7 +50,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
                 _idsOutrasPenalidades = value;
             }
         }
-
+        
         #endregion Penalidades
 
         private List<InfracaoCampo> _campos = new List<InfracaoCampo>();
@@ -114,6 +114,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			this.ItemTexto =
 			this.ConfiguracaoTid =
 			this.SubitemTexto = string.Empty;
+
+            for (int i = 0; i < 4; i++)
+            {
+                this.IdsOutrasPenalidades.Add(0);
+            }
 		}
 	}
 }

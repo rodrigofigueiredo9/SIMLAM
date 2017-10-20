@@ -71,7 +71,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     }
                 }
 
-                ValidacoesGenericasBus.DataMensagem(infracao.DataConstatacao, "Infracao_DataConstatacao", "constatação/vistoria");
+                ValidacoesGenericasBus.DataMensagem(infracao.DataConstatacao, "Infracao_DataConstatacao", "constatação/vistoria", true);
 
                 DateTime hora = new DateTime();
                 if (!DateTime.TryParse(infracao.HoraConstatacao, out hora))

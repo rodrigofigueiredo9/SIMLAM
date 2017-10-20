@@ -1128,6 +1128,22 @@ Infracao = {
 		    Infracao.onSelecionarSemInfracao();
 		}
 
+		$('.cbPenalidadeOutras', Infracao.container).each(function () {
+		    if ($(this).attr('checked')) {
+		        if ($(this).attr('disabled') == false) {
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeAttr('disabled');
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeClass('disabled');
+		        }
+
+		        var container = $(this).closest('.block');
+
+		        var penalidade = $('.ddlTiposPenalidade :selected', container).val();
+		        var descricao = $('.hdnPenalidade' + penalidade, Infracao.container).val();
+
+		        $('.txtDescricaoPenalidade', container).val(descricao);
+		    }
+		});
+
 		MasterPage.botoes();
 		MasterPage.carregando(false);
 	},
