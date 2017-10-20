@@ -154,64 +154,76 @@
 
         <label>Enquadramento da penalidade conforme Lei 10.476/2015</label>
 
-        <div class="block"  style="padding-top: 5px;">
-            <div class="block coluna30">
-                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiAdvertencia == null ? false : Model.Infracao.PossuiAdvertencia.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeAdvertencia" }))%>Art.2º Item I - Advertência</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiMulta == null ? false : Model.Infracao.PossuiMulta.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeMulta" }))%>Art.2º Item II - Multa</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiApreensao == null ? false : Model.Infracao.PossuiApreensao.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeApreensao" }))%>Art.2º Item III - Apreensão</label><br />
-                <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiInterdicaoEmbargo == null ? false : Model.Infracao.PossuiInterdicaoEmbargo.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeInterdicaoEmbargo" }))%>Art.2º Item IV - Interdição ou embargo</label>
+        <div class="block"  style="padding-top: 15px;">
+            <div class="block coluna25">
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiAdvertencia == null ? false : Model.Infracao.PossuiAdvertencia.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeAdvertencia" }))%>Art.2º Item I - Advertência</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiMulta == null ? false : Model.Infracao.PossuiMulta.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeMulta" }))%>Art.2º Item II - Multa</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiApreensao == null ? false : Model.Infracao.PossuiApreensao.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeApreensao" }))%>Art.2º Item III - Apreensão</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.Infracao.PossuiInterdicaoEmbargo == null ? false : Model.Infracao.PossuiInterdicaoEmbargo.Value), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeInterdicaoEmbargo" }))%>Art.2º Item IV - Interdição ou embargo</label>
+                </div>
             </div>
 
-            <div class="block coluna65">
+            <div class="coluna1" style="border-left: 2px solid; height:130px;">
+                <%--Linha vertical--%>
+            </div>
+
+            <div class="block coluna60">
 
                 <%foreach(var item in Model.Penalidades) { %>
                     <input type="hidden" class="hdnPenalidade<%:item.Id%>" value="<%:item.Codigo %>" />
                 <% } %>
 
-                <div class="block">
+                <div class="block" style="height:28px; align-self:center;">
                     <div class="coluna2 append2">
                         <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[0] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna30 append2">
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades01, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna50">
+                    <div class="coluna50" style="height:28px; align-self:center;">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
-                    <div class="coluna2 append2">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
                         <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[1] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna30 append2">
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades02, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna50">
+                    <div class="coluna50" style="height:28px; align-self:center;">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
-                    <div class="coluna2 append2">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
                         <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[2] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna30 append2">
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades03, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna50">
+                    <div class="coluna50" style="height:28px; align-self:center;">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
                 <div class="block">
-                    <div class="coluna2 append2">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
                         <%= Html.CheckBox("Penalidade.Item", (Model.Infracao.IdsOutrasPenalidades[3] != 0 ? true : false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna30 append2">
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
                         <%= Html.DropDownList("Penalidade.Tipo", Model.ListaPenalidades04, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
-                    <div class="coluna50">
+                    <div class="coluna50" style="height:28px; align-self:center;">
                         <%= Html.TextBox("Penalidade.Descricao", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
