@@ -83,7 +83,7 @@ CFOCEmitir = {
 	verificarNumero: function () {
 	    Mensagem.limpar();
 
-	    var tmpNumero = $('.txtNumero', CFOEmitir.container).val();
+	    var tmpNumero = $('.txtNumero', CFOCEmitir.container).val();
 
 	    var textoNumeral = tmpNumero;
 	    var serieNumero = "";
