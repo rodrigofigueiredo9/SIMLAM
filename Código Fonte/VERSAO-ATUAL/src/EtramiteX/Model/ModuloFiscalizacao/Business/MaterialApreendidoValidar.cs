@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -8,95 +9,71 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 	public class MaterialApreendidoValidar
 	{
-		public bool Salvar(MaterialApreendido materialApreendido)
-		{
-			if (!materialApreendido.IsApreendido.HasValue)
-			{
-				Validacao.Add(Mensagem.MaterialApreendidoMsg.IsApreendidoObritatorio);
-				return Validacao.EhValido;
-			}
+        public bool Salvar(MaterialApreendido materialApreendido)
+        {
+            if (materialApreendido.IsDigital == null)
+            {
+                Validacao.Add(Mensagem.MaterialApreendidoMsg.DigitalOuBlocoObrigatorio);
+            }
+            else
+            {
+                if (materialApreendido.IsDigital == false)
+                {
+                    if (String.IsNullOrWhiteSpace(materialApreendido.NumeroIUF))
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.NumeroIUFObrigatorio);
+                    }
 
-			if (materialApreendido.IsApreendido.Value)
-			{
-				if (!materialApreendido.IsTadGeradoSistema.HasValue)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.IsTadGeradoSistemaObrigatorio);
-				}
-				else if (!materialApreendido.IsTadGeradoSistema.Value)
-				{
-					
-					if (string.IsNullOrWhiteSpace(materialApreendido.NumeroTad))
-					{
-						if (materialApreendido.SerieId == (int)eSerie.C)
-						{
-							Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroObrigatorio);
-						}
-						else
-						{
-							Validacao.Add(Mensagem.MaterialApreendidoMsg.TadNumeroBlocoObrigatorio);
-						}
-					}
+                    if (materialApreendido.SerieId == null || materialApreendido.SerieId == 0)
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.SerieObrigatorio);
+                    }
 
-					ValidacoesGenericasBus.DataMensagem(materialApreendido.DataLavratura, "MaterialApreendido_DataLavratura", "Data da lavratura do termo");
+                    ValidacoesGenericasBus.DataMensagem(materialApreendido.DataLavratura, "MaterialApreendido_DataLavratura", "lavratura do IUF");
+                }
 
-				}
+                if (string.IsNullOrWhiteSpace(materialApreendido.Descricao))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
+                }
 
-				if (materialApreendido.SerieId.GetValueOrDefault() == 0)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.SerieObrigatorio);
-				}
+                if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
+                }
 
-				if (string.IsNullOrWhiteSpace(materialApreendido.Descricao))
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
-				}
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
+                }
 
-				if (!string.IsNullOrWhiteSpace(materialApreendido.ValorProdutos))
-				{
-					Decimal aux = 0;
-					if (!Decimal.TryParse(materialApreendido.ValorProdutos, out aux)) 
-					{
-						Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosInvalido);
-					}
-				}
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
+                }
 
-				if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
-				}
+                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
+                }
 
-				if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
-				}
+                if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
+                }
 
-				if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
-				}
+                if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
+                }
 
-				if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
-				}
+                if (materialApreendido.ProdutosApreendidos.Count == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ProdutoApreendidoObrigatorio);
+                }
+            }
 
-				if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
-				}
-
-				if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
-				}
-
-				if (materialApreendido.Materiais.Count == 0)
-				{
-					Validacao.Add(Mensagem.MaterialApreendidoMsg.MaterialApreendidoObrigatorio);
-				}
-			}
-
-			return Validacao.EhValido;
-		}
+            return Validacao.EhValido;
+        }
 	}
 }

@@ -3,7 +3,7 @@
    (	"ID" NUMBER(38,0) NOT NULL ENABLE, 
 	"CODIGO_ID" NUMBER(38,0) NOT NULL ENABLE, 
 	"TEXTO" VARCHAR2(50 BYTE) NOT NULL ENABLE, 
-	"DESCRICAO" VARCHAR2(100 BYTE) NOT NULL ENABLE, 
+	"DESCRICAO" VARCHAR2(100 BYTE), 
 	"ATIVO" NUMBER(1,0) NOT NULL ENABLE, 
 	"TID" VARCHAR2(36 BYTE) NOT NULL ENABLE, 
 	"EXECUTOR_ID" NUMBER(38,0), 
@@ -26,22 +26,36 @@
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
   TABLESPACE "IDAF_TBS" ;
  
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ID" IS 'Chave primária. Utiliza a sequência seq_hst_lov_fisc_infr_cod_rece.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."CODIGO_ID" IS 'Chave estrangeira para lov_fisc_infracao_codigo_rece.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."TEXTO" IS 'Texto de identificação. Código da receita.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."DESCRICAO" IS 'Descrição do código da receita.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ATIVO" IS 'Ativo: 1 - sim | 0 - não.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_ID" IS 'Chave estrangeira para tab_funcionario. Campo (ID).';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TID" IS 'Referencia ao campo (TID) da tabela tab_funcionario.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_NOME" IS 'Nome do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_LOGIN" IS 'Login do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TIPO_ID" IS 'Chave estrangeira para lov_executor_tipo. Campo(ID).';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TIPO_TEXTO" IS 'Texto do tipo do executor que executou a ação.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ACAO_EXECUTADA" IS 'Ação que foi disparada pelo sistema a qual gerou essa linha de histórico.';
-   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."DATA_EXECUCAO" IS 'Data que foi gerada essa linha de histórico.';
 
-   COMMENT ON TABLE "IDAF"."HST_LOV_FISC_INFR_COD_RECE" IS 'Tabela do historico da Configuracao de Fiscalizacao - Códigos da Receita.';
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ID" IS 'Chave primária. Utiliza a sequência seq_hst_lov_fisc_infr_cod_rece.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."CODIGO_ID" IS 'Chave estrangeira para lov_fisc_infracao_codigo_rece.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."TEXTO" IS 'Texto de identificação. Código da receita.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."DESCRICAO" IS 'Descrição do código da receita.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ATIVO" IS 'Ativo: 1 - sim | 0 - não.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_ID" IS 'Chave estrangeira para tab_funcionario. Campo (ID).';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TID" IS 'Referencia ao campo (TID) da tabela tab_funcionario.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_NOME" IS 'Nome do executor que executou a ação.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_LOGIN" IS 'Login do executor que executou a ação.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TIPO_ID" IS 'Chave estrangeira para lov_executor_tipo. Campo(ID).';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."EXECUTOR_TIPO_TEXTO" IS 'Texto do tipo do executor que executou a ação.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."ACAO_EXECUTADA" IS 'Ação que foi disparada pelo sistema a qual gerou essa linha de histórico.';
+ 
+   COMMENT ON COLUMN "IDAF"."HST_LOV_FISC_INFR_COD_RECE"."DATA_EXECUCAO" IS 'Data que foi gerada essa linha de histórico.';
+ 
+   COMMENT ON TABLE "IDAF"."HST_LOV_FISC_INFR_COD_RECE"  IS 'Tabela do historico da Configuracao de Fiscalizacao - Códigos da Receita.';
  
 
   CREATE INDEX "IDAF"."IDX_HST_LOV_F_INF_CR_EXEC_ACAO" ON "IDAF"."HST_LOV_FISC_INFR_COD_RECE" ("ACAO_EXECUTADA") 

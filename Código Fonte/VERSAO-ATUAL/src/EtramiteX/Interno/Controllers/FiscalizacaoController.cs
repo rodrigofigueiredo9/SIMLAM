@@ -52,6 +52,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         ObjetoInfracaoBus _busObjetoInfracao = new ObjetoInfracaoBus();
         MaterialApreendidoBus _busMaterialApreendido = new MaterialApreendidoBus();
         ConsideracaoFinalBus _busConsideracaoFinal = new ConsideracaoFinalBus();
+        MultaBus _busMulta = new MultaBus();
+        OutrasPenalidadesBus _busOutrasPenalidades = new OutrasPenalidadesBus();
 
         ListaBus _busLista = new ListaBus();
         FuncionarioBus _busFuncionario = new FuncionarioBus();
@@ -158,6 +160,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis);
             vm.LocalInfracaoVM.IsVisualizar = true;
             vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
+            vm.InfracaoVM = new InfracaoVM();
+            vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
+
+            if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;   //apenas para carregar a aba
 
             return View("Salvar", vm);
         }
@@ -765,21 +771,39 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
-        #region Objeto da Infração
+        #region Interdição/Embargo
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
         public ActionResult ObjetoInfracao(int id)
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
-            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(_busObjetoInfracao.Obter(id), _busLista.FiscalizacaoObjetoInfracaoSerie, _busLista.FiscalizacaoObjetoInfracaoCaracteristicaSolo);
+            ObjetoInfracao entidade = new ObjetoInfracao();
+
+            if (id != 0)
+            {
+                entidade = _busObjetoInfracao.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (entidade.Id > 0)
+            {
+                entidade.IsDigital = true;
+            }
+
+            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
+
+            if (vm.ObjetoInfracaoVM.Entidade.Arquivo == null)
+            {
+                vm.ObjetoInfracaoVM.Entidade.Arquivo = new Arquivo();
+            }
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView(vm.ObjetoInfracaoVM);
+                return PartialView("InterdicaoEmbargo", vm.ObjetoInfracaoVM);
             }
             else
             {
-                vm.PartialInicial = "ObjetoInfracao";
+                vm.PartialInicial = "InterdicaoEmbargo";
                 return View("Salvar", vm);
             }
         }
@@ -790,18 +814,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             FiscalizacaoVM vm = new FiscalizacaoVM();
 
             ObjetoInfracao entidade = _busObjetoInfracao.Obter(id);
-            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoObjetoInfracaoSerie, _busLista.FiscalizacaoObjetoInfracaoCaracteristicaSolo);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (entidade.Id > 0)
+            {
+                entidade.IsDigital = true;
+            }
+            
+            vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
             vm.ObjetoInfracaoVM.IsVisualizar = entidade.Id > 0;
             vm.ObjetoInfracaoVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
 
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView("ObjetoInfracao", vm.ObjetoInfracaoVM);
+                return PartialView("InterdicaoEmbargo", vm.ObjetoInfracaoVM);
             }
             else
             {
-                vm.PartialInicial = "ObjetoInfracao";
+                vm.PartialInicial = "InterdicaoEmbargo";
                 return View("Visualizar", vm);
             }
         }
@@ -836,6 +867,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ConsideracaoFinalVM = new ConsideracaoFinalVM();
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
@@ -897,8 +929,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             vm.ConsideracaoFinalVM.IsVisualizar = fiscalizacao.ConsideracaoFinal.Id > 0;
             vm.ConsideracaoFinalVM.ArquivoVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
@@ -984,6 +1018,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Endereco = setorLocalizacao.FormatarEndereco() });
         }
 
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar })]
+        public ActionResult ObterCPF(int funcionarioId)
+        {
+            var cpf = _busFuncionario.Obter(funcionarioId).Cpf;
+            
+            return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @CPF = cpf });
+        }
+
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar, ePermissao.AcompanhamentoCriar, ePermissao.AcompanhamentoEditar })]
         public ActionResult ObterAssinanteCargos(int setorId)
         {
@@ -1014,6 +1057,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> itens = new List<Lista>();
             List<Lista> subitens = new List<Lista>();
             List<Lista> series = new List<Lista>();
+            List<Lista> penalidades = new List<Lista>();
 
             if (id != 0)
             {
@@ -1025,10 +1069,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     itens = _busConfiguracao.ObterItens(infracao.ClassificacaoId, infracao.TipoId);
                     subitens = _busConfiguracao.ObterSubitens(infracao.ClassificacaoId, infracao.TipoId, infracao.ItemId);
                     series = _busLista.FiscalizacaoSerie;
+                    penalidades = _busConfiguracao.ObterPenalidadesLista();
                 }
                 else
                 {
                     infracao = new Infracao();
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (infracao.IdsOutrasPenalidades.Count <= i)
+                {
+                    infracao.IdsOutrasPenalidades.Add(0);
                 }
             }
 
@@ -1040,7 +1093,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Itens = ViewModelHelper.CriarSelectList(itens, true, selecionado: infracao.ItemId.ToString()),
                 Subitens = ViewModelHelper.CriarSelectList(subitens, true, selecionado: infracao.SubitemId.GetValueOrDefault().ToString()),
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
-                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
+                Penalidades = penalidades,
+                ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[0].ToString()),
+                ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[1].ToString()),
+                ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[2].ToString()),
+                ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[3].ToString())
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;
@@ -1074,13 +1132,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> itens = new List<Lista>();
             List<Lista> subitens = new List<Lista>();
             List<Lista> series = new List<Lista>();
+            List<Lista> penalidades = new List<Lista>();
 
-            infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            //infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            infracao = _busInfracao.Obter(id, true);
 
-            tipos = _busConfiguracao.ObterTipos(infracao.ClassificacaoId);
+            for (int i = 0; i < 4; i++)
+            {
+                if (infracao.IdsOutrasPenalidades.Count <= i)
+                {
+                    infracao.IdsOutrasPenalidades.Add(0);
+                }
+            }
+
+                tipos = _busConfiguracao.ObterTipos(infracao.ClassificacaoId);
             itens = _busConfiguracao.ObterItens(infracao.ClassificacaoId, infracao.TipoId);
             subitens = _busConfiguracao.ObterSubitens(infracao.ClassificacaoId, infracao.TipoId, infracao.ItemId);
             series = _busLista.FiscalizacaoSerie;
+            penalidades = _busConfiguracao.ObterPenalidadesLista();
 
             if (_busInfracao.ConfigAlterada(infracao.ConfiguracaoId, infracao.ConfiguracaoTid))
             {
@@ -1109,7 +1178,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 Itens = ViewModelHelper.CriarSelectList(itens, true, selecionado: infracao.ItemId.ToString()),
                 Subitens = ViewModelHelper.CriarSelectList(subitens, true, selecionado: infracao.SubitemId.GetValueOrDefault().ToString()),
                 Series = ViewModelHelper.CriarSelectList(series, true, selecionado: infracao.SerieId.GetValueOrDefault().ToString()),
-                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: infracao.CodigoReceitaId.GetValueOrDefault().ToString()),
+                Penalidades = penalidades,
+                ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[0].ToString()),
+                ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[1].ToString()),
+                ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[2].ToString()),
+                ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: infracao.IdsOutrasPenalidades[3].ToString())
             };
 
             vm.InfracaoVM.Campos = infracao.Campos;
@@ -1223,22 +1297,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
             MaterialApreendido materialApreendido = new MaterialApreendido();
-            List<ListaValor> ufs = new List<ListaValor>();
-            List<ListaValor> municipios = new List<ListaValor>();
-            List<ListaValor> tipos = new List<ListaValor>();
+            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
 
             if (id != 0)
             {
                 materialApreendido = _busMaterialApreendido.Obter(id);
             }
 
+            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
+
             vm.MaterialApreendidoVM = new MaterialApreendidoVM
             {
                 MaterialApreendido = materialApreendido,
                 Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
+                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
                 Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
                 Municipios = new List<SelectListItem>(),
-                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true)
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
             };
 
             if (id != 0)
@@ -1269,22 +1346,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
         }
 
+        //Carrega a sessão, em uma fiscalização já salva
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar, ePermissao.FiscalizacaoEditar })]
         public ActionResult MaterialApreendidoVisualizar(int id)
         {
             FiscalizacaoVM vm = new FiscalizacaoVM();
             MaterialApreendido materialApreendido = new MaterialApreendido();
-            List<ListaValor> ufs = new List<ListaValor>();
-            List<ListaValor> municipios = new List<ListaValor>();
-            List<ListaValor> tipos = new List<ListaValor>();
+            List<ProdutoApreendidoLst> produtosApreendidos = new List<ProdutoApreendidoLst>();
 
             materialApreendido = _busMaterialApreendido.Obter(id);
+            produtosApreendidos = _busMaterialApreendido.ObterProdutosApreendidosLst();
 
             vm.MaterialApreendidoVM = new MaterialApreendidoVM
             {
                 IsVisualizar = materialApreendido.Id > 0,
                 MaterialApreendido = materialApreendido,
                 Tipos = ViewModelHelper.CriarSelectList(_busLista.MaterialApreendidoTipo, true),
+                produtosUnidades = produtosApreendidos,
+                ListaProdutosApreendidos = ViewModelHelper.CriarSelectList(produtosApreendidos, true),
+                ListaDestinos = ViewModelHelper.CriarSelectList(_busMaterialApreendido.ObterDestinosLst()),
                 Ufs = ViewModelHelper.CriarSelectList(_busLista.Estados, true, selecionado: materialApreendido.Depositario.Estado.GetValueOrDefault().ToString()),
                 Municipios = new List<SelectListItem>(),
                 Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: materialApreendido.SerieId.ToString())
@@ -1315,6 +1395,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
         }
 
+        //Salva a sessão
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
         public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)
@@ -1325,6 +1406,196 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         }
 
         #endregion
+
+        #region Multa
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult Multa(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            Multa multa = new Multa();
+
+            if (id != 0)
+            {
+                multa = _busMulta.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
+
+            vm.MultaVM = new MultaVM
+            {
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+            };
+
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.MultaVM.Multa.Arquivo == null)
+            {
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MultaVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult MultaVisualizar(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            Multa multa = new Multa();
+
+            multa = _busMulta.Obter(id);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (multa.Id > 0)
+            {
+                multa.IsDigital = true;
+            }
+
+            vm.MultaVM = new MultaVM
+            {
+                IsVisualizar = multa.Id > 0,
+                Multa = multa,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+            };
+
+            vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.MultaVM.Multa.Arquivo == null)
+            {
+                vm.MultaVM.Multa.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("Multa", vm.MultaVM);
+            }
+            else
+            {
+                vm.PartialInicial = "Multa";
+                return View("Salvar", vm);
+            }
+        }
+
+        //Salva a sessão
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult CriarMulta(Multa entidade)
+        {
+            _busMulta.Salvar(entidade);
+
+            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
+        }
+
+        #endregion Multa
+
+        #region Outras Penalidades
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult OutrasPenalidades(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
+
+            if (id != 0)
+            {
+                outrasPenalidades = _busOutrasPenalidades.Obter(id);
+            }
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (outrasPenalidades.Id > 0)
+            {
+                outrasPenalidades.IsDigital = true;
+            }
+
+            vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
+            {
+                OutrasPenalidades = outrasPenalidades,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: outrasPenalidades.SerieId.ToString())
+            };
+
+            vm.OutrasPenalidadesVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo == null)
+            {
+                vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("OutrasPenalidades", vm.OutrasPenalidadesVM);
+            }
+            else
+            {
+                vm.PartialInicial = "OutrasPenalidades";
+                return View("Salvar", vm);
+            }
+        }
+
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult OutrasPenalidadesVisualizar(int id)
+        {
+            FiscalizacaoVM vm = new FiscalizacaoVM();
+            OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
+
+            outrasPenalidades = _busOutrasPenalidades.Obter(id);
+
+            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
+            if (outrasPenalidades.Id > 0)
+            {
+                outrasPenalidades.IsDigital = true;
+            }
+
+            vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
+            {
+                IsVisualizar = outrasPenalidades.Id > 0,
+                OutrasPenalidades = outrasPenalidades,
+                Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: outrasPenalidades.SerieId.ToString())
+            };
+
+            vm.OutrasPenalidadesVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
+
+            if (vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo == null)
+            {
+                vm.OutrasPenalidadesVM.OutrasPenalidades.Arquivo = new Arquivo();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("OutrasPenalidades", vm.OutrasPenalidadesVM);
+            }
+            else
+            {
+                vm.PartialInicial = "OutrasPenalidades";
+                return View("Salvar", vm);
+            }
+        }
+
+        //Salva a sessão
+        [HttpPost]
+        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+        public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
+        {
+            _busOutrasPenalidades.Salvar(entidade);
+
+            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
+        }
+
+        #endregion Outras Penalidades
 
         #region Finalizar
 
@@ -1737,7 +2008,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
-
         #region Penalidade
 
 
@@ -1784,7 +2054,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarPenalidade })]
         public ActionResult ConfigurarPenalidade()
         {
-            PenalidadeVM vm = new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "", "", "");
+            PenalidadeVM vm = new PenalidadeVM(_busConfiguracao.ObterPenalidades(), "","","");
             return View(vm);
         }
 
@@ -1805,16 +2075,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         }
 
-        #endregion
+        #endregion  
 
         #region Item
 
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
-        public ActionResult ConfigurarItem()
-        {
-            ItemInfracaoVM vm = new ItemInfracaoVM(_busConfiguracao.ObterItemInfracao());
-            return View(vm);
-        }
+		public ActionResult ConfigurarItem()
+		{
+			ItemInfracaoVM vm = new ItemInfracaoVM(_busConfiguracao.ObterItemInfracao());
+			return View(vm);
+		}
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.ConfigurarItem })]
@@ -2254,7 +2524,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 @Url = Url.Action("ConfigurarCodigosReceita", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
             }, JsonRequestBehavior.AllowGet);
 
-        } 
+        }
 
         #endregion Códigos da Receita
 

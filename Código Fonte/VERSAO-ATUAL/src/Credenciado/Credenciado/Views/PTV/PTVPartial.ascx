@@ -187,11 +187,13 @@
 		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="EmpreendimentoTexto">Empreendimento *</label>
-				 <% if ( !string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) ) { %>
+				 <% if (!string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) && Model.PTV.Empreendimento == 0)
+                     { %>
 			        <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoSemDoc, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
                 <%} else { %>
                     <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
 			    <input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+                <script> $(".hdnEmpreendimentoOrigemID").val(<%= Model.PTV.Empreendimento %>);  </script>
                     <% }%>
 			</div>		
 		</div>

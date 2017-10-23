@@ -325,8 +325,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTVOutro.Data
 
                 #region Arquivos
 
-                comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
-				a.tid from {0}tab_ptv_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem", EsquemaBanco);
+
+
+
+                string strSQL = @"select count(*)  from 
+                                                        tab_ptv_outrouf ptv 
+                                                        inner join tab_ptv_arquivo a on ptv.id = a.ptv
+                                                        inner join tab_arquivo b on a.arquivo = b.id
+                                                        where ptv.id = :ptv order by a.ordem";
+                comando = bancoDeDados.CriarComando(strSQL);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                int Ret = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+                if (Ret == 0)
+                    strSQL = @"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				       a.tid from tab_ptv_outro_arquivo a, tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem";
+                else
+                    strSQL = @"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho, a.tid  from 
+                                                        tab_ptv_outrouf ptv 
+                                                        inner join tab_ptv_arquivo a on ptv.id = a.ptv
+                                                        inner join tab_arquivo b on a.arquivo = b.id
+                                                        where ptv.id = :ptv order by a.ordem";
+
+
+
+                comando = bancoDeDados.CriarComando(strSQL);
 
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 

@@ -16,15 +16,15 @@ Fiscalizacao = {
 		localInfracaoVisualizar: '',
 		autuado: '',
 		projetoGeografico: '',
-		complementacaoDados: '',
-		enquadramento: '',
 		objetoInfracao: '',
 		diagnostico: '',
+        outrasPenalidadesVisualizar: '',
 		consideracaoFinalVisualizar: '',
 		finalizar: '',
 		infracao: '',
 		materialApreendido: '',
-		documentosGerados: ''
+		documentosGerados: '',
+		multa: '',
 	},
 
 	load: function (container) {
@@ -45,6 +45,30 @@ Fiscalizacao = {
 		}
 		Fiscalizacao.containerAba = $('.conteudoFiscalizacao', Fiscalizacao.container);
 
+        //esconde as abas das infrações. Só deverão ser exibidas se as infrações correspondentes forem selecionadas.
+		$('.step4', Fiscalizacao.container).hide();
+		$('.step5', Fiscalizacao.container).hide();
+		$('.step6', Fiscalizacao.container).hide();
+		$('.step7', Fiscalizacao.container).hide();
+
+		var abas = [];
+
+		var infracao = JSON.parse($('.hdnInfracoes', Fiscalizacao.container).val());
+
+		if (infracao.PossuiAdvertencia == true) {
+		    abas.push('advertencia');
+		}
+		if (infracao.PossuiMulta == true) {
+		    abas.push('multa');
+		}
+		if (infracao.PossuiApreensao == true) {
+		    abas.push('apreensao');
+		}
+		if (infracao.PossuiInterdicaoEmbargo == true) {
+		    abas.push('interdicaoembargo');
+		}
+
+		Fiscalizacao.ocultarAbas(abas);
 	},
 
 	gerenciarWizardAbas: function () {
@@ -54,7 +78,7 @@ Fiscalizacao = {
 		}
 
 		if (Fiscalizacao.modo == 1) {
-			if (Fiscalizacao.stepAtual != 9 && Fiscalizacao.salvarEdicao) {
+			if (Fiscalizacao.salvarEdicao) {
 				if (!Fiscalizacao.salvarTelaAtual()) {
 					return;
 				}
@@ -73,7 +97,7 @@ Fiscalizacao = {
 	},
 
 	gerarObjetoWizard: function () {
-		var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
+	    var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
 		return { step: 0, params: param };
 	},
 
@@ -95,41 +119,41 @@ Fiscalizacao = {
 				break;
 
 			case 3:
-				//Fiscalizacao.onObterStep(FiscalizacaoComplementacaoDados.settings.urls.visualizar, objeto.params, function () {
-				//	FiscalizacaoComplementacaoDados.callBackObterComplementacaoDadosVisualizar();
-				//	Fiscalizacao.gerenciarVisualizacao('.hdnComplementacaoDadosId');
-				//});
-				//break;
-
-			case 4:
-				Fiscalizacao.onObterStep(FiscalizacaoEnquadramento.settings.urls.visualizar, objeto.params, function () {
-					FiscalizacaoEnquadramento.callBackObterEnquadramentoVisualizar();
-					Fiscalizacao.gerenciarVisualizacao('.hdnEnquadramentoId');
-				});
-				break;
-
-			case 5:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.infracao, objeto.params, function () {
 					Infracao.callBackObterInfracaoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnInfracaoId');
 				});
 				break;
 
-			case 6:
+		    case 4:
+		        Fiscalizacao.onObterStep(Fiscalizacao.urls.multa, objeto.params, function () {
+		            FiscalizacaoMulta.callBackObterFiscalizacaoMultaVisualizar();
+		            Fiscalizacao.gerenciarVisualizacao('.hdnMultaId');
+		        });
+		        break;
+
+			case 5:
 				Fiscalizacao.onObterStep(FiscalizacaoObjetoInfracao.settings.urls.visualizar, objeto.params, function () {
 					FiscalizacaoObjetoInfracao.callBackObterObjetoInfracaoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnObjetoInfracaoId');
 				});
 				break;
 
-			case 7:
+			case 6:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.materialApreendido, objeto.params, function () {
 					FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendidoVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnMaterialApreendidoId');
 				});
 				break;
 
-			case 8:
+		    case 7:
+		        Fiscalizacao.onObterStep(Fiscalizacao.urls.outrasPenalidadesVisualizar, objeto.params, function () {
+		            FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesVisualizar();
+		            Fiscalizacao.gerenciarVisualizacao('.hdnOutrasPenalidadesId');
+		        });
+		        break;
+
+            case 8:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.consideracaoFinalVisualizar, objeto.params, function () {
 					FiscalizacaoConsideracaoFinal.callBackObterConsideracaoFinalVisualizar();
 					Fiscalizacao.gerenciarVisualizacao('.hdnConsideracaoFinalId');
@@ -151,12 +175,8 @@ Fiscalizacao = {
 			return;
 		}
 
-		if (Fiscalizacao.stepAtual != 9) {
-			if (!Fiscalizacao.salvarTelaAtual()) {
-				return;
-			}
-		} else {
-			Mensagem.limpar(Fiscalizacao.containerMensagem);
+		if (!Fiscalizacao.salvarTelaAtual()) {
+			return;
 		}
 
 		MasterPage.carregando(true);
@@ -170,16 +190,28 @@ Fiscalizacao = {
 	obterStep: function (container) {
 
 	    if ($(container).data('step') !== null && $(container).data('step') !== NaN && $(container).data('step') !== undefined) {
-		    return +$(container).data('step');
+	        var step = +$(container).data('step');
+
+	        return step;
 		}
 
 		if ($(container).hasClass('btnVoltar')) {
-			return Fiscalizacao.stepAtual - 1;
+		    var step = Fiscalizacao.stepAtual - 1;
+
+		    while ($('.step' + step, Fiscalizacao.container).hasClass('isOculta')) {
+		        step--;
+		    }
 		}
 
 		if ($(container).hasClass('btnAvancar') || $(container).hasClass('btnSalvar')) {
-			return Fiscalizacao.stepAtual + 1;
+		    var step = Fiscalizacao.stepAtual + 1;
+
+		    while ($('.step' + step, Fiscalizacao.container).hasClass('isOculta')) {
+		        step++;
+		    }
 		}
+
+		return step;
 	},
 
 	configurarStepWizard: function () {
@@ -211,15 +243,14 @@ Fiscalizacao = {
 				MasterPage.carregando(false);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
-				Fiscalizacao.containerAba.empty().hide();
-				Fiscalizacao.containerAba.append(response);
-				callBack();
+			    Fiscalizacao.containerAba.empty().hide();
+			    Fiscalizacao.containerAba.append(response);
+			    callBack();
 			}
 		});
 	},
 
-	onSalvarStep: function (url, objetoStep, msg) {
+	onSalvarStep: function (url, objetoStep, msg, abas) {
 
 		var isSalvo = false;
 
@@ -235,7 +266,6 @@ Fiscalizacao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Fiscalizacao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Fiscalizacao.containerMensagem, response.Msg);
 					return;
@@ -245,7 +275,63 @@ Fiscalizacao = {
 				isSalvo = true;
 			}
 		});
+		
+		if (abas != null) {
+		    Fiscalizacao.ocultarAbas(abas);
+		}
+
 		return isSalvo;
+	},
+
+	ocultarAbas: function(abas){
+	    var multa = false;
+	    var interdicao = false;
+	    var apreensao = false;
+	    var outras = false;
+
+	    abas.forEach(function (aba) {
+	        if (aba == 'multa') {
+	            $('.step4', Fiscalizacao.container).show();
+	            $('.step4', Fiscalizacao.container).removeClass('isOculta');
+	            multa = true;
+	        } else if (aba == 'interdicaoembargo') {
+	            $('.step5', Fiscalizacao.container).show();
+	            $('.step5', Fiscalizacao.container).removeClass('isOculta');
+	            interdicao = true;
+	        } else if (aba == 'apreensao') {
+	            $('.step6', Fiscalizacao.container).show();
+	            $('.step6', Fiscalizacao.container).removeClass('isOculta');
+	            apreensao = true;
+	        } else if (aba == 'outras') {
+	            $('.step7', Fiscalizacao.container).show();
+	            $('.step7', Fiscalizacao.container).removeClass('isOculta');
+	            outras = true;
+	        } else if (aba == 'advertencia') {
+	            $('.step7', Fiscalizacao.container).show();
+	            $('.step7', Fiscalizacao.container).removeClass('isOculta');
+	            outras = true;
+	        }
+	    });
+
+	    if (multa == false) {
+	        $('.step4', Fiscalizacao.container).hide();
+	        $('.step4', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (interdicao == false) {
+	        $('.step5', Fiscalizacao.container).hide();
+	        $('.step5', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (apreensao == false) {
+	        $('.step6', Fiscalizacao.container).hide();
+	        $('.step6', Fiscalizacao.container).addClass('isOculta');
+	    }
+
+	    if (outras == false) {
+	        $('.step7', Fiscalizacao.container).hide();
+	        $('.step7', Fiscalizacao.container).addClass('isOculta');
+	    }
 	},
 
 	obterReqInterEmp: function (urlBuscar, params) {
@@ -318,7 +404,7 @@ Fiscalizacao = {
 	}
 }
 
-// 1ª Aba
+// 1ª Aba - Local da Infração
 FiscalizacaoLocalInfracao = {
 	settings: {
 		urls: {
@@ -868,7 +954,7 @@ FiscalizacaoLocalInfracao = {
 	}
 }
 
-// 2ª Aba
+// 2ª Aba - Progeto Geográfico
 FiscalizacaoProjetoGeografico = {
 
 	urlObter: '',
@@ -971,324 +1057,7 @@ FiscalizacaoProjetoGeografico = {
 	}
 }
 
-// 3ª Aba - Foi removida!
-FiscalizacaoComplementacaoDados = {
-	settings: {
-		urls: {
-			salvar: '',
-			visualizar: ''
-		},
-		idsTela: null
-	},
-
-	container: null,
-
-	configurarBtnEditar: function () {
-		$(".btnEditar", Fiscalizacao.container).unbind('click');
-		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoComplementacaoDados.onBtnEditar);
-	},
-
-	onBtnEditar: function () {
-		MasterPage.carregando(true);
-		var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
-		Fiscalizacao.onObterStep(Fiscalizacao.urls.complementacaoDados, param, FiscalizacaoComplementacaoDados.callBackObterComplementacaoDados);
-	},
-
-	callBackObterComplementacaoDadosVisualizar: function () {
-		var isVisualizar = false;
-		if (parseInt($('.hdnComplementacaoDadosId', Fiscalizacao.container).val()) > 0) {
-			Fiscalizacao.salvarEdicao = false;
-			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
-			FiscalizacaoComplementacaoDados.configurarBtnEditar();
-			isVisualizar = true;
-		} else {
-			Fiscalizacao.salvarEdicao = true;
-			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
-		}
-
-		FiscalizacaoComplementacaoDados.callBackObterComplementacaoDadosDefault(isVisualizar);
-		FiscalizacaoComplementacaoDados.configurarBtnEditar();
-	},
-
-	callBackObterComplementacaoDados: function () {
-		Fiscalizacao.salvarEdicao = true;
-		Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-		FiscalizacaoComplementacaoDados.callBackObterComplementacaoDadosDefault();
-	},
-
-	callBackObterComplementacaoDadosDefault: function (isVisualizar) {
-		Fiscalizacao.stepAtual = 3;
-		Fiscalizacao.configurarBtnCancelarStep(3);
-		Fiscalizacao.salvarTelaAtual = FiscalizacaoComplementacaoDados.onSalvarFiscalizacaoComplementacaoDados;
-
-		if (!isVisualizar) {
-			FiscalizacaoComplementacaoDados.container = $('.FiscalizacaoComplementacaoDadosContainer', Fiscalizacao.container);
-			FiscalizacaoComplementacaoDados.container.delegate('.ddlVinculoComPropriedadeTipo', 'change', FiscalizacaoComplementacaoDados.gerenciarVinculoPropriedade);
-			FiscalizacaoComplementacaoDados.container.delegate('.ddlConhecimentoLegislacaoTipo', 'change', FiscalizacaoComplementacaoDados.gerenciarConhecimentoLegislacao);
-			FiscalizacaoComplementacaoDados.container.delegate('.checkboxReservasLegais', 'change', FiscalizacaoComplementacaoDados.gerenciarReservasLegais);
-
-			FiscalizacaoComplementacaoDados.gerenciarVinculoPropriedade();
-			FiscalizacaoComplementacaoDados.gerenciarConhecimentoLegislacao();
-			FiscalizacaoComplementacaoDados.gerenciarDadosPropriedade();
-
-			if (FiscalizacaoComplementacaoDados.obterAutuadoTipo() == FiscalizacaoComplementacaoDados.settings.idsTela.TipoAutuadoEmpreendimento) {
-				FiscalizacaoComplementacaoDados.obterResponsavelVinculoPropriedade();
-			}
-		}
-
-		Fiscalizacao.alternarAbas();
-		Mascara.load();
-		MasterPage.carregando(false);
-		Fiscalizacao.gerenciarVisualizacao();
-	},
-
-
-	obterResponsavelVinculoPropriedade: function () {
-		var container = FiscalizacaoComplementacaoDados.container;
-		var empreendimentoId = $('.hdnEmpreendimentoId', container).val();
-		var autuadoId = $('.hdnAutuadoId', container).val();
-
-		$.ajax({
-			url: FiscalizacaoComplementacaoDados.settings.urls.urlObterVinculoPropriedade,
-			data: JSON.stringify({ autuadoId: autuadoId, empreendimentoId: empreendimentoId }),
-			cache: false,
-			async: false,
-			type: 'POST',
-			typeData: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(container));
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.vinculo) {
-					$('.ddlVinculoComPropriedadeTipo option', FiscalizacaoComplementacaoDados.container).each(function () {
-						if ($(this).val() == response.vinculo) {
-							$(this).attr('selected', 'selected');
-
-							if (response.vinculo == FiscalizacaoComplementacaoDados.settings.idsTela.VinculoPropriedadeOutro) {
-								$('.txtVinculoComPropriedadeEspecificarTexto', FiscalizacaoComplementacaoDados.container).val(response.especificar);
-							}
-
-							FiscalizacaoComplementacaoDados.gerenciarVinculoPropriedade();
-						}
-					});
-				} else {
-					$('.ddlVinculoComPropriedadeTipo option:eq(0)', container).attr('selected', 'selected');
-				}
-			}
-		});
-	},
-
-	gerenciarConhecimentoLegislacao: function () {
-		var conhecimento = $('.ddlConhecimentoLegislacaoTipo :selected', FiscalizacaoComplementacaoDados.container).val();
-		$('.divJustificativa', FiscalizacaoComplementacaoDados.container).addClass('hide');
-
-		if (conhecimento == FiscalizacaoComplementacaoDados.settings.idsTela.RespostasDefaultSim ||
-			conhecimento == FiscalizacaoComplementacaoDados.settings.idsTela.RespostasDefaultNao) {
-			$('.divJustificativa', FiscalizacaoComplementacaoDados.container).removeClass('hide');
-		}
-	},
-
-	gerenciarVinculoPropriedade: function () {
-		var vinculo = $('.ddlVinculoComPropriedadeTipo :selected', FiscalizacaoComplementacaoDados.container).val();
-		$('.divEspecificarVinculoPropriedade', FiscalizacaoComplementacaoDados.container).addClass('hide');
-		if (vinculo == FiscalizacaoComplementacaoDados.settings.idsTela.VinculoPropriedadeOutro) {
-			$('.divEspecificarVinculoPropriedade', FiscalizacaoComplementacaoDados.container).removeClass('hide');
-		}
-	},
-
-	gerenciarDadosPropriedade: function () {
-		var tipoAutuado = FiscalizacaoComplementacaoDados.obterAutuadoTipo();
-		$('.fsDadosPropriedade', FiscalizacaoComplementacaoDados.container).addClass('hide');
-		if (tipoAutuado == 2) {
-			$('.fsDadosPropriedade', FiscalizacaoComplementacaoDados.container).removeClass('hide');
-		}
-
-	},
-
-	gerenciarReservasLegais: function () {
-		var container = FiscalizacaoComplementacaoDados.container;
-		var current = $(this).val();
-
-		var averbada = $('.checkbox1', container).is(':checked');
-		var proposta = $('.checkbox2', container).is(':checked');
-		var naoInformado = $('.checkbox3', container).is(':checked');
-		var naoPossui = $('.checkbox4', container).is(':checked');
-
-		if (averbada || proposta) {
-			$('.checkbox3', container).removeAttr('checked');
-			$('.checkbox4', container).removeAttr('checked');
-		}
-
-		if (naoInformado && current == 4) {
-			$('.checkbox1', container).removeAttr('checked');
-			$('.checkbox2', container).removeAttr('checked');
-			$('.checkbox3', container).attr('checked', 'checked');
-			$('.checkbox4', container).removeAttr('checked');
-		}
-
-		if (naoPossui && current == 8) {
-			$('.checkbox1', container).removeAttr('checked');
-			$('.checkbox2', container).removeAttr('checked');
-			$('.checkbox3', container).removeAttr('checked');
-			$('.checkbox4', container).attr('checked', 'checked');
-		}
-	},
-
-	obterAutuadoTipo: function () {
-		return Number($('.hdnTipoAutuado', FiscalizacaoComplementacaoDados.container).val()) || 0;
-	},
-
-	onSalvarFiscalizacaoComplementacaoDados: function () {
-		var container = FiscalizacaoComplementacaoDados.container;
-
-		var obj = {
-			Id: Number($('.hdnComplementacaoDadosId', container).val()) || 0,
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()) || 0,
-			EmpreendimentoId: Number($('.hdnEmpreendimentoId', container).val()) || 0,
-			AutuadoTipo: FiscalizacaoComplementacaoDados.obterAutuadoTipo(),
-			AutuadoId: $('.hdnAutuadoId', container).val(),
-			ResidePropriedadeTipo: $('.ddlResidePropriedadeTipo :selected', container).val(),
-			ResidePropriedadeTipoTexto: $('.ddlResidePropriedadeTipo :selected', container).text(),
-			RendaMensalFamiliarTipo: $('.ddlRendaMensalFamiliarTipo :selected', container).val(),
-			RendaMensalFamiliarTipoTexto: $('.ddlRendaMensalFamiliarTipo :selected', container).text(),
-			NivelEscolaridadeTipo: $('.ddlNivelEscolaridadeTipo :selected', container).val(),
-			NivelEscolaridadeTipoTexto: $('.ddlNivelEscolaridadeTipo :selected', container).text(),
-			VinculoComPropriedadeTipo: $('.ddlVinculoComPropriedadeTipo :selected', container).val(),
-			VinculoComPropriedadeTipoTexto: $('.ddlVinculoComPropriedadeTipo :selected', container).text(),
-			VinculoComPropriedadeEspecificarTexto: $('.txtVinculoComPropriedadeEspecificarTexto', container).val(),
-			ConhecimentoLegislacaoTipo: $('.ddlConhecimentoLegislacaoTipo :selected', container).val(),
-			ConhecimentoLegislacaoTipoTexto: $('.ddlConhecimentoLegislacaoTipo :selected', container).text(),
-			Justificativa: $('.txtJustificativa', container).val(),
-			AreaTotalInformada: $('.txtAreaTotalInformada', container).val(),
-			AreaCoberturaFlorestalNativa: $('.txtAreaCoberturaFlorestalNativa', container).val(),
-			ReservalegalTipo: 0
-		}
-
-		$('.checkboxReservasLegais:checked', container).each(function () {
-			obj.ReservalegalTipo += parseInt($(this).val());
-		});
-
-		if (obj.AutuadoTipo == FiscalizacaoComplementacaoDados.settings.idsTela.TipoAutuadoPessoa) {
-			//setando id do autuado, pois o campo '.ddlResponsaveis' esta hide
-			obj.ResponsavelId = $('.hdnAutuadoId', container).val();
-
-			//limpando campos ocultos
-			obj.AreaTotalInformada = '';
-			obj.AreaCoberturaFlorestalNativa = '';
-			obj.ReservalegalTipo = 0;
-			obj.EmpreendimentoId = 0;
-		}
-
-		if (obj.VinculoComPropriedadeTipo != FiscalizacaoComplementacaoDados.settings.idsTela.VinculoPropriedadeOutro) {
-			obj.VinculoComPropriedadeEspecificarTexto = '';
-		}
-
-		if (obj.ConhecimentoLegislacaoTipo == 3) {
-			obj.Justificativa = '';
-		}
-
-		var arrayMensagem = new Array();
-
-		arrayMensagem.push(FiscalizacaoComplementacaoDados.settings.mensagens.Salvar)
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoComplementacaoDados.settings.urls.salvar, obj, arrayMensagem);
-
-	}
-
-},
-
-// 4ª Aba
-FiscalizacaoEnquadramento = {
-	settings: {
-		urls: {
-			salvar: '',
-			visualizar: ''
-		},
-		idsTela: null,
-		mensagens: null
-	},
-	container: null,
-
-	configurarBtnEditar: function () {
-		$(".btnEditar", Fiscalizacao.container).unbind('click');
-		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoEnquadramento.onBtnEditar);
-	},
-
-	onBtnEditar: function () {
-		MasterPage.carregando(true);
-		var param = { id: $('#hdnFiscalizacaoId', Fiscalizacao.container).val() };
-		Fiscalizacao.onObterStep(Fiscalizacao.urls.enquadramento, param, FiscalizacaoEnquadramento.callBackObterEnquadramento);
-	},
-
-	callBackObterEnquadramentoVisualizar: function () {
-		if (parseInt($('.hdnEnquadramentoId', Fiscalizacao.container).val()) > 0) {
-			Fiscalizacao.salvarEdicao = false;
-			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
-			FiscalizacaoEnquadramento.configurarBtnEditar();
-		} else {
-			Fiscalizacao.salvarEdicao = true;
-			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
-		}
-
-		FiscalizacaoEnquadramento.callBackObterEnquadramentoDefault();
-		FiscalizacaoEnquadramento.configurarBtnEditar();
-	},
-
-	callBackObterEnquadramento: function () {
-		Fiscalizacao.salvarEdicao = true;
-		Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-		FiscalizacaoEnquadramento.callBackObterEnquadramentoDefault();
-	},
-
-	callBackObterEnquadramentoDefault: function () {
-		FiscalizacaoEnquadramento.container = $('.FiscalizacaoEnquadramentoContainer', Fiscalizacao.container);
-		Fiscalizacao.configurarBtnCancelarStep(4);
-		Fiscalizacao.stepAtual = 4;
-		Fiscalizacao.salvarTelaAtual = FiscalizacaoEnquadramento.onSalvarFiscalizacaoEnquadramento;
-		Fiscalizacao.alternarAbas();
-		MasterPage.botoes(Fiscalizacao.container);
-
-		MasterPage.carregando(false);
-		Fiscalizacao.gerenciarVisualizacao();
-	},
-
-	onSalvarFiscalizacaoEnquadramento: function () {
-		var container = FiscalizacaoEnquadramento.container;
-
-		var obj = {
-			Id: Number($('.hdnEnquadramentoId', container).val()) || 0,
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()) || 0,
-			Artigos: []
-		}
-
-		$('.fsArtigo', container).each(function () {
-			var artigo = {
-				Id: Number($('.hdnArtigoId', this).val()) || 0,
-				Identificador: $('.hdnIdentificador', this).val(),
-				EnquadramentoId: $('.hdnEnquadramentoId', FiscalizacaoEnquadramento.container).val(),
-				ArtigoTexto: $('.txtArtigoTexto', this).val(),
-				ArtigoParagrafo: $('.txtArtigoParagrafo', this).val(),
-				CombinadoArtigo: $('.txtCombinadoArtigo', this).val(),
-				CombinadoArtigoParagrafo: $('.txtCombinadoArtigoParagrafo', this).val(),
-				DaDo: $('.txtDaDo', this).val()
-			}
-
-			obj.Artigos.push(artigo);
-
-		});
-
-		var arrayMensagem = new Array();
-
-		arrayMensagem.push(FiscalizacaoEnquadramento.settings.mensagens.Salvar)
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoEnquadramento.settings.urls.salvar, obj, arrayMensagem);
-
-	}
-
-},
-
-// 5ª Aba
+// 3ª Aba - Infração/Fiscalização
 Infracao = {
 	settings: {
 		urls: {
@@ -1307,27 +1076,21 @@ Infracao = {
 
 	callBackObterInfracaoVisualizar: function () {
 
-		Fiscalizacao.stepAtual = 5;
+		Fiscalizacao.stepAtual = 3;
 		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
 		Fiscalizacao.alternarAbas();
 
-		Infracao.container.delegate('.ddlClassificacoes', 'change', Infracao.onSelecionarClassificacao);
-		Infracao.container.delegate('.ddlTipos', 'change', Infracao.onSelecionarTipo);
-		Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
-		Infracao.container.delegate('.rdoIsGeradaSistemaSim', 'change', Infracao.onSelecionarIsGeradaSistemaSim);
-		Infracao.container.delegate('.rdoIsGeradaSistemaNao', 'change', Infracao.onSelecionarIsGeradaSistemaNao);
-		Infracao.container.delegate('.rdoIsAutuadaSim', 'change', Infracao.onSelecionarIsAutuadaSim);
-		Infracao.container.delegate('.rdoIsAutuadaNao', 'change', Infracao.onSelecionarrdoIsAutuadaNao);
-		Infracao.container.delegate('.rdoIsEspecificar', 'change', Infracao.onSelecionarIsEspecificar);
-		Infracao.container.delegate('.rdoIsNotEspecificar', 'change', Infracao.onSelecionarIsNotEspecificar);
+		$('.fsInfracao', Infracao.container).hide();
+		$('.ddlTiposPenalidade', Infracao.container).attr('disabled', 'disable');
+		$('.ddlTiposPenalidade', Infracao.container).addClass('disabled');
 
-		Infracao.container.delegate('.rdbIsGeradaSistema', 'click', Infracao.gerenciarIsGeradaSistema);
-		Infracao.container.delegate('.ddlSeries', 'change', Infracao.gerenciarSerie);
-
-		Infracao.gerenciarSerie();
-
-		Infracao.container.delegate('.btnAddArq', 'click', Infracao.onEnviarArquivoClick);
-		Infracao.container.delegate('.btnLimparArq', 'click', Infracao.onLimparArquivoClick);
+	    Infracao.container.delegate('.rdoComInfracao', 'change', Infracao.onSelecionarComInfracao);
+	    Infracao.container.delegate('.rdoSemInfracao', 'change', Infracao.onSelecionarSemInfracao);
+	    Infracao.container.delegate('.ddlClassificacoes', 'change', Infracao.onSelecionarClassificacao);
+	    Infracao.container.delegate('.ddlTipos', 'change', Infracao.onSelecionarTipo);
+	    Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
+	    Infracao.container.delegate('.cbPenalidade', 'change', Infracao.onMarcarPenalidade);
+	    Infracao.container.delegate('.ddlTiposPenalidade', 'change', Infracao.onSelecionarPenalidade);
 
 		Mascara.load(Infracao.container);
 
@@ -1358,8 +1121,163 @@ Infracao = {
 				tamanhoModal: Modal.tamanhoModalMedia
 			});
 		}
+
+		if ($('.rdoComInfracao', Infracao.container).attr('checked') == true) {
+		    Infracao.onSelecionarComInfracao();
+		} else if ($('.rdoSemInfracao', Infracao.container).attr('checked') == true) {
+		    Infracao.onSelecionarSemInfracao();
+		}
+
+		$('.cbPenalidadeOutras', Infracao.container).each(function () {
+		    if ($(this).attr('checked')) {
+		        if ($(this).attr('disabled') == false) {
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeAttr('disabled');
+		            $(this).closest('.block').find('.ddlTiposPenalidade').removeClass('disabled');
+		        }
+
+		        var container = $(this).closest('.block');
+
+		        var penalidade = $('.ddlTiposPenalidade :selected', container).val();
+		        var descricao = $('.hdnPenalidade' + penalidade, Infracao.container).val();
+
+		        $('.txtDescricaoPenalidade', container).val(descricao);
+		    }
+		});
+
 		MasterPage.botoes();
 		MasterPage.carregando(false);
+	},
+
+	onSalvarInfracao: function () {
+
+	    var container = Infracao.container;
+
+	    var obj = {
+	        Id: Number($('.hdnInfracaoId', container).val()),
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
+	        ClassificacaoId: $('.ddlClassificacoes :selected', container).val(),
+	        TipoId: $('.ddlTipos :selected', container).val(),
+	        ItemId: $('.ddlItens :selected', container).val(),
+	        ConfiguracaoId: $('.hdnConfiguracaoId', container).val(),
+	        ConfiguracaoTid: $('.hdnConfiguracaoTid', container).val(),
+	        Campos: [],
+	        Perguntas: [],
+	    }
+        
+	    var abas = [];
+
+	    if ($('.rdoComInfracao', container).attr('checked')) {
+	        obj.ComInfracao = true;
+
+	        //Quadro de Enquadramento
+	        var EnquadramentoInfracao = {
+	            Id: $('.enquadramentoId', container).val(),
+	            Artigos: []
+	        };
+
+	        $('.divQuadroEnquadramento .dataGridTable tbody tr', container).each(function () {
+	            var item = {
+	                ArtigoTexto: $(this).find('.txtArtigoEnquadramento').val().trim(),
+	                ArtigoParagrafo: $(this).find('.txtItemEnquadramento').val().trim(),
+	                DaDo: $(this).find('.txtLeiEnquadramento').val().trim(),
+	            };
+
+	            if (item.ArtigoTexto != '' && item.ArtigoParagrafo != '' && item.DaDo != '') {
+	                EnquadramentoInfracao.Artigos.push(item);
+	            }
+	        });
+
+	        obj.EnquadramentoInfracao = EnquadramentoInfracao;
+
+            //Informações da fiscalização
+	        obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val(); 
+	        obj.DataConstatacao = { DataTexto: $('.txtDataConstatacao', container).val() };
+	        obj.HoraConstatacao = $('.txtHoraConstatacao', container).val();
+            
+	        if ($('.rdoClassificacaoLeve', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 0;
+	        } else if ($('.rdoClassificacaoMedia', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 1;
+	        } else if ($('.rdoClassificacaoGrave', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 2;
+	        } else if ($('.rdoClassificacaoGravissima', container).attr('checked')) {
+	            obj.ClassificacaoInfracao = 3;
+	        }
+
+	        //Penalidades - Itens fixos
+	        obj.PossuiAdvertencia = $('.cbPenalidadeAdvertencia', container).attr('checked');
+	        obj.PossuiMulta = $('.cbPenalidadeMulta', container).attr('checked');
+	        obj.PossuiApreensao = $('.cbPenalidadeApreensao', container).attr('checked');
+	        obj.PossuiInterdicaoEmbargo = $('.cbPenalidadeInterdicaoEmbargo', container).attr('checked');
+
+	        if (obj.PossuiAdvertencia) {
+	            abas.push('advertencia');
+	        }
+	        if (obj.PossuiMulta) {
+	            abas.push('multa');
+	        }
+	        if (obj.PossuiApreensao) {
+	            abas.push('apreensao');
+	        }
+	        if (obj.PossuiInterdicaoEmbargo) {
+	            abas.push('interdicaoembargo');
+	        }
+
+	        //Penalidades - Outros
+	        obj.IdsOutrasPenalidades = [];
+	        var possuiOutras = false;
+	        $('.ddlTiposPenalidadeOutras', container).each(function () {
+	            if ($(this).val() > 0) {
+	                possuiOutras = true;
+	                obj.IdsOutrasPenalidades.push($(this).val());
+	            }
+	        });
+	        if (possuiOutras) {
+	            abas.push('outras');
+	        }
+
+	    } else if ($('.rdoSemInfracao', container).attr('checked')) { 
+	        obj.ComInfracao = false;
+
+	        //Informações da fiscalização
+	        obj.DataConstatacao = { DataTexto: $('.txtDataConstatacao', container).val() };
+	        obj.HoraConstatacao = $('.txtHoraConstatacao', container).val();
+	    } 
+
+	    if ($('.ddlSubitens :selected', container).val() != '0') {
+	        obj.SubitemId = $('.ddlSubitens :selected', container).val();
+	    }
+
+	    $('.divCampos .divCampo', container).each(function (index, item) {
+	        obj.Campos.push({
+	            Id: $('.hdnCampoInfracaoId', item).val(),
+	            CampoId: $('.hdnCampoId', item).val(),
+	            Texto: $('.txtTexto', item).val()
+	        });
+	    });
+
+	    $('.divQuestionarios .divQuestionario', container).each(function (index, item) {
+
+	        var respostaId = $('.rdoResposta:checked', item).val();
+	        var perguntaId = $('.hdnPerguntaId', item).val();
+	        var especificar = $('.hdnRespostaEspecificar' + perguntaId, item).val() == "1";
+
+	        obj.Perguntas.push({
+	            Id: $('.hdnQuestionarioId', item).val(),
+	            PerguntaId: perguntaId,
+	            PerguntaTid: $('.hdnPerguntaTid', item).val(),
+	            RespostaId: respostaId,
+	            RespostaTid: $('.hdnRespostaTid' + respostaId, item).val(),
+	            Especificacao: (especificar) ? $('.txtEspecificar', item).val() : '',
+	            IsEspecificar: especificar
+	        });
+	    });
+
+	    var arrayMensagem = [];
+
+	    arrayMensagem.push(Infracao.settings.mensagens.Salvar);
+
+	    return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem, abas);
 	},
 
 	configurarBtnEditar: function () {
@@ -1374,332 +1292,368 @@ Infracao = {
 			Infracao.callBackObterInfracaoVisualizar();
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(5);
+			Fiscalizacao.configurarBtnCancelarStep(3);
 			Fiscalizacao.gerenciarVisualizacao();
 		});
 	},
 
-	gerenciarIsGeradaSistema: function () {
-		var rdb = $('.rdbIsGeradaSistema:checked', Infracao.container).val();
-		if (rdb == 0) {
-			Infracao.onSelecionarIsGeradaSistemaNao();
-		} else {
-			if (rdb == 1) {
-				Infracao.onSelecionarIsGeradaSistemaSim();
-			}
-		}
-	},
-
-	callBackObterInfracao: function () {
-
-		Fiscalizacao.stepAtual = 5;
-		Fiscalizacao.salvarTelaAtual = Infracao.onSalvarInfracao;
-		Fiscalizacao.alternarAbas();
-
-		Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-
-		Fiscalizacao.configurarBtnCancelarStep(5);
-		MasterPage.carregando(false);
-	},
-
-	onSelecionarIsGeradaSistemaSim: function () {
-		$('.divIsGeradoSistema', Infracao.container).hide();
-		$('.ddlSeries option:eq(3)', Infracao.container).attr('selected', 'selected');
-		$('.ddlSeries', Infracao.container).attr('disabled', 'disabled');
-
-		Infracao.onLimparArquivoClick();
-	},
-
-	onSelecionarIsGeradaSistemaNao: function () {
-		$('.divIsGeradoSistema', Infracao.container).show();
-		$('.ddlSeries', Infracao.container).removeAttr('disabled', 'disabled').val(0);
-		Infracao.gerenciarSerie();
-	},
-
-	gerenciarSerie: function () {
-		if ($('.rdbIsGeradaSistema:checked', Infracao.container).val() == 0) {
-			var serie = $('.ddlSeries :selected', Infracao.container).val();
-			if (serie == 3) {
-				$('.lblNumAutoInfracao', Infracao.container).text('Nº do auto de infração *');
-			} else {
-				$('.lblNumAutoInfracao', Infracao.container).text('Nº do auto de infração - bloco *');
-			}
-		} else {
-			Infracao.onSelecionarIsGeradaSistemaSim();
-		}
-
-	},
-
-	onSelecionarIsAutuadaSim: function () {
-		$('.divInfracaoAutuada', Infracao.container).show();
-	},
-
-	onSelecionarrdoIsAutuadaNao: function () {
-		$('.divInfracaoAutuada', Infracao.container).hide();
-	},
-
-	onSelecionarIsEspecificar: function () {
-		var perguntaId = $(this, Infracao.container).attr('perguntaId');
-		$('.divEspecificacao' + perguntaId, Infracao.container).show();
-		$('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('1');
-	},
-
-	onSelecionarIsNotEspecificar: function () {
-		var perguntaId = $(this, Infracao.container).attr('perguntaId');
-		$('.divEspecificacao' + perguntaId, Infracao.container).hide();
-		$('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('0');
-	},
-
 	onSelecionarClassificacao: function () {
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
 
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+	    if (classificacao) {
 
-		if (classificacao) {
+	        $('.ddlTipos', Infracao.container).ddlClear();
+	        $('.ddlItens', Infracao.container).ddlClear();
+	        $('.ddlSubitens', Infracao.container).ddlClear();
+	        $('.divCamposPerguntas', Infracao.container).html('');
 
-			$('.ddlTipos', Infracao.container).ddlClear();
-			$('.ddlItens', Infracao.container).ddlClear();
-			$('.ddlSubitens', Infracao.container).ddlClear();
-			$('.divCamposPerguntas', Infracao.container).html('');
+	        $.ajax({
+	            url: Infracao.settings.urls.obterTipo,
+	            data: JSON.stringify({ classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
 
-			$.ajax({ url: Infracao.settings.urls.obterTipo,
-				data: JSON.stringify({ classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
+	                if (response.EhValido) {
+	                    $('.ddlTipos', Infracao.container).ddlLoad(response.Tipos);
 
-					if (response.EhValido) {
-						$('.ddlTipos', Infracao.container).ddlLoad(response.Tipos);
-
-						if (response.Tipos.length == 2) {
-							Infracao.onSelecionarTipo();
-						}
-					}
-				}
-			});
-		}
+	                    if (response.Tipos.length == 2) {
+	                        Infracao.onSelecionarTipo();
+	                    }
+	                }
+	            }
+	        });
+	    }
 
 	},
 
 	onSelecionarTipo: function () {
 
-		var tipo = $('.ddlTipos', Infracao.container).val();
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+	    var tipo = $('.ddlTipos', Infracao.container).val();
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
 
-		if (tipo && classificacao) {
+	    if (tipo && classificacao) {
 
-			$('.ddlItens', Infracao.container).ddlClear();
+	        $('.ddlItens', Infracao.container).ddlClear();
 
-			$.ajax({ url: Infracao.settings.urls.obterItem,
-				data: JSON.stringify({ tipoId: tipo, classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
+	        $.ajax({
+	            url: Infracao.settings.urls.obterItem,
+	            data: JSON.stringify({ tipoId: tipo, classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
 
-					if (response.EhValido) {
-						$('.ddlItens', Infracao.container).ddlLoad(response.Itens, { disabled: false });
-						$('.ddlSubitens', Infracao.container).ddlClear();
-						$('.divCamposPerguntas', Infracao.container).html('');
+	                if (response.EhValido) {
+	                    $('.ddlItens', Infracao.container).ddlLoad(response.Itens, { disabled: false });
+	                    $('.ddlSubitens', Infracao.container).ddlClear();
+	                    $('.divCamposPerguntas', Infracao.container).html('');
 
-						if (response.Itens.length == 2) {
-							Infracao.onSelecionarItem();
-						}
-					}
-				}
-			});
-		}
+	                    if (response.Itens.length == 2) {
+	                        Infracao.onSelecionarItem();
+	                    }
+	                }
+	            }
+	        });
+	    }
 
 	},
 
 	onSelecionarItem: function () {
 
-		var item = $('.ddlItens', Infracao.container).val();
-		var tipo = $('.ddlTipos', Infracao.container).val();
-		var classificacao = $('.ddlClassificacoes', Infracao.container).val();
+	    var item = $('.ddlItens', Infracao.container).val();
+	    var tipo = $('.ddlTipos', Infracao.container).val();
+	    var classificacao = $('.ddlClassificacoes', Infracao.container).val();
 
-		if (item && tipo && classificacao) {
+	    if (item && tipo && classificacao) {
 
-			$('.ddlSubitens', Infracao.container).ddlClear();
+	        $('.ddlSubitens', Infracao.container).ddlClear();
 
-			$.ajax({ url: Infracao.settings.urls.obterConfiguracao,
-				data: JSON.stringify({ tipoId: tipo, itemId: item, classificacaoId: classificacao }),
-				cache: false,
-				async: true,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
+	        $.ajax({
+	            url: Infracao.settings.urls.obterConfiguracao,
+	            data: JSON.stringify({ tipoId: tipo, itemId: item, classificacaoId: classificacao }),
+	            cache: false,
+	            async: true,
+	            type: 'POST',
+	            dataType: 'json',
+	            contentType: 'application/json; charset=utf-8',
+	            error: function (XMLHttpRequest, textStatus, erroThrown) {
+	                Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Infracao.container));
+	            },
+	            success: function (response, textStatus, XMLHttpRequest) {
 
-					if (response.EhValido) {
-						$('.ddlSubitens', Infracao.container).ddlLoad(response.Subitens);
-						$('.divCamposPerguntas', Infracao.container).html(response.Html);
-						Mascara.load($('.divCamposPerguntas', Infracao.container));
-					}
-				}
-			});
-		}
+	                if (response.EhValido) {
+	                    $('.ddlSubitens', Infracao.container).ddlLoad(response.Subitens);
+	                    $('.divCamposPerguntas', Infracao.container).html(response.Html);
+	                    Mascara.load($('.divCamposPerguntas', Infracao.container));
+	                }
+	            }
+	        });
+	    }
 	},
 
-	onSalvarInfracao: function () {
+	onSelecionarComInfracao: function () {
+	    $('.fsInfracao', Infracao.container).show();
 
-		var container = Infracao.container;
-
-		var obj = {
-			Id: Number($('.hdnInfracaoId', container).val()),
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
-			ClassificacaoId: $('.ddlClassificacoes :selected', container).val(),
-			TipoId: $('.ddlTipos :selected', container).val(),
-			ItemId: $('.ddlItens :selected', container).val(),
-			IsAutuada: '',
-			ConfiguracaoId: $('.hdnConfiguracaoId', container).val(),
-			ConfiguracaoTid: $('.hdnConfiguracaoTid', container).val(),
-			Campos: [],
-			Perguntas: []
-		}
-
-		if ($('.rdoIsAutuadaSim', container).attr('checked')) {
-			obj.IsAutuada = true;
-			obj.SerieId = $('.ddlSeries :selected', container).val();
-			obj.CodigoReceitaId = $('.ddlCodigoReceitas :selected', container).val();
-			obj.IsGeradaSistema = $('.rdoIsGeradaSistemaSim', container).attr('checked');
-			obj.ValorMulta = $('.txtValorMulta', container).val();
-			obj.CodigoReceita = $('.txtCodigoReceita', container).val();
-			obj.NumeroAutoInfracaoBloco = $('.txtNumeroAutoInfracaoBloco', container).val();
-			obj.DescricaoInfracao = $('.txtDescricaoInfracao', container).val();
-			obj.DataLavraturaAuto = { DataTexto: $('.txtDataLavraturaAuto', container).val() };
-			obj.ValorExtenso = $('.txtValorExtenso', container).val();
-			obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-		}
-
-		if ($('.rdoIsAutuadaNao', container).attr('checked')) {
-			obj.IsAutuada = false;
-		}
-
-		if ($('.ddlSubitens :selected', container).val() != '0') {
-			obj.SubitemId = $('.ddlSubitens :selected', container).val();
-		}
-
-		$('.divCampos .divCampo', container).each(function (index, item) {
-			obj.Campos.push({
-				Id: $('.hdnCampoInfracaoId', item).val(),
-				CampoId: $('.hdnCampoId', item).val(),
-				Texto: $('.txtTexto', item).val()
-			});
-		});
-
-		$('.divQuestionarios .divQuestionario', container).each(function (index, item) {
-
-			var respostaId = $('.rdoResposta:checked', item).val();
-			var perguntaId = $('.hdnPerguntaId', item).val();
-			var especificar = $('.hdnRespostaEspecificar' + perguntaId, item).val() == "1";
-
-			obj.Perguntas.push({
-				Id: $('.hdnQuestionarioId', item).val(),
-				PerguntaId: perguntaId,
-				PerguntaTid: $('.hdnPerguntaTid', item).val(),
-				RespostaId: respostaId,
-				RespostaTid: $('.hdnRespostaTid' + respostaId, item).val(),
-				Especificacao: (especificar) ? $('.txtEspecificar', item).val() : '',
-				IsEspecificar: especificar
-			});
-		});
-
-		//Limpando dados de campos
-		if (obj.IsGeradaSistema) {
-			obj.DataLavraturaAuto.DataTexto = '';
-			obj.NumeroAutoInfracaoBloco = '';
-		}
-
-		var arrayMensagem = [];
-
-		arrayMensagem.push(Infracao.settings.mensagens.Salvar);
-
-		return Fiscalizacao.onSalvarStep(Infracao.settings.urls.salvar, obj, arrayMensagem);
-
+	    $('.divDescricaoInfracao', Infracao.container).show();
+	    $('.divClassificacao', Infracao.container).show();
 	},
 
-	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', Infracao.container).val();
+	onSelecionarSemInfracao: function () {
+	    $('.fsInfracao', Infracao.container).hide();
 
-		erroMsg = new Array();
+	    $('.fsCaracterizacao', Infracao.container).show();
+	    $('.fsDadosInfracao', Infracao.container).show();
 
-		if (nomeArquivo == '') {
-			erroMsg.push(Infracao.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!Infracao.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(Infracao.settings.mensagens.ArquivoNaoEhDoc);
-			}
-		}
-
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
-
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', Infracao.container);
-		FileUpload.upload(Infracao.settings.urls.enviarArquivo, inputFile, Infracao.callBackArqEnviado);
+	    $('.divDescricaoInfracao', Infracao.container).hide();
+	    $('.divClassificacao', Infracao.container).hide();
 	},
 
-	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', Infracao.container).val('');
-		$('.inputFile', Infracao.container).val('');
+	onMarcarPenalidade: function(){
+	    var marcado = $(this).closest('.cbPenalidade').attr('checked');
+	    var container = $(this).closest('.block');
+	    
+	    if (marcado == true) {
+	        $('.ddlTiposPenalidade', container).removeAttr('disabled');
+	        $('.ddlTiposPenalidade', container).removeClass('disabled');
+	    } else {
+	        $('.ddlTiposPenalidade option:eq(0)', container).attr('selected', 'selected');
+	        $('.ddlTiposPenalidade', container).attr('disabled', 'disable');
+	        $('.ddlTiposPenalidade', container).addClass('disabled');
 
-		$('.spanInputFile', Infracao.container).removeClass('hide');
-		$('.txtArquivoNome', Infracao.container).addClass('hide');
-
-		$('.btnAddArq', Infracao.container).removeClass('hide');
-		$('.btnLimparArq', Infracao.container).addClass('hide');
+	        $('.txtDescricaoPenalidade', container).val('');
+	    }
 	},
 
-	validarTipoArquivo: function (tipo) {
+	onSelecionarPenalidade: function () {
+	    var container = $(this).closest('.block');
 
-		var tipoValido = false;
-		$(Infracao.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
+	    var penalidade = $('.ddlTiposPenalidade :selected', container).val();
+	    var descricao = $('.hdnPenalidade' + penalidade, Infracao.container).val();
 
-		return tipoValido;
+	    $('.txtDescricaoPenalidade', container).val(descricao);
 	},
-
-	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', Infracao.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', Infracao.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', Infracao.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
-
-			$('.spanInputFile', Infracao.container).addClass('hide');
-			$('.txtArquivoNome', Infracao.container).removeClass('hide');
-
-			$('.btnAddArq', Infracao.container).addClass('hide');
-			$('.btnLimparArq', Infracao.container).removeClass('hide');
-		} else {
-			Infracao.onLimparArquivoClick();
-			Mensagem.gerar(Infracao.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
-	}
 }
 
-// 6ª Aba
+// 4ª aba - Multa
+FiscalizacaoMulta = {
+    settings: {
+        urls: {
+            salvar: '',
+            obterSerie: '',
+            enviarArquivo: '',
+            obter: '',
+        },
+    },
+    container: null,
+    mensagens: null,
+    TiposArquivo: [],
+
+    callBackObterFiscalizacaoMultaVisualizar: function () {
+        FiscalizacaoMulta.callBackObterFiscalizacaoMultaDefault();
+    },
+
+    callBackObterFiscalizacaoMulta: function () {
+        FiscalizacaoMulta.callBackObterFiscalizacaoMultaDefault();
+    },
+
+    callBackObterFiscalizacaoMultaDefault: function () {
+        Fiscalizacao.stepAtual = 4;
+        Fiscalizacao.salvarTelaAtual = FiscalizacaoMulta.onSalvarFiscalizacaoMulta;
+        Fiscalizacao.alternarAbas();
+
+        $('.fsCamposMulta', FiscalizacaoMulta.container).hide();
+        
+        FiscalizacaoMulta.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMulta.onSelecionarIsDigital);
+        FiscalizacaoMulta.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMulta.onSelecionarIsBloco);
+        FiscalizacaoMulta.container.delegate('.btnAddArq', 'click', FiscalizacaoMulta.onEnviarArquivoClick);
+        FiscalizacaoMulta.container.delegate('.btnLimparArq', 'click', FiscalizacaoMulta.onLimparArquivoClick);
+
+        Mascara.load(FiscalizacaoMulta.container);
+
+        if (parseInt($('.hdnMultaId', FiscalizacaoMulta.container).val()) > 0) {
+            Fiscalizacao.salvarEdicao = false;
+            Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
+            FiscalizacaoMulta.configurarBtnEditar();
+        } else {
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+        }
+
+        if ($('.rdoIsDigital', FiscalizacaoMulta.container).attr('checked') == true) {
+            FiscalizacaoMulta.onSelecionarIsDigital();
+        } else if ($('.rdoIsBloco', FiscalizacaoMulta.container).attr('checked') == true) {
+            FiscalizacaoMulta.onSelecionarIsBloco();
+        }
+
+        MasterPage.botoes();
+        MasterPage.carregando(false);
+    },
+
+    onSalvarFiscalizacaoMulta: function () {
+        var container = FiscalizacaoMulta.container;
+
+        //Criação do objeto (da classe Multa)
+        var obj = {
+            Id: Number($('.hdnMultaId', container).val()),
+            FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
+        };
+
+        //Preenchendo o objeto
+        if ($('.rdoIsBloco', container).attr('checked')) {
+            obj.IsDigital = false;
+            obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+            obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+            obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+        } else if ($('.rdoIsDigital', container).attr('checked')) {
+            obj.IsDigital = true;
+        }
+        obj.SerieId = $('.ddlSeries :selected', container).val();
+        obj.CodigoReceitaId = $('.ddlCodigosReceita :selected', container).val();
+        obj.ValorMulta = $('.txtValorMulta', container).val();
+        obj.Justificativa = $('.txtJustificativa', container).val();
+
+        var arrayMensagem = [];
+
+        arrayMensagem.push(FiscalizacaoMulta.settings.mensagens.Salvar);
+
+        return Fiscalizacao.onSalvarStep(FiscalizacaoMulta.settings.urls.salvar, obj, arrayMensagem);
+    },
+
+    configurarBtnEditar: function () {
+        $(".btnEditar", Fiscalizacao.container).unbind('click');
+        $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMulta.onBtnEditar);
+    },
+
+    onBtnEditar: function () {
+        Fiscalizacao.onObterStep(FiscalizacaoMulta.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+            FiscalizacaoMulta.callBackObterFiscalizacaoMulta();
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+            Fiscalizacao.configurarBtnCancelarStep(4);
+            Fiscalizacao.gerenciarVisualizacao();
+        });
+    },
+
+    onSelecionarIsDigital: function () {
+        $('.fsCamposMulta', FiscalizacaoMulta.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).addClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).val('Gerado automaticamente');
+
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).show();
+        $('.ddlSeries', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoMulta.container).addClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoMulta.container).attr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).addClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).val('Gerado automaticamente');
+
+        $('.divPDF', FiscalizacaoMulta.container).hide();
+    },
+
+    onSelecionarIsBloco: function () {
+        $('.fsCamposMulta', FiscalizacaoMulta.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).removeAttr('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).removeClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoMulta.container).val('');
+
+        $('.ddlSeries option:eq(0)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).hide();
+        $('.ddlSeries', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoMulta.container).removeClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).removeClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoMulta.container).val('');
+
+        $('.divPDF', FiscalizacaoMulta.container).show();
+    },
+
+    onEnviarArquivoClick: function () {
+        var nomeArquivo = $('.inputFile', FiscalizacaoMulta.container).val();
+
+        erroMsg = new Array();
+
+        if (nomeArquivo == '') {
+            erroMsg.push(FiscalizacaoMulta.settings.mensagens.ArquivoObrigatorio);
+        } else {
+            var tam = nomeArquivo.length - 4;
+            if (!FiscalizacaoMulta.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+                erroMsg.push(FiscalizacaoMulta.settings.mensagens.ArquivoNaoEhPdf);
+            }
+        }
+
+        if (erroMsg.length > 0) {
+            Mensagem.gerar(Fiscalizacao.container, erroMsg);
+            return;
+        }
+
+        MasterPage.carregando(true);
+        var inputFile = $('.inputFile', FiscalizacaoMulta.container);
+        FileUpload.upload(FiscalizacaoMulta.settings.urls.enviarArquivo, inputFile, FiscalizacaoMulta.callBackArqEnviado);
+    },
+
+    onLimparArquivoClick: function () {
+        $('.hdnArquivoJson', FiscalizacaoMulta.container).val('');
+        $('.inputFile', FiscalizacaoMulta.container).val('');
+
+        $('.spanInputFile', FiscalizacaoMulta.container).removeClass('hide');
+        $('.txtArquivoNome', FiscalizacaoMulta.container).addClass('hide');
+
+        $('.btnAddArq', FiscalizacaoMulta.container).removeClass('hide');
+        $('.btnLimparArq', FiscalizacaoMulta.container).addClass('hide');
+    },
+
+    validarTipoArquivo: function (tipo) {
+
+        var tipoValido = false;
+        $(FiscalizacaoMulta.TiposArquivo).each(function (i, tipoItem) {
+            if (tipoItem == tipo) {
+                tipoValido = true;
+            }
+        });
+
+        return tipoValido;
+    },
+
+    callBackArqEnviado: function (controle, retorno, isHtml) {
+        var ret = eval('(' + retorno + ')');
+        if (ret.Arquivo != null) {
+            $('.txtArquivoNome', FiscalizacaoMulta.container).text(ret.Arquivo.Nome);
+            $('.hdnArquivoJson', FiscalizacaoMulta.container).val(JSON.stringify(ret.Arquivo));
+            $('.txtArquivoNome', FiscalizacaoMulta.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+
+            $('.spanInputFile', FiscalizacaoMulta.container).addClass('hide');
+            $('.txtArquivoNome', FiscalizacaoMulta.container).removeClass('hide');
+
+            $('.btnAddArq', FiscalizacaoMulta.container).addClass('hide');
+            $('.btnLimparArq', FiscalizacaoMulta.container).removeClass('hide');
+        } else {
+            FiscalizacaoMulta.onLimparArquivoClick();
+            Mensagem.gerar(FiscalizacaoMulta.container, ret.Msg);
+        }
+        MasterPage.carregando(false);
+
+        Mensagem.limpar(Fiscalizacao.container);
+    },
+}
+
+// 5ª Aba - Interdição/Embargo
 FiscalizacaoObjetoInfracao = {
 	settings: {
 		urls: {
@@ -1746,232 +1700,213 @@ FiscalizacaoObjetoInfracao = {
 
 	callBackObterObjetoInfracaoDefault: function () {
 		FiscalizacaoObjetoInfracao.container = $('.FiscalizacaoObjetoInfracaoContainer', Fiscalizacao.container);
-		Fiscalizacao.stepAtual = 6;
+		Fiscalizacao.stepAtual = 5;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoObjetoInfracao.onSalvarFiscalizacaoObjetoInfracao;
 		Fiscalizacao.alternarAbas();
 
-		FiscalizacaoObjetoInfracao.container.delegate('.rdbAreaEmbargadaAtvIntermed', 'click', FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed);
-		FiscalizacaoObjetoInfracao.container.delegate('.rdbTeiGeradoPeloSistema', 'click', FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema);
-		FiscalizacaoObjetoInfracao.container.delegate('.rdbExisteAtvAreaDegrad', 'click', FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto);
-		FiscalizacaoObjetoInfracao.container.delegate('.btnAddArq', 'click', FiscalizacaoObjetoInfracao.onEnviarArquivoClick);
-		FiscalizacaoObjetoInfracao.container.delegate('.btnLimparArq', 'click', FiscalizacaoObjetoInfracao.onLimparArquivoClick);
-		FiscalizacaoObjetoInfracao.container.delegate('.ddlInfracaoResultouErosaoTipo', 'change', FiscalizacaoObjetoInfracao.onChangeErosao);
-		FiscalizacaoObjetoInfracao.container.delegate('.ddlTeiGeradoPeloSistemaSerieTipo', 'change', FiscalizacaoObjetoInfracao.gerenciarSerie);
+		$('.fsCamposInterdicaoEmbargo', FiscalizacaoObjetoInfracao.container).hide();
 
-		FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed();
-		FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema();
+		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsDigital', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsDigital);
+		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsBloco', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsBloco);
+		FiscalizacaoObjetoInfracao.container.delegate('.rdbExisteAtvAreaDegrad', 'click', FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto);
+		FiscalizacaoObjetoInfracao.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
+	    FiscalizacaoObjetoInfracao.container.delegate('.btnAddArq', 'click', FiscalizacaoObjetoInfracao.onEnviarArquivoClick);
+	    FiscalizacaoObjetoInfracao.container.delegate('.btnLimparArq', 'click', FiscalizacaoObjetoInfracao.onLimparArquivoClick);
+
+		//FiscalizacaoObjetoInfracao.container.delegate('.rdbAreaEmbargadaAtvIntermed', 'click', FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed);
+		//FiscalizacaoObjetoInfracao.container.delegate('.rdbTeiGeradoPeloSistema', 'click', FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema);
+		//FiscalizacaoObjetoInfracao.container.delegate('.ddlInfracaoResultouErosaoTipo', 'change', FiscalizacaoObjetoInfracao.onChangeErosao);
+		//FiscalizacaoObjetoInfracao.container.delegate('.ddlTeiGeradoPeloSistemaSerieTipo', 'change', FiscalizacaoObjetoInfracao.gerenciarSerie);
+
+		//FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed();
+		//FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema();
 		FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto();
-		FiscalizacaoObjetoInfracao.gerenciarSerie();
+		//FiscalizacaoObjetoInfracao.gerenciarSerie();
 
 		Mascara.load(FiscalizacaoObjetoInfracao.container);
-		Fiscalizacao.configurarBtnCancelarStep(6);
+		Fiscalizacao.configurarBtnCancelarStep(5);
+
+		if ($('.rdoIsDigital', FiscalizacaoObjetoInfracao.container).attr('checked') == true) {
+		    FiscalizacaoObjetoInfracao.onSelecionarIsDigital();
+		} else if ($('.rdoIsBloco', FiscalizacaoObjetoInfracao.container).attr('checked') == true) {
+		    FiscalizacaoObjetoInfracao.onSelecionarIsBloco();
+		}
+
 		MasterPage.carregando(false);
 		MasterPage.botoes();
 		Fiscalizacao.gerenciarVisualizacao();
 	},
 
-	gerenciarAreaEmbarcadaAtvIntermed: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbAreaEmbargadaAtvIntermed:checked', container).val();
+	onSalvarFiscalizacaoObjetoInfracao: function () {
+	    var container = FiscalizacaoObjetoInfracao.container;
 
-		$('.divAreaEmbarcada', container).addClass('hide');
-		if (rdb == 1) {
-			$('.divAreaEmbarcada', container).removeClass('hide');
-		}
+	    var obj = {
+	        Id: Number($('.hdnObjetoInfracaoId', container).val()) || 0,
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()) || 0,
+	        DataLavraturaTermo: { DataTexto: $('.txtDataLavraturaTermo', container).val() },
+	        OpniaoAreaDanificada: $('.txtOpniaoAreaDanificada', container).val(),
+	        DescricaoTermoEmbargo: $('.txtDescricaoTermoEmbargo', container).val(),
+	        NumeroLacre: $('.txtNumeroLacre', container).val(),
+	        ExisteAtvAreaDegrad: $('.rdbExisteAtvAreaDegrad:checked', container).val(),
+	        ExisteAtvAreaDegradEspecificarTexto: $('.txtExisteAtvAreaDegradEspecificarTexto', container).val(),
+	    }
 
-		if (rdb == 0) {
-			$('.divTeiGeradoPeloSistema', container).addClass('hide');
+	    //Preenchendo o objeto
+	    if ($('.rdoIsBloco', container).attr('checked')) {
+	        obj.IsDigital = false;
+	        obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+	        obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+	    } else if ($('.rdoIsDigital', container).attr('checked')) {
+	        obj.IsDigital = true;
+	    }
+	    obj.SerieId = $('.ddlSeries :selected', container).val();
 
-			//Limpa campos
-			$('.rdbTeiGeradoPeloSistema:checked', container).removeAttr('checked');
-			$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(0)', container).attr('selected', 'selected');
-			$('.txtDataLavraturaTermo', container).val('');
-			$('.txtDescricaoTermoEmbargo', container).val('');
-			$('.txtNumTeiBloco', container).val('');
+	    if ($('.rdbInterditado', container).attr('checked')) {
+	        obj.Interditado = true;
+	    } else if ($('.rdbEmbargado', container).attr('checked')) {
+	        obj.Interditado = false;
+	    }
 
-		}
+	    if (obj.ExisteAtvAreaDegrad == 0) {
+	        obj.ExisteAtvAreaDegradEspecificarTexto = '';
+	    }
+	    
+	    var arrayMensagem = new Array();
+
+	    arrayMensagem.push(FiscalizacaoObjetoInfracao.settings.mensagens.Salvar)
+
+	    return Fiscalizacao.onSalvarStep(FiscalizacaoObjetoInfracao.settings.urls.salvar, obj, arrayMensagem);
 	},
 
-	gerenciarTeiGeradoPeloSistema: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbTeiGeradoPeloSistema:checked', container).val();
+	onSelecionarIsDigital: function () {
+	    $('.fsCamposInterdicaoEmbargo', FiscalizacaoObjetoInfracao.container).show();
 
-		$('.divTeiGeradoPeloSistema', container).addClass('hide');
-		$('.ddlTeiGeradoPeloSistemaSerieTipo', container).attr('disabled', 'disabled');
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).addClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
 
-		if (rdb == 0) {
-			$('.divTeiGeradoPeloSistema', container).removeClass('hide');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).show();
+	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 
-			if ($('.hdnIsVisualizar', container).val() != 'true')
-				$('.ddlTeiGeradoPeloSistemaSerieTipo', container).removeAttr('disabled', 'disabled');
-			FiscalizacaoObjetoInfracao.gerenciarSerie();
-		} else {
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).addClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
 
-			if (rdb == 1) {
-				$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(3)', container).attr('selected', 'selected');
-				$('.ddlTeiGeradoPeloSistemaSerieTipo', container).attr('disabled', 'disabled');
-			} else {
-				$('.ddlTeiGeradoPeloSistemaSerieTipo option:eq(0)', container).attr('selected', 'selected');
-			}
-		}
+	    $('.divPDF', FiscalizacaoObjetoInfracao.container).hide();
+	},
 
+	onSelecionarIsBloco: function () {
+	    $('.fsCamposInterdicaoEmbargo', FiscalizacaoObjetoInfracao.container).show();
+
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).removeAttr('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('');
+
+	    $('.ddlSeries option:eq(0)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).hide();
+	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeAttr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
+
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).removeAttr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('');
+
+	    $('.divPDF', FiscalizacaoObjetoInfracao.container).show();
 	},
 
 	gerenciarExisteAtvAreaDegradEspecificarTexto: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbExisteAtvAreaDegrad:checked', container).val();
+	    var container = FiscalizacaoObjetoInfracao.container;
+	    var rdb = $('.rdbExisteAtvAreaDegrad:checked', container).val();
 
-		$('.divExisteAtvAreaDegradEspecificarTexto', container).addClass('hide');
-		if (rdb == 1) {
-			$('.divExisteAtvAreaDegradEspecificarTexto', container).removeClass('hide');
-		}
+	    $('.divExisteAtvAreaDegradEspecificarTexto', container).addClass('hide');
+	    if (rdb == 1) {
+	        $('.divExisteAtvAreaDegradEspecificarTexto', container).removeClass('hide');
+	    }
 	},
 
-	gerenciarSerie: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-		var rdb = $('.rdbTeiGeradoPeloSistema:checked', container).val();
-		if (rdb == 0) {
-			var serie = $('.ddlTeiGeradoPeloSistemaSerieTipo :selected').val();
-			if (serie == 3) {
-				$('.lblNumTEI', container).text('Nº do TEI *');
-			} else {
-				$('.lblNumTEI', container).text('Nº do TEI - bloco *');
-			}
-		}
-	},
-
-	onSalvarFiscalizacaoObjetoInfracao: function () {
-		var container = FiscalizacaoObjetoInfracao.container;
-
-		var obj = {
-			Id: Number($('.hdnObjetoInfracaoId', container).val()) || 0,
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()) || 0,
-			AreaEmbargadaAtvIntermed: $('.rdbAreaEmbargadaAtvIntermed:checked', container).val(),
-			TeiGeradoPeloSistema: $('.rdbTeiGeradoPeloSistema:checked', container).val(),
-			TeiGeradoPeloSistemaSerieTipo: $('.ddlTeiGeradoPeloSistemaSerieTipo :selected', container).val(),
-			TeiGeradoPeloSistemaSerieTipoTexto: $('.ddlTeiGeradoPeloSistemaSerieTipo :selected', container).text(),
-			NumTeiBloco: $('.txtNumTeiBloco', container).val(),
-			DataLavraturaTermo: { DataTexto: $('.txtDataLavraturaTermo', container).val() },
-			OpniaoAreaDanificada: $('.txtOpniaoAreaDanificada', container).val(),
-			DescricaoTermoEmbargo: $('.txtDescricaoTermoEmbargo', container).val(),
-			ExisteAtvAreaDegrad: $('.rdbExisteAtvAreaDegrad:checked', container).val(),
-			ExisteAtvAreaDegradEspecificarTexto: $('.txtExisteAtvAreaDegradEspecificarTexto', container).val(),
-			FundamentoInfracao: $('.txtFundamentoInfracao', container).val(),
-			UsoSoloAreaDanificada: $('.txtUsoSoloAreaDanificada', container).val(),
-			CaracteristicaSoloAreaDanificada: 0,
-			AreaDeclividadeMedia: $('.txtAreaDeclividadeMedia', container).val(),
-			InfracaoResultouErosaoTipo: $('.ddlInfracaoResultouErosaoTipo', container).val(),
-			Arquivo: $.parseJSON($('.hdnArquivoJson', container).val()),
-			InfracaoResultouErosaoTipoTexto: $('.txtErosao', container).val().trim()
-		}
-
-		$('.checkboxCaracteristicasSolo:checked', Fiscalizacao.container).each(function () {
-			obj.CaracteristicaSoloAreaDanificada += parseInt($(this).val());
-		});
-
-
-		//limpando dados {
-		if (obj.AreaEmbargadaAtvIntermed == 1) {
-			if (obj.TeiGeradoPeloSistema == 1) {
-				obj.NumTeiBloco = '';
-				obj.Arquivo = null;
-				obj.DataLavraturaTermo.DataTexto = '';
-			}
-		}
-
-		if (obj.AreaEmbargadaAtvIntermed == 0) {
-			obj.OpniaoAreaDanificada = '';
-		}
-
-		if (obj.ExisteAtvAreaDegrad == 0) {
-			obj.ExisteAtvAreaDegradEspecificarTexto = '';
-		}
-
-		//}
-
-		var arrayMensagem = new Array();
-
-		arrayMensagem.push(FiscalizacaoObjetoInfracao.settings.mensagens.Salvar)
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoObjetoInfracao.settings.urls.salvar, obj, arrayMensagem);
+	mascaraLacre: function (evt) {
+	    //Permite apenas números, vírgulas e espaços.
+	    if ((evt.originalEvent.key >= 0
+             && evt.originalEvent.key <= 9)
+            || evt.originalEvent.key == ','
+            || evt.originalEvent.key == ' ') {
+	        return true;
+	    } else {
+	        return false;
+	    }
 	},
 
 	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', FiscalizacaoObjetoInfracao.container).val();
+	    var nomeArquivo = $('.inputFile', FiscalizacaoObjetoInfracao.container).val();
 
-		erroMsg = new Array();
+	    erroMsg = new Array();
 
-		if (nomeArquivo == '') {
-			erroMsg.push(FiscalizacaoObjetoInfracao.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!FiscalizacaoObjetoInfracao.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(FiscalizacaoObjetoInfracao.settings.mensagens.ArquivoNaoEhPdf);
-			}
-		}
+	    if (nomeArquivo == '') {
+	        erroMsg.push(FiscalizacaoObjetoInfracao.settings.mensagens.ArquivoObrigatorio);
+	    } else {
+	        var tam = nomeArquivo.length - 4;
+	        if (!FiscalizacaoObjetoInfracao.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+	            erroMsg.push(FiscalizacaoObjetoInfracao.settings.mensagens.ArquivoNaoEhPdf);
+	        }
+	    }
 
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
+	    if (erroMsg.length > 0) {
+	        Mensagem.gerar(Fiscalizacao.container, erroMsg);
+	        return;
+	    }
 
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', FiscalizacaoObjetoInfracao.container);
-		FileUpload.upload(FiscalizacaoObjetoInfracao.settings.urls.enviarArquivo, inputFile, FiscalizacaoObjetoInfracao.callBackArqEnviado);
+	    MasterPage.carregando(true);
+	    var inputFile = $('.inputFile', FiscalizacaoObjetoInfracao.container);
+	    FileUpload.upload(FiscalizacaoObjetoInfracao.settings.urls.enviarArquivo, inputFile, FiscalizacaoObjetoInfracao.callBackArqEnviado);
 	},
 
 	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', FiscalizacaoObjetoInfracao.container).val('');
-		$('.inputFile', FiscalizacaoObjetoInfracao.container).val('');
+	    $('.hdnArquivoJson', FiscalizacaoObjetoInfracao.container).val('');
+	    $('.inputFile', FiscalizacaoObjetoInfracao.container).val('');
 
-		$('.spanInputFile', FiscalizacaoObjetoInfracao.container).removeClass('hide');
-		$('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).addClass('hide');
+	    $('.spanInputFile', FiscalizacaoObjetoInfracao.container).removeClass('hide');
+	    $('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).addClass('hide');
 
-		$('.btnAddArq', FiscalizacaoObjetoInfracao.container).removeClass('hide');
-		$('.btnLimparArq', FiscalizacaoObjetoInfracao.container).addClass('hide');
+	    $('.btnAddArq', FiscalizacaoObjetoInfracao.container).removeClass('hide');
+	    $('.btnLimparArq', FiscalizacaoObjetoInfracao.container).addClass('hide');
 	},
 
 	validarTipoArquivo: function (tipo) {
 
-		var tipoValido = false;
-		$(FiscalizacaoObjetoInfracao.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
+	    var tipoValido = false;
+	    $(FiscalizacaoObjetoInfracao.TiposArquivo).each(function (i, tipoItem) {
+	        if (tipoItem == tipo) {
+	            tipoValido = true;
+	        }
+	    });
 
-		return tipoValido;
+	    return tipoValido;
 	},
 
 	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', FiscalizacaoObjetoInfracao.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+	    var ret = eval('(' + retorno + ')');
+	    if (ret.Arquivo != null) {
+	        $('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).text(ret.Arquivo.Nome);
+	        $('.hdnArquivoJson', FiscalizacaoObjetoInfracao.container).val(JSON.stringify(ret.Arquivo));
+	        $('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
 
-			$('.spanInputFile', FiscalizacaoObjetoInfracao.container).addClass('hide');
-			$('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).removeClass('hide');
+	        $('.spanInputFile', FiscalizacaoObjetoInfracao.container).addClass('hide');
+	        $('.txtArquivoNome', FiscalizacaoObjetoInfracao.container).removeClass('hide');
 
-			$('.btnAddArq', FiscalizacaoObjetoInfracao.container).addClass('hide');
-			$('.btnLimparArq', FiscalizacaoObjetoInfracao.container).removeClass('hide');
-		} else {
-			FiscalizacaoObjetoInfracao.onLimparArquivoClick();
-			Mensagem.gerar(Fiscalizacao.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
-	},
-
-	onChangeErosao: function () {
-		$('.divTxtErosao', FiscalizacaoObjetoInfracao.container).addClass('hide');
-		$('.txtErosao', FiscalizacaoObjetoInfracao.container).val('');
-		if ($(this).val() === "1") {
-			$('.divTxtErosao', FiscalizacaoObjetoInfracao.container).removeClass('hide');
-		}
+	        $('.btnAddArq', FiscalizacaoObjetoInfracao.container).addClass('hide');
+	        $('.btnLimparArq', FiscalizacaoObjetoInfracao.container).removeClass('hide');
+	    } else {
+	        FiscalizacaoObjetoInfracao.onLimparArquivoClick();
+	        Mensagem.gerar(Fiscalizacao.container, ret.Msg);
+	    }
+	    MasterPage.carregando(false);
 	}
-},
+}
 
-// 7ª Aba
+// 6ª Aba - Apreensão
 FiscalizacaoMaterialApreendido = {
 	settings: {
 		urls: {
@@ -1999,32 +1934,27 @@ FiscalizacaoMaterialApreendido = {
 
 	callBackObterFiscalizacaoMaterialApreendido: function () {
 		FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendidoDefault();
-		FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema();
 	},
 
 	callBackObterFiscalizacaoMaterialApreendidoDefault: function () {
-		Fiscalizacao.stepAtual = 7;
+		Fiscalizacao.stepAtual = 6;
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoMaterialApreendido.onSalvarFiscalizacaoMaterialApreendido;
 		Fiscalizacao.alternarAbas();
-
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlTipos', 'change', FiscalizacaoMaterialApreendido.onSelecionarTipo);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlEstado', 'change', Aux.onEnderecoEstadoChange);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsApreendidoNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsApreendidoNao);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaSim', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim);
-		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsGeradoSistemaNao', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao);
+		
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsDigital', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsDigital);
+		FiscalizacaoMaterialApreendido.container.delegate('.rdoIsBloco', 'change', FiscalizacaoMaterialApreendido.onSelecionarIsBloco);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAssociarDepositario', 'click', FiscalizacaoMaterialApreendido.onAssociarDepositario);
+		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
+		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarMaterial', 'click', FiscalizacaoMaterialApreendido.adicionarMaterial);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirMaterial', 'click', FiscalizacaoMaterialApreendido.excluirMaterial);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
+	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
-		FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
+	    Mascara.load(FiscalizacaoMaterialApreendido.container);
 
-		FiscalizacaoMaterialApreendido.container.delegate('.rbdIsGeradoSistema', 'change', FiscalizacaoMaterialApreendido.gerenciarIsGeradaSistema);
-		FiscalizacaoMaterialApreendido.container.delegate('.ddlSeries', 'change', FiscalizacaoMaterialApreendido.gerenciarSerie);
-
-		Mascara.load(FiscalizacaoMaterialApreendido.container);
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).hide();
 
 		if (parseInt($('.hdnMaterialApreendidoId', FiscalizacaoMaterialApreendido.container).val()) > 0) {
 			Fiscalizacao.salvarEdicao = false;
@@ -2034,318 +1964,542 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.salvarEdicao = true;
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
+		
+		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
+		} else if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    FiscalizacaoMaterialApreendido.onSelecionarIsBloco();
+		}
 
 		MasterPage.botoes();
 		MasterPage.carregando(false);
 	},
 
 	configurarBtnEditar: function () {
-		$(".btnEditar", Fiscalizacao.container).unbind('click');
-		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
+	    $(".btnEditar", Fiscalizacao.container).unbind('click');
+	    $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoMaterialApreendido.onBtnEditar);
 	},
 
 	onBtnEditar: function () {
-
-		Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
-
-			FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
-			Fiscalizacao.salvarEdicao = true;
-			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
-			Fiscalizacao.configurarBtnCancelarStep(7);
-			Fiscalizacao.gerenciarVisualizacao();
-		});
+	    Fiscalizacao.onObterStep(FiscalizacaoMaterialApreendido.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+	        FiscalizacaoMaterialApreendido.callBackObterFiscalizacaoMaterialApreendido();
+	        Fiscalizacao.salvarEdicao = true;
+	        Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+	        Fiscalizacao.configurarBtnCancelarStep(6);
+	        Fiscalizacao.gerenciarVisualizacao();
+	    });
 	},
 
-	onSelecionarIsApreendidoSim: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).show();
+	onSelecionarIsDigital: function () {
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).show();
+
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+	    
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).show();
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).addClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
+
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).hide();
 	},
 
-	onSelecionarIsApreendidoNao: function () {
-		$('.divApreensao', FiscalizacaoMaterialApreendido.container).hide();
+	onSelecionarIsBloco: function () {
+	    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).show();
 
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
-		$('.rdoIsGeradoSistemaNao', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.rdoIsGeradoSistemaSim', FiscalizacaoMaterialApreendido.container).removeAttr('checked');
-		$('.txtNumeroTad', FiscalizacaoMaterialApreendido.container).val('');
-		$('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
-	},
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeAttr('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
+	    
+	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).hide();
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 
-	gerenciarSerie: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-		var rdb = $('.rbdIsGeradoSistema:checked', container).val();
-		if (rdb == 0) {
-			var serie = $('.ddlSeries :selected').val();
-			if (serie == 3) {
-				$('.lblNumTAD', container).text('Nº do TAD *');
-			} else {
-				$('.lblNumTAD', container).text('Nº do TAD - bloco *');
-			}
-		}
-	},
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
+	    $('.txtDataLavratura', FiscalizacaoMaterialApreendido.container).val('');
 
-	gerenciarIsGeradaSistema: function () {
-		var rdb = $('.rbdIsGeradoSistema:checked', FiscalizacaoMaterialApreendido.container).val();
-		if (rdb == 0) {
-			FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaNao();
-		} else {
-			if (rdb == 1) {
-				FiscalizacaoMaterialApreendido.onSelecionarIsGeradaSistemaSim();
-			}
-		}
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
-
-	onSelecionarIsGeradaSistemaSim: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).hide();
-
-		$('.ddlSeries option:eq(3)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
-	},
-
-	onSelecionarIsGeradaSistemaNao: function () {
-		$('.divIsTad', FiscalizacaoMaterialApreendido.container).show();
-		$('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
-		FiscalizacaoMaterialApreendido.gerenciarSerie();
-	},
-
-	onSalvarFiscalizacaoMaterialApreendido: function () {
-		var container = FiscalizacaoMaterialApreendido.container;
-
-		var obj = {
-			Id: Number($('.hdnMaterialApreendidoId', container).val()),
-			FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
-			IsApreendido: '',
-			Materiais: []
-		};
-
-		if ($('.rdoIsApreendidoSim', container).attr('checked')) {
-			obj.IsApreendido = true;
-
-			obj.SerieId = $('.ddlSeries :selected', container).val();
-
-			if ($('.rdoIsGeradoSistemaNao', container).attr('checked')) {
-				obj.IsTadGeradoSistema = false;
-				obj.NumeroTad = $('.txtNumeroTad', container).val();
-				obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
-				obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
-			}
-
-			if ($('.rdoIsGeradoSistemaSim', container).attr('checked')) {
-				obj.IsTadGeradoSistema = true;
-			}
-
-
-			obj.Depositario = {
-				Id: $('.hdnDepositarioId', container).val(),
-				Estado: $('.ddlEstado :selected', container).val(),
-				Municipio: $('.ddlMunicipio :selected', container).val(),
-				Logradouro: $('.txtLogradouro', container).val(),
-				Bairro: $('.txtBairro', container).val(),
-				Distrito: $('.txtDistrito', container).val()
-			};
-			obj.Descricao = $('.txtDescricao', container).val();
-			obj.ValorProdutos = $('.txtValorProdutos', container).val();
-			obj.Opiniao = $('.txtOpiniao', container).val();
-
-			$('.hdnItemJSon', container.find('.divMateriais')).each(function () {
-				var objMaterial = String($(this).val());
-				if (objMaterial != '') {
-					obj.Materiais.push(JSON.parse(objMaterial));
-				}
-			});
-		}
-
-		if ($('.rdoIsApreendidoNao', container).attr('checked')) {
-			obj.IsApreendido = false;
-		}
-
-		var arrayMensagem = [];
-
-		arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
-
-		return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
+	    $('.divPDF', FiscalizacaoMaterialApreendido.container).show();
 	},
 
 	onAssociarDepositario: function () {
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
 
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
-			});
-		});
-	},
+	    //Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+        //Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+	    var dataPessoa = {
+	        cpfCnpj: null,
+            tipoPessoa: null,
+            tipoCadastro: '1'
+	    };
 
-	onEditarDepositario: function () {
-		var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
-		FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
-
-		Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
-			FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-				tituloCriar: 'Cadastrar Depositario',
-				tituloEditar: 'Editar Depositario',
-				tituloVisualizar: 'Visualizar Depositario',
-				onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
-				editarVisualizar: Fiscalizacao.salvarEdicao
-			});
-		});
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.associarDepositario, dataPessoa, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario
+	        });
+	    });
 	},
 
 	callBackEditarDepositario: function (Pessoa) {
-		$('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
-		$('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
-		$('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
-		return true;
+	    $('.spanVisualizarDepositario', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
+	    $('.txtNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtCnpj', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    return true;
 	},
 
-	onSelecionarTipo: function () {
-		var tipo = $('.ddlTipos :selected', FiscalizacaoMaterialApreendido.container).val();
-		$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('');
+	onEditarDepositario: function () {
+	    var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
 
-		switch (tipo) {
-
-			case '1':
-			case '7':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar a quantidade');
-				break;
-
-			case '2':
-			case '3':
-			case '4':
-			case '6':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar o volume em (m³) e como foi medido');
-				break;
-
-			case '5':
-			case '8':
-				$('.labEspecificacao', FiscalizacaoMaterialApreendido.container).text('Especificar');
-				break;
-		}
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
 	},
 
-	adicionarMaterial: function () {
-		var mensagens = new Array();
-		Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
-		var container = $('.fsMateriais');
+	onSelecionarProdutoApreendido: function () {
+	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container).val();
+	    var unidade = $('.hdnUnidade' + produto, FiscalizacaoMaterialApreendido.container).val();
 
-		var item = { Id: '', TipoId: $('.ddlTipos :selected', container).val(), TipoTexto: $('.ddlTipos :selected', container).text(), Especificacao: $('.txtEspecificacao', container).val() };
-
-		if (item.TipoId == 0) {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.TipoObrigatorio));
-		}
-
-		if (jQuery.trim(item.Especificacao) == '') {
-			mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.EspecificacaoObrigatorio));
-		}
-
-		$('.hdnItemJSon', container).each(function () {
-			var obj = String($(this).val());
-			if (obj != '') {
-				var itemAdd = (JSON.parse(obj));
-				if (item.TipoId == itemAdd.TipoId) {
-					mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.MaterialJaAdicionado));
-				}
-			}
-		});
-
-		if (mensagens.length > 0) {
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
-			return;
-		}
-
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
-		linha.find('.hdnItemJSon').val(JSON.stringify(item));
-		linha.find('.tipo').html(item.TipoTexto).attr('title', item.TipoTexto);
-		linha.find('.especificacao').html(item.Especificacao).attr('title', item.Especificacao);
-
-		$('.dataGridTable tbody:last', container).append(linha);
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-
-		$('.ddlTipos', container).ddlFirst();
-		$('.txtEspecificacao', container).val('');
+	    $('.txtUnidade', FiscalizacaoMaterialApreendido.container).val(unidade);
 	},
 
-	excluirMaterial: function () {
-		var container = $('.fsMateriais');
-		var linha = $(this).closest('tr');
-		linha.remove();
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+	adicionarProdutoApreendido: function () {
+	    var mensagens = new Array();
+	    Mensagem.limpar(FiscalizacaoMaterialApreendido.container);
+	    var container = $('.fsProdutosApreendidos');
+
+        //Monta o objeto
+	    var item = {
+	        Id: 0,
+	        ProdutoId: $('.ddlProdutosApreendidos :selected', container).val(),
+	        ProdutoTexto: $('.ddlProdutosApreendidos :selected', container).text(),
+	        UnidadeTexto: $('.txtUnidade', container).val(),
+	        Quantidade: $('.txtQuantidade', container).val(),
+	        DestinoId: $('.ddlDestinos :selected', container).val(),
+	        DestinoTexto: $('.ddlDestinos :selected', container).text()
+	    };
+
+        //Verifica se todos os campos foram preenchidos, e se  objeto não está repetido
+	    if (item.ProdutoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoObrigatorio));
+	    }
+	    if (item.Quantidade.trim() == '') {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.QuantidadeObrigatoria));
+	    }
+	    if (item.DestinoId == 0) {
+	        mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.DestinoObrigatorio));
+	    }
+	    $('.hdnItemJSon', container).each(function () {
+	        var obj = String($(this).val());
+	        if (obj != '') {
+	            var itemAdd = (JSON.parse(obj));
+	            if (item.ProdutoId == itemAdd.ProdutoId
+                    && item.DestinoId == itemAdd.DestinoId) {
+	                mensagens.push(jQuery.extend(true, {}, FiscalizacaoMaterialApreendido.settings.mensagens.ProdutoJaAdicionado));
+	            }
+	        }
+	    });
+
+	    //Se alguma obrigatoriedade não for atendida, retorna uma mensagem de erro
+	    if (mensagens.length > 0) {
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, mensagens);
+	        return;
+	    }
+
+        //Monta a nova linha
+	    var numItem = 0;
+	    $('.hdnItemJSon', container).each(function(){
+	        numItem++;
+	    });
+	    var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
+	    linha.find('.hdnItemJSon').val(JSON.stringify(item));
+	    linha.find('.item').text(numItem).attr('title', numItem);
+	    linha.find('.produto').text(item.ProdutoTexto).attr('title', item.ProdutoTexto);
+	    linha.find('.unidade').text(item.UnidadeTexto).attr('title', item.UnidadeTexto);
+	    linha.find('.quantidade').text(item.Quantidade).attr('title', item.Quantidade);
+	    linha.find('.destino').text(item.DestinoTexto).attr('title', item.DestinoTexto);
+
+        //Adiciona a nova linha na tabela
+	    $('.dataGridTable tbody:last', container).append(linha);
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+
+        //Limpa os controles
+	    $('.ddlProdutosApreendidos', container).ddlFirst();
+	    $('.txtUnidade', container).val('');
+	    $('.txtQuantidade', container).val('');
+	    $('.ddlDestinos', container).ddlFirst();
+	},
+
+	excluirProdutoApreendido: function () {
+        //remove a linha
+	    $(this).closest('tr').remove();
+
+	    var container = $('.fsProdutosApreendidos');
+
+	    //atualiza o número na coluna item das outras linhas
+	    var numItem = 0;
+	    container.find('tr').each(function () {
+	        if ($(this).find('.item').text() != '') {
+	            $(this).find('.item').text(++numItem);
+	        }
+	    });
+
+	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+	},
+
+	mascaraLacre: function (evt) {
+	    //Permite apenas números, vírgulas e espaços.
+	    if ((evt.originalEvent.key >= 0
+             && evt.originalEvent.key <= 9)
+            || evt.originalEvent.key == ','
+            || evt.originalEvent.key == ' ') {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	},
+
+	onSalvarFiscalizacaoMaterialApreendido: function () {
+	    var container = FiscalizacaoMaterialApreendido.container;
+
+        //Criação do objeto (da classe MaterialApreendido)
+	    var obj = {
+	        Id: Number($('.hdnMaterialApreendidoId', container).val()),
+	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()),
+	        ProdutosApreendidos: []
+	    };
+
+        //Preenchendo o objeto com os itens da sessão Apreensão
+	    if ($('.rdoIsBloco', container).attr('checked')) {
+	        obj.IsDigital = false;
+	        obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+	        obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+	    } else if ($('.rdoIsDigital', container).attr('checked')) {
+	        obj.IsDigital = true;
+	    }
+	    obj.SerieId = $('.ddlSeries :selected', container).val();
+	    obj.Descricao = $('.txtDescricao', container).val();
+	    obj.ValorProdutos = $('.txtValorBensApreendidos', container).val();
+	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
+
+	    //Preenchendo o objeto com os itens da sessão Depositário
+	    obj.Depositario = {
+	        Id: $('.hdnDepositarioId', container).val(),
+	        Logradouro: $('.txtLogradouro', container).val(),
+	        Bairro: $('.txtBairro', container).val(),
+	        Distrito: $('.txtDistrito', container).val(),
+	        Estado: $('.ddlEstado :selected', container).val(),
+	        Municipio: $('.ddlMunicipio :selected', container).val()
+	    };
+
+	    //Preenchendo o objeto com os itens da sessão Produtos Apreendidos / Destinação
+	    $('.hdnItemJSon', container.find('.divProdutosApreendidos')).each(function () {
+	        var objProdutoApreendido = String($(this).val());
+	        if (objProdutoApreendido != '') {
+	            obj.ProdutosApreendidos.push(JSON.parse(objProdutoApreendido));
+	        }
+	    });
+	    obj.Opiniao = $('.txtOpiniao', container).val();
+
+	    var arrayMensagem = [];
+
+	    arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
+
+	    return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
 	},
 
 	onEnviarArquivoClick: function () {
-		var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
+	    var nomeArquivo = $('.inputFile', FiscalizacaoMaterialApreendido.container).val();
 
-		erroMsg = new Array();
+	    erroMsg = new Array();
 
-		if (nomeArquivo == '') {
-			erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
-		} else {
-			var tam = nomeArquivo.length - 4;
-			if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
-				erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
-			}
-		}
+	    if (nomeArquivo == '') {
+	        erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoObrigatorio);
+	    } else {
+	        var tam = nomeArquivo.length - 4;
+	        if (!FiscalizacaoMaterialApreendido.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+	            erroMsg.push(FiscalizacaoMaterialApreendido.settings.mensagens.ArquivoNaoEhPdf);
+	        }
+	    }
 
-		if (erroMsg.length > 0) {
-			Mensagem.gerar(Fiscalizacao.container, erroMsg);
-			return;
-		}
+	    if (erroMsg.length > 0) {
+	        Mensagem.gerar(Fiscalizacao.container, erroMsg);
+	        return;
+	    }
 
-		MasterPage.carregando(true);
-		var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
-		FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
+	    MasterPage.carregando(true);
+	    var inputFile = $('.inputFile', FiscalizacaoMaterialApreendido.container);
+	    FileUpload.upload(FiscalizacaoMaterialApreendido.settings.urls.enviarArquivo, inputFile, FiscalizacaoMaterialApreendido.callBackArqEnviado);
 	},
 
 	onLimparArquivoClick: function () {
-		$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
-		$('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
+	    $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val('');
+	    $('.inputFile', FiscalizacaoMaterialApreendido.container).val('');
 
-		$('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	    $('.spanInputFile', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).addClass('hide');
 
-		$('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	    $('.btnAddArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
 	},
 
 	validarTipoArquivo: function (tipo) {
 
-		var tipoValido = false;
-		$(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
-			if (tipoItem == tipo) {
-				tipoValido = true;
-			}
-		});
+	    var tipoValido = false;
+	    $(FiscalizacaoMaterialApreendido.TiposArquivo).each(function (i, tipoItem) {
+	        if (tipoItem == tipo) {
+	            tipoValido = true;
+	        }
+	    });
 
-		return tipoValido;
+	    return tipoValido;
 	},
 
 	callBackArqEnviado: function (controle, retorno, isHtml) {
-		var ret = eval('(' + retorno + ')');
-		if (ret.Arquivo != null) {
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
-			$('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+	    var ret = eval('(' + retorno + ')');
+	    if (ret.Arquivo != null) {
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).text(ret.Arquivo.Nome);
+	        $('.hdnArquivoJson', FiscalizacaoMaterialApreendido.container).val(JSON.stringify(ret.Arquivo));
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
 
-			$('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	        $('.spanInputFile', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.txtArquivoNome', FiscalizacaoMaterialApreendido.container).removeClass('hide');
 
-			$('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
-			$('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-		} else {
-			FiscalizacaoMaterialApreendido.onLimparArquivoClick();
-			Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
-		}
-		MasterPage.carregando(false);
+	        $('.btnAddArq', FiscalizacaoMaterialApreendido.container).addClass('hide');
+	        $('.btnLimparArq', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    } else {
+	        FiscalizacaoMaterialApreendido.onLimparArquivoClick();
+	        Mensagem.gerar(FiscalizacaoMaterialApreendido.container, ret.Msg);
+	    }
+	    MasterPage.carregando(false);
 
-		Mensagem.limpar(Fiscalizacao.container);
-	}
+	    Mensagem.limpar(Fiscalizacao.container);
+	},
 }
 
-// 8ª Aba
+// 7ª aba - Outras Penalidades
+FiscalizacaoOutrasPenalidades = {
+    settings: {
+        urls: {
+            salvar: '',
+            obterSerie: '',
+            enviarArquivo: '',
+            obter: '',
+        },
+    },
+    container: null,
+    mensagens: null,
+    TiposArquivo: [],
+
+    callBackObterFiscalizacaoOutrasPenalidadesVisualizar: function () {
+        FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesDefault();
+    },
+
+    callBackObterFiscalizacaoOutrasPenalidades: function () {
+        FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidadesDefault();
+    },
+
+    callBackObterFiscalizacaoOutrasPenalidadesDefault: function () {
+        Fiscalizacao.stepAtual = 7;
+        Fiscalizacao.salvarTelaAtual = FiscalizacaoOutrasPenalidades.onSalvarFiscalizacaoOutrasPenalidades;
+        Fiscalizacao.alternarAbas();
+
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).hide();
+
+        FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsDigital', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsDigital);
+        FiscalizacaoOutrasPenalidades.container.delegate('.rdoIsBloco', 'change', FiscalizacaoOutrasPenalidades.onSelecionarIsBloco);
+        FiscalizacaoOutrasPenalidades.container.delegate('.btnAddArq', 'click', FiscalizacaoOutrasPenalidades.onEnviarArquivoClick);
+        FiscalizacaoOutrasPenalidades.container.delegate('.btnLimparArq', 'click', FiscalizacaoOutrasPenalidades.onLimparArquivoClick);
+        
+        Mascara.load(FiscalizacaoOutrasPenalidades.container);
+
+        if (parseInt($('.hdnOutrasPenalidadesId', FiscalizacaoOutrasPenalidades.container).val()) > 0) {
+            Fiscalizacao.salvarEdicao = false;
+            Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
+            FiscalizacaoOutrasPenalidades.configurarBtnEditar();
+        } else {
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+        }
+        
+        if ($('.rdoIsDigital', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
+            FiscalizacaoOutrasPenalidades.onSelecionarIsDigital();
+        } else if ($('.rdoIsBloco', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
+            FiscalizacaoOutrasPenalidades.onSelecionarIsBloco();
+        }
+        
+        MasterPage.botoes();
+        MasterPage.carregando(false);
+    },
+
+    onSalvarFiscalizacaoOutrasPenalidades: function () {
+        var container = FiscalizacaoOutrasPenalidades.container;
+
+        //Criação do objeto (da classe OutrasPenalidades)
+        var obj = {
+            Id: Number($('.hdnOutrasPenalidadesId', container).val()),
+            FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val())
+        };
+
+        //Preenchendo o objeto
+        if ($('.rdoIsBloco', container).attr('checked')) {
+            obj.IsDigital = false;
+            obj.NumeroIUF = $('.txtNumeroIUF', container).val();
+            obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
+            obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+        } else if ($('.rdoIsDigital', container).attr('checked')) {
+            obj.IsDigital = true;
+        }
+        obj.SerieId = $('.ddlSeries :selected', container).val();
+        obj.Descricao = $('.txtDescricao', container).val();
+
+        var arrayMensagem = [];
+
+        arrayMensagem.push(FiscalizacaoOutrasPenalidades.settings.mensagens.Salvar);
+
+        return Fiscalizacao.onSalvarStep(FiscalizacaoOutrasPenalidades.settings.urls.salvar, obj, arrayMensagem);
+    },
+
+    configurarBtnEditar: function () {
+        $(".btnEditar", Fiscalizacao.container).unbind('click');
+        $(".btnEditar", Fiscalizacao.container).click(FiscalizacaoOutrasPenalidades.onBtnEditar);
+    },
+
+    onBtnEditar: function () {
+        Fiscalizacao.onObterStep(FiscalizacaoOutrasPenalidades.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
+            FiscalizacaoOutrasPenalidades.callBackObterFiscalizacaoOutrasPenalidades();
+            Fiscalizacao.salvarEdicao = true;
+            Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
+            Fiscalizacao.configurarBtnCancelarStep(7);
+            Fiscalizacao.gerenciarVisualizacao();
+        });
+    },
+
+    onSelecionarIsDigital: function () {
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
+
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).show();
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
+
+        $('.divPDF', FiscalizacaoOutrasPenalidades.container).hide();
+    },
+
+    onSelecionarIsBloco: function () {
+        $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).show();
+
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+        $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.ddlSeries option:eq(0)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).hide();
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
+        $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
+        $('.txtDataLavratura', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.divPDF', FiscalizacaoOutrasPenalidades.container).show();
+    },
+
+    onEnviarArquivoClick: function () {
+        var nomeArquivo = $('.inputFile', FiscalizacaoOutrasPenalidades.container).val();
+
+        erroMsg = new Array();
+
+        if (nomeArquivo == '') {
+            erroMsg.push(FiscalizacaoOutrasPenalidades.settings.mensagens.ArquivoObrigatorio);
+        } else {
+            var tam = nomeArquivo.length - 4;
+            if (!FiscalizacaoOutrasPenalidades.validarTipoArquivo(nomeArquivo.toLowerCase().substr(tam))) {
+                erroMsg.push(FiscalizacaoOutrasPenalidades.settings.mensagens.ArquivoNaoEhPdf);
+            }
+        }
+
+        if (erroMsg.length > 0) {
+            Mensagem.gerar(Fiscalizacao.container, erroMsg);
+            return;
+        }
+
+        MasterPage.carregando(true);
+        var inputFile = $('.inputFile', FiscalizacaoOutrasPenalidades.container);
+        FileUpload.upload(FiscalizacaoOutrasPenalidades.settings.urls.enviarArquivo, inputFile, FiscalizacaoOutrasPenalidades.callBackArqEnviado);
+    },
+
+    onLimparArquivoClick: function () {
+        $('.hdnArquivoJson', FiscalizacaoOutrasPenalidades.container).val('');
+        $('.inputFile', FiscalizacaoOutrasPenalidades.container).val('');
+
+        $('.spanInputFile', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+
+        $('.btnAddArq', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        $('.btnLimparArq', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+    },
+
+    validarTipoArquivo: function (tipo) {
+
+        var tipoValido = false;
+        $(FiscalizacaoOutrasPenalidades.TiposArquivo).each(function (i, tipoItem) {
+            if (tipoItem == tipo) {
+                tipoValido = true;
+            }
+        });
+
+        return tipoValido;
+    },
+
+    callBackArqEnviado: function (controle, retorno, isHtml) {
+        var ret = eval('(' + retorno + ')');
+        if (ret.Arquivo != null) {
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).text(ret.Arquivo.Nome);
+            $('.hdnArquivoJson', FiscalizacaoOutrasPenalidades.container).val(JSON.stringify(ret.Arquivo));
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).attr('href', '/Arquivo/BaixarTemporario?nomeTemporario=' + ret.Arquivo.TemporarioNome + '&contentType=' + ret.Arquivo.ContentType);
+
+            $('.spanInputFile', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+            $('.txtArquivoNome', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+
+            $('.btnAddArq', FiscalizacaoOutrasPenalidades.container).addClass('hide');
+            $('.btnLimparArq', FiscalizacaoOutrasPenalidades.container).removeClass('hide');
+        } else {
+            FiscalizacaoOutrasPenalidades.onLimparArquivoClick();
+            Mensagem.gerar(FiscalizacaoOutrasPenalidades.container, ret.Msg);
+        }
+        MasterPage.carregando(false);
+
+        Mensagem.limpar(Fiscalizacao.container);
+    },
+}
+
+// 8ª Aba - Considerações Finais
 FiscalizacaoConsideracaoFinal = {
 	settings: {
 		urls: {
@@ -2353,9 +2507,11 @@ FiscalizacaoConsideracaoFinal = {
 			obter: '',
 			obterSetores: '',
 			obterEnderecoSetor: '',
+            obterCPF: '',
 			enviarArquivo: '',
 			obterAssinanteCargos: '',
-			obterAssinanteFuncionarios: ''
+			obterAssinanteFuncionarios: '',
+            associarTestemunha: ''
 		},
 		modo: 1,
 		mensagens: {}
@@ -2363,6 +2519,8 @@ FiscalizacaoConsideracaoFinal = {
 	TiposArquivo: [],
 	isLoad: true,
 	container: null,
+	pessoaModalInte: null,
+
 	load: function (container, options) {
 		if (options) { $.extend(FiscalizacaoLocalInfracao.settings, options); }
 		FiscalizacaoConsideracaoFinal.container = MasterPage.getContent(container);
@@ -2379,6 +2537,7 @@ FiscalizacaoConsideracaoFinal = {
 		$('.rblFuncIDAF', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onClickRblFuncIDAF);
 		$('.rblTermo', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onClickRadioTermos);
 		$('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo({ extPermitidas: ['jpg', 'gif', 'png', 'bmp'] });
+		$('.fsArquivosIUF', FiscalizacaoConsideracaoFinal.container).arquivo({ extPermitidas: ['pdf'] });
 
 		$('.ddlFuncIDAF', FiscalizacaoConsideracaoFinal.container).change(FiscalizacaoConsideracaoFinal.onChangeFuncIDAF);
 		$('.ddlTestemunha', FiscalizacaoConsideracaoFinal.container).change(FiscalizacaoConsideracaoFinal.onChangeFunc);
@@ -2393,19 +2552,69 @@ FiscalizacaoConsideracaoFinal = {
 		$('.btnAdicionarAssinante', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onAdicionarAssinante);
 		$('.btnExcluirAssinante', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onExcluirAssinante);
 
+		$('.btnAssociarTestemunha', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onAssociarTestemunha);
+		$('.btnEditarTestemunha', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onEditarTestemunha);
+
 		MasterPage.botoes(FiscalizacaoConsideracaoFinal.container);
+		FiscalizacaoConsideracaoFinal.onClickRadioOpinar();
 	},
+
+	onAssociarTestemunha: function () {
+	    FiscalizacaoConsideracaoFinal.pessoaModalInte = new PessoaAssociar();
+
+	    //Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+	    //Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+	    var dataPessoa = {
+	        cpfCnpj: null,
+	        tipoPessoa: null,
+	        tipoCadastro: '1'
+	    };
+
+	    Modal.abrir(FiscalizacaoConsideracaoFinal.settings.urls.associarTestemunha, dataPessoa, function (container) {
+	        FiscalizacaoConsideracaoFinal.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Testemunha',
+	            tituloEditar: 'Editar Testemunha',
+	            tituloVisualizar: 'Visualizar Testemunha',
+	            onAssociarCallback: FiscalizacaoConsideracaoFinal.callBackEditarTestemunha,
+                isFiscalizacao: true
+	        });
+	    });
+	},
+
+	callBackEditarTestemunha: function (Pessoa) {
+	    $('.spanVisualizarTestemunha', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.hdnTestemunhaId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
+	    $('.txtTestemunhaNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtTestemunhaCPF', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    return true;
+	},
+
+	onEditarTestemunha: function () {
+	    var id = $('.hdnTestemunhaId', FiscalizacaoConsideracaoFinal.container).val();
+	    FiscalizacaoConsideracaoFinal.pessoaModalInte = new PessoaAssociar();
+
+	    Modal.abrir(FiscalizacaoConsideracaoFinal.settings.urls.editarTestemunha + "/" + id, null, function (container) {
+	        FiscalizacaoConsideracaoFinal.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Testemunha',
+	            tituloEditar: 'Editar Testemunha',
+	            tituloVisualizar: 'Visualizar Testemunha',
+	            onAssociarCallback: FiscalizacaoConsideracaoFinal.callBackEditarTestemunha,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
+	},
+
 	configurarBtnEditar: function () {
 
 		$(".btnEditar", Fiscalizacao.container).unbind('click');
 		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoConsideracaoFinal.onBtnEditar);
 	},
+
 	gerarObjetoConsideracaoFinal: function () {
 
 		var consideracaoFinal = {
 			Id: $('.hdnConsideracaoFinalId', FiscalizacaoConsideracaoFinal.container).val(),
 			FiscalizacaoId: $('.hdnFiscalizacaoId', Fiscalizacao.container).val(),
-			Justificar: $('.txtJustificar', FiscalizacaoConsideracaoFinal.container).val().trim(),
 			Descrever: $('.txtDescrever', FiscalizacaoConsideracaoFinal.container).val().trim(),
 			HaReparacao: parseInt($('.rblOpinar:checked', FiscalizacaoConsideracaoFinal.container).val()),
 			Reparacao: '',
@@ -2414,14 +2623,13 @@ FiscalizacaoConsideracaoFinal = {
 			Arquivo: null,
 			Assinantes: [],
 			Testemunhas: [],
-			Anexos: $('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto')
+			Anexos: $('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto'),
+			AnexosIUF: $('.fsArquivosIUF', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto')
 		};
 
 		if (consideracaoFinal.HaReparacao == 1) {
-			consideracaoFinal.HaReparacao = true;
 			consideracaoFinal.Reparacao = $('.txtOpinarReparacao', FiscalizacaoConsideracaoFinal.container).val().trim();
 		} else if (consideracaoFinal.HaReparacao == 0) {
-			consideracaoFinal.HaReparacao = false;
 			consideracaoFinal.Reparacao = $('.txtOpinarReparacao', FiscalizacaoConsideracaoFinal.container).val().trim();
 			consideracaoFinal.HaTermoCompromisso = null;
 			consideracaoFinal.TermoCompromissoJustificar = '';
@@ -2442,9 +2650,8 @@ FiscalizacaoConsideracaoFinal = {
 				TestemunhaIDAF: parseInt($('.ddlFuncIDAF', item).val()),
 				TestemunhaId: parseInt($('.ddlTestemunha', item).val()),
 				TestemunhaNome: $('.txtTestemunhaNome', item).val().trim(),
-				TestemunhaEndereco: $('.txtTestemunhaEndereco', item).val().trim(),
-				Colocacao: $('.hdnColocacao', item).val(),
-				TestemunhaSetorId: parseInt($('.ddlSetor', item).val())
+				TestemunhaCPF: $('.txtTestemunhaCPF', item).val().trim(),
+				Colocacao: $('.hdnColocacao', item).val()
 			};
 
 			if (testemunha.TestemunhaIDAF == 1) {
@@ -2478,6 +2685,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return consideracaoFinal;
 	},
+
 	callBackObterConsideracaoFinalVisualizar: function () {
 		var context = $('.divConsideracaoFinal', Fiscalizacao.container);
 		FiscalizacaoConsideracaoFinal.load(context);
@@ -2492,6 +2700,7 @@ FiscalizacaoConsideracaoFinal = {
 		}
 		MasterPage.carregando(false);
 	},
+
 	onBtnEditar: function () {
 
 		Fiscalizacao.onObterStep(FiscalizacaoConsideracaoFinal.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
@@ -2505,12 +2714,21 @@ FiscalizacaoConsideracaoFinal = {
 			Fiscalizacao.gerenciarVisualizacao();
 		});
 	},
+
 	onClickRadioOpinar: function () {
+	    var haReparacao = parseInt($('.rblOpinar:checked', FiscalizacaoConsideracaoFinal.container).val());
+
 		$('.divTermo', FiscalizacaoConsideracaoFinal.container).addClass('hide');
-		if ($(this).val().toString() != "0") {
+		if (haReparacao == 1) {
 			$('.divTermo', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		}
+
+		$('.divReparacaoSim', FiscalizacaoConsideracaoFinal.container).addClass('hide');
+		if (haReparacao == 1 || haReparacao == 0) {
+		    $('.divReparacaoSim', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
+		}
 	},
+
 	onClickRadioTermos: function () {
 		$('.divTermoJustificar, .divArquivo', FiscalizacaoConsideracaoFinal.container).addClass('hide');
 
@@ -2522,31 +2740,30 @@ FiscalizacaoConsideracaoFinal = {
 			$('.divArquivo', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		}
 	},
+
 	onChangeFuncIDAF: function () {
 		var ddlFuncIDAF = $(this);
 		var context = ddlFuncIDAF.closest('fieldset');
 
-		$('.divFuncionario, .divDadosTestemunha, .divDadosEndereco', context).addClass('hide');
-		$('input[type="text"]', context).val('').removeAttr('disabled').removeClass('disabled');
-		$('.ddlTestemunha, .ddlSetor', context).val(0);
-		$('.ddlSetor', context).val(0).attr('disabled', 'disabled').addClass('disabled');
+		$('.divFuncionario, .divDadosTestemunha', context).addClass('hide');
+		$('.ddlTestemunha', context).val(0);
+		$('.txtTestemunhaNome, .txtTestemunhaCPF', context).val('');
 
 		if (ddlFuncIDAF.val().toString() == "1") {
-			$('.divFuncionario, .divDadosEndereco', context).removeClass('hide');
-			$('.txtTestemunhaEndereco', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
+		    $('input[type="text"]', context).val('').removeAttr('disabled').removeClass('disabled');
+			$('.divFuncionario', context).removeClass('hide');
+			$('.txtTestemunhaCPF', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
 		} else if (ddlFuncIDAF.val().toString() == "2") {
-			$('.divDadosTestemunha, .divDadosEndereco', context).removeClass('hide');
+			$('.divDadosTestemunha', context).removeClass('hide');
 		}
 	},
-	onChangeFunc: function () {
 
+	onChangeFunc: function () {
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
-		var txtTestemunhaEndereco = $('.txtTestemunhaEndereco', context);
-		var ddlSetor = $('.ddlSetor', context);
+		var txtTestemunhaCPF = $('.txtTestemunhaCPF', context);
 
-		txtTestemunhaEndereco.val('');
-		ddlSetor.val(0).attr('disabled', 'disabled').addClass('disabled')
+		txtTestemunhaCPF.val('');
 
 		if (!value) {
 			return;
@@ -2554,7 +2771,8 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(true);
 
-		$.ajax({ url: FiscalizacaoConsideracaoFinal.settings.urls.obterSetores,
+		$.ajax({
+		    url: FiscalizacaoConsideracaoFinal.settings.urls.obterCPF,
 			data: $.toJSON({ funcionarioId: value }),
 			cache: false,
 			async: false,
@@ -2568,9 +2786,9 @@ FiscalizacaoConsideracaoFinal = {
 
 				if (response.EhValido) {
 					Mensagem.limpar(Fiscalizacao.container);
-					ddlSetor.ddlLoad(response.Setores);
-					if (response.Endereco) {
-						txtTestemunhaEndereco.val(response.Endereco).attr('disabled', 'disabled');
+					if (response.CPF) {
+					    txtTestemunhaCPF.val(response.CPF).attr('disabled', 'disabled');
+					    txtTestemunhaCPF.val(response.CPF).addClass('disabled');
 					}
 				}
 
@@ -2582,6 +2800,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(false);
 	},
+
 	onChangeSetor: function () {
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
@@ -2620,6 +2839,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(false);
 	},
+
 	onClickRblFuncIDAF: function () {
 		var radio = $(this);
 		var context = radio.closest('fieldset');
@@ -2635,6 +2855,7 @@ FiscalizacaoConsideracaoFinal = {
 		}
 		$('.divDadosEndereco', context).removeClass('hide');
 	},
+
 	onSalvar: function () {
 		var flag = false;
 
@@ -2669,6 +2890,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return flag;
 	},
+
 	onEnviarArquivoClick: function () {
 		var nomeArquivo = $('#fileTermo', FiscalizacaoConsideracaoFinal.container).val();
 
@@ -2692,6 +2914,7 @@ FiscalizacaoConsideracaoFinal = {
 		var inputFile = $('#fileTermo', FiscalizacaoConsideracaoFinal.container);
 		FileUpload.upload(FiscalizacaoConsideracaoFinal.settings.urls.enviarArquivo, inputFile, FiscalizacaoConsideracaoFinal.callBackArqEnviado);
 	},
+
 	onLimparArquivoClick: function () {
 		$('.hdnArquivoJson', FiscalizacaoConsideracaoFinal.container).val('');
 		$('.inputFile', FiscalizacaoConsideracaoFinal.container).val('');
@@ -2702,6 +2925,7 @@ FiscalizacaoConsideracaoFinal = {
 		$('.btnAddArq', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		$('.btnLimparArq', FiscalizacaoConsideracaoFinal.container).addClass('hide');
 	},
+
 	validarTipoArquivo: function (tipo) {
 
 		var tipoValido = false;
@@ -2713,6 +2937,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return tipoValido;
 	},
+
 	callBackArqEnviado: function (controle, retorno, isHtml) {
 		var ret = eval('(' + retorno + ')');
 		if (ret.Arquivo != null) {
@@ -2825,7 +3050,7 @@ FiscalizacaoConsideracaoFinal = {
 	}
 }
 
-// 9ª Aba
+// 9ª Aba - Concluir Cadastro
 FiscalizacaoFinalizar = {
 	settings: {
 		urls: {

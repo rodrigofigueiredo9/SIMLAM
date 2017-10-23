@@ -314,95 +314,95 @@ Lote = {
 			{ item: item, dataCriacao: DataCriacao, empreendimentoID: IdEmpreendimeto, lista: _objeto.Lotes, loteID: $('.hdLoteId', Lote.container).val() },
 			Lote.container, false);
 
-		if (!Ret.EhValido) {
-			return;
-		}
+        if (!Ret.EhValido) {
+            return;
+        }
 
-		
-        if (item.OrigemTipo < 5 && item.OrigemTipo != 1 )
-		    item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
-		var linha = $('.trTemplate', tabela).clone();
-		$(linha).removeClass('hide trTemplate');
+        if (item.OrigemTipo < 5 && item.OrigemTipo != 1)
+            item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
-		$('.hdnItemJson', linha).val(JSON.stringify(item));
-		$('.lblOrigem', linha).html(item.OrigemTipoTexto + '-' + item.OrigemNumero).attr('title', item.OrigemTipoTexto + '-' + item.OrigemNumero);
-		$('.lblCultivar', linha).html(item.CulturaTexto + ' ' + item.CultivarTexto).attr('title', item.CulturaTexto + ' ' + item.CultivarTexto);
-		$('.lblQuantidade', linha).html(item.Quantidade).attr('title', item.Quantidade);
-		$('.lblUnidadeMedida', linha).html(unidadeMedida.Texto).attr('title', unidadeMedida.Texto);
+        var linha = $('.trTemplate', tabela).clone();
+        $(linha).removeClass('hide trTemplate');
 
-		$('tbody', tabela).append(linha);
+        $('.hdnItemJson', linha).val(JSON.stringify(item));
+        $('.lblOrigem', linha).html(item.OrigemTipoTexto + '-' + item.OrigemNumero).attr('title', item.OrigemTipoTexto + '-' + item.OrigemNumero);
+        $('.lblCultivar', linha).html(item.CulturaTexto + ' ' + item.CultivarTexto).attr('title', item.CulturaTexto + ' ' + item.CultivarTexto);
+        $('.lblQuantidade', linha).html(item.Quantidade).attr('title', item.Quantidade);
+        $('.lblUnidadeMedida', linha).html(unidadeMedida.Texto).attr('title', unidadeMedida.Texto);
 
-		$('select', container).ddlFirst();
-		$('.divAdicionar', container).find('select').ddlClear();
-		container.find('.text').unmask().val('');
-		Mascara.load(container);
+        $('tbody', tabela).append(linha);
 
-		Listar.atualizarEstiloTable(tabela);
-		//$('.ddlOrigem', container).focus();
-	},
+        $('select', container).ddlFirst();
+        $('.divAdicionar', container).find('select').ddlClear();
+        container.find('.text').unmask().val('');
+        Mascara.load(container);
 
-	excluir: function () {
-		Mensagem.limpar(Lote.container);
-		var container = $(this).closest('.dataGridTable');
-		$(this).closest('tr').toggle(
+        Listar.atualizarEstiloTable(tabela);
+        //$('.ddlOrigem', container).focus();
+    },
+
+    excluir: function () {
+        Mensagem.limpar(Lote.container);
+        var container = $(this).closest('.dataGridTable');
+        $(this).closest('tr').toggle(
 			function () {
-				$(this).remove();
+			    $(this).remove();
 			});
-		Listar.atualizarEstiloTable(container);
-	},
+        Listar.atualizarEstiloTable(container);
+    },
 
-	obter: function () {
-		var objeto = {
-			Id: $('.hdLoteId', Lote.container).val(),
-			EmpreendimentoId: $('.ddlEmpreemdimento', Lote.container).val(),
-			DataCriacao: { DataTexto: $('.txtDataCriacao', Lote.container).val() },
-			CodigoUC: $('.txtUCCodigo', Lote.container).val(),
-			Ano: $('.txtAno', Lote.container).val(),
-			Numero: $('.txtNumero', Lote.container).val(),
-			Lotes: []
-		};
+    obter: function () {
+        var objeto = {
+            Id: $('.hdLoteId', Lote.container).val(),
+            EmpreendimentoId: $('.ddlEmpreemdimento', Lote.container).val(),
+            DataCriacao: { DataTexto: $('.txtDataCriacao', Lote.container).val() },
+            CodigoUC: $('.txtUCCodigo', Lote.container).val(),
+            Ano: $('.txtAno', Lote.container).val(),
+            Numero: $('.txtNumero', Lote.container).val(),
+            Lotes: []
+        };
 
-		$('.gridLote tbody tr:not(.trTemplate)', Lote.container).each(function (i, linha) {
-			objeto.Lotes.push(JSON.parse($('.hdnItemJson', linha).val()));
-		});
+        $('.gridLote tbody tr:not(.trTemplate)', Lote.container).each(function (i, linha) {
+            objeto.Lotes.push(JSON.parse($('.hdnItemJson', linha).val()));
+        });
 
-		for (var i = 0; i < objeto.Lotes.length; i++) {
-		    
-		    if (objeto.Lotes[i].ExibeKg) {
-		        objeto.Lotes[i].Quantidade = parseInt(objeto.Lotes[i].Quantidade) / 1000;
-		    }
-		}
+        for (var i = 0; i < objeto.Lotes.length; i++) {
 
-		return objeto;
-	},
+            if (objeto.Lotes[i].ExibeKg) {
+                objeto.Lotes[i].Quantidade = parseInt(objeto.Lotes[i].Quantidade) / 1000;
+            }
+        }
 
-	salvar: function () {
-		Mensagem.limpar(Lote.container);
-		MasterPage.carregando(true);
+        return objeto;
+    },
 
-		$.ajax({
-			url: Lote.settings.urls.urlSalvar,
-			data: JSON.stringify(Lote.obter()),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: Aux.error,
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					if (response.Url) {
-						MasterPage.redireciona(response.Url);
-					}
-				}
+    salvar: function () {
+        Mensagem.limpar(Lote.container);
+        MasterPage.carregando(true);
 
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(Lote.container, response.Msg);
-				}
-			}
-		});
+        $.ajax({
+            url: Lote.settings.urls.urlSalvar,
+            data: JSON.stringify(Lote.obter()),
+            cache: false,
+            async: false,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: Aux.error,
+            success: function (response, textStatus, XMLHttpRequest) {
+                if (response.EhValido) {
+                    if (response.Url) {
+                        MasterPage.redireciona(response.Url);
+                    }
+                }
 
-		MasterPage.carregando(false);
-	}
+                if (response.Msg && response.Msg.length > 0) {
+                    Mensagem.gerar(Lote.container, response.Msg);
+                }
+            }
+        });
+
+        MasterPage.carregando(false);
+    }
 }

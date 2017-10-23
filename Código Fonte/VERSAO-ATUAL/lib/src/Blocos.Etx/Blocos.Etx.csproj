@@ -229,6 +229,8 @@
     <Compile Include="ModuloValidacao\Interno\DestinatarioPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitacaoEmissaoPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitarEmissaoCFOCFOCMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\OutrasPenalidadesMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\MultaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\LocalVistoriaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\PragaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\CulturaMsg.cs" />

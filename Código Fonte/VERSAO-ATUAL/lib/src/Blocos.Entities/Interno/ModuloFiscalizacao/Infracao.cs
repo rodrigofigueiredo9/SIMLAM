@@ -21,14 +21,39 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32? SerieId { get; set; }
 		public Int32? CodigoReceitaId { get; set; }
 		public Boolean? IsAutuada { get; set; }
+        public Boolean? ComInfracao { get; set; }
 		public Boolean? IsGeradaSistema { get; set; }
 		public String ValorMulta { get; set; }
 		public String NumeroAutoInfracaoBloco { get; set; }
 		public String DescricaoInfracao { get; set; }
 		public Boolean ConfigAlterou { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
+        public string HoraConstatacao { get; set; }
+        public int? ClassificacaoInfracao { get; set; }     //0-leve; 1-média; 2-grave; 3-gravíssima
 
-		private List<InfracaoCampo> _campos = new List<InfracaoCampo>();
+        #region Penalidades
+
+        public bool? PossuiAdvertencia { get; set; }
+        public bool? PossuiMulta { get; set; }
+        public bool? PossuiApreensao { get; set; }
+        public bool? PossuiInterdicaoEmbargo { get; set; }
+
+        private List<int> _idsOutrasPenalidades = new List<int>();
+        public List<int> IdsOutrasPenalidades
+        {
+            get
+            {
+                return _idsOutrasPenalidades;
+            }
+            set
+            {
+                _idsOutrasPenalidades = value;
+            }
+        }
+        
+        #endregion Penalidades
+
+        private List<InfracaoCampo> _campos = new List<InfracaoCampo>();
 		public List<InfracaoCampo> Campos
 		{
 			get { return _campos; }
@@ -56,6 +81,32 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			set { _arquivo = value; }
 		}
 
+        private Enquadramento _enquadramentoInfracao = new Enquadramento();
+        public Enquadramento EnquadramentoInfracao
+        {
+            get
+            {
+                return _enquadramentoInfracao;
+            }
+            set
+            {
+                _enquadramentoInfracao = value;
+            }
+        }
+
+        private DateTecno _dataConstatacao = new DateTecno();
+        public DateTecno DataConstatacao
+        {
+            get
+            {
+                return _dataConstatacao;
+            }
+            set
+            {
+                _dataConstatacao = value;
+            }
+        }
+
 		public Infracao()
 		{
 			this.ClassificacaoTexto =
@@ -63,6 +114,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			this.ItemTexto =
 			this.ConfiguracaoTid =
 			this.SubitemTexto = string.Empty;
+
+            for (int i = 0; i < 4; i++)
+            {
+                this.IdsOutrasPenalidades.Add(0);
+            }
 		}
 	}
 }

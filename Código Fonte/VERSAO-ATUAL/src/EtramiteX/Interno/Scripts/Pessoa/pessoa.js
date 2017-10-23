@@ -26,6 +26,7 @@ var Pessoa = function () {
 			callBackCopiarEnderecoConjuge: null,
 			conjugeId: 0,
 			possuiConjuge: false,
+            isFiscalizacao: false,
 
 			urls: {
 				modalAssociarProfissao: '',
@@ -331,8 +332,13 @@ var Pessoa = function () {
 							//urlAcao = _objRef.settings.urls.editar;
 							//}
 						} else {
-							urlAcao = _objRef.settings.urls.criar;
-							param = { cpfCnpj: cpfCnpj, tipoPessoa: tipoPessoaNum, TipoCadastro: _objRef.settings.tipoCadastro };
+						    urlAcao = _objRef.settings.urls.criar;
+
+						    if (_objRef.settings.isFiscalizacao == true) {
+                                param = { cpfCnpj: cpfCnpj, tipoPessoa: tipoPessoaNum, TipoCadastro: _objRef.settings.tipoCadastro, fiscalizacao: _objRef.settings.isFiscalizacao };
+						    } else {
+						        param = { cpfCnpj: cpfCnpj, tipoPessoa: tipoPessoaNum, TipoCadastro: _objRef.settings.tipoCadastro };
+						    }
 						}
 
 						$.ajax({ url: urlAcao, data: param, cache: false, async: false,
@@ -446,7 +452,10 @@ var Pessoa = function () {
 
 			var retorno = null;
 
-			$.ajax({ url: urlAcao, data: JSON.stringify(jsonPessoa), type: 'POST', typeData: 'json',
+			var dados = { vm: jsonPessoa, fiscalizacao: _objRef.settings.isFiscalizacao };
+
+			$.ajax({
+			    url: urlAcao, data: JSON.stringify(dados), type: 'POST', typeData: 'json',
 				contentType: 'application/json; charset=utf-8', cache: false, async: false,
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));

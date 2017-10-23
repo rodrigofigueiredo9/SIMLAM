@@ -184,15 +184,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
-			if (ptv.Empreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-			}
+            if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
+            (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+            {
+                if (ptv.Empreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+                }
 
-			if (ptv.ResponsavelEmpreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-			}
+                if (ptv.ResponsavelEmpreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+                }
+            }
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -352,13 +356,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				return false;
 			}
 			
-			var loteBus = new LoteBus();
-			if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC); 
-				return false;
-			}
-
+			
 			#region Saldo
 
 			//TODO
@@ -369,7 +367,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.CFO:
 					EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
 					EmissaoCFO cfo = emissaoCFOBus.Obter(item.Origem);
-					saldo = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.ExibeQtdKg ? x.Quantidade / 1000 : x.Quantidade );
+					saldo = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 					produtorItem = cfo.ProdutorId;
 
 					if (cfo.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
@@ -392,7 +390,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.CFOC:
 					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
 					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(item.Origem);
-                    saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.ExibeQtdKg ? x.Quantidade / 1000 : x.Quantidade);
+                    saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade );
 
 					if (cfoc.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 					{
@@ -414,7 +412,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 					PTVOutroBus ptvOutroBus = new PTVOutroBus();
 					PTVOutro ptvOutro = ptvOutroBus.Obter(item.Origem);
-                    saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.ExibeQtdKg ? x.Quantidade / 1000 : x.Quantidade);
+                    saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 					if (ptvOutro.Situacao != (int)ePTVOutroSituacao.Valido)
 					{
@@ -435,7 +433,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.PTV:
 					PTVBus ptvBus = new PTVBus();
 					PTV ptv = ptvBus.Obter(item.Origem);
-                    saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.ExibeQtdKg ? x.Quantidade / 1000 : x.Quantidade);
+                    saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 					produtorItem = ptv.ResponsavelEmpreendimento;
 					break;
 			}
@@ -525,7 +523,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
-					if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
+					if ((saldoOutrosDoc + quantidadeAdicionada + (item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade) ) > saldo)
 					{
 						Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);
 					}

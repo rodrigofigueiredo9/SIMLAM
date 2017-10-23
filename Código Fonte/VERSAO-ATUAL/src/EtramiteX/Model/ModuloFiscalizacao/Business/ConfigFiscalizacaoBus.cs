@@ -169,15 +169,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
             catch (Exception e)
             {
-                //TODO: alterar isso quando o resto das telas estiver pronto
-                if (e.Message.Contains("integrity constraint"))
-                {
-                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ErroCodigoUsado);
-                }
-                else
-                {
-                    Validacao.AddErro(e);
-                }
+                Validacao.AddErro(e);
             }
 
             return Validacao.EhValido;
@@ -274,7 +266,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
         #endregion
 
-        #region Penalidade
+		#region Penalidade
 
         public bool ExcluirPenalidade(int id)
         {
@@ -286,10 +278,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 {
                     bancoDeDados.IniciarTransacao();
 
-
+                   
                     _da.ExcluirPenalidade(id, bancoDeDados);
                     Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ExcluirPenalidade);
-
+                 
 
                     bancoDeDados.Commit();
                 }
@@ -347,11 +339,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
         #region Campo Infração
         public bool SalvarCampoInfracao(Item entidade)
-        {
-            try
-            {
-                if (_validar.SalvarCampoInfracao(entidade))
-                {
+		{
+			try
+			{
+				if (_validar.SalvarCampoInfracao(entidade))
+				{
 
                     GerenciadorTransacao.ObterIDAtual();
 
@@ -584,7 +576,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
             catch (Exception e)
             {
-                Validacao.AddErro(e);
+                //TODO: alterar isso quando o resto das telas estiver pronto 
+                if (e.Message.Contains("integrity constraint"))
+                {
+                    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ErroCodigoUsado);
+                }
+                else
+                {
+                    Validacao.AddErro(e);
+                }
             }
 
             return Validacao.EhValido;
@@ -625,7 +625,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             }
 
             return podeExcluir;
-        } 
+        }
 
         #endregion Códigos da Receita
 
@@ -696,17 +696,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return lista;
         }
 
-        public List<Item> ObterItemInfracao()
-        {
-            List<Item> lista = null;
-            try
-            {
-                lista = _da.ObterItemInfracao();
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+		public List<Item> ObterItemInfracao()
+		{
+			List<Item> lista = null;
+			try
+			{
+				lista = _da.ObterItemInfracao();
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
             return lista;
         }
@@ -823,6 +823,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             try
             {
                 lista = _da.ObterSubitens(classificacaoId, tipoId, itemId);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return lista;
+        }
+
+        public List<Lista> ObterPenalidadesLista()
+        {
+            List<Lista> lista = null;
+            try
+            {
+                lista = _da.ObterPenalidadesLista();
             }
             catch (Exception exc)
             {
@@ -1085,9 +1100,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             _da.AlterarSituacaoPenalidade(Id, situacaoNova);
         }
 
-        public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova)
-        {
-            List<String> configAssociadas = _da.ObterIdsConfiguracoesAssociadasCampoInfracao(campoId);
+		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova)
+		{
+			List<String> configAssociadas = _da.ObterIdsConfiguracoesAssociadasCampoInfracao(campoId);
 
             if (configAssociadas.Count > 0 && situacaoNova == 0)
             {
