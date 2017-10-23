@@ -2057,6 +2057,21 @@ FiscalizacaoMaterialApreendido = {
 	    return true;
 	},
 
+	onEditarDepositario: function () {
+	    var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
+	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
+
+	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
+	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Depositario',
+	            tituloEditar: 'Editar Depositario',
+	            tituloVisualizar: 'Visualizar Depositario',
+	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
+	},
+
 	onSelecionarProdutoApreendido: function () {
 	    var produto = $('.ddlProdutosApreendidos :selected', FiscalizacaoMaterialApreendido.container).val();
 	    var unidade = $('.hdnUnidade' + produto, FiscalizacaoMaterialApreendido.container).val();
@@ -2208,21 +2223,6 @@ FiscalizacaoMaterialApreendido = {
 	    arrayMensagem.push(FiscalizacaoMaterialApreendido.settings.mensagens.Salvar);
 
 	    return Fiscalizacao.onSalvarStep(FiscalizacaoMaterialApreendido.settings.urls.salvar, obj, arrayMensagem);
-	},
-
-	onEditarDepositario: function () {
-	    var id = $('.hdnDepositarioId', FiscalizacaoMaterialApreendido.container).val();
-	    FiscalizacaoMaterialApreendido.pessoaModalInte = new PessoaAssociar();
-
-	    Modal.abrir(FiscalizacaoMaterialApreendido.settings.urls.editarDepositario + "/" + id, null, function (container) {
-	        FiscalizacaoMaterialApreendido.pessoaModalInte.load(container, {
-	            tituloCriar: 'Cadastrar Depositario',
-	            tituloEditar: 'Editar Depositario',
-	            tituloVisualizar: 'Visualizar Depositario',
-	            onAssociarCallback: FiscalizacaoMaterialApreendido.callBackEditarDepositario,
-	            editarVisualizar: Fiscalizacao.salvarEdicao
-	        });
-	    });
 	},
 
 	onEnviarArquivoClick: function () {
@@ -2510,7 +2510,8 @@ FiscalizacaoConsideracaoFinal = {
             obterCPF: '',
 			enviarArquivo: '',
 			obterAssinanteCargos: '',
-			obterAssinanteFuncionarios: ''
+			obterAssinanteFuncionarios: '',
+            associarTestemunha: ''
 		},
 		modo: 1,
 		mensagens: {}
@@ -2518,6 +2519,8 @@ FiscalizacaoConsideracaoFinal = {
 	TiposArquivo: [],
 	isLoad: true,
 	container: null,
+	pessoaModalInte: null,
+
 	load: function (container, options) {
 		if (options) { $.extend(FiscalizacaoLocalInfracao.settings, options); }
 		FiscalizacaoConsideracaoFinal.container = MasterPage.getContent(container);
@@ -2548,14 +2551,64 @@ FiscalizacaoConsideracaoFinal = {
 		$('.btnAdicionarAssinante', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onAdicionarAssinante);
 		$('.btnExcluirAssinante', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onExcluirAssinante);
 
+		$('.btnAssociarTestemunha', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onAssociarTestemunha);
+		$('.btnEditarTestemunha', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onEditarTestemunha);
+
 		MasterPage.botoes(FiscalizacaoConsideracaoFinal.container);
 		FiscalizacaoConsideracaoFinal.onClickRadioOpinar();
 	},
+
+	onAssociarTestemunha: function () {
+	    FiscalizacaoConsideracaoFinal.pessoaModalInte = new PessoaAssociar();
+
+	    //Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+	    //Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+	    var dataPessoa = {
+	        cpfCnpj: null,
+	        tipoPessoa: null,
+	        tipoCadastro: '1'
+	    };
+
+	    Modal.abrir(FiscalizacaoConsideracaoFinal.settings.urls.associarTestemunha, dataPessoa, function (container) {
+	        FiscalizacaoConsideracaoFinal.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Testemunha',
+	            tituloEditar: 'Editar Testemunha',
+	            tituloVisualizar: 'Visualizar Testemunha',
+	            onAssociarCallback: FiscalizacaoConsideracaoFinal.callBackEditarTestemunha,
+                isFiscalizacao: true
+	        });
+	    });
+	},
+
+	callBackEditarTestemunha: function (Pessoa) {
+	    $('.spanVisualizarTestemunha', FiscalizacaoMaterialApreendido.container).removeClass('hide');
+	    $('.hdnTestemunhaId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
+	    $('.txtTestemunhaNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtTestemunhaCPF', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    return true;
+	},
+
+	onEditarTestemunha: function () {
+	    var id = $('.hdnTestemunhaId', FiscalizacaoConsideracaoFinal.container).val();
+	    FiscalizacaoConsideracaoFinal.pessoaModalInte = new PessoaAssociar();
+
+	    Modal.abrir(FiscalizacaoConsideracaoFinal.settings.urls.editarTestemunha + "/" + id, null, function (container) {
+	        FiscalizacaoConsideracaoFinal.pessoaModalInte.load(container, {
+	            tituloCriar: 'Cadastrar Testemunha',
+	            tituloEditar: 'Editar Testemunha',
+	            tituloVisualizar: 'Visualizar Testemunha',
+	            onAssociarCallback: FiscalizacaoConsideracaoFinal.callBackEditarTestemunha,
+	            editarVisualizar: Fiscalizacao.salvarEdicao
+	        });
+	    });
+	},
+
 	configurarBtnEditar: function () {
 
 		$(".btnEditar", Fiscalizacao.container).unbind('click');
 		$(".btnEditar", Fiscalizacao.container).click(FiscalizacaoConsideracaoFinal.onBtnEditar);
 	},
+
 	gerarObjetoConsideracaoFinal: function () {
 
 		var consideracaoFinal = {
@@ -2630,6 +2683,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return consideracaoFinal;
 	},
+
 	callBackObterConsideracaoFinalVisualizar: function () {
 		var context = $('.divConsideracaoFinal', Fiscalizacao.container);
 		FiscalizacaoConsideracaoFinal.load(context);
@@ -2644,6 +2698,7 @@ FiscalizacaoConsideracaoFinal = {
 		}
 		MasterPage.carregando(false);
 	},
+
 	onBtnEditar: function () {
 
 		Fiscalizacao.onObterStep(FiscalizacaoConsideracaoFinal.settings.urls.obter, Fiscalizacao.gerarObjetoWizard().params, function () {
@@ -2657,6 +2712,7 @@ FiscalizacaoConsideracaoFinal = {
 			Fiscalizacao.gerenciarVisualizacao();
 		});
 	},
+
 	onClickRadioOpinar: function () {
 	    var haReparacao = parseInt($('.rblOpinar:checked', FiscalizacaoConsideracaoFinal.container).val());
 
@@ -2670,6 +2726,7 @@ FiscalizacaoConsideracaoFinal = {
 		    $('.divReparacaoSim', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		}
 	},
+
 	onClickRadioTermos: function () {
 		$('.divTermoJustificar, .divArquivo', FiscalizacaoConsideracaoFinal.container).addClass('hide');
 
@@ -2681,21 +2738,24 @@ FiscalizacaoConsideracaoFinal = {
 			$('.divArquivo', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		}
 	},
+
 	onChangeFuncIDAF: function () {
 		var ddlFuncIDAF = $(this);
 		var context = ddlFuncIDAF.closest('fieldset');
 
-		$('.divFuncionario, .divDadosTestemunha, .divDadosEndereco', context).addClass('hide');
-		$('input[type="text"]', context).val('').removeAttr('disabled').removeClass('disabled');
-		$('.ddlTestemunha, .ddlSetor', context).val(0);
+		$('.divFuncionario, .divDadosTestemunha', context).addClass('hide');
+		$('.ddlTestemunha', context).val(0);
+		$('.txtTestemunhaNome, .txtTestemunhaCPF', context).val('');
 
 		if (ddlFuncIDAF.val().toString() == "1") {
+		    $('input[type="text"]', context).val('').removeAttr('disabled').removeClass('disabled');
 			$('.divFuncionario', context).removeClass('hide');
 			$('.txtTestemunhaCPF', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
 		} else if (ddlFuncIDAF.val().toString() == "2") {
-			$('.divDadosTestemunha, .divDadosEndereco', context).removeClass('hide');
+			$('.divDadosTestemunha', context).removeClass('hide');
 		}
 	},
+
 	onChangeFunc: function () {
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
@@ -2738,6 +2798,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(false);
 	},
+
 	onChangeSetor: function () {
 		var value = parseInt($(this).val());
 		var context = $(this).closest('fieldset');
@@ -2776,6 +2837,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		MasterPage.carregando(false);
 	},
+
 	onClickRblFuncIDAF: function () {
 		var radio = $(this);
 		var context = radio.closest('fieldset');
@@ -2791,6 +2853,7 @@ FiscalizacaoConsideracaoFinal = {
 		}
 		$('.divDadosEndereco', context).removeClass('hide');
 	},
+
 	onSalvar: function () {
 		var flag = false;
 
@@ -2825,6 +2888,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return flag;
 	},
+
 	onEnviarArquivoClick: function () {
 		var nomeArquivo = $('#fileTermo', FiscalizacaoConsideracaoFinal.container).val();
 
@@ -2848,6 +2912,7 @@ FiscalizacaoConsideracaoFinal = {
 		var inputFile = $('#fileTermo', FiscalizacaoConsideracaoFinal.container);
 		FileUpload.upload(FiscalizacaoConsideracaoFinal.settings.urls.enviarArquivo, inputFile, FiscalizacaoConsideracaoFinal.callBackArqEnviado);
 	},
+
 	onLimparArquivoClick: function () {
 		$('.hdnArquivoJson', FiscalizacaoConsideracaoFinal.container).val('');
 		$('.inputFile', FiscalizacaoConsideracaoFinal.container).val('');
@@ -2858,6 +2923,7 @@ FiscalizacaoConsideracaoFinal = {
 		$('.btnAddArq', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
 		$('.btnLimparArq', FiscalizacaoConsideracaoFinal.container).addClass('hide');
 	},
+
 	validarTipoArquivo: function (tipo) {
 
 		var tipoValido = false;
@@ -2869,6 +2935,7 @@ FiscalizacaoConsideracaoFinal = {
 
 		return tipoValido;
 	},
+
 	callBackArqEnviado: function (controle, retorno, isHtml) {
 		var ret = eval('(' + retorno + ')');
 		if (ret.Arquivo != null) {

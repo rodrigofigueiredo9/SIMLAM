@@ -37,7 +37,7 @@
     </fieldset>
 
     <fieldset class="box fsInfracao fsCaracterizacao">
-	    <legend>Caracterização da infração</legend>
+	    <legend>Caracterização da infração/fiscalização</legend>
 
 	    <div class="block">
 		    <div class="coluna76">

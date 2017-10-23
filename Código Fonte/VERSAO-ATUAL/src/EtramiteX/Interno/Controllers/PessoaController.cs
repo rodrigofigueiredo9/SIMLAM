@@ -124,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
-		public ActionResult Criar(string cpfCnpj, int? tipoPessoa, int tipoCadastro = 0)
+		public ActionResult Criar(string cpfCnpj, int? tipoPessoa, int tipoCadastro = 0, bool fiscalizacao = false)
 		{
 			SalvarVM vm = new SalvarVM(_busLista.EstadosCivil, _busLista.Sexos, _busLista.Profissoes, _busLista.OrgaosClasse, _busLista.Estados);
 			vm.ExibirMensagensPartial = true;
@@ -149,7 +149,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (Request.IsAjaxRequest())
 			{
-				return PartialView("PessoaPartial", vm);
+                if (fiscalizacao == false)
+                {
+                    return PartialView("PessoaPartial", vm);
+                }
+                else
+                {
+                    return PartialView("PessoaPartialFiscalizacao", vm);
+                }
 			}
 			else
 			{
@@ -159,7 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
-		public ActionResult Criar(SalvarVM vm)
+		public ActionResult Criar(SalvarVM vm, bool fiscalizacao = false)
 		{
 			string urlRedireciona = Url.Action("Criar", "Pessoa");
 			vm.CpfCnpjValido = true;
@@ -169,19 +176,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				vm.Pessoa.Tipo = (vm.TipoCadastro == 2) ? PessoaTipo.JURIDICA : PessoaTipo.FISICA;
 			}
-			
-			CarregaCampos(vm);
+
+            if (!fiscalizacao)
+            {
+                CarregaCampos(vm);
+            }
 
 			if (vm.TipoCadastro == 1 && (vm.Pessoa.Fisica.EstadoCivil == 2 || vm.Pessoa.Fisica.EstadoCivil == 5))
 			{
 				vm.Pessoa.Fisica.ConjugeId = -1;
 			}
-			
-			if (_bus.Salvar(vm.Pessoa)) 
-			{
-				Validacao.Add(Mensagem.Pessoa.Salvar);
-				urlRedireciona += "?Msg=" + Validacao.QueryParam();
-			}
+
+            if (!fiscalizacao)
+            {
+                if (_bus.Salvar(vm.Pessoa))
+                {
+                    Validacao.Add(Mensagem.Pessoa.Salvar);
+                    urlRedireciona += "?Msg=" + Validacao.QueryParam();
+                }
+            }
 			return Json(new { IsPessoaSalva = Validacao.EhValido, UrlRedireciona = urlRedireciona, @Pessoa = vm.Pessoa, Msg = Validacao.Erros });
 		}
 

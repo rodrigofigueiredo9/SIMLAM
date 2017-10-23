@@ -2284,6 +2284,8 @@
     <Content Include="Views\OrgaosParceirosConveniados\ListarResultados.ascx" />
     <Content Include="Views\OrgaosParceirosConveniados\OrgaosParceirosConveniados.ascx" />
     <Content Include="Views\OrgaosParceirosConveniados\Visualizar.aspx" />
+    <Content Include="Views\Pessoa\FisicaFiscalizacao.ascx" />
+    <Content Include="Views\Pessoa\PessoaPartialFiscalizacao.ascx" />
     <Content Include="Views\Profissao\Criar.aspx" />
     <Content Include="Views\Profissao\Editar.aspx" />
     <Content Include="Views\Profissao\Index.aspx" />

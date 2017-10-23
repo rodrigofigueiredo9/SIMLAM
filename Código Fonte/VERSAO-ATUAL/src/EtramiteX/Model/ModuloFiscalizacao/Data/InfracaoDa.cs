@@ -313,13 +313,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("item", infracao.ItemId, DbType.Int32);
                 comando.AdicionarParametroEntrada("subitem", infracao.SubitemId, DbType.Int32);
                 comando.AdicionarParametroEntrada("configuracao", infracao.ConfiguracaoId, DbType.Int32);
-                comando.AdicionarParametroEntrada("descricao_infracao", infracao.DescricaoInfracao, DbType.String);
+                comando.AdicionarParametroEntrada("descricao_infracao", (infracao.ComInfracao == true ? infracao.DescricaoInfracao : null), DbType.String);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroEntrada("configuracao_tid", DbType.String, 36, infracao.ConfiguracaoTid);
                 comando.AdicionarParametroEntrada("possui_infracao", infracao.ComInfracao, DbType.Boolean);
                 comando.AdicionarParametroEntrada("data_constatacao", infracao.DataConstatacao.Data, DbType.Date);
                 comando.AdicionarParametroEntrada("hora_constatacao", infracao.HoraConstatacao, DbType.String);
-                comando.AdicionarParametroEntrada("classificacao_infracao", infracao.ClassificacaoInfracao, DbType.Int32);
+                comando.AdicionarParametroEntrada("classificacao_infracao", (infracao.ComInfracao == true ? infracao.ClassificacaoInfracao : null), DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -405,29 +405,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-                #region Enquadramento
+                if (infracao.ComInfracao == true)
+                {
+                    #region Enquadramento
 
-                infracao.EnquadramentoInfracao.FiscalizacaoId = infracao.FiscalizacaoId;
+                    infracao.EnquadramentoInfracao.FiscalizacaoId = infracao.FiscalizacaoId;
 
-                EnquadramentoDa _enquadramentoDA = new EnquadramentoDa();
+                    EnquadramentoDa _enquadramentoDA = new EnquadramentoDa();
 
-                infracao.EnquadramentoInfracao = _enquadramentoDA.Salvar(infracao.EnquadramentoInfracao, banco);
+                    infracao.EnquadramentoInfracao = _enquadramentoDA.Salvar(infracao.EnquadramentoInfracao, banco);
 
-                #endregion
+                    #endregion
 
-                #region Penalidades Fixas
+                    #region Penalidades Fixas
 
-                comando = bancoDeDados.CriarComando(@"
+                    comando = bancoDeDados.CriarComando(@"
                                 delete from {0}tab_fisc_penalidades_infr
                                 where infracao = :id_infracao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
 
-                bancoDeDados.ExecutarNonQuery(comando);
+                    bancoDeDados.ExecutarNonQuery(comando);
 
-                if (infracao.PossuiAdvertencia == true)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+                    if (infracao.PossuiAdvertencia == true)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_penalidades_infr (id,
                                                                           infracao,
                                                                           penalidade,
@@ -437,15 +439,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         (select id from lov_fisc_penalidades_fixas where texto like '%Advertência%'),
                                         :tid)", EsquemaBanco);
 
-                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-                }
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
 
-                if (infracao.PossuiMulta == true)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+                    if (infracao.PossuiMulta == true)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_penalidades_infr (id,
                                                                           infracao,
                                                                           penalidade,
@@ -455,15 +457,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         (select id from lov_fisc_penalidades_fixas where texto like '%Multa%'),
                                         :tid)", EsquemaBanco);
 
-                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-                }
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
 
-                if (infracao.PossuiApreensao == true)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+                    if (infracao.PossuiApreensao == true)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_penalidades_infr (id,
                                                                           infracao,
                                                                           penalidade,
@@ -473,15 +475,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         (select id from lov_fisc_penalidades_fixas where texto like '%Apreensão%'),
                                         :tid)", EsquemaBanco);
 
-                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-                }
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
 
-                if (infracao.PossuiInterdicaoEmbargo == true)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+                    if (infracao.PossuiInterdicaoEmbargo == true)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_penalidades_infr (id,
                                                                           infracao,
                                                                           penalidade,
@@ -491,26 +493,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         (select id from lov_fisc_penalidades_fixas where texto like '%Interdição%'),
                                         :tid)", EsquemaBanco);
 
-                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                    bancoDeDados.ExecutarNonQuery(comando);
-                }
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
 
-                #endregion
+                    #endregion
 
-                #region Outras Penalidades
+                    #region Outras Penalidades
 
-                comando = bancoDeDados.CriarComando(@"
+                    comando = bancoDeDados.CriarComando(@"
                             delete from tab_fisc_outras_penalidad_infr
                             where infracao = :id_infracao", EsquemaBanco);
-                
-                comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                bancoDeDados.ExecutarNonQuery(comando);
 
-                foreach (var id_penalidade in infracao.IdsOutrasPenalidades)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    foreach (var id_penalidade in infracao.IdsOutrasPenalidades)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_outras_penalidad_infr (id,
                                                                                infracao,
                                                                                penalidade_outra,
@@ -520,14 +522,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         :id_penalidade,
                                         :tid)", EsquemaBanco);
 
+                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                        comando.AdicionarParametroEntrada("id_penalidade", id_penalidade, DbType.Int32);
+                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+
+                    #endregion
+                }
+                else if (infracao.ComInfracao == false)
+                {
+                    #region Enquadramento
+                    EnquadramentoDa _enquadramentoDA = new EnquadramentoDa();
+
+                    _enquadramentoDA.Excluir(infracao.FiscalizacaoId, banco);
+
+                    #endregion
+
+                    #region Penalidades Fixas
+
+                    comando = bancoDeDados.CriarComando(@"
+                                delete from {0}tab_fisc_penalidades_infr
+                                where infracao = :id_infracao", EsquemaBanco);
+
                     comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("id_penalidade", id_penalidade, DbType.Int32);
-                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                     bancoDeDados.ExecutarNonQuery(comando);
-                }
 
-                #endregion
+                    #endregion
+
+                    #region Outras Penalidades
+
+                    comando = bancoDeDados.CriarComando(@"
+                            delete from tab_fisc_outras_penalidad_infr
+                            where infracao = :id_infracao", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    #endregion
+                }
 
 				Historico.Gerar(infracao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
