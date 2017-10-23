@@ -199,6 +199,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
+                #region Anexos IUF
+
+                foreach (var item in consideracaoFinal.AnexosIUF)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+					 insert into {0}tab_fisc_consid_final_iuf a
+					   (id, 
+						consid_final, 
+						arquivo, 
+						ordem, 
+						descricao, 
+						tid)
+					 values
+					   ({0}seq_fisc_consid_final_iuf.nextval,
+						:consid_final,
+						:arquivo,
+						:ordem,
+						:descricao,
+						:tid)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                #endregion
+
 				Historico.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
 				Consulta.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
@@ -402,6 +433,59 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
+                #region Anexos IUF
+
+                comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_consid_final_iuf ra ", EsquemaBanco);
+                comando.DbCommand.CommandText += String.Format("where ra.consid_final = :consid_final{0}",
+                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.Anexos.Select(x => x.Id).ToList()));
+                comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                foreach (var item in consideracaoFinal.AnexosIUF)
+                {
+                    if (item.Id > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+							update {0}tab_fisc_consid_final_iuf t
+							   set t.arquivo   = :arquivo,
+								   t.ordem     = :ordem,
+								   t.descricao = :descricao,
+								   t.tid       = :tid
+							 where t.id = :id", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+							insert into {0}tab_fisc_consid_final_iuf a
+							  (id, 
+							   consid_final, 
+							   arquivo, 
+							   ordem, 
+							   descricao, 
+							   tid)
+							values
+							  ({0}seq_fisc_consid_final_iuf.nextval,
+							   :consid_final,
+							   :arquivo,
+							   :ordem,
+							   :descricao,
+							   :tid)", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+                    }
+
+                    comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                #endregion
+
 				Historico.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
 				Consulta.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
@@ -542,6 +626,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				});
 
 				#endregion
+
+                #region Anexos IUF
+
+                comando = bancoDeDados.CriarComando(@"
+				select a.id Id,
+					   a.ordem Ordem,
+					   a.descricao Descricao,
+					   b.nome,
+					   b.extensao,
+					   b.id arquivo_id,
+					   b.caminho,
+					   a.tid Tid
+				  from {0}tab_fisc_consid_final_iuf a, 
+					   {0}tab_arquivo b
+				 where a.arquivo = b.id
+				   and a.consid_final = :consid_final
+				 order by a.ordem", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+
+                consideracaoFinal.AnexosIUF = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
+                {
+                    item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
+                    item.Arquivo.Caminho = reader.GetValue<string>("caminho");
+                    item.Arquivo.Nome = reader.GetValue<string>("nome");
+                    item.Arquivo.Extensao = reader.GetValue<string>("extensao");
+                });
+
+                #endregion
 			}
 			return consideracaoFinal;
 		}

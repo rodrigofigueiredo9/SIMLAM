@@ -867,6 +867,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ConsideracaoFinalVM = new ConsideracaoFinalVM();
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
@@ -928,8 +929,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             vm.ConsideracaoFinalVM.IsVisualizar = fiscalizacao.ConsideracaoFinal.Id > 0;
             vm.ConsideracaoFinalVM.ArquivoVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
+            vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
