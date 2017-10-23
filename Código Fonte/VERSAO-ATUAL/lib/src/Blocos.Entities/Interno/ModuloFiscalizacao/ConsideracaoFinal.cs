@@ -17,6 +17,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public List<ConsideracaoFinalTestemunha> Testemunhas { get; set; }
 		public List<FiscalizacaoAssinante> Assinantes { get; set; }
 		public List<Anexo> Anexos { get; set; }
+        public List<Anexo> AnexosIUF { get; set; }
 		public string Tid { get; set; }
 		public Arquivo.Arquivo Arquivo { get; set; }
 

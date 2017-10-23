@@ -92,6 +92,11 @@
 
    <% Html.RenderPartial("Assinantes", Model.AssinantesVM); %>
 
+    <fieldset class="block box fsArquivosIUF">
+		<legend>PDF do IUF</legend>
+		<% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoIUFVM); %>
+	</fieldset>
+
 	<fieldset class="block box fsArquivos">
 		<legend>Relatório fotográfico</legend>
 		<% Html.RenderPartial("~/Views/Arquivo/ArquivoFiscalizacao.ascx", Model.ArquivoVM); %>
