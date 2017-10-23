@@ -1638,6 +1638,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
 
             vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+
+            List<Lista> penalidades = _busConfiguracao.ObterPenalidadesLista();
+            vm.InfracaoVM.Penalidades = penalidades;
+            vm.InfracaoVM.ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[0].ToString());
+            vm.InfracaoVM.ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[1].ToString());
+            vm.InfracaoVM.ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[2].ToString());
+            vm.InfracaoVM.ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[3].ToString());
+
             vm.InfracaoVM.Classificacoes = ViewModelHelper.CriarSelectList(_busLista.InfracaoClassificacao, true, selecionado: fiscalizacao.Infracao.ClassificacaoId.ToString());
             vm.InfracaoVM.Tipos = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterTipos(fiscalizacao.Infracao.ClassificacaoId), true, selecionado: fiscalizacao.Infracao.TipoId.ToString());
             vm.InfracaoVM.Itens = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterItens(fiscalizacao.Infracao.ClassificacaoId, fiscalizacao.Infracao.TipoId), true, selecionado: fiscalizacao.Infracao.ItemId.ToString());
