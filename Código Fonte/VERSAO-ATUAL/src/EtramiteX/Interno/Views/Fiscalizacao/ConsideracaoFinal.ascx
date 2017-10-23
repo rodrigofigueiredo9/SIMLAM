@@ -11,7 +11,9 @@
     FiscalizacaoConsideracaoFinal.settings.urls.obterCPF = '<%: Url.Action("ObterCPF", "Fiscalizacao") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.enviarArquivo = '<%= Url.Action("Arquivo", "Arquivo") %>';
 	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteCargos = '<%= Url.Action("ObterAssinanteCargos", "Fiscalizacao") %>';
-	FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteFuncionarios = '<%= Url.Action("ObterAssinanteFuncionarios", "Fiscalizacao") %>';
+    FiscalizacaoConsideracaoFinal.settings.urls.obterAssinanteFuncionarios = '<%= Url.Action("ObterAssinanteFuncionarios", "Fiscalizacao") %>';
+    FiscalizacaoConsideracaoFinal.settings.urls.associarTestemunha= '<%= Url.Action("PessoaModal", "Pessoa") %>';
+    FiscalizacaoConsideracaoFinal.settings.urls.editarTestemunha = '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>';
 	FiscalizacaoConsideracaoFinal.settings.mensagens = <%= Model.Mensagens %>;
 	FiscalizacaoConsideracaoFinal.TiposArquivo = <%= Model.TiposArquivoValido %>;
 

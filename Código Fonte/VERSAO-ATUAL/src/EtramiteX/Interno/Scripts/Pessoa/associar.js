@@ -27,6 +27,7 @@ PessoaAssociar = function () {
 			editarVisualizar: true,
 			tipoCadastro: 0,
 			callBackCopiarEnderecoConjuge: null,
+            isFiscalizacao: false,
 			msgs: {
 				RepresentanteExistente: null
 			}
@@ -65,6 +66,7 @@ PessoaAssociar = function () {
 				tipoCadastro: _objRef.settings.tipoCadastro,
 				conjugeId: _objRef.settings.conjugeId,
 				possuiConjuge: _objRef.settings.possuiConjuge,
+                isFiscalizacao: _objRef.settings.isFiscalizacao,
 				msgs: {
 					RepresentanteExistente: _objRef.settings.msgs.RepresentanteExistente
 				},

@@ -72,11 +72,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						{
 							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaNomeObrigatorio, item.Colocacao.ToString());
 						}
-
-						if (string.IsNullOrWhiteSpace(item.TestemunhaEndereco))
-						{
-							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaEnderecoObrigatorio, item.Colocacao.ToString());
-						}
 					}
 				}
 			}
