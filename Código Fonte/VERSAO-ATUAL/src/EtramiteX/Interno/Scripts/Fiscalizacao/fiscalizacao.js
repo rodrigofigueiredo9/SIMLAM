@@ -2537,6 +2537,7 @@ FiscalizacaoConsideracaoFinal = {
 		$('.rblFuncIDAF', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onClickRblFuncIDAF);
 		$('.rblTermo', FiscalizacaoConsideracaoFinal.container).click(FiscalizacaoConsideracaoFinal.onClickRadioTermos);
 		$('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo({ extPermitidas: ['jpg', 'gif', 'png', 'bmp'] });
+		$('.fsArquivosIUF', FiscalizacaoConsideracaoFinal.container).arquivo({ extPermitidas: ['pdf'] });
 
 		$('.ddlFuncIDAF', FiscalizacaoConsideracaoFinal.container).change(FiscalizacaoConsideracaoFinal.onChangeFuncIDAF);
 		$('.ddlTestemunha', FiscalizacaoConsideracaoFinal.container).change(FiscalizacaoConsideracaoFinal.onChangeFunc);
@@ -2622,7 +2623,8 @@ FiscalizacaoConsideracaoFinal = {
 			Arquivo: null,
 			Assinantes: [],
 			Testemunhas: [],
-			Anexos: $('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto')
+			Anexos: $('.fsArquivos', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto'),
+			AnexosIUF: $('.fsArquivosIUF', FiscalizacaoConsideracaoFinal.container).arquivo('obterObjeto')
 		};
 
 		if (consideracaoFinal.HaReparacao == 1) {
