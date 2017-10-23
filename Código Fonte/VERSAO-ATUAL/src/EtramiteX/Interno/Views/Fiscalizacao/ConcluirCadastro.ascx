@@ -254,6 +254,11 @@
 				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 1, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 1), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Sim</label>
 				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 0, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
 			</div>
+            <div class="coluna30 append2">
+				<label>Houve a apreensão de algum material?</label><br />
+				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos", 1, (Model.MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos.Count > 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbProdutosApreendidos" }))%>Sim</label>
+				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos", 0, (Model.MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos.Count == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
+			</div>
 		</div>
 
 	</fieldset>
