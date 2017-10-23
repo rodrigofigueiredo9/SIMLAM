@@ -168,6 +168,9 @@
 
 		objetoSerializado = jsonContents($('.filtroSerializarAjax', container));
 
+        //Solução para a mascara que não deixava filtrar certo, replace do "." que estava retornando uma consulta incorreta
+		objetoSerializado.Filtros.SolicitacaoNumero = objetoSerializado.Filtros.SolicitacaoNumero.replace(".", "");
+		
 		if (settings.onBeforeFiltrar) {
 			settings.onBeforeFiltrar(container, objetoSerializado);
 		}
