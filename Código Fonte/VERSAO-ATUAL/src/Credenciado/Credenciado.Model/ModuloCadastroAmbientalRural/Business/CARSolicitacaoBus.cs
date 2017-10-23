@@ -68,6 +68,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				{
 					GerenciadorTransacao.ObterIDAtual();
 					carSolicitacao.Id = _daInterno.ObterNovoID();
+                    if(carSolicitacao.Declarante.IsFisica)
+                        carSolicitacao.Declarante.Id = User.FuncionarioId;                  
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 					{
@@ -353,7 +355,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		{
 			try
 			{
-				return _da.Obter(id, banco);
+                //Consulta no credenciado, se vier nulo, consulta no institucional
+                var onCred = _da.Obter(id, banco);
+                if(onCred.AutorId== null || onCred.Id == null || onCred.AutorId == 0 || onCred.Id == 0)
+                {
+                    return _da.ObterOnInstitucional(id, banco);
+                }
+                return onCred;
 			}
 			catch (Exception exc)
 			{
