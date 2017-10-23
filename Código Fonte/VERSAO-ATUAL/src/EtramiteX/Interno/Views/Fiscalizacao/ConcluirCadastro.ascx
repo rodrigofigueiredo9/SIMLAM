@@ -12,7 +12,7 @@
 <div class="divFinalizar">
 
 	<fieldset class="box">
-		<legend>Agente Fiscal</legend>
+		<legend>Autoridade Autuante</legend>
 
 		<div class="block">
 			<div class="coluna60 ">
@@ -31,7 +31,7 @@
 	</fieldset>
 
 	<fieldset class="box">
-		<legend>Local da infração</legend>
+		<legend>Local da Infração/Fiscalização</legend>
 
 		<div class="block">
 			<div class="coluna20 append2">
@@ -84,7 +84,7 @@
 	</fieldset>
 
 	<fieldset class="box">
-		<legend>Autuado</legend>
+		<legend>Autuado/Fiscalizado</legend>
 
 		<div class="block divPessoa <%= Model.LocalInfracaoVM.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
 		<%= Html.Hidden("hdnAutuadoPessoaId", Model.LocalInfracaoVM.LocalInfracao.PessoaId, new { @class = "hdnAutuadoPessoaId" })%>
@@ -121,7 +121,7 @@
 	</fieldset>
 
 	<fieldset class="box fdsInfracao">
-		<legend>Classificação da infração</legend>
+		<legend>Caracterização da Infração</legend>
 
 		<div class="block">
 			<div class="coluna76">
