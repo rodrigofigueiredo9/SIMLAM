@@ -323,7 +323,7 @@
             </div>
             <div class="coluna17 append2">
                 <label>Data de lavratura do IUF</label><br />
-				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Data", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.Data == DateTime.MinValue ? Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFApreensao maskData" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Data", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.Data != DateTime.MinValue ? Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFApreensao maskData" }))%>
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />

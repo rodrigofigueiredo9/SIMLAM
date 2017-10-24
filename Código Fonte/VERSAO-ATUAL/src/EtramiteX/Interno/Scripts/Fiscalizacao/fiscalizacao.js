@@ -1946,10 +1946,9 @@ FiscalizacaoMaterialApreendido = {
 			Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
 		
-		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
-		    FiscalizacaoMaterialApreendido.onSelecionarIsDigital();
-		} else if ($('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
-		    FiscalizacaoMaterialApreendido.onSelecionarIsBloco();
+		if ($('.rdoIsDigital', FiscalizacaoMaterialApreendido.container).attr('checked') == true
+            || $('.rdoIsBloco', FiscalizacaoMaterialApreendido.container).attr('checked') == true) {
+		    $('.fsCorpo', FiscalizacaoMaterialApreendido.container).show();
 		}
 
 		MasterPage.botoes();
