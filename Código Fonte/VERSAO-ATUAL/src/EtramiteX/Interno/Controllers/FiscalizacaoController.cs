@@ -1492,12 +1492,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 outrasPenalidades = _busOutrasPenalidades.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (outrasPenalidades.Id > 0)
-            {
-                outrasPenalidades.IsDigital = true;
-            }
-
             vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
             {
                 OutrasPenalidades = outrasPenalidades,
@@ -1529,12 +1523,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
 
             outrasPenalidades = _busOutrasPenalidades.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (outrasPenalidades.Id > 0)
-            {
-                outrasPenalidades.IsDigital = true;
-            }
 
             vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
             {

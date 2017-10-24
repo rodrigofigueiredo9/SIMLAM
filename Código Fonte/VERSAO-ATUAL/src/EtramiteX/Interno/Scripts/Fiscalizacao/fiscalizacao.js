@@ -2319,10 +2319,9 @@ FiscalizacaoOutrasPenalidades = {
             Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
         }
         
-        if ($('.rdoIsDigital', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
-            FiscalizacaoOutrasPenalidades.onSelecionarIsDigital();
-        } else if ($('.rdoIsBloco', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
-            FiscalizacaoOutrasPenalidades.onSelecionarIsBloco();
+        if ($('.rdoIsDigital', FiscalizacaoOutrasPenalidades.container).attr('checked') == true
+            || $('.rdoIsBloco', FiscalizacaoOutrasPenalidades.container).attr('checked') == true) {
+            $('.fsCamposOutrasPenalidades', FiscalizacaoOutrasPenalidades.container).show();
         }
         
         MasterPage.botoes();
