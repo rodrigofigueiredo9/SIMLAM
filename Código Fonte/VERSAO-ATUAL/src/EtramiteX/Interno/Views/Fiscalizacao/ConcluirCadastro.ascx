@@ -286,6 +286,29 @@
         </div>
     </fieldset>
 
+     <fieldset class="box">
+        <legend>Interdição/Embargo</legend>
+
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.NumeroIUF", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? Model.ObjetoInfracaoVM.Entidade.NumeroIUF : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFInterdicaoEmbargo" }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Serie", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? Model.ObjetoInfracaoVM.Entidade.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFInterdicaoEmbargo" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Data", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? Model.ObjetoInfracaoVM.Entidade.DataLavraturaTermo.DataTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFInterdicaoEmbargo maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Emitido", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? (Model.ObjetoInfracaoVM.Entidade.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFInterdicaoEmbargo" }))%>
+            </div>
+        </div>
+    </fieldset>
+
 	<fieldset class="box<%= Model.InfracaoVM.Infracao.IsAutuada.GetValueOrDefault() ? "" : " hide" %>">
 		<legend>Auto de infração</legend>
 
