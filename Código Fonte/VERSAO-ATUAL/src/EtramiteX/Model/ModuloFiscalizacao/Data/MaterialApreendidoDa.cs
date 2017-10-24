@@ -465,14 +465,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                            t.opiniao,
                                            t.arquivo,
                                            a.nome arquivo_nome,
+                                           lfs.texto serie_texto,
                                            t.tid 
                                     from tab_fisc_apreensao t,
                                          tab_pessoa p,
                                          tab_arquivo a,
-                                         tab_fiscalizacao f
+                                         tab_fiscalizacao f,
+                                         lov_fiscalizacao_serie lfs
                                     where t.depositario = p.id(+)
                                           and t.arquivo = a.id(+)
                                           and t.fiscalizacao = :fiscalizacao
+                                          and (t.serie is null or t.serie = lfs.id)
                                           and f.id = t.fiscalizacao", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
@@ -490,6 +493,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             NumeroIUF = reader.GetValue<string>("iuf_numero"),
                             NumeroLacre = reader.GetValue<string>("numero_lacres"),
                             SerieId = reader.GetValue<int>("serie"),
+                            SerieTexto = reader.GetValue<string>("serie_texto"),
                             Descricao = reader.GetValue<string>("descricao"),
                             ValorProdutos = reader.GetValue<string>("valor_produtos"),
                             Opiniao = reader.GetValue<string>("opiniao"),
@@ -513,10 +517,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
 
-                        if (!Convert.IsDBNull(reader["iuf_data"]))
-                        {
-                            materialApreendido.DataLavratura.DataTexto = reader.GetValue<string>("iuf_data");
-                        }
+                        materialApreendido.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
                     }
                     reader.Close();
                 }

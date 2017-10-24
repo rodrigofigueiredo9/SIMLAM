@@ -50,8 +50,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public ComplementacaoDados ComplementacaoDados { get; set; }
 		public Enquadramento Enquadramento { get; set; }
 		public Infracao Infracao { get; set; }
-		public ObjetoInfracao ObjetoInfracao { get; set; }
+        public Multa Multa { get; set; }
+		public ObjetoInfracao ObjetoInfracao { get; set; }  //Interdição/embargo
 		public MaterialApreendido MaterialApreendido { get; set; }
+        public OutrasPenalidades OutrasPenalidades { get; set; }
 		public ConsideracaoFinal ConsideracaoFinal { get; set; }
 		public ProjetoGeografico ProjetoGeo { get; set; }
 

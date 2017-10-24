@@ -784,12 +784,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 entidade = _busObjetoInfracao.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (entidade.Id > 0)
-            {
-                entidade.IsDigital = true;
-            }
-
             vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
 
             if (vm.ObjetoInfracaoVM.Entidade.Arquivo == null)
@@ -814,12 +808,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             FiscalizacaoVM vm = new FiscalizacaoVM();
 
             ObjetoInfracao entidade = _busObjetoInfracao.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (entidade.Id > 0)
-            {
-                entidade.IsDigital = true;
-            }
             
             vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
             vm.ObjetoInfracaoVM.IsVisualizar = entidade.Id > 0;
@@ -1420,12 +1408,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 multa = _busMulta.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (multa.Id > 0)
-            {
-                multa.IsDigital = true;
-            }
-
             vm.MultaVM = new MultaVM
             {
                 Multa = multa,
@@ -1458,12 +1440,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             Multa multa = new Multa();
 
             multa = _busMulta.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (multa.Id > 0)
-            {
-                multa.IsDigital = true;
-            }
 
             vm.MultaVM = new MultaVM
             {
@@ -1516,12 +1492,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 outrasPenalidades = _busOutrasPenalidades.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (outrasPenalidades.Id > 0)
-            {
-                outrasPenalidades.IsDigital = true;
-            }
-
             vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
             {
                 OutrasPenalidades = outrasPenalidades,
@@ -1553,12 +1523,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             OutrasPenalidades outrasPenalidades = new OutrasPenalidades();
 
             outrasPenalidades = _busOutrasPenalidades.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (outrasPenalidades.Id > 0)
-            {
-                outrasPenalidades.IsDigital = true;
-            }
 
             vm.OutrasPenalidadesVM = new OutrasPenalidadesVM
             {
@@ -1638,6 +1602,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
 
             vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+
+            List<Lista> penalidades = _busConfiguracao.ObterPenalidadesLista();
+            vm.InfracaoVM.Penalidades = penalidades;
+            vm.InfracaoVM.ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[0].ToString());
+            vm.InfracaoVM.ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[1].ToString());
+            vm.InfracaoVM.ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[2].ToString());
+            vm.InfracaoVM.ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[3].ToString());
+
             vm.InfracaoVM.Classificacoes = ViewModelHelper.CriarSelectList(_busLista.InfracaoClassificacao, true, selecionado: fiscalizacao.Infracao.ClassificacaoId.ToString());
             vm.InfracaoVM.Tipos = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterTipos(fiscalizacao.Infracao.ClassificacaoId), true, selecionado: fiscalizacao.Infracao.TipoId.ToString());
             vm.InfracaoVM.Itens = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterItens(fiscalizacao.Infracao.ClassificacaoId, fiscalizacao.Infracao.TipoId), true, selecionado: fiscalizacao.Infracao.ItemId.ToString());
@@ -1651,6 +1623,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(fiscalizacao.Id);
+            vm.MultaVM.Multa = fiscalizacao.Multa;
+            vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
 
             if (Request.IsAjaxRequest())
             {
