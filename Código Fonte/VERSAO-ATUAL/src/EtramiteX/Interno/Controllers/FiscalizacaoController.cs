@@ -784,12 +784,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 entidade = _busObjetoInfracao.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (entidade.Id > 0)
-            {
-                entidade.IsDigital = true;
-            }
-
             vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
 
             if (vm.ObjetoInfracaoVM.Entidade.Arquivo == null)
@@ -814,12 +808,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             FiscalizacaoVM vm = new FiscalizacaoVM();
 
             ObjetoInfracao entidade = _busObjetoInfracao.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (entidade.Id > 0)
-            {
-                entidade.IsDigital = true;
-            }
             
             vm.ObjetoInfracaoVM = new ObjetoInfracaoVM(entidade, _busLista.FiscalizacaoSerie);
             vm.ObjetoInfracaoVM.IsVisualizar = entidade.Id > 0;

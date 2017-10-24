@@ -1708,23 +1708,14 @@ FiscalizacaoObjetoInfracao = {
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnAddArq', 'click', FiscalizacaoObjetoInfracao.onEnviarArquivoClick);
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnLimparArq', 'click', FiscalizacaoObjetoInfracao.onLimparArquivoClick);
 
-		//FiscalizacaoObjetoInfracao.container.delegate('.rdbAreaEmbargadaAtvIntermed', 'click', FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed);
-		//FiscalizacaoObjetoInfracao.container.delegate('.rdbTeiGeradoPeloSistema', 'click', FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema);
-		//FiscalizacaoObjetoInfracao.container.delegate('.ddlInfracaoResultouErosaoTipo', 'change', FiscalizacaoObjetoInfracao.onChangeErosao);
-		//FiscalizacaoObjetoInfracao.container.delegate('.ddlTeiGeradoPeloSistemaSerieTipo', 'change', FiscalizacaoObjetoInfracao.gerenciarSerie);
-
-		//FiscalizacaoObjetoInfracao.gerenciarAreaEmbarcadaAtvIntermed();
-		//FiscalizacaoObjetoInfracao.gerenciarTeiGeradoPeloSistema();
 		FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto();
-		//FiscalizacaoObjetoInfracao.gerenciarSerie();
 
 		Mascara.load(FiscalizacaoObjetoInfracao.container);
 		Fiscalizacao.configurarBtnCancelarStep(5);
 
-		if ($('.rdoIsDigital', FiscalizacaoObjetoInfracao.container).attr('checked') == true) {
-		    FiscalizacaoObjetoInfracao.onSelecionarIsDigital();
-		} else if ($('.rdoIsBloco', FiscalizacaoObjetoInfracao.container).attr('checked') == true) {
-		    FiscalizacaoObjetoInfracao.onSelecionarIsBloco();
+		if ($('.rdoIsDigital', FiscalizacaoObjetoInfracao.container).attr('checked') == true
+            || $('.rdoIsBloco', FiscalizacaoObjetoInfracao.container).attr('checked') == true) {
+		    $('.fsCamposInterdicaoEmbargo', FiscalizacaoObjetoInfracao.container).show();
 		}
 
 		MasterPage.carregando(false);
@@ -1738,7 +1729,6 @@ FiscalizacaoObjetoInfracao = {
 	    var obj = {
 	        Id: Number($('.hdnObjetoInfracaoId', container).val()) || 0,
 	        FiscalizacaoId: Number($('.hdnFiscalizacaoId', Fiscalizacao.container).val()) || 0,
-	        DataLavraturaTermo: { DataTexto: $('.txtDataLavraturaTermo', container).val() },
 	        OpniaoAreaDanificada: $('.txtOpniaoAreaDanificada', container).val(),
 	        DescricaoTermoEmbargo: $('.txtDescricaoTermoEmbargo', container).val(),
 	        NumeroLacre: $('.txtNumeroLacre', container).val(),
@@ -1750,7 +1740,7 @@ FiscalizacaoObjetoInfracao = {
 	    if ($('.rdoIsBloco', container).attr('checked')) {
 	        obj.IsDigital = false;
 	        obj.NumeroIUF = $('.txtNumeroIUF', container).val();
-	        obj.DataLavratura = { DataTexto: $('.txtDataLavratura', container).val() };
+	        obj.DataLavraturaTermo = { DataTexto: $('.txtDataLavratura', container).val() };
 	        obj.Arquivo = $.parseJSON($('.hdnArquivoJson', container).val());
 	    } else if ($('.rdoIsDigital', container).attr('checked')) {
 	        obj.IsDigital = true;
@@ -1789,8 +1779,6 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
-
-	    $('.divPDF', FiscalizacaoObjetoInfracao.container).hide();
 	},
 
 	onSelecionarIsBloco: function () {
@@ -1808,8 +1796,6 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).removeAttr('disabled', 'disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
 	    $('.txtDataLavratura', FiscalizacaoObjetoInfracao.container).val('');
-
-	    $('.divPDF', FiscalizacaoObjetoInfracao.container).show();
 	},
 
 	gerenciarExisteAtvAreaDegradEspecificarTexto: function () {

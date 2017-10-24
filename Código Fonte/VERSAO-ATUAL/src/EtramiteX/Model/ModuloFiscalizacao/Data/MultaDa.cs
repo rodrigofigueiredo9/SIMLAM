@@ -200,7 +200,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                          {0}tab_arquivo a,
                                          {0}lov_fiscalizacao_serie lfs
                                     where tfm.arquivo = a.id(+)
-                                          and lfs.id = tfm.serie
+                                          and (lfs.id = tfm.serie or tfm.serie is null)
                                           and tfm.fiscalizacao = :fiscalizacao
                                           and f.id = tfm.fiscalizacao", EsquemaBanco);
 
@@ -215,7 +215,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Id = reader.GetValue<int>("id"),
                             IsDigital = reader.GetValue<bool>("iuf_digital"),
                             NumeroIUF = reader.GetValue<string>("iuf_numero"),
-                            SerieId = reader.GetValue<int>("serie"),
+                            SerieId = reader.GetValue<int?>("serie"),
                             SerieTexto = reader.GetValue<string>("serie_texto"),
                             ValorMulta = reader.GetValue<decimal>("valor_multa"),
                             CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
