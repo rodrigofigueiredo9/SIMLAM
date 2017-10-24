@@ -11,6 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
         public Boolean? IsDigital { get; set; }
         public String NumeroIUF { get; set; }
         public Int32? SerieId { get; set; }
+        public String SerieTexto { get; set; }
         public String Descricao { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
 

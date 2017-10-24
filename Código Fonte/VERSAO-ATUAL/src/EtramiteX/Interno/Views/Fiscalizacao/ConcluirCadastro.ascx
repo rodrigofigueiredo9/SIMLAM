@@ -315,19 +315,42 @@
         <div class="block">
             <div class="coluna15 append2">
                 <label>Nº IUF</label><br />
-				<%= Html.TextBox(".MaterialApreendidoVM.MaterialApreendido.NumeroIUF", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFApreensao" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.NumeroIUF", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFApreensao" }))%>
             </div>
             <div class="coluna10 append2">
                 <label>Série</label><br />
-				<%= Html.TextBox(".MaterialApreendidoVM.MaterialApreendido.Serie", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFApreensao" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Serie", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFApreensao" }))%>
             </div>
             <div class="coluna17 append2">
                 <label>Data de lavratura do IUF</label><br />
-				<%= Html.TextBox(".MaterialApreendidoVM.MaterialApreendido.Data", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFApreensao maskData" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Data", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFApreensao maskData" }))%>
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />
-				<%= Html.TextBox(".MaterialApreendidoVM.MaterialApreendido.Emitido", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFApreensao" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Emitido", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFApreensao" }))%>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="box">
+        <legend>Outras Penalidades</legend>
+
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFOutrasPenalidades" }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.Serie", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? Model.OutrasPenalidadesVM.OutrasPenalidades.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFOutrasPenalidades" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.Data", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? Model.OutrasPenalidadesVM.OutrasPenalidades.DataLavratura.DataTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFOutrasPenalidades maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidade.Emitido", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFOutrasPenalidades" }))%>
             </div>
         </div>
     </fieldset>
