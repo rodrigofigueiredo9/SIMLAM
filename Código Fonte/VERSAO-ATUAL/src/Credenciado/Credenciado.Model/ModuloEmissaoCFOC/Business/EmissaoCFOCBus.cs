@@ -286,6 +286,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			return null;
 		}
 
+        public List<Lista> ObterEmpreendimentosListaEtramiteX(BancoDeDados bd = null)
+        {
+            return _da.ObterEmpreendimentosListaEtramiteX(bd);
+        }
+
 		public List<Lista> ObterEmpreendimentosLista(int credenciadoID = 0)
 		{
 			try
