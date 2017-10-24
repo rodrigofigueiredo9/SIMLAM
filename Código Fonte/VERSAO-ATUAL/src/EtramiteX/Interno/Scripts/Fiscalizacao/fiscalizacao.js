@@ -1491,10 +1491,9 @@ FiscalizacaoMulta = {
             Fiscalizacao.botoes({ btnSalvar: true, spnCancelarCadastro: true });
         }
 
-        if ($('.rdoIsDigital', FiscalizacaoMulta.container).attr('checked') == true) {
-            FiscalizacaoMulta.onSelecionarIsDigital();
-        } else if ($('.rdoIsBloco', FiscalizacaoMulta.container).attr('checked') == true) {
-            FiscalizacaoMulta.onSelecionarIsBloco();
+        if ($('.rdoIsDigital', FiscalizacaoMulta.container).attr('checked') == true
+            || $('.rdoIsBloco', FiscalizacaoMulta.container).attr('checked') == true) {
+            $('.fsCamposMulta', FiscalizacaoMulta.container).show();
         }
 
         MasterPage.botoes();
@@ -1543,7 +1542,7 @@ FiscalizacaoMulta = {
             Fiscalizacao.botoes({ btnSalvar: true, spnCancelarEdicao: true });
             Fiscalizacao.configurarBtnCancelarStep(4);
             Fiscalizacao.gerenciarVisualizacao();
-        });
+        })
     },
 
     onSelecionarIsDigital: function () {
@@ -1561,8 +1560,6 @@ FiscalizacaoMulta = {
         $('.txtDataLavratura', FiscalizacaoMulta.container).attr('disabled', 'disabled');
         $('.txtDataLavratura', FiscalizacaoMulta.container).addClass('disabled');
         $('.txtDataLavratura', FiscalizacaoMulta.container).val('Gerado automaticamente');
-
-        $('.divPDF', FiscalizacaoMulta.container).hide();
     },
 
     onSelecionarIsBloco: function () {
@@ -1580,8 +1577,6 @@ FiscalizacaoMulta = {
         $('.txtDataLavratura', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
         $('.txtDataLavratura', FiscalizacaoMulta.container).removeClass('disabled');
         $('.txtDataLavratura', FiscalizacaoMulta.container).val('');
-
-        $('.divPDF', FiscalizacaoMulta.container).show();
     },
 
     onEnviarArquivoClick: function () {

@@ -1420,12 +1420,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 multa = _busMulta.Obter(id);
             }
 
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (multa.Id > 0)
-            {
-                multa.IsDigital = true;
-            }
-
             vm.MultaVM = new MultaVM
             {
                 Multa = multa,
@@ -1458,12 +1452,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             Multa multa = new Multa();
 
             multa = _busMulta.Obter(id);
-
-            //temporário enquanto não salva o tipo de IUF, DELETAR DEPOIS
-            if (multa.Id > 0)
-            {
-                multa.IsDigital = true;
-            }
 
             vm.MultaVM = new MultaVM
             {
