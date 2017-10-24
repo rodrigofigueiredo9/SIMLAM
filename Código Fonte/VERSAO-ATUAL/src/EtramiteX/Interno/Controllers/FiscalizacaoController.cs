@@ -1659,6 +1659,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
             vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(fiscalizacao.Id);
+            vm.MultaVM.Multa = fiscalizacao.Multa;
+            vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
 
             if (Request.IsAjaxRequest())
             {

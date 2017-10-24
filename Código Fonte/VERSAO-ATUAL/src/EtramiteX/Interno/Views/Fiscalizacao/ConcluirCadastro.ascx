@@ -262,6 +262,29 @@
 		</div>
 
 	</fieldset>
+    
+    <fieldset class="box">
+        <legend>Multa</legend>
+
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("MultaVM.Multa.NumeroIUF", (Model.MultaVM.Multa.IsDigital != null ? Model.MultaVM.Multa.NumeroIUF : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFMulta" }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Serie", (Model.MultaVM.Multa.IsDigital != null ? Model.MultaVM.Multa.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFMulta" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Data", (Model.MultaVM.Multa.IsDigital != null ? Model.MultaVM.Multa.DataLavratura.DataTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFMulta maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Emitido", (Model.MultaVM.Multa.IsDigital != null ? (Model.MultaVM.Multa.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFMulta" }))%>
+            </div>
+        </div>
+    </fieldset>
 
 	<fieldset class="box<%= Model.InfracaoVM.Infracao.IsAutuada.GetValueOrDefault() ? "" : " hide" %>">
 		<legend>Auto de infração</legend>

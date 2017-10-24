@@ -40,6 +40,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		EnquadramentoDa _daEnquadramento = new EnquadramentoDa();
 		ObjetoInfracaoDa _daObjetoInfracao = new ObjetoInfracaoDa();
 		MaterialApreendidoDa _daMaterialApreendido = new MaterialApreendidoDa();
+        MultaDa _daMulta = new MultaDa();
+        OutrasPenalidadesDa _daOutrasPenalidades = new OutrasPenalidadesDa();
 		ConsideracaoFinalDa _daConsideracaoFinal = new ConsideracaoFinalDa();
 		AcompanhamentoDa _daAcompanhamento = new AcompanhamentoDa();
 
@@ -416,6 +418,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     entidade.Infracao = _daInfracao.Obter(id, bancoDeDados);
 					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
 					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
+                    entidade.Multa = _daMulta.Obter(id, bancoDeDados);
+                    entidade.OutrasPenalidades = _daOutrasPenalidades.Obter(id, bancoDeDados);
 
                     if (entidade.MaterialApreendido == null)
                     {
