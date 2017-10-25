@@ -37,17 +37,17 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("Multa.NumeroIUF", Model.Multa.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("Multa.NumeroIUF", ((Model.Multa.IsDigital == true && Model.Multa.NumeroIUF == null) ? "Gerado automaticamente" : Model.Multa.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Multa.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
 				<label>Série *</label><br />
-				<%= Html.DropDownList("Multa.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
+				<%= Html.DropDownList("Multa.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Series.Count <= 2 || Model.Multa.IsDigital == true), new { @class = "text ddlSeries" }))%>
 			</div>
 
-            <div class="coluna15">
+            <div class="coluna20">
 				<label>Data da lavratura do IUF *</label>
-				<%= Html.TextBox("Multa.DataLavratura", Model.Multa.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
+				<%= Html.TextBox("Multa.DataLavratura", (Model.Multa.DataLavratura.Data != DateTime.MinValue ? Model.Multa.DataLavratura.DataTexto : "Gerado automaticamente"), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Multa.IsDigital == true), new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
 
             <div class="coluna17">

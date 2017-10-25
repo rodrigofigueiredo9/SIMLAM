@@ -67,6 +67,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     insert into {0}tab_fisc_multa (id,
                                                                    fiscalizacao,
                                                                    valor_multa,
+                                                                   iuf_digital,
+                                                                   iuf_numero,
+                                                                   iuf_data,
+                                                                   serie,
                                                                    arquivo,
                                                                    justificar,
                                                                    codigo_receita,
@@ -74,6 +78,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     values ({0}seq_tab_fisc_multa.nextval,
                                             :fiscalizacao,
                                             :valor_multa,
+                                            :iuf_digital,
+                                            :iuf_numero,
+                                            :iuf_data,
+                                            :serie,
                                             :arquivo,
                                             :justificar,
                                             :codigo_receita,
@@ -82,6 +90,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando.AdicionarParametroEntrada("fiscalizacao", multa.FiscalizacaoId, DbType.Int32);
                 comando.AdicionarParametroEntrada("valor_multa", multa.ValorMulta, DbType.Decimal);
+                comando.AdicionarParametroEntrada("iuf_digital", multa.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", multa.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", multa.DataLavratura.Data, DbType.Date);
+                comando.AdicionarParametroEntrada("serie", multa.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("justificar", multa.Justificativa, DbType.String);
                 comando.AdicionarParametroEntrada("codigo_receita", multa.CodigoReceitaId, DbType.Int32);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -118,6 +130,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"
                                     update {0}tab_fisc_multa t
                                     set t.fiscalizacao = :fiscalizacao,
+                                        t.iuf_digital = :iuf_digital,
+                                        t.iuf_numero = :iuf_numero,
+                                        t.iuf_data = :iuf_data,
+                                        t.serie = :serie,
                                         t.valor_multa = :valor_multa,
                                         t.arquivo = :arquivo,
                                         t.justificar = :justificar,
@@ -127,6 +143,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando.AdicionarParametroEntrada("id", multa.Id, DbType.Int32);
                 comando.AdicionarParametroEntrada("fiscalizacao", multa.FiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf_digital", multa.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", multa.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", multa.DataLavratura.Data, DbType.Date);
+                comando.AdicionarParametroEntrada("serie", multa.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("valor_multa", multa.ValorMulta, DbType.Decimal);
                 comando.AdicionarParametroEntrada("justificar", multa.Justificativa, DbType.String);
                 comando.AdicionarParametroEntrada("codigo_receita", multa.CodigoReceitaId, DbType.Int32);
@@ -165,6 +185,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"
                                     select tfm.id,
                                            f.situacao situacao_id,
+                                           tfm.iuf_digital,
+                                           tfm.iuf_numero,
+                                           tfm.iuf_data,
+                                           tfm.serie,
+                                           lfs.texto serie_texto,
                                            tfm.valor_multa,
                                            tfm.codigo_receita,
                                            tfm.justificar,
@@ -172,8 +197,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                            a.nome arquivo_nome
                                     from {0}tab_fisc_multa tfm,
                                          {0}tab_fiscalizacao f,
-                                         {0}tab_arquivo a
+                                         {0}tab_arquivo a,
+                                         {0}lov_fiscalizacao_serie lfs
                                     where tfm.arquivo = a.id(+)
+                                          and (lfs.id = tfm.serie or tfm.serie is null)
                                           and tfm.fiscalizacao = :fiscalizacao
                                           and f.id = tfm.fiscalizacao", EsquemaBanco);
 
@@ -186,11 +213,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         multa = new Multa
                         {
                             Id = reader.GetValue<int>("id"),
+                            IsDigital = reader.GetValue<bool>("iuf_digital"),
+                            NumeroIUF = reader.GetValue<string>("iuf_numero"),
+                            SerieId = reader.GetValue<int?>("serie"),
+                            SerieTexto = reader.GetValue<string>("serie_texto"),
                             ValorMulta = reader.GetValue<decimal>("valor_multa"),
                             CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
                             FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
                             Justificativa = reader.GetValue<string>("justificar")
                         };
+
+                        multa.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
 
                         multa.Arquivo = new Arquivo
                         {

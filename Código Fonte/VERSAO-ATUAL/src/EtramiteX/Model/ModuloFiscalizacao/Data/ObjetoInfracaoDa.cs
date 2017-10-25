@@ -62,12 +62,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                               tei_gerado_pelo_sist, tei_gerado_pelo_sist_serie, num_tei_bloco, data_lavratura_termo,  
                               opniao_area_danificada, desc_termo_embargo, existe_atv_area_degrad, existe_atv_area_degrad_especif, fundament_infracao, 
                               uso_solo_area_danif, declividade_media_area,infracao_result_erosao, caract_solo_area_danif, arquivo, tid, infr_result_er_especifique,
-                              interditado, numero_lacre) values({0}seq_tab_fisc_obj_infracao.nextval,  
+                              interditado, numero_lacre, iuf_digital, iuf_numero, iuf_data, serie) values({0}seq_tab_fisc_obj_infracao.nextval,  
                               :fiscalizacao, :area_embargada_atv_intermed, :tei_gerado_pelo_sist, :tei_gerado_pelo_sist_serie,  
                               :num_tei_bloco, :data_lavratura_termo, :opniao_area_danificada, :desc_termo_embargo,  
                               :existe_atv_area_degrad, :existe_atv_area_degrad_especif, :fundament_infracao, :uso_solo_area_danif, :declividade_media_area, 
                               :infracao_result_erosao, :caract_solo_area_danif, :arquivo, :tid, :infr_result_er_especifique,
-                              :interditado, :numero_lacre) returning i.id into :id", EsquemaBanco);
+                              :interditado, :numero_lacre, :iuf_digital, :iuf_numero, :iuf_data, :serie) returning i.id into :id", EsquemaBanco);
 
 
                 comando.AdicionarParametroEntrada("fiscalizacao", objetoInfracao.FiscalizacaoId, DbType.Int32);
@@ -91,6 +91,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroSaida("id", DbType.Int32);
                 comando.AdicionarParametroEntrada("interditado", objetoInfracao.Interditado, DbType.Boolean);
                 comando.AdicionarParametroEntrada("numero_lacre", objetoInfracao.NumeroLacre, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_digital", objetoInfracao.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", objetoInfracao.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", objetoInfracao.DataLavraturaTermo.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("serie", objetoInfracao.SerieId, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				objetoInfracao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
@@ -124,7 +128,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															i.uso_solo_area_danif = :uso_solo_area_danif, i.declividade_media_area = :declividade_media_area, 
 															i.infracao_result_erosao = :infracao_result_erosao, i.caract_solo_area_danif = :caract_solo_area_danif, i.arquivo = :arquivo,
 															i.tid = :tid, i.infr_result_er_especifique = :infr_result_er_especifique,
-                                                            i.interditado = :interditado, i.numero_lacre = :numero_lacre where i.id = :id", EsquemaBanco);
+                                                            i.interditado = :interditado, i.numero_lacre = :numero_lacre,
+                                                            i.iuf_digital = :iuf_digital, i.iuf_numero = :iuf_numero, i.iuf_data = :iuf_data, i.serie = :serie
+                                                            where i.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", objetoInfracao.FiscalizacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("area_embargada_atv_intermed", objetoInfracao.AreaEmbargadaAtvIntermed, DbType.Int32);
@@ -146,6 +152,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("infr_result_er_especifique", DbType.String, 150, objetoInfracao.InfracaoResultouErosaoTipoTexto);
                 comando.AdicionarParametroEntrada("interditado", objetoInfracao.Interditado, DbType.Boolean);
                 comando.AdicionarParametroEntrada("numero_lacre", objetoInfracao.NumeroLacre, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_digital", objetoInfracao.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", objetoInfracao.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", objetoInfracao.DataLavraturaTermo.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("serie", objetoInfracao.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("id", objetoInfracao.Id, DbType.Int32);
 				
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -195,9 +205,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															i.opniao_area_danificada, i.desc_termo_embargo, i.existe_atv_area_degrad,
 															i.existe_atv_area_degrad_especif, i.fundament_infracao, i.uso_solo_area_danif, i.declividade_media_area,
 															i.infracao_result_erosao, i.caract_solo_area_danif, i.arquivo, a.nome arquivo_nome, i.tid, i.infr_result_er_especifique,
-                                                            i.interditado, i.numero_lacre
-															from tab_fisc_obj_infracao i, tab_fiscalizacao t, tab_arquivo a where i.fiscalizacao = :fiscalizacao 
-															and i.arquivo = a.id(+) and t.id = i.fiscalizacao", EsquemaBanco);
+                                                            i.interditado, i.numero_lacre,
+                                                            i.iuf_digital, i.iuf_numero, i.iuf_data, i.serie, lfs.texto serie_texto
+															from tab_fisc_obj_infracao i, tab_fiscalizacao t, tab_arquivo a, lov_fiscalizacao_serie lfs
+                                                            where i.fiscalizacao = :fiscalizacao 
+															and i.arquivo = a.id(+) and t.id = i.fiscalizacao
+                                                            and (lfs.id = i.serie or i.serie is null)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
@@ -208,13 +221,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						objetoInfracao.Id = Convert.ToInt32(reader["id"]);
 						objetoInfracao.FiscalizacaoId = fiscalizacaoId;
 						objetoInfracao.FiscalizacaoSituacaoId = Convert.ToInt32(reader["situacao_id"]);
-                        //objetoInfracao.AreaEmbargadaAtvIntermed = Convert.ToInt32(reader["area_embargada_atv_intermed"]);
 						objetoInfracao.ExisteAtvAreaDegrad = Convert.ToInt32(reader["existe_atv_area_degrad"]);
 						objetoInfracao.ExisteAtvAreaDegradEspecificarTexto = reader["existe_atv_area_degrad_especif"].ToString();
-                        //objetoInfracao.FundamentoInfracao = reader["fundament_infracao"].ToString();
-                        //objetoInfracao.UsoSoloAreaDanificada = reader["uso_solo_area_danif"].ToString();
-                        //objetoInfracao.AreaDeclividadeMedia = reader.GetValue<decimal>("declividade_media_area").ToStringTrunc();
                         objetoInfracao.NumeroLacre = reader["numero_lacre"].ToString();
+                        objetoInfracao.IsDigital = reader.GetValue<bool?>("iuf_digital");
+                        objetoInfracao.NumeroIUF = reader.GetValue<string>("iuf_numero");
+                        objetoInfracao.DataLavraturaTermo.Data = reader.GetValue<DateTime>("iuf_data");
+                        objetoInfracao.SerieId = reader.GetValue<int?>("serie");
+                        objetoInfracao.SerieTexto = reader.GetValue<string>("serie_texto");
 						
 						objetoInfracao.Tid = reader["tid"].ToString();
 
@@ -227,39 +241,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             objetoInfracao.Interditado = null;
                         }
 
-                        //if (reader["infracao_result_erosao"] != null && !Convert.IsDBNull(reader["infracao_result_erosao"]))
-                        //{
-                        //    objetoInfracao.InfracaoResultouErosaoTipo = Convert.ToInt32(reader["infracao_result_erosao"]) == 0 ? 2 : 1;
-                        //}
-                        //else 
-                        //{
-                        //    objetoInfracao.InfracaoResultouErosaoTipo = 0;
-                        //}
-
-                        //if (reader["tei_gerado_pelo_sist_serie"] != null && !Convert.IsDBNull(reader["tei_gerado_pelo_sist_serie"]))
-                        //{
-                        //    objetoInfracao.TeiGeradoPeloSistemaSerieTipo = Convert.ToInt32(reader["tei_gerado_pelo_sist_serie"]);
-                        //}
-
-                        //if (reader["tei_gerado_pelo_sist"] != null && !Convert.IsDBNull(reader["tei_gerado_pelo_sist"]))
-                        //{
-                        //    objetoInfracao.TeiGeradoPeloSistema = Convert.ToInt32(reader["tei_gerado_pelo_sist"]);
-                        //}
-
-                        //if (reader["caract_solo_area_danif"] != null && !Convert.IsDBNull(reader["caract_solo_area_danif"]))
-                        //{
-                        //    objetoInfracao.CaracteristicaSoloAreaDanificada = Convert.ToInt32(reader["caract_solo_area_danif"]);
-                        //}
-
 						if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
 						{
 							objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
 						}
-
-                        //if (reader["num_tei_bloco"] != null && !Convert.IsDBNull(reader["num_tei_bloco"]))
-                        //{
-                        //    objetoInfracao.NumTeiBloco = reader["num_tei_bloco"].ToString();
-                        //}
 
 						if (reader["opniao_area_danificada"] != null && !Convert.IsDBNull(reader["opniao_area_danificada"]))
 						{

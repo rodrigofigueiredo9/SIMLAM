@@ -12,6 +12,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
         public Boolean? IsDigital { get; set; }
         public String NumeroIUF { get; set; }
         public Int32? SerieId { get; set; }
+        public String SerieTexto { get; set; }
         public Boolean? Interditado { get; set; }
 		public Int32? AreaEmbargadaAtvIntermed { get; set; }
 		public Int32? TeiGeradoPeloSistema { get; set; }

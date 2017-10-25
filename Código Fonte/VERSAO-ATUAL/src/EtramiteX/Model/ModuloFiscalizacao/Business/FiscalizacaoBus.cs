@@ -40,6 +40,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		EnquadramentoDa _daEnquadramento = new EnquadramentoDa();
 		ObjetoInfracaoDa _daObjetoInfracao = new ObjetoInfracaoDa();
 		MaterialApreendidoDa _daMaterialApreendido = new MaterialApreendidoDa();
+        MultaDa _daMulta = new MultaDa();
+        OutrasPenalidadesDa _daOutrasPenalidades = new OutrasPenalidadesDa();
 		ConsideracaoFinalDa _daConsideracaoFinal = new ConsideracaoFinalDa();
 		AcompanhamentoDa _daAcompanhamento = new AcompanhamentoDa();
 
@@ -412,11 +414,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					entidade.LocalInfracao = _daLocalInfracao.Obter(id, bancoDeDados);
 					entidade.ComplementacaoDados = _daComplementacaoDados.Obter(id, bancoDeDados);
 					entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
-					entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
+                    //entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
+                    entidade.Infracao = _daInfracao.Obter(id, bancoDeDados);
 					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
-					entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
+					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
+
+                    if (entidade.MaterialApreendido == null)
+                    {
+                        entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
+                    }
+
+                    entidade.Multa = _daMulta.Obter(id, bancoDeDados);
+
+                    if (entidade.Multa == null)
+                    {
+                        entidade.Multa = _daMulta.ObterAntigo(id, bancoDeDados);
+                    }
+
+                    entidade.OutrasPenalidades = _daOutrasPenalidades.Obter(id, bancoDeDados);
+
 					entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
 					entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (entidade.Infracao.IdsOutrasPenalidades.Count <= i)
+                        {
+                            entidade.Infracao.IdsOutrasPenalidades.Add(0);
+                        }
+                    }
 
 					entidade.AutuadoPessoa = entidade.LocalInfracao.PessoaId.GetValueOrDefault() > 0 ? new PessoaBus().Obter(entidade.LocalInfracao.PessoaId.Value) : new Pessoa();
 					entidade.AutuadoEmpreendimento = entidade.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? new EmpreendimentoBus().Obter(entidade.LocalInfracao.EmpreendimentoId.Value) : new Empreendimento();

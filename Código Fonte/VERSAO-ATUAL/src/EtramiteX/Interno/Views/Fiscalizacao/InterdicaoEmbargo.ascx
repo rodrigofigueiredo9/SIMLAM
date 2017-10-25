@@ -23,17 +23,17 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("ObjetoInfracao.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("ObjetoInfracao.NumeroIUF", ((Model.Entidade.IsDigital == true && Model.Entidade.NumeroIUF == null) ? "Gerado automaticamente" : Model.Entidade.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
 				<label>Série *</label><br />
-				<%= Html.DropDownList("ObjetoInfracao.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
+				<%= Html.DropDownList("ObjetoInfracao.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Series.Count <= 2 || Model.Entidade.IsDigital == true), new { @class = "text ddlSeries" }))%>
 			</div>
 
-            <div class="coluna15">
+            <div class="coluna20">
 				<label>Data da lavratura do IUF *</label>
-				<%= Html.TextBox("ObjetoInfracao.DataLavratura", Model.Entidade.DataLavraturaTermo.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
+				<%= Html.TextBox("ObjetoInfracao.DataLavratura", (Model.Entidade.DataLavraturaTermo.Data != DateTime.MinValue ? Model.Entidade.DataLavraturaTermo.DataTexto : "Gerado automaticamente"), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.IsDigital == true), new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>
 
