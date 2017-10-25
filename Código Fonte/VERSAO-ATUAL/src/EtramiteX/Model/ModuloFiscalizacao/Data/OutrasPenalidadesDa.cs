@@ -66,17 +66,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"
                                     insert into {0}tab_fisc_outras_penalidades (id,
                                                                                fiscalizacao,
+                                                                               iuf_digital,
+                                                                               iuf_numero,
+                                                                               iuf_data,
+                                                                               serie,
                                                                                descricao,
                                                                                arquivo,
                                                                                tid)
                                     values ({0}seq_fisc_outras_penalidades.nextval,
                                             :fiscalizacao,
+                                            :iuf_digital,
+                                            :iuf_numero,
+                                            :iuf_data,
+                                            :serie,
                                             :descricao,
                                             :arquivo,
                                             :tid)
                                     returning id into :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", outrasPenalidades.FiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf_digital", outrasPenalidades.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", outrasPenalidades.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", outrasPenalidades.DataLavratura.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("serie", outrasPenalidades.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("descricao", outrasPenalidades.Descricao, DbType.String);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -112,6 +124,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"
                                     update {0}tab_fisc_outras_penalidades t
                                     set t.fiscalizacao = :fiscalizacao,
+                                        t.iuf_digital = :iuf_digital,
+                                        t.iuf_numero = :iuf_numero,
+                                        t.iuf_data = :iuf_data,
+                                        t.serie = :serie,
                                         t.descricao = :descricao,
                                         t.arquivo = :arquivo,
                                         t.tid = :tid
@@ -119,6 +135,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando.AdicionarParametroEntrada("id", outrasPenalidades.Id, DbType.Int32);
                 comando.AdicionarParametroEntrada("fiscalizacao", outrasPenalidades.FiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf_digital", outrasPenalidades.IsDigital, DbType.Boolean);
+                comando.AdicionarParametroEntrada("iuf_numero", outrasPenalidades.NumeroIUF, DbType.String);
+                comando.AdicionarParametroEntrada("iuf_data", outrasPenalidades.DataLavratura.Data, DbType.DateTime);
+                comando.AdicionarParametroEntrada("serie", outrasPenalidades.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("descricao", outrasPenalidades.Descricao, DbType.String);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -155,14 +175,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"
                                     select tfop.id,
                                            f.situacao situacao_id,
+                                           tfop.iuf_digital,
+                                           tfop.iuf_numero,
+                                           tfop.iuf_data,
+                                           tfop.serie,
+                                           lfs.texto serie_texto,
                                            tfop.descricao,
                                            tfop.arquivo,
                                            a.nome arquivo_nome
                                     from {0}tab_fisc_outras_penalidades tfop,
                                          {0}tab_fiscalizacao f,
+                                         {0}lov_fiscalizacao_serie lfs,
                                          {0}tab_arquivo a
                                     where tfop.arquivo = a.id(+)
                                           and tfop.fiscalizacao = :fiscalizacao
+                                          and (tfop.serie is null or tfop.serie = lfs.id)
                                           and f.id = tfop.fiscalizacao", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
@@ -174,9 +201,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         outrasPenalidades = new OutrasPenalidades
                         {
                             Id = reader.GetValue<int>("id"),
+                            IsDigital = reader.GetValue<bool>("iuf_digital"),
+                            NumeroIUF = reader.GetValue<string>("iuf_numero"),
+                            SerieId = reader.GetValue<int>("serie"),
+                            SerieTexto = reader.GetValue<string>("serie_texto"),
                             Descricao = reader.GetValue<string>("descricao"),
                             FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id")
                         };
+
+                        outrasPenalidades.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
 
                         outrasPenalidades.Arquivo = new Arquivo
                         {

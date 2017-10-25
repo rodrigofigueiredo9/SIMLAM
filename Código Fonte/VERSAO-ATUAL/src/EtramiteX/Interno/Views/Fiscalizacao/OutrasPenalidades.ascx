@@ -37,17 +37,17 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("OutrasPenalidades.NumeroIUF", Model.OutrasPenalidades.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("OutrasPenalidades.NumeroIUF", ((Model.OutrasPenalidades.IsDigital == true && Model.OutrasPenalidades.NumeroIUF == null) ? "Gerado automaticamente" : Model.OutrasPenalidades.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.OutrasPenalidades.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
 	        </div>
 
             <div class="coluna17">
 				<label>Série *</label><br />
-				<%= Html.DropDownList("OutrasPenalidades.Serie", Model.Series, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Series.Count <= 2, new { @class = "text ddlSeries" }))%>
+				<%= Html.DropDownList("OutrasPenalidades.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Series.Count <= 2 || Model.OutrasPenalidades.IsDigital == true), new { @class = "text ddlSeries" }))%>
 			</div>
 
             <div class="coluna15">
 				<label>Data da lavratura do IUF *</label>
-				<%= Html.TextBox("OutrasPenalidades.DataLavratura", Model.OutrasPenalidades.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataLavratura" }))%>
+				<%= Html.TextBox("OutrasPenalidades.DataLavratura", (Model.OutrasPenalidades.DataLavratura.Data != DateTime.MinValue ? Model.OutrasPenalidades.DataLavratura.DataTexto : "Gerado automaticamente"), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.OutrasPenalidades.IsDigital == true), new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>
 
