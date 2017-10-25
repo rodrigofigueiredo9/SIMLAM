@@ -9,7 +9,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public int Id { get; set; }
 		public int FiscalizacaoId { get; set; }
 		public int SetorId { get; set; }
-		public DateTecno Data { get; set; }//Data de Vistoria
+        //public DateTecno Data { get; set; }//Data de Vistoria
+        public int? AreaFiscalizacao { get; set; }  //0 = DDSIA, 1 = DDSIV, 2 = DRNRE
 		public int SistemaCoordId { get; set; }
 		public int Datum { get; set; }
 		public int Fuso { get { return 24; } }
@@ -32,7 +33,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 
 		public LocalInfracao()
 		{
-			this.Data = new DateTecno();
 			this.AreaAbrangencia =
 			this.LatNorthing =
 			this.LonEasting =

@@ -13,14 +13,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.LocalInfracaoMsg.SelecioneSetor);
 			}
 
-			if (localInfracao.Data.IsEmpty || !localInfracao.Data.IsValido)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.DataFiscalizacaoObrigatoria);
-			} 
-			else if (localInfracao.Data.Data.GetValueOrDefault() > DateTime.Now)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.DataFiscalizacaoMenorAtual);
-			}
+            //if (localInfracao.Data.IsEmpty || !localInfracao.Data.IsValido)
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.DataFiscalizacaoObrigatoria);
+            //} 
+            //else if (localInfracao.Data.Data.GetValueOrDefault() > DateTime.Now)
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.DataFiscalizacaoMenorAtual);
+            //}
+
+            if (localInfracao.AreaAbrangencia == null)
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.AreaFiscalizacaoObrigatoria);
+            }
 
 			if (!localInfracao.LonEastingToDecimal.HasValue)
 			{

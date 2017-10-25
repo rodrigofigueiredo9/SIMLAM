@@ -554,13 +554,14 @@ FiscalizacaoLocalInfracao = {
 		});
 	},
 	gerarObjetoLocalInfracao: function () {
+
 		var localInfracao = {
 			Id: $('.hdnFiscalizacaoId', Fiscalizacao.container).val(),
 			LocalInfracao: {
 				Id: $('.hdnLocalInfracaoId', FiscalizacaoLocalInfracao.container).val(),
 				FiscalizacaoId: $('.hdnFiscalizacaoId', Fiscalizacao.container).val(),
 				SetorId: $('.ddlSetores', FiscalizacaoLocalInfracao.container).val(),
-				Data: { DataTexto: $('.txtData', FiscalizacaoLocalInfracao.container).val() },
+			    //Data: { DataTexto: $('.txtData', FiscalizacaoLocalInfracao.container).val() },
 				SistemaCoordId: $('.ddlCoordenadaTipo', FiscalizacaoLocalInfracao.container).val(),
 				Datum: $('.ddlDatum', FiscalizacaoLocalInfracao.container).val(),
 				AreaAbrangencia: $('.txtAreaAbran', FiscalizacaoLocalInfracao.container).val(),
@@ -576,6 +577,13 @@ FiscalizacaoLocalInfracao = {
 			},
 			SituacaoId: $('.hdnFiscalizacaoSituacaoId', Fiscalizacao.container).val()
 		};
+
+		$('.rblAreaFiscalizacao', FiscalizacaoLocalInfracao.container).each(function () {
+		    if ($(this).attr('checked')) {
+		        localInfracao.LocalInfracao.AreaFiscalizacao = $(this).val();
+		    }
+		});
+
 		return localInfracao;
 	},
 	onClickRadioAutuado: function () {

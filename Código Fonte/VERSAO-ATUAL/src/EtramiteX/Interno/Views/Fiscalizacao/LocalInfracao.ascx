@@ -44,8 +44,10 @@
 
 		<div class="block">
 			<div class="coluna18">
-				<label for="LocalInfracao_Data_DataTexto">Data da vistoria *</label>
-				<%= Html.TextBox("LocalInfracao.Data.DataTexto", Model.LocalInfracao.Data.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtData maskData" }))%>
+				<label for="LocalInfracao_AreaFiscalizacao">Área da Fiscalização *</label><br />
+				<label><%= Html.RadioButton("rblAreaFiscalizacao", 0, Model.LocalInfracao.AreaFiscalizacao == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDDSIA" }))%>DDSIA</label><br />
+                <label><%= Html.RadioButton("rblAreaFiscalizacao", 1, Model.LocalInfracao.AreaFiscalizacao == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDDSIV" }))%>DDSIV</label><br />
+                <label><%= Html.RadioButton("rblAreaFiscalizacao", 2, Model.LocalInfracao.AreaFiscalizacao == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDRNRE" }))%>DRNRE</label>
 			</div>
 		</div>
 	</fieldset>
