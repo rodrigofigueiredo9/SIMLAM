@@ -281,7 +281,7 @@
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />
-				<%= Html.TextBox("MultaVM.Multa.Emitido", (Model.MultaVM.Multa.IsDigital != null ? (Model.MultaVM.Multa.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFMulta" }))%>
+				<%= Html.TextBox("MultaVM.Multa.Emitido", (Model.MultaVM.Multa.IsDigital != null ? (Model.MultaVM.Multa.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFMulta" }))%>
             </div>
         </div>
     </fieldset>
@@ -304,7 +304,7 @@
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />
-				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Emitido", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? (Model.ObjetoInfracaoVM.Entidade.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFInterdicaoEmbargo" }))%>
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Emitido", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? (Model.ObjetoInfracaoVM.Entidade.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFInterdicaoEmbargo" }))%>
             </div>
         </div>
     </fieldset>
@@ -327,7 +327,7 @@
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />
-				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Emitido", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFApreensao" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Emitido", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFApreensao" }))%>
             </div>
         </div>
     </fieldset>
@@ -350,50 +350,10 @@
             </div>
             <div class="coluna17 append2">
                 <label>Emitido por</label><br />
-				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidade.Emitido", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true ? "Sistema" : "Manual") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFOutrasPenalidades" }))%>
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidade.Emitido", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFOutrasPenalidades" }))%>
             </div>
         </div>
     </fieldset>
-
-	<fieldset class="box<%= Model.InfracaoVM.Infracao.IsAutuada.GetValueOrDefault() ? "" : " hide" %>">
-		<legend>Auto de infração</legend>
-
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº AI</label><br />
-				<%= Html.TextBox("N_AI", Model.N_AI, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_AI_EmitidoPor", Model.N_AI_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do auto</label><br />
-				<%= Html.TextBox("N_AI_DataAuto", Model.N_AI_DataAuto, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
-
-	</fieldset>
-
-	<fieldset class="box<%= Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed.GetValueOrDefault() == 1 ? "" : " hide" %>">
-		<legend>Termo de embargo e interdição</legend>
-
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº TEI</label><br />
-				<%= Html.TextBox("N_TEI", Model.N_TEI, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_TEI_EmitidoPor", Model.N_TEI_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do termo</label><br />
-				<%= Html.TextBox("N_TEI_DataTermo", Model.N_TEI_DataTermo, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
-
-	</fieldset>
 
 	<fieldset class="box" >
 		<legend>Documentos gerados</legend>
