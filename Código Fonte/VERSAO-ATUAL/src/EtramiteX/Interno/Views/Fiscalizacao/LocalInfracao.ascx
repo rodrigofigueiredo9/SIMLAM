@@ -50,74 +50,8 @@
 		</div>
 	</fieldset>
 
-	<fieldset class="block box">
-		<legend>Local da infração</legend>
-		<div class="block">
-			<div class="coluna21">
-				<label>Sistema de coordenada *</label>
-				<%= Html.DropDownList("LocalInfracao.SistemaCoordId", Model.CoordenadasSistema, new { @class = "text disabled ddlCoordenadaTipo", @disabled = "disabled" })%>
-			</div>
-
-			<div class="coluna19 prepend2">
-				<label>Datum *</label>
-				<%= Html.DropDownList("LocalInfracao.Datum", Model.Datuns, new { @class = "text disabled ddlDatum", @disabled = "disabled" })%>
-			</div>
-
-			<div class="coluna19 prepend2">
-				<label>Fuso *</label>
-				<%= Html.DropDownList("LocalInfracao.Fuso", Model.Fusos, new { @class = "text disabled ddlFuso", @disabled = "disabled" })%>
-			</div>
-
-			<div class="coluna21 prepend2">
-				<label>Área de abrangência (m) *</label>
-				<%= Html.TextBox("LocalInfracao.AreaAbrangencia", Model.LocalInfracao.AreaAbrangencia, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtAreaAbran", @maxlength = "5" }))%>
-			</div>
-		</div>
-
-		<div class="block">
-			<div class="coluna21">
-				<label>Easting *</label>
-				<%= Html.TextBox("LocalInfracao.Setor.Easting", Model.LocalInfracao.LonEasting, new { @class = "text disabled txtEasting", @disabled = "disabled" })%>
-			</div>
-
-			<div class="coluna19 prepend2">
-				<label>Northing *</label>
-				<%= Html.TextBox("LocalInfracao.Setor.Northing", Model.LocalInfracao.LatNorthing, new { @class = "text disabled txtNorthing", @disabled = "disabled" })%>
-			</div>
-
-			<div class="coluna19 prepend2">
-				<label>Hemisfério *</label>
-				<%= Html.DropDownList("LocalInfracao.Setor.Hemisfério", Model.Hemisferios, new { @class = "text disabled ddlHemisferio", @disabled = "disabled" })%>
-			</div>
-		</div>
-
-		<div class="block divEndereco divEnderecoLocalizacao">
-			<div class="coluna11">
-				<label for="Filtros_EstadoId">UF *</label>
-				<%= Html.DropDownList("Filtros.EstadoId", Model.Estados, new { @class = "text ddlEstado disabled", @disabled = "disabled" })%>
-			</div>
-			<div class="coluna51 prepend2">
-				<label for="LocalInfracao_MunicipioId">Município *</label>
-				<%= Html.DropDownList("LocalInfracao.MunicipioId", Model.Municipios, new { @class = "text ddlMunicipio disabled", @disabled = "disabled" })%>
-			</div>
-
-			<% if (!Model.IsVisualizar) { %>
-			<div class="coluna20 prepend2">
-				<button type="button" class="inlineBotao btnBuscarCoorLocal">Buscar</button>
-			</div>
-			<% } %>
-		</div>
-
-		<div class="block">
-			<div class="coluna90">
-				<label for="LocalInfracao_Local">Local *</label>
-				<%= Html.TextBox("LocalInfracao.Local", Model.LocalInfracao.Local, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtLocal", maxlength = "150" }))%>
-			</div>
-		</div>
-	</fieldset>
-
-	<fieldset class="block box">
-		<legend>Autuado</legend>
+    <fieldset class="block box">
+		<legend>Autuado/Fiscalizado</legend>
 		<div class="block">
 			<div class="coluna100">
 				<label for="">Infração ocorreu dentro de empreendimento? * <span style="font-style: italic; color: Gray;">(Empreendimento = Propriedade rural/urbana, Comercio/Serviço, Indústria, Obra de Infraestrutura.)</span></label><br />
@@ -210,6 +144,72 @@
 			</div>
 		</div>
 
+	</fieldset>
+
+	<fieldset class="block box">
+		<legend>Local da infração</legend>
+		<div class="block">
+			<div class="coluna21">
+				<label>Sistema de coordenada *</label>
+				<%= Html.DropDownList("LocalInfracao.SistemaCoordId", Model.CoordenadasSistema, new { @class = "text disabled ddlCoordenadaTipo", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna19 prepend2">
+				<label>Datum *</label>
+				<%= Html.DropDownList("LocalInfracao.Datum", Model.Datuns, new { @class = "text disabled ddlDatum", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna19 prepend2">
+				<label>Fuso *</label>
+				<%= Html.DropDownList("LocalInfracao.Fuso", Model.Fusos, new { @class = "text disabled ddlFuso", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna21 prepend2">
+				<label>Área de abrangência (m) *</label>
+				<%= Html.TextBox("LocalInfracao.AreaAbrangencia", Model.LocalInfracao.AreaAbrangencia, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtAreaAbran", @maxlength = "5" }))%>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="coluna21">
+				<label>Easting *</label>
+				<%= Html.TextBox("LocalInfracao.Setor.Easting", Model.LocalInfracao.LonEasting, new { @class = "text disabled txtEasting", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna19 prepend2">
+				<label>Northing *</label>
+				<%= Html.TextBox("LocalInfracao.Setor.Northing", Model.LocalInfracao.LatNorthing, new { @class = "text disabled txtNorthing", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna19 prepend2">
+				<label>Hemisfério *</label>
+				<%= Html.DropDownList("LocalInfracao.Setor.Hemisfério", Model.Hemisferios, new { @class = "text disabled ddlHemisferio", @disabled = "disabled" })%>
+			</div>
+		</div>
+
+		<div class="block divEndereco divEnderecoLocalizacao">
+			<div class="coluna11">
+				<label for="Filtros_EstadoId">UF *</label>
+				<%= Html.DropDownList("Filtros.EstadoId", Model.Estados, new { @class = "text ddlEstado disabled", @disabled = "disabled" })%>
+			</div>
+			<div class="coluna51 prepend2">
+				<label for="LocalInfracao_MunicipioId">Município *</label>
+				<%= Html.DropDownList("LocalInfracao.MunicipioId", Model.Municipios, new { @class = "text ddlMunicipio disabled", @disabled = "disabled" })%>
+			</div>
+
+			<% if (!Model.IsVisualizar) { %>
+			<div class="coluna20 prepend2">
+				<button type="button" class="inlineBotao btnBuscarCoorLocal">Buscar</button>
+			</div>
+			<% } %>
+		</div>
+
+		<div class="block">
+			<div class="coluna90">
+				<label for="LocalInfracao_Local">Nome do empreendimento e Endereço da infração/ocorrência *</label>
+				<%= Html.TextBox("LocalInfracao.Local", Model.LocalInfracao.Local, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtLocal", maxlength = "150" }))%>
+			</div>
+		</div>
 	</fieldset>
 </div>
 
