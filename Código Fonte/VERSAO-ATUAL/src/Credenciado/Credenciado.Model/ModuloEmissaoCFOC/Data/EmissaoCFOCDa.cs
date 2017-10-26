@@ -708,7 +708,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 
                 Comando comandoSerie = bancoDeDados.CriarComando(@"
-				select nvl(serie,' ') from tab_numero_cfo_cfoc where numero = :numero ");
+				select serie from tab_numero_cfo_cfoc where numero = :numero and serie is not null ");
 
                 comandoSerie.AdicionarParametroEntrada("numero", numeroDigital, DbType.Int64);
 

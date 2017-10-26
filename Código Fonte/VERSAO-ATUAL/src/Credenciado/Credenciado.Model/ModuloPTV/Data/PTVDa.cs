@@ -923,15 +923,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
         }
 
-		internal bool VerificarNumeroPTV(Int64 ptvNumero)
+		internal bool VerificarNumeroPTV(Int64 ptvNumero, string serieNumeral = "")
 		{
 			bool retorno = false;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_ptv t where t.numero = :numero", EsquemaBanco);
+                string strSql = "select count(*) from {0}tab_ptv t where t.numero = :numero";
+
+                if (!string.IsNullOrEmpty(serieNumeral))
+                    strSql += " and serie = :serie";
+
+				Comando comando = bancoDeDados.CriarComando(strSql, EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("numero", ptvNumero, DbType.Int64);
+
+                if (!string.IsNullOrEmpty(serieNumeral))
+                    comando.AdicionarParametroEntrada("serie", serieNumeral, DbType.String);
 
 				retorno = (bancoDeDados.ExecutarScalar<int>(comando) > 0);
 			}
@@ -951,21 +959,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-		internal Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, long numero)
+		internal Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, long numero, string serieNumeral = "")
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Dictionary<string, object> retorno = null;
 				Comando comando = null;
+                string strSql = "";
 
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
-						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
+                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
+
+                        if (!string.IsNullOrEmpty(serieNumeral))
+                            strSql += " and serie = :serie ";
+						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
+
 					case eDocumentoFitossanitarioTipo.CFOC:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
-						from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
+                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
+
+                        if (!string.IsNullOrEmpty(serieNumeral))
+                            strSql += " and serie = :serie ";
+
+						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
@@ -976,6 +995,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				}
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+
+                if (!string.IsNullOrEmpty(serieNumeral))
+                    comando.AdicionarParametroEntrada("serie", serieNumeral, DbType.String);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
