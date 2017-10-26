@@ -198,7 +198,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
-		internal string VerificarNumeroPTV(int tipoNumero, string PTVNumero)
+		internal string VerificarNumeroPTV(int tipoNumero, string PTVNumero, string serieNumeral = "")
 		{
 			if (tipoNumero == (int)eDocumentoFitossanitarioTipoNumero.Bloco)
 			{

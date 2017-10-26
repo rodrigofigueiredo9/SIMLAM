@@ -617,6 +617,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 						item.Id = reader.GetValue<int>("id");
 						item.Numero = reader.GetValue<long>("numero");
+                        item.Serie = reader.GetValue<string>("serie");
 						item.Situacao = reader.GetValue<bool>("situacao");
 						item.Tipo = reader.GetValue<int>("tipo_documento");
 						item.TipoNumero = filtro.TipoNumero;

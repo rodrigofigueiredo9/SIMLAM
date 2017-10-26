@@ -326,9 +326,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult VerificarDocumentoOrigem(int origemTipo, string origemTipoTexto, long numero)
+        public ActionResult VerificarDocumentoOrigem(int origemTipo, string origemTipoTexto, long numero, string serieNumeral)
 		{
-			Dictionary<string, object> dadosDocumentoOrigem = _busPTV.VerificarDocumentoOrigem((eDocumentoFitossanitarioTipo)origemTipo, origemTipoTexto, numero);
+			Dictionary<string, object> dadosDocumentoOrigem = _busPTV.VerificarDocumentoOrigem((eDocumentoFitossanitarioTipo)origemTipo, origemTipoTexto, numero, serieNumeral);
 
 			return Json(new
 			{

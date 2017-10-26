@@ -13,7 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloLiberacaoCFOCFOC
 		public bool Situacao { get; set; }
 		public bool Utilizado { get; set; }
 		public int TipoNumero { get; set; }
-
+        public string Serie { get; set; }
 		public string Motivo { get; set; }
 		public string TipoDocumentoTexto { 
 			get 

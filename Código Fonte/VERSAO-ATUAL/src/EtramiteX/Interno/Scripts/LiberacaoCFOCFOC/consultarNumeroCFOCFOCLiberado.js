@@ -181,7 +181,7 @@ ConsultarNumeroCFOCFOCLiberado = {
 			item = lista[i];
 
 			$('.tipoDocumento', linha).append(item.TipoDocumentoTexto);
-			$('.Numero', linha).append(item.Numero);
+			$('.Numero', linha).append(item.Numero + (item.Serie ? '/' + item.Serie : ''));
 			$('.Utilizado', linha).append(item.UtilizadoTexto);
 			$('.Situacao', linha).append(item.SituacaoTexto);
 			$('.hdnObjetoJson', linha).val(JSON.stringify(item));
