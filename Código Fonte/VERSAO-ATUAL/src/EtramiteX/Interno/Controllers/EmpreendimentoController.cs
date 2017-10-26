@@ -184,6 +184,37 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+        [Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
+        public ActionResult LocalizarFiscalizacaoPessoa(LocalizarVM vm, string CpfCnpj)
+        {
+            _bus.ValidarLocalizarFiscalizacaoPessoa(CpfCnpj);
+
+            if (!Validacao.EhValido)
+            {
+                return Json(new { @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                vm.Paginacao = new Paginacao();
+                vm.Paginacao.QuantPaginacao = Convert.ToInt32(Int32.MaxValue);
+                vm.Paginacao.OrdenarPor = 1;
+
+                Resultados<Empreendimento> retorno = _bus.FiltrarPessoa(vm.Paginacao, CpfCnpj);
+                if (retorno == null)
+                {
+                    return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+                }
+
+                vm.PodeEditar = User.IsInRole(ePermissao.EmpreendimentoEditar.ToString());
+                vm.PodeVisualizar = User.IsInRole(ePermissao.EmpreendimentoVisualizar.ToString());
+
+                vm.Paginacao.EfetuarPaginacao();
+                vm.SetResultados(retorno.Itens);
+
+                return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultadosLocalizar", vm) }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
 		public ActionResult Localizar(LocalizarVM vm)
 		{

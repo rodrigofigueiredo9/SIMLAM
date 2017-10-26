@@ -9,7 +9,8 @@
 	FiscalizacaoLocalInfracao.settings.urls.obter = '<%= Url.Action("LocalInfracao", "Fiscalizacao") %>';
 	FiscalizacaoLocalInfracao.settings.urls.associarAutuadoPessoa = '<%= Url.Action("PessoaModal", "Pessoa") %>';
 	FiscalizacaoLocalInfracao.settings.urls.editarAutuadoPessoa = '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>';
-	FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimento = '<%= Url.Action("LocalizarFiscalizacao", "Empreendimento") %>';
+    FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimento = '<%= Url.Action("LocalizarFiscalizacao", "Empreendimento") %>';
+    FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimentoPessoa = '<%= Url.Action("LocalizarFiscalizacaoPessoa", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.visualizarEmpreendimento = '<%= Url.Action("EmpreendimentoInline", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.editarEmpreendimento = '<%= Url.Action("Editar", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.salvar = '<%= Url.Action("Salvar", "Fiscalizacao") %>';
@@ -58,7 +59,7 @@
 			<div class="coluna100">
 				<label for="">Infração ocorreu dentro de empreendimento? * <span style="font-style: italic; color: Gray;">(Empreendimento = Propriedade rural/urbana, Comercio/Serviço, Indústria, Obra de Infraestrutura.)</span></label><br />
 				<label><%= Html.RadioButton("rblAutuado", 1, Model.LocalInfracao.EmpreendimentoId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado" }))%>Sim</label>
-				<label><%= Html.RadioButton("rblAutuado", 0, Model.LocalInfracao.PessoaId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado prepend2" }))%>Não</label>
+				<label><%= Html.RadioButton("rblAutuado", 0, (Model.LocalInfracao.EmpreendimentoId == 0 || Model.LocalInfracao.EmpreendimentoId == null) && Model.LocalInfracao.PessoaId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado prepend2" }))%>Não</label>
 			</div>
 		</div>
 		<div class="block divPessoa <%= Model.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
@@ -89,7 +90,8 @@
 			<div class="block">
 				<% if (!Model.IsVisualizar) { %>
 				<div class="coluna30">
-					<button type="button" class="inlineBotao btnVerificarEmp">Verificar Empreendimento</button>
+                    <label>Empreendimentos associados</label>
+					<button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
 				</div>
 				<% } %>
 			</div>
@@ -113,17 +115,17 @@
 						<span class="spanBotoes spanEmpSalvar hide">
 							<input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
 						</span>
-						<span class="spanBotoes spanEmpNovo hide">
+						<!--<span class="spanBotoes spanEmpNovo hide">
 							<input class="floatLeft btnEmpNovo" type="button" value="Novo" />
-						</span>
-						<span class="spanBotoes spanEmpSalvarCadastrar hide">
+						</span>-->
+						<!--<span class="spanBotoes spanEmpSalvarCadastrar hide">
 							<input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
-						</span>
+						</span>-->
 						<span class="spanBotoes spanEmpSalvarEditar hide">
 							<input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
 						</span>
 						<span class="spanBotoes spanEmpAssNovo hide">
-							<input class="floatLeft btnEmpAssNovo" type="button" value="Buscar Novo" />
+							<input class="floatLeft btnEmpAssNovoPessoa" type="button" value="Buscar Novo" />
 						</span>
 					</span>
 					<span class="spanCancelarEmp cancelarCaixa">ou <a class="linkCancelar linkCancelarEmp">Cancelar</a></span>
