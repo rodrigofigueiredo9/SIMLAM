@@ -597,12 +597,13 @@ FiscalizacaoLocalInfracao = {
 		$('.ddlResponsaveis option', FiscalizacaoLocalInfracao.container).remove();
 		$('.ddlResponsaveisPropriedade option', FiscalizacaoLocalInfracao.container).remove();
 
+		$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
 
-		if ($(this).val().toString() == "0") {
-			$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
-		} else {
-			$('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
-		}
+		//if ($(this).val().toString() == "0") {
+		//	$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		//} else {
+		//	$('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		//}
 	},
 	onClickBuscarPessoa: function () {
 
