@@ -109,7 +109,7 @@
 				DesenhadorEsri.getInstance().addEventListener(LegendaControllerEvent.LAYERS_SERVICOS_ATUALIZAR, atualizarLegenda);
 				
 				//#DEBUG
-				//init(91,3,1); 
+				//init(57538,3,1); 
 				//ajustarTamanho(1000,500);
 				
 				//setTimeout(resize,4000,900,550); 

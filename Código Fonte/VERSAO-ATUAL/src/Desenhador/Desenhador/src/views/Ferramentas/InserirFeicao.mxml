@@ -173,7 +173,7 @@
 					else
 					{
 						
-						estavaPausado = !estavaPausado;
+						estavaPausado = FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0;
 						desabilitaSnap = false;
 						desligarSemApagarFeicao(deixarHabilitadoSnap);
 						ligado = true;
