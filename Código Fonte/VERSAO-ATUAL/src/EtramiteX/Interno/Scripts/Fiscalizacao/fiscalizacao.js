@@ -1683,8 +1683,8 @@ FiscalizacaoMulta = {
         $('.txtNumeroIUF', FiscalizacaoMulta.container).addClass('disabled');
         $('.txtNumeroIUF', FiscalizacaoMulta.container).val('Gerado automaticamente');
 
-        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).attr('selected', 'selected');
-        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).show();
+        $('.ddlSeries option:eq(5)', FiscalizacaoMulta.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(5)', FiscalizacaoMulta.container).show();
         $('.ddlSeries', FiscalizacaoMulta.container).attr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoMulta.container).addClass('disabled');
 
@@ -1701,7 +1701,7 @@ FiscalizacaoMulta = {
         $('.txtNumeroIUF', FiscalizacaoMulta.container).val('');
 
         $('.ddlSeries option:eq(0)', FiscalizacaoMulta.container).attr('selected', 'selected');
-        $('.ddlSeries option:eq(4)', FiscalizacaoMulta.container).hide();
+        $('.ddlSeries option:eq(5)', FiscalizacaoMulta.container).hide();
         $('.ddlSeries', FiscalizacaoMulta.container).removeAttr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoMulta.container).removeClass('disabled');
 
@@ -1835,7 +1835,6 @@ FiscalizacaoObjetoInfracao = {
 		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsDigital', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsDigital);
 		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsBloco', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsBloco);
 		FiscalizacaoObjetoInfracao.container.delegate('.rdbExisteAtvAreaDegrad', 'click', FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto);
-		FiscalizacaoObjetoInfracao.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnAddArq', 'click', FiscalizacaoObjetoInfracao.onEnviarArquivoClick);
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnLimparArq', 'click', FiscalizacaoObjetoInfracao.onLimparArquivoClick);
 
@@ -1902,8 +1901,8 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('Gerado automaticamente');
 
-	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
-	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).show();
+	    $('.ddlSeries option:eq(5)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(5)', FiscalizacaoObjetoInfracao.container).show();
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).attr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).addClass('disabled');
 
@@ -1920,7 +1919,7 @@ FiscalizacaoObjetoInfracao = {
 	    $('.txtNumeroIUF', FiscalizacaoObjetoInfracao.container).val('');
 
 	    $('.ddlSeries option:eq(0)', FiscalizacaoObjetoInfracao.container).attr('selected', 'selected');
-	    $('.ddlSeries option:eq(4)', FiscalizacaoObjetoInfracao.container).hide();
+	    $('.ddlSeries option:eq(5)', FiscalizacaoObjetoInfracao.container).hide();
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeAttr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoObjetoInfracao.container).removeClass('disabled');
 
@@ -2059,7 +2058,6 @@ FiscalizacaoMaterialApreendido = {
 		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
-		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
@@ -2108,8 +2106,8 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).addClass('disabled');
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('Gerado automaticamente');
 	    
-	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
-	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).show();
+	    $('.ddlSeries option:eq(5)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
+	    $('.ddlSeries option:eq(5)', FiscalizacaoMaterialApreendido.container).show();
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).attr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).addClass('disabled');
 
@@ -2128,7 +2126,7 @@ FiscalizacaoMaterialApreendido = {
 	    $('.txtNumeroIUF', FiscalizacaoMaterialApreendido.container).val('');
 	    
 	    $('.ddlSeries option:eq(0)', FiscalizacaoMaterialApreendido.container).attr('selected', 'selected');
-	    $('.ddlSeries option:eq(4)', FiscalizacaoMaterialApreendido.container).hide();
+	    $('.ddlSeries option:eq(5)', FiscalizacaoMaterialApreendido.container).hide();
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeAttr('disabled', 'disabled');
 	    $('.ddlSeries', FiscalizacaoMaterialApreendido.container).removeClass('disabled');
 
@@ -2199,12 +2197,14 @@ FiscalizacaoMaterialApreendido = {
 	    var item = {
 	        Id: 0,
 	        ProdutoId: $('.ddlProdutosApreendidos :selected', container).val(),
-	        ProdutoTexto: $('.ddlProdutosApreendidos :selected', container).text(),
 	        UnidadeTexto: $('.txtUnidade', container).val(),
 	        Quantidade: $('.txtQuantidade', container).val(),
 	        DestinoId: $('.ddlDestinos :selected', container).val(),
 	        DestinoTexto: $('.ddlDestinos :selected', container).text()
 	    };
+
+	    var temp = $('.ddlProdutosApreendidos :selected', container).text().split('-');
+	    item.ProdutoTexto = temp[0];
 
         //Verifica se todos os campos foram preenchidos, e se  objeto não está repetido
 	    if (item.ProdutoId == 0) {
@@ -2274,18 +2274,6 @@ FiscalizacaoMaterialApreendido = {
 	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 	},
 
-	mascaraLacre: function (evt) {
-	    //Permite apenas números, vírgulas e espaços.
-	    if ((evt.originalEvent.key >= 0
-             && evt.originalEvent.key <= 9)
-            || evt.originalEvent.key == ','
-            || evt.originalEvent.key == ' ') {
-	        return true;
-	    } else {
-	        return false;
-	    }
-	},
-
 	onSalvarFiscalizacaoMaterialApreendido: function () {
 	    var container = FiscalizacaoMaterialApreendido.container;
 
@@ -2307,7 +2295,8 @@ FiscalizacaoMaterialApreendido = {
 	    }
 	    obj.SerieId = $('.ddlSeries :selected', container).val();
 	    obj.Descricao = $('.txtDescricao', container).val();
-	    obj.ValorProdutos = $('.txtValorBensApreendidos', container).val();
+	    obj.ValorProdutosExtenso = $('.txtValorBensApreendidosExtenso', container).val();
+	    obj.ValorProdutosReais = $('.txtValorBensApreendidosReais', container).val();
 	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
 
 	    //Preenchendo o objeto com os itens da sessão Depositário
@@ -2509,8 +2498,8 @@ FiscalizacaoOutrasPenalidades = {
         $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
         $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('Gerado automaticamente');
 
-        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
-        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).show();
+        $('.ddlSeries option:eq(5)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
+        $('.ddlSeries option:eq(5)', FiscalizacaoOutrasPenalidades.container).show();
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).attr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).addClass('disabled');
 
@@ -2529,7 +2518,7 @@ FiscalizacaoOutrasPenalidades = {
         $('.txtNumeroIUF', FiscalizacaoOutrasPenalidades.container).val('');
 
         $('.ddlSeries option:eq(0)', FiscalizacaoOutrasPenalidades.container).attr('selected', 'selected');
-        $('.ddlSeries option:eq(4)', FiscalizacaoOutrasPenalidades.container).hide();
+        $('.ddlSeries option:eq(5)', FiscalizacaoOutrasPenalidades.container).hide();
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeAttr('disabled', 'disabled');
         $('.ddlSeries', FiscalizacaoOutrasPenalidades.container).removeClass('disabled');
 

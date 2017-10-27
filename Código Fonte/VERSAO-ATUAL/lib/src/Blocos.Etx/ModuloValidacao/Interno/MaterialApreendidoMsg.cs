@@ -23,7 +23,7 @@
 		public Mensagem TadNumeroBlocoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_NumeroTad", Tipo = eTipoMensagem.Advertencia, Texto = "Nº do TAD - bloco é obrigatório." }; } }
 		public Mensagem DataLavraturaObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_DataLavratura", Tipo = eTipoMensagem.Advertencia, Texto = "Data da lavratura do termo é obrigatório." }; } }
 		public Mensagem DescricaoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Descricao", Tipo = eTipoMensagem.Advertencia, Texto = "Descrever a apreensão é obrigatório." }; } }
-        public Mensagem ValorProdutosObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_ValorProdutos", Tipo = eTipoMensagem.Advertencia, Texto = "Valor dos bens apreendidos (R$ e por extenso) é obrigatório." }; } }
+        public Mensagem ValorProdutosObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_ValorProdutosReais", Tipo = eTipoMensagem.Advertencia, Texto = "Valor dos bens apreendidos (R$ e por extenso) é obrigatório." }; } }
         public Mensagem ValorProdutosInvalido { get { return new Mensagem() { Campo = "MaterialApreendido_ValorProdutos", Tipo = eTipoMensagem.Advertencia, Texto = "Valor dos bens apreendidos (R$ e por extenso) inválido." }; } }
         public Mensagem NumeroLacreInvalido { get { return new Mensagem() { Campo = "MaterialApreendido_NumeroLacre", Tipo = eTipoMensagem.Advertencia, Texto = "Número(s) do(s) Lacre(s) da Interdição/Embargo inválido." }; } }
 		public Mensagem DepositarioObrigatorio { get { return new Mensagem() { Campo = "Depositario_NomeRazaoSocial", Tipo = eTipoMensagem.Advertencia, Texto = "Depositário é obrigatório." }; } }
@@ -33,6 +33,7 @@
 		public Mensagem DepositarioEstadoObrigatorio { get { return new Mensagem() { Campo = "Depositario_Estado", Tipo = eTipoMensagem.Advertencia, Texto = "UF é obrigatório." }; } }
 		public Mensagem DepositarioMunicipioObrigatorio { get { return new Mensagem() { Campo = "Depositario_Municipio", Tipo = eTipoMensagem.Advertencia, Texto = "Município é obrigatório." }; } }
         public Mensagem ProdutoApreendidoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_ProdutosApreendidos", Tipo = eTipoMensagem.Advertencia, Texto = "Produto Apreendido é obrigatório." }; } }
+        public Mensagem OpiniaoObrigatoria { get { return new Mensagem() { Campo = "MaterialApreendido_Opiniao", Tipo = eTipoMensagem.Advertencia, Texto = "Descrever ou opinar quanto à destinação do material apreendido é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Tipo", Tipo = eTipoMensagem.Advertencia, Texto = "Tipo do material é obrigatório." }; } }
 		public Mensagem EspecificacaoObrigatorio { get { return new Mensagem() { Campo = "MaterialApreendido_Especificacao", Tipo = eTipoMensagem.Advertencia, Texto = "Especificação do material é obrigatório." }; } }
 		public Mensagem MaterialJaAdicionado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Material ja adicionado." }; } }
