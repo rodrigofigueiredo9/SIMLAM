@@ -467,11 +467,22 @@ PTVEmitir = {
 	verificarDocumentoOrigem: function () {
 		Mensagem.limpar(PTVEmitir.container);
 		var ddl = $('.ddlOrigemTipo', PTVEmitir.container).ddlSelecionado();
-		var origemNumero = +$('.txtNumeroOrigem', PTVEmitir.container).val();
+		var origemNumero = $('.txtNumeroOrigem', PTVEmitir.container).val();
+
+		var textoNumeral = origemNumero;
+		var serieNumeral = "";
+
+		if (textoNumeral.toString().indexOf("/") >= 0) {
+
+		    var arrTexto = textoNumeral.split("/");
+		    textoNumeral = arrTexto[0];
+		    serieNumeral = arrTexto[1];
+		}
+
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlVerificarDocumentoOrigem,
-			data: JSON.stringify({ origemTipo: ddl.Id, origemTipoTexto: ddl.Texto, numero: origemNumero }),
+			data: JSON.stringify({ origemTipo: ddl.Id, origemTipoTexto: ddl.Texto, numero: textoNumeral, serieNumeral: serieNumeral }),
 			cache: false,
 			async: false,
 			type: 'POST',
