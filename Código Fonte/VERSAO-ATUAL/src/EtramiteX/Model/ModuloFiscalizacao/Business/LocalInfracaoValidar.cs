@@ -22,47 +22,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             //    Validacao.Add(Mensagem.LocalInfracaoMsg.DataFiscalizacaoMenorAtual);
             //}
 
-            if (localInfracao.AreaAbrangencia == null)
+            if (localInfracao.AreaFiscalizacao == null)
             {
                 Validacao.Add(Mensagem.LocalInfracaoMsg.AreaFiscalizacaoObrigatoria);
             }
 
-			if (!localInfracao.LonEastingToDecimal.HasValue)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.EastingUtmObrigatorio);
-			}
+            //if (!localInfracao.LonEastingToDecimal.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.EastingUtmObrigatorio);
+            //}
 
-			if (!localInfracao.LatNorthingToDecimal.HasValue)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.NorthingUtmObrigatorio);
-			}
+            //if (!localInfracao.LatNorthingToDecimal.HasValue)
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.NorthingUtmObrigatorio);
+            //}
 
-			if (localInfracao.MunicipioId == 0)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.MunicipioObrigatorio);				
-			}
+            //if (localInfracao.MunicipioId == 0)
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.MunicipioObrigatorio);				
+            //}
 
-			if (string.IsNullOrWhiteSpace(localInfracao.AreaAbrangencia))
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaObrigatoria);
-			}
-			else
-			{
-				int areaAbran = 0;
-				if (!int.TryParse(localInfracao.AreaAbrangencia, out areaAbran))
-				{
-					Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaInvalida);
-				}
-				else if (areaAbran == 0)				
-				{
-					Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaMaiorZero);
-				}
-			}
+            //if (string.IsNullOrWhiteSpace(localInfracao.AreaAbrangencia))
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaObrigatoria);
+            //}
+            //else
+            //{
+            //    int areaAbran = 0;
+            //    if (!int.TryParse(localInfracao.AreaAbrangencia, out areaAbran))
+            //    {
+            //        Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaInvalida);
+            //    }
+            //    else if (areaAbran == 0)				
+            //    {
+            //        Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaMaiorZero);
+            //    }
+            //}
 
-			if (string.IsNullOrWhiteSpace(localInfracao.Local))
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
-			}
+            //if (string.IsNullOrWhiteSpace(localInfracao.Local))
+            //{
+            //    Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
+            //}
 
 			if (localInfracao.PessoaId.GetValueOrDefault() == 0 && localInfracao.EmpreendimentoId.GetValueOrDefault() == 0)
 			{

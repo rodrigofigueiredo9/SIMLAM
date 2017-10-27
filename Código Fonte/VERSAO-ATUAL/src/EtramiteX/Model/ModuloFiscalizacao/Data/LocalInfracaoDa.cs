@@ -76,7 +76,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("lat_northing", localInfracao.LatNorthingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("lon_easting", localInfracao.LonEastingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("hemisferio", localInfracao.Hemisferio, DbType.Int32);
-				comando.AdicionarParametroEntrada("municipio", localInfracao.MunicipioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", (localInfracao.MunicipioId == 0 ? null : (int?)localInfracao.MunicipioId), DbType.Int32);
 				comando.AdicionarParametroEntrada("pessoa", localInfracao.PessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", localInfracao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -92,7 +92,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				localInfracao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                if (localInfracao.MunicipioId != 0 && localInfracao.MunicipioId != null)
+                {
+                    AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                }
 
 				bancoDeDados.Commit();
 			}
@@ -132,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("lat_northing", localInfracao.LatNorthingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("lon_easting", localInfracao.LonEastingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("hemisferio", localInfracao.Hemisferio, DbType.Int32);
-				comando.AdicionarParametroEntrada("municipio", localInfracao.MunicipioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", (localInfracao.MunicipioId == 0 ? null : (int?)localInfracao.MunicipioId), DbType.Int32);
 				comando.AdicionarParametroEntrada("pessoa", localInfracao.PessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", localInfracao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -146,7 +149,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                if (localInfracao.MunicipioId != 0 && localInfracao.MunicipioId != null)
+                {
+                    AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                }
 
 				bancoDeDados.Commit();
 			}

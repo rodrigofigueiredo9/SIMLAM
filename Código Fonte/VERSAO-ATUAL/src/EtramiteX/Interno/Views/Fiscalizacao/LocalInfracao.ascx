@@ -84,7 +84,7 @@
 		</div>
 	</fieldset>
 
-	<fieldset class="block box fsLocalInfracao hide">
+	<fieldset class="block box fsLocalInfracao <%= (!String.IsNullOrWhiteSpace(Model.LocalInfracao.LonEasting)) ? "" : "hide" %>">
 		<legend>Local da infração</legend>
 		<div class="block">
 			<div class="coluna21">
@@ -151,7 +151,7 @@
 		</div>
 	</fieldset>
 
-    <fieldset class="block box fsEmpreendimentoBuscar hide">
+    <fieldset class="block box fsEmpreendimentoBuscar <%= (Model.LocalInfracao.EmpreendimentoId > 0) ? "" : "hide" %>">
 		    <div class="divEmpreendimento <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
 			    <%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
 			    <%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
