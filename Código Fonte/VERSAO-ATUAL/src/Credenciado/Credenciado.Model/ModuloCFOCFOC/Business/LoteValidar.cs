@@ -509,7 +509,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 					case eDocumentoFitossanitarioTipo.CFOC:
 						EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
-						EmissaoCFOC CFOC = emissaoCFOCBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false);
+						EmissaoCFOC CFOC = emissaoCFOCBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false, serieNumero: serieNumeral);
 
 						if (CFOC.Id > 0)
 						{
