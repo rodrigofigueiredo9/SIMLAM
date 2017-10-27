@@ -4,7 +4,7 @@
 
 <div id="abasNav" class="AbasFiscalizacao subContMenu">
 	<ul>
-		<li class="step1 ativo"><a class="primeira">Local da Infração</a> </li>
+		<li class="step1 ativo"><a class="primeira">Autuado/Fiscalizado</a> </li>
 		<li class="step2"><a>Projeto Geográfico</a> </li>
 		<li class="step3"><a>Infração/Fiscalização</a></li>
         <li class="step4"><a>Multa</a></li>

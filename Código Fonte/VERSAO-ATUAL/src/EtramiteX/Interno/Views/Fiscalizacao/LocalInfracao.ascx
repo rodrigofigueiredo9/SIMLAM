@@ -9,7 +9,8 @@
 	FiscalizacaoLocalInfracao.settings.urls.obter = '<%= Url.Action("LocalInfracao", "Fiscalizacao") %>';
 	FiscalizacaoLocalInfracao.settings.urls.associarAutuadoPessoa = '<%= Url.Action("PessoaModal", "Pessoa") %>';
 	FiscalizacaoLocalInfracao.settings.urls.editarAutuadoPessoa = '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>';
-	FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimento = '<%= Url.Action("LocalizarFiscalizacao", "Empreendimento") %>';
+    FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimento = '<%= Url.Action("LocalizarFiscalizacao", "Empreendimento") %>';
+    FiscalizacaoLocalInfracao.settings.urls.localizarEmpreendimentoPessoa = '<%= Url.Action("LocalizarFiscalizacaoPessoa", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.visualizarEmpreendimento = '<%= Url.Action("EmpreendimentoInline", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.editarEmpreendimento = '<%= Url.Action("Editar", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.salvar = '<%= Url.Action("Salvar", "Fiscalizacao") %>';
@@ -44,13 +45,46 @@
 
 		<div class="block">
 			<div class="coluna18">
-				<label for="LocalInfracao_Data_DataTexto">Data da vistoria *</label>
-				<%= Html.TextBox("LocalInfracao.Data.DataTexto", Model.LocalInfracao.Data.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtData maskData" }))%>
+				<label for="LocalInfracao_AreaFiscalizacao">Área da Fiscalização *</label><br />
+				<label><%= Html.RadioButton("rblAreaFiscalizacao", 0, Model.LocalInfracao.AreaFiscalizacao == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDDSIA" }))%>DDSIA</label><br />
+                <label><%= Html.RadioButton("rblAreaFiscalizacao", 1, Model.LocalInfracao.AreaFiscalizacao == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDDSIV" }))%>DDSIV</label><br />
+                <label><%= Html.RadioButton("rblAreaFiscalizacao", 2, Model.LocalInfracao.AreaFiscalizacao == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAreaFiscalizacao rblAreaFiscalizacaoDRNRE" }))%>DRNRE</label>
 			</div>
 		</div>
 	</fieldset>
 
-	<fieldset class="block box">
+    <fieldset class="block box">
+		<legend>Autuado/Fiscalizado</legend>
+		<div class="block">
+			<div class="coluna100">
+				<label for="">Infração ocorreu dentro de empreendimento? * <span style="font-style: italic; color: Gray;">(Empreendimento = Propriedade rural/urbana, Comercio/Serviço, Indústria, Obra de Infraestrutura.)</span></label><br />
+				<label><%= Html.RadioButton("rblAutuado", 1, Model.LocalInfracao.EmpreendimentoId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado" }))%>Sim</label>
+				<label><%= Html.RadioButton("rblAutuado", 0, (Model.LocalInfracao.EmpreendimentoId == 0 || Model.LocalInfracao.EmpreendimentoId == null) && Model.LocalInfracao.PessoaId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado prepend2" }))%>Não</label>
+			</div>
+		</div>
+		<div class="block divPessoa <%= Model.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
+
+		<%= Html.Hidden("hdnAutuadoPessoaId", Model.LocalInfracao.PessoaId, new { @class = "hdnAutuadoPessoaId" })%>
+		<%= Html.Hidden("hdnAutuadoPessoaTid", Model.LocalInfracao.PessoaTid, new { @class = "hdnAutuadoPessoaTid" })%>
+
+			<div class="coluna50">
+				<label for="txtNomeRazao">Nome / Razão Social *</label>
+				<%= Html.TextBox("txtNomeRazao", Model.Pessoa.NomeRazaoSocial, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNomeRazao" }))%>
+			</div>
+			<div class="coluna30 prepend2">
+				<label for="txtCpfCnpj">CPF/CNPJ *</label>
+				<%= Html.TextBox("txtCpfCnpj", Model.Pessoa.CPFCNPJ, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCpfCnpj" }))%>
+			</div>
+			<div class="prepend2">
+				<% if (!Model.IsVisualizar) { %>
+				<button type="button" class="floatLeft inlineBotao btnBuscarPessoa" title="Buscar autuado">Buscar</button>
+				<% } %>
+				<span class="spanVisualizarAutuado <%= (Model.LocalInfracao.PessoaId > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarVisualizarPessoa" title="Visualizar autuado"></button></span>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset class="block box fsLocalInfracao <%= (!String.IsNullOrWhiteSpace(Model.LocalInfracao.LonEasting)) ? "" : "hide" %>">
 		<legend>Local da infração</legend>
 		<div class="block">
 			<div class="coluna21">
@@ -104,112 +138,90 @@
 			<% if (!Model.IsVisualizar) { %>
 			<div class="coluna20 prepend2">
 				<button type="button" class="inlineBotao btnBuscarCoorLocal">Buscar</button>
+                <button type="button" class="inlineBotao btnVerificarEmp hide">Verificar Empreendimento</button>
 			</div>
 			<% } %>
 		</div>
 
 		<div class="block">
 			<div class="coluna90">
-				<label for="LocalInfracao_Local">Local *</label>
+				<label for="LocalInfracao_Local">Nome do empreendimento e Endereço da infração/ocorrência *</label>
 				<%= Html.TextBox("LocalInfracao.Local", Model.LocalInfracao.Local, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtLocal", maxlength = "150" }))%>
 			</div>
 		</div>
 	</fieldset>
 
-	<fieldset class="block box">
-		<legend>Autuado</legend>
-		<div class="block">
-			<div class="coluna100">
-				<label for="">Infração ocorreu dentro de empreendimento? * <span style="font-style: italic; color: Gray;">(Empreendimento = Propriedade rural/urbana, Comercio/Serviço, Indústria, Obra de Infraestrutura.)</span></label><br />
-				<label><%= Html.RadioButton("rblAutuado", 1, Model.LocalInfracao.EmpreendimentoId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado" }))%>Sim</label>
-				<label><%= Html.RadioButton("rblAutuado", 0, Model.LocalInfracao.PessoaId > 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblAutuado prepend2" }))%>Não</label>
-			</div>
-		</div>
-		<div class="block divPessoa <%= Model.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
+    <fieldset class="block box fsEmpreendimentoBuscar <%= (Model.LocalInfracao.EmpreendimentoId > 0) ? "" : "hide" %>">
+		    <div class="divEmpreendimento <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
+			    <%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
 
-		<%= Html.Hidden("hdnAutuadoPessoaId", Model.LocalInfracao.PessoaId, new { @class = "hdnAutuadoPessoaId" })%>
-		<%= Html.Hidden("hdnAutuadoPessoaTid", Model.LocalInfracao.PessoaTid, new { @class = "hdnAutuadoPessoaTid" })%>
+			    <div class="block divBtnVerificarEmpreendimento">
+				    <% if (!Model.IsVisualizar) { %>
+				    <div class="coluna30">
+                        <label>Empreendimentos associados</label>
+					    <button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
+				    </div>
+				    <% } %>
+			    </div>
+			    <fieldset class="block boxBranca fdsEmpreendimento hide">
+				    <legend>Empreendimento Autuado</legend>
+				    <div class="divResultados">
 
-			<div class="coluna50">
-				<label for="txtNomeRazao">Nome / Razão Social *</label>
-				<%= Html.TextBox("txtNomeRazao", Model.Pessoa.NomeRazaoSocial, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNomeRazao" }))%>
-			</div>
-			<div class="coluna30 prepend2">
-				<label for="txtCpfCnpj">CPF/CNPJ *</label>
-				<%= Html.TextBox("txtCpfCnpj", Model.Pessoa.CPFCNPJ, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCpfCnpj" }))%>
-			</div>
-			<div class="prepend2">
-				<% if (!Model.IsVisualizar) { %>
-				<button type="button" class="floatLeft inlineBotao btnBuscarPessoa" title="Buscar autuado">Buscar</button>
-				<% } %>
-				<span class="spanVisualizarAutuado <%= (Model.LocalInfracao.PessoaId > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarVisualizarPessoa" title="Visualizar autuado"></button></span>
-			</div>
-		</div>
+				    </div>
+				    <div class="block divDadosEmpreendimento">
+					    <div class="empreendimentoPartial">
 
-		<div class="divEmpreendimento <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
-			<%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
+					    </div>
+				    </div>
 
-			<div class="block">
-				<% if (!Model.IsVisualizar) { %>
-				<div class="coluna30">
-					<button type="button" class="inlineBotao btnVerificarEmp">Verificar Empreendimento</button>
-				</div>
-				<% } %>
-			</div>
-			<fieldset class="block boxBranca fdsEmpreendimento hide">
-				<legend>Empreendimento Autuado</legend>
-				<div class="divResultados">
+				    <% if (!Model.IsVisualizar) { %>
+				    <div class="block box divBotoes">
+					    <span class="modoVisualizar">
+						    <span class="spanBotoes spanEmpAssociar hide">
+							    <input class="floatLeft btnEmpAssociar" type="button" value="Associar" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvar hide">
+							    <input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
+						    </span>
+						    <span class="spanBotoes spanEmpNovo hide">
+							    <input class="floatLeft btnEmpNovo" type="button" value="Novo" />
+						    </span>
+                            <span class="spanBotoes spanEmpBuscaLocal hide">
+							    <input class="floatLeft btnEmpBuscaLocal" type="button" value="Buscar por Localização" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvarCadastrar hide">
+							    <input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvarEditar hide">
+							    <input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
+						    </span>
+						    <span class="spanBotoes spanEmpAssNovoPessoa hide">
+							    <input class="floatLeft btnEmpAssNovoPessoa" type="button" value="Buscar Novo" />
+						    </span>
+                            <span class="spanBotoes spanEmpAssNovo hide">
+							    <input class="floatLeft btnEmpAssNovo" type="button" value="Buscar Novo" />
+						    </span>
+					    </span>
+					    <span class="spanCancelarEmp cancelarCaixa">ou <a class="linkCancelar linkCancelarEmp">Cancelar</a></span>
+				    </div>
+				    <% } %>
+			    </fieldset>
+		    </div>
 
-				</div>
-				<div class="block divDadosEmpreendimento">
-					<div class="empreendimentoPartial">
+		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <div class="coluna70">
+				    <label for="LocalInfracao_ResponsavelId">Autuado *</label>
+				    <%= Html.DropDownList("LocalInfracao.ResponsavelId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveis" }))%>
+			    </div>
+		    </div>
 
-					</div>
-				</div>
-
-				<% if (!Model.IsVisualizar) { %>
-				<div class="block box divBotoes">
-					<span class="modoVisualizar">
-						<span class="spanBotoes spanEmpAssociar hide">
-							<input class="floatLeft btnEmpAssociar" type="button" value="Associar" />
-						</span>
-						<span class="spanBotoes spanEmpSalvar hide">
-							<input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
-						</span>
-						<span class="spanBotoes spanEmpNovo hide">
-							<input class="floatLeft btnEmpNovo" type="button" value="Novo" />
-						</span>
-						<span class="spanBotoes spanEmpSalvarCadastrar hide">
-							<input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
-						</span>
-						<span class="spanBotoes spanEmpSalvarEditar hide">
-							<input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
-						</span>
-						<span class="spanBotoes spanEmpAssNovo hide">
-							<input class="floatLeft btnEmpAssNovo" type="button" value="Buscar Novo" />
-						</span>
-					</span>
-					<span class="spanCancelarEmp cancelarCaixa">ou <a class="linkCancelar linkCancelarEmp">Cancelar</a></span>
-				</div>
-				<% } %>
-			</fieldset>
-		</div>
-
-		<div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<div class="coluna70">
-				<label for="LocalInfracao_ResponsavelId">Autuado *</label>
-				<%= Html.DropDownList("LocalInfracao.ResponsavelId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveis" }))%>
-			</div>
-		</div>
-
-		<div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<div class="coluna70">
-				<label for="LocalInfracao_ResponsavelPropriedadeId">Responsável do Empreendimento *</label>
-				<%= Html.DropDownList("LocalInfracao.ResponsavelPropriedadeId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveisPropriedade " }))%>
-			</div>
-		</div>
-
-	</fieldset>
+		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <div class="coluna70">
+				    <label for="LocalInfracao_ResponsavelPropriedadeId">Responsável do Empreendimento *</label>
+				    <%= Html.DropDownList("LocalInfracao.ResponsavelPropriedadeId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveisPropriedade " }))%>
+			    </div>
+		    </div>
+        </fieldset>
 </div>
 
