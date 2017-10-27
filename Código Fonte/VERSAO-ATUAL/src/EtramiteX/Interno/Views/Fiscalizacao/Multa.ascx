@@ -56,28 +56,9 @@
 			</div>
 
             <div class="coluna20">
-		        <label>Valor da multa (Reais) *</label>
-		        <%= Html.TextBox("Multa.ValorMulta", Model.Multa.ValorMulta, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMulta", @maxlength = "8" }))%>
+		        <label>Valor da multa (R$) *</label>
+		        <%= Html.TextBox("Multa.ValorMulta", Model.Multa.ValorMulta, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMulta", @maxlength = "13" }))%>
 	        </div>
-        </div>
-
-        <div class="block divPDF">
-            <div class="coluna50 inputFileDiv">
-				<label>PDF do IUF</label>
-				<div class="block">
-					<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.Multa.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.Multa.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.Multa.Arquivo.Nome)%></a>
-				</div>
-				<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
-				<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Multa.Arquivo.Nome) ? "" : "hide" %>">
-					<input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
-				</span>
-			</div>
-			<% if (!Model.IsVisualizar) { %>
-			    <div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
-				    <button type="button" class="inlineBotao btnAddArq <%= string.IsNullOrEmpty(Model.Multa.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
-				    <button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.Multa.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
-			    </div>
-			<% } %>
         </div>
         
         <br />

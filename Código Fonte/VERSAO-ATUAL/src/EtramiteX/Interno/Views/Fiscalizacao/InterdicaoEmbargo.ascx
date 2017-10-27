@@ -36,25 +36,6 @@
 				<%= Html.TextBox("ObjetoInfracao.DataLavratura", (Model.Entidade.DataLavraturaTermo.Data != DateTime.MinValue ? Model.Entidade.DataLavraturaTermo.DataTexto : "Gerado automaticamente"), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.IsDigital == true), new { @class = "text maskData txtDataLavratura" }))%>
 			</div>
         </div>
-
-        <div class="block divPDF">
-            <div class="coluna50 inputFileDiv">
-				<label>PDF do IUF</label>
-				<div class="block">
-					<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.Entidade.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.Entidade.Arquivo.Nome)%></a>
-				</div>
-				<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
-				<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "" : "hide" %>">
-					<input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
-				</span>
-			</div>
-			<% if (!Model.IsVisualizar) { %>
-			    <div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
-				    <button type="button" class="inlineBotao btnAddArq <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
-				    <button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.Entidade.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
-			    </div>
-			<% } %>
-        </div>
     </fieldset>
 
     <fieldset class="block box fsCamposInterdicaoEmbargo">
@@ -90,7 +71,7 @@
         
         <div class="block">
 			<div class="coluna52">
-				<label for="ObjetoInfracao_ExisteAtvAreaDegrad">Está sendo desenvolvida alguma atividade na área interditada/embargada? *</label><br />
+				<label for="ObjetoInfracao_ExisteAtvAreaDegrad">Está sendo desenvolvida alguma atividade no local/área/empreendimento interditado/embargado? *</label><br />
 				<span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpanExisteAtvAreaDegrad">
 					<label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 1, (Model.Entidade.ExisteAtvAreaDegrad == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Sim</label>
 					<label><%= Html.RadioButton("ObjetoInfracao.ExisteAtvAreaDegrad", 0, (Model.Entidade.ExisteAtvAreaDegrad == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "rdbExisteAtvAreaDegrad" }))%>Não</label>

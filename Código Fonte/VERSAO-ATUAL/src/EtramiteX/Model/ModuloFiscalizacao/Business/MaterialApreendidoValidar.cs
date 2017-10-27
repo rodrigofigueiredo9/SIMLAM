@@ -37,6 +37,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
                 }
 
+                if (materialApreendido.ValorProdutosReais == null || materialApreendido.ValorProdutosReais == 0)
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosObrigatorio);
+                }
+
+                if (String.IsNullOrWhiteSpace(materialApreendido.ValorProdutosExtenso))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosObrigatorio);
+                }
+
                 if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
                 {
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
@@ -70,6 +80,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 if (materialApreendido.ProdutosApreendidos.Count == 0)
                 {
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.ProdutoApreendidoObrigatorio);
+                }
+
+                if (String.IsNullOrWhiteSpace(materialApreendido.Opiniao))
+                {
+                    Validacao.Add(Mensagem.MaterialApreendidoMsg.OpiniaoObrigatoria);
                 }
             }
 

@@ -1278,7 +1278,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
-        #region Material apreendido
+        #region Apreensão
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
         public ActionResult MaterialApreendido(int id)
