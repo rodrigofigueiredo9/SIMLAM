@@ -418,7 +418,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 //                    comandtxt += @" union all select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, max(trunc(metaphone.jaro_winkler(:filtro_fonetico,p.texto),5)) 
 //								similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id and p.texto_fonema like upper('%' || upper(metaphone.gerarCodigo(:filtro_fonetico)) || '%') 
 //								and metaphone.jaro_winkler(:filtro_fonetico,p.texto) >= to_number(:limite_similaridade) group by p.id, p.texto, p.codigo, p.tid, p.origem, o.texto";
-                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL
+                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL, i.SERIE
                                    from CNF_DOC_FITO_INTERVALO i, lov_doc_fitossanitarios_tipo td, LOV_DOC_FITOSSANI_TIPO_NUMERO tn
                                    where i.TIPO_DOCUMENTO = " + Convert.ToInt32(filtros.Dados.TipoDocumentoID)
                                          + " and i.TIPO = " + Convert.ToInt32(filtros.Dados.TipoNumeracaoID)
@@ -458,7 +458,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                         doc.TipoDocumentoTexto = reader["TipoDocumento"].ToString();
                         doc.NumeroInicial = Convert.ToInt64(reader["NUMERO_INICIAL"]);
                         doc.NumeroFinal = Convert.ToInt64(reader["NUMERO_FINAL"]);
-
+                        doc.Serie = reader["SERIE"].ToString();
                         retorno.Itens.Add(doc);
                         //profissao.Id = Convert.ToInt32(reader["id"]);
 

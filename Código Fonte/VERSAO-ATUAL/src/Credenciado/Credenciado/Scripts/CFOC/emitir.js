@@ -87,9 +87,9 @@ CFOCEmitir = {
 
 	    var textoNumeral = tmpNumero;
 	    var serieNumero = "";
-	    if (tmpNumero.indexOf("/") >= 0) {
+	    if (textoNumeral.toString().indexOf("/") >= 0) {
 
-	        var arNumero = tmpNumero.split("/");
+	        var arNumero = textoNumeral.split("/");
 	        textoNumeral = arNumero[0];
 	        serieNumero = arNumero[1];
 	    }

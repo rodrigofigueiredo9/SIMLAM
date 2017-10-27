@@ -458,7 +458,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                     }
                 }
 
-                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO)
+                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO || item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
                     item.Quantidade = saldoDocOrigem;
 
             }
