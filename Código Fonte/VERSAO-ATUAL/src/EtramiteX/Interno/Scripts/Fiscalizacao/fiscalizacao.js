@@ -1835,7 +1835,6 @@ FiscalizacaoObjetoInfracao = {
 		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsDigital', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsDigital);
 		FiscalizacaoObjetoInfracao.container.delegate('.rdoIsBloco', 'change', FiscalizacaoObjetoInfracao.onSelecionarIsBloco);
 		FiscalizacaoObjetoInfracao.container.delegate('.rdbExisteAtvAreaDegrad', 'click', FiscalizacaoObjetoInfracao.gerenciarExisteAtvAreaDegradEspecificarTexto);
-		FiscalizacaoObjetoInfracao.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnAddArq', 'click', FiscalizacaoObjetoInfracao.onEnviarArquivoClick);
 	    FiscalizacaoObjetoInfracao.container.delegate('.btnLimparArq', 'click', FiscalizacaoObjetoInfracao.onLimparArquivoClick);
 
@@ -2059,7 +2058,6 @@ FiscalizacaoMaterialApreendido = {
 		FiscalizacaoMaterialApreendido.container.delegate('.ddlProdutosApreendidos', 'change', FiscalizacaoMaterialApreendido.onSelecionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnAdicionarProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.adicionarProdutoApreendido);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnExcluirProdutoApreendido', 'click', FiscalizacaoMaterialApreendido.excluirProdutoApreendido);
-		FiscalizacaoMaterialApreendido.container.delegate('.txtNumeroLacre', 'keypress', FiscalizacaoMaterialApreendido.mascaraLacre);
 		FiscalizacaoMaterialApreendido.container.delegate('.btnEditarDepositario', 'click', FiscalizacaoMaterialApreendido.onEditarDepositario);
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnAddArq', 'click', FiscalizacaoMaterialApreendido.onEnviarArquivoClick);
 	    FiscalizacaoMaterialApreendido.container.delegate('.btnLimparArq', 'click', FiscalizacaoMaterialApreendido.onLimparArquivoClick);
@@ -2272,18 +2270,6 @@ FiscalizacaoMaterialApreendido = {
 	    });
 
 	    Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-	},
-
-	mascaraLacre: function (evt) {
-	    //Permite apenas números, vírgulas e espaços.
-	    if ((evt.originalEvent.key >= 0
-             && evt.originalEvent.key <= 9)
-            || evt.originalEvent.key == ','
-            || evt.originalEvent.key == ' ') {
-	        return true;
-	    } else {
-	        return false;
-	    }
 	},
 
 	onSalvarFiscalizacaoMaterialApreendido: function () {
