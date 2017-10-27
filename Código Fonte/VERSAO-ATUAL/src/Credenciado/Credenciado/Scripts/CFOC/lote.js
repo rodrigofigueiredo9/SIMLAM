@@ -276,9 +276,9 @@ Lote = {
 
         var textoNumeral = textoNumeroOrigem;
         var serieNumeral = "";
-        if (textoNumeroOrigem.indexOf("/") >= 0) {
+        if (textoNumeral.toString().indexOf("/") >= 0) {
 
-            var arrTexto = textoNumeroOrigem.split("/");
+            var arrTexto = textoNumeral.split("/");
             textoNumeral = arrTexto[0];
             serieNumeral = arrTexto[1];
         }
