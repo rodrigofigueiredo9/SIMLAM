@@ -2197,12 +2197,14 @@ FiscalizacaoMaterialApreendido = {
 	    var item = {
 	        Id: 0,
 	        ProdutoId: $('.ddlProdutosApreendidos :selected', container).val(),
-	        ProdutoTexto: $('.ddlProdutosApreendidos :selected', container).text(),
 	        UnidadeTexto: $('.txtUnidade', container).val(),
 	        Quantidade: $('.txtQuantidade', container).val(),
 	        DestinoId: $('.ddlDestinos :selected', container).val(),
 	        DestinoTexto: $('.ddlDestinos :selected', container).text()
 	    };
+
+	    var temp = $('.ddlProdutosApreendidos :selected', container).text().split('-');
+	    item.ProdutoTexto = temp[0];
 
         //Verifica se todos os campos foram preenchidos, e se  objeto não está repetido
 	    if (item.ProdutoId == 0) {
@@ -2293,7 +2295,8 @@ FiscalizacaoMaterialApreendido = {
 	    }
 	    obj.SerieId = $('.ddlSeries :selected', container).val();
 	    obj.Descricao = $('.txtDescricao', container).val();
-	    obj.ValorProdutos = $('.txtValorBensApreendidos', container).val();
+	    obj.ValorProdutosExtenso = $('.txtValorBensApreendidosExtenso', container).val();
+	    obj.ValorProdutosReais = $('.txtValorBensApreendidosReais', container).val();
 	    obj.NumeroLacre = $('.txtNumeroLacre', container).val();
 
 	    //Preenchendo o objeto com os itens da sessão Depositário
