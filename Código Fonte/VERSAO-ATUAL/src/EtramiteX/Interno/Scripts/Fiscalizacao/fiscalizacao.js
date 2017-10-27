@@ -443,13 +443,15 @@ FiscalizacaoLocalInfracao = {
 			FiscalizacaoLocalInfracao.container.delegate('.btnBuscarPessoa', 'click', FiscalizacaoLocalInfracao.onClickBuscarPessoa);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEditarVisualizarPessoa', 'click', FiscalizacaoLocalInfracao.onClickEditarVisualizarPessoa);
 			FiscalizacaoLocalInfracao.container.delegate('.btnVerificarEmp, .btnEmpAssNovo', 'click', FiscalizacaoLocalInfracao.onClickVerificarEmp);
-			FiscalizacaoLocalInfracao.container.delegate('.btnVerificarEmpPessoa, .btnEmpAssNovoPessoa', 'click', FiscalizacaoLocalInfracao.onClickVerificarEmpPessoa);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEditarEmpreendimento', 'click', FiscalizacaoLocalInfracao.onVisualizarEmp);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEmpAssociar', 'click', FiscalizacaoLocalInfracao.onClickAssociarEmp);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEmpSalvar', 'click', FiscalizacaoLocalInfracao.onEditarEmp);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEmpNovo', 'click', FiscalizacaoLocalInfracao.onNovoEmp);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEmpSalvarCadastrar', 'click', FiscalizacaoLocalInfracao.onClickSalvarEmp);
 			FiscalizacaoLocalInfracao.container.delegate('.btnEmpSalvarEditar', 'click', FiscalizacaoLocalInfracao.onEditarCadastroEmp);
+
+			FiscalizacaoLocalInfracao.container.delegate('.btnVerificarEmpPessoa, .btnEmpAssNovoPessoa', 'click', FiscalizacaoLocalInfracao.onClickVerificarEmpPessoa);
+			FiscalizacaoLocalInfracao.container.delegate('.btnEmpBuscaLocal', 'click', FiscalizacaoLocalInfracao.onClickAtivarBuscaLocalizacao);
 		}
 
 		if (parseInt($('.hdnAutuadoEmpreendimentoId', FiscalizacaoLocalInfracao.container).val()) > 0) {
@@ -537,6 +539,9 @@ FiscalizacaoLocalInfracao = {
 				$('.btnBuscarCoorLocal', FiscalizacaoLocalInfracao.container).focus();
 			}
 		});
+
+		$('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
+		$('.btnBuscarCoorLocal', FiscalizacaoLocalInfracao.container).hide();
 	},
 
 	gerarObjetoFiltroLocalizar: function () {
@@ -658,8 +663,9 @@ FiscalizacaoLocalInfracao = {
 		$('.txtNomeRazao', FiscalizacaoLocalInfracao.container).val(Pessoa.NomeRazaoSocial);
 		$('.txtCpfCnpj', FiscalizacaoLocalInfracao.container).val(Pessoa.CPFCNPJ);
 
-		if ($('.rblAutuado', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
+		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		}
 
 		return true;
@@ -691,12 +697,24 @@ FiscalizacaoLocalInfracao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, FiscalizacaoLocalInfracao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
+			    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
+			    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
 
 				if (response.EhValido) {
 					$('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
 					$('.divResultados', FiscalizacaoLocalInfracao.container).removeClass('hide');
 					$('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).empty();
 					FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpNovo, .fdsEmpreendimento');
+
+					$('.spanEmpBuscaLocal', FiscalizacaoLocalInfracao.container).hide();
+					$('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).hide();
+
+					$('.spanEmpNovo', FiscalizacaoLocalInfracao.container).show();
+					$('.spanEmpAssNovo', FiscalizacaoLocalInfracao.container).show();
+
+					$('.spanEmpNovoPessoa', FiscalizacaoLocalInfracao.container).hide();
+					$('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).hide();
+
 					Mensagem.limpar(Fiscalizacao.container);
 				} else {
 
@@ -750,7 +768,14 @@ FiscalizacaoLocalInfracao = {
 	                $('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
 	                $('.divResultados', FiscalizacaoLocalInfracao.container).removeClass('hide');
 	                $('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).empty();
-	                FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpNovo, .fdsEmpreendimento');
+	                FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpBuscaLocal, .fdsEmpreendimento');
+
+	                $('.spanEmpNovo', FiscalizacaoLocalInfracao.container).hide();
+	                $('.spanEmpAssNovo', FiscalizacaoLocalInfracao.container).hide();
+
+	                $('.spanEmpNovoPessoa', FiscalizacaoLocalInfracao.container).show();
+	                $('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).show();
+
 	                Mensagem.limpar(Fiscalizacao.container);
 	            } else {
 
@@ -1012,6 +1037,15 @@ FiscalizacaoLocalInfracao = {
 		});
 
 		MasterPage.carregando(false);
+	},
+
+	onClickAtivarBuscaLocalizacao: function(){
+	    MasterPage.carregando(true);
+
+	    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).hide();
+	    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
+
+        MasterPage.carregando(false);
 	},
 
 	onClickSalvar: function () {

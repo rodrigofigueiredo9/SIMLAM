@@ -82,75 +82,9 @@
 				<span class="spanVisualizarAutuado <%= (Model.LocalInfracao.PessoaId > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarVisualizarPessoa" title="Visualizar autuado"></button></span>
 			</div>
 		</div>
-
-		<div class="divEmpreendimento <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
-			<%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
-
-			<div class="block">
-				<% if (!Model.IsVisualizar) { %>
-				<div class="coluna30">
-                    <label>Empreendimentos associados</label>
-					<button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
-				</div>
-				<% } %>
-			</div>
-			<fieldset class="block boxBranca fdsEmpreendimento hide">
-				<legend>Empreendimento Autuado</legend>
-				<div class="divResultados">
-
-				</div>
-				<div class="block divDadosEmpreendimento">
-					<div class="empreendimentoPartial">
-
-					</div>
-				</div>
-
-				<% if (!Model.IsVisualizar) { %>
-				<div class="block box divBotoes">
-					<span class="modoVisualizar">
-						<span class="spanBotoes spanEmpAssociar hide">
-							<input class="floatLeft btnEmpAssociar" type="button" value="Associar" />
-						</span>
-						<span class="spanBotoes spanEmpSalvar hide">
-							<input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
-						</span>
-						<!--<span class="spanBotoes spanEmpNovo hide">
-							<input class="floatLeft btnEmpNovo" type="button" value="Novo" />
-						</span>-->
-						<!--<span class="spanBotoes spanEmpSalvarCadastrar hide">
-							<input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
-						</span>-->
-						<span class="spanBotoes spanEmpSalvarEditar hide">
-							<input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
-						</span>
-						<span class="spanBotoes spanEmpAssNovo hide">
-							<input class="floatLeft btnEmpAssNovoPessoa" type="button" value="Buscar Novo" />
-						</span>
-					</span>
-					<span class="spanCancelarEmp cancelarCaixa">ou <a class="linkCancelar linkCancelarEmp">Cancelar</a></span>
-				</div>
-				<% } %>
-			</fieldset>
-		</div>
-
-		<div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<div class="coluna70">
-				<label for="LocalInfracao_ResponsavelId">Autuado *</label>
-				<%= Html.DropDownList("LocalInfracao.ResponsavelId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveis" }))%>
-			</div>
-		</div>
-
-		<div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			<div class="coluna70">
-				<label for="LocalInfracao_ResponsavelPropriedadeId">Responsável do Empreendimento *</label>
-				<%= Html.DropDownList("LocalInfracao.ResponsavelPropriedadeId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveisPropriedade " }))%>
-			</div>
-		</div>
-
 	</fieldset>
 
-	<fieldset class="block box">
+	<fieldset class="block box fsLocalInfracao hide">
 		<legend>Local da infração</legend>
 		<div class="block">
 			<div class="coluna21">
@@ -204,6 +138,7 @@
 			<% if (!Model.IsVisualizar) { %>
 			<div class="coluna20 prepend2">
 				<button type="button" class="inlineBotao btnBuscarCoorLocal">Buscar</button>
+                <button type="button" class="inlineBotao btnVerificarEmp hide">Verificar Empreendimento</button>
 			</div>
 			<% } %>
 		</div>
@@ -215,5 +150,78 @@
 			</div>
 		</div>
 	</fieldset>
+
+    <fieldset class="block box fsEmpreendimentoBuscar hide">
+		    <div class="divEmpreendimento <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
+			    <%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
+
+			    <div class="block divBtnVerificarEmpreendimento">
+				    <% if (!Model.IsVisualizar) { %>
+				    <div class="coluna30">
+                        <label>Empreendimentos associados</label>
+					    <button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
+				    </div>
+				    <% } %>
+			    </div>
+			    <fieldset class="block boxBranca fdsEmpreendimento hide">
+				    <legend>Empreendimento Autuado</legend>
+				    <div class="divResultados">
+
+				    </div>
+				    <div class="block divDadosEmpreendimento">
+					    <div class="empreendimentoPartial">
+
+					    </div>
+				    </div>
+
+				    <% if (!Model.IsVisualizar) { %>
+				    <div class="block box divBotoes">
+					    <span class="modoVisualizar">
+						    <span class="spanBotoes spanEmpAssociar hide">
+							    <input class="floatLeft btnEmpAssociar" type="button" value="Associar" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvar hide">
+							    <input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
+						    </span>
+						    <span class="spanBotoes spanEmpNovo hide">
+							    <input class="floatLeft btnEmpNovo" type="button" value="Novo" />
+						    </span>
+                            <span class="spanBotoes spanEmpBuscaLocal hide">
+							    <input class="floatLeft btnEmpBuscaLocal" type="button" value="Buscar por Localização" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvarCadastrar hide">
+							    <input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvarEditar hide">
+							    <input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
+						    </span>
+						    <span class="spanBotoes spanEmpAssNovoPessoa hide">
+							    <input class="floatLeft btnEmpAssNovoPessoa" type="button" value="Buscar Novo" />
+						    </span>
+                            <span class="spanBotoes spanEmpAssNovo hide">
+							    <input class="floatLeft btnEmpAssNovo" type="button" value="Buscar Novo" />
+						    </span>
+					    </span>
+					    <span class="spanCancelarEmp cancelarCaixa">ou <a class="linkCancelar linkCancelarEmp">Cancelar</a></span>
+				    </div>
+				    <% } %>
+			    </fieldset>
+		    </div>
+
+		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <div class="coluna70">
+				    <label for="LocalInfracao_ResponsavelId">Autuado *</label>
+				    <%= Html.DropDownList("LocalInfracao.ResponsavelId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveis" }))%>
+			    </div>
+		    </div>
+
+		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
+			    <div class="coluna70">
+				    <label for="LocalInfracao_ResponsavelPropriedadeId">Responsável do Empreendimento *</label>
+				    <%= Html.DropDownList("LocalInfracao.ResponsavelPropriedadeId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveisPropriedade " }))%>
+			    </div>
+		    </div>
+        </fieldset>
 </div>
 
