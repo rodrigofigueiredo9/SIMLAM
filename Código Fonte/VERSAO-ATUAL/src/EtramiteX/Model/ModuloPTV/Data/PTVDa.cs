@@ -652,12 +652,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															 pr.ptv,
 															 pr.origem_tipo,
 															 pr.origem,
-															 case pr.origem_tipo 
-															    when 1 then (select t.numero from cre_cfo t where t.id = pr.origem) 
-															    when 2 then (select t.numero from cre_cfoc t where t.id = pr.origem) 
-															    when 3 then (select t.numero from tab_ptv t where t.id = pr.origem) 
-																when 4 then (select t.numero from tab_ptv_outrouf t where t.id = pr.origem) 
-															 else pr.numero_origem end as origem_texto,
+															case pr.origem_tipo 
+															    when 1 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from cre_cfo t where t.id = pr.origem) 
+															    when 2 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from cre_cfoc t where t.id = pr.origem) 
+															    when 3 then (select to_char(t.numero) from tab_ptv t where t.id = pr.origem) 
+																when 4 then (select to_char(t.numero) from tab_ptv_outrouf t where t.id = pr.origem) 
+															 else to_char(pr.numero_origem) end as origem_texto,
 															 pr.numero_origem,
 															 t.texto tipo_origem_texto,
 															 pr.cultura,
