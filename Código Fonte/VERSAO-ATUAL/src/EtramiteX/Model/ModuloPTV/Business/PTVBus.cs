@@ -197,7 +197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return numero;
 		}
 
-		public Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, string origemTipoTexto, long numero)
+		public Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, string origemTipoTexto, long numero, string serieNumeral)
 		{
 			List<Lista> listaCulturas = new List<Lista>();
 			Dictionary<string, object> retorno = new Dictionary<string, object>();
@@ -211,7 +211,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				}
 				else
 				{
-					documentoOrigem = _da.VerificarDocumentoOrigem(origemTipo, numero);
+					documentoOrigem = _da.VerificarDocumentoOrigem(origemTipo, numero, serieNumeral);
 					if (documentoOrigem != null)
 					{
 						switch (origemTipo)

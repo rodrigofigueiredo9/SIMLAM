@@ -525,13 +525,14 @@ PTVEmitir = {
 	verificarDocumentoOrigem: function () {
 		Mensagem.limpar(PTVEmitir.container);
 		var ddl = $('.ddlOrigemTipo', PTVEmitir.container).ddlSelecionado();
-		var origemNumero = +$('.txtNumeroOrigem', PTVEmitir.container).val();
+		var origemNumero = $('.txtNumeroOrigem', PTVEmitir.container).val();
 
 		
 
 		var textoNumeral = origemNumero;
 		var serieNumeral = "";
-		if (textoNumeral.indexOf("/") >= 0) {
+		
+		if (textoNumeral.toString().indexOf("/") >= 0) {
 
 		    var arrTexto = textoNumeral.split("/");
 		    textoNumeral = arrTexto[0];

@@ -123,6 +123,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					comando.AdicionarParametroEntrada("data_inicial", filtro.DataInicialEmissao, DbType.DateTime);
 				}
 
+                if (!string.IsNullOrEmpty(filtro.Serie))
+                {
+                    comando.DbCommand.CommandText += " and t.serie = :serie ";
+                    comando.AdicionarParametroEntrada("serie", filtro.Serie, DbType.String);
+                }
+
 				if (!string.IsNullOrEmpty(filtro.DataFinalEmissao))
 				{
 					comando.DbCommand.CommandText += " and h.data_execucao <= :data_final";
@@ -140,6 +146,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 						item.Id = reader.GetValue<int>("id");
 						item.Numero = reader.GetValue<long>("numero");
+                        item.Serie = reader.GetValue<string>("serie");
 						item.Situacao = reader.GetValue<bool>("situacao");
 						item.Tipo = reader.GetValue<int>("tipo_documento");
 						item.TipoNumero = filtro.TipoNumero;
