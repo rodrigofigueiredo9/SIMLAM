@@ -103,15 +103,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 		public bool ValidarLocalizarFiscalizacao(ListarEmpreendimentoFiltro filtros)
 		{
 			Msg.CampoPrefixo = "Filtros";
-			//if ((filtros.EstadoId ?? 0) <= 0)
-			//{
-			//	Validacao.Add(Msg.EstadoObrigatorio);
-			//}
-
-			//if ((filtros.MunicipioId ?? 0) <= 0)
-			//{
-			//	Validacao.Add(Msg.MunicipioObrigatorio);
-			//}
 
 			VerificarCoordenadaComAbrangencia(filtros.Coordenada, "Filtros");
 
@@ -126,6 +117,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 
 			return Validacao.EhValido;
 		}
+
+        public bool ValidarLocalizarFiscalizacaoPessoa(string CpfCnpj)
+        {
+            if (String.IsNullOrWhiteSpace(CpfCnpj))
+            {
+                Validacao.Add(Msg.CpfCnpjObrigatorio);
+            }
+
+            return Validacao.EhValido;
+        }
 
 		public bool EmPosse(int empreendimento)
 		{
