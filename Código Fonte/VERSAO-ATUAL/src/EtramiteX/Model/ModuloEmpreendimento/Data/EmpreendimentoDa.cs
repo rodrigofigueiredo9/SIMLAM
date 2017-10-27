@@ -1529,6 +1529,77 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			return retorno;
 		}
 
+        public Resultados<Empreendimento> FiltrarEmpreendimentoPessoa(Filtro<ListarEmpreendimentoFiltro> filtros, BancoDeDados banco = null)
+        {
+            Resultados<Empreendimento> retorno = new Resultados<Empreendimento>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                string comandtxt = string.Empty;
+                Comando comando = bancoDeDados.CriarComando("");
+
+                #region Adicionando Filtros
+
+                comandtxt += comando.FiltroIn("e.empreendimento_id", String.Format(@"select r.empreendimento from {0}tab_empreendimento_responsavel r, {0}lst_pessoa p where p.pessoa_id = r.responsavel 
+				and p.cpf_cnpj like :responsavel_cpf_cnpj ||'%'", (string.IsNullOrEmpty(EsquemaBanco) ? "" : ".")), "responsavel_cpf_cnpj", filtros.Dados.Responsavel.CpfCnpj);
+
+                List<String> ordenar = new List<String>();
+                List<String> colunas = new List<String>() { "codigo", "segmento_texto", "denominador", "cnpj" };
+
+                if (filtros.OdenarPor > 0)
+                {
+                    ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+                }
+                else
+                {
+                    ordenar.Add("denominador");
+                }
+
+                #endregion
+
+                #region Quantidade de registro do resultado
+
+                comando.DbCommand.CommandText = String.Format("select count(*) from {0}lst_empreendimento e where e.id > 0" + comandtxt,
+                (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + "."));
+
+                retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+                comando.AdicionarParametroEntrada("menor", filtros.Menor);
+                comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+                comandtxt = String.Format(@"select e.empreendimento_id id, e.codigo, e.denominador, e.cnpj, e.segmento_texto from {0}lst_empreendimento e where e.id > 0"
+                + comandtxt + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + "."));
+
+                comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+                #endregion
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    #region Adicionando os dados na classe de retorno
+
+                    Empreendimento empreendimento;
+
+                    while (reader.Read())
+                    {
+                        empreendimento = new Empreendimento();
+                        empreendimento.Id = reader.GetValue<Int32>("id");
+                        empreendimento.Codigo = reader.GetValue<Int64>("codigo");
+                        empreendimento.Denominador = reader.GetValue<String>("denominador");
+                        empreendimento.CNPJ = reader.GetValue<String>("cnpj");
+                        empreendimento.SegmentoTexto = reader.GetValue<String>("segmento_texto");
+                        retorno.Itens.Add(empreendimento);
+                    }
+
+                    reader.Close();
+
+                    #endregion
+                }
+            }
+
+            return retorno;
+        }
+
 		public List<PessoaLst> ObterResponsaveis(int id, BancoDeDados banco = null)
 		{
 			List<PessoaLst> responsaveis = new List<PessoaLst>();

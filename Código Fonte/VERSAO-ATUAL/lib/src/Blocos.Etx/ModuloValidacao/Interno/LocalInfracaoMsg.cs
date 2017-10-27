@@ -18,6 +18,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem SelecioneSetor { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_SetorId", Texto = "Selecione um setor." }; } }
 		public Mensagem DataFiscalizacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Data_DataTexto", Texto = "Informe uma data da vistoria válida." }; } }
 		public Mensagem DataFiscalizacaoMenorAtual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Data_DataTexto", Texto = "Data da vistoria deve ser menor ou igual a data atual." }; } }
+        public Mensagem AreaFiscalizacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_AreaFiscalizacao", Texto = "Área da Fiscalização é obrigatória." }; } }
 
 		public Mensagem AreaAbrangenciaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_AreaAbrangencia", Texto = "Área de abrangência (m) é obrigatória." }; } }
 		public Mensagem AreaAbrangenciaInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_AreaAbrangencia", Texto = "Área de abrangência (m) é inválida." }; } }
