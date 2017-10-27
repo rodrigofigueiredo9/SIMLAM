@@ -123,10 +123,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 
                     //Verifica a disponibilidade de números de acordo com a série utilizada
+                    string numeroSql="";
+
                     if (liberacao.LiberarDigitalCFO || liberacao.LiberarDigitalCFOC)
                     {
 
-                        string numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_numero = 2 and rownum = 1 order by id desc";
+                        if (liberacao.LiberarDigitalCFO)
+                        {
+                            numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and rownum = 1 order by id desc";
+                        }
+                        else
+                        {
+
+                            numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and rownum = 1 order by id desc";
+                        }
 
                         Comando cmdSqlNumero = bancoDeDados.CriarComando(numeroSql);
 
@@ -168,10 +178,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                             }
 
                         }
+
                     }
+                    
                      
-
-
 					Comando comando = bancoDeDados.CriarComando(@"
 					insert into tab_liberacao_cfo_cfoc (id, tid, responsavel_tecnico, liberar_bloco_cfo, numero_inicial_cfo, numero_final_cfo, 
 					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero, serie)
