@@ -428,7 +428,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
             #endregion
 
-            if(globalModuloFiscal == qtdModuloFiscal)
+            if(globalModuloFiscal != qtdModuloFiscal)
             {
                 //var textoMerge = "ENTROU AQUI";
                 //return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);

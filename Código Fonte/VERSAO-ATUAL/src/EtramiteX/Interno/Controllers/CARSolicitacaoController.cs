@@ -111,54 +111,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoCriar })]
 		public ActionResult Criar(CARSolicitacao entidade)
 		{
-			_bus.Salvar(entidade);
-
+			_bus.Salvar(entidade);         
             
-            #region Carga das tabelas APP Caculada e APP Escadinha
-            var qtdModuloFiscal = 0.0;
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-            {
-                #region Select QTD Modulo Fiscal
-                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
-
-                comando.AdicionarParametroEntrada("empreendimentoID", entidade.Empreendimento.Id, DbType.Int32);
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    while (reader.Read())
-                    {
-                        qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
-                    }
-
-                    reader.Close();
-                }
-                #endregion
-            }
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
-            {
-                #region Chamada Procedure
-                bancoDeDados.IniciarTransacao();
-                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
-                                
-                command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
-                
-                bancoDeDados.ExecutarNonQuery(command);
-                bancoDeDados.Commit();
-
-                bancoDeDados.IniciarTransacao();
-                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); end;");
-
-                com.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
-                com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
-                
-                bancoDeDados.ExecutarNonQuery(com);
-                bancoDeDados.Commit();
-                #endregion
-
-            }
-            #endregion
-            
-
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @urlRetorno = urlRetorno }, JsonRequestBehavior.AllowGet);
 		}
