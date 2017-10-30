@@ -1,4 +1,5 @@
-﻿using GeoJSON.Net.Geometry;
+﻿using GeoJSON.Net;
+using GeoJSON.Net.Geometry;
 using Ionic.Zip;
 using log4net;
 using Newtonsoft.Json;
@@ -95,14 +96,22 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
 							}
                         //ATRIBUI OBJETO CADASTRANTE AO CAR
-						car.cadastrante = new Cadastrante()
+						/*car.cadastrante = new Cadastrante()
 						{
 							cpf = declarante.cpf,
 							dataNascimento = declarante.dataNascimento,
 							nome = declarante.nome,
 							nomeMae = declarante.nomeMae
-						};
-
+						};*/
+                        //ATRIBUI OBJETO CADASTRANTE AO CAR
+                        if(requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+                            car.cadastrante = ObterDadosCadastrante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+                        else
+                            using (var connCredendicado = new OracleConnection(CarUtils.GetBancoCredenciado()))
+                            {
+                                connCredendicado.Open();
+                                car.cadastrante = ObterDadosCadastrante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
+                            }
 
 						 if (controleSicar.solicitacao_passivo > 0)
 							PreencherCampos(car);
@@ -732,7 +741,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var declarante = 0;
 			var declaranteTid = string.Empty;
 			var pessoa = new Pessoa();
-
+            
 			using (
 				var cmd =
 					new OracleCommand(
@@ -837,9 +846,65 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			{
 				pessoa.nomeMae = "Não informado";
 			}
-
+            
 			return pessoa;
 		}
+
+        private static Cadastrante ObterDadosCadastrante(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid, int solicitacaoCar, string solicitacaoCarTid)
+        {
+            //var declaranteTid = string.Empty;
+            var cadastrante = new Cadastrante();
+            if (schema == "IDAF")
+            {
+                using (
+                    var cmd =
+                        new OracleCommand(
+                            "SELECT  F.NOME, F.CPF FROM IDAF.HST_CAR_SOLICITACAO T INNER JOIN IDAF.TAB_FUNCIONARIO F ON T.AUTOR_ID = F.ID" + //T.AUTOR,
+                            " WHERE T.empreendimento_id = :empreendimento_id AND T.situacao_id IN (1,2,5,6) AND T.tid = :tid",
+                            conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
+                    cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            //declarante. = Convert.ToInt32(dr["AUTOR"]);
+                            cadastrante.nome = Convert.ToString(dr["NOME"]);
+                            cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (
+                    var cmd =
+                        new OracleCommand(
+                            "SELECT  P.NOME, P.CPF, P.MAE, P.DATA_NASCIMENTO FROM IDAF.HST_CAR_SOLICITACAO T INNER JOIN IDAF.TAB_PESSOA P ON T.DECLARANTE_ID = P.ID" + //T.DECLARANTE,
+                            " WHERE T.empreendimento_id = :empreendimento_id AND T.situacao_id IN (1,2,5,6) AND T.tid = :tid",
+                            conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
+                    cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            //declarante.id = Convert.ToInt32(dr["AUTOR"]);
+                            cadastrante.nome = Convert.ToString(dr["NOME"]);
+                            cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                            cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                            cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
+                        }
+                    }
+                }
+            }
+            
+            return cadastrante;
+        }
 
 		/// <summary>
 		/// Obters the proprietarios posseiros concessionarios.
@@ -1300,7 +1365,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
-					                                                                                                         {
+					{
 						var geo = new Geo() { tipo = tipoGeometriaCar };
 
 						try
@@ -1308,6 +1373,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							//geo.geoJson = GeometryFromWKT.Parse(Convert.ToString(dr["wkt"])).ToGeoJson();
 							var multipolygon = GeoJSONFromWKT.Parse(Convert.ToString(dr["wkt"]));
 							geo.geoJson = multipolygon;
+                            
 						}
 						catch (Exception exception)
 						{
@@ -1750,8 +1816,30 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio600,
                 "tipo = 'APP_ESCADINHA_RIO_ACIMA_600'"));
 
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaTotal));
+
             //Remover geometrias nulas para envio
             geometrias.RemoveAll(x => x == null);
+            /*
+            //Fazer APP Escadinha Total
+            var totalEscadinha = new Geo();
+            totalEscadinha.tipo = "APP_ESCADINHA";
+            var totalArea = 0.0;
+            //String totalGeometria = "";
+
+            foreach (var geo in geometrias)
+            {
+                totalArea += geo.area;
+                //totalGeometria += geo.geoJson.ToString();
+                
+            }
+
+            //GeoJSONObject totalGeoEscadinha = GeoJSONFromWKT.Parse(totalGeometria);
+
+            totalEscadinha.area = totalArea;
+            //totalEscadinha.geoJson = totalGeoEscadinha;
+
+            geometrias.Add(totalEscadinha); */         
 
             return geometrias;
         }
