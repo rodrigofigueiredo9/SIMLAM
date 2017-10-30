@@ -58,6 +58,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
         public const string TipoEscadinhaCalculadaRio50A200 = "APP_ESCADINHA_RIO_50_A_200";
         public const string TipoEscadinhaCalculadaRio200A600 = "APP_ESCADINHA_200_A_600";
         public const string TipoEscadinhaCalculadaRio600 = "APP_ESCADINHA_RIO_ACIMA_600";
+        public const string TipoEscadinhaTotal = "APP_ESCADINHA";
 
 		[DefaultValue("")]
 		public string tipo { get; set; }

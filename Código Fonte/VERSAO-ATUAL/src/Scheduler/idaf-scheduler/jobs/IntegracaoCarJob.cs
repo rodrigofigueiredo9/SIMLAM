@@ -196,14 +196,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            //string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO";                
-            string BuildSQl = @"SELECT CAR.ID
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE ID IN (30842,38012,34520,46389,28931,31892,33984,32998,25613,31671,40003,37439,31962,41647,40054,25475)";                
+            /*string BuildSQl = @"SELECT CAR.ID
                                 FROM TAB_CAR_SOLICITACAO CAR
                                     INNER JOIN IDAFGEO.GEO_CAR_APP_CALCULADAS GEOAPP
                                         ON GEOAPP.EMPREENDIMENTO = CAR.EMPREENDIMENTO
                                   WHERE ROWNUM < 1000";
             
-
+            */
             /*string BuildSQl = @"SELECT CAR.ID
                 FROM TAB_CAR_SOLICITACAO CAR
                     INNER JOIN IDAFGEO.GEO_CAR_ESCADINHA_CALCULADAS GEOAPP
