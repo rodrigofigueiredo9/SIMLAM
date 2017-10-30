@@ -399,6 +399,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public CARSolicitacao Obter(int id, BancoDeDados banco = null)
 		{
+            //Chamada do botão enviar para SICAR
 			try
 			{
                 //Consulta no credenciado, se vier nulo, consulta no institucional

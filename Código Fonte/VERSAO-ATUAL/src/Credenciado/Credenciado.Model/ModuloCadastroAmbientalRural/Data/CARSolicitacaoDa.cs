@@ -520,18 +520,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					   'Credenciado' autor_modulo,
 
 					   s.motivo,
-					   tr.data_criacao requerimento_data_cadastro
-					   --s.projeto_digital
+					   tr.data_criacao requerimento_data_cadastro,
+					   pg.ID projeto_digital
 
                     from tab_car_solicitacao s 
                         INNER JOIN          lov_car_solicitacao_situacao l      ON  s.SITUACAO =  l.ID
-					    LEFT JOIN          lov_car_solicitacao_situacao la     ON  s.SITUACAO_ANTERIOR = la.ID
+					    LEFT JOIN           lov_car_solicitacao_situacao la     ON  s.SITUACAO_ANTERIOR = la.ID
 					    INNER JOIN          tab_empreendimento e                ON  s.EMPREENDIMENTO = e.ID
 					    INNER JOIN          tab_pessoa  pes                     ON  s.DECLARANTE = pes.ID
 					    INNER JOIN          tab_requerimento  tr                ON  s.REQUERIMENTO = tr.ID
 					    INNER JOIN          tab_protocolo  p                    ON  s.REQUERIMENTO = p.REQUERIMENTO
                         INNER JOIN          tab_funcionario f                   ON  s.AUTOR = f.ID
                         INNER JOIN          lov_funcionario_tipo tf             ON  f.TIPO = tf.ID
+                        INNER JOIN          crt_projeto_geo pg                  ON  s.EMPREENDIMENTO = pg.EMPREENDIMENTO
                     where 
 					  s.id = :id
                     ");
