@@ -241,7 +241,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 					lee.sigla estado_emissao_sigla,
 					t.municipio_emissao_texto,
 					t.data_ativacao,
-					t.data_execucao
+					t.data_execucao,
+                    t.serie
 				from hst_cfoc t, lov_estado le, lov_estado lee
 				where le.id(+) = t.estado_id
 				and lee.id(+) = t.estado_emissao_id
@@ -259,7 +260,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 						entidade.Id = id;
 						entidade.Situacao = reader.GetValue<int>("situacao_id");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.Empreendimento.Id = reader.GetValue<int>("empreendimento_id");
 						entidade.Empreendimento.Tid = reader.GetValue<string>("empreendimento_tid");
 
