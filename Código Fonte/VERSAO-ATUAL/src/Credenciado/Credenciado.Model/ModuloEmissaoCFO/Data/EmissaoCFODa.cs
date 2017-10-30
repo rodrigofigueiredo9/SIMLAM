@@ -1365,10 +1365,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
                 Comando comando;
 				
                 if (string.IsNullOrEmpty(serie))
-                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 1 and n.tipo_numero = 1 and n.situacao = 0 and n.numero = :numero");
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 1 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero");
                 else
                 {
-                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 1 and n.tipo_numero = 1 and n.situacao = 0 and n.numero = :numero and serie = :serie");
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 1 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and serie = :serie");
                     comando.AdicionarParametroEntrada("serie", serie, DbType.String);
                 }
 

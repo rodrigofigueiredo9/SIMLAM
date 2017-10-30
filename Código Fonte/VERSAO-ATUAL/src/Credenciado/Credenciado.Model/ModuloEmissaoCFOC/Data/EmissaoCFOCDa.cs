@@ -416,7 +416,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciado))
 			{
 
-                string sqlCfo = @"select id from {0}tab_cfo where numero = :numero";
+                string sqlCfo = @"select id from {0}tab_cfoc where numero = :numero";
 
                 if (!string.IsNullOrEmpty(serieNumero))
                     sqlCfo += " and serie = :serie";
@@ -950,10 +950,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 1 and n.situacao = 0 and n.numero = :numero");
+                string numeroSem = numero;
+                string serie = "";
+                if (numero.IndexOf("/") >= 0)
+                {
+                    string[] arNum = numero.Split('/');
+                    numeroSem = arNum[0];
+                    serie = arNum[1];
 
-				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
-				return bancoDeDados.ExecutarScalar<int>(comando) <= 0;
+                }
+
+                Comando comando;
+
+                if (string.IsNullOrEmpty(serie))
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero");
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and serie = :serie");
+                    comando.AdicionarParametroEntrada("serie", serie, DbType.String);
+                }
+
+                comando.AdicionarParametroEntrada("numero", numeroSem, DbType.Int64);
+                return bancoDeDados.ExecutarScalar<int>(comando) <= 0;
 			}
 		}
 
