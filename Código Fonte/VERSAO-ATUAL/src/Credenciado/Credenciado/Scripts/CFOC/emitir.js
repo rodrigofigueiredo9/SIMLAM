@@ -478,7 +478,7 @@ CFOCEmitir = {
 	obter: function () {
 	    var empreendimento = $('.ddlEmpreendimentos', CFOCEmitir.container).ddlSelecionado();
 
-	    var textoNumeral = $('.txtNumero', CFOEmitir.container).val();
+	    var textoNumeral = $('.txtNumero', CFOCEmitir.container).val();
 	    var serieNumeral = "";
 	    if (textoNumeral.indexOf("/") >= 0) {
 
