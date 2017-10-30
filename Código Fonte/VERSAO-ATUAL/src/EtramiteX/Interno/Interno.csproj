@@ -1704,13 +1704,10 @@
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoDestinos.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoProdutos.ascx" />
-    <Content Include="Views\Fiscalizacao\Infracao_old.ascx" />
     <Content Include="Views\Fiscalizacao\OutrasPenalidades.ascx" />
     <Content Include="Views\Fiscalizacao\Multa.ascx" />
-    <Content Include="Views\Fiscalizacao\MaterialApreendido_old.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
-    <Content Include="Views\Fiscalizacao\ObjetoInfracao_old.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
@@ -2331,7 +2328,6 @@
     <Content Include="Views\Fiscalizacao\ProjetoGeoBaseReferenciaPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeoDesenhadorPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeoEnviarProjetoPartial.ascx" />
-    <Content Include="Views\Fiscalizacao\Enquadramento_old.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoPartial.ascx" />
     <Content Include="Views\Fiscalizacao\Infracao.ascx" />
     <Content Include="Views\Fiscalizacao\ProjetoGeografico.ascx" />

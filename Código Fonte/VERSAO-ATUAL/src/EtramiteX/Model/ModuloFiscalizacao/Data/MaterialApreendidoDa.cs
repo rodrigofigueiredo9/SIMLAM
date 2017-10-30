@@ -74,6 +74,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                             serie,
                                                             descricao,
                                                             valor_produtos,
+                                                            valor_produtos_reais,
                                                             depositario,
                                                             endereco_logradouro,
                                                             endereco_bairro,
@@ -92,6 +93,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                           :serie,
                                           :descricao,
                                           :valor_produtos,
+                                          :valor_produtos_reais,
                                           :depositario,
                                           :endereco_logradouro,
                                           :endereco_bairro, 
@@ -109,7 +111,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
 				comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
-				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.String);
+				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutosExtenso, DbType.String);
+                comando.AdicionarParametroEntrada("valor_produtos_reais", materialApreendido.ValorProdutosReais, DbType.Decimal);
 				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
 				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
@@ -204,6 +207,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                        serie = :serie,
                                        descricao = :descricao,
                                        valor_produtos = :valor_produtos,
+                                       valor_produtos_reais = :valor_produtos_reais,
                                        depositario = :depositario,
                                        endereco_logradouro = :endereco_logradouro,
                                        endereco_bairro = :endereco_bairro, 
@@ -222,7 +226,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
                 comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
                 comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
-                comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutos, DbType.String);
+                comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutosExtenso, DbType.String);
+                comando.AdicionarParametroEntrada("valor_produtos_reais", materialApreendido.ValorProdutosReais, DbType.Decimal);
                 comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
                 comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
                 comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
@@ -378,7 +383,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
-							ValorProdutos = reader.GetValue<string>("valor_produtos"),
+							ValorProdutosExtenso = reader.GetValue<string>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),
 							Opiniao = reader.GetValue<string>("opiniao"),
 							FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
@@ -454,6 +459,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                            t.serie,
                                            t.descricao,
                                            t.valor_produtos,
+                                           t.valor_produtos_reais,
                                            t.depositario,
                                            nvl(p.nome, p.razao_social) nome,
                                            nvl(p.cpf, p.cnpj) cpf,
@@ -495,7 +501,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             SerieId = reader.GetValue<int>("serie"),
                             SerieTexto = reader.GetValue<string>("serie_texto"),
                             Descricao = reader.GetValue<string>("descricao"),
-                            ValorProdutos = reader.GetValue<string>("valor_produtos"),
+                            ValorProdutosExtenso = reader.GetValue<string>("valor_produtos"),
+                            ValorProdutosReais = reader.GetValue<decimal>("valor_produtos_reais"),
                             Opiniao = reader.GetValue<string>("opiniao"),
                             Tid = reader.GetValue<string>("tid"),
                             Depositario = new MaterialApreendidoDepositario
@@ -608,7 +615,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         ProdutoApreendidoLst produto = new ProdutoApreendidoLst();
 
                         produto.Id = reader.GetValue<int>("id");
-                        produto.Texto = reader.GetValue<string>("item");
+                        produto.Texto = reader.GetValue<string>("item") + " - " + reader.GetValue<string>("unidade");
                         produto.Unidade = reader.GetValue<string>("unidade");
                         produto.IsAtivo = reader.GetValue<bool>("ativo");
 

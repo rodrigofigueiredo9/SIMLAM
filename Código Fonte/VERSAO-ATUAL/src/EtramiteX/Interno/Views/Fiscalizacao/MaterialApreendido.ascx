@@ -53,25 +53,6 @@
 			</div>
         </div>
 
-        <div class="block divPDF">
-            <div class="coluna50 inputFileDiv">
-				<label>PDF do IUF</label>
-				<div class="block">
-					<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.MaterialApreendido.Arquivo.Id }) %>" class="<%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.MaterialApreendido.Arquivo.Nome)%></a>
-				</div>
-				<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.ArquivoJSon) %>" />
-				<span class="spanInputFile <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>">
-					<input type="file" id="file" class="inputFile" style="display: block; width: 100%" name="file" <%=Model.IsVisualizar ? "disabled=\"disabled\"" : "" %>/>
-				</span>
-			</div>
-			<% if (!Model.IsVisualizar) { %>
-			    <div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
-				    <button type="button" class="inlineBotao btnAddArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
-				    <button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.MaterialApreendido.Arquivo.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
-			    </div>
-			<% } %>
-        </div>
-
         <div class="block">
 			<div class="coluna75">
 				<label>Descrever a apreensão *</label>
@@ -80,15 +61,19 @@
 		</div>
 
         <div class="block">
-			<div class="coluna75">
-				<label>Valor dos bens apreendidos (R$ e por extenso)</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutos", Model.MaterialApreendido.ValorProdutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidos", @maxlength = "200" }))%>
+            <div class="coluna25">
+				<label>Valor dos bens apreendidos (R$) *</label>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutosReais", Model.MaterialApreendido.ValorProdutosReais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorBensApreendidosReais", @maxlength = "13" }))%>
+			</div>
+			<div class="coluna50">
+				<label>Valor dos bens apreendidos (por extenso) *</label>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutosExtenso", Model.MaterialApreendido.ValorProdutosExtenso, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidosExtenso", @maxlength = "200" }))%>
 			</div>
 		</div>
 
         <div class="block">
 			<div class="coluna75">
-				<label>Número(s) do(s) Lacre(s) da Interdição/Embargo</label>
+				<label>Número(s) do(s) Lacre(s) da Apreensão</label>
 				<%= Html.TextBox("MaterialApreendido.NumeroLacre", Model.MaterialApreendido.NumeroLacre, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroLacre", @maxlength = "100" }))%>
 			</div>
 		</div>
@@ -223,7 +208,6 @@
 							    <%if (!Model.IsVisualizar){%>
 								    <td class="tdAcoes">
 									    <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(prod)%>' />
-                                        <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
 									    <input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
 								    </td>
 							    <%} %>
@@ -238,7 +222,6 @@
                                 <td><span class="destino"></span></td>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value="" />
-                                    <input title="Editar" type="button" class="icone editar btnEditarProdutoApreendido" value="" />
 									<input title="Excluir" type="button" class="icone excluir btnExcluirProdutoApreendido" value="" />
 								</td>
 							</tr>
@@ -253,7 +236,7 @@
         <div class="block box">
 		    <div class="coluna76">
 			    <label>
-				    Descrever ou opinar quanto a destinação do material apreendido:
+				    Descrever ou opinar quanto a destinação do material apreendido: *
 			    </label>
 			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
 		    </div>
