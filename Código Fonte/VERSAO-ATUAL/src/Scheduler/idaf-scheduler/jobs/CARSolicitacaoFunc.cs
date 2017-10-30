@@ -178,38 +178,38 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         solicitacao.Tid = Convert.ToString(reader["tid"]); //reader.GetValue<String>("tid");
                         solicitacao.Numero = Convert.ToString(reader["numero"]);//reader.GetValue<String>("numero");
                         solicitacao.DataEmissao.DataTexto = Convert.ToString(reader["data_emissao"]); //reader.GetValue<String>("data_emissao");
-                        solicitacao.SituacaoId = Convert.ToInt32(reader["situacao"]); //reader.GetValue<Int32>("situacao");
+                        if (reader["situacao"] != null && !Convert.IsDBNull(reader["situacao"])) solicitacao.SituacaoId = Convert.ToInt32(reader["situacao"]); //reader.GetValue<Int32>("situacao");
                         solicitacao.SituacaoTexto = Convert.ToString(reader["situacao_texto"]); //reader.GetValue<String>("situacao_texto");
                         solicitacao.DataSituacao.DataTexto = Convert.ToString(reader["situacao_data"]); //reader.GetValue<String>("situacao_data");
-                        solicitacao.SituacaoAnteriorId = Convert.ToInt32(reader["situacao_anterior"]); //reader.GetValue<Int32>("situacao_anterior");
+                        if (reader["situacao_anterior"] != null && !Convert.IsDBNull(reader["situacao_anterior"])) solicitacao.SituacaoAnteriorId = Convert.ToInt32(reader["situacao_anterior"]);
                         solicitacao.SituacaoAnteriorTexto = Convert.ToString(reader["situacao_anterior_texto"]); //reader.GetValue<String>("situacao_anterior_texto");
                         solicitacao.DataSituacaoAnterior.DataTexto = Convert.ToString(reader["situacao_anterior_data"]); //reader.GetValue<String>("situacao_anterior_data");
 
-                        solicitacao.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]); //reader.GetValue<Int32>("protocolo_id");
-                        solicitacao.Protocolo.IsProcesso = Convert.ToBoolean(reader["protocolo"]); //reader.GetValue<Int32>("protocolo") == 1;
-                        solicitacao.Protocolo.NumeroProtocolo = Convert.ToInt32(reader["protocolo_numero"]); //reader.GetValue<Int32?>("protocolo_numero");
-                        solicitacao.Protocolo.Ano = Convert.ToInt32(reader["protocolo_ano"]); //reader.GetValue<Int32>("protocolo_ano");
+                        if (reader["protocolo_id"] != null && !Convert.IsDBNull(reader["protocolo_id"])) solicitacao.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]); //reader.GetValue<Int32>("protocolo_id");
+                        if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"])) solicitacao.Protocolo.IsProcesso = Convert.ToBoolean(reader["protocolo"]); //reader.GetValue<Int32>("protocolo") == 1;
+                        if (reader["protocolo_numero"] != null && !Convert.IsDBNull(reader["protocolo_numero"])) solicitacao.Protocolo.NumeroProtocolo = Convert.ToInt32(reader["protocolo_numero"]); //reader.GetValue<Int32?>("protocolo_numero");
+                        if (reader["protocolo_ano"] != null && !Convert.IsDBNull(reader["protocolo_ano"])) solicitacao.Protocolo.Ano = Convert.ToInt32(reader["protocolo_ano"]); //reader.GetValue<Int32>("protocolo_ano");
 
-                        solicitacao.ProtocoloSelecionado.Id = Convert.ToInt32(reader["protocolo_selecionado_id"]); //reader.GetValue<Int32>("protocolo_selecionado_id");
-                        solicitacao.ProtocoloSelecionado.IsProcesso = Convert.ToBoolean(reader["protocolo_selecionado"]); //reader.GetValue<Int32>("protocolo_selecionado") == 1;
-                        solicitacao.ProtocoloSelecionado.NumeroProtocolo = Convert.ToInt32(reader["protocolo_selecionado_numero"]); //reader.GetValue<Int32?>("protocolo_selecionado_numero");
-                        solicitacao.ProtocoloSelecionado.Ano = Convert.ToInt32(reader["protocolo_selecionado_ano"]); //reader.GetValue<Int32>("protocolo_selecionado_ano");
-                        solicitacao.Requerimento.Id = Convert.ToInt32(reader["requerimento"]); //reader.GetValue<Int32>("requerimento");
-                        solicitacao.Requerimento.DataCadastro = Convert.ToDateTime(reader["requerimento_data_cadastro"]); //reader.GetValue<DateTime>("requerimento_data_cadastro");
-                        solicitacao.Atividade.Id = Convert.ToInt32(reader["atividade"]); //reader.GetValue<Int32>("atividade");
-                        solicitacao.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]); //reader.GetValue<Int32>("empreendimento_id");
+                        if (reader["protocolo_selecionado_id"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_id"])) solicitacao.ProtocoloSelecionado.Id = Convert.ToInt32(reader["protocolo_selecionado_id"]); //reader.GetValue<Int32>("protocolo_selecionado_id");
+                        if (reader["protocolo_selecionado"] != null && !Convert.IsDBNull(reader["protocolo_selecionado"])) solicitacao.ProtocoloSelecionado.IsProcesso = Convert.ToBoolean(reader["protocolo_selecionado"]); //reader.GetValue<Int32>("protocolo_selecionado") == 1;
+                        if (reader["protocolo_selecionado_numero"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_numero"])) solicitacao.ProtocoloSelecionado.NumeroProtocolo = Convert.ToInt32(reader["protocolo_selecionado_numero"]); //reader.GetValue<Int32?>("protocolo_selecionado_numero");
+                        if (reader["protocolo_selecionado_ano"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_ano"])) solicitacao.ProtocoloSelecionado.Ano = Convert.ToInt32(reader["protocolo_selecionado_ano"]); //reader.GetValue<Int32>("protocolo_selecionado_ano");
+                        if (reader["requerimento"] != null && !Convert.IsDBNull(reader["requerimento"])) solicitacao.Requerimento.Id = Convert.ToInt32(reader["requerimento"]); //reader.GetValue<Int32>("requerimento");
+                        if (reader["requerimento_data_cadastro"] != null && !Convert.IsDBNull(reader["requerimento_data_cadastro"])) solicitacao.Requerimento.DataCadastro = Convert.ToDateTime(reader["requerimento_data_cadastro"]); //reader.GetValue<DateTime>("requerimento_data_cadastro");
+                        if (reader["atividade"] != null && !Convert.IsDBNull(reader["atividade"])) solicitacao.Atividade.Id = Convert.ToInt32(reader["atividade"]); //reader.GetValue<Int32>("atividade");
+                        if (reader["empreendimento_id"] != null && !Convert.IsDBNull(reader["empreendimento_id"])) solicitacao.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]); //reader.GetValue<Int32>("empreendimento_id");
                         solicitacao.Empreendimento.NomeRazao = Convert.ToString(reader["empreendimento_nome"]); //reader.GetValue<String>("empreendimento_nome");
-                        solicitacao.Empreendimento.Codigo = Convert.ToInt64(reader["empreendimento_codigo"]); //reader.GetValue<Int64?>("empreendimento_codigo");
-                        solicitacao.Declarante.Id = Convert.ToInt32(reader["declarante"]); //reader.GetValue<Int32>("declarante");
+                        if (reader["empreendimento_codigo"] != null && !Convert.IsDBNull(reader["empreendimento_codigo"])) solicitacao.Empreendimento.Codigo = Convert.ToInt64(reader["empreendimento_codigo"]); //reader.GetValue<Int64?>("empreendimento_codigo");
+                        if (reader["declarante"] != null && !Convert.IsDBNull(reader["declarante"])) solicitacao.Declarante.Id = Convert.ToInt32(reader["declarante"]); //reader.GetValue<Int32>("declarante");
                         solicitacao.Declarante.NomeRazaoSocial = Convert.ToString(reader["declarante_nome_razao"]); //reader.GetValue<String>("declarante_nome_razao");
 
-                        solicitacao.AutorId = Convert.ToInt32(reader["autor_id"]); //reader.GetValue<Int32>("autor_id");
+                        if (reader["autor_id"] != null && !Convert.IsDBNull(reader["autor_id"])) solicitacao.AutorId = Convert.ToInt32(reader["autor_id"]); //reader.GetValue<Int32>("autor_id");
                         solicitacao.AutorNome = Convert.ToString(reader["autor_nome"]); //reader.GetValue<String>("autor_nome");
                         solicitacao.AutorSetorTexto = Convert.ToString(reader["autor_setor"]); //reader.GetValue<String>("autor_setor");
                         solicitacao.AutorModuloTexto = Convert.ToString(reader["autor_modulo"]); //reader.GetValue<String>("autor_modulo");
 
                         solicitacao.Motivo = Convert.ToString(reader["motivo"]); //reader.GetValue<String>("motivo");
-                        solicitacao.ProjetoId = Convert.ToInt32(reader["projeto_geo_id"]); //reader.GetValue<Int32>("projeto_geo_id");
+                        if (reader["projeto_geo_id"] != null && !Convert.IsDBNull(reader["projeto_geo_id"])) solicitacao.ProjetoId = Convert.ToInt32(reader["projeto_geo_id"]); //reader.GetValue<Int32>("projeto_geo_id");
                     }
 
                     reader.Close();
@@ -438,33 +438,33 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         solicitacao.Tid = Convert.ToString(reader["tid"]);//reader.GetValue<String>("tid");
                         solicitacao.Numero = Convert.ToString(reader["numero"]);  //reader.GetValue<String>("numero");
                         solicitacao.DataEmissao.DataTexto = Convert.ToString(reader["data_emissao"]); //reader.GetValue<String>("data_emissao");
-                        solicitacao.SituacaoId = Convert.ToInt32(reader["situacao"]); //reader.GetValue<Int32>("situacao");
+                        if (reader["situacao"] != null && !Convert.IsDBNull(reader["situacao"])) solicitacao.SituacaoId = Convert.ToInt32(reader["situacao"]); //reader.GetValue<Int32>("situacao");
                         solicitacao.SituacaoTexto = Convert.ToString(reader["tid"]); //reader.GetValue<String>("situacao_texto");
                         solicitacao.DataSituacao.DataTexto = Convert.ToString(reader["tid"]);  //reader.GetValue<String>("situacao_data");
-                        solicitacao.SituacaoAnteriorId = Convert.ToInt32(reader["situacao_anterior"]); //reader.GetValue<Int32>("situacao_anterior");
+                        if (reader["situacao_anterior"] != null && !Convert.IsDBNull(reader["situacao_anterior"])) solicitacao.SituacaoAnteriorId = Convert.ToInt32(reader["situacao_anterior"]); //reader.GetValue<Int32>("situacao_anterior");
                         solicitacao.SituacaoAnteriorTexto = Convert.ToString(reader["situacao_anterior_texto"]);  //reader.GetValue<String>("situacao_anterior_texto");
                         solicitacao.DataSituacaoAnterior.DataTexto = Convert.ToString(reader["situacao_anterior_data"]);  //reader.GetValue<String>("situacao_anterior_data");
-                        solicitacao.Requerimento.Id = Convert.ToInt32(reader["requerimento"]); //reader.GetValue<Int32>("requerimento");
-                        solicitacao.Requerimento.DataCadastro = Convert.ToDateTime(reader["requerimento_data_cadastro"]); //reader.GetValue<DateTime>("requerimento_data_cadastro");
-                        solicitacao.Atividade.Id = Convert.ToInt32(reader["atividade"]); //reader.GetValue<Int32>("atividade");
-                        solicitacao.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]); //reader.GetValue<Int32>("empreendimento_id");
+                        if (reader["requerimento"] != null && !Convert.IsDBNull(reader["requerimento"])) solicitacao.Requerimento.Id = Convert.ToInt32(reader["requerimento"]); //reader.GetValue<Int32>("requerimento");
+                        if (reader["requerimento_data_cadastro"] != null && !Convert.IsDBNull(reader["requerimento_data_cadastro"])) solicitacao.Requerimento.DataCadastro = Convert.ToDateTime(reader["requerimento_data_cadastro"]); //reader.GetValue<DateTime>("requerimento_data_cadastro");
+                        if (reader["atividade"] != null && !Convert.IsDBNull(reader["atividade"])) solicitacao.Atividade.Id = Convert.ToInt32(reader["atividade"]); //reader.GetValue<Int32>("atividade");
+                        if (reader["empreendimento_id"] != null && !Convert.IsDBNull(reader["empreendimento_id"])) solicitacao.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]); //reader.GetValue<Int32>("empreendimento_id");
                         solicitacao.Empreendimento.NomeRazao = Convert.ToString(reader["empreendimento_nome"]);  //reader.GetValue<String>("empreendimento_nome");
-                        solicitacao.Empreendimento.Codigo = Convert.ToInt64(reader["empreendimento_codigo"]);  //reader.GetValue<Int64?>("empreendimento_codigo");
-                        solicitacao.Declarante.Id = Convert.ToInt32(reader["declarante"]);  //reader.GetValue<Int32>("declarante");
+                        if (reader["empreendimento_codigo"] != null && !Convert.IsDBNull(reader["empreendimento_codigo"])) solicitacao.Empreendimento.Codigo = Convert.ToInt64(reader["empreendimento_codigo"]);  //reader.GetValue<Int64?>("empreendimento_codigo");
+                        if (reader["declarante"] != null && !Convert.IsDBNull(reader["declarante"])) solicitacao.Declarante.Id = Convert.ToInt32(reader["declarante"]);  //reader.GetValue<Int32>("declarante");
                         solicitacao.Declarante.NomeRazaoSocial = Convert.ToString(reader["declarante_nome_razao"]); // reader.GetValue<String>("declarante_nome_razao");
 
-                        solicitacao.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]);  //reader.GetValue<Int32>("protocolo_id");
-                        solicitacao.Protocolo.IsProcesso = Convert.ToBoolean(reader["protocolo"]);  //reader.GetValue<Int32>("protocolo") == 1;
-                        solicitacao.Protocolo.NumeroProtocolo = Convert.ToInt32(reader["protocolo_numero"]);  //reader.GetValue<Int32?>("protocolo_numero");
-                        solicitacao.Protocolo.Ano = Convert.ToInt32(reader["protocolo_ano"]);  //reader.GetValue<Int32>("protocolo_ano");
+                        if (reader["protocolo_id"] != null && !Convert.IsDBNull(reader["protocolo_id"])) solicitacao.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]);  //reader.GetValue<Int32>("protocolo_id");
+                        if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"])) solicitacao.Protocolo.IsProcesso = Convert.ToBoolean(reader["protocolo"]);  //reader.GetValue<Int32>("protocolo") == 1;
+                        if (reader["protocolo_numero"] != null && !Convert.IsDBNull(reader["protocolo_numero"])) solicitacao.Protocolo.NumeroProtocolo = Convert.ToInt32(reader["protocolo_numero"]);  //reader.GetValue<Int32?>("protocolo_numero");
+                        if (reader["protocolo_ano"] != null && !Convert.IsDBNull(reader["protocolo_ano"])) solicitacao.Protocolo.Ano = Convert.ToInt32(reader["protocolo_ano"]);  //reader.GetValue<Int32>("protocolo_ano");
 
-                        solicitacao.AutorId = Convert.ToInt32(reader["autor_id"]);  //reader.GetValue<Int32>("autor_id");
+                        if (reader["autor_id"] != null && !Convert.IsDBNull(reader["autor_id"])) solicitacao.AutorId = Convert.ToInt32(reader["autor_id"]);  //reader.GetValue<Int32>("autor_id");
                         solicitacao.AutorNome = Convert.ToString(reader["autor_nome"]);  //reader.GetValue<String>("autor_nome");
                         solicitacao.AutorTipoTexto = Convert.ToString(reader["autor_tipo"]);  //reader.GetValue<String>("autor_tipo");
                         solicitacao.AutorModuloTexto = Convert.ToString(reader["autor_modulo"]);  //reader.GetValue<String>("autor_modulo");
 
                         solicitacao.Motivo = Convert.ToString(reader["motivo"]);  //reader.GetValue<String>("motivo");
-                        solicitacao.ProjetoId = Convert.ToInt32(reader["projeto_digital"]);  //reader.GetValue<Int32>("projeto_digital");
+                        if (reader["projeto_digital"] != null && !Convert.IsDBNull(reader["projeto_digital"])) solicitacao.ProjetoId = Convert.ToInt32(reader["projeto_digital"]);  //reader.GetValue<Int32>("projeto_digital");
                     }
 
                     reader.Close();

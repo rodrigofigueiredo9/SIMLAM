@@ -54,7 +54,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs.Class
             set { _dataSituacao = value; }
         }
 
-        public Int32 SituacaoAnteriorId { get; set; }
+        public Int32? SituacaoAnteriorId { get; set; }
         public String SituacaoAnteriorTexto { get; set; }
 
         private DateTecno _dataSituacaoAnterior = new DateTecno();
