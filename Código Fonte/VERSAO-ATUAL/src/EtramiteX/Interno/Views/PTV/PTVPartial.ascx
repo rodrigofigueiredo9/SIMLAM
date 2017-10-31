@@ -92,7 +92,7 @@
 			<input type="hidden" class="hdnEmpreendimentoOrigemID" value="0" />
 			<input type="hidden" class="hdnEmpreendimentoOrigemNome" value="" />
 			<label for="NumeroOrigem">Número documento <span class="labelOrigem"></span> *</label>
-			<%=Html.TextBox("NumeroOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroOrigem",  @maxlength="19"})) %>
+			<%=Html.TextBox("NumeroOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroOrigem",  @maxlength="12"})) %>
 		</div>
 		<div class="coluna20 identificacaoCultura">
 			<label for="ProdutoCultura">Cultura *</label>

@@ -104,7 +104,7 @@ Lote = {
         else {
             $('.divVerificarNumero', Lote.container).removeClass('hide');
             $('.divObterCultura', Lote.container).addClass('hide');
-            $('.txtNumeroOrigem', Lote.container).attr("maxlength", 10);
+            $('.txtNumeroOrigem', Lote.container).attr("maxlength", 12);
 
             $('.txtQuantidade', Lote.container).addClass('disabled');
             $('.txtQuantidade', Lote.container).attr('disabled', 'disabled');

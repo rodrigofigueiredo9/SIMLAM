@@ -16,7 +16,7 @@
 			<div class="block fixado">
 				<div class="coluna85">
 					<label for="Filtros_Numero">Número CFO</label>
-					<%= Html.TextBox("Filtros.Numero", null, new { @class = "text setarFoco", @maxlength = "38" })%>
+					<%= Html.TextBox("Filtros.Numero", null, new { @class = "text setarFoco", @maxlength = "12" })%>
 				</div>
 				<div class="coluna10">
 					<button class="inlineBotao btnBuscar">Buscar</button>

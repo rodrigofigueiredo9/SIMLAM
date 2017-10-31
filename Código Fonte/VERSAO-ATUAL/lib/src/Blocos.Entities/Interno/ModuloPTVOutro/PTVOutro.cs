@@ -46,6 +46,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro
         public string DeclaracaoAdicionalHtml { get; set; }
         public List<Praga> Pragas { get; set; }
 
+
+
         public List<Anexo> Anexos { get; set; }
 
         public List<PTVOutroDeclaracao> Declaracoes { get; set; }
