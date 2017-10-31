@@ -12,7 +12,7 @@
 	<div class="block">
 		<div class="coluna23">
 			<label for="Numero">Número PTV *</label>
-			<%= Html.TextBox("Numero", Model.PTV.Numero == 0 ? "" : Model.PTV.Numero.ToString(), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text txtNumero setarFoco maskNumInt", @maxlength="10"}))%>
+			<%= Html.TextBox("Numero", Model.PTV.Numero == 0 ? "" : Model.PTV.Numero.ToString(), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text txtNumero setarFoco", @maxlength="12"}))%>
 		</div>
 
 		<% if (!Model.IsVisualizar) { %>
