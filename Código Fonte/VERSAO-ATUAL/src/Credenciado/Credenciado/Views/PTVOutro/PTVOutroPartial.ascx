@@ -12,7 +12,7 @@
 	<div class="block">
 		<div class="coluna23">
 			<label for="Numero">Número PTV *</label>
-			<%= Html.TextBox("Numero", Model.PTV.Numero == 0 ? "" : Model.PTV.Numero.ToString(), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text txtNumero setarFoco maskNumInt", @maxlength="10"}))%>
+			<%= Html.TextBox("Numero", Model.PTV.Numero == 0 ? "" : Model.PTV.Numero.ToString(), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text txtNumero setarFoco", @maxlength="12"}))%>
 		</div>
 
 		<% if (!Model.IsVisualizar) { %>
@@ -88,7 +88,7 @@
 		</div>
 		<div class="coluna26 prepend1 campoIdentificacao">
 			<label for="NumeroOrigem">Número do documento <span class="labelOrigem"></span> *</label>
-			<%=Html.TextBox("NumeroOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroOrigem maskNumInt campoIdentificacao2",  @maxlength="20"})) %>
+			<%=Html.TextBox("NumeroOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroOrigem campoIdentificacao2",  @maxlength="20"})) %>
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="ProdutoCultura">Cultura *</label>

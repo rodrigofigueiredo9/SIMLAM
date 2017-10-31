@@ -341,7 +341,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 				comando.AdicionarParametroEntrada("cultivar", DbType.Int32);
 				comando.AdicionarParametroEntrada("quantidade", DbType.Decimal);
                 comando.AdicionarParametroEntrada("unidade_medida", DbType.Int32);
-                comando.AdicionarParametroEntrada("numero_origem", DbType.Int64);
+                comando.AdicionarParametroEntrada("numero_origem", DbType.String);
                 comando.AdicionarParametroEntrada("tipo_producao", DbType.Int32);
 
 				PTV.Produtos.ForEach(item =>

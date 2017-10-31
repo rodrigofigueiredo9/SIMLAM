@@ -104,7 +104,7 @@ Lote = {
         else {
             $('.divVerificarNumero', Lote.container).removeClass('hide');
             $('.divObterCultura', Lote.container).addClass('hide');
-            $('.txtNumeroOrigem', Lote.container).attr("maxlength", 10);
+            $('.txtNumeroOrigem', Lote.container).attr("maxlength", 12);
 
             $('.txtQuantidade', Lote.container).addClass('disabled');
             $('.txtQuantidade', Lote.container).attr('disabled', 'disabled');
@@ -113,7 +113,7 @@ Lote = {
 
         }
 
-        if (origem.Id == Lote.settings.idsTela.TipoCFO) {
+        if (origem.Id == Lote.settings.idsTela.TipoCFO || origem.Id == Lote.settings.idsTela.TipoCFOC) {
 
             $('.txtQuantidade', Lote.container).removeClass('disabled');
             $('.txtQuantidade', Lote.container).removeAttr('disabled');
@@ -276,9 +276,9 @@ Lote = {
 
         var textoNumeral = textoNumeroOrigem;
         var serieNumeral = "";
-        if (textoNumeroOrigem.indexOf("/") >= 0) {
+        if (textoNumeral.toString().indexOf("/") >= 0) {
 
-            var arrTexto = textoNumeroOrigem.split("/");
+            var arrTexto = textoNumeral.split("/");
             textoNumeral = arrTexto[0];
             serieNumeral = arrTexto[1];
         }
@@ -319,14 +319,14 @@ Lote = {
         }
 
 
-        if (item.OrigemTipo < 5 && item.OrigemTipo != 1)
+        if (item.OrigemTipo < 5 && item.OrigemTipo != 1 && item.OrigemTipo != 2)
             item.Quantidade = Ret.ObjResponse.QtdDocOrigem;
 
         var linha = $('.trTemplate', tabela).clone();
         $(linha).removeClass('hide trTemplate');
 
         $('.hdnItemJson', linha).val(JSON.stringify(item));
-        $('.lblOrigem', linha).html(item.OrigemTipoTexto + '-' + item.OrigemNumero).attr('title', item.OrigemTipoTexto + '-' + item.OrigemNumero);
+        $('.lblOrigem', linha).html(item.OrigemTipoTexto + '-' + item.OrigemNumero + (item.Serie ? '/' + item.Serie : '')).attr('title', item.OrigemTipoTexto + '-' + item.OrigemNumero + (item.Serie ? '/' + item.Serie : ''));
         $('.lblCultivar', linha).html(item.CulturaTexto + ' ' + item.CultivarTexto).attr('title', item.CulturaTexto + ' ' + item.CultivarTexto);
         $('.lblQuantidade', linha).html(item.Quantidade).attr('title', item.Quantidade);
         $('.lblUnidadeMedida', linha).html(unidadeMedida.Texto).attr('title', unidadeMedida.Texto);

@@ -87,9 +87,9 @@ CFOCEmitir = {
 
 	    var textoNumeral = tmpNumero;
 	    var serieNumero = "";
-	    if (tmpNumero.indexOf("/") >= 0) {
+	    if (textoNumeral.toString().indexOf("/") >= 0) {
 
-	        var arNumero = tmpNumero.split("/");
+	        var arNumero = textoNumeral.split("/");
 	        textoNumeral = arNumero[0];
 	        serieNumero = arNumero[1];
 	    }
@@ -478,7 +478,7 @@ CFOCEmitir = {
 	obter: function () {
 	    var empreendimento = $('.ddlEmpreendimentos', CFOCEmitir.container).ddlSelecionado();
 
-	    var textoNumeral = $('.txtNumero', CFOEmitir.container).val();
+	    var textoNumeral = $('.txtNumero', CFOCEmitir.container).val();
 	    var serieNumeral = "";
 	    if (textoNumeral.indexOf("/") >= 0) {
 

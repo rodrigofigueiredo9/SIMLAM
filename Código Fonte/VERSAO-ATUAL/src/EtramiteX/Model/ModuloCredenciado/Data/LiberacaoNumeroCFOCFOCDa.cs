@@ -130,12 +130,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
                         if (liberacao.LiberarDigitalCFO)
                         {
-                            numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and rownum = 1 order by id desc";
+                            numeroSql = @"select (select max(numero) as numero from  tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and numero is not null) as numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and rownum = 1 order by id desc";
                         }
                         else
                         {
 
-                            numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and rownum = 1 order by id desc";
+                            numeroSql = @"select (select max(numero) as numero from  tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and numero is not null) as numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and rownum = 1 order by id desc";
                         }
 
                         Comando cmdSqlNumero = bancoDeDados.CriarComando(numeroSql);
@@ -350,11 +350,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                 v_serie          varchar2(1) := :serie;
                                 v_maior_tmp        number := 0;
 					        begin
-						        select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
-										        and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
-							        (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
-										        and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
-						        into v_maior from dual;
+						      if v_serie is null then
+						            select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                               else
+                                    select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where serie = v_serie and length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where serie = v_serie and c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                                end if;
+
+                                select substr(v_maior,5) into v_maior_tmp from dual;
 
                                 if (v_maior_tmp = 9975) then
                                     v_maior := 0;
@@ -363,13 +373,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 						        for j in 1..v_quantidade_lib loop 
 							        v_maior := v_maior + 1;
               
-                                  if v_serie is null then
+                                 if v_serie is null then
                                     select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
                                     and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) 
                                     and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
                                   else
                                     select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = v_serie
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = :serie
                                     and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
                                   end if;
         
@@ -890,8 +900,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					proximo number;
 					v_aux   number := 1;
 					v_saida number := 0;
+                    v_serie varchar2(1) := null;
 				begin 
+
+                   
 					proximo := :numero_inicial;
+
+                    if (proximo >= 9975) then
+                                proximo := 1;
+                    end if;
 
 					for i in 1..:quantidadeDigital loop
 						select count(*) into v_aux from cnf_doc_fito_intervalo c 
