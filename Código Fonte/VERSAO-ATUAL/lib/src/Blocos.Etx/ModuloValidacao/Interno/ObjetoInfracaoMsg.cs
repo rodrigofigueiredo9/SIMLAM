@@ -29,6 +29,7 @@
 		public Mensagem NumTeiMaiorZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_NumTeiBloco", Texto = "Nº do TEI deve ser maior do que zero." }; } }
 
 		public Mensagem DescricaoTermoEmbargoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_DescricaoTermoEmbargo", Texto = "Descrição do termo de interdição/embargo é obrigatório." }; } }
+        public Mensagem OpinarObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_OpniaoAreaDanificada", Texto = "Opinar quanto a interdição/embargo é obrigatório." }; } }
 
         public Mensagem IUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_IsDigital", Texto = "IUF para interdição/embargo é obrigatório." }; } }
         public Mensagem NumeroIUFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ObjetoInfracao_NumeroIUF", Texto = "Número do IUF é obrigatório." }; } }

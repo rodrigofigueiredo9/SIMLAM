@@ -24,7 +24,7 @@
 	<div class="block box">
 		<div class="block">
 			<div class="ultima">
-				<label for="ConsideracaoFinal_Descrever">Descrever outras informações que julgar relevante para um maior detalhamento e esclarecimento do processo</label>
+				<label for="ConsideracaoFinal_Descrever">Descrever outras informações que julgar relevante para um maior detalhamento e esclarecimento do processo *</label>
 				<%= Html.TextArea("ConsideracaoFinal.Descrever", Model.ConsideracaoFinal.Descrever, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text textarea txtDescrever" }))%>
 			</div>
 		</div>

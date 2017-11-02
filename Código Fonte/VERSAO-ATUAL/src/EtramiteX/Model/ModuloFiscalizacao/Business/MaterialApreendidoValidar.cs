@@ -42,11 +42,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosObrigatorio);
                 }
 
-                if (String.IsNullOrWhiteSpace(materialApreendido.ValorProdutosExtenso))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosObrigatorio);
-                }
-
                 if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
                 {
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);

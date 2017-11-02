@@ -57,7 +57,7 @@
 
             <div class="coluna20">
 		        <label>Valor da multa (R$) *</label>
-		        <%= Html.TextBox("Multa.ValorMulta", Model.Multa.ValorMulta, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMulta", @maxlength = "13" }))%>
+		        <%= Html.TextBox("Multa.ValorMulta", Model.Multa.ValorMultaMascara, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMulta", @maxlength = "13" }))%>
 	        </div>
         </div>
         

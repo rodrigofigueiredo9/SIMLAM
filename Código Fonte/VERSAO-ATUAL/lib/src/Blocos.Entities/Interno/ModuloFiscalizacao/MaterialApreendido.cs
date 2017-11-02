@@ -16,6 +16,19 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public String Descricao { get; set; }
 		public String ValorProdutosExtenso { get; set; }
         public Decimal? ValorProdutosReais { get; set; }
+        public String ValorProdutosReaisMascara {
+            get
+            {
+                string valor = string.Empty;
+
+                if (ValorProdutosReais != null)
+                {
+                    valor = String.Format("{0:##,###,##0.00}", ValorProdutosReais);
+                }
+
+                return valor;
+            }
+        }
         public String NumeroLacre { get; set; }
 		public String Opiniao { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
