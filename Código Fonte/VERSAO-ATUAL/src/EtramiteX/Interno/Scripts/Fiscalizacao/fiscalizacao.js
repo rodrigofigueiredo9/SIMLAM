@@ -540,8 +540,11 @@ FiscalizacaoLocalInfracao = {
 			}
 		});
 
+		$('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+		$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
+
 		$('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
-		$('.btnBuscarCoorLocal', FiscalizacaoLocalInfracao.container).hide();
+		$('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
 	},
 
 	gerarObjetoFiltroLocalizar: function () {
