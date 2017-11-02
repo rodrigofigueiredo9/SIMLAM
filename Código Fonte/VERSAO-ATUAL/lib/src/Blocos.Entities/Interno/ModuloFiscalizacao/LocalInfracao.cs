@@ -25,6 +25,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public string Local { get; set; }
 		public int? PessoaId { get; set; }
 		public string PessoaTid { get; set; }
+        public int? DentroEmpreendimento { get; set; }
 		public int? EmpreendimentoId { get; set; }
 		public string EmpreendimentoTid { get; set; }
 		public int? ResponsavelId { get; set; }
