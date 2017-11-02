@@ -57,7 +57,7 @@
         
         <div class="block">
 			<div class="coluna75">
-				<label for="ObjetoInfracao_OpniaoAreaDanificada">Opinar quanto à interdição/embargo da área/atividade/produto, justificando sua manutenção ou a possibilidade de desinterdição/desembargo</label>
+				<label for="ObjetoInfracao_OpniaoAreaDanificada">Opinar quanto à interdição/embargo da área/atividade/produto, justificando sua manutenção ou a possibilidade de desinterdição/desembargo *</label>
 				<%= Html.TextArea("ObjetoInfracao.OpniaoAreaDanificada", Model.Entidade.OpniaoAreaDanificada, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtOpniaoAreaDanificada", @maxlength = "1000" }))%>
 			</div>
 		</div>

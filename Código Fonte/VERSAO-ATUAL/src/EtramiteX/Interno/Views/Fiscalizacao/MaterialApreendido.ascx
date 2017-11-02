@@ -63,11 +63,7 @@
         <div class="block">
             <div class="coluna25">
 				<label>Valor dos bens apreendidos (R$) *</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutosReais", Model.MaterialApreendido.ValorProdutosReais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorBensApreendidosReais", @maxlength = "13" }))%>
-			</div>
-			<div class="coluna50">
-				<label>Valor dos bens apreendidos (por extenso) *</label>
-				<%= Html.TextBox("MaterialApreendido.ValorProdutosExtenso", Model.MaterialApreendido.ValorProdutosExtenso, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValorBensApreendidosExtenso", @maxlength = "200" }))%>
+				<%= Html.TextBox("MaterialApreendido.ValorProdutosReais", Model.MaterialApreendido.ValorProdutosReaisMascara, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorBensApreendidosReais", @maxlength = "13" }))%>
 			</div>
 		</div>
 

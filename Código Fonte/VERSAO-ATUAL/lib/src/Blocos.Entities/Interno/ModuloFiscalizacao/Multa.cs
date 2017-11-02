@@ -14,6 +14,20 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
         public String SerieTexto { get; set; }
         public Int32? CodigoReceitaId { get; set; }
 		public Decimal ValorMulta { get; set; }
+        public String ValorMultaMascara
+        {
+            get
+            {
+                string valor = string.Empty;
+
+                if (ValorMulta != null)
+                {
+                    valor = String.Format("{0:##,###,##0.00}", ValorMulta);
+                }
+
+                return valor;
+            }
+        }
 		public String Justificativa { get; set; }
 		public Int32 FiscalizacaoSituacaoId { get; set; }
 
