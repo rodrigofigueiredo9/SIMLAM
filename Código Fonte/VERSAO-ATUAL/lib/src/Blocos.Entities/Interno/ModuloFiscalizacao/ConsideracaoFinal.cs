@@ -31,6 +31,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			Assinantes = new List<FiscalizacaoAssinante>();
 			Testemunhas = new List<ConsideracaoFinalTestemunha>();
 			Anexos = new List<Anexo>();
+            AnexosIUF = new List<Anexo>();
 			Arquivo = new Arquivo.Arquivo();
 		}
 	}
