@@ -27,6 +27,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MunicipioObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_MunicipioId", Texto = "Município é obrigatório." }; } }
 		public Mensagem LocalObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Local", Texto = "Local é obrigatório." }; } }
 		public Mensagem PessoaEmpreendimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pessoa ou empreendimento é obrigatório." }; } }
+
+        public Mensagem EmpreendimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento é obrigatório." }; } }
+        public Mensagem PessoaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pessoa é obrigatório." }; } }
 		
 		public Mensagem EastingUtmObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Setor_Easting", Texto = new CoordenadaMsg("").EastingUtmObrigatorio.Texto }; } }
 		public Mensagem NorthingUtmObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Setor_Northing", Texto = new CoordenadaMsg("").NorthingUtmObrigatorio.Texto }; } }

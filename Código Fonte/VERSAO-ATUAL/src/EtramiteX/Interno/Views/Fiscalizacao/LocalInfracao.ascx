@@ -138,7 +138,6 @@
 			<% if (!Model.IsVisualizar) { %>
 			<div class="coluna20 prepend2">
 				<button type="button" class="inlineBotao btnBuscarCoorLocal">Buscar</button>
-                <button type="button" class="inlineBotao btnVerificarEmp hide">Verificar Empreendimento</button>
 			</div>
 			<% } %>
 		</div>
@@ -161,9 +160,11 @@
 				    <div class="coluna30">
                         <label>Empreendimentos associados</label>
 					    <button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
+                        <button type="button" class="inlineBotao btnVerificarEmp hide">Verificar Empreendimento</button>
 				    </div>
 				    <% } %>
 			    </div>
+                
 			    <fieldset class="block boxBranca fdsEmpreendimento hide">
 				    <legend>Empreendimento Autuado</legend>
 				    <div class="divResultados">
