@@ -40,6 +40,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.ObjetoInfracao.DescricaoTermoEmbargoObrigatorio);
                 }
 
+                if (String.IsNullOrWhiteSpace(objetoInfracao.OpniaoAreaDanificada))
+                {
+                    Validacao.Add(Mensagem.ObjetoInfracao.OpinarObrigatorio);
+                }
+
                 if (objetoInfracao.ExisteAtvAreaDegrad == null)
                 {
                     Validacao.Add(Mensagem.ObjetoInfracao.ExisteAtvAreaDegradObrigatorio);

@@ -133,8 +133,8 @@
 			    <%= Html.TextBox("Infracao.DataConstatacao", Model.Infracao.DataConstatacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataConstatacao" }))%>
 		    </div>
 
-            <div class="coluna15 append2">
-			    <label>Hora da constatação *</label>
+            <div class="coluna20 append2">
+			    <label>Hora da constatação/vistoria *</label>
 			    <%= Html.TextBox("Infracao.HoraConstatacao", Model.Infracao.HoraConstatacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskHoraMinuto txtHoraConstatacao" }))%>
 		    </div>
 
