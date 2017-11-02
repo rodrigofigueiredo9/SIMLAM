@@ -540,11 +540,18 @@ FiscalizacaoLocalInfracao = {
 			}
 		});
 
-		$('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
-		$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
+		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
+		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 
-		$('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
-		$('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
+		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
+		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
+
+		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+		}
+		//else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
+		//    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
+		//}
 	},
 
 	gerarObjetoFiltroLocalizar: function () {
@@ -675,6 +682,8 @@ FiscalizacaoLocalInfracao = {
 		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
+		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
 		}
 
 		return true;
@@ -709,7 +718,9 @@ FiscalizacaoLocalInfracao = {
 			    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 			    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
 
-				if (response.EhValido) {
+			    if (response.EhValido) {
+			        $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+
 					$('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
 					$('.divResultados', FiscalizacaoLocalInfracao.container).removeClass('hide');
 					$('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).empty();
@@ -774,6 +785,8 @@ FiscalizacaoLocalInfracao = {
 	        success: function (response, textStatus, XMLHttpRequest) {
 
 	            if (response.EhValido) {
+	                $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+
 	                $('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
 	                $('.divResultados', FiscalizacaoLocalInfracao.container).removeClass('hide');
 	                $('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).empty();
