@@ -603,6 +603,12 @@ FiscalizacaoLocalInfracao = {
 		    }
 		});
 
+		$('.rblAutuado', FiscalizacaoLocalInfracao.container).each(function () {
+		    if ($(this).attr('checked')) {
+		        localInfracao.LocalInfracao.DentroEmpreendimento = $(this).val();
+		    }
+		});
+
 		return localInfracao;
 	},
 
