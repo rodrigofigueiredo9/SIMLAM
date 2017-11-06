@@ -26,5 +26,10 @@
 			<type>2</type>
 			<location>C:/Users/talitafinger/Desktop/Projetos/Idaf/Idaf/Credenciado/Navegador</location>
 		</link>
+		<link>
+			<name>bin-release3</name>
+			<type>2</type>
+			<location>C:/DesenhadorCredenciado</location>
+		</link>
 	</linkedResources>
 </projectDescription>

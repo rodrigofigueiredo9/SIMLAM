@@ -61,20 +61,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
-			if (ptv.Empreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-			}
+
+
+            //if (ptv.Empreendimento <= 0)
+            //{
+            //    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+            //}
+
+            if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
+             (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+            {
+                if (ptv.Empreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+                }
+
+                if (ptv.ResponsavelEmpreendimento <= 0)
+                {
+                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+                }
+            }
 
 			if (_da.EmpreendimentoPossuiEPTVBloqueado(ptv.Id, ptv.Empreendimento))
 			{
 				Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
 			}
 
-			if (ptv.ResponsavelEmpreendimento <= 0)
-			{
-				Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-			}
+            //if (ptv.ResponsavelEmpreendimento <= 0)
+            //{
+            //    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+            //}
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -236,12 +252,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.OrigemObrigatorio);
 			}
 
-			var loteBus = new LoteBus();
-			if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-				return false;
-			}
+            //var loteBus = new LoteBus();
+            //if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
+            //    return false;
+            //}
 
 			#region Saldo
 
@@ -267,10 +283,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (cfo.DataEmissao.Data > ptvData.Data)
-					{
-						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
-					}
+                    //if (cfo.DataAtivacao.Data < ptvData.Data)
+                    //{
+                    //    Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                    //}
 					break;
 
 				case eDocumentoFitossanitarioTipo.CFOC:
@@ -412,6 +428,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvData.Data.GetValueOrDefault().Year, ptvID);
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
+
+                    if (item.ExibeQtdKg)
+                        item.Quantidade = item.Quantidade / 1000;
 
 					if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
 					{
@@ -599,7 +618,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 
 			PTV eptv = _da.Obter(idPTV, true);
-			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
+                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;

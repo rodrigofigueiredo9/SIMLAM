@@ -99,9 +99,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual">
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
@@ -539,6 +536,10 @@
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EtramiteX\Relatorio\Interno.Model.RelatorioIndividual.csproj">
+      <Project>{7f7481cd-3199-43da-bcb5-1c1c9797bfce}</Project>
+      <Name>Interno.Model.RelatorioIndividual</Name>
     </ProjectReference>
     <ProjectReference Include="..\Publico.Model\Publico.Model.csproj">
       <Project>{814B0933-8D99-4F22-8EB2-2437392DF7AB}</Project>

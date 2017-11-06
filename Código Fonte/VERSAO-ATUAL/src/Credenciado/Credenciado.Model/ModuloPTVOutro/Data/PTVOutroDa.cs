@@ -129,7 +129,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
 
-                comando = bancoDeDados.CriarComando(@"delete from tab_ptv_arquivo ", UsuarioCredenciado);
+                comando = bancoDeDados.CriarComando(@"delete from tab_ptv_outro_arquivo ", UsuarioCredenciado);
                 comando.DbCommand.CommandText += String.Format("where ptv = :ptv {0}",
                 comando.AdicionarNotIn("and", "id", DbType.Int32, PTV.Anexos.Select(x => x.Id).ToList()));
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
@@ -161,7 +161,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
                     {
                         comando = bancoDeDados.CriarComando(@"
 						insert into tab_ptv_outrouf_produto(id, tid, ptv, origem_tipo, numero_origem, cultura, cultivar, quantidade, unidade_medida)
-						values(tab_ptv_outrouf_produto.nextval,:tid,:ptv,:origem_tipo,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", UsuarioCredenciado);
+						values(seq_tab_ptv_outrouf_prod.nextval,:tid,:ptv,:origem_tipo,:numero_origem,:cultura,:cultivar,:quantidade,:unidade_medida)", UsuarioCredenciado);
 
                         comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
                     }
@@ -211,13 +211,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 					{
 						if (item.Id > 0)
 						{
-							comando = bancoDeDados.CriarComando(@"update {0}tab_ptv_arquivo a set a.ptv = :ptv, a.arquivo = :arquivo, 
+							comando = bancoDeDados.CriarComando(@"update tab_ptv_outro_arquivo a set a.ptv = :ptv, a.arquivo = :arquivo, 
 							a.ordem = :ordem, a.descricao = :descricao, a.tid = :tid where a.id = :id", EsquemaBanco);
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						}
 						else
 						{
-							comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
+                            comando = bancoDeDados.CriarComando(@"insert into tab_ptv_outro_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
 							values ({0}seq_ptv_arquivo.nextval, :ptv, :arquivo, :ordem, :descricao, :tid)", EsquemaBanco);
 						}
 
@@ -386,7 +386,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 if (PTV.Anexos != null && PTV.Anexos.Count > 0)
                 {
-                    comando = bancoDeDados.CriarComando(@"insert into {0}tab_ptv_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
+                    comando = bancoDeDados.CriarComando(@"insert into tab_ptv_outro_arquivo a (id, ptv, arquivo, ordem, descricao, tid) 
 					values ({0}seq_ptv_arquivo.nextval, :ptv, :arquivo, :ordem, :descricao, :tid)", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
@@ -586,9 +586,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
 		internal PTVOutro Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
+            PTVOutro PTV = new PTVOutro();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				PTVOutro PTV = new PTVOutro();
+				
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				select p.tid                   Tid,
@@ -705,8 +706,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 #region Arquivos
 
-                comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
-				a.tid from {0}tab_ptv_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem", EsquemaBanco);
+
+                string strSQL = @"select count(*)  from 
+                                                        tab_ptv_outrouf ptv 
+                                                        inner join tab_ptv_arquivo a on ptv.id = a.ptv
+                                                        inner join tab_arquivo b on a.arquivo = b.id
+                                                        where ptv.id = :ptv order by a.ordem";
+                comando = bancoDeDados.CriarComando(strSQL);
+
+                comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+                int Ret = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+                if (Ret == 0)
+                    strSQL = @"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				       a.tid from tab_ptv_outro_arquivo a, tab_arquivo b where a.arquivo = b.id and a.ptv = :ptv order by a.ordem";
+                else
+                    strSQL = @"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho, a.tid  from 
+                                                        tab_ptv_outrouf ptv 
+                                                        inner join tab_ptv_arquivo a on ptv.id = a.ptv
+                                                        inner join tab_arquivo b on a.arquivo = b.id
+                                                        where ptv.id = :ptv order by a.ordem";
+
+              
+
+                comando = bancoDeDados.CriarComando(strSQL);
 
                 comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 
@@ -734,8 +757,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Data
 
                 #endregion
 
+
                 return PTV;
+
 			}
+
+
+
 		}
 
         internal bool VerificaSePTVAssociadoLote(Int64 ptvNumero)

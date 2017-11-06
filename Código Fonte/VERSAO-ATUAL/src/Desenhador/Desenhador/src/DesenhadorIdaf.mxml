@@ -107,7 +107,7 @@
 				DesenhadorEsri.getInstance().addEventListener(LegendaControllerEvent.LAYERS_SERVICOS_ATUALIZAR, atualizarLegenda);
 				
 				//#DEBUG 
-			//	init(422,1,1); 
+			//	init(119777,1,1); 
 			//	ajustarTamanho(1000,500);
 			}  
 			private function init(projeto:Number, tipo:Number, modo:Number):void

@@ -14,14 +14,16 @@
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/PTV/listar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 	<script type="text/javascript">
-		$(function () {
+	    $(function () {
+	       
 			PTVEmitir.settings.idsTela = <%= Model.IdsTela %>;
 			PTVEmitir.settings.idsOrigem = <%= Model.IdsOrigem %>;
 			PTVEmitir.settings.Mensagens = <%= Model.Mensagens %>;
 			PTVEmitir.settings.dataAtual = '<%= Model.DataAtual%>';
 			PTVEmitir.load($("#central"), {
 				urls: {
-					urlSalvar: '<%= Url.Action("Salvar", "PTV") %>',
+				    urlSalvar: '<%= Url.Action("Salvar", "PTV") %>',
+				    urlAssociarCultura: '<%= Url.Action("Caracterizacoes", "ConfiguracaoVegetal/AssociarCultura") %>',
 					urlVerificarNumeroPTV: '<%= Url.Action("VerificarNumeroPTV", "PTV") %>',
 					urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
 					urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',

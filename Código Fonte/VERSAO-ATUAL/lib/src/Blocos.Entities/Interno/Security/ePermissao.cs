@@ -1,4 +1,4 @@
-namespace Tecnomapas.Blocos.Entities.Interno.Security
+﻿namespace Tecnomapas.Blocos.Entities.Interno.Security
 {
 	public enum ePermissao
 	{
@@ -241,6 +241,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Security
 		ConfigurarCampo,
 		ConfigurarPergunta,
 		ConfigurarResposta,
+        ConfigurarProdutosDestinacao,
 		ConfigurarFiscCriar,
 		ConfigurarFiscEditar,
 		ConfigurarFiscVisualizar,
@@ -386,6 +387,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Security
 
 		RelatorioMapa,
 
-        DeclaracaoAdicional
+        DeclaracaoAdicional,
+
+        ConfigurarPenalidade,
+        ConfigurarCodigoReceita
 	}
 }

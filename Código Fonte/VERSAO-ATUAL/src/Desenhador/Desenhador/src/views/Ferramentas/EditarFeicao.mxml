@@ -317,7 +317,7 @@
 					range = DesenhadorEsri.getInstance().range(25);
 					
 					//verifica vertices
-					range = DesenhadorEsri.getInstance().range(7); 
+					range = DesenhadorEsri.getInstance().range(1); 
 					for(var i:int =0; i< feicoesSnap.length; i++)
 					{  
 						

@@ -293,18 +293,41 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				eUnidadeProducaoTipoProducao tipoProducao = ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedidaId);
 
 				DateTime dataSaldo = titulo.DataSituacao.Data.GetValueOrDefault();
-				if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
-				{
-					dataSaldo = new DateTime(DateTime.Today.Year - 1, dataSaldo.Month, dataSaldo.Day);
-				}
+                DateTime dataValidade = dataSaldo.AddYears(1); 
+				//if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
+                /*
+                 * Cálculo do saldo do CFO acrescenta a diferença de datas
+                 */
+                while (dataValidade < DateTime.Today)
+                {
+                    dataSaldo = dataValidade;
+                    dataValidade = dataValidade.AddYears(1);
+                }
 
-				decimal totalTela = item.Quantidade + lista.Where(x => !x.Equals(item) && x.CultivarId == item.CultivarId && x.UnidadeMedidaId == item.UnidadeMedidaId).Sum(x => x.Quantidade);
+
+               
+
+                //Converte todas as quantidades para tonelada, para calcular o saldo
+                var quantidadeItem = item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade;
+                var listaReduzida = lista.Where(x => !x.Equals(item)
+                                                     && x.CultivarId == item.CultivarId
+                                                     && x.UnidadeMedidaId == item.UnidadeMedidaId
+                                                     && x.UnidadeProducao == item.UnidadeProducao).ToList();
+                foreach (var itemLista in listaReduzida)
+                {
+                    if (itemLista.ExibeQtdKg)
+                    {
+                        itemLista.Quantidade = itemLista.Quantidade / 1000;
+                    }
+                }
+
+				decimal totalTela = quantidadeItem + listaReduzida.Sum(x => x.Quantidade);
 				if (unidade.EstimativaProducaoQuantidadeAno < _da.ObterQuantidadeProduto(empreendimento, item.CultivarId, tipoProducao, item.UnidadeProducao, cfo, dataSaldo) + totalTela)
 				{
 					Validacao.Add(Mensagem.EmissaoCFO.QuantidadeMensalInvalida(unidade.CodigoUP.ToString()));
 				}
 			}
-
+             
 			if (lista.Count(x => !x.Equals(item)) >= 5)
 			{
 				Validacao.Add(Mensagem.EmissaoCFO.LimiteMaximo);

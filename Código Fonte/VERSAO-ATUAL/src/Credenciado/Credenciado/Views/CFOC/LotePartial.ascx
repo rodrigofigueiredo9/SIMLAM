@@ -87,7 +87,7 @@
 		</div>
 		<div class="coluna15 prepend1">
 			<label for="Quantidade">Quantidade *</label>
-			<%= Html.TextBox("Quantidade",(object)String.Empty, new { @maxlength="12",  @class = "text maskDecimalPonto4 txtQuantidade" })%>
+			<%= Html.TextBox("Quantidade",(object)String.Empty, ViewModelHelper.SetaDisabled(true,   new { @maxlength="12",  @class = "text maskDecimalPonto4 txtQuantidade" }))%>
 		</div>
 		<div class="coluna1 prepend1">
 			<button type="button" class="inlineBotao bloco btnAdicionar">Adicionar</button>
@@ -111,7 +111,20 @@
 
 			<tbody>
 				<% foreach (var item in Model.Lote.Lotes)
-	   { %>
+	               {
+                       decimal qtd = 0;
+                       var unid = "";
+                       if (item.ExibeKg)
+                       {
+                           qtd = item.Quantidade * 1000;
+                           unid = "KG";
+                       }
+                       else
+                       {
+                           qtd = item.Quantidade;
+                           unid = item.UnidadeMedidaTexto;
+                       }   
+           %>
 				<tr>
 					<td>
 						<label class="lblOrigem" title="<%= item.OrigemTipoTexto +"-"+ item.OrigemNumero %>"><%= item.OrigemTipoTexto +"-"+item.OrigemNumero %></label>
@@ -120,10 +133,10 @@
 						<label class="lblCultivar" title="<%= item.CulturaTexto + " " + item.CultivarTexto %>"><%= item.CulturaTexto + " " + item.CultivarTexto %></label>
 					</td>
 					<td>
-						<label class="lblQuantidade" title="<%= item.Quantidade.ToStringTrunc(4) %>"><%= item.Quantidade.ToStringTrunc(4) %></label>
+						<label class="lblQuantidade" title="<%= qtd.ToStringTrunc(4) %>"><%= qtd.ToStringTrunc(4) %></label>
 					</td>
 					<td>
-						<label class="lblUnidadeMedida" title="<%= item.UnidadeMedidaTexto %>"><%= item.UnidadeMedidaTexto %></label>
+						<label class="lblUnidadeMedida" title="<%= unid %>"><%= unid %></label>
 					</td>
 					<% if (!Model.IsVisualizar)
 		{ %>

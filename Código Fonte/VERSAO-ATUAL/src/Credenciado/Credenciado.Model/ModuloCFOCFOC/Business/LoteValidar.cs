@@ -74,13 +74,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 			{
 				lote.Lotes.ForEach(item =>
 				{
-					Lote(item, lote.DataCriacao, lote.EmpreendimentoId, lote.Lotes, lote.Id);
+					LoteValidacoesSalvar(item, lote.DataCriacao, lote.EmpreendimentoId, lote.Lotes, lote.Id);
 				});
 			}
 
 			return Validacao.EhValido;
 		}
 
+        //Valida um item que está sendo incluído no lote
 		public void Lote(LoteItem item, DateTecno loteData, int empreendimentoID, List<LoteItem> lista, int loteID)
 		{
 			if (empreendimentoID <= 0)
@@ -94,10 +95,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				Validacao.Add(Mensagem.Lote.OrigemObrigatorio);
 			}
 
-			if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && _da.VerificarSeCfoJaAssociadaALote(item.Origem) && !_da.VerificarSeDocumentoUtilizadoPorMesmaUC(item.Origem, empreendimentoID))
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-			}
+            //if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && _da.VerificarSeCfoJaAssociadaALote(item.Origem) && !_da.VerificarSeDocumentoUtilizadoPorMesmaUC(item.Origem, empreendimentoID))
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
+            //}
 
 			if (item.Cultura <= 0)
 			{
@@ -109,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				Validacao.Add(Mensagem.Lote.CultivarObrigatoria);
 			}
 
-			if (item.Quantidade <= 0)
+			if (item.OrigemTipo >= 5 && item.Quantidade <= 0)
 			{
 				Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
 			}
@@ -134,9 +135,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				return;
 			}
 
-			//TODO
 			int auxiliar = 0;
-			decimal saldo = 0;
+			decimal saldoDocOrigem = 0;
 			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
 			if (produtos != null)
 			{
@@ -145,7 +145,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.CFO:
 						EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
 						EmissaoCFO cfo = emissaoCFOBus.Obter(item.Origem);
-						saldo = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (cfo.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 						{
@@ -167,7 +167,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.CFOC:
 						EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
 						EmissaoCFOC cfoc = emissaoCFOCBus.Obter(item.Origem);
-						saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (cfoc.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 						{
@@ -189,7 +189,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.PTV:
 						PTVInternoBus ptvInternoBus = new PTVInternoBus();
 						PTV ptv = ptvInternoBus.Obter(item.Origem);
-						saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (ptv.Situacao != (int)ePTVOutroSituacao.Valido)
 						{
@@ -210,7 +210,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						PTVOutroBus ptvOutroBus = new PTVOutroBus();
 						PTVOutro ptvOutro = ptvOutroBus.Obter(item.Origem);
-						saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+						saldoDocOrigem = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 						if (ptvOutro.Situacao != (int)ePTVOutroSituacao.Valido
 							&& ptvOutro.Situacao != (int)ePTVOutroSituacao.Invalido)
@@ -233,15 +233,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				string empreendimento = string.Empty;
 				switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
 				{
-					case eDocumentoFitossanitarioTipo.CFO:
-					case eDocumentoFitossanitarioTipo.CFOC:
-						empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
 
-						if (!string.IsNullOrEmpty(empreendimento))
-						{
-							Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
-						}
-						break;
+                    //    if (!string.IsNullOrEmpty(empreendimento) &&  ((eDocumentoFitossanitarioTipo)item.OrigemTipo) != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
 
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
@@ -262,17 +262,222 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 						Validacao.Add(Mensagem.Lote.CultivarDesassociadoUC(item.CultivarTexto));
 					}
 
-					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, loteData.Data.GetValueOrDefault().Year, loteID);
+                   
+                    decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
-					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
+                    
 
-					if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
-					{
-						Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
-					}
+                    decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, DateTime.Now.Year, item.Id);
+
+
+                    if (item.ExibeKg)
+                        item.Quantidade = item.Quantidade / 1000;
+
+                    if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldoDocOrigem)
+                    {
+                        Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);
+                    }
+
+                    //SALDO DA UC
+                    decimal saldoUc = _da.obterSaldoRestanteCultivarUC(empreendimentoID, item.Cultivar, item.Cultura);
+
+
+
+                    if (saldoUc <= 0)
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarSaldoTodoUtilizado);
+                    }
+
+
+                    if ((quantidadeAdicionada + item.Quantidade + saldoOutrosDoc) > saldoUc)
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
+                    }
 				}
+
+                item.Quantidade = saldoDocOrigem;
 			}
 		}
+
+        //Confere novamente um item que já foi inserido no lote
+        public void LoteValidacoesSalvar(LoteItem item, DateTecno loteData, int empreendimentoID, List<LoteItem> lista, int loteID)
+        {
+            if (empreendimentoID <= 0)
+            {
+                Validacao.Add(Mensagem.Lote.EmpreendimentoObrigatorio);
+                return;
+            }
+
+            if (item.OrigemTipo <= 0)
+            {
+                Validacao.Add(Mensagem.Lote.OrigemObrigatorio);
+            }
+
+           
+
+            if (item.Cultura <= 0)
+            {
+                Validacao.Add(Mensagem.Lote.CulturaObrigatoria);
+            }
+
+            if (item.Cultivar <= 0)
+            {
+                Validacao.Add(Mensagem.Lote.CultivarObrigatoria);
+            }
+
+            if (item.OrigemTipo >= 5 && item.Quantidade <= 0)
+            {
+                Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
+            }
+
+            if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && !x.Equals(item)) > 0)
+            {
+                Validacao.Add(Mensagem.Lote.OrigemJaAdicionada(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+            }
+
+            if (lista != null && lista.Count > 0 && !lista.Any(x => x.Cultivar == item.Cultivar))
+            {
+                Validacao.Add(Mensagem.Lote.CultivarUnico);
+            }
+
+            if (lista != null && lista.Count > 0 && lista.Any(x => x.UnidadeMedida != item.UnidadeMedida))
+            {
+                Validacao.Add(Mensagem.Lote.UnidadeMedidaUnico);
+            }
+
+            if (!Validacao.EhValido)
+            {
+                return;
+            }
+
+            int auxiliar = 0;
+            decimal saldoDocOrigem = 0;
+            List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
+            if (produtos != null)
+            {
+                switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
+                {
+                    case eDocumentoFitossanitarioTipo.CFO:
+                        EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
+                        EmissaoCFO cfo = emissaoCFOBus.Obter(item.Origem);
+                        saldoDocOrigem = cfo.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+
+                        if (cfo.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemSituacaoInvalida(item.OrigemTipoTexto));
+                        }
+
+                        DateTime dataVencimentoCFO = cfo.DataEmissao.Data.GetValueOrDefault().AddDays(cfo.ValidadeCertificado);
+                        if (dataVencimentoCFO < DateTime.Today)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
+                        }
+
+                        if (cfo.DataEmissao.Data > loteData.Data)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                        }
+                        break;
+
+                    case eDocumentoFitossanitarioTipo.CFOC:
+                        EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
+                        EmissaoCFOC cfoc = emissaoCFOCBus.Obter(item.Origem);
+                        saldoDocOrigem = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
+
+                        if (cfoc.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemSituacaoInvalida(item.OrigemTipoTexto));
+                        }
+
+                        DateTime dataVencimentoCFOC = cfoc.DataEmissao.Data.GetValueOrDefault().AddDays(cfoc.ValidadeCertificado);
+                        if (dataVencimentoCFOC < DateTime.Today)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
+                        }
+
+                        if (cfoc.DataEmissao.Data > loteData.Data)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                        }
+                        break;
+
+                    case eDocumentoFitossanitarioTipo.PTV:
+                        PTVInternoBus ptvInternoBus = new PTVInternoBus();
+                        PTV ptv = ptvInternoBus.Obter(item.Origem);
+                        saldoDocOrigem = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+
+                        if (ptv.Situacao != (int)ePTVOutroSituacao.Valido)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemSituacaoInvalida(item.OrigemTipoTexto));
+                        }
+
+                        if (ptv.ValidoAte.Data.GetValueOrDefault() < DateTime.Today)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
+                        }
+
+                        if (ptv.DataEmissao.Data > loteData.Data)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                        }
+                        break;
+
+                    case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                        PTVOutroBus ptvOutroBus = new PTVOutroBus();
+                        PTVOutro ptvOutro = ptvOutroBus.Obter(item.Origem);
+                        saldoDocOrigem = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+
+                        if (ptvOutro.Situacao != (int)ePTVOutroSituacao.Valido
+                            && ptvOutro.Situacao != (int)ePTVOutroSituacao.Invalido)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemSituacaoInvalida(item.OrigemTipoTexto));
+                        }
+
+                        if (ptvOutro.DataEmissao.Data > loteData.Data)
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+                        }
+                        break;
+                }
+
+                string empreendimento = string.Empty;
+                switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
+                {
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+
+                    //    if (!string.IsNullOrEmpty(empreendimento) && (eDocumentoFitossanitarioTipo)item.OrigemTipo != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
+
+                    case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                        empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
+
+                        if (!string.IsNullOrEmpty(empreendimento))
+                        {
+                            Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizadoOutroUF(item.OrigemTipoTexto, item.OrigemNumero.ToString(), empreendimento));
+                        }
+                        break;
+                }
+
+                if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO ||
+                    item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC ||
+                    item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)
+                {
+                    if (!_da.UCPossuiCultivar(empreendimentoID, item.Cultivar))
+                    {
+                        Validacao.Add(Mensagem.Lote.CultivarDesassociadoUC(item.CultivarTexto));
+                    }
+                }
+
+                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
+                    item.Quantidade = saldoDocOrigem;
+
+            }
+        }
 
 		public List<IdentificacaoProduto> OrigemNumero(string numero, int origemTipo, out int origemID)
 		{
@@ -415,7 +620,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 		public bool Editar(Lote lote)
 		{
-			if (lote.SituacaoId != (int)eLoteSituacao.NaoUtilizado)
+            if (!LoteSituacao(lote.Id,null)) 
 			{
 				Validacao.Add(Mensagem.Lote.EditarSituacaoInvalida);
 			}

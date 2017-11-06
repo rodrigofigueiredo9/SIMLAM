@@ -26,6 +26,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 	public class PTVOutroBus
 	{
 		#region Propriedades
+        private GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
 		PTVOutroDa _da = new PTVOutroDa();
 		PTVOutroValidar _validar = new PTVOutroValidar();
@@ -34,6 +35,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 		{
 			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
 		}
+
+        public String UsuarioCredenciado
+        {
+            get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
+        }
+
 
 
 		#endregion
@@ -61,8 +68,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 
                     #region Arquivos/Diretorio
 
-                    ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
+                    ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 
+                 
                     if (ptv.Anexos != null && ptv.Anexos.Count > 0)
                     {
                         foreach (Anexo anexo in ptv.Anexos)
@@ -71,6 +79,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
                             {
                                 anexo.Arquivo = _busArquivo.Copiar(anexo.Arquivo);
                             }
+                        }
+
+                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                        {
+                            bancoDeDados.IniciarTransacao();
+
+                            
+                            ArquivoDa arquivoDa = new ArquivoDa();
+
+                            if (ptv.Anexos != null && ptv.Anexos.Count > 0)
+                            {
+                                foreach (Anexo anexo in ptv.Anexos)
+                                {
+                                    if (!String.IsNullOrWhiteSpace(anexo.Arquivo.TemporarioNome) && anexo.Arquivo.Id == 0)
+                                    {
+                                        arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
+                                    }
+                                }
+                            }
+
+                            bancoDeDados.Commit();
                         }
                     }
 
@@ -85,21 +114,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business
 					{
 						bancoDeDados.IniciarTransacao();
 
-                        #region Arquivos/Banco
-                        ArquivoDa arquivoDa = new ArquivoDa();
-
-                        if (ptv.Anexos != null && ptv.Anexos.Count > 0)
-                        {
-                            foreach (Anexo anexo in ptv.Anexos)
-                            {
-                                if (!String.IsNullOrWhiteSpace(anexo.Arquivo.TemporarioNome) && anexo.Arquivo.Id == 0)
-                                {
-                                    arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
-                                }
-                            }
-                        }
-                        #endregion
-
+ 
 						_da.Salvar(ptv, bancoDeDados);
 
 						bancoDeDados.Commit();

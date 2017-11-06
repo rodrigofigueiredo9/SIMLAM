@@ -36,6 +36,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 			dataSource = _da.Obter(ptvID);
 			situacao = dataSource.Situacao;
 
+            foreach (PTVProdutoRelatorio prod in dataSource.Produtos)
+            {
+                if (prod.ExibeQtdKg)
+                {
+                    prod.Quantidade *= 1000;
+                    prod.UnidadeMedida = "KG";
+                }
+            }
+
 			if (dataSource.AssinaturaDigital.Id.HasValue && dataSource.AssinaturaDigital.Id.Value > 0)
 			{
 				dataSource.AssinaturaDigital.Conteudo = AsposeImage.RedimensionarImagemPNG(File.ReadAllBytes(dataSource.AssinaturaDigital.Caminho), 4);
@@ -56,7 +65,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 			QRCodeEncoder qrCodeEncoder = new QRCodeEncoder();
 			qrCodeEncoder.QRCodeScale = 2;
 
-			string url = String.Format("{0}/{1}/{2}", UrlPDFPublico, "ptv/GerarPdfCredenciado", id);
+            string url = String.Format("{0}/{1}/{2}", UrlPDFPublico, "ptv/GerarPdfInterno", ptvID);
 
 			System.Drawing.Image imageQRCode = qrCodeEncoder.Encode(url);
 

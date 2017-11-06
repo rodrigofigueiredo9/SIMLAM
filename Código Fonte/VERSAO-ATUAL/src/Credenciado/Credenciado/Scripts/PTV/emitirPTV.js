@@ -3,6 +3,39 @@
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
 
+$(document).ready(function () {
+
+
+    $("#DataVistoria").datepicker({
+        dateFormat: 'dd/mm/y',
+        dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        minDate: new Date(),
+        beforeShowDay: function (d) {
+
+            // normalize the date for searching in array
+            var dmy = "";
+            dmy += ("00" + d.getDate()).slice(-2) + "/";
+            dmy += ("00" + (d.getMonth() + 1)).slice(-2) + "/";
+            dmy += d.getFullYear().toString().substr(-2);
+            // alert(datelist);
+            return [$.inArray(dmy, datelist) >= 0 ? true : false, ""];
+        }
+    });
+
+
+  
+
+    $("#OrigemTipo option").filter(function () {
+        return $.trim($(this).text()) == 'Sem Documento'
+    }).remove();
+
+
+});
+
+
+var datelist = []; 
 PTVEmitir = {
 	settings: {
 		urls: {
@@ -38,9 +71,56 @@ PTVEmitir = {
 
 	container: null,
 
+    
+
+	
 	cidadeID: null,
 
 	load: function (container, options) {
+
+
+	    jQuery.fn.filterByText = function (textbox, selectSingleMatch) {
+	        return this.each(function () {
+	            var select = this;
+	            var options = [];
+	            $(select).find('option').each(function () {
+	                options.push({ value: $(this).val(), text: $(this).text() });
+	            });
+
+	            $(select).data('options', options);
+	            
+	           
+	            $(textbox).bind('change', function () {
+	                //var options = $(select).empty().scrollTop(0).data('options');
+	               
+	                var options = [];
+	                $("#DataHoraVistoriaId option").each(function () {
+	                    options.push({ "id": $(this).val(), "text": $(this).text() });
+	                });
+
+	                $(select).empty();
+	                var search = $.trim($(this).val());
+	                var regex = new RegExp(search, 'gi');
+	             
+	              
+	                for (var i = 0; i < options.length; i++) {
+	                    var option = options[i];
+	                    
+	                    if (option.text.match(regex) !== null) {
+	                        $(select).append(
+                                    $('<option>').text(option.text).val(option.id)
+                            );
+	                    }
+	                }
+	                if (selectSingleMatch === true &&
+                            $(select).children().length === 1) {
+	                    $(select).children().get(0).selected = true;
+	                }
+	            });
+	        });
+	    };
+
+
 		if (options) { $.extend(PTVEmitir.settings, options); }
 
 		PTVEmitir.container = MasterPage.getContent(container);
@@ -89,6 +169,33 @@ PTVEmitir = {
 		}
 
 		$('.txtNumeroDua', PTVEmitir.container).focus();
+
+
+		$('#DataVistoria').keydown(function (e) {
+		    e.preventDefault();
+		    return false;
+		});
+
+
+		
+	    
+		
+
+		
+		if (window.location.href.indexOf("Visualizar") == -1) {
+		   
+		    $('#DataVistoria').change(function (e) {
+		        
+		            PTVEmitir.onChangeLocalVistoria();
+		            $(this).blur();
+		    });
+		}
+
+		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+		
+        $('#DataVistoria').change();
+		
+
 	},
 
 	verificarDUAEnter: function (e) {
@@ -122,7 +229,17 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 
-				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
+			    $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
+
+			    var txtData = JSON.stringify(response.DiasHorasVistoria).toString();
+			   
+			    var lstDatas = txtData.match(/\d{2}\/\d{2}\/\d{2}/g);
+
+			   
+			    datelist = lstDatas; // populate the array
+			   
+			    $("#DataVistoria").datepicker("refresh"); // 
+			 
 
 			}
 		});
@@ -264,6 +381,9 @@ PTVEmitir = {
 			produtos.push(JSON.parse($(this).val()));
 		});
 
+		
+
+
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlObterResponsaveisEmpreend,
 			data: JSON.stringify({ empreendimentoID: empreendimentoID, produtos: produtos }),
@@ -287,7 +407,7 @@ PTVEmitir = {
 
 	onChangeOrigemTipo: function () {
 		Mensagem.limpar(PTVEmitir.container);
-
+		
 		var labelOrigem = $('.labelOrigem', PTVEmitir.container);
 		labelOrigem.text('');
 		var option = $('option:selected', this);
@@ -310,6 +430,41 @@ PTVEmitir = {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
+		}
+
+		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+
+		    $('#EmpreendimentoTexto').removeAttr('disabled');
+		    $('#EmpreendimentoTexto').removeClass('disabled');
+
+		    if ($(this).val() == "7") {
+
+		        $('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).addClass('hide');
+
+		        $('label[for="NumeroOrigem"]').hide();
+
+		    } else {
+		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		        $('label[for="NumeroOrigem"]').show();
+
+		    }
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
+		}
+		else {
+
+		    $('#EmpreendimentoTexto').attr('disabled', 'disabled');
+		    $('#EmpreendimentoTexto').addClass('disabled');
+
+		    $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+		    $('.labelOrigem', PTVEmitir.container).removeClass('hide');
+		    $('label[for="NumeroOrigem"]').show();
+
+		    $('#ResponsavelEmpreendimento').replaceWith('<select id="ResponsavelEmpreendimento" class="text ddlResponsaveis disabled" disabled="disabled" name="ResponsavelEmpreendimento">' +
+
+                                        '</select>');
 		}
 
 		$('.txtNumeroOrigem', PTVEmitir.container).focus();
@@ -457,6 +612,9 @@ PTVEmitir = {
 
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
 
+		var txtUnid = $('.ddlProdutoUnidadeMedida option:selected', container).text();
+		var bExibeKg = txtUnid.indexOf("KG") >= 0;
+
 		var item = {
 			PTV: $('.txtNumero', PTVEmitir.container).val(),
 			OrigemTipo: $('.ddlOrigemTipo', container).val(),
@@ -469,9 +627,11 @@ PTVEmitir = {
 			CultivarTexto: $('.ddlProdutoCultivar option:selected', container).text(),
 			UnidadeMedidaTexto: $('.ddlProdutoUnidadeMedida option:selected', container).text(),
 			UnidadeMedida: $('.ddlProdutoUnidadeMedida option:selected', container).val(),
-			Quantidade: $('.txtProdutoQuantidade', container).val(),
+			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
 			EmpreendimentoId: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
-			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val()
+			EmpreendimentoDeclaratorio: $('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val(),
+			ExibeQtdKg: bExibeKg
+
 		};
 
 		//Valida Item já adicionado na Grid
@@ -504,7 +664,13 @@ PTVEmitir = {
 		if ($('.txtEmpreendimento', PTVEmitir.container).text() == '') {
 			$('.hdnEmpreendimentoID', PTVEmitir.container).val(item.EmpreendimentoId);
 			$('.txtEmpreendimento', PTVEmitir.container).val(item.EmpreendimentoDeclaratorio);
-			PTVEmitir.onObterResposaveisEmpreend($('.hdnEmpreendimentoID', PTVEmitir.container).val());
+			
+			if (item.OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
+			    
+			    PTVEmitir.onObterResposaveisEmpreend(item.EmpreendimentoId);
+
+			}
+		
 		}
 
 		if (item.OrigemTipo == '1' || item.OrigemTipo == '2' || item.OrigemTipo == '3') {
@@ -1052,6 +1218,8 @@ PTVEmitir = {
 			dados = $('.txtCNPJDUA', PTVEmitir.container).val();
 		}
 
+	
+
 		var objeto = {
 			Id: +$('.hdnEmissaoId', PTVEmitir.container).val(),
 			NumeroTipo: +$('.rbTipoNumero:checked', PTVEmitir.container).val(),
@@ -1060,7 +1228,7 @@ PTVEmitir = {
 			Numero: $('.txtNumero', PTVEmitir.container).val(),
 			DataEmissao: { DataTexto: $('.txtDataEmissao', PTVEmitir.container).val() },
 			Situacao: $('.ddlSituacoes', PTVEmitir.container).val(),
-			Empreendimento: $('.hdnEmpreendimentoID', PTVEmitir.container).val(),
+			Empreendimento: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
 			EmpreendimentoTexto: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelEmpreendimento: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			PartidaLacradaOrigem: $('.rbPartidaLacradaOrigem:checked', PTVEmitir.container).val(),
@@ -1080,14 +1248,23 @@ PTVEmitir = {
 			DataHoraVistoriaId: $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).val(),
 			TipoPessoa: $('.rdbPessaoTipo:checked', PTVEmitir.container).val(),
 			DeclaracaoAdicional: $('.txtDeclaracaoAdicional', PTVEmitir.container).html(),
+			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
+			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			Produtos: [],
-			Anexos: []
+			Anexos: [],
+			DataVistoria: $('#DataVistoria', PTVEmitir.container).val()
 		}
 
 		var retorno = [];
 		$('.gridProdutos tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			retorno.push(JSON.parse($('.hdnItemJson', this).val()));
 		});
+
+
+		for (var i = 0; i < retorno.length; i++)
+		    if (retorno[i].ExibeQtdKg) {
+		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
+		    }
 
 		objeto.Produtos = retorno;
 

@@ -84,58 +84,49 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 				#region SQL PTV
 
 				comando = bancoDeDados.CriarComando(@"
-				select distinct t.id,
-					t.tid,
-					t.numero,
-					t.situacao,
-					e.denominador,
-					e.cnpj,
-					le.sigla as uf,
-					lm.texto as municipio,
-					ee.logradouro,
-					ee.bairro,
-					ee.distrito,
-					nvl(pr.nome, pr.razao_social) as resp_razao_social,
-					pr.cpf as empreend_resp_cpf,
-					t.partida_lacrada_origem,
-					t.numero_lacre,
-					t.numero_porao,
-					t.numero_container,
-					t.apresentacao_nota_fiscal,
-					t.numero_nota_fiscal,
-					t.tipo_transporte,
-					t.rota_transito_definida,
-					t.veiculo_identificacao_numero,
-					t.itinerario,
-					t.data_ativacao,
-					t.valido_ate,
-					t.responsavel_tecnico,
-					d.nome as destinatario_nome,
-					d.endereco as destinatario_endereco,
-					led.sigla destinatario_uf,
-					lmd.texto destinatario_mun,
-					lme.texto as municipio_emissao,
-					d.cpf_cnpj destinatario_cpfcnpj
-				from tab_ptv                     t,
-					tab_empreendimento           e,
-					tab_empreendimento_endereco  ee,
-					lov_estado                   le,
-					lov_municipio                lm,
-					lov_municipio                lme,
-					tab_pessoa                   pr,
-					tab_destinatario_ptv         d,
-					lov_estado                   led,
-					lov_municipio                lmd
-				where e.id = t.empreendimento
-				and (ee.empreendimento = e.id and ee.correspondencia = 0)
-				and le.id = ee.estado
-				and lm.id = ee.municipio
-				and lme.id(+) = t.municipio_emissao
-				and pr.id(+) = t.responsavel_emp
-				and d.id = t.destinatario
-				and led.id = d.uf
-				and lmd.id = d.municipio
-				and t.id = :id", EsquemaBanco);
+				            select t.id,       
+					        t.tid,
+					        t.numero,
+					        t.situacao,
+					        nvl(e.denominador, t.empreendimento_sem_doc) as denominador,
+					        e.cnpj,
+					        le.sigla as uf,
+					        lm.texto as municipio,
+					        ee.logradouro,
+					        ee.bairro,
+					        ee.distrito,
+					        nvl(nvl(pr.nome, pr.razao_social),t.responsavel_sem_doc) as resp_razao_social,
+					        pr.cpf as empreend_resp_cpf,
+					        t.partida_lacrada_origem,
+					        t.numero_lacre,
+					        t.numero_porao,
+					        t.numero_container,
+					        t.apresentacao_nota_fiscal,
+					        t.numero_nota_fiscal,
+					        t.tipo_transporte,
+					        t.rota_transito_definida,
+					        t.veiculo_identificacao_numero,
+					        t.itinerario,
+					        t.data_ativacao,
+					        t.valido_ate,
+					        t.responsavel_tecnico,
+					        d.nome as destinatario_nome,
+					        d.endereco as destinatario_endereco,
+					        led.sigla destinatario_uf,
+					        lmd.texto destinatario_mun,
+					        lme.texto as municipio_emissao,
+					        d.cpf_cnpj destinatario_cpfcnpj 
+                            from tab_ptv t 
+                            left join tab_empreendimento e on t.empreendimento = e.id
+                            left join tab_empreendimento_endereco ee on ee.empreendimento = e.id and ee.correspondencia = 0
+                            left join lov_estado le on ee.estado = le.id
+                            left join lov_municipio  lm on ee.municipio = lm.id
+                            left join lov_municipio lme on t.municipio_emissao = lme.id
+                            left join tab_pessoa pr on pr.id = t.responsavel_emp
+                            left join tab_destinatario_ptv d on d.id = t.destinatario
+                            left join lov_estado led on led.id = d.uf
+                            left join lov_municipio lmd on lmd.id = d.municipio
+                            where t.id= :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -194,8 +185,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 				#region SQL Funcionário
 				comando = bancoDeDados.CriarComando(@"
-			    select f.nome, h.numero_habilitacao, h.numero_crea, f.arquivo arquivo_id from {0}tab_hab_emi_ptv h, {0}tab_funcionario f
-			    where f.id = h.funcionario and f.id = :idfun", EsquemaBanco);
+			    select f.nome, h.numero_habilitacao, h.numero_crea, h.uf_habilitacao, h.orgao_classe, h.registro_orgao_classe, f.arquivo arquivo_id, le.sigla from {0}tab_hab_emi_ptv h, {0}tab_funcionario f, {0}lov_estado le
+			    where f.id = h.funcionario and h.uf_habilitacao = le.id and f.id = :idfun", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("idfun", emissaoPTV.FuncId, DbType.Int32);
 
@@ -205,8 +196,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 					{
 						emissaoPTV.FuncionarioHabilitado.Nome = reader.GetValue<string>("nome");
 						emissaoPTV.FuncionarioHabilitado.Numero = reader.GetValue<string>("numero_habilitacao");
-						emissaoPTV.FuncionarioHabilitado.Registro = reader.GetValue<string>("numero_crea");
+						
 						emissaoPTV.FuncionarioHabilitado.ArquivoId = reader.GetValue<int>("arquivo_id");
+
+                        int orgaoClasse = reader.GetValue<int>("orgao_classe");
+                        int uf_habilitacao = reader.GetValue<int>("uf_habilitacao");
+
+                        emissaoPTV.FuncionarioHabilitado.Registro = (orgaoClasse == 9 && uf_habilitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_crea");
+
+
 					}
 					reader.Close();
 				}
@@ -381,7 +379,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 					comando = bancoDeDados.CriarComando(@"select pp.origem, pp.origem_tipo, pp.unidade_medida from tab_ptv_produto pp where pp.ptv = :origemId and pp.cultivar = :cultivarID", EsquemaBanco);
 					comando.AdicionarParametroEntrada("origemId", origem, DbType.Int32);
-                    comandoCred.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
@@ -389,7 +387,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 						{
 							int origemPTV = reader.GetValue<int>("origem");
 							int origemTipoPTV = reader.GetValue<int>("origem_tipo");
-							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida_id");
+							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida");
 
 							retorno.AddRange(ObterDeclaracaoAdicional(origemPTV, origemTipoPTV, (int)ValidacoesGenericasBus.ObterTipoProducao(unidadeMedidaIdPTV), cultivarID, bancoDeDados));
 						}

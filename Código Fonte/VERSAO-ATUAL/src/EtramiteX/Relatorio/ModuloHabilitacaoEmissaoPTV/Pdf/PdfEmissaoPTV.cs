@@ -46,6 +46,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                 dataSource.DataAtivacao = "--/--/--";
             }
 
+            foreach (PTVProdutoRelatorio prod in dataSource.Produtos)
+            {
+                if (prod.ExibeQtdKg)
+                {
+                    prod.Quantidade *= 1000;
+                    prod.UnidadeMedida = "KG";
+                }
+            }
+
 			#region Imagem Vazia
 
 			MemoryStream memory = new MemoryStream();
@@ -178,6 +187,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 							stream = PdfMetodosAuxiliares.TarjaVermelha(msTemp, mensagemTarja, "Inválida");
 						}
 						break;
+                    case ePTVSituacao.Valido:
+                        using (MemoryStream msTemp = new MemoryStream(stream.ToArray()))
+                        {
+                            stream.Close();
+                            stream.Dispose();
+
+                            string urlOrigem = HttpContext.Current.Request.Url.ToString();
+
+                            if (urlOrigem.IndexOf("publico") >= 0)
+                            {
+                                
+                                stream = PdfMetodosAuxiliares.TarjaVermelha(msTemp, mensagemTarja, "Válida");
+                            }
+                        }
+                        break;
 					default:
 						break;
 				}

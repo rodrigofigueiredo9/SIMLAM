@@ -44,6 +44,8 @@
 		</div>
 </fieldset>
 
+
+
 <div class="linhaConteudo <%= Model.PTV.Id <= 0 ? "hide":""%>">
 
 	<fieldset class="box">
@@ -127,12 +129,27 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% foreach (var item in Model.PTV.Produtos) { %>
+					<% foreach (var item in Model.PTV.Produtos) { 
+           
+                    decimal qtd = 0;
+                    var unid = "";
+                    if (item.ExibeQtdKg)
+                    {
+                        qtd = item.Quantidade * 1000;
+                        unid = "KG";
+
+                    }
+                    else
+                    {
+                        qtd = item.Quantidade;
+                        unid = item.UnidadeMedidaTexto;
+                    }             
+            %>
 					<tr>
 						<td class="Origem_Tipo" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
 						<td class="cultura_cultivar" title="<%= item.CulturaCultivar %>"><%= item.CulturaCultivar %></td>
-						<td class="quantidade" title="<%=item.Quantidade %>"><%=item.Quantidade %></td>
-						<td class="unidade_medida" title="<%= item.UnidadeMedida %>"><%=item.UnidadeMedidaTexto %></td>
+						<td class="quantidade" title="<%=qtd %>"><%=qtd %></td>
+					    <td class="unidade_medida" title="<%= unid %>"><%=unid %></td>
 						<%if (!Model.IsVisualizar) { %>
 						<td>
 							<a class="icone excluir btnExcluir"></a>
@@ -170,15 +187,26 @@
 		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="EmpreendimentoTexto">Empreendimento *</label>
-				<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
-				<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+				 <% if (!string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) && Model.PTV.Empreendimento == 0)
+                     { %>
+			        <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoSemDoc, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+                <%} else { %>
+                    <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+			    <input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+                <script> $(".hdnEmpreendimentoOrigemID").val(<%= Model.PTV.Empreendimento %>);  </script>
+                    <% }%>
 			</div>		
 		</div>
 
 		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+				   <% if (Model.PTV.Produtos.Count > 0 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
+                   { %>
+			        <%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.ResponsavelSemDoc , ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
+                <% } else { %>
+                    <%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 2, new { @class="text ddlResponsaveis"}))%>
+                <% } %>
 			</div>
 		</div>
 	</fieldset>
@@ -319,6 +347,8 @@
 		</div>
 	</div>
 
+   
+
 	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="block">
 			<div class="coluna40">
@@ -330,7 +360,8 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="LocalEmissao">Vistoria de Carga *</label>
-				<%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%>
+                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
+				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
 			</div>
 		</div>
 	</div>

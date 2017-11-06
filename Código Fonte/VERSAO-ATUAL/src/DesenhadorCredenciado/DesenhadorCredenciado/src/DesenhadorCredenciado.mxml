@@ -109,7 +109,7 @@
 				DesenhadorEsri.getInstance().addEventListener(LegendaControllerEvent.LAYERS_SERVICOS_ATUALIZAR, atualizarLegenda);
 				
 				//#DEBUG
-				//init(91,3,1); 
+				//init(57538,3,1); 
 				//ajustarTamanho(1000,500);
 				
 				//setTimeout(resize,4000,900,550); 
@@ -213,8 +213,8 @@
 			
 			public function enviarJson():void 
 			{ 
-				//ProjetoController.getInstance().buscarSituacaoProcessamento("{\"SituacaoTexto\":\"Processado\",\"SituacaoId\":4,\"ArquivosProcessados\":[{\"ArquivoProcessamento\":{\"ProjetoId\":0,\"Mecanismo\":0,\"IdRelacionamento\":0,\"Tipo\":4,\"isValido\":true,\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Id\":278,\"Raiz\":0,\"Nome\":\"Relatório de importação\",\"Extensao\":null,\"Caminho\":null,\"Diretorio\":null,\"TemporarioNome\":null,\"TemporarioPathNome\":null,\"ContentType\":null,\"ContentLength\":0,\"Tid\":null,\"Buffer\":null,\"Apagar\":0,\"Conteudo\":null},\"Id\":278,\"IdRelacionamento\":0,\"ProjetoId\":0,\"Tipo\":4,\"Texto\":\"Croqui da propriedade (PDF)\",\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Caminho\":null,\"IsPDF\":false,\"Mecanismo\":0,\"MostarGerar\":false,\"MostarBaixar\":false,\"MostarRegerar\":false,\"MostrarReenviar\":false,\"MostrarReprocessar\":false,\"MostrarCancelar\":false}]}");
-				ProjetoController.getInstance().buscarAreaAbrangencia("{\"MenorX\":382076.77670448,\"MenorY\":7882710.65774085,\"MaiorX\":384735.844522616,\"MaiorY\":7884279.64004548}");
+				ProjetoController.getInstance().buscarSituacaoProcessamento("{\"SituacaoTexto\":\"Processado\",\"SituacaoId\":4,\"ArquivosProcessados\":[{\"ArquivoProcessamento\":{\"ProjetoId\":0,\"Mecanismo\":0,\"IdRelacionamento\":0,\"Tipo\":4,\"isValido\":true,\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Id\":278,\"Raiz\":0,\"Nome\":\"Relatório de importação\",\"Extensao\":null,\"Caminho\":null,\"Diretorio\":null,\"TemporarioNome\":null,\"TemporarioPathNome\":null,\"ContentType\":null,\"ContentLength\":0,\"Tid\":null,\"Buffer\":null,\"Apagar\":0,\"Conteudo\":null},\"Id\":278,\"IdRelacionamento\":0,\"ProjetoId\":0,\"Tipo\":4,\"Texto\":\"Croqui da propriedade (PDF)\",\"Etapa\":0,\"Situacao\":0,\"SituacaoTexto\":null,\"Caminho\":null,\"IsPDF\":false,\"Mecanismo\":0,\"MostarGerar\":false,\"MostarBaixar\":false,\"MostarRegerar\":false,\"MostrarReenviar\":false,\"MostrarReprocessar\":false,\"MostrarCancelar\":false}]}");
+				//ProjetoController.getInstance().buscarAreaAbrangencia("{\"MenorX\":382076.77670448,\"MenorY\":7882710.65774085,\"MaiorX\":384735.844522616,\"MaiorY\":7884279.64004548}");
 			}
 			protected function atualizarLegenda(ev:LegendaControllerEvent):void
 			{ 

@@ -763,6 +763,9 @@ Mascara = {
 		$(".maskDecimalPonto", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.' });
 		$(".maskDecimalPonto4", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 4 });
 		$(".maskDecimalPonto3", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 3 });
+	
+
+		$(".maskDecimalPonto2", container).unmaskMoney().maskMoney({ decimal: ',', thousands: '.', precision: 2 });
 
 		/*-->maskMoney
 		{

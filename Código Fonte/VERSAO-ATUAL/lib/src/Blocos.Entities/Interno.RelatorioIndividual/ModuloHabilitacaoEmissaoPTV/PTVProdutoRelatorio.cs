@@ -31,6 +31,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloHabilitac
 
 		public decimal Quantidade { get; set; }
 
+        public bool ExibeQtdKg { get; set; }
+
 		public string DeclaracaoAdicional { get; set; }
 
         public string DeclaracaoAdicionalHtml { get; set; }

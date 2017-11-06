@@ -384,7 +384,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 						#region [ Enviar E-mail ]
 
-						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
+						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
+                            eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
 						{
 							PTVComunicador comunicador = new PTVComunicador();
 							comunicador.Id = _da.ObterIDComunicador(eptv.Id);
@@ -397,10 +398,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							comunicador.Conversas.Add(conversa);
 
 							SalvarConversa(comunicador, bancoDeDadosInterno, bancoDeDadosCredenciado);
-						}
-						else
-						{
-							var emailKeys = new Dictionary<string, string>
+                        }
+                        else
+                        {
+                            var emailKeys = new Dictionary<string, string>
 							{
 								{ "[data situacao]", DateTime.Today.ToShortDateString() },
 								{ "[hora situacao]", DateTime.Now.ToShortTimeString() },
@@ -409,27 +410,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								{ "[hora vistoria]", eptv.DataHoraVistoriaTexto }
 							};
 
-							foreach (var item in emailKeys)
-							{
-								textoEmail = textoEmail.Replace(item.Key, item.Value);
-							}
+                            foreach (var item in emailKeys)
+                            {
+                                textoEmail = textoEmail.Replace(item.Key, item.Value);
+                            }
 
-							var email = new Email();
-							email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
-							email.Texto = textoEmail;
-							email.Tipo = eEmailTipo.AnaliseEPTV;
-							email.Codigo = eptv.Id;
+                            var email = new Email();
+                            email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
+                            email.Texto = textoEmail;
+                            email.Tipo = eEmailTipo.AnaliseEPTV;
+                            email.Codigo = eptv.Id;
 
-							List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
+                            List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
 
-							if (lstEmail != null && lstEmail.Count > 0)
-							{
-								email.Destinatario = String.Join(", ", lstEmail.ToArray());
+                            if (lstEmail != null && lstEmail.Count > 0)
+                            {
+                                email.Destinatario = String.Join(", ", lstEmail.ToArray());
 
-								EmailBus emailBus = new EmailBus();
-								emailBus.Enviar(email, bancoDeDadosInterno);
-							}
-						}
+                                EmailBus emailBus = new EmailBus();
+                                emailBus.Enviar(email, bancoDeDadosInterno);
+                            }
+                        }
 
 						#endregion
 

@@ -107,7 +107,7 @@
 		<div class="block">
 			<div class="coluna23">
 				<label>Quantidade/Mês *</label>
-				<%=Html.TextBox("CFOC.Produto.Quantidade", "", ViewModelHelper.SetaDisabled(true, new { @class="text txtProdutoQuantidade"}))%>
+				<%=Html.TextBox("CFOC.Produto.Quantidade", "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutoQuantidade maskDecimalPonto4"}))%>
 			</div>
 			<div class="coluna23 prepend1">
 				<label>Unidade de medida *</label>
@@ -137,11 +137,29 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% foreach (var item in Model.CFOC.Produtos) { %>
+					<% foreach (var item in Model.CFOC.Produtos) 
+                        {   
+                              
+                            decimal qtd = 0;
+                            var unid = "";
+                            if (item.ExibeQtdKg)
+                            {
+                                qtd = item.Quantidade * 1000;
+                                unid = "KG";
+
+                            }
+                            else
+                            {
+                                qtd = item.Quantidade;
+                                unid = item.UnidadeMedida;
+                            } 
+            
+            
+                            %>
 					<tr>
 						<td class="codigo" title="<%=item.LoteCodigo %>"><%=item.LoteCodigo %></td>
 						<td class="cultura_cultivar" title="<%=item.CulturaTexto + " " + item.CultivarTexto %>"><%=item.CulturaTexto + " " + item.CultivarTexto%></td>
-						<td class="quantidade" title="<%= item.Quantidade + " " + item.UnidadeMedida %>"><%= item.Quantidade + " " + item.UnidadeMedida %></td>
+						<td class="quantidade" title="<%= qtd + " " + unid %>"><%= qtd + " " + unid %></td>
 						<td class="data_consolidacao" title="<%=item.DataConsolidacao.DataTexto %>"><%=item.DataConsolidacao.DataTexto %></td>
 						<%if(!Model.IsVisualizar){ %>
 						<td>

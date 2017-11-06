@@ -9,7 +9,8 @@ Implantação do SIMLAM IDAF na Pentago
 # Máquina DEV:
 	
 - Foi preciso instalar e configurar o Instant Client (conector jdbc) do Oracle na Máquina de Dev para executar o debug das aplicações do IDAF (soluções).
-	Usamos na máquina de dev o "ODTwithODAC121024.zip"
+	Usamos inicialmente na máquina de dev o "ODTwithODAC121024.zip", por causa do Oracle 12c, mas esse client está errado.
+	Devemos instalar o "instantclient-basic-nt-11.2.0.3.0". Guardamos esse arquivo na rede da Pentago.
 
 - Precisamos colocar a variável NLS_LANG COM O VALOR "BRAZILIAN PORTUGUESE_BRAZIL.WE8MSWIN1252".
 

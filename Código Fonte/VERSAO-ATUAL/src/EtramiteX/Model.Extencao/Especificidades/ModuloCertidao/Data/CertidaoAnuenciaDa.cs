@@ -147,6 +147,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCer
 
 				#region Apaga os dados da especificidade
 
+
+                comando = bancoDeDados.CriarComando(@"delete from {0}esp_certidao_anuencia_dest e where e.especificidade = (select id from {0}esp_certidao_anuencia c where c.titulo = :titulo ) ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
 				comando = bancoDeDados.CriarComando(@"delete from {0}esp_certidao_anuencia e where e.titulo = :titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);

@@ -169,11 +169,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				{
 					bancoDeDados.IniciarTransacao();
 
-					LoteBus loteBus = new LoteBus();
-					foreach (var item in entidadeBanco.Produtos)
-					{
-						loteBus.AlterarSituacaoLote(item.LoteId, eLoteSituacao.Utilizado, bancoDeDados);
-					}
+                    //LoteBus loteBus = new LoteBus();
+                    //foreach (var item in entidadeBanco.Produtos)
+                    //{
+                    //    loteBus.AlterarSituacaoLote(item.LoteId, eLoteSituacao.Utilizado, bancoDeDados);
+                    //}
 
 					_da.Ativar(entidadeBanco, bancoDeDados);
 
@@ -286,6 +286,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			return null;
 		}
 
+        public List<Lista> ObterEmpreendimentosListaEtramiteX(BancoDeDados bd = null)
+        {
+            return _da.ObterEmpreendimentosListaEtramiteX(bd);
+        }
+
 		public List<Lista> ObterEmpreendimentosLista(int credenciadoID = 0)
 		{
 			try
@@ -295,7 +300,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 					credenciadoID = User.FuncionarioId;
 				}
 
-				return _da.ObterEmpreendimentosLista(credenciadoID);
+                return _da.ObterEmpreendimentosLista(credenciadoID);
 			}
 			catch (Exception exc)
 			{

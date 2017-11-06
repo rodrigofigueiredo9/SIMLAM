@@ -112,9 +112,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		#region Campo
+        #region Penalidade
+        public bool SalvarPenalidade(Penalidade penalidade)
+        {
+            return Validacao.EhValido;
+        }
 
-		public bool SalvarCampoInfracao(Item campo)
+
+        #endregion
+
+        #region Campo
+
+        public bool SalvarCampoInfracao(Item campo)
 		{
 			return Validacao.EhValido;
 		}
@@ -224,7 +233,60 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-		public bool Salvar(ConfigFiscalizacao configuracao)
+        #region Produtos Apreendidos / Destinação
+
+        public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
+        {
+            if (listaProdutos == null)
+            {
+                return Validacao.EhValido;
+            }
+
+            foreach (var item in listaProdutos)
+            {
+                if (item.Excluir == false)
+                {
+                    if (String.IsNullOrWhiteSpace(item.Item))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
+                    }
+
+                    if (String.IsNullOrWhiteSpace(item.Unidade))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
+                    }
+                }
+            }
+
+
+            return Validacao.EhValido;
+        }
+
+        public bool SalvarDestinacao(List<DestinacaoProduto> listaDestinacao)
+        {
+            if (listaDestinacao == null)
+            {
+                return Validacao.EhValido;
+            }
+
+            foreach (var item in listaDestinacao)
+            {
+                if (item.Excluir == false)
+                {
+                    if (String.IsNullOrWhiteSpace(item.Destino))
+                    {
+                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DestinoObrigatorio);
+                    }
+                }
+            }
+
+
+            return Validacao.EhValido;
+        }
+
+        #endregion Produtos Apreendidos / Destinação
+
+        public bool Salvar(ConfigFiscalizacao configuracao)
 		{
 			Mensagem msg = null;
 			List<string> lstMsg = new List<string>();

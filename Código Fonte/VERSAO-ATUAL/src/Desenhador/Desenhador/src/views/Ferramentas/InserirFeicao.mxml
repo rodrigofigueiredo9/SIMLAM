@@ -37,6 +37,10 @@
 			private var pontoMouse:Point;
 			public var pausado:Boolean = false;
 			private var menuItem:ContextMenuItem = null;
+			
+			private var desabilitaSnap:Boolean = false;
+			
+			private var estavaPausado:Boolean = true;
 
 			public function ligarDesligar():void
 			{
@@ -82,6 +86,8 @@
 					FeicoesSnapSelecionadas.getInstance().desenhar();
 					dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.DESLIGAR_OUTRAS_FERRAMENTAS, null, this,false,true,true));
 				}
+				
+				
 				DesenhadorEsri.getInstance().map.addEventListener(MouseEvent.CLICK, desenharClickMouse);
 				this.parentApplication.addEventListener(MouseEvent.MOUSE_MOVE, desenharMoveMouse);
 				this.parentApplication.addEventListener(KeyboardEvent.KEY_UP, acaoTecladoUp);
@@ -157,9 +163,17 @@
 						ligarOk(false,deixarHabilitadoSnap);
 						pausado = false;
 						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN,null, this,false));
+												
+						if (estavaPausado && deixarHabilitadoSnap)
+						{
+							desabilitaSnap = true;
+						}
 					}
 					else
 					{
+						
+						estavaPausado = FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0;
+						desabilitaSnap = false;
 						desligarSemApagarFeicao(deixarHabilitadoSnap);
 						ligado = true;
 						pausado = true;
@@ -223,15 +237,34 @@
 			{	
 				var range:Number = DesenhadorEsri.getInstance().range();
 				var ar:Vector.<Point> = null;
+				
+				
+				for each (var f:Feicao in FeicoesSelecionadas.getInstance().feicoes)
+				{
+					if (f.layerFeicao.Nome.indexOf("Rio (linha)") >= 0)
+					{
+						Alert.show("Não é possível inserir Rio (linha)."); 
+						
+						return;
+					}
+				}
+				
 				if(!(ev.target is ButtonExt))
 				{
 					var pt:Point = DesenhadorEsri.getInstance().converterMouseParaPoint(ev);
 					var pontoIntersectado:Point = null;
 					if(FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0)
 					{
+					
 						var feicoesSnap:Vector.<Feicao> = FeicoesSnapSelecionadas.getInstance().feicoes;
 						//verifica vertices
-						range = DesenhadorEsri.getInstance().range(7); 
+						
+						if (desabilitaSnap)
+							range = DesenhadorEsri.getInstance().range(1); 
+						else
+							range = DesenhadorEsri.getInstance().range(7);
+						
+						
 						for(var i:int =0; i< feicoesSnap.length; i++)
 						{  
 							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pt, range, feicoesSnap[i].geometria.vertices,
@@ -244,7 +277,13 @@
 						if(!pontoIntersectado)
 						{
 							//verifica arestas
-							range = DesenhadorEsri.getInstance().range(4); 
+							
+							if (desabilitaSnap)
+								range = DesenhadorEsri.getInstance().range(1); 
+							else
+								range = DesenhadorEsri.getInstance().range(4);
+							
+							
 							for(var i:int =0; i< feicoesSnap.length; i++)
 							{  
 								pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pt,range, feicoesSnap[i].geometria.vertices,
@@ -322,10 +361,13 @@
 					range = DesenhadorEsri.getInstance().range(25);
 				
 					//verifica vertices
-					range = DesenhadorEsri.getInstance().range(7); 
+					if (desabilitaSnap)
+						range = DesenhadorEsri.getInstance().range(1); 
+					else
+						range = DesenhadorEsri.getInstance().range(7);
 				
 					pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarVerticeIntersectado(pt, range, FeicoesSnapSelecionadas.getInstance().verticesMaisProximos,
-						null, false);
+						null, true);
 					
 					if(pontoIntersectado)
 					{
@@ -336,7 +378,11 @@
 					if(!pontoIntersectado)
 					{
 						//verifica arestas
-						range = DesenhadorEsri.getInstance().range(4); 
+						if (desabilitaSnap)
+							range = DesenhadorEsri.getInstance().range(1); 
+						else
+							range = DesenhadorEsri.getInstance().range(4);
+							
 						for(var i:int =0; i< feicoesSnap.length; i++)
 						{  							
 							pontoIntersectado = FeicaoSelecionada.getInstance().geometria.buscarPontoProximoNoMeioDaAresta(pt,range, feicoesSnap[i].geometria.vertices,

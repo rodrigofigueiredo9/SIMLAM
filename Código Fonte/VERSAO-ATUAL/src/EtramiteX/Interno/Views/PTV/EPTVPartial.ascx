@@ -79,15 +79,24 @@
 	<div class="block campoTela">
 		<div class="coluna58">
 			<label for="EmpreendimentoTexto">Empreendimento *</label>
-			<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+			 <% if ( !string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) ) { %>
+			    <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoSemDoc, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+            <%} else { %>
+                <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
 			<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+              <% } %>
 		</div>
 	</div>
 
 	<div class="block campoTela">
 		<div class="coluna58">
 			<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-			<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
+		   <%  if (Model.PTV.Produtos.Count > 0 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
+               { %>
+			    <%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.ResponsavelSemDoc , ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
+            <% } else { %>
+                <%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 2, new { @class="text ddlResponsaveis"}))%>
+            <% } %>
 		</div>
 	</div>
 </fieldset>
@@ -283,7 +292,7 @@
 		</div>
 	</div>
 
-	<div class="block divCamposSituacao divMotivo <%= (Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Rejeitado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado) ? "hide":""%>">
+	<div class="block divCamposSituacao divMotivo <%= (Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Rejeitado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao) ? "hide":""%>">
 		<div class="block ultima">
 			<label for="SituacaoMotivo">Motivo *</label>
 			<%= Html.TextArea("SituacaoMotivo", Model.PTV.SituacaoMotivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text media txtSituacaoMotivo", @maxlength="1000" })) %>

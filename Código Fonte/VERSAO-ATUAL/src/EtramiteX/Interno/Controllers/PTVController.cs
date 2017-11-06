@@ -22,6 +22,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV;
 
+
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
 	public class PTVController : DefaultController
@@ -34,6 +35,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		private DestinatarioPTVBus _bus = new DestinatarioPTVBus();
 		private PTVBus _busPTV = new PTVBus();
+
+        private Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus _PTVBusCred = new Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus();
 
 		#endregion
 
@@ -465,6 +468,47 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+        #region DUA
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+        public ActionResult GravarVerificacaoDUA(string numero, string cpfCnpj, string tipo, int ptvId)
+        {
+            var filaID = _PTVBusCred.GravarConsultaDUA(numero, cpfCnpj, tipo);
+
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @FilaID = filaID
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+        public ActionResult VerificarConsultaDUA(int filaID, string numero, string cpfCnpj, string tipo, int ptvId)
+        {
+            cpfCnpj = cpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
+
+            _PTVBusCred.VerificarDUA(filaID, numero, cpfCnpj, tipo, ptvId);
+
+            return Json(new
+            {
+                @Valido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Consultado = true
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
 
 		#region GerarPDF PTV
 

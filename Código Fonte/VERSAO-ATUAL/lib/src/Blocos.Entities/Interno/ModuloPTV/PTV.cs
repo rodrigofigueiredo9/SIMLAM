@@ -10,8 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 {
 	public class PTV
 	{
-		public string NumeroDua { get; set; }
-		public string CPFCNPJDUA { get; set; }
+	
 
 		public int TipoPessoa { get; set; }
 
@@ -56,13 +55,24 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int DataHoraVistoriaId { get; set; }
 		public string DataHoraVistoriaTexto { get; set; }
 
+        public DateTime DataVistoria { get; set; }
+
+        public string NumeroDua { get; set; }
+        public string CPFCNPJDUA { get; set; }
+
+        public bool ExibeQtdKg { get; set; }
+
 		public bool TemAssinatura { get; set; }
 
 		public int Credenciado { get; set; }
 
 		public List<Anexo> Anexos { get; set; }
 
-        public string DeclaracaoAdicional { get; set; } 
+        public string DeclaracaoAdicional { get; set; }
+
+        public string EmpreendimentoSemDoc { get; set; }
+
+        public string ResponsavelSemDoc { get; set; } 
 
 		public PTV()
 		{

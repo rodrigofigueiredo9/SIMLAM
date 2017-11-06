@@ -411,7 +411,7 @@ package models.Esri
 				ponto= map.toScreen(mpPoint); 
 			return ponto;
 		}
-		public function range(diferenca:Number=4):Number
+		public function range(diferenca:Number=1):Number
 		{
 			var num:Number =0;
 			if(map)
