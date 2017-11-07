@@ -624,7 +624,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   select  (select count(1) from {0}TAB_FISC_ENQUADRAMENTO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Enquadramento' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Infração' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_OBJ_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Objeto da Infração' cadastro from dual union all
-						   select  (select count(1) from {0}TAB_FISC_MATERIAL_APREENDIDO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Material apreendido' cadastro from dual union all
+						   --select  (select count(1) from {0}TAB_FISC_MATERIAL_APREENDIDO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Material apreendido' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_CONSID_FINAL t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Considerações finais' cadastro from dual)        
 					tab where tab.qtd = 0", EsquemaBanco);
 
