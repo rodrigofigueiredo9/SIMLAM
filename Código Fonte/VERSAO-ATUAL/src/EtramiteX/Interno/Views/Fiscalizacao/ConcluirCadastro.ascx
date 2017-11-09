@@ -121,7 +121,7 @@
 	</fieldset>
 
 	<fieldset class="box fdsInfracao">
-		<legend>Caracterização da Infração</legend>
+		<legend>Caracterização da Infração/Fiscalização</legend>
 
 		<div class="block">
 			<div class="coluna76">
@@ -132,7 +132,7 @@
 
 		<div class="block">
 			<div class="coluna76">
-				<label>Tipo de infração</label><br />
+				<label>Tipo de infração/Fiscalização</label><br />
 				<%= Html.DropDownList("Fiscalizacao.Infracao.Tipo", Model.InfracaoVM.Tipos, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipos" }))%>
 			</div>
 		</div>

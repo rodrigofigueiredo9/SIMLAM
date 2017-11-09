@@ -12,10 +12,10 @@
   TABLESPACE "IDAF_TBS" ;
  
 
-   COMMENT ON COLUMN "IDAF"."LOV_PENALIDADES_FIXAS"."ID" IS 'Chave primaria.';
+   COMMENT ON COLUMN "IDAF"."LOV_FISC_PENALIDADES_FIXAS"."ID" IS 'Chave primaria.';
  
-   COMMENT ON COLUMN "IDAF"."LOV_PENALIDADES_FIXAS"."TEXTO" IS 'Descrição da penalidade.';
+   COMMENT ON COLUMN "IDAF"."LOV_FISC_PENALIDADES_FIXAS"."TEXTO" IS 'Descrição da penalidade.';
    
-   COMMENT ON TABLE "IDAF"."LOV_PENALIDADES_FIXAS"  IS 'Tabela de penalidades fixas da Infração, aba Infração/Fiscalização.';
+   COMMENT ON TABLE "IDAF"."LOV_FISC_PENALIDADES_FIXAS"  IS 'Tabela de penalidades fixas da Infração, aba Infração/Fiscalização.';
  
  

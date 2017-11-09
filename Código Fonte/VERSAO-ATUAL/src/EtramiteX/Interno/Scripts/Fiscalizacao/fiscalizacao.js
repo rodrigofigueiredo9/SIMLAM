@@ -620,7 +620,7 @@ FiscalizacaoLocalInfracao = {
 	},
 
 	onClickRadioAutuado: function () {
-
+	    
 		$('.divPessoa, .divEmpreendimento, .fdsEmpreendimento, .divDdlResponsavel', FiscalizacaoLocalInfracao.container).addClass("hide");
 		$('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).empty();
 		$('.hdnAutuadoEmpreendimentoId, .hdnAutuadoPessoaId', FiscalizacaoLocalInfracao.container).val('');
@@ -631,6 +631,18 @@ FiscalizacaoLocalInfracao = {
 		$('.ddlResponsaveisPropriedade option', FiscalizacaoLocalInfracao.container).remove();
 
 		$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
+
+		$('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).hide();
+		$('.txtAreaAbran', FiscalizacaoLocalInfracao.container).val('');
+		$('.txtEasting', FiscalizacaoLocalInfracao.container).val('');
+		$('.txtNorthing', FiscalizacaoLocalInfracao.container).val('');
+		$('.ddlEstado', FiscalizacaoLocalInfracao.container).ddlClear();
+		$('.ddlMunicipio', FiscalizacaoLocalInfracao.container).ddlClear();
+		$('.txtLocal', FiscalizacaoLocalInfracao.container).val('');
+		$('.txtLocal', FiscalizacaoLocalInfracao.container).text('');
+
+		$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).hide();
+
 
 		//if ($(this).val().toString() == "0") {
 		//	$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
@@ -681,8 +693,11 @@ FiscalizacaoLocalInfracao = {
 
 		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).removeClass("hide");
+		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
+		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
 		}
 
