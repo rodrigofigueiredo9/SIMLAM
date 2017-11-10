@@ -544,14 +544,14 @@ FiscalizacaoLocalInfracao = {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 
+		    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
 		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
 
 		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+
+		    $('.divDdlResponsavel', FiscalizacaoLocalInfracao.container).hide();
 		}
-		//else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
-		//    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
-		//}
 	},
 
 	gerarObjetoFiltroLocalizar: function () {
@@ -691,12 +691,22 @@ FiscalizacaoLocalInfracao = {
 		$('.txtNomeRazao', FiscalizacaoLocalInfracao.container).val(Pessoa.NomeRazaoSocial);
 		$('.txtCpfCnpj', FiscalizacaoLocalInfracao.container).val(Pessoa.CPFCNPJ);
 
+        //Dentro de empreedimento == sim
 		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
-		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
+
+		    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).show();
+		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).hide();
+
+		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).hide();
+		}
+        //Dentro de empreendimento == não
+		else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
 		}
@@ -730,10 +740,10 @@ FiscalizacaoLocalInfracao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, FiscalizacaoLocalInfracao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-			    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
-			    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
-
 			    if (response.EhValido) {
+			        $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
+			        $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+
 			        $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 
 					$('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
@@ -812,6 +822,9 @@ FiscalizacaoLocalInfracao = {
 
 	                $('.spanEmpNovoPessoa', FiscalizacaoLocalInfracao.container).show();
 	                $('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).show();
+
+	                $('.btnEmpBuscaLocal', FiscalizacaoLocalInfracao.container).show();
+	                $('.spanEmpBuscaLocal', FiscalizacaoLocalInfracao.container).show();
 
 	                Mensagem.limpar(Fiscalizacao.container);
 	            } else {
@@ -901,6 +914,8 @@ FiscalizacaoLocalInfracao = {
 
 					$('.hdnAutuadoEmpreendimentoId', FiscalizacaoLocalInfracao.container).val($('.hdnEmpId', FiscalizacaoLocalInfracao.container).val());
 					FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpSalvar, .spanEmpAssNovo, .divDdlResponsavel');
+
+					$('.divDdlResponsavel', FiscalizacaoLocalInfracao.container).show();
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
@@ -1576,6 +1591,8 @@ Infracao = {
 
 	    $('.divDescricaoInfracao', Infracao.container).show();
 	    $('.divClassificacao', Infracao.container).show();
+
+	    Listar.atualizarEstiloTable(Infracao.container.find('.dataGridTable'));
 	},
 
 	onSelecionarSemInfracao: function () {
