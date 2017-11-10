@@ -268,7 +268,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
             else
             {
-                fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
+                //fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
+                fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(id);   //temporário
                 lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
                 pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
             }
@@ -278,6 +279,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
             vm.IsVisualizar = true;
+
+            vm.InfracaoVM = new InfracaoVM();
+            vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
+
+            if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;   //apenas para carregar a aba
 
             return View("Visualizar", vm);
         }
