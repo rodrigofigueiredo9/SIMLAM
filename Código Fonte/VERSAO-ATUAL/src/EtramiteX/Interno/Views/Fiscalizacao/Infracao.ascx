@@ -92,7 +92,7 @@
 						        <tr id="Infracao_Enquadramento" >
                                     <td>
                                         <% if (!Model.IsVisualizar) { %>
-                                            <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="13" style="border:none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
+                                            <input type="text" class="text txtArtigoEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border:none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } else { %>
                                             <input type="text" class="text txtArtigoEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].ArtigoTexto : string.Empty)%>" maxlength="16" style="border:none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline; text-align:center;" />
                                         <% } %>

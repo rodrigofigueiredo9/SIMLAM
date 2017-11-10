@@ -1576,6 +1576,8 @@ Infracao = {
 
 	    $('.divDescricaoInfracao', Infracao.container).show();
 	    $('.divClassificacao', Infracao.container).show();
+
+	    Listar.atualizarEstiloTable(Infracao.container.find('.dataGridTable'));
 	},
 
 	onSelecionarSemInfracao: function () {
