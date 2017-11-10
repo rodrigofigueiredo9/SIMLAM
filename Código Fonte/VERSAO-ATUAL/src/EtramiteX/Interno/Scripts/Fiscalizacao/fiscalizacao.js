@@ -549,6 +549,8 @@ FiscalizacaoLocalInfracao = {
 		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
 
 		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+
+		    $('.divDdlResponsavel', FiscalizacaoLocalInfracao.container).hide();
 		}
 	},
 
@@ -912,6 +914,8 @@ FiscalizacaoLocalInfracao = {
 
 					$('.hdnAutuadoEmpreendimentoId', FiscalizacaoLocalInfracao.container).val($('.hdnEmpId', FiscalizacaoLocalInfracao.container).val());
 					FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpSalvar, .spanEmpAssNovo, .divDdlResponsavel');
+
+					$('.divDdlResponsavel', FiscalizacaoLocalInfracao.container).show();
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
