@@ -156,7 +156,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Visualizar(int id)
 		{
 			bool existeCredenciado = _bus.ExisteCredenciado(id);
-
             CARSolicitacao solicitacao = null;
 			CARSolicitacao solicitacaoAux = existeCredenciado ? _busCredenciado.Obter(id) : _bus.Obter(id, false);
             if (solicitacaoAux.SituacaoId != (int)eCARSolicitacaoSituacao.EmCadastro && solicitacaoAux.SituacaoId != (int)eCARSolicitacaoSituacao.Pendente)
@@ -182,33 +181,64 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			#region Configurar
 
-			List<Protocolos> lstProcessosDocumentos = new List<Protocolos>(){new Protocolos()
+            if (solicitacao != null)
+            {
+                List<Protocolos> lstProcessosDocumentos = new List<Protocolos>(){new Protocolos()
 			{
 				IsAtivo = true,
 				Id = solicitacao.ProtocoloSelecionado.Id.ToString() + "@" + (solicitacao.ProtocoloSelecionado.IsProcesso ? 1 : 2) + "@" + solicitacao.Requerimento.Id.ToString(),
 				Texto = solicitacao.Requerimento.Id.ToString() + " - " + solicitacao.Requerimento.DataCadastroTexto
 			}};
 
-			List<PessoaLst> lstResponsaveis = new List<PessoaLst>(){new PessoaLst()
+                List<PessoaLst> lstResponsaveis = new List<PessoaLst>(){new PessoaLst()
 			{
 				IsAtivo = true,
 				Id = solicitacao.Declarante.Id,
 				Texto = solicitacao.Declarante.NomeRazaoSocial
 			}};
 
-			CARSolicitacaoVM vm = new CARSolicitacaoVM(
-				solicitacao,
-				_busLista.CadastroAmbientalRuralSolicitacaoSituacao,
-				lstProcessosDocumentos,
-				_busLista.AtividadesSolicitada,
-				lstResponsaveis,
-				isVisualizar: true);
+                CARSolicitacaoVM vm = new CARSolicitacaoVM(
+                    solicitacao,
+                    _busLista.CadastroAmbientalRuralSolicitacaoSituacao,
+                    lstProcessosDocumentos,
+                    _busLista.AtividadesSolicitada,
+                    lstResponsaveis,
+                    isVisualizar: true);
 
-			vm.IsCredenciado = existeCredenciado;
+                vm.IsCredenciado = existeCredenciado;
+                return View(vm);
+            }
+            else
+            {
+                List<Protocolos> lstProcessosDocumentos = new List<Protocolos>(){new Protocolos()
+			{
+				IsAtivo = true,
+				Id = solicitacaoAux.ProtocoloSelecionado.Id.ToString() + "@" + (solicitacaoAux.ProtocoloSelecionado.IsProcesso ? 1 : 2) + "@" + solicitacaoAux.Requerimento.Id.ToString(),
+				Texto = solicitacaoAux.Requerimento.Id.ToString() + " - " + solicitacaoAux.Requerimento.DataCadastroTexto
+			}};
+
+                    List<PessoaLst> lstResponsaveis = new List<PessoaLst>(){new PessoaLst()
+			{
+				IsAtivo = true,
+				Id = solicitacaoAux.Declarante.Id,
+				Texto = solicitacaoAux.Declarante.NomeRazaoSocial
+			}};
+
+                CARSolicitacaoVM vm = new CARSolicitacaoVM(
+                    solicitacaoAux,
+                    _busLista.CadastroAmbientalRuralSolicitacaoSituacao,
+                    lstProcessosDocumentos,
+                    _busLista.AtividadesSolicitada,
+                    lstResponsaveis,
+                    isVisualizar: true);
+
+                vm.IsCredenciado = existeCredenciado;
+                return View(vm);                
+            }
 
 			#endregion Configurar
 
-			return View(vm);
+            //return null;
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoVisualizar })]

@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.misc.WKT;
 using Tecnomapas.EtramiteX.Scheduler.models;
@@ -141,6 +142,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 				}
+                
+                //UPDATE NA COLUNA DATA_CRIACAO DA TAB_SCHEDULER_FILA quando der erro no receptor, para gera-los de novo                
+                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE soundex(resultado) = soundex('O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;
+                                                ')", conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
 			}
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
@@ -445,6 +454,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var car = new CAR();
 
 			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
+            var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
+           
 
 			var builder = new StringBuilder();
 			builder.Append(imovel.logradouro);
@@ -463,6 +474,37 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
 			var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
+            var eCorrespondencia = new EnderecoCorrespondencia();
+
+            if (endCorrespondencia != null)
+            {
+                
+                
+                eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
+                eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
+                eCorrespondencia.complemento =
+                    (complementoCorrespondencia.Length > 100
+                        ? complementoCorrespondencia.Substring(0, 100)
+                        : complementoCorrespondencia);
+                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+                eCorrespondencia.cep = endCorrespondencia.cep;
+                eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
+                
+            }
+            else
+            {
+
+                eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
+                eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
+                eCorrespondencia.complemento =
+                    (complementoCorrespondencia.Length > 100
+                        ? complementoCorrespondencia.Substring(0, 100)
+                        : complementoCorrespondencia);
+                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+                eCorrespondencia.cep = imovel.cep;
+                eCorrespondencia.codigoMunicipio = imovel.municipio;
+                
+            }
 
 			car.imovel = new Imovel()
 			{
@@ -474,19 +516,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
 				telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
 				modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
-                enderecoCorrespondencia = new EnderecoCorrespondencia()
-                {
-                    logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro),
-                    numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero),
-                    complemento =
-                        (complementoCorrespondencia.Length > 100
-                            ? complementoCorrespondencia.Substring(0, 100)
-                            : complementoCorrespondencia),
-                    bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia),
-                    cep = imovel.cep,
-                    codigoMunicipio = imovel.municipio
-                }
-				
+                enderecoCorrespondencia = eCorrespondencia				
 			};
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
@@ -674,6 +704,88 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			return empreendimento;
 		}
 
+        private static Empreendimento ObterDadosImovelCorrespondencia(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid)
+        {
+            var empreendimento = new Empreendimento();            
+            var enderecos = new List<EnderecoEmpreendimento>();
+
+            using (
+                var cmd =
+                    new OracleCommand(
+                        "SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
+                        schema +
+                        ".HST_EMPREENDIMENTO_ENDERECO t WHERE t.tid = :tid AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
+                        conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("tid", empreendimentoTid));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        var empTemporario = new EnderecoEmpreendimento
+                        {
+                            correspondencia = dr.GetValue<Int32>("correspondencia"),
+                            zona = dr.GetValue<Int32>("zona"),
+                            cep = dr.GetValue<string>("cep") ?? string.Empty,
+                            logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
+                            bairro = dr.GetValue<string>("bairro") ?? string.Empty,
+                            municipio = dr.GetValue<Int32>("municipio_id"),                            
+                            numero = dr.GetValue<string>("numero") ?? string.Empty,
+                            caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
+                            distrito = dr.GetValue<string>("distrito") ?? string.Empty,
+                            corrego = dr.GetValue<string>("corrego") ?? string.Empty,
+                            complemento = dr.GetValue<string>("complemento") ?? string.Empty
+                        };
+
+                        enderecos.Add(empTemporario);
+                    }
+                }
+            }
+
+            if (enderecos.Count > 0)
+            {
+                var enderecoEscolhido = 0;
+                for (var i = 0; i < enderecos.Count; i++)
+                {
+                    if (enderecos[i].correspondencia == 1)
+                    {
+                        enderecoEscolhido = i;
+                        break;
+                    }
+                }
+
+                empreendimento.zona = enderecos[enderecoEscolhido].zona;
+                empreendimento.cep = enderecos[enderecoEscolhido].cep;
+                if (empreendimento.cep != null) empreendimento.cep = Regex.Replace(empreendimento.cep, @"[^0-9a-zA-Z]+", "");
+                empreendimento.logradouro = enderecos[enderecoEscolhido].logradouro;
+                empreendimento.bairro = enderecos[enderecoEscolhido].bairro;
+                empreendimento.municipio = enderecos[enderecoEscolhido].municipio;
+                empreendimento.numero = enderecos[enderecoEscolhido].numero;
+                empreendimento.caixaPostal = enderecos[enderecoEscolhido].caixaPostal;
+                empreendimento.distrito = enderecos[enderecoEscolhido].distrito;
+                empreendimento.corrego = enderecos[enderecoEscolhido].corrego;
+                empreendimento.complemento = enderecos[enderecoEscolhido].complemento;
+            }
+
+            //Buscar código do IBGE
+            using (var cmd = new OracleCommand("SELECT IBGE FROM " + schema + ".LOV_MUNICIPIO t WHERE t.id = :id", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("id", empreendimento.municipio));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        empreendimento.municipio = Convert.ToInt32(dr["ibge"]);
+                    }
+                }
+            }
+
+            return empreendimento;
+
+        }
+
 		/// <summary>
 		/// Obters the modulo fiscal.
 		/// </summary>
@@ -852,57 +964,157 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         private static Cadastrante ObterDadosCadastrante(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid, int solicitacaoCar, string solicitacaoCarTid)
         {
-            //var declaranteTid = string.Empty;
             var cadastrante = new Cadastrante();
+            var temCredenciado = true;
             if (schema == "IDAF")
             {
-                using (
-                    var cmd =
-                        new OracleCommand(
-                            "SELECT  F.NOME, F.CPF FROM IDAF.HST_CAR_SOLICITACAO T INNER JOIN IDAF.TAB_FUNCIONARIO F ON T.AUTOR_ID = F.ID" + //T.AUTOR,
-                            " WHERE T.empreendimento_id = :empreendimento_id AND T.situacao_id IN (1,2,5,6) AND T.tid = :tid",
-                            conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
-                    cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+                temCredenciado = VerificarCadastranteCredenciado(conn, solicitacaoCar);
 
-                    using (var dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            //declarante. = Convert.ToInt32(dr["AUTOR"]);
-                            cadastrante.nome = Convert.ToString(dr["NOME"]);
-                            cadastrante.cpf = Convert.ToString(dr["CPF"]);
-                        }
-                    }
+                if (temCredenciado)
+                {
+                    cadastrante = obterCadastranteCredenciado(conn, schema, solicitacaoCar, solicitacaoCarTid);
+                }
+                else
+                {
+                    cadastrante = ObterCadastranteInstitucional(conn, schema, solicitacaoCar, solicitacaoCarTid);
                 }
             }
             else
             {
-                using (
+                cadastrante = obterCadastranteCredenciado(conn, schema, solicitacaoCar, solicitacaoCarTid);
+            }
+            
+            return cadastrante;
+        }
+
+
+        private static Boolean VerificarCadastranteCredenciado(OracleConnection conn, int solicitacaoCar)
+        {
+            var temCredenciado = 0;
+            using (
                     var cmd =
-                        new OracleCommand(
-                            "SELECT  P.NOME, P.CPF, P.MAE, P.DATA_NASCIMENTO FROM IDAF.HST_CAR_SOLICITACAO T INNER JOIN IDAF.TAB_PESSOA P ON T.DECLARANTE_ID = P.ID" + //T.DECLARANTE,
-                            " WHERE T.empreendimento_id = :empreendimento_id AND T.situacao_id IN (1,2,5,6) AND T.tid = :tid",
-                            conn))
+                        new OracleCommand("SELECT COUNT(ID) CONTADOR FROM IDAFCREDENCIADO.TAB_CAR_SOLICITACAO WHERE ID = :id", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
+
+                using (var dr = cmd.ExecuteReader())
                 {
-                    cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
+                    while (dr.Read())
+                    {
+                        temCredenciado = Convert.ToInt32(dr["CONTADOR"]);
+                    }
+                    dr.Close();
+                }
+            }
+            if (temCredenciado > 0) return true;
+            else return false;
+        }
+
+        private static Cadastrante ObterCadastranteInstitucional(OracleConnection conn, string schema, int solicitacaoCar, string solicitacaoCarTid)
+        {
+            var cadastrante = new Cadastrante();
+
+            using (var cmd =
+                        new OracleCommand(@"SELECT F.NOME, F.CPF
+                                            FROM HST_CAR_SOLICITACAO CAR
+                                              INNER JOIN TAB_FUNCIONARIO F ON CAR.AUTOR_ID = F.ID
+                                              WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
+                cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        cadastrante.nome = Convert.ToString(dr["NOME"]);
+                        cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                        if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
+                    }
+                    dr.Close();
+                }
+            }
+
+            return cadastrante;
+        }
+
+        private static Cadastrante obterCadastranteCredenciado(OracleConnection conn, string schema, int solicitacaoCar, string solicitacaoCarTid)
+        {
+            var cadastrante = new Cadastrante();
+            var tipo = 0;
+
+            using (var cmd =
+                        new OracleCommand(@"SELECT P.TIPO
+                                            FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
+                                                INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
+                                                INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
+                cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        tipo = Convert.ToInt32(dr["TIPO"]);
+                    }
+                    dr.Close();
+                }
+            }
+            //SE FOR PF PEGA O EXECUTOR
+            if(tipo == 1)
+            {
+                using (var cmd =
+                        new OracleCommand(@"SELECT P.NOME AS NOME, P.CPF AS CPF, P.MAE AS MAE, P.DATA_NASCIMENTO AS DATA_NASCIMENTO
+                                            FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
+                                                INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
+                                                INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
                     cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
 
                     using (var dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
                         {
-                            //declarante.id = Convert.ToInt32(dr["AUTOR"]);
                             cadastrante.nome = Convert.ToString(dr["NOME"]);
                             cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                            if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
                             cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
                             cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
                         }
+                        dr.Close();
                     }
                 }
-            }
-            
+            } else
+                //SE FOR PJ PEGA O DECLARANTE
+                if(tipo == 2)
+                {
+                    using (var cmd =
+                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CNPJ 
+                                            FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
+                                                INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
+                                                INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
+                    {
+                        cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
+                        cmd.Parameters.Add(new OracleParameter("tid", solicitacaoCarTid));
+
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                cadastrante.nome = Convert.ToString(dr["NOME"]);
+                                cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");                               
+                            }
+                            dr.Close();
+                        }
+                    }
+                }
+
             return cadastrante;
         }
 
@@ -1111,23 +1323,26 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static ReservaLegal ObterDadosReservaLegal(OracleConnection conn, string schema, string requisicaoOrigem, int dominioId, string dominioTid)
 		{
 			var resultado = new ReservaLegal();
-
+            var dadosReceptor = new DadosReserva();
+           // var IsReceptor = false;
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT situacao_id,numero_termo,arl_croqui,(case when t.compensada = 1 and t.cedente_receptor = 2 then 1 else 0 end) compensada,cedente_receptor,emp_compensacao_id FROM " + schema +
+						"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
 						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
+                //cmd.Parameters.Add(new OracleParameter("dominio_id", 35791));
+                //cmd.Parameters.Add(new OracleParameter("dominio_tid", "b0135b80-4a42-476d-b033-f37c9671e0c5"));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
 					{
-						if (Convert.ToInt32(dr["situacao_id"]) == 1)
+						if (Convert.ToInt32(dr["situacao_id"]) == 1)  //1: Não informada  / 2: Proposta  / 3: Registrada                        
 						{
-							resultado.resposta = "Não";
+							resultado.resposta = "Não";                            
 						}
 						else
 						{
@@ -1137,7 +1352,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							{
 								numero = dr.GetValue<string>("numero_termo"),
 								data = new DateTime(1900, 01, 01),
-								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não")
+                                reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") 
 							};
 							if (string.IsNullOrEmpty(dados.numero))
 							{
@@ -1151,9 +1366,21 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							{
 								//TODO:Pendente da ISSUE http://hercules:8080/browse/SIMLAMIDAF-2297
 								//dados.numeroCAR = "ES-0000001-00000000000000000000000000000001";
-								dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente));
+                                dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
+                                                              
+                                //dados.numeroCAR = "TESTING... SICAR"; //ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
+                            
+                                dadosReceptor = dados;
 							}
-							resultado.dadosReserva = new List<DadosReserva>() { dados };
+                            if (!string.IsNullOrEmpty(dadosReceptor.reservaDentroImovel)) // Verifica se o Receptor recebeu algum valor
+                            {                                
+                                resultado.dadosReserva = new List<DadosReserva>() { dadosReceptor };
+                                if (String.IsNullOrWhiteSpace(dadosReceptor.numeroCAR))
+                                    return resultado;  //Retorna o primeiro número CAR encontrado
+                            }
+                            else
+                                resultado.dadosReserva = new List<DadosReserva>() { dados };
+
 						}
 					}
 				}
@@ -1162,11 +1389,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			return resultado;
 		}
 
-		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente)
+		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente, string requisicaoOrigem)
 		{
-			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema=1", conn))
+            var origem = requisicaoOrigem == "credenciado" ? 2 : 1;
+			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoCedente));
+                cmd.Parameters.Add(new OracleParameter("origem", origem));
 
 				using (var dr = cmd.ExecuteReader())
 					if (dr.Read())
@@ -1402,7 +1631,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                 //geo.largura = 0;
                                 geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
                                 //geo.geoJson.type = Geometria.MULTIPOLYGON;
-                                //geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
+                                geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
                                 break;
 						}
 
@@ -1816,30 +2045,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaRio600,
                 "tipo = 'APP_ESCADINHA_RIO_ACIMA_600'"));
 
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaTotal));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaTotal,
+                "tipo = 'APP_ESCADINHA'"));
 
             //Remover geometrias nulas para envio
-            geometrias.RemoveAll(x => x == null);
-            /*
-            //Fazer APP Escadinha Total
-            var totalEscadinha = new Geo();
-            totalEscadinha.tipo = "APP_ESCADINHA";
-            var totalArea = 0.0;
-            //String totalGeometria = "";
-
-            foreach (var geo in geometrias)
-            {
-                totalArea += geo.area;
-                //totalGeometria += geo.geoJson.ToString();
-                
-            }
-
-            //GeoJSONObject totalGeoEscadinha = GeoJSONFromWKT.Parse(totalGeometria);
-
-            totalEscadinha.area = totalArea;
-            //totalEscadinha.geoJson = totalGeoEscadinha;
-
-            geometrias.Add(totalEscadinha); */         
+            geometrias.RemoveAll(x => x == null);    
 
             return geometrias;
         }

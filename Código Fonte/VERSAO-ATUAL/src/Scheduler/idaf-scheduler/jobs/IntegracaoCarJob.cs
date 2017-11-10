@@ -181,13 +181,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                   CARSolicitacaoFunc cr = new CARSolicitacaoFunc();
                   // Monta o json na coluna REQUISÃO da tab_schedule_fila 
                   cr.EnviarReenviarArquivoSICAR(solicitacaoID, origem, true, conn);
-
-                  //CARSolicitacaoController variavel = new CARSolicitacaoController();
-                  //ar.EnviarReenviarArquivoSICAR(solicitacaoID, origem, false);
               }
               catch (Exception ex)
               {
-
+                  using (OracleCommand command = new OracleCommand("UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 0 WHERE PASSIVO_ENVIADO = 1 AND ID = :id", conn))
+                  {
+                      command.Parameters.Add(new OracleParameter("id", solicitacaoID));
+                      command.ExecuteNonQuery();
+                  }
                   String i = ex.Message;
               }              
           }
@@ -196,7 +197,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE ID IN (30842,38012,34520,46389,28931,31892,33984,32998,25613,31671,40003,37439,31962,41647,40054,25475)";                
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE  ID = 60477"; //PASSIVO_ENVIADO IS NULL AND ID < 24500
+            //string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID > 65628";    
             /*string BuildSQl = @"SELECT CAR.ID
                                 FROM TAB_CAR_SOLICITACAO CAR
                                     INNER JOIN IDAFGEO.GEO_CAR_APP_CALCULADAS GEOAPP
@@ -211,8 +213,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                   WHERE ROWNUM < 1000
                 ";
               */
-            var arrayIDS = new List<int>();	
-
+            var arrayIDS = new List<int>();
+            try
+            {
                 using (OracleCommand command = new OracleCommand(BuildSQl, conn))
                 {
                     using (var dr = command.ExecuteReader())
@@ -221,8 +224,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             arrayIDS.Add(dr.GetValue<int>("ID"));
                         }
-                    }
-                }            
+                    }                    
+                }
+               /* using (OracleCommand cmdUp = new OracleCommand(BuildSQlUp, conn))
+                {
+                    cmdUp.ExecuteNonQuery();                    
+                }*/                                
+            }catch(Exception e)
+            {
+                string v = e.Message;
+            }
             return arrayIDS;
         }
 

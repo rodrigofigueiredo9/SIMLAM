@@ -94,7 +94,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
 				{
-					if (resultado.mensagensResposta.Count > 0)
+					if (resultado.mensagensResposta.Count > 1 && resultado.codigoResposta != 200)
 					{
 						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + ";"));
 						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;

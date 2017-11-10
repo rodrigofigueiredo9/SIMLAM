@@ -62,7 +62,7 @@ namespace Tecnomapas.EtramiteX.Scheduler
             var gerarArquivoCar = JobBuilder.Create<GerarArquivoCarJob>().WithIdentity("GerarArquivoCarJob").Build();
             JobDictionary.Add("GerarArquivoCarJob", gerarArquivoCar);
 			
-			//var enviarArquivoCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("EnviarArquivoCarJob").Build();
+		    //var enviarArquivoCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("EnviarArquivoCarJob").Build();
 			//JobDictionary.Add("EnviarArquivoCarJob", enviarArquivoCar);
 
             //var ajustarStatusCar = JobBuilder.Create<AjustarStatusCarJob>().WithIdentity("AjustarStatusCarJob").Build();
@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Scheduler
 		private static void ScheduleJobs()
 		{
             _scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A cada 15 Segundos"));
-            //_scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A cada 15 Segundos"));
+            //_scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A cada 60 Segundos"));
             //_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
             //_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}

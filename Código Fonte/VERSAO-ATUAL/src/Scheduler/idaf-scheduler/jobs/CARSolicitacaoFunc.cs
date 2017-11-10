@@ -105,16 +105,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             //using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             //{
-            using (OracleCommand command = new OracleCommand(
+         /*   using (OracleCommand command = new OracleCommand(
             #region Solicitação
 
                 //Comando comando = bancoDeDados.CriarComando(@"
                 "select s.tid," +
                     "s.numero," +
-                    "s.data_emissao," +
-                    "s.situacao_data," +
+                    "s.data_emissao," +                    
                     "l.id situacao," +
-                    "l.texto situacao_texto," +
+                    "l.texto situacao_texto," +                    
+                    "s.situacao_data," +                    
                     "s.situacao_anterior," +
                     "la.texto situacao_anterior_texto," +
                     "s.situacao_anterior_data," +
@@ -131,7 +131,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     "s.atividade," +
                     "e.id empreendimento_id," +
                     "e.denominador empreendimento_nome," +
-                    "e.codigo empreendimento_codigo," +
+                    "e.codigo empreendimento_codigo, " +
                     "s.declarante," +
                     "f.funcionario_id autor_id," +
                     "f.nome autor_nome," +
@@ -170,11 +170,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 command.Parameters.Add(new OracleParameter("id", id));
                 //using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 //{
+                solicitacao.Id = id; 
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        solicitacao.Id = id; //Convert.ToInt32(dr["pessoa_id"]);
+                        
                         solicitacao.Tid = Convert.ToString(reader["tid"]); //reader.GetValue<String>("tid");
                         solicitacao.Numero = Convert.ToString(reader["numero"]);//reader.GetValue<String>("numero");
                         solicitacao.DataEmissao.DataTexto = Convert.ToString(reader["data_emissao"]); //reader.GetValue<String>("data_emissao");
@@ -217,7 +218,125 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             }
 
             return solicitacao;
-            #endregion
+            #endregion */
+
+            using (OracleCommand command = new OracleCommand(
+            #region Solicitação
+
+                //Comando comando = bancoDeDados.CriarComando(@"
+             "select s.tid," +
+                 "s.numero," +
+                 "s.data_emissao," +
+                 "l.id situacao," +
+                 "l.texto situacao_texto," +
+                 "s.situacao_data," +
+                 "s.situacao_anterior," +
+                 "la.texto situacao_anterior_texto," +
+                 "s.situacao_anterior_data," +
+                 "p.id protocolo_id," +
+                 "p.protocolo," +
+                 "p.numero protocolo_numero," +
+                 "p.ano protocolo_ano," +
+
+                 "ps.id protocolo_selecionado_id," +
+                 "ps.protocolo protocolo_selecionado," +
+                 "ps.numero protocolo_selecionado_numero," +
+                 "ps.ano protocolo_selecionado_ano," +
+                 "s.requerimento," +
+                 "tr.data_criacao requerimento_data_cadastro," +
+                 "s.atividade," +
+                 "e.id empreendimento_id," +
+                 "e.denominador empreendimento_nome," +
+                 "e.codigo empreendimento_codigo, " +
+                 "s.declarante," +
+                 "nvl(pes.nome, pes.razao_social) declarante_nome_razao," +
+                 "f.funcionario_id autor_id," +
+                 "f.nome autor_nome," +
+                 "(select stragg_barra(sigla) from hst_setor where " +
+                 "setor_id in (select fs.setor_id from hst_funcionario_setor fs where fs.id_hst = f.id)" +
+                 "and tid in (select fs.setor_tid from hst_funcionario_setor fs where fs.id_hst = f.id )) autor_setor," +
+                 "'Institucional' autor_modulo," +
+                 "s.autor," +
+                 "s.motivo," +
+                 "pg.id projeto_geo_id" +
+
+             " from tab_car_solicitacao         s," +
+                 "lov_car_solicitacao_situacao l," +
+                 "lov_car_solicitacao_situacao la," +
+                 "tab_protocolo                p," +
+                 "tab_protocolo                ps," +
+                 "tab_empreendimento           e," +
+                 "crt_projeto_geo              pg," +
+                 "tab_pessoa                   pes," +
+                 "tab_requerimento             tr," +
+                 "hst_funcionario              f " +
+             " where s.situacao = l.id" +
+             " and s.situacao_anterior = la.id(+)" +
+             " and s.protocolo = p.id" +
+             " and s.protocolo_selecionado = ps.id(+)" +
+             " and s.empreendimento = e.id" +
+             " and s.empreendimento = pg.empreendimento" +
+             " and s.declarante = pes.id" +
+             " and s.requerimento = tr.id" +
+             " and pg.caracterizacao = 1" +
+             " and f.funcionario_id = s.autor" +
+             " and f.tid = (select autor_tid from hst_car_solicitacao where acao_executada = 342 and solicitacao_id = s.id)" +
+             " and s.id = :id", conn))
+            {
+                //comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+                command.Parameters.Add(new OracleParameter("id", id));
+                //using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                //{
+                solicitacao.Id = id;
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+
+                        solicitacao.Tid = Convert.ToString(reader["tid"]); //reader.GetValue<String>("tid");
+                        solicitacao.Numero = Convert.ToString(reader["numero"]);//reader.GetValue<String>("numero");
+                        solicitacao.DataEmissao.DataTexto = Convert.ToString(reader["data_emissao"]); //reader.GetValue<String>("data_emissao");
+                        if (reader["situacao"] != null && !Convert.IsDBNull(reader["situacao"])) solicitacao.SituacaoId = Convert.ToInt32(reader["situacao"]); //reader.GetValue<Int32>("situacao");
+                        solicitacao.SituacaoTexto = Convert.ToString(reader["situacao_texto"]); //reader.GetValue<String>("situacao_texto");
+                        solicitacao.DataSituacao.DataTexto = Convert.ToString(reader["situacao_data"]); //reader.GetValue<String>("situacao_data");
+                        if (reader["situacao_anterior"] != null && !Convert.IsDBNull(reader["situacao_anterior"])) solicitacao.SituacaoAnteriorId = Convert.ToInt32(reader["situacao_anterior"]);
+                        solicitacao.SituacaoAnteriorTexto = Convert.ToString(reader["situacao_anterior_texto"]); //reader.GetValue<String>("situacao_anterior_texto");
+                        solicitacao.DataSituacaoAnterior.DataTexto = Convert.ToString(reader["situacao_anterior_data"]); //reader.GetValue<String>("situacao_anterior_data");
+
+                        if (reader["protocolo_id"] != null && !Convert.IsDBNull(reader["protocolo_id"])) solicitacao.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]); //reader.GetValue<Int32>("protocolo_id");
+                        if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"])) solicitacao.Protocolo.IsProcesso = Convert.ToBoolean(reader["protocolo"]); //reader.GetValue<Int32>("protocolo") == 1;
+                        if (reader["protocolo_numero"] != null && !Convert.IsDBNull(reader["protocolo_numero"])) solicitacao.Protocolo.NumeroProtocolo = Convert.ToInt32(reader["protocolo_numero"]); //reader.GetValue<Int32?>("protocolo_numero");
+                        if (reader["protocolo_ano"] != null && !Convert.IsDBNull(reader["protocolo_ano"])) solicitacao.Protocolo.Ano = Convert.ToInt32(reader["protocolo_ano"]); //reader.GetValue<Int32>("protocolo_ano");
+
+                        if (reader["protocolo_selecionado_id"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_id"])) solicitacao.ProtocoloSelecionado.Id = Convert.ToInt32(reader["protocolo_selecionado_id"]); //reader.GetValue<Int32>("protocolo_selecionado_id");
+                        if (reader["protocolo_selecionado"] != null && !Convert.IsDBNull(reader["protocolo_selecionado"])) solicitacao.ProtocoloSelecionado.IsProcesso = Convert.ToBoolean(reader["protocolo_selecionado"]); //reader.GetValue<Int32>("protocolo_selecionado") == 1;
+                        if (reader["protocolo_selecionado_numero"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_numero"])) solicitacao.ProtocoloSelecionado.NumeroProtocolo = Convert.ToInt32(reader["protocolo_selecionado_numero"]); //reader.GetValue<Int32?>("protocolo_selecionado_numero");                  
+                        if (reader["protocolo_selecionado_ano"] != null && !Convert.IsDBNull(reader["protocolo_selecionado_ano"])) solicitacao.ProtocoloSelecionado.Ano = Convert.ToInt32(reader["protocolo_selecionado_ano"]); //reader.GetValue<Int32>("protocolo_selecionado_ano");                    
+                        if (reader["requerimento"] != null && !Convert.IsDBNull(reader["requerimento"])) solicitacao.Requerimento.Id = Convert.ToInt32(reader["requerimento"]); //reader.GetValue<Int32>("requerimento");                
+                        if (reader["requerimento_data_cadastro"] != null && !Convert.IsDBNull(reader["requerimento_data_cadastro"])) solicitacao.Requerimento.DataCadastro = Convert.ToDateTime(reader["requerimento_data_cadastro"]); //reader.GetValue<DateTime>("requerimento_data_cadastro");
+                        if (reader["atividade"] != null && !Convert.IsDBNull(reader["atividade"])) solicitacao.Atividade.Id = Convert.ToInt32(reader["atividade"]); //reader.GetValue<Int32>("atividade");						
+                        if (reader["empreendimento_id"] != null && !Convert.IsDBNull(reader["empreendimento_id"])) solicitacao.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]); //reader.GetValue<Int32>("empreendimento_id");                     
+                        solicitacao.Empreendimento.NomeRazao = Convert.ToString(reader["empreendimento_nome"]); //reader.GetValue<String>("empreendimento_nome");
+                        if (reader["empreendimento_codigo"] != null && !Convert.IsDBNull(reader["empreendimento_codigo"])) solicitacao.Empreendimento.Codigo = Convert.ToInt64(reader["empreendimento_codigo"]); //reader.GetValue<Int64?>("empreendimento_codigo");                    
+                        if (reader["declarante"] != null && !Convert.IsDBNull(reader["declarante"])) solicitacao.Declarante.Id = Convert.ToInt32(reader["declarante"]); //reader.GetValue<Int32>("declarante");
+                        solicitacao.Declarante.NomeRazaoSocial = Convert.ToString(reader["declarante_nome_razao"]); //reader.GetValue<String>("declarante_nome_razao");	               
+                        
+                        if (reader["autor_id"] != null && !Convert.IsDBNull(reader["autor_id"])) solicitacao.AutorId = Convert.ToInt32(reader["autor_id"]); //reader.GetValue<Int32>("autor_id");
+                        solicitacao.AutorNome = Convert.ToString(reader["autor_nome"]); //reader.GetValue<String>("autor_nome");
+                        solicitacao.AutorSetorTexto = Convert.ToString(reader["autor_setor"]); //reader.GetValue<String>("autor_setor");
+                        solicitacao.AutorModuloTexto = Convert.ToString(reader["autor_modulo"]); //reader.GetValue<String>("autor_modulo");               
+                        
+                        solicitacao.Motivo = Convert.ToString(reader["motivo"]); //reader.GetValue<String>("motivo");
+                        if (reader["projeto_geo_id"] != null && !Convert.IsDBNull(reader["projeto_geo_id"])) solicitacao.ProjetoId = Convert.ToInt32(reader["projeto_geo_id"]); //reader.GetValue<Int32>("projeto_geo_id");
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return solicitacao;
+            #endregion 
+
         }
 
         //
@@ -382,48 +501,48 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             //Comando comando = bancoDeDados.CriarComando(@"
             using (OracleCommand command = new OracleCommand(
 
-            "select s.tid, s.numero, s.data_emissao, s.situacao_data, l.id situacao, l.texto situacao_texto, s.situacao_anterior, la.texto situacao_anterior_texto, s.situacao_anterior_data, nvl(pes.nome, pes.razao_social) declarante_nome_razao," +
-                  "s.requerimento, s.atividade, " +
-                  "e.id empreendimento_id," +
-                  "e.denominador empreendimento_nome," +
-                  "e.codigo empreendimento_codigo,}" +
-                  "s.declarante," +
+            "select s.tid, s.numero, s.data_emissao, s.situacao_data, l.id situacao, l.texto situacao_texto, s.situacao_anterior, la.texto situacao_anterior_texto, s.situacao_anterior_data, nvl(pes.nome, pes.razao_social) declarante_nome_razao, " +
+                  " s.requerimento, s.atividade, " +
+                  " e.id empreendimento_id, " +
+                  " e.denominador empreendimento_nome, " +
+                  " e.codigo empreendimento_codigo, " +
+                  " s.declarante," +
+ 
+                  " p.id protocolo_id," +
+                  " p.protocolo," +
+                  " p.numero protocolo_numero," +
+                  " p.ano protocolo_ano," +
 
-                  "p.id protocolo_id," +
-                  "p.protocolo," +
-                  "p.numero protocolo_numero," +
-                  "p.ano protocolo_ano," +
+                  " s.credenciado autor_id," +
+                  " nvl(f.nome, f.razao_social) autor_nome," +
+                  " lct.texto  autor_tipo," +
+                  " 'Credenciado' autor_modulo," +
 
-                  "s.credenciado autor_id," +
-                  "nvl(f.nome, f.razao_social) autor_nome," +
-                  "lct.texto  autor_tipo," +
-                  "'Credenciado' autor_modulo," +
-
-                  "s.motivo," +
-                  "tr.data_criacao requerimento_data_cadastro," +
-                  "s.projeto_digital" +
-
-                  "from tab_car_solicitacao          s," +
-                  "lov_car_solicitacao_situacao l," +
-                  "lov_car_solicitacao_situacao la," +
-                  "tab_empreendimento           e," +
-                  "tab_pessoa                   pes," +
-                  "tab_requerimento             tr," +
-                  "tab_credenciado              tc," +
-                  "tab_pessoa                   f," +
-                  "lov_credenciado_tipo         lct," +
-                  "ins_protocolo                p" +
-                "where s.situacao = l.id" +
-                "and s.situacao_anterior = la.id(+)" +
-                "and s.empreendimento = e.id" +
-                "and s.declarante = pes.id" +
-                "and s.requerimento = tr.id" +
-                "and s.empreendimento = e.id" +
-                "and tc.id = s.credenciado" +
-                "and f.id = tc.pessoa" +
-                "and lct.id = tc.tipo" +
-                "and s.requerimento=p.requerimento(+)" +
-                "and s.id = :id", conn))//UsuarioCredenciado)
+                  " s.motivo," +
+                  " tr.data_criacao requerimento_data_cadastro," +
+                  " s.projeto_digital" +
+ 
+                  " from tab_car_solicitacao          s," +
+                  " lov_car_solicitacao_situacao l," +
+                  " lov_car_solicitacao_situacao la," +
+                  " tab_empreendimento           e," +
+                  " tab_pessoa                   pes," +
+                  " tab_requerimento             tr," +
+                  " tab_credenciado              tc," +
+                  " tab_pessoa                   f," +
+                  " lov_credenciado_tipo         lct," +
+                  " ins_protocolo                p" +
+                "  where s.situacao = l.id" +
+                " and s.situacao_anterior = la.id(+)" +
+                " and s.empreendimento = e.id" +
+                " and s.declarante = pes.id" +
+                " and s.requerimento = tr.id" +
+                " and s.empreendimento = e.id" +
+                " and tc.id = s.credenciado" +
+                " and f.id = tc.pessoa" +
+                " and lct.id = tc.tipo" +
+                " and s.requerimento=p.requerimento(+)" +
+                " and s.id = :id", conn))//UsuarioCredenciado)
             {
                 //comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -576,8 +695,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             //bancoDeDados.IniciarTransacao();
 
             //Comando comando = bancoDeDados.CriarComando(@
-            using (OracleCommand command = new OracleCommand("select s.solicitacao_id solic_id, s.tid solic_tid, s.empreendimento_id emp_id, s.empreendimento_tid emp_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
-                    "and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
+            using (OracleCommand command = new OracleCommand("select s.empreendimento_id emp_id, s.empreendimento_tid emp_tid, s.solicitacao_id solic_id, s.tid solic_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
+                    " and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
             {
                 //comando.AdicionarParametroEntrada("idSolicitacao", solicitacaoId, DbType.Int32);
 
@@ -592,8 +711,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                             + "\"origem\": \"" + solicitacaoOrigem.ToString().ToLower() + "\", "
                                             + "\"empreendimento\":" + Convert.ToInt32(reader["emp_id"]) + ", "              //reader.GetValue<int>("emp_id") + ", "
                                             + "\"empreendimento_tid\": \"" + Convert.ToString(reader["emp_tid"]) + "\","    //reader.GetValue<string>("emp_tid") + "\","
-                                            + "\"solicitacao_car\": " + Convert.ToString(reader["emp_tid"]) + ","           //reader.GetValue<int>("solic_id") + ","
-                                            + "\"solicitacao_car_tid\": \"" + Convert.ToString(reader["emp_tid"]) + "\"" +  //reader.GetValue<string>("solic_tid") + "\"" +
+                                            + "\"solicitacao_car\": " + Convert.ToString(reader["solic_id"]) + ","           //reader.GetValue<int>("solic_id") + ","
+                                            + "\"solicitacao_car_tid\": \"" + Convert.ToString(reader["solic_tid"]) + "\"" +  //reader.GetValue<string>("solic_tid") + "\"" +
                                           "}";
                     }
 
@@ -796,7 +915,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 //bancoDeDados.IniciarTransacao();
 
                // Comando comando = bancoDeDados.CriarComando(@
-            using (OracleCommand command = new OracleCommand("select tcs.id solic_id, tcs.tid solic_tid, te.id emp_id, te.tid emp_tid from tab_car_solicitacao tcs, tab_empreendimento te "+
+            using (OracleCommand command = new OracleCommand("select te.id emp_id, te.tid emp_tid, tcs.id solic_id, tcs.tid solic_tid  from tab_car_solicitacao tcs, tab_empreendimento te " +
                     " where tcs.empreendimento = te.id and tcs.id = :idSolicitacao", conn))
             {
 

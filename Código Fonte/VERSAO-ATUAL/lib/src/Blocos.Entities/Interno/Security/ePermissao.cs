@@ -386,6 +386,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Security
 
 		RelatorioMapa,
 
-        DeclaracaoAdicional
+        DeclaracaoAdicional,
+
+        ConfigurarCodigoReceita,
+        ConfigurarPenalidade,
+        ConfigurarProdutosDestinacao,
 	}
 }

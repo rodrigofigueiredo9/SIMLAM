@@ -65,12 +65,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		{
 			try
 			{
-				if (_validar.Salvar(carSolicitacao))
-				{
+				//if (_validar.Salvar(carSolicitacao))
+				//{
 					GerenciadorTransacao.ObterIDAtual();
 					carSolicitacao.Id = _daInterno.ObterNovoID();
-                    if(carSolicitacao.Declarante.IsFisica)
-                        carSolicitacao.Declarante.Id = User.FuncionarioId;                  
+                    
+                    //carSolicitacao.Declarante.Id = User.FuncionarioId;                  
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 					{
@@ -131,7 +131,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
                     }
                     #endregion
-				}
+				//}
 			}
 			catch (Exception e)
 			{
@@ -399,7 +399,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public CARSolicitacao Obter(int id, BancoDeDados banco = null)
 		{
-            //Chamada do botão enviar para SICAR
+            //Chamada tambem do botão enviar para SICAR
 			try
 			{
                 //Consulta no credenciado, se vier nulo, consulta no institucional

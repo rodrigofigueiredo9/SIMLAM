@@ -66,12 +66,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		{
 			try
 			{
-				if (_validar.Salvar(entidade))
-				{
+			    //if (_validar.Salvar(entidade))
+				//{
 					GerenciadorTransacao.ObterIDAtual();
 
-                    var verificar = _da.VerificaSolicitacaoCedente(entidade.Empreendimento.Id);
-
+                    //função não esta sendo usada, pois implementamos outra soluçao no scheduler; arquivo: gerarArquivoCarJob; função: obterDadosReservaLegal;
+                    //var verificar = _da.VerificaSolicitacaoCedente(entidade.Empreendimento.Id);
+                    var verificar = false;
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
@@ -131,7 +132,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                     }
                     #endregion
             
-				}
+				//}
 		    }
 			catch (Exception e)
 			{
