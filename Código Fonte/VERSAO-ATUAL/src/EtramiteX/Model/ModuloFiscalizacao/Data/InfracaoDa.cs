@@ -515,7 +515,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                     foreach (var id_penalidade in infracao.IdsOutrasPenalidades)
                     {
-                        comando = bancoDeDados.CriarComando(@"
+                        if (id_penalidade > 0)
+                        {
+                            comando = bancoDeDados.CriarComando(@"
                                 insert into {0}tab_fisc_outras_penalidad_infr (id,
                                                                                infracao,
                                                                                penalidade_outra,
@@ -525,11 +527,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         :id_penalidade,
                                         :tid)", EsquemaBanco);
 
-                        comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
-                        comando.AdicionarParametroEntrada("id_penalidade", id_penalidade, DbType.Int32);
-                        comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                            comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+                            comando.AdicionarParametroEntrada("id_penalidade", id_penalidade, DbType.Int32);
+                            comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                        bancoDeDados.ExecutarNonQuery(comando);
+                            bancoDeDados.ExecutarNonQuery(comando);
+                        }
                     }
 
                     #endregion

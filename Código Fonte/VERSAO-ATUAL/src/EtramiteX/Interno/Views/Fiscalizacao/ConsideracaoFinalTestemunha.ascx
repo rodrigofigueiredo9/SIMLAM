@@ -10,12 +10,6 @@
 		<div class="coluna19">
 			<label for="">Funcionário do IDAF?</label><br />
 			<%= Html.DropDownList("Span" + Model.Testemunha.Colocacao, Model.FuncionarioIDAF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFuncIDAF" }))%> 
-
-			<%--<span style="display: none;/*inline-block*/ border-style: solid; border-width: 1px; border-color: transparent;" class="text" id="Span<%= Model.Testemunha.Colocacao%>">
-				<label><%= Html.RadioButton("rblFuncIDAF" + Model.Testemunha.Colocacao, 1, Model.Testemunha.TestemunhaIDAF.HasValue && Model.Testemunha.TestemunhaIDAF.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblFuncIDAF prepend2" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("rblFuncIDAF" + Model.Testemunha.Colocacao, 0, Model.Testemunha.TestemunhaIDAF.HasValue && !Model.Testemunha.TestemunhaIDAF.Value, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rblFuncIDAF " }))%>Não</label>
-			</span>--%>
-
 		</div>
 	</div>
 
