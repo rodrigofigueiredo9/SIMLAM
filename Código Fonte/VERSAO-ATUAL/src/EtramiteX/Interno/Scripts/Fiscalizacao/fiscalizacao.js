@@ -730,10 +730,10 @@ FiscalizacaoLocalInfracao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, FiscalizacaoLocalInfracao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-			    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
-			    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
-
 			    if (response.EhValido) {
+			        $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
+			        $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+
 			        $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 
 					$('.divResultados', FiscalizacaoLocalInfracao.container).html(response.Html);
