@@ -41,6 +41,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.LocalInfracaoMsg.ResponsavelPropriedadeObrigatorio);
 			}
 
+            if (string.IsNullOrWhiteSpace(localInfracao.AreaAbrangencia))
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaObrigatoria);
+            }
+
+            if (string.IsNullOrWhiteSpace(localInfracao.LonEasting))
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.EastingUtmObrigatorio);
+            }
+
+            if (string.IsNullOrWhiteSpace(localInfracao.LatNorthing))
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.NorthingUtmObrigatorio);
+            }
+
+            if (localInfracao.MunicipioId == null || localInfracao.MunicipioId < 1)
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.MunicipioObrigatorio);
+            }
+
+            if (string.IsNullOrWhiteSpace(localInfracao.Local))
+            {
+                Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
+            }
+
 			return Validacao.EhValido;
 		}
 	}
