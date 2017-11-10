@@ -544,14 +544,12 @@ FiscalizacaoLocalInfracao = {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 
+		    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).show();
 		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).hide();
 
 		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
 		}
-		//else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
-		//    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
-		//}
 	},
 
 	gerarObjetoFiltroLocalizar: function () {
@@ -691,12 +689,22 @@ FiscalizacaoLocalInfracao = {
 		$('.txtNomeRazao', FiscalizacaoLocalInfracao.container).val(Pessoa.NomeRazaoSocial);
 		$('.txtCpfCnpj', FiscalizacaoLocalInfracao.container).val(Pessoa.CPFCNPJ);
 
+        //Dentro de empreedimento == sim
 		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.divEmpreendimento', FiscalizacaoLocalInfracao.container).show();
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
-		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
+
+		    $('.divBtnVerificarEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+		    $('.fdsEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
+		    $('.btnVerificarEmpPessoa', FiscalizacaoLocalInfracao.container).show();
+		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).hide();
+
+		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).hide();
+		}
+        //Dentro de empreendimento == não
+		else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).removeClass("hide");
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
 		}
@@ -812,6 +820,9 @@ FiscalizacaoLocalInfracao = {
 
 	                $('.spanEmpNovoPessoa', FiscalizacaoLocalInfracao.container).show();
 	                $('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).show();
+
+	                $('.btnEmpBuscaLocal', FiscalizacaoLocalInfracao.container).show();
+	                $('.spanEmpBuscaLocal', FiscalizacaoLocalInfracao.container).show();
 
 	                Mensagem.limpar(Fiscalizacao.container);
 	            } else {
