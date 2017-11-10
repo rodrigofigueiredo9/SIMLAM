@@ -154,7 +154,7 @@
 
                 <div class="coluna10">
                     <label>Quantidade</label>
-				    <input type="text" id="MaterialApreendido_ProdutosApreendidos" maxlength="8" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
+				    <input type="text" id="MaterialApreendido_ProdutosApreendidos" maxlength="13" id="MaterialApreendido_Quantidade" class="text txtQuantidade maskDecimalPonto" />
                 </div>
 
                 <div class="coluna30">
@@ -196,7 +196,7 @@
                                     <span class="unidade" title="<%:prod.UnidadeTexto%>"><%:prod.UnidadeTexto%></span>
                                 </td>
                                 <td>
-                                    <span class="quantidade" title="<%:prod.Quantidade%>"><%:prod.Quantidade%></span>
+                                    <span class="quantidade" title="<%:prod.Quantidade%>"><%:String.Format("{0:##,###,##0.00}", prod.Quantidade)%></span>
                                 </td>
                                 <td>
                                     <span class="produto" title="<%:prod.DestinoTexto%>"><%:prod.DestinoTexto%></span>

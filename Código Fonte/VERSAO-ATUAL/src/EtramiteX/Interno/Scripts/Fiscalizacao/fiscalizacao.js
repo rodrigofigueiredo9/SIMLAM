@@ -2890,7 +2890,9 @@ FiscalizacaoConsideracaoFinal = {
 			$('.divFuncionario', context).removeClass('hide');
 			$('.txtTestemunhaCPF', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
 		} else if (ddlFuncIDAF.val().toString() == "2") {
-			$('.divDadosTestemunha', context).removeClass('hide');
+		    $('.divDadosTestemunha', context).removeClass('hide');
+		    $('.txtTestemunhaCPF', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
+		    $('.txtTestemunhaNome', FiscalizacaoLocalInfracao.container).attr('disabled', 'disabled').addClass('disabled');
 		}
 	},
 
