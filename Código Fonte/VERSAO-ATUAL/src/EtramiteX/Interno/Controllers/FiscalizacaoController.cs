@@ -1779,7 +1779,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             try
             {
-                Stream strArquivo = _bus.LaudoFiscalizacaoPdf(id, arquivo, historico);
+                Stream strArquivo = _bus.LaudoFiscalizacaoPdfNovo(id, arquivo, historico);
 
                 if (!Validacao.EhValido)
                 {
