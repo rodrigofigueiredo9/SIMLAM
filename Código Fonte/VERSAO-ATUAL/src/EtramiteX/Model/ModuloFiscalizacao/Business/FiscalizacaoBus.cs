@@ -811,6 +811,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return null;
 		}
 
+        public Stream LaudoFiscalizacaoPdfNovo(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
+        {
+            try
+            {
+                PdfFiscalizacao _pdf = new PdfFiscalizacao();
+                Fiscalizacao fiscalizacao = Obter(id, true);
+
+                if (historico == 0 && fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                {
+                    return _pdf.GerarLaudoFiscalizacaoNovo(id, banco: banco);
+                }
+
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
+
+                if (fiscalizacao.PdfLaudo.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfLaudo.Id != arquivo))
+                {
+                    Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
+                    return null;
+                }
+
+                ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfLaudo.Id.GetValueOrDefault());
+
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
+
+                return pdf.Buffer;
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public Arquivo BaixarArquivo(int id, int historico = 0)
 		{
 			try

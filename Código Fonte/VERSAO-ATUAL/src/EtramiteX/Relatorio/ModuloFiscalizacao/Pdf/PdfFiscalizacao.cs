@@ -148,6 +148,97 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return GerarPdf(dataSource);
 		}
 
+        public MemoryStream GerarLaudoFiscalizacaoNovo(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao_Novo.docx";
+
+            FiscalizacaoRelatorioNovo dataSource = _da.ObterNovo(id, banco);
+
+            ConfiguracaoDefault.TextoTagAssinante = "«Assinante.Nome»";
+            ConfiguracaoDefault.TextoTagAssinantes1 = "«TableStart:Assinantes1»";
+            ConfiguracaoDefault.TextoTagAssinantes2 = "«TableStart:Assinantes2»";
+
+            if (dataSource.ConsideracoesFinais != null &&
+                dataSource.ConsideracoesFinais.Assinantes != null &&
+                dataSource.ConsideracoesFinais.Assinantes.Count > 0)
+            {
+                var autor = dataSource.ConsideracoesFinais.Assinantes.First(x => x.Id == dataSource.UsuarioCadastro.Id);
+                if (autor != null)
+                {
+                    dataSource.ConsideracoesFinais.Assinantes.Remove(autor);
+                    dataSource.ConsideracoesFinais.Assinantes.Insert(0, autor);
+                }
+
+
+                ConfiguracaoDefault.Assinantes = dataSource.ConsideracoesFinais.Assinantes.Cast<IAssinante>().ToList();
+            }
+
+            ConfigurarCabecarioRodape(dataSource.LocalInfracao.SetorId);
+
+            if (dataSource.ConsideracoesFinais.Anexos != null && dataSource.ConsideracoesFinais.Anexos.Count > 0)
+            {
+                foreach (ConsideracoesFinaisAnexoRelatorio anexo in dataSource.ConsideracoesFinais.Anexos)
+                {
+                    anexo.Arquivo.Conteudo = AsposeImage.RedimensionarImagem(File.ReadAllBytes(anexo.Arquivo.Caminho), 11, eAsposeImageDimensao.Ambos);
+                }
+            }
+
+            ObterArquivoTemplate();
+
+            object objeto = dataSource;
+
+            #region Remover
+
+            this.ConfiguracaoDefault.AddLoadAcao((doc, a) =>
+            {
+                List<Table> itenRemover = new List<Table>();
+                FiscalizacaoRelatorioNovo fiscalizacao = (FiscalizacaoRelatorioNovo)dataSource;
+
+                fiscalizacao.OrgaoMunicipio = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoMunicipio);
+                fiscalizacao.OrgaoUF = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoUf);
+
+                if (fiscalizacao.Infracao.Campos.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Campos»").Remove();
+                }
+
+                if (fiscalizacao.Infracao.Perguntas.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Perguntas»").Remove();
+                }
+
+                if (fiscalizacao.ConsideracoesFinais.Anexos.Count == 0)
+                {
+                    itenRemover.Add(doc.Last<Table>("«TableStart:ConsideracoesFinais.Anexos»"));
+                    doc.RemovePageBreak();
+                }
+
+                #region Anexo Croqui da fiscalizacao
+
+                /*List<ArquivoProjeto> arquivosProj = new ProjetoGeograficoBus().ObterArquivos(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(0), true).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui).ToList();
+
+				autorizacao.AnexosPdfs = arquivosProj.Cast<Arquivo>().ToList();
+
+				//Obtendo Arquivos
+				ArquivoBus _busArquivo = new ArquivoBus();
+
+				for (int i = 0; i < autorizacao.AnexosPdfs.Count; i++)
+				{
+					autorizacao.AnexosPdfs[i] = _busArquivo.ObterDados(autorizacao.AnexosPdfs[i].Id.GetValueOrDefault(0));
+				}*/
+
+                #endregion
+
+                AsposeExtensoes.RemoveTables(itenRemover);
+            });
+
+            #endregion Remover
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+
+            return GerarPdf(dataSource);
+        }
+
 		public MemoryStream GerarLaudoAcompanhamentoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
 			ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao_Acompanhamento.docx";
