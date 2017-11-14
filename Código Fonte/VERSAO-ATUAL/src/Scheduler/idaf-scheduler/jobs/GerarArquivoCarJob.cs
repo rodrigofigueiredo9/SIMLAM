@@ -116,8 +116,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						 if (controleSicar.solicitacao_passivo > 0)
 							PreencherCampos(car);
-						else
+                        else 
 							ValidarCampos(car);
+                             
 
 						//Salvar o arquivo .CAR
 						var arquivoCar = GerarArquivoCAR(car, conn);
@@ -1093,7 +1094,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 if(tipo == 2)
                 {
                     using (var cmd =
-                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CNPJ 
+                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CPF 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
                                                 INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
                                                 INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
@@ -1352,7 +1353,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							{
 								numero = dr.GetValue<string>("numero_termo"),
 								data = new DateTime(1900, 01, 01),
-                                reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") 
+                                //reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
+                                reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
 							};
 							if (string.IsNullOrEmpty(dados.numero))
 							{
@@ -1534,6 +1536,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						geo.AddRange(ObterGeometriaArlAverbada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid, item.Item2));
 					}
 				});
+                //geo.AddRange(ObterGeometriaArlTotal(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 			}
 
 			//Remover geometrias nulas para envio
@@ -1577,10 +1580,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     break;
 
 			}
+            sqlBuilder.Append(" t.GEOMETRY.sdo_gtype AS GEOTYPE, ");
 			sqlBuilder.Append(" (CASE WHEN TEMARCO(t.geometry)='TRUE' THEN SDO_CS.TRANSFORM(sdo_geom.sdo_arc_densify(t.geometry, 0.01001, 'arc_tolerance=0,00001'), 4674).get_wkt() ");
-			sqlBuilder.Append(" ELSE SDO_CS.TRANSFORM(t.geometry, 4674).get_wkt() END) as wkt FROM ");
-			sqlBuilder.Append(tabela + " t WHERE t.projeto = :projeto AND (t.tid = :tid or t.projeto_tid = :tid)");
-			if (filtro != "")
+			sqlBuilder.Append(" ELSE SDO_CS.TRANSFORM(t.geometry, 4674).get_wkt() END) as wkt FROM ");            
+			//sqlBuilder.Append(tabela + " t WHERE t.projeto = :projeto AND (t.tid = :tid or t.projeto_tid = :tid)");
+            sqlBuilder.Append(tabela + " t WHERE t.projeto = :projeto");
+            if (filtro != "")
 			{
 				sqlBuilder.Append(" AND " + filtro);
 			}
@@ -1589,14 +1594,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			{
                 //PARAMETROS DO SELECT
 				cmd.Parameters.Add(new OracleParameter("projeto", projetoGeoId));
-				cmd.Parameters.Add(new OracleParameter("tid", projetoGeoTid));
+				//cmd.Parameters.Add(new OracleParameter("tid", projetoGeoTid));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
 					{
 						var geo = new Geo() { tipo = tipoGeometriaCar };
-
 						try
 						{
 							//geo.geoJson = GeometryFromWKT.Parse(Convert.ToString(dr["wkt"])).ToGeoJson();
@@ -1611,6 +1615,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							throw new Exception("Geometria " + tipoGeometriaCar + " ID " + id + "inválida: " + exception.Message);
 						}
 
+                        switch (Convert.ToInt32(dr["GEOTYPE"]))
+                        {
+                            case 2001:   //POINT
+                                geo.area = 0;
+                                break;
+                            case 2002:   //LINESTRING
+                                geo.area = 0;
+                                break;
+                            case 2003:   //POLYGON
+                                geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                                geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
+                                break;
+                            case 2007:   //MULTIPOLYGON
+                                geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                                break;
+
+                        }
+                        /*
+                         * 
 						switch (tipoGeometriaGeoJson)
 						{
 							case Geometria.LINESTRING:
@@ -1630,10 +1653,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             case Geometria.MULTIPOLYGON:
                                 //geo.largura = 0;
                                 geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
-                                //geo.geoJson.type = Geometria.MULTIPOLYGON;
-                                geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
+                                //geo.geoJson.Type = Geometria.MULTIPOLYGON;
+                                //geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
                                 break;
-						}
+						}*/
 
 						//Criar arquivo geojson para testes
 						/*var id = Convert.ToString(dr["id"]);
@@ -1680,7 +1703,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <exception cref="System.Exception">Erro ao buscar os dados Geo - ATP do imóvel inexistente.</exception>
 		private static Geo ObterGeometriaAreaImovel(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_ATP";
+			var tabela = schema + ".GEO_ATP";
 
 			var geometrias = new List<Geo>();
 
@@ -1704,7 +1727,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaArlARecuperar(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_ARL";
+			var tabela = schema + ".GEO_ARL";
 
 			var geometrias = new List<Geo>();
 
@@ -1724,7 +1747,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaRioAte10(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_RIO_AREA";
+			var tabela = schema + ".GEO_RIO_AREA";
 
 			var geometrias = new List<Geo>();
 
@@ -1743,7 +1766,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaRio10A50(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_RIO_AREA";
+			var tabela = schema + ".GEO_RIO_AREA";
 
 			var geometrias = new List<Geo>();
 
@@ -1763,7 +1786,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaReservatorioArtifical(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_REPRESA";
+			var tabela = schema + ".GEO_REPRESA";
 
 			var geometrias = new List<Geo>();
 
@@ -1783,7 +1806,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaRio50A200(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_RIO_AREA";
+			var tabela = schema + ".GEO_RIO_AREA";
 
 			var geometrias = new List<Geo>();
 
@@ -1804,7 +1827,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaRio200A600(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_RIO_AREA";
+			var tabela = schema + ".GEO_RIO_AREA";
 
 			var geometrias = new List<Geo>();
 
@@ -1825,7 +1848,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaRioAcima600(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_RIO_AREA";
+			var tabela = schema + ".GEO_RIO_AREA";
 
 			var geometrias = new List<Geo>();
 
@@ -1846,7 +1869,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaNascenteOlhoDagua(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_NASCENTE";
+			var tabela = schema + ".GEO_NASCENTE";
 
 			var geometrias = new List<Geo>();
 
@@ -1865,7 +1888,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaLagoNatural(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_LAGOA";
+			var tabela = schema + ".GEO_LAGOA";
 
 			var geometrias = new List<Geo>();
 
@@ -1884,7 +1907,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaAreaDeclividadeMaior45(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_REST_DECLIVIDADE";
+			var tabela = schema + ".GEO_REST_DECLIVIDADE";
 
 			var geometrias = new List<Geo>();
 
@@ -1904,7 +1927,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaBordaChapada(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_ESCARPA";
+			var tabela = schema + ".GEO_ESCARPA";
 
 			var geometrias = new List<Geo>();
 
@@ -1924,7 +1947,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaManguezal(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_AVN";
+			var tabela = schema + ".GEO_AVN";
 
 			var geometrias = new List<Geo>();
 
@@ -1944,13 +1967,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaVegetacaoNativa(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_AVN";
+			var tabela = schema + ".GEO_AVN";
 
 			var geometrias = new List<Geo>();
 
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
 				Geo.TipoVegetacaoNativa,
-				"vegetacao NOT IN ('MANGUE','BREJO','RESTINGA','RESTINGA-APP')"));
+                "vegetacao NOT IN ('MANGUE','RESTINGA','RESTINGA-APP')"));
+                //"vegetacao NOT IN ('MANGUE','BREJO','RESTINGA','RESTINGA-APP')"));
 
 			return geometrias;
 		}
@@ -1965,7 +1989,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaAppTotal(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_AREAS_CALCULADAS";
+			var tabela = schema + ".GEO_AREAS_CALCULADAS";
 
 			var geometrias = new List<Geo>();
 
@@ -1988,8 +2012,30 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             var tabela = schema + ".GEO_CAR_APP_CALCULADAS";
 
             var geometrias = new List<Geo>();
-
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaNascente,
+            
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaNascente,
+                "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRioAte10,
+                "tipo = 'APP_RIO_ATE_10'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio10A50,
+                "tipo = 'APP_RIO_10_A_50'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio50A200,
+                "tipo = 'APP_RIO_50_A_200'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio200A600,
+                "tipo = 'APP_200_A_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio600,
+                "tipo = 'APP_RIO_ACIMA_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaReservatorio,
+                "tipo = 'APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaBordaChapada,
+                "tipo = 'APP_BORDA_CHAPADA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRestinga,
+                "tipo = 'APP_RESTINGA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaDeclividade,
+                "tipo = 'APP_AREA_DECLIVIDADE_MAIOR_45'"));
+            
+            /*
+             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaNascente,
                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaRioAte10,
                 "tipo = 'APP_RIO_ATE_10'"));
@@ -2009,6 +2055,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 "tipo = 'APP_RESTINGA'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaDeclividade,
                 "tipo = 'APP_AREA_DECLIVIDADE_MAIOR_45'"));
+            */ 
 
             //Remover geometrias nulas para envio
             geometrias.RemoveAll(x => x == null);
@@ -2029,8 +2076,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             var tabela = schema + ".GEO_CAR_ESCADINHA_CALCULADAS";
 
             var geometrias = new List<Geo>();
+            
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaNascente,
+                 "tipo = 'APP_ESCADINHA_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaLago,
+                "tipo = 'APP_ESCADINHA_LAGO_NATURAL'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaRioAte10,
+                "tipo = 'APP_ESCADINHA_RIO_ATE_10'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaRio10A50,
+                "tipo = 'APP_ESCADINHA_RIO_10_A_50'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaRio50A200,
+                "tipo = 'APP_ESCADINHA_RIO_50_A_200'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaRio200A600,
+                "tipo = 'APP_ESCADINHA_200_A_600'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoEscadinhaCalculadaRio600,
+                "tipo = 'APP_ESCADINHA_RIO_ACIMA_600'"));
 
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaNascente,
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaTotal,
+                "tipo = 'APP_ESCADINHA'"));
+            
+            /*
+             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaNascente,
                  "tipo = 'APP_ESCADINHA_NASCENTE_OLHO_DAGUA'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaCalculadaLago,
                 "tipo = 'APP_ESCADINHA_LAGO_NATURAL'"));
@@ -2047,6 +2113,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoEscadinhaTotal,
                 "tipo = 'APP_ESCADINHA'"));
+            */
 
             //Remover geometrias nulas para envio
             geometrias.RemoveAll(x => x == null);    
@@ -2064,7 +2131,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaAreaConsolidada(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".HST_AA";
+			var tabela = schema + ".GEO_AA";
 
 			var geometrias = new List<Geo>();
 
@@ -2076,7 +2143,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 		private static IEnumerable<Geo> ObterGeometriaArlAverbada(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid, string identificacaoReserva)
 		{
-			var tabela = schema + ".HST_ARL";
+			var tabela = schema + ".GEO_ARL";
 
 			var geometrias = new List<Geo>();
 
@@ -2088,7 +2155,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 		private static IEnumerable<Geo> ObterGeometriaArlProposta(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid, string identificacaoReserva)
 		{
-			var tabela = schema + ".HST_ARL";
+			var tabela = schema + ".GEO_ARL";
 
 			var geometrias = new List<Geo>();
 
@@ -2097,6 +2164,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			return geometrias;
 		}
+
+        private static IEnumerable<Geo> ObterGeometriaArlTotal(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
+        {
+            var tabela = schema + ".GEO_ARL";
+
+            var geometrias = new List<Geo>();
+
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
+                Geo.TipoArlTotal, "situacao != 'D'"));
+
+            return geometrias;
+        }
 
 		/// <summary>
 		/// Gerars the arquivo car.
