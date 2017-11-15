@@ -207,27 +207,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     doc.Find<Row>("«TableStart:Infracao.Perguntas»").Remove();
                 }
 
+                if (fiscalizacao.MaterialApreendido.ProdutosDestinacoes.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:MaterialApreendido.ProdutosDestinacoes»").Remove();
+                }
+
                 if (fiscalizacao.ConsideracoesFinais.Anexos.Count == 0)
                 {
                     itenRemover.Add(doc.Last<Table>("«TableStart:ConsideracoesFinais.Anexos»"));
                     doc.RemovePageBreak();
                 }
-
-                #region Anexo Croqui da fiscalizacao
-
-                /*List<ArquivoProjeto> arquivosProj = new ProjetoGeograficoBus().ObterArquivos(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(0), true).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui).ToList();
-
-				autorizacao.AnexosPdfs = arquivosProj.Cast<Arquivo>().ToList();
-
-				//Obtendo Arquivos
-				ArquivoBus _busArquivo = new ArquivoBus();
-
-				for (int i = 0; i < autorizacao.AnexosPdfs.Count; i++)
-				{
-					autorizacao.AnexosPdfs[i] = _busArquivo.ObterDados(autorizacao.AnexosPdfs[i].Id.GetValueOrDefault(0));
-				}*/
-
-                #endregion
 
                 AsposeExtensoes.RemoveTables(itenRemover);
             });

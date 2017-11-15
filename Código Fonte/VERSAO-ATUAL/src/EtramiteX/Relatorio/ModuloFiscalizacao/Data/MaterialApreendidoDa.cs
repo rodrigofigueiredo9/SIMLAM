@@ -69,6 +69,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return objeto;
 		}
 
+        public MaterialApreendidoRelatorioNovo ObterNovo(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            MaterialApreendidoRelatorioNovo objeto = new MaterialApreendidoRelatorioNovo();
+            Comando comando = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                comando = bancoDeDados.CriarComando(@"select tfa.id Id,
+                                                             Tfa.Iuf_Numero NumeroIUF,
+                                                             Lfs.Texto SerieTexto,
+                                                             to_char(tfa.iuf_data, 'DD/MM/YYYY') DataLavraturaIUF,
+                                                             Tfa.Descricao DescreverApreensao,
+                                                             Tfa.Opiniao OpinarDestino
+                                                      from {0}Tab_Fisc_Apreensao tfa,
+                                                           {0}lov_fiscalizacao_serie lfs
+                                                      where (tfa.serie is null or lfs.id = tfa.serie)
+                                                            and tfa.Fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+                objeto = bancoDeDados.ObterEntity<MaterialApreendidoRelatorioNovo>(comando);
+                objeto.ProdutosDestinacoes = ObterProdutosDestinacao(objeto.Id);
+                objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroIUF) ? String.Empty : objeto.SerieTexto;              
+            }
+
+            return objeto;
+        }
+
 		public MaterialApreendidoRelatorio ObterHistorico(int historicoId, BancoDeDados banco = null)
 		{
 			MaterialApreendidoRelatorio objeto = new MaterialApreendidoRelatorio();
@@ -133,6 +161,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			return colecao;
 		}
+
+        private List<ApreensaoProdutoDestinacaoRelatorio> ObterProdutosDestinacao(int materialApreendidoId, BancoDeDados banco = null)
+        {
+            List<ApreensaoProdutoDestinacaoRelatorio> colecao = new List<ApreensaoProdutoDestinacaoRelatorio>();
+            Comando comando = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                comando = bancoDeDados.CriarComando(@"select Cfip.Item Produto,
+                                                             Cfip.Unidade Unidade,
+                                                             Tfap.Quantidade,
+                                                             Cfid.Destino Destino
+                                                      from {0}Tab_Fisc_Apreensao_Produto tfap,
+                                                           {0}Cnf_Fisc_Infracao_Produto cfip,
+                                                           {0}Cnf_Fisc_Infr_Destinacao cfid
+                                                      where Tfap.Produto = cfip.id
+                                                            and Tfap.Destinacao = cfid.id
+                                                            and Tfap.Apreensao = :apreensaoId", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("apreensaoId", materialApreendidoId, DbType.Int32);
+
+                colecao = bancoDeDados.ObterEntityList<ApreensaoProdutoDestinacaoRelatorio>(comando);
+
+                for (int i = 0; i < colecao.Count; i++)
+                {
+                    colecao[i].Item = (i + 1).ToString();
+                }
+            }
+
+            return colecao;
+        }
 
 		private List<MaterialApreendidoMaterialRelatorio> ObterMateriaisHistorico(int historicoMaterialApreendidoId, BancoDeDados banco = null)
 		{
