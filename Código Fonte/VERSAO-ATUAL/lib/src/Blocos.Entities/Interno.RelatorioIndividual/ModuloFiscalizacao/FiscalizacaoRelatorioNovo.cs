@@ -58,8 +58,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 			set { _materialApreendido = value; }
 		}
 
-		private ObjetoInfracaoRelatorio _objetoInfracao = new ObjetoInfracaoRelatorio();
-		public ObjetoInfracaoRelatorio ObjetoInfracao
+		private ObjetoInfracaoRelatorioNovo _objetoInfracao = new ObjetoInfracaoRelatorioNovo();
+		public ObjetoInfracaoRelatorioNovo ObjetoInfracao
 		{
 			get { return _objetoInfracao; }
 			set { _objetoInfracao = value; }

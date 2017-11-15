@@ -99,6 +99,83 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return objeto;
 		}
 
+        public ObjetoInfracaoRelatorioNovo ObterNovo(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            ObjetoInfracaoRelatorioNovo objeto = new ObjetoInfracaoRelatorioNovo();
+            Comando comando = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                comando = bancoDeDados.CriarComando(@"
+					select (case o.area_embargada_atv_intermed
+							 when 1 then
+							  'Sim'
+							 when 0 then
+							  'Não'
+						   end) AreaEmbargadaInterditada,
+						   o.TEI_GERADO_PELO_SIST IsGeradoSistema,
+						   nvl(o.num_tei_bloco, f.autos) NumeroTEI,
+						   to_char(o.data_lavratura_termo, 'DD/MM/YYYY') DataLavraturaTEI,
+						   o.opniao_area_danificada OpinarEmbargo,
+						   ls.texto SerieTexto,
+						   (case o.existe_atv_area_degrad
+							 when 1 then
+							  'Sim'
+							 when 0 then
+							  'Não'
+                             when -1 then
+                             'Não se aplica'
+						   end) AtividadeAreaDegradado,
+						   o.existe_atv_area_degrad_especif AtividadeAreaDegradadoEspecif,
+						   o.fundament_infracao FundamentoCaracterizacaoInfra,
+						   o.uso_solo_area_danif UsoOcupacaoSolo,
+						   (select stragg(b.texto)
+							  from {0}lov_fisc_obj_infra_carac_solo b
+							 where bitand(o.caract_solo_area_danif, b.codigo) != 0) CaracteristicaoAreaSoloDanifi,
+						   o.declividade_media_area DeclividadeMedia,
+						   (case o.infracao_result_erosao
+							 when 1 then
+							  'Sim'
+							 when 0 then
+							  'Não'
+							 else
+							  ''
+						   end) IsInfracaoErosaoSolo,
+						   O.infr_result_er_especifique EspecificarIsInfracao,
+                           O.Iuf_Numero NumeroIUF,
+                           to_char(O.Iuf_Data, 'DD/MM/YYYY') DataLavraturaIUF
+					  from {0}tab_fisc_obj_infracao  o,
+						   {0}lov_fiscalizacao_serie ls,
+						   {0}tab_fiscalizacao       f
+					 where o.fiscalizacao = f.id(+)
+					   and o.serie = ls.id(+)
+					   and f.id = :fiscalizacaoId", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+                objeto = bancoDeDados.ObterEntity<ObjetoInfracaoRelatorioNovo>(comando, (IDataReader reader, ObjetoInfracaoRelatorioNovo item) =>
+                {
+                    item.EspecificarIsInfracaoErosaoSolo = reader.GetValue<string>("EspecificarIsInfracao");
+                    item.DeclividadeMedia = reader.GetValue<decimal>("DeclividadeMedia").ToStringTrunc();
+                });
+
+                objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroIUF) ? String.Empty : objeto.SerieTexto;
+
+                //if (objeto.DataLavraturaIUF == null)
+                //{
+                //    objeto.DataLavraturaIUF = new FiscalizacaoDa().ObterDataConclusao(fiscalizacaoId, bancoDeDados).DataTexto;
+                //}
+
+                //if (!objeto.IsGeradoSistema.HasValue)
+                //{
+                //    objeto.NumeroIUF = null;
+                //    objeto.DataLavraturaTEI = null;
+                //}
+            }
+
+            return objeto;
+        }
+
 		public ObjetoInfracaoRelatorio ObterHistorico(int historicoId, BancoDeDados banco = null)
 		{
 			ObjetoInfracaoRelatorio objeto = new ObjetoInfracaoRelatorio();
