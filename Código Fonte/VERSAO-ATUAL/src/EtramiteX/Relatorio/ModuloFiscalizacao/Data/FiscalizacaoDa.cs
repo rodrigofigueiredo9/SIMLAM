@@ -965,7 +965,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 objeto.ComplementacaoDados = _complementacaoDadosDa.Obter(id, bancoDeDados);
 
                 objeto.Infracao = _infracaoDa.Obter(id, bancoDeDados);
-                objeto.ObjetoInfracao = _objetoInfracaoDa.Obter(id, bancoDeDados);
+                objeto.ObjetoInfracao = _objetoInfracaoDa.ObterNovo(id, bancoDeDados);
                 objeto.MaterialApreendido = _materialApreendidoDa.Obter(id, bancoDeDados);
 
                 objeto.ConsideracoesFinais = _consideracoesFinaisDa.Obter(id, bancoDeDados);

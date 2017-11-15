@@ -235,6 +235,7 @@
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\FiscalizacaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\InfracaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\LocalInfracaoRelatorioNovo.cs" />
+    <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\ObjetoInfracaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloHabilitacaoEmissaoPTV\DestinatarioPTVRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloHabilitacaoEmissaoPTV\EmissaoEPTVRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloHabilitacaoEmissaoPTV\EmissaoPTVRelatorio.cs" />
