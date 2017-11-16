@@ -3,7 +3,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<FiscalizacaoAssinanteVM>" %>
 
 <fieldset class="block box fdsAssinante" id="blocoAssinante">
-	<legend>Assinantes</legend>
+	<legend>Assinantes do Laudo de Fiscalização</legend>
 
 	<%if(!Model.IsVisualizar) {%>
 

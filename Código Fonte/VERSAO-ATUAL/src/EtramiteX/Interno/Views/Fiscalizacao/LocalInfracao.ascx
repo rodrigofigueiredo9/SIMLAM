@@ -1,4 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+﻿
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LocalInfracaoVM>" %>
 <script src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
@@ -101,8 +102,8 @@
 				<label>Fuso *</label>
 				<%= Html.DropDownList("LocalInfracao.Fuso", Model.Fusos, new { @class = "text disabled ddlFuso", @disabled = "disabled" })%>
 			</div>
-
-			<div class="coluna21 prepend2">
+            
+			<div class="coluna21 prepend2 divAreaAbrangencia">
 				<label>Área de abrangência (m) *</label>
 				<%= Html.TextBox("LocalInfracao.AreaAbrangencia", Model.LocalInfracao.AreaAbrangencia, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtAreaAbran", @maxlength = "5" }))%>
 			</div>
@@ -155,14 +156,12 @@
 			    <%= Html.Hidden("hdnAutuadoEmpreendimentoId", Model.LocalInfracao.EmpreendimentoId, new { @class = "hdnAutuadoEmpreendimentoId" })%>
 			    <%= Html.Hidden("hdnAutuadoEmpreendimentoTid", Model.LocalInfracao.EmpreendimentoTid, new { @class = "hdnAutuadoEmpreendimentoTid" })%>
 
-			    <div class="block divBtnVerificarEmpreendimento">
-				    <% if (!Model.IsVisualizar) { %>
+			    <div class="block divBtnVerificarEmpreendimento hide">
 				    <div class="coluna30">
                         <label>Empreendimentos associados</label>
 					    <button type="button" class="btnVerificarEmpPessoa">Verificar Empreendimento</button>
                         <button type="button" class="inlineBotao btnVerificarEmp hide">Verificar Empreendimento</button>
 				    </div>
-				    <% } %>
 			    </div>
                 
 			    <fieldset class="block boxBranca fdsEmpreendimento hide">

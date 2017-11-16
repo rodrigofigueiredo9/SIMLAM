@@ -25,6 +25,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 		private LocalInfracaoDa _localInfracaoDa { get; set; }
 		private MaterialApreendidoDa _materialApreendidoDa { get; set; }
 		private ObjetoInfracaoDa _objetoInfracaoDa { get; set; }
+        private MultaDa _multaDa { get; set; }
 		private GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
 		#endregion
@@ -44,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			_localInfracaoDa = new LocalInfracaoDa();
 			_materialApreendidoDa = new MaterialApreendidoDa();
 			_objetoInfracaoDa = new ObjetoInfracaoDa();
+            _multaDa = new MultaDa();
 		}
 
 		#region Obter
@@ -902,6 +904,78 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			return objeto;
 		}
+
+        public FiscalizacaoRelatorioNovo ObterNovo(int id, BancoDeDados banco = null)
+        {
+            FiscalizacaoRelatorioNovo objeto = new FiscalizacaoRelatorioNovo();
+            Comando comando = null;
+            int autuanteId = 0;
+
+            objeto.NumeroFiscalizacao = id.ToString();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Fiscalizacao
+
+                comando = bancoDeDados.CriarComando(@"select f.autuante, f.situacao, f.situacao_data from {0}tab_fiscalizacao f where f.id = :id ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        autuanteId = reader.GetValue<Int32>("autuante");
+                        objeto.SituacaoId = reader.GetValue<Int32>("situacao");
+
+                        if (objeto.SituacaoId != (int)eFiscalizacaoSituacaoRelatorio.EmAndamento)
+                        {
+                            if (objeto.SituacaoId == (int)eFiscalizacaoSituacaoRelatorio.CadastroConcluido)
+                            {
+                                objeto.DataConclusao = reader.GetValue<DateTime>("situacao_data").ToShortDateString();
+                            }
+                            else
+                            {
+                                comando = bancoDeDados.CriarComando(@"select f.situacao_data from hst_fiscalizacao f where f.fiscalizacao_id = :fiscalizacao 
+																	and f.situacao_id = 2/*Cadastro Concluido*/ and f.data_execucao = (select max(h.data_execucao) 
+																	from hst_fiscalizacao h where h.fiscalizacao_id = :fiscalizacao and 
+																	h.situacao_id = 2/*Cadastro Concluido*/)", EsquemaBanco);
+
+                                comando.AdicionarParametroEntrada("fiscalizacao", id, DbType.Int32);
+
+                                using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+                                {
+                                    if (readerAux.Read())
+                                    {
+                                        objeto.DataConclusao = readerAux.GetValue<DateTime>("situacao_data").ToShortDateString();
+                                    }
+                                    readerAux.Close();
+                                }
+                            }
+                        }
+
+                    }
+
+                    reader.Close();
+                }
+
+                objeto.UsuarioCadastro = _funcionarioDa.Obter(autuanteId, bancoDeDados);
+
+                #endregion
+
+                objeto.LocalInfracao = _localInfracaoDa.ObterNovo(id, bancoDeDados);
+                //objeto.ComplementacaoDados = _complementacaoDadosDa.Obter(id, bancoDeDados);
+
+                objeto.Infracao = _infracaoDa.Obter(id, bancoDeDados);
+                objeto.ObjetoInfracao = _objetoInfracaoDa.ObterNovo(id, bancoDeDados);
+                objeto.Multa = _multaDa.Obter(id, bancoDeDados);
+                objeto.MaterialApreendido = _materialApreendidoDa.ObterNovo(id, bancoDeDados);
+
+                objeto.ConsideracoesFinais = _consideracoesFinaisDa.Obter(id, bancoDeDados);
+            }
+
+            return objeto;
+        }
 
 		public FiscalizacaoRelatorio ObterHistorico(int historicoId, BancoDeDados banco = null)
 		{

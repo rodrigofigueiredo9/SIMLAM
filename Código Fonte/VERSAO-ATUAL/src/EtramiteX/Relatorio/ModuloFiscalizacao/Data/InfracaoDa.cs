@@ -74,6 +74,53 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return objeto;
 		}
 
+        public InfracaoRelatorioNovo ObterNovo(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            InfracaoRelatorioNovo objeto = new InfracaoRelatorioNovo();
+            Comando comando = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                comando = bancoDeDados.CriarComando(@"select i.id Id, i.gerado_sistema IsGeradoSistema, nvl(i.numero_auto_infracao_bloco, f.autos) NumeroAI, ls.texto SerieTexto,
+				   TO_CHAR(i.data_lavratura_auto, 'DD/MM/YYYY') DataLavraturaAI, i.descricao_infracao DescricaoInfracao,
+				   c.texto Classificacao, t.texto Tipo, it.texto Item, s.texto Subitem 
+				from {0}tab_fiscalizacao f,
+				   {0}tab_fisc_infracao i, 
+				   {0}lov_cnf_fisc_infracao_classif c, 
+				   {0}cnf_fisc_infracao_tipo t, 
+				   {0}cnf_fisc_infracao_item it,
+				   {0}lov_fiscalizacao_serie ls, 
+				   {0}cnf_fisc_infracao_subitem s          
+				where i.serie = ls.id(+)
+				   and i.subitem = s.id(+) 
+				   and i.item = it.id
+				   and i.tipo = t.id
+				   and i.classificacao = c.id
+				   and i.fiscalizacao = f.id 
+				   and f.id = :fiscalizacaoId", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+                objeto = bancoDeDados.ObterEntity<InfracaoRelatorioNovo>(comando);
+                objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroAI) ? String.Empty : objeto.SerieTexto;
+                objeto.Campos = ObterCampos(objeto.Id, bancoDeDados);
+                objeto.Perguntas = ObterPerguntas(objeto.Id, bancoDeDados);
+
+                if (objeto.DataLavraturaAI == null)
+                {
+                    objeto.DataLavraturaAI = new FiscalizacaoDa().ObterDataConclusao(fiscalizacaoId, bancoDeDados).DataTexto;
+                }
+
+                if (!objeto.IsGeradoSistema.HasValue)
+                {
+                    objeto.NumeroAI = null;
+                    objeto.DataLavraturaAI = null;
+                }
+            }
+
+            return objeto;
+        }
+
 		public InfracaoRelatorio ObterHistorico(int historicoId, BancoDeDados banco = null)
 		{
 			InfracaoRelatorio objeto = new InfracaoRelatorio();

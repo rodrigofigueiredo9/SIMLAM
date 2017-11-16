@@ -21,6 +21,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Pdf;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -44,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
         OutrasPenalidadesDa _daOutrasPenalidades = new OutrasPenalidadesDa();
 		ConsideracaoFinalDa _daConsideracaoFinal = new ConsideracaoFinalDa();
 		AcompanhamentoDa _daAcompanhamento = new AcompanhamentoDa();
+        EmpreendimentoDa _daEmpreendimento = new EmpreendimentoDa();
 
 		public static EtramitePrincipal User
 		{
@@ -91,6 +93,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						}
 
 						entidade.LocalInfracao.FiscalizacaoId = entidade.Id;
+
+                        //se não foi usado o filtro de local, as informações de local são salvas a partir do empreendimento
+                        if (entidade.LocalInfracao.EmpreendimentoId != null)
+                        {
+                            Empreendimento empreendimento = _daEmpreendimento.Obter(entidade.LocalInfracao.EmpreendimentoId.Value);
+
+                            entidade.LocalInfracao.LatNorthing = entidade.LocalInfracao.LatNorthing ?? empreendimento.Coordenada.NorthingUtm.ToString();
+                            entidade.LocalInfracao.LonEasting = entidade.LocalInfracao.LonEasting ?? empreendimento.Coordenada.EastingUtm.ToString();
+                            entidade.LocalInfracao.MunicipioId = (entidade.LocalInfracao.MunicipioId != null && entidade.LocalInfracao.MunicipioId > 0) ? entidade.LocalInfracao.MunicipioId : empreendimento.Enderecos[0].MunicipioId;
+                            entidade.LocalInfracao.Local = entidade.LocalInfracao.Local ?? empreendimento.Denominador;
+                        }
+
 						_daLocalInfracao.Salvar(entidade.LocalInfracao, bancoDeDados);
 
 						#endregion
@@ -796,6 +810,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return null;
 		}
+
+        public Stream LaudoFiscalizacaoPdfNovo(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
+        {
+            try
+            {
+                PdfFiscalizacao _pdf = new PdfFiscalizacao();
+                Fiscalizacao fiscalizacao = Obter(id, true);
+
+                if (historico == 0 && fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                {
+                    return _pdf.GerarLaudoFiscalizacaoNovo(id, banco: banco);
+                }
+
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
+
+                if (fiscalizacao.PdfLaudo.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfLaudo.Id != arquivo))
+                {
+                    Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
+                    return null;
+                }
+
+                ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfLaudo.Id.GetValueOrDefault());
+
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
+
+                return pdf.Buffer;
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
 
 		public Arquivo BaixarArquivo(int id, int historico = 0)
 		{
