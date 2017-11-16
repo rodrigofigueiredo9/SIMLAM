@@ -617,20 +617,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                                     and l.TIPO_NUMERO = 1 --BLOCO
                               ),
                               --Digital de CFO
-                              (select count (*) lib_D_CFO,
-                                      max(l.numero) ultnum_D_CFO
+                              (select count (*) lib_D_CFO
                               from TAB_NUMERO_CFO_CFOC l
                               where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
                                     and l.TIPO_DOCUMENTO = 1  --CFO
                                     and l.TIPO_NUMERO = 2 --DIGITAL
                               ),
+                              (select (case when l.serie is null then to_char(l.numero) else concat(l.numero, concat('/', l.serie)) end) ultnum_D_CFO
+                              from TAB_NUMERO_CFO_CFOC l
+                              where l.id = (select max(a.id)
+                                            from tab_numero_cfo_cfoc a
+                                            where substr(a.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                                  and a.TIPO_DOCUMENTO = 1  --CFO
+                                                  and a.TIPO_NUMERO = 2) --DIGITAL
+                              ),
                               --Digital de CFOC
-                              (select count (*) lib_D_CFOC,
-                                      max(l.numero) ultnum_D_CFOC
+                              (select count (*) lib_D_CFOC
                               from TAB_NUMERO_CFO_CFOC l
                               where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
                                     and l.TIPO_DOCUMENTO = 2  --CFOC
                                     and l.TIPO_NUMERO = 2 --DIGITAL
+                              ),
+                              (select (case when l.serie is null then to_char(l.numero) else concat(l.numero, concat('/', l.serie)) end) ultnum_D_CFOC
+                              from TAB_NUMERO_CFO_CFOC l
+                              where l.id = (select max(a.id)
+                                            from tab_numero_cfo_cfoc a
+                                            where substr(a.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                                  and a.TIPO_DOCUMENTO = 2  --CFOC
+                                                  and a.TIPO_NUMERO = 2) --DIGITAL
                               ),
                               --Digital de PTV
                               (select max(t.numero) ultnum_D_PTV
