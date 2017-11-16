@@ -462,6 +462,12 @@ FiscalizacaoLocalInfracao = {
 			}
 			FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpSalvar, .spanEmpAssNovo, .fdsEmpreendimento, .divDdlResponsavel');
 		}
+
+		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {  //"não"
+		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).hide();
+		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {    //"sim"
+		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).show();
+		}
 	},
 
 	configurarBtnEditar: function () {
@@ -644,11 +650,11 @@ FiscalizacaoLocalInfracao = {
 		$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).hide();
 
 
-		//if ($(this).val().toString() == "0") {
-		//	$('.divPessoa', FiscalizacaoLocalInfracao.container).removeClass("hide");
-		//} else {
-		//	$('.divEmpreendimento', FiscalizacaoLocalInfracao.container).removeClass("hide");
-		//}
+		if ($(this).val().toString() == "0") {  //"não"
+		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).hide();
+		} else {    //"sim"
+		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).show();
+		}
 	},
 
 	onClickBuscarPessoa: function () {

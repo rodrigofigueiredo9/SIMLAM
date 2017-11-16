@@ -95,12 +95,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						entidade.LocalInfracao.FiscalizacaoId = entidade.Id;
 
                         //se não foi usado o filtro de local, as informações de local são salvas a partir do empreendimento
-                        Empreendimento empreendimento = _daEmpreendimento.Obter(entidade.LocalInfracao.EmpreendimentoId.Value);
+                        if (entidade.LocalInfracao.EmpreendimentoId != null)
+                        {
+                            Empreendimento empreendimento = _daEmpreendimento.Obter(entidade.LocalInfracao.EmpreendimentoId.Value);
 
-                        entidade.LocalInfracao.LatNorthing = entidade.LocalInfracao.LatNorthing ?? empreendimento.Coordenada.NorthingUtm.ToString();
-                        entidade.LocalInfracao.LonEasting = entidade.LocalInfracao.LonEasting ?? empreendimento.Coordenada.EastingUtm.ToString();
-                        entidade.LocalInfracao.MunicipioId = (entidade.LocalInfracao.MunicipioId != null && entidade.LocalInfracao.MunicipioId>0) ? entidade.LocalInfracao.MunicipioId : empreendimento.Enderecos[0].MunicipioId;
-                        entidade.LocalInfracao.Local = entidade.LocalInfracao.Local ?? empreendimento.Denominador;
+                            entidade.LocalInfracao.LatNorthing = entidade.LocalInfracao.LatNorthing ?? empreendimento.Coordenada.NorthingUtm.ToString();
+                            entidade.LocalInfracao.LonEasting = entidade.LocalInfracao.LonEasting ?? empreendimento.Coordenada.EastingUtm.ToString();
+                            entidade.LocalInfracao.MunicipioId = (entidade.LocalInfracao.MunicipioId != null && entidade.LocalInfracao.MunicipioId > 0) ? entidade.LocalInfracao.MunicipioId : empreendimento.Enderecos[0].MunicipioId;
+                            entidade.LocalInfracao.Local = entidade.LocalInfracao.Local ?? empreendimento.Denominador;
+                        }
 
 						_daLocalInfracao.Salvar(entidade.LocalInfracao, bancoDeDados);
 
