@@ -674,97 +674,98 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                     {
                         DocumentoFitossanitarioConsolidado doc;
 
-                        reader.Read();
+                        if (reader.Read())
+                        {
 
-                        #region Não Liberados
+                            #region Não Liberados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Não Liberados";
-                        doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
-                        doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
+                            doc.Texto = "Não Liberados";
+                            doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
+                            doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Liberados
+                            #region Liberados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Liberados";
-                        doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
-                        doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
+                            doc.Texto = "Liberados";
+                            doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
+                            doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Em Elaboração
+                            #region Em Elaboração
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Em Elaboração";
-                        doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["elab_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
+                            doc.Texto = "Em Elaboração";
+                            doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["elab_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Utilizados
+                            #region Utilizados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Utilizados";
-                        doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
+                            doc.Texto = "Utilizados";
+                            doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Cancelados
+                            #region Cancelados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Cancelados";
-                        doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
+                            doc.Texto = "Cancelados";
+                            doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Ultimo Liberado
+                            #region Ultimo Liberado
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Último nº liberado";
-                        doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
+                            doc.Texto = "Último nº liberado";
+                            doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
-
+                            #endregion
+                        }
                         reader.Close();
                     }
                     #endregion Preenche o resultado
