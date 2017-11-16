@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -220,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -257,7 +257,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -355,7 +355,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
