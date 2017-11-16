@@ -172,6 +172,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
         public ActionResult Salvar(Fiscalizacao fiscalizacao)
         {
+            if (fiscalizacao.LocalInfracao.AreaAbrangencia == null) fiscalizacao.LocalInfracao.AreaAbrangencia = "0";
             _bus.Salvar(fiscalizacao);
 
             if (Validacao.EhValido)

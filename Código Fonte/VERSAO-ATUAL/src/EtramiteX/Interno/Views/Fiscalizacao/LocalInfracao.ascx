@@ -102,8 +102,8 @@
 				<label>Fuso *</label>
 				<%= Html.DropDownList("LocalInfracao.Fuso", Model.Fusos, new { @class = "text disabled ddlFuso", @disabled = "disabled" })%>
 			</div>
-
-			<div class="coluna21 prepend2">
+            
+			<div class="coluna21 prepend2 divAreaAbrangencia">
 				<label>Área de abrangência (m) *</label>
 				<%= Html.TextBox("LocalInfracao.AreaAbrangencia", Model.LocalInfracao.AreaAbrangencia, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNumInt txtAreaAbran", @maxlength = "5" }))%>
 			</div>

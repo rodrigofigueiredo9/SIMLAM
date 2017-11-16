@@ -43,11 +43,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
             if (localInfracao.DentroEmpreendimento == 0)
             {
-                if (string.IsNullOrWhiteSpace(localInfracao.AreaAbrangencia))
-                {
-                    Validacao.Add(Mensagem.LocalInfracaoMsg.AreaAbrangenciaObrigatoria);
-                }
-
                 if (string.IsNullOrWhiteSpace(localInfracao.LonEasting))
                 {
                     Validacao.Add(Mensagem.LocalInfracaoMsg.EastingUtmObrigatorio);
