@@ -1,4 +1,5 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+﻿
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Pessoa/inline.js" />
 /// <reference path="../Empreendimento/inline.js" />
 
@@ -463,9 +464,9 @@ FiscalizacaoLocalInfracao = {
 			FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpSalvar, .spanEmpAssNovo, .fdsEmpreendimento, .divDdlResponsavel');
 		}
 
-		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {  //"não"
+		if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val() == 0) {  //"não"
 		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).hide();
-		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "1") {    //"sim"
+		} else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val() == 1) {    //"sim"
 		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).show();
 		}
 	},
