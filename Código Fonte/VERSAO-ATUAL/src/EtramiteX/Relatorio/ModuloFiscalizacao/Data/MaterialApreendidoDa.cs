@@ -76,6 +76,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
+                comando = bancoDeDados.CriarComando(@"select count(id) existe
+                                                      from {0}Tab_Fisc_Apreensao
+                                                      where fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+
+                int existe = 0;
+
+                IDataReader readerCount = bancoDeDados.ExecutarReader(comando);
+                if (readerCount.Read())
+                {
+                    existe = Convert.ToInt32(readerCount["existe"].ToString());
+                }
+                readerCount.Close();
+
+                if (existe == 0)
+                {
+                    return null;
+                }
+
                 comando = bancoDeDados.CriarComando(@"select tfa.id Id,
                                                              Tfa.Iuf_Numero NumeroIUF,
                                                              Lfs.Texto SerieTexto,

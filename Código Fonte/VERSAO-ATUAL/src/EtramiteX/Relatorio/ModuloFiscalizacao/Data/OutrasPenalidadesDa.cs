@@ -8,7 +8,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Data
 {
-	public class MultaDa
+	public class OutrasPenalidadesDa
 	{
 		#region Propriedade e Atributos
 
@@ -16,7 +16,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 		#endregion
 
-		public MultaDa(string strBancoDeDados = null)
+		public OutrasPenalidadesDa(string strBancoDeDados = null)
 		{
 			EsquemaBanco = string.Empty;
 			if (!string.IsNullOrEmpty(strBancoDeDados))
@@ -27,15 +27,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 		#region Obter
 
-		public MultaRelatorio Obter(int fiscalizacaoId, BancoDeDados banco = null)
+		public OutrasPenalidadesRelatorio Obter(int fiscalizacaoId, BancoDeDados banco = null)
 		{
-			MultaRelatorio objeto = new MultaRelatorio();
+            OutrasPenalidadesRelatorio objeto = new OutrasPenalidadesRelatorio();
 			Comando comando = null;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
                 comando = bancoDeDados.CriarComando(@"select count(id) existe
-                                                      from {0}Tab_Fisc_Multa
+                                                      from {0}Tab_Fisc_Outras_Penalidades
                                                       where fiscalizacao = :fiscalizacaoId", EsquemaBanco);
                 comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 
@@ -54,22 +54,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     return null;
                 }
 
-                comando = bancoDeDados.CriarComando(@"select Tfm.Iuf_Numero NumeroIUF,
-                                                             to_char(Tfm.Iuf_Data, 'DD/MM/YYYY') DataLavraturaIUF,
-                                                             concat(lficr.texto, concat(' - ', lficr.descricao)) CodigoReceita,
-                                                             lfs.texto SerieTexto,
-                                                             tfm.valor_multa ValorMulta,
-                                                             tfm.justificar Justificar
-                                                      from {0}Tab_Fisc_Multa tfm,
-                                                           {0}Lov_Fiscalizacao_Serie lfs,
-                                                           {0}Lov_Fisc_Infracao_Codigo_Rece lficr
-                                                      where (Tfm.Serie is null or tfm.serie = lfs.id)
-                                                            and (tfm.codigo_receita is null or tfm.codigo_receita = lficr.id)
-                                                            and tfm.Fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"select Tfop.Iuf_Numero NumeroIUF,
+                                                             Lfs.Texto SerieTexto,
+                                                             to_char(tfop.iuf_data, 'DD/MM/YYYY') DataLavraturaIUF,
+                                                             Tfop.Descricao Descricao
+                                                      from {0}Tab_Fisc_Outras_Penalidades tfop,
+                                                           {0}Lov_Fiscalizacao_Serie lfs
+                                                      where (tfop.serie is null or Tfop.Serie = lfs.id)
+                                                            and fiscalizacao = :fiscalizacaoId", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 
-				objeto = bancoDeDados.ObterEntity<MultaRelatorio>(comando);
+                objeto = bancoDeDados.ObterEntity<OutrasPenalidadesRelatorio>(comando);
 			}
 
 			return objeto;

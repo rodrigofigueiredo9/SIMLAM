@@ -25,6 +25,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 		private LocalInfracaoDa _localInfracaoDa { get; set; }
 		private MaterialApreendidoDa _materialApreendidoDa { get; set; }
 		private ObjetoInfracaoDa _objetoInfracaoDa { get; set; }
+        private OutrasPenalidadesDa _outrasPenalidadesDa { get; set; }
         private MultaDa _multaDa { get; set; }
 		private GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
@@ -46,6 +47,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			_materialApreendidoDa = new MaterialApreendidoDa();
 			_objetoInfracaoDa = new ObjetoInfracaoDa();
             _multaDa = new MultaDa();
+            _outrasPenalidadesDa = new OutrasPenalidadesDa();
 		}
 
 		#region Obter
@@ -964,12 +966,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 #endregion
 
                 objeto.LocalInfracao = _localInfracaoDa.ObterNovo(id, bancoDeDados);
-                //objeto.ComplementacaoDados = _complementacaoDadosDa.Obter(id, bancoDeDados);
-
                 objeto.Infracao = _infracaoDa.Obter(id, bancoDeDados);
+
                 objeto.ObjetoInfracao = _objetoInfracaoDa.ObterNovo(id, bancoDeDados);
                 objeto.Multa = _multaDa.Obter(id, bancoDeDados);
                 objeto.MaterialApreendido = _materialApreendidoDa.ObterNovo(id, bancoDeDados);
+                objeto.OutrasPenalidades = _outrasPenalidadesDa.Obter(id, bancoDeDados);
 
                 objeto.ConsideracoesFinais = _consideracoesFinaisDa.Obter(id, bancoDeDados);
             }

@@ -237,6 +237,7 @@
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\LocalInfracaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\ApreensaoProdutoDestinacaoRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\MaterialApreendidoRelatorioNovo.cs" />
+    <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\OutrasPenalidadesRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\MultaRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\ObjetoInfracaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloHabilitacaoEmissaoPTV\DestinatarioPTVRelatorio.cs" />
