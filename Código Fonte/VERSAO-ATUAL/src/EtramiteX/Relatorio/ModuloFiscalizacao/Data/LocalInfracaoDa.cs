@@ -79,6 +79,62 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return objeto;
 		}
 
+        public LocalInfracaoRelatorioNovo ObterNovo(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            LocalInfracaoRelatorioNovo objeto = new LocalInfracaoRelatorioNovo();
+            Comando comando = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                comando = bancoDeDados.CriarComando(@"select l.id Id,
+													l.setor SetorId,
+													nvl(l.responsavel, l.pessoa) AutuadoEmpResponsavelId,
+													l.resp_propriedade PropResponsavelId,
+													l.empreendimento EmpreendimentoId,
+													nvl (emp.nome_fantasia, emp.denominador) EmpreendimentoNomeRazaoSocial,
+													emp.cnpj EmpreendimentoCnpj,
+                                                    emp.codigo CodEmp,
+													ct.texto SistemaCoordenada,
+													l.fuso Fuso,
+													d.texto Datum,
+													l.lon_easting CoordenadaEasting,
+													l.lat_northing CoordenadaNorthing,
+													l.local Local,
+													to_char(Inf.Data_Constatacao, 'DD/MM/YYYY') DataFiscalizacao,
+                                                    Inf.Hora_Constatacao HoraFiscalizacao,
+													m.texto Municipio,
+													e.sigla UF
+												from {0}tab_fisc_local_infracao l,
+													{0}tab_empreendimento      emp,
+													{0}lov_municipio           m,
+													{0}lov_estado              e,
+													{0}lov_coordenada_tipo     ct,
+													{0}lov_coordenada_datum    d,
+                                                    {0}tab_fisc_infracao       inf
+												where l.municipio = m.id
+												and e.id = m.estado
+												and l.sis_coord = ct.id
+												and l.datum = d.id
+												and emp.id(+) = l.empreendimento
+                                                and inf.fiscalizacao(+) = l.fiscalizacao
+												and l.fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+                objeto = bancoDeDados.ObterEntity<LocalInfracaoRelatorioNovo>(comando);
+                objeto.Autuado = ObterAutuado(objeto.AutuadoEmpResponsavelId, bancoDeDados);
+                objeto.EmpResponsavel = ObterAutuado(objeto.PropResponsavelId, bancoDeDados);
+
+                if (objeto.EmpreendimentoId > 0)
+                {
+                    objeto.EmpEndereco = ObterEmpEndereco(objeto.EmpreendimentoId, bancoDeDados);
+                }
+
+            }
+
+            return objeto;
+        }
+
 		public LocalInfracaoRelatorio ObterHistorico(int historicoId, BancoDeDados banco = null)
 		{
 			LocalInfracaoRelatorio objeto = new LocalInfracaoRelatorio();

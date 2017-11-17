@@ -148,6 +148,106 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return GerarPdf(dataSource);
 		}
 
+        public MemoryStream GerarLaudoFiscalizacaoNovo(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao_Novo.docx";
+
+            FiscalizacaoRelatorioNovo dataSource = _da.ObterNovo(id, banco);
+
+            ConfiguracaoDefault.TextoTagAssinante = "«Assinante.Nome»";
+            ConfiguracaoDefault.TextoTagAssinantes1 = "«TableStart:Assinantes1»";
+            ConfiguracaoDefault.TextoTagAssinantes2 = "«TableStart:Assinantes2»";
+
+            if (dataSource.ConsideracoesFinais != null &&
+                dataSource.ConsideracoesFinais.Assinantes != null &&
+                dataSource.ConsideracoesFinais.Assinantes.Count > 0)
+            {
+                var autor = dataSource.ConsideracoesFinais.Assinantes.First(x => x.Id == dataSource.UsuarioCadastro.Id);
+                if (autor != null)
+                {
+                    dataSource.ConsideracoesFinais.Assinantes.Remove(autor);
+                    dataSource.ConsideracoesFinais.Assinantes.Insert(0, autor);
+                }
+
+
+                ConfiguracaoDefault.Assinantes = dataSource.ConsideracoesFinais.Assinantes.Cast<IAssinante>().ToList();
+            }
+
+            ConfigurarCabecarioRodape(dataSource.LocalInfracao.SetorId);
+
+            if (dataSource.ConsideracoesFinais.Anexos != null && dataSource.ConsideracoesFinais.Anexos.Count > 0)
+            {
+                foreach (ConsideracoesFinaisAnexoRelatorio anexo in dataSource.ConsideracoesFinais.Anexos)
+                {
+                    anexo.Arquivo.Conteudo = AsposeImage.RedimensionarImagem(File.ReadAllBytes(anexo.Arquivo.Caminho), 11, eAsposeImageDimensao.Ambos);
+                }
+            }
+
+            ObterArquivoTemplate();
+
+            object objeto = dataSource;
+
+            #region Remover
+
+            this.ConfiguracaoDefault.AddLoadAcao((doc, a) =>
+            {
+                List<Table> itenRemover = new List<Table>();
+                FiscalizacaoRelatorioNovo fiscalizacao = (FiscalizacaoRelatorioNovo)dataSource;
+
+                fiscalizacao.OrgaoMunicipio = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoMunicipio);
+                fiscalizacao.OrgaoUF = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoUf);
+
+                if (fiscalizacao.Infracao.Campos.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Campos»").Remove();
+                }
+
+                if (fiscalizacao.Infracao.Perguntas.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Perguntas»").Remove();
+                }
+
+                if (fiscalizacao.ConsideracoesFinais.Anexos.Count == 0)
+                {
+                    itenRemover.Add(doc.Last<Table>("«TableStart:ConsideracoesFinais.Anexos»"));
+                    doc.RemovePageBreak();
+                }
+
+                //Remove as seções de infrações que não foram preenchidas
+                if (fiscalizacao.Multa == null)
+                {
+                    doc.Find<Row>("«Secao.Multa»").Remove();
+                }
+                if (fiscalizacao.ObjetoInfracao == null)
+                {
+                    doc.Find<Row>("«Secao.InterdicaoEmbargo»").Remove();
+                }
+                if (fiscalizacao.MaterialApreendido == null)
+                {
+                    doc.Find<Row>("«Secao.Apreensao»").Remove();
+                }
+                else
+                {
+                    if (fiscalizacao.MaterialApreendido.ProdutosDestinacoes == null || fiscalizacao.MaterialApreendido.ProdutosDestinacoes.Count == 0)
+                    {
+                        doc.Find<Row>("«TableStart:MaterialApreendido.ProdutosDestinacoes»").Remove();
+                    }
+                }
+                if (fiscalizacao.OutrasPenalidades == null)
+                {
+                    doc.Find<Row>("«Secao.OutrasPenalidades»").Remove();
+                }
+                
+                AsposeExtensoes.RemoveTables(itenRemover);
+            });
+
+            #endregion Remover
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+
+            return GerarPdf(dataSource);
+        }
+
 		public MemoryStream GerarLaudoAcompanhamentoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
 			ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao_Acompanhamento.docx";
