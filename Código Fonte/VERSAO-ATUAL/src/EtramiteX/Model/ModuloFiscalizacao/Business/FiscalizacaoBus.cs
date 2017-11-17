@@ -274,7 +274,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                         fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
                         fiscalizacao.PdfLaudo.Extensao = ".pdf";
                         fiscalizacao.PdfLaudo.ContentType = "application/pdf";
-                        fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                        fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacaoNovo(fiscalizacao.Id, false, bancoDeDados);
                         arquivoBus.Salvar(fiscalizacao.PdfLaudo);
 
                         arquivoDa.Salvar(fiscalizacao.PdfLaudo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
