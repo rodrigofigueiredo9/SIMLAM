@@ -116,7 +116,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 												and l.sis_coord = ct.id
 												and l.datum = d.id
 												and emp.id(+) = l.empreendimento
-                                                and inf.fiscalizacao = l.fiscalizacao
+                                                and inf.fiscalizacao(+) = l.fiscalizacao
 												and l.fiscalizacao = :fiscalizacaoId", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);

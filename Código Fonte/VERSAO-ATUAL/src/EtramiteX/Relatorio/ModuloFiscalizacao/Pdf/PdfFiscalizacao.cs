@@ -207,23 +207,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     doc.Find<Row>("«TableStart:Infracao.Perguntas»").Remove();
                 }
 
-                if (fiscalizacao.MaterialApreendido.ProdutosDestinacoes.Count == 0)
-                {
-                    doc.Find<Row>("«TableStart:MaterialApreendido.ProdutosDestinacoes»").Remove();
-                }
-
                 if (fiscalizacao.ConsideracoesFinais.Anexos.Count == 0)
                 {
                     itenRemover.Add(doc.Last<Table>("«TableStart:ConsideracoesFinais.Anexos»"));
                     doc.RemovePageBreak();
                 }
 
+                //Remove as seções de infrações que não foram preenchidas
+                if (fiscalizacao.Multa == null)
+                {
+                    doc.Find<Row>("«Secao.Multa»").Remove();
+                }
+                if (fiscalizacao.ObjetoInfracao == null)
+                {
+                    doc.Find<Row>("«Secao.InterdicaoEmbargo»").Remove();
+                }
+                if (fiscalizacao.MaterialApreendido == null)
+                {
+                    doc.Find<Row>("«Secao.Apreensao»").Remove();
+                }
+                else
+                {
+                    if (fiscalizacao.MaterialApreendido.ProdutosDestinacoes == null || fiscalizacao.MaterialApreendido.ProdutosDestinacoes.Count == 0)
+                    {
+                        doc.Find<Row>("«TableStart:MaterialApreendido.ProdutosDestinacoes»").Remove();
+                    }
+                }
+                if (fiscalizacao.OutrasPenalidades == null)
+                {
+                    doc.Find<Row>("«Secao.OutrasPenalidades»").Remove();
+                }
+                
                 AsposeExtensoes.RemoveTables(itenRemover);
             });
 
             #endregion Remover
 
-            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
 
             return GerarPdf(dataSource);
         }

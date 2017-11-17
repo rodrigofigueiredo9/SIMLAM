@@ -72,6 +72,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
             set { _multa = value; }
         }
 
+        private OutrasPenalidadesRelatorio _outrasPenalidades = new OutrasPenalidadesRelatorio();
+        public OutrasPenalidadesRelatorio OutrasPenalidades
+        {
+            get { return _outrasPenalidades; }
+            set { _outrasPenalidades = value; }
+        }
+
 		private AcompanhamentoRelatorio _acompanhamento = new AcompanhamentoRelatorio();
 		public AcompanhamentoRelatorio Acompanhamento
 		{

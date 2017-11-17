@@ -14,6 +14,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
         public String DataLavraturaIUF { get; set; }
 		public String OpinarEmbargo { get; set; }
 		public String AtividadeAreaDegradado { get; set; }
+        public String Descricao { get; set; }
 		public String AtividadeAreaDegradadoEspecif { get; set; }
 		public String FundamentoCaracterizacaoInfra { get; set; }
 		public String UsoOcupacaoSolo { get; set; }

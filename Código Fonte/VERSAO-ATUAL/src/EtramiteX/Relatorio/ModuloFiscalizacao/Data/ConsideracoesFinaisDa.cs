@@ -35,10 +35,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 
-				comando = bancoDeDados.CriarComando(@" select c.id Id, c.justificar JustificativaValorPenalidade, c.descrever DescricaoInfracao, (case c.tem_reparacao when 1 then 'Sim' when 0 then 'Não' end)
-					IsReparacao, c.reparacao OpniaoFormaReparacao, (case when c.tem_reparacao = 0 then c.reparacao end) ReparacaoJustificativa,
-					(case c.tem_termo_comp when 1 then 'Sim' when 0 then 'Não' end) IsTermoCompromisso, c.tem_termo_comp_justificar TermoCompromissoJustificativa from {0}tab_fisc_consid_final c where 
-					c.fiscalizacao = :fiscalizacaoId ", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@" select c.id Id,
+                                                              c.justificar JustificativaValorPenalidade,
+                                                              c.descrever DescricaoInfracao,
+                                                              (case c.tem_reparacao when 1 then 'Sim' when 0 then 'Não' end) IsReparacao,
+                                                              c.reparacao OpniaoFormaReparacao,
+                                                              (case when c.tem_reparacao = 0 then c.reparacao end) ReparacaoJustificativa,
+                                                              (case c.tem_termo_comp when 1 then 'Sim' when 0 then 'Não' end) IsTermoCompromisso,
+                                                              c.tem_termo_comp_justificar TermoCompromissoJustificativa
+                                                       from {0}tab_fisc_consid_final c
+                                                       where c.fiscalizacao = :fiscalizacaoId ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 

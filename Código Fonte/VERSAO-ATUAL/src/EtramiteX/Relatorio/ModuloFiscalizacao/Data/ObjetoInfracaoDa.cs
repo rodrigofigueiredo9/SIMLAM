@@ -106,6 +106,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
+                comando = bancoDeDados.CriarComando(@"select count(id) existe
+                                                      from {0}tab_fisc_obj_infracao
+                                                      where fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+                
+                int existe = 0;
+
+                IDataReader readerCount = bancoDeDados.ExecutarReader(comando);
+                if (readerCount.Read())
+                {
+                    existe = Convert.ToInt32(readerCount["existe"].ToString());
+                }
+                readerCount.Close();
+
+                if (existe == 0)
+                {
+                    return null;
+                }
+
                 comando = bancoDeDados.CriarComando(@"
 					select (case o.area_embargada_atv_intermed
 							 when 1 then
@@ -143,7 +163,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 						   end) IsInfracaoErosaoSolo,
 						   O.infr_result_er_especifique EspecificarIsInfracao,
                            O.Iuf_Numero NumeroIUF,
-                           to_char(O.Iuf_Data, 'DD/MM/YYYY') DataLavraturaIUF
+                           to_char(O.Iuf_Data, 'DD/MM/YYYY') DataLavraturaIUF,
+                           o.desc_termo_embargo Descricao
 					  from {0}tab_fisc_obj_infracao  o,
 						   {0}lov_fiscalizacao_serie ls,
 						   {0}tab_fiscalizacao       f
@@ -160,17 +181,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 });
 
                 objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroIUF) ? String.Empty : objeto.SerieTexto;
-
-                //if (objeto.DataLavraturaIUF == null)
-                //{
-                //    objeto.DataLavraturaIUF = new FiscalizacaoDa().ObterDataConclusao(fiscalizacaoId, bancoDeDados).DataTexto;
-                //}
-
-                //if (!objeto.IsGeradoSistema.HasValue)
-                //{
-                //    objeto.NumeroIUF = null;
-                //    objeto.DataLavraturaTEI = null;
-                //}
             }
 
             return objeto;
