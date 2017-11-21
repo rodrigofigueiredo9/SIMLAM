@@ -139,12 +139,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return null;
         }
 
-        public List<long> ObterLiberadosIntervalo(int tipo, long inicio, long fim)
+        public List<long> ObterLiberadosIntervalo(int tipo, long inicio, long fim, string serie)
         {
             List<long> retorno = new List<long>();
             try
             {
-                retorno = _da.LiberadosIntervalo(tipo, inicio, fim);
+                retorno = _da.LiberadosIntervalo(tipo, inicio, fim, serie);
             }
             catch (Exception exc)
             {
