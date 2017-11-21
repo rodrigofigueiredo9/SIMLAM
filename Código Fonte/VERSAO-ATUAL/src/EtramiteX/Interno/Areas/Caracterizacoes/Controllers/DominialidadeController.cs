@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Data;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloProjetoDigital;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -34,7 +36,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
-		
+
+        public static double globalModuloFiscal;
+
 		#endregion
 
 		#region Criar
@@ -141,6 +145,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			DominialidadeVM vm = new DominialidadeVM(caracterizacao, _listaBus.BooleanLista);
 			vm.TextoMerge = textoMerge;
 			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+
 			return View(vm);
 		}
 
@@ -224,9 +229,30 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]
-		public ActionResult Dominio(Dominio dominio)
+		public ActionResult Dominio(Dominio dominio, int empreendimento)
 		{
 			DominioVM vm = new DominioVM(_listaBus.DominialidadeComprovacoes, dominio, dominio.ComprovacaoId);
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                #region Select QTD Modulo Fiscal GLOBAL
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimento, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        //SET VARIAVEL GLOBAL
+                        globalModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                    }
+
+                    reader.Close();
+                }
+                #endregion
+            }
+            
 			return PartialView("DominioPartial", vm);
 		}
 
@@ -355,13 +381,80 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			_bus.ObterDominialidadeARL(caracterizacao);
 			DominialidadeVM vm = new DominialidadeVM(caracterizacao, new List<Lista>());
 
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
-			}, JsonRequestBehavior.AllowGet);
-		}
+            var qtdModuloFiscal = 0.0;
+            #region Carga das tabelas APP Caculada e APP Escadinha
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                #region Select QTD Modulo Fiscal
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", caracterizacao.EmpreendimentoId, DbType.Int32);
+                
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+                    }
+
+                    reader.Close();
+                }
+                #endregion
+            }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+            {
+                #region Chamada Procedure
+                bancoDeDados.IniciarTransacao();
+                Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
+
+                command.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                
+                bancoDeDados.ExecutarNonQuery(command);
+                bancoDeDados.Commit();
+                #endregion
+            }
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+            {
+                #region Chamada Procedure
+                bancoDeDados.IniciarTransacao();
+                Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); end;");
+
+                com.AdicionarParametroEntrada("emp", caracterizacao.EmpreendimentoId, System.Data.DbType.Int32);
+                com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
+
+                bancoDeDados.ExecutarNonQuery(com);
+                bancoDeDados.Commit();
+                #endregion
+            }
+            #endregion
+
+            if(globalModuloFiscal != qtdModuloFiscal)
+            {
+                //var textoMerge = "ENTROU AQUI";
+                //return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
+                ConfirmarVM mv = new ConfirmarVM();
+
+                mv.Id = caracterizacao.EmpreendimentoId;
+                mv.Mensagem = Mensagem.Caracterizacao.retificacaoCAR(" ");
+                mv.Titulo = "Confirmação da Retificação";
+                //return PartialView("Confirmar", mv);
+                return Json(new
+                {
+                    @EhValido = Validacao.EhValido,
+                    @Empty = true,  //Variavel para abrir o modal
+                    @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "Confirmar", mv)
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Msg = Validacao.Erros,
+                @Empty = false,
+                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
+            }, JsonRequestBehavior.AllowGet);
+
+        }
 
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]
 		private List<Lista> LocalizacoesReserva(ReservaLegal reserva, int dominioTipo = 0)

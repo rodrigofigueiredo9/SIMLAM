@@ -24,7 +24,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 
 			informacoes = new List<Resposta>
 			{
-				new Resposta() {codigo = "DESEJA_ADERIR_PRA", respostas = new List<object>() {"Não Informado"}},
+				new Resposta() {codigo = "DESEJA_ADERIR_PRA", respostas = new List<object>() {"Sim"}}, //{"Não Informado"}},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL", respostas = new List<object>() {"Não Informado"}},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL_REGULARIZAR", respostas = new List<object>()},
 				new Resposta() {codigo = "POSSUI_DEFICIT_RL_COMPENSAR", respostas = new List<object>()},
@@ -38,7 +38,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 				new Resposta() {codigo = "EXISTE_RPPN_DATA_PUBLICACAO", respostas = new List<object>() },
 				new Resposta() {codigo = "EXISTE_RPPN_NUMERO", respostas = new List<object>() },
 				new Resposta() {codigo = "POSSUI_CRF", respostas = new List<object>() {"Não Informado"}},
-				new Resposta() {codigo = "RL_TEMPORALIDADE", respostas = new List<object>() {"PERIODO_ANTERIOR_23_01_1934"}},
+				new Resposta() {codigo = "RL_TEMPORALIDADE", respostas = new List<object>() {"PERIODO_15_09_1965_A_17_07_1989"}},
 				new Resposta() {codigo = "TAMANHO_ALTERADO_APOS_2008", respostas = new List<object>() {"Não Informado"}},
 				new Resposta() {codigo = "TAMANHO_ALTERADO_APOS_2008_AREA", respostas = new List<object>() }
 			};

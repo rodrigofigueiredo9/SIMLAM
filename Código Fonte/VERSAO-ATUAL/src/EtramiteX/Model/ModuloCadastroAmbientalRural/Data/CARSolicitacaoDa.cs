@@ -43,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 		#region Ações de DML
 
-		internal int Salvar(CARSolicitacao solicitacao, BancoDeDados banco)
+		internal int Salvar(CARSolicitacao solicitacao, BancoDeDados banco, bool verificarSolicitacaoCedente)
 		{
 			if (solicitacao == null)
 			{
@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 			if (solicitacao.Id <= 0)
 			{
-				return Criar(solicitacao, banco);
+                return Criar(solicitacao, verificarSolicitacaoCedente, banco);
 			}
 			else
 			{
@@ -60,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			}
 		}
 
-		internal int Criar(CARSolicitacao solicitacao, BancoDeDados banco = null)
+        internal int Criar(CARSolicitacao solicitacao, bool verificarSolicitacaoCedente, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -70,16 +70,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				insert into {0}tab_car_solicitacao(id, numero, data_emissao, situacao, situacao_data, protocolo, requerimento, protocolo_selecionado, atividade, 
-				empreendimento, declarante, autor, tid) values({0}seq_car_solicitacao.nextval, {0}seq_car_solicitacao.currval, sysdate, :situacao, 
+				 empreendimento, declarante, autor, tid) values({0}seq_car_solicitacao.nextval, {0}seq_car_solicitacao.currval, sysdate, :situacao, 
 				sysdate, :protocolo, :requerimento, :protocolo_selecionado, :atividade, :empreendimento, :declarante, :autor, :tid) returning id into :id", EsquemaBanco);
 
-
-				comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
-				comando.AdicionarParametroEntrada("protocolo", solicitacao.Protocolo.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("requerimento", solicitacao.Requerimento.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("protocolo_selecionado", solicitacao.ProtocoloSelecionado.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("atividade", solicitacao.Atividade.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("empreendimento", solicitacao.Empreendimento.Id, DbType.Int32);
+                //a variavel verifcarSolicitacaoCedente nao esta sendo usada
+                //if(verificarSolicitacaoCedente) comando.AdicionarParametroEntrada("situacao", 7, DbType.Int32);
+                //else comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
+                comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
+                comando.AdicionarParametroEntrada("protocolo", solicitacao.Protocolo.Id, DbType.Int32);
+				//comando.AdicionarParametroEntrada("requerimento", solicitacao.Requerimento.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("requerimento", 27828, DbType.Int32);
+                comando.AdicionarParametroEntrada("protocolo_selecionado", solicitacao.ProtocoloSelecionado.Id, DbType.Int32);
+				//comando.AdicionarParametroEntrada("atividade", solicitacao.Atividade.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("atividade", 285, DbType.Int32);
+                comando.AdicionarParametroEntrada("empreendimento", solicitacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("declarante", solicitacao.Declarante.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("autor", solicitacao.AutorId, DbType.Int32);
 
@@ -575,9 +579,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				   e.codigo empreendimento_codigo,
 				   s.declarante_id,
        
+
 				   f.funcionario_id autor_id,
 				   f.tid autor_tid,
 				   f.nome autor_nome,
+                    
 				   (select stragg_barra(sigla) from hst_setor where 
 				   setor_id in (select fs.setor_id from hst_funcionario_setor fs where fs.id_hst = f.id)
 				   and tid in (select fs.setor_tid from hst_funcionario_setor fs where fs.id_hst = f.id )) autor_setor,
@@ -648,7 +654,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						solicitacao.Declarante.Id = reader.GetValue<Int32>("declarante_id");
 						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nomerazao");
 
-						solicitacao.AutorId = reader.GetValue<Int32>("autor_id");
+						solicitacao.AutorId = reader.GetValue<Int32>("autor_id");                        
 						solicitacao.AutorNome = reader.GetValue<String>("autor_nome");
 						solicitacao.AutorSetorTexto = reader.GetValue<String>("autor_setor");
 						solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
@@ -658,10 +664,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					}
 
 					reader.Close();
-				}
-
-				#endregion
-			}
+                }
+               
+                #endregion
+            }
 
 			return solicitacao;
 		}
@@ -1410,6 +1416,84 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
 		}
+
+        internal Boolean VerificaSolicitacaoCedente(int empreendimento)
+        {
+            /*  *Se o receptor tiver RLC (Reserva Legal Compensada) vindo de outra propriedade, entao: 
+                *Verifica se o cedente do receptor existe número SICAR
+                *Se não existir, a situação da solicitação CAR do receptor será "aguardando" (7)*/
+
+            //COUNT SE HÁ RLC EM OUTRA PROPRIEDADE
+            /*var sql = @"SELECT EMP_CEDENTE.ID ID_CEDENTE       
+                                FROM TAB_EMPREENDIMENTO                 EMP_RECEPTOR                                       
+                                INNER JOIN CRT_DOMINIALIDADE_RESERVA    DR_RECEPTOR    ON  EMP_RECEPTOR.ID = DR_RECEPTOR.EMP_COMPENSACAO
+                                INNER JOIN CRT_DOMINIALIDADE_DOMINIO    DOM_RECEPTOR   ON  DOM_RECEPTOR.ID = DR_RECEPTOR.MATRICULA      
+                                INNER JOIN CRT_DOMINIALIDADE_DOMINIO    DOM_CEDENTE    ON  DR_RECEPTOR.DOMINIO = DOM_CEDENTE.ID
+                                INNER JOIN CRT_DOMINIALIDADE_RESERVA    DR_CEDENTE     ON  DR_CEDENTE.MATRICULA = DOM_CEDENTE.ID
+                                INNER JOIN TAB_EMPREENDIMENTO           EMP_CEDENTE    ON  EMP_CEDENTE.ID = DR_CEDENTE.EMP_COMPENSACAO
+                        WHERE EMP_RECEPTOR.ID = :id_emp_receptor AND ROWNUM = 1";
+            */
+
+            /*var sql = @" select  r.* --r.emp_compensacao, r.id, r.situacao, r.localizacao, r.situacao_vegetal, r.dominio 
+                        from    crt_dominialidade_reserva r --, tab_empreendimento e --, crt_dominialidade_reserva rc 
+                        where   r.cedente_receptor = 1
+                                and r.dominio in (
+                                                select distinct dr.dominio
+                                                from tab_empreendimento emp
+                                                      inner join crt_dominialidade_reserva dr
+                                                        on emp.id = dr.emp_compensacao
+                                                      inner join crt_dominialidade_dominio dom
+                                                      on dom.id = dr.matricula
+                                                where emp.codigo = 10666
+                                              )
+                                and rownum = 1
+                        ;";*/
+            
+            var sql = "SELECT HISTORICO_CARACTERIZACAO.BuscarCedenteReservaLegal(:id_emp_receptor) from dual";
+             
+            var sql2 = "SELECT ID FROM TAB_CONTROLE_SICAR WHERE EMPREENDIMENTO = :emp";
+            
+            //int empreendimentoCedente = 0;
+            //int verificaNumeroSICAR = 0;
+            //var temCedente = false;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(sql);
+                comando.AdicionarParametroEntrada("id_emp_receptor", empreendimento);
+                var reader = bancoDeDados.ExecutarScalar(comando);
+                /*{
+                                    empreendimentoCedente = reader.;
+                                    if (reader.Read())
+                                    {
+                                        //empreendimentoCedente = reader.GetValue<int>("ID_CEDENTE");
+                                        empreendimentoCedente = reader.GetValue<int>("CODIGO_IMOVEL");
+                                        temCedente = true;
+                                    }
+                                    //reader.Close();
+                                }*/
+                if (reader != null) return true;
+                else return false;
+                /*if (temCedente)
+                {
+                    Comando comando2 = bancoDeDados.CriarComando(sql2);
+                    comando2.AdicionarParametroEntrada("emp", empreendimentoCedente);
+                    using (var rea= bancoDeDados.ExecutarReader(comando2))
+                    {
+                        if (rea.Read())
+                        {
+                            verificaNumeroSICAR = rea.GetValue<int>("ID");
+                        }
+                        rea.Close();
+                    }
+                }
+            }
+            if (verificaNumeroSICAR == 0)
+                return false;
+            else
+                return true;*/
+            }
+        }
 
 		internal void FazerVirarPassivo(int solicitacaoID, BancoDeDados banco)
 		{

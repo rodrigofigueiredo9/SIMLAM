@@ -31,28 +31,28 @@ namespace Tecnomapas.Blocos.Etx.ModuloCore.Data
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("acao", Convert.ToInt32(acao), DbType.Int32);
 				comando.AdicionarParametroEntrada("executor_id", DbType.Int32);
-				comando.AdicionarParametroEntrada("executor_tid", DbType.String);
 				comando.AdicionarParametroEntrada("executor_nome", DbType.String);
 				comando.AdicionarParametroEntrada("executor_login", DbType.String);
 				comando.AdicionarParametroEntrada("executor_tipo_id", DbType.Int32);
+                comando.AdicionarParametroEntrada("executor_tid", DbType.String);
 
 				executor = executor ?? Executor.Current;
 
 				if (executor == null)
 				{
 					comando.SetarValorParametro("executor_id", DBNull.Value);
-					comando.SetarValorParametro("executor_tid", DBNull.Value);
 					comando.SetarValorParametro("executor_nome", DBNull.Value);
 					comando.SetarValorParametro("executor_login", DBNull.Value);
 					comando.SetarValorParametro("executor_tipo_id", DBNull.Value);
+                    comando.SetarValorParametro("executor_tid", DBNull.Value);
 				}
 				else
 				{
 					comando.SetarValorParametro("executor_id", executor.Id);
-					comando.SetarValorParametro("executor_tid", executor.Tid);
 					comando.SetarValorParametro("executor_nome", executor.Nome);
 					comando.SetarValorParametro("executor_login", executor.Login);
 					comando.SetarValorParametro("executor_tipo_id", executor.Tipo);
+                    comando.SetarValorParametro("executor_tid", executor.Tid);
 				}
 
 				bancoDeDados.ExecutarNonQuery(comando);
