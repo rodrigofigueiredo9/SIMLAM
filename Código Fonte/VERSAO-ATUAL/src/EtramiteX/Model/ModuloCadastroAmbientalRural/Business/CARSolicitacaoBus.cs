@@ -66,8 +66,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		{
 			try
 			{
-			    //if (_validar.Salvar(entidade))
-				//{
+			    if (_validar.Salvar(entidade))
+				{
 					GerenciadorTransacao.ObterIDAtual();
 
                     //função não esta sendo usada, pois implementamos outra soluçao no scheduler; arquivo: gerarArquivoCarJob; função: obterDadosReservaLegal;
@@ -132,7 +132,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                     }
                     #endregion
             
-				//}
+				}
 		    }
 			catch (Exception e)
 			{

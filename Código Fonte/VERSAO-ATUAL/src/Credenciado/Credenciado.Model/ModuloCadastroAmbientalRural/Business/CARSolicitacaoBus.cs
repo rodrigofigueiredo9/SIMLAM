@@ -65,8 +65,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		{
 			try
 			{
-				//if (_validar.Salvar(carSolicitacao))
-				//{
+				if (_validar.Salvar(carSolicitacao))
+				{
 					GerenciadorTransacao.ObterIDAtual();
 					carSolicitacao.Id = _daInterno.ObterNovoID();
                     
@@ -131,7 +131,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
                     }
                     #endregion
-				//}
+				}
 			}
 			catch (Exception e)
 			{
