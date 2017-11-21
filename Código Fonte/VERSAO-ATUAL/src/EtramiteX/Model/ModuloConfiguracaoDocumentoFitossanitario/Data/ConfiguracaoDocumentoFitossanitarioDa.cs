@@ -335,7 +335,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return retorno;
         }
 
-        internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, BancoDeDados banco = null)
+        internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, string serie, BancoDeDados banco = null)
         {
             List<long> retorno = new List<long>();
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -344,24 +344,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 if (tipo == (int)eDocumentoFitossanitarioTipo.CFO || tipo == (int)eDocumentoFitossanitarioTipo.CFOC)
                 {
-                    comando = bancoDeDados.CriarComando(@"
-				              select t.*
-                              from tab_numero_cfo_cfoc t, hst_liberacao_cfo_cfoc h 
-				              where h.liberacao_id = t.liberacao
-                                    and t.numero >= " + inicio +
-                                    " and t.numero <= " + fim +
-                                    " and t.tipo_documento = " + tipo);
+                    comando = bancoDeDados.CriarComando(@"select t.*
+                                                          from tab_numero_cfo_cfoc t,
+                                                               hst_liberacao_cfo_cfoc h 
+                            				              where h.liberacao_id = t.liberacao
+                                                                and t.numero >= :inicio
+                                                                and t.numero <= :fim
+                                                                and t.tipo_documento = :tipo");
+
+                    if (serie == null)
+                    {
+                        comando.DbCommand.CommandText += " and t.serie is null";
+                    }
+                    else
+                    {
+                        comando.DbCommand.CommandText += " and t.serie = :serie";
+                        comando.AdicionarParametroEntrada("serie", serie, DbType.String);
+                    }
 
                     comando.DbCommand.CommandText += " order by t.numero";
+
+                    comando.AdicionarParametroEntrada("inicio", inicio, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fim", fim, DbType.Int64);
+                    comando.AdicionarParametroEntrada("tipo", tipo, DbType.Int32);
                 }
                 else //PTV
                 {
-                    comando = bancoDeDados.CriarComando(@"
-				              select t.NUMERO
-                              from tab_ptv t
-                              where t.NUMERO >= " + inicio +
-                                    " and t.NUMERO <= " + fim +
-                              " order by t.NUMERO");
+                    comando = bancoDeDados.CriarComando(@"select t.numero
+                                                          from tab_ptv t
+                                                          where t.numero >= :inicio
+                                                                and t.numero <= :fim
+                                                          order by t.numero");
+
+                    comando.AdicionarParametroEntrada("inicio", inicio, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fim", fim, DbType.Int64);
                 }
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
