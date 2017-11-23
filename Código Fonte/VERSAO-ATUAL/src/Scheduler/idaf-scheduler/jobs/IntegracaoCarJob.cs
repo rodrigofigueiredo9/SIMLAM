@@ -65,6 +65,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
               }
               catch (Exception ex)
               {
+                  //Caso não consiga inserir na tab_scheduler_fila, seta 0 na coluna 'passivo_enviado' da solicitação CAR, para saber que não foi enviado
                   using (OracleCommand command = new OracleCommand("UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 0 WHERE PASSIVO_ENVIADO = 1 AND ID = :id", conn))
                   {
                       command.Parameters.Add(new OracleParameter("id", solicitacaoID));
