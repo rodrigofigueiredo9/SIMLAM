@@ -118,9 +118,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 			{
 				intervalos.ForEach(item =>
 				{
-                    if (!intervalo.Equals(item) && intervalo.TipoDocumentoID == item.TipoDocumentoID && intervalo.Tipo == item.Tipo
-                        && ((intervalo.NumeroInicial >= item.NumeroInicial && intervalo.NumeroInicial <= item.NumeroFinal) && intervalo.Serie == item.Serie ||
-                            (item.NumeroInicial >= intervalo.NumeroInicial && item.NumeroInicial <= intervalo.NumeroFinal) && intervalo.Serie == item.Serie))
+                    if (!intervalo.Equals(item)
+                        && intervalo.TipoDocumentoID == item.TipoDocumentoID
+                        //&& intervalo.Tipo == item.Tipo
+                        && (((intervalo.NumeroInicial >= item.NumeroInicial && intervalo.NumeroInicial <= item.NumeroFinal) && ((String.IsNullOrWhiteSpace(intervalo.Serie) && String.IsNullOrWhiteSpace(item.Serie)) || intervalo.Serie == item.Serie))
+                            || ((item.NumeroInicial >= intervalo.NumeroInicial && item.NumeroInicial <= intervalo.NumeroFinal) && ((String.IsNullOrWhiteSpace(intervalo.Serie) && String.IsNullOrWhiteSpace(item.Serie)) || intervalo.Serie == item.Serie))
+                           )
+                       )
 					{
 						Validacao.Add(Mensagem.ConfiguracaoDocumentoFitossanitario.NumeroInicialExiste(intervalo.TipoDocumentoTexto));
 					}
