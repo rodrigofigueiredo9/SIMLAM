@@ -835,27 +835,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select min(numero) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l
-				where l.id = t.liberacao and t.tipo_documento = 1 and t.tipo_numero = 2
-				and not exists (select null from cre_cfo c where c.numero = t.numero)
-				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
-                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
+                                    select min(t.numero||'/'||t.serie)
+                                    from tab_numero_cfo_cfoc t,
+                                         tab_liberacao_cfo_cfoc l
+                                    where l.id = t.liberacao
+                                          and t.tipo_documento = 1
+                                          and t.tipo_numero = 2
+                                          and not exists ( select null
+                                                           from cre_cfo c
+                                                           where c.numero = t.numero
+                                                                 and c.serie = t.serie )
+                                          and t.situacao = 1
+                                          and t.utilizado = 0
+                                          and l.responsavel_tecnico = :credenciado
+                                          and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
                 string numeroDigital = bancoDeDados.ExecutarScalar(comando).ToString();
 
-
-                Comando comandoSerie = bancoDeDados.CriarComando(@"
-				select serie from tab_numero_cfo_cfoc where numero = :numero ");
-
-                comandoSerie.AdicionarParametroEntrada("numero", numeroDigital, DbType.Int64);
-
-                string serieDigital = bancoDeDados.ExecutarScalar(comandoSerie).ToString();
-
-                if (!string.IsNullOrEmpty(serieDigital))
+                if (numeroDigital.Count() == 9) //se não possui série, tira a barra
                 {
-                    numeroDigital = numeroDigital + "/" + serieDigital; 
+                    numeroDigital = numeroDigital.Substring(0, 8);
                 }
 
                 return numeroDigital;

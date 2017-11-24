@@ -60,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                 {
                     comando = bancoDeDados.CriarComando(@"
 				    update tab_numero_cfo_cfoc t set t.utilizado = 1 
-				    where t.tipo_documento = :tipo_documento and t.tipo_numero = :tipo_numero and t.numero = :numero 
+				    where t.tipo_documento = :tipo_documento and t.tipo_numero = :tipo_numero and t.numero = :numero and t.serie is null
 				    returning t.id into :id", EsquemaBanco);
                 }
                 else
