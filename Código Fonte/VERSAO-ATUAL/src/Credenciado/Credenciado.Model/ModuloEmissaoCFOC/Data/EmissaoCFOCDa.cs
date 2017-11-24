@@ -696,27 +696,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select min(numero) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l
-				where l.id = t.liberacao and t.tipo_documento = 2 and t.tipo_numero = 2
-				and not exists(select null from cre_cfoc c where c.numero = t.numero)
-				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
-                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
+                                    select min(t.numero||'/'||t.serie)
+                                    from tab_numero_cfo_cfoc t,
+                                         tab_liberacao_cfo_cfoc l
+                                    where l.id = t.liberacao
+                                          and t.tipo_documento = 2
+                                          and t.tipo_numero = 2
+                                          and not exists( select null
+                                                          from cre_cfoc c
+                                                          where c.numero = t.numero
+                                                                and c.serie = t.serie )
+                                          and t.situacao = 1
+                                          and t.utilizado = 0
+                                          and l.responsavel_tecnico = :credenciado
+                                          and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
 
                 comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
                 string numeroDigital = bancoDeDados.ExecutarScalar(comando).ToString();
 
-
-                Comando comandoSerie = bancoDeDados.CriarComando(@"
-				select serie from tab_numero_cfo_cfoc where numero = :numero ");
-
-                comandoSerie.AdicionarParametroEntrada("numero", numeroDigital, DbType.Int64);
-
-                string serieDigital = bancoDeDados.ExecutarScalar(comandoSerie).ToString();
-
-                if (!string.IsNullOrEmpty(serieDigital))
+                if (numeroDigital.Count() == 9)     //se não tiver série, remove a barra
                 {
-                    numeroDigital = numeroDigital + "/" + serieDigital;
+                    numeroDigital = numeroDigital.Substring(0, 8);
                 }
 
                 return numeroDigital;
@@ -963,10 +964,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                 Comando comando;
 
                 if (string.IsNullOrEmpty(serie))
-                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero");
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and n.serie is null");
                 else
                 {
-                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and serie = :serie");
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and n.serie = :serie");
                     comando.AdicionarParametroEntrada("serie", serie, DbType.String);
                 }
 
@@ -982,7 +983,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				Comando comando = bancoDeDados.CriarComando(@"
 				select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l 
 				where l.id = n.liberacao and n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
-				and not exists (select null from cre_cfoc c where c.numero = n.numero) 
+				and not exists (select null from cre_cfoc c where c.numero = n.numero and c.serie = n.serie) 
 				and l.responsavel_tecnico = :credenciado 
                 and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
