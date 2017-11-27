@@ -2024,12 +2024,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <returns></returns>
 		private static IEnumerable<Geo> ObterGeometriaAppTotal(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".GEO_AREAS_CALCULADAS";
+			//var tabela = schema + ".GEO_AREAS_CALCULADAS";
+            var tabela = schema + ".GEO_CAR_APP_CALCULADAS";
 
 			var geometrias = new List<Geo>();
 
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppTotal,
-				"tipo = 'APP_APMP'"));
+                "tipo = 'APP_TOTAL'"));
+                //"tipo = 'APP_APMP'"));
 
 			return geometrias;
 		}
