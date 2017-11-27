@@ -132,7 +132,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                         bancoDeDados.IniciarTransacao();
                         command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
 
-                        command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+                        command.AdicionarParametroEntrada("emp", carSolicitacao.Empreendimento.Id, System.Data.DbType.Int32);
 
                         bancoDeDados.ExecutarNonQuery(command);
 
