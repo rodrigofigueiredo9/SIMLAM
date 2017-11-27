@@ -91,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                     var qtdModuloFiscal = 0.0;
                     using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                     {
-
+                        #region Select QTD Modulo Fiscal
                         Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");
 
                         comando.AdicionarParametroEntrada("empreendimentoID", carSolicitacao.Empreendimento.Id, DbType.Int32);
@@ -105,6 +105,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
                             reader.Close();
                         }
+                        #endregion
                     }
                     using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
                     {
@@ -125,6 +126,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                         com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
 
                         bancoDeDados.ExecutarNonQuery(com);
+
+                        bancoDeDados.Commit();
+
+                        bancoDeDados.IniciarTransacao();
+                        command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
+
+                        command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+
+                        bancoDeDados.ExecutarNonQuery(command);
 
                         bancoDeDados.Commit();
                         #endregion

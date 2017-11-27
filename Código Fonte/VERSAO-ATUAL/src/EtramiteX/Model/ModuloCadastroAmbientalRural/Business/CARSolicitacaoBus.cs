@@ -127,6 +127,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
                         bancoDeDados.ExecutarNonQuery(com);
                         bancoDeDados.Commit();
+
+                        bancoDeDados.IniciarTransacao();
+                        command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
+
+                        command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+
+                        bancoDeDados.ExecutarNonQuery(command);
+
+                        bancoDeDados.Commit();
                         #endregion
 
                     }
