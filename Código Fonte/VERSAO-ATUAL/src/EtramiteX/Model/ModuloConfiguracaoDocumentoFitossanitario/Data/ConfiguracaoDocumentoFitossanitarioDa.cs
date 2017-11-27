@@ -303,9 +303,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
                                                       where lt.id = i.tipo_documento
                                                             and i.configuracao = :configuracao
-                                                            and substr(i.NUMERO_INICIAL, 3, 2) = " + anoStr +    //to_char(sysdate, 'YY')
-                                                      " order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
+                                                            and substr(i.NUMERO_INICIAL, 3, 2) = :anoStr
+                                                       order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
 
+                comando.AdicionarParametroEntrada("anoStr", anoStr, DbType.Int32);
                 comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
 
                 using (IDataReader reader = bancoDedados.ExecutarReader(comando))
@@ -328,6 +329,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                     reader.Close();
                 }
+
+                retorno.DocumentoFitossanitarioIntervalos = retorno.DocumentoFitossanitarioIntervalos.OrderBy(a => a.NumeroInicial).OrderBy(a => a.Serie).OrderBy(a => a.TipoDocumentoTexto).ToList();
 
                 #endregion
             }
