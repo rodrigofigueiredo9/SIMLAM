@@ -432,6 +432,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 
                 if (!string.IsNullOrEmpty(serieNumero))
                     sqlCfo += " and serie = :serie";
+                else
+                    sqlCfo += " and serie is null";
 
 				Comando comando = bancoDeDados.CriarComando(sqlCfo, EsquemaCredenciado);
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
