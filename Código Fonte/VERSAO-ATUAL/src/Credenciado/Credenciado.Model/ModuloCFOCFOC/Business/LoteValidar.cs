@@ -115,7 +115,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
 			}
 
-			if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && !x.Equals(item)) > 0)
+			if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && x.Serie == item.Serie && !x.Equals(item)) > 0)
 			{
 				Validacao.Add(Mensagem.Lote.OrigemJaAdicionada(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
 			}
@@ -315,7 +315,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                 Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
             }
 
-            if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && !x.Equals(item)) > 0)
+            if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && x.Serie == item.Serie && !x.Equals(item)) > 0)
             {
                 Validacao.Add(Mensagem.Lote.OrigemJaAdicionada(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
             }
