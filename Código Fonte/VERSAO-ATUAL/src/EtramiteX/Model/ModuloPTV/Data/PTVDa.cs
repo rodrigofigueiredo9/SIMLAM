@@ -763,6 +763,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+                        else
+                            strSql += " and serie is null ";
                         comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 
                     case eDocumentoFitossanitarioTipo.CFOC:
@@ -771,6 +773,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+                        else
+                            strSql += " and serie is null ";
 
                         comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
                     case eDocumentoFitossanitarioTipo.PTV:

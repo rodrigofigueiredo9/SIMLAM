@@ -895,7 +895,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
                 comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
                 comando.AdicionarParametroEntrada("serie_inicial", serie, DbType.String);
-                comando.AdicionarParametroEntrada("quantidadeDigital", liberacao.QuantidadeDigitalCFO, DbType.Int32);
+                comando.AdicionarParametroEntrada("quantidadeDigital", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
 
                 comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
                 comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
