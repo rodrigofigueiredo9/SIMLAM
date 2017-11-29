@@ -70,7 +70,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 				comando.AdicionarParametroEntrada("id", solicitacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_emissao", DateTime.Now, DbType.Date);
-				comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.Valido, DbType.Int32);
+				//comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.Valido, DbType.Int32);
+                comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao_data", DateTime.Now, DbType.Date);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				comando.AdicionarParametroEntrada("requerimento", solicitacao.Requerimento.Id, DbType.Int32);
