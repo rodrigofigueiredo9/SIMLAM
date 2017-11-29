@@ -92,8 +92,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                     using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                     {
                         #region Select QTD Modulo Fiscal
-                        Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");
-
+                        //Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");
+                        Comando comando = bancoDeDados.CriarComando(@"
+                        select  
+                           round((SELECT (t.croqui_area/10000) FROM idafcredenciado.CRT_DOMINIALIDADE t WHERE t.empreendimento = car_sol.EMPREENDIMENTO) /
+                              (SELECT m.modulo_ha FROM idaf.CNF_MUNICIPIO_MOD_FISCAL m WHERE m.municipio = (SELECT e.municipio FROM
+                              idafcredenciado.TAB_EMPREENDIMENTO_ENDERECO e WHERE e.empreendimento = car_sol.EMPREENDIMENTO AND e.correspondencia = 0)),2) as ATP_QTD_MODULO_FISCAL    
+                        from idafcredenciado.TAB_CAR_SOLICITACAO car_sol, idafcredenciado.CRT_PROJETO_GEO g
+                        where car_sol.SITUACAO NOT IN (3) --Em Cadastro (1) e Inválidos (3) );
+                        and car_sol.EMPREENDIMENTO = g.EMPREENDIMENTO
+                        and g.empreendimento = :empreendimentoID
+                        and g.caracterizacao = 1");
                         comando.AdicionarParametroEntrada("empreendimentoID", carSolicitacao.Empreendimento.Id, DbType.Int32);
 
                         using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -107,7 +116,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                         }
                         #endregion
                     }
-                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafcredenciadogeo"))
                     {
                         #region Chamada Procedure
                         bancoDeDados.IniciarTransacao();
