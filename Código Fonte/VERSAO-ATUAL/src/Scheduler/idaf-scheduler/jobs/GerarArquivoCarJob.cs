@@ -1650,23 +1650,35 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							throw new Exception("Geometria " + tipoGeometriaCar + " ID " + id + "inválida: " + exception.Message);
 						}
 
-                        switch (Convert.ToInt32(dr["GEOTYPE"]))
+                        if (tipoGeometriaGeoJson == Geometria.POINT || tipoGeometriaGeoJson == Geometria.LINESTRING)
                         {
-                            case 2001:   //POINT
-                                geo.area = 0;
-                                break;
-                            case 2002:   //LINESTRING
-                                geo.area = 0;
-                                break;
-                            case 2003:   //POLYGON
-                                geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                            geo.area = 0;
+                            if (Convert.ToInt32(dr["GEOTYPE"]) == 2003)
+                            {
                                 geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
-                                break;
-                            case 2007:   //MULTIPOLYGON
-                                geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
-                                break;
-
+                            }                            
                         }
+                        else
+                        {
+                            switch (Convert.ToInt32(dr["GEOTYPE"]))
+                            {
+                                case 2001:   //POINT
+                                    geo.area = 0;
+                                    break;
+                                case 2002:   //LINESTRING
+                                    geo.area = 0;
+                                    break;
+                                case 2003:   //POLYGON
+                                    geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                                    geo.geoJson = new MultiPolygon(new List<Polygon>() { geo.geoJson as Polygon });
+                                    break;
+                                case 2007:   //MULTIPOLYGON
+                                    geo.area = Math.Round(Convert.ToDouble(dr["area_m2"]) / 10000, 2); //Converter para hectare
+                                    break;
+
+                            }
+                        }
+                        
                         /*
                          * 
 						switch (tipoGeometriaGeoJson)
@@ -2007,8 +2019,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var geometrias = new List<Geo>();
 
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
-				Geo.TipoVegetacaoNativa,
-                "vegetacao NOT IN ('MANGUE','RESTINGA','RESTINGA-APP')"));
+				Geo.TipoVegetacaoNativa));
+                //"vegetacao NOT IN ('MANGUE','RESTINGA','RESTINGA-APP')"));
                 //"vegetacao NOT IN ('MANGUE','BREJO','RESTINGA','RESTINGA-APP')"));
 
 			return geometrias;
