@@ -1363,11 +1363,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
 						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
                          */
-                        @" SELECT t.situacao_id, t.numero_termo, d.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao_id 
-                            FROM HST_CRT_DOMINIALIDADE_RESERVA t 
-                                  INNER JOIN HST_CRT_DOMINIALIDADE_DOMINIO d ON t.DOMINIO_ID = d.ID
-                            WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
-			{
+                        
+                        @"SELECT t.situacao, t.numero_termo, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao
+                          FROM CRT_DOMINIALIDADE_RESERVA t
+                              INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
+                              INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
+                          WHERE t.DOMINIO = :dominio_id AND t.TID = :dominio_tid",conn))
+                {
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
                 
@@ -1375,7 +1377,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				{
 					while (dr.Read())
 					{
-                        if (Convert.ToInt32(dr["situacao_id"]) == 1 || Convert.ToInt32(dr["situacao_id"]) == 2)  //1: Não informada  / 2: Proposta  / 3: Registrada                        
+                        if (Convert.ToInt32(dr["situacao"]) == 1 || Convert.ToInt32(dr["situacao"]) == 2)  //1: Não informada  / 2: Proposta  / 3: Registrada                        
 						{
 							resultado.resposta = "Não";                            
 						}
@@ -1395,10 +1397,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								dados.numero = "Não informado";
 							}
 
-                            var area = dr.GetValue<double>("ARL_DOCUMENTO");
+                            var area = Convert.ToDouble(dr["ARL_DOCUMENTO"]);//var area = dr.GetValue<double>("ARL_DOCUMENTO");
 							dados.area = area > 0 ? Convert.ToString(Math.Round(area / 10000, 2), CultureInfo.InvariantCulture) : "0";
                             
-							var empreendimentoCedente = dr["emp_compensacao_id"];
+							var empreendimentoCedente = dr["emp_compensacao"];
                             if (dados.reservaDentroImovel == "Não" && !Convert.IsDBNull(empreendimentoCedente) && empreendimentoCedente != null) // && (dr.GetValue<double>("arl_croqui") > 0))
 							{
 								
