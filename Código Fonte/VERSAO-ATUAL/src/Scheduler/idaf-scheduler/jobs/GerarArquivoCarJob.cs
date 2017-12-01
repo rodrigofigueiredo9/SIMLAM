@@ -1552,7 +1552,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				geo.AddRange(ObterGeometriaLagoNatural(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaManguezal(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaVegetacaoNativa(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
-				geo.AddRange(ObterGeometriaAreaDeclividadeMaior45(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
+                geo.AddRange(ObterGeometriaAreaDeclividade25a45(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));                
+                geo.AddRange(ObterGeometriaAreaDeclividadeMaior45(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));              
 				geo.AddRange(ObterGeometriaBordaChapada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaAreaConsolidada(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
 				geo.AddRange(ObterGeometriaAppTotal(connGeo, schemaGeo, projetoGeoId, projetoGeoTid));
@@ -1946,6 +1947,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			return geometrias;
 		}
 
+        private static IEnumerable<Geo> ObterGeometriaAreaDeclividade25a45(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
+        {
+            var tabela = schema + ".GEO_REST_DECLIVIDADE";
+
+            var geometrias = new List<Geo>();
+
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, null, Geometria.POLYGON,
+                Geo.TipoAreaDecliv25a45, "tipo = 'RESTRICAO'"));
+
+            return geometrias;
+        }
+
 		/// <summary>
 		/// Obters the geometria area declividade maior45.
 		/// </summary>
@@ -1961,7 +1974,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var geometrias = new List<Geo>();
 
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
-				Geo.TipoAreaDeclivMaior45));
+                Geo.TipoAreaDeclivMaior45, "tipo = 'APP'"));
 
 			return geometrias;
 		}
