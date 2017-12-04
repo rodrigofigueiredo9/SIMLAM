@@ -605,7 +605,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloRelat
 					r.empreendimento_tid,
 					r.situacao_id,
 					r.situacao_texto,
-					(select pe.municipio_texto
+					(select distinct pe.municipio_texto
 						from hst_credenciado c, hst_pessoa p, hst_pessoa_endereco pe
 						where c.pessoa_id = p.pessoa_id
 						and c.pessoa_tid = p.tid
