@@ -23,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 		public const string TipoReservArtificialDecorBarramento = "RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO";
 		public const string TipoVereda = "VEREDA";
 		public const string TipoAreaTopoMorro = "AREA_TOPO_MORRO";
+        public const string TipoAreaDecliv25a45 = "AREA_USO_RESTRITO_DECLIVIDADE_25_A_45";
 		public const string TipoAreaDeclivMaior45 = "AREA_DECLIVIDADE_MAIOR_45";
 		public const string TipoBordaChapada = "BORDA_CHAPADA";
 		public const string TipoRestinga = "RESTINGA";
