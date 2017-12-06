@@ -224,7 +224,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumeroDigitalCFONaoPodeSerMenorIgualZero);
 			}
 
-			if (_da.DigitalPossuiNumeroCFONaoConfigurado(liberacao.QuantidadeDigitalCFO, liberacao.CredenciadoId))
+			if (_da.DigitalPossuiNumeroCFONaoConfigurado(liberacao.QuantidadeDigitalCFO))
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumerosDigitaisCFONaoPodeExcederAConfiguradaNoSistema);
 			}
@@ -242,7 +242,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumeroDigitalCFOCNaoPodeSerMenorIgualZero);
 			}
 
-			if (_da.DigitalPossuiNumeroCFOCNaoConfigurado(liberacao.QuantidadeDigitalCFOC, liberacao.CredenciadoId))
+			if (_da.DigitalPossuiNumeroCFOCNaoConfigurado(liberacao.QuantidadeDigitalCFOC))
 			{
 				Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumerosDigitaisCFOCNaoPodeExcederAConfiguradaNoSistema);
 			}
