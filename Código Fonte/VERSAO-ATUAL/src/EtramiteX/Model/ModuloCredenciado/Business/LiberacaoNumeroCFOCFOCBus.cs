@@ -252,12 +252,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 					{
 						case eDocumentoFitossanitarioTipo.CFO:
 							EmissaoCFOBus busCFO = new EmissaoCFOBus();
-							busCFO.Cancelar(new EmissaoCFO() { Numero = objeto.Numero.ToString() });
+							busCFO.Cancelar(new EmissaoCFO() { Numero = objeto.Numero.ToString(), Serie = objeto.Serie });
 							break;
 
 						case eDocumentoFitossanitarioTipo.CFOC:
 							EmissaoCFOCBus busCFOC = new EmissaoCFOCBus();
-							busCFOC.Cancelar(new EmissaoCFOC() { Numero = objeto.Numero.ToString() });
+                            busCFOC.Cancelar(new EmissaoCFOC() { Numero = objeto.Numero.ToString(), Serie = objeto.Serie });
 							break;
 					}
 
