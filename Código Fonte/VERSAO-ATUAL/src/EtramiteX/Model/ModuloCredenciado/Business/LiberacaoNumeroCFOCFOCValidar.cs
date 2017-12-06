@@ -435,12 +435,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			{
 				case eDocumentoFitossanitarioTipo.CFO:
 					EmissaoCFODa daCFO = new EmissaoCFODa();
-					utilizadoID = daCFO.NumeroUtilizado(objeto.Numero);
+					utilizadoID = daCFO.NumeroUtilizado(objeto.Numero, objeto.Serie);
 					break;
 
 				case eDocumentoFitossanitarioTipo.CFOC:
 					EmissaoCFOCDa daCFOC = new EmissaoCFOCDa();
-					utilizadoID = daCFOC.NumeroUtilizado(objeto.Numero);
+					utilizadoID = daCFOC.NumeroUtilizado(objeto.Numero, objeto.Serie);
 					break;
 			}
 

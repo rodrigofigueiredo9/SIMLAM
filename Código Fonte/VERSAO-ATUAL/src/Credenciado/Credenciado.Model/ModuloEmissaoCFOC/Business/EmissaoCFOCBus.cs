@@ -216,17 +216,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 				bancoDeDados.IniciarTransacao();
 
 				EmissaoCFOC entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, false, false, bancoDeDados);
-				List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
 
-				//Dessassocio os Lotes
-				entidadeBanco.Produtos.Clear();
-				_da.Salvar(entidadeBanco, bancoDeDados);
+                if (entidade.Id != 0)
+                {
+                    List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
 
-				LoteBus loteBus = new LoteBus();
-				foreach (var item in lotesID)
-				{
-					loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
-				}
+                    //Dessassocio os Lotes
+                    entidadeBanco.Produtos.Clear();
+                    _da.Salvar(entidadeBanco, bancoDeDados);
+
+                    LoteBus loteBus = new LoteBus();
+                    foreach (var item in lotesID)
+                    {
+                        loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
+                    }
+                }
 
 				_da.Cancelar(entidadeBanco, bancoDeDados);
 

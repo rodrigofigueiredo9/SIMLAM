@@ -935,13 +935,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 		#region Validaçoes
 
-		public int NumeroUtilizado(long numero)
+		public int NumeroUtilizado(long numero, string serie)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfoc c where c.numero = :numero), 0) from dual", EsquemaCredenciado);
+                Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfoc c where c.numero = :numero and ( c.serie = :serie or ( c.serie is null or :serie is null ) )), 0) from dual", EsquemaCredenciado);
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                comando.AdicionarParametroEntrada("serie", serie, DbType.String);
 
 				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
