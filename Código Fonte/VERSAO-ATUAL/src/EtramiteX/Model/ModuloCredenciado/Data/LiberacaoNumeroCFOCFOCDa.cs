@@ -493,11 +493,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
                 if (liberacao.LiberarDigitalCFO)
                 {
-                    LiberarDigitalCFO(liberacao, bancoDeDados);
+                    LiberarDigitalCFOCFOC(liberacao, liberacao.QuantidadeDigitalCFO, (int)eCFOCFOCTipo.CFO, (int)eCFOCFOCTipoNumero.Digital, bancoDeDados);
                 }
                 if (liberacao.LiberarDigitalCFOC)
                 {
-                    LiberarDigitalCFOC(liberacao, bancoDeDados);
+                    LiberarDigitalCFOCFOC(liberacao, liberacao.QuantidadeDigitalCFOC, (int)eCFOCFOCTipo.CFOC, (int)eCFOCFOCTipoNumero.Digital, bancoDeDados);
                 }
                 if (liberacao.LiberarBlocoCFO)
                 {
@@ -514,397 +514,96 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
             }
         }
 
-        private void LiberarDigitalCFO(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
+        private void LiberarDigitalCFOCFOC(LiberaracaoNumeroCFOCFOC liberacao, int quantidade, int tipoDocumento, int tipoNumero, BancoDeDados banco = null)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 bancoDeDados.IniciarTransacao();
 
-                /*verificar qual foi o último número liberado*/
+                int total_liberado = 0;
 
-                //Se houver números liberados, pega o maior número liberado do ano atual.
-                //Se não houver números liberados, pega o número anterior ao menor número disponível para o ano atual.
-				Comando comando = banco.CriarComando(@"
-                                    select nvl( ( select max(t.serie||to_char(t.numero))
-                                                  from tab_liberacao_cfo_cfoc l,
-                                                       tab_numero_cfo_cfoc t
-                                                  where length(t.numero) = 8
-                                                        and t.liberacao = l.id
-                                                        and t.tipo_documento = :tipo_documento
-                                                        and t.tipo_numero = :tipo_numero
-                                                        and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ), 
-                                                ( select min(t.serie||to_char(t.numero_inicial-1))
-                                                  from cnf_doc_fito_intervalo t
-                                                  where t.tipo_documento = :tipo_documento
-                                                        and t.tipo = :tipo_numero
-                                                        and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%' ) ) valor
-                                    from dual");
-                
-                comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFO, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
+                //pegar todos os ranges
+                Comando comando = bancoDeDados.CriarComando(@"
+                                        select cnf.numero_inicial,
+                                               cnf.numero_final,
+                                               cnf.serie
+                                        from cnf_doc_fito_intervalo cnf
+                                        where cnf.tipo_documento = :tipo_documento
+                                              and cnf.tipo = :tipo_numero");
 
-				object objeto = banco.ExecutarScalar(comando);  //número retornado pela consulta acima, no formato série + número (ex: A32170025)
+                comando.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                comando.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
 
-                string serienum = ((objeto != null && objeto != DBNull.Value) ? objeto.ToString() : string.Empty);
-                long ultimoAdicionado = 0;
-                string serie = string.Empty;
-                
-                if (serienum.Count() == 9)  //número possui série (série + num de 8 digitos)
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
-                    serie = serienum[0].ToString();
-                    ultimoAdicionado = Convert.ToInt64(serienum.Substring(1, 8));
+                    while (reader.Read())
+                    {
+                        Int64 numInicial = reader.GetValue<int>("numero_inicial");
+                        Int64 numFinal = reader.GetValue<int>("numero_final");
+                        string serie = reader.GetValue<string>("serie");
+
+                        for (Int64 numero = numInicial; numero <= numFinal && total_liberado < quantidade; numero++)
+                        {
+                            Comando comandoAux = bancoDeDados.CriarComando(@"
+                                                    select count(t.id) total
+                                                    from tab_numero_cfo_cfoc t
+                                                    where t.tipo_documento = :tipo_documento
+                                                          and t.tipo_numero = :tipo_numero
+                                                          and t.numero = :numero
+                                                          and ((t.serie is null and :serie_atual is null) or t.serie = :serie_atual )");
+
+                            comandoAux.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                            comandoAux.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
+                            comandoAux.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                            comandoAux.AdicionarParametroEntrada("serie_atual", serie, DbType.String);
+
+                            int total = Convert.ToInt32(bancoDeDados.ExecutarScalar(comandoAux));
+
+                            //Se não encontrou o número na tabela tab_numero_cfo_cfoc, é porque ele está disponível
+                            if (total == 0)
+                            {
+                                Comando comandoInsert = bancoDeDados.CriarComando(@"
+                                                            insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, TID, utilizado, serie)
+                                                            values (seq_tab_numero_cfo_cfoc.nextval,
+                                                                    :numero,
+                                                                    :tipo_documento,
+                                                                    :tipo_numero,
+                                                                    :liberacao,
+                                                                    1,
+                                                                    :tid,
+                                                                    0,
+                                                                    :serie)");
+
+                                comandoInsert.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                                comandoInsert.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                                comandoInsert.AdicionarParametroEntrada("serie", serie, DbType.String);
+
+                                bancoDeDados.ExecutarNonQuery(comandoInsert);
+
+                                total_liberado++;
+                            }
+                        }
+
+                        if (total_liberado == quantidade)
+                        {
+                            break;
+                        }
+                    }
+
+                    reader.Close();
                 }
-                //número não possui série
+
+                if (total_liberado == quantidade)
+                {
+                    bancoDeDados.Commit();
+                }
                 else
                 {
-                    ultimoAdicionado = Convert.ToInt64(serienum);
+                    bancoDeDados.Rollback();
                 }
-
-                /*enquanto não atingir a quantidade desejada para liberação
-                    *verificar qual é o menor número (considerando a série) disponível para liberação
-                    *se houver número, gravar que ele foi liberado na tabela tab_numero_cfo_cfoc*/
-
-                comando = banco.CriarComandoPlSql(@"
-                                declare
-                                  proximo number;
-                                  v_aux   number := 1;
-                                  v_saida number := 0;
-                                  serie_atual varchar2 (1);
-                                begin 
-                                  proximo := :numero_inicial; --o próximo número a ser liberado é o número seguinte ao último número liberado
-                                  serie_atual := :serie_inicial;
-
-                                  --faz o loop para a quantidade de números que se deseja liberar, liberando um número por vez
-                                  --(se não conseguir liberar tudo, não commita)
-                                  for i in 1..:quantidadeDigital loop
-                                    -- verifica se o número a ser liberado está dentro de algum range de mesma série
-                                    select count(*) into v_aux
-                                    from cnf_doc_fito_intervalo c 
-                                    where c.tipo = :tipo_numero
-                                          and c.tipo_documento = :tipo_documento
-                                          and ((serie_atual is null and c.serie is null) or c.serie = serie_atual)
-                                          and proximo >= c.numero_inicial
-                                          and proximo <= c.numero_final;
-    
-                                    -- se não foi encontrado nenhum range da série atual que contenha o número:
-                                    if v_aux = 0 then
-                                      -- verifica se existe algum range com a série atual que inicie acima
-                                      -- do número a ser liberado
-                                      -- se houver, o menor número do range será o número a ser liberado
-                                      select nvl(min(t.numero_inicial), 0) into proximo
-                                      from cnf_doc_fito_intervalo t 
-                                      where t.tipo_documento = :tipo_documento
-                                            and t.tipo = :tipo_numero
-                                            and ((serie_atual is null and t.serie is null) or t.serie = serie_atual)
-                                            and t.numero_inicial > proximo
-                                            and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-      
-                                      -- se não foi encontrado nenhum range superior nessa série:
-                                      if proximo = 0 then
-                                        -- verifica se existe algum outro range acima da série atual. A série recebe a nova série
-                                        select nvl(min(p.serie), '0') into serie_atual
-                                        from cnf_doc_fito_intervalo p
-                                        where p.tipo_documento = :tipo_documento
-                                              and p.tipo = :tipo_numero
-                                              and ((serie_atual is null and p.serie >= 'A') or p.serie > serie_atual)
-                                              and to_char(p.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-                                        
-                                        -- O próximo número é o menor do range
-                                        select nvl(min(t.numero_inicial), 0) into proximo
-                                        from cnf_doc_fito_intervalo t 
-                                        where t.tipo_documento = :tipo_documento
-                                              and t.tipo = :tipo_numero
-                                              and t.serie = serie_atual
-                                              and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-        
-                                        -- se não existe nenhum número a ser liberado, saída = 1
-                                        if proximo = 0 then
-                                          v_saida := 1;/*Possui 1 não configurado*/
-                                          exit;
-                                        else
-                                          insert into tab_numero_cfo_cfoc (id, 
-                                                                           numero,
-                                                                           tipo_documento,
-                                                                           tipo_numero,
-                                                                           liberacao,
-                                                                           situacao,
-                                                                           utilizado,
-                                                                           tid,
-                                                                           serie)
-                                          values (seq_tab_numero_cfo_cfoc.nextval,
-                                                  proximo,
-                                                  :tipo_documento,
-                                                  :tipo_numero,
-                                                  :liberacao,
-                                                  1,
-                                                  0,
-                                                  :tid,
-                                                  serie_atual);
-                                    
-                                          proximo := proximo + 1;
-                                        end if;
-                                      else
-                                        insert into tab_numero_cfo_cfoc (id, 
-                                                                         numero,
-                                                                         tipo_documento,
-                                                                         tipo_numero,
-                                                                         liberacao,
-                                                                         situacao,
-                                                                         utilizado,
-                                                                         tid,
-                                                                         serie)
-                                        values (seq_tab_numero_cfo_cfoc.nextval,
-                                                proximo,
-                                                :tipo_documento,
-                                                :tipo_numero,
-                                                :liberacao,
-                                                1,
-                                                0,
-                                                :tid,
-                                                serie_atual);
-                                    
-                                        proximo := proximo + 1;
-                                      end if;
-                                    else
-                                        insert into tab_numero_cfo_cfoc (id, 
-                                                                         numero,
-                                                                         tipo_documento,
-                                                                         tipo_numero,
-                                                                         liberacao,
-                                                                         situacao,
-                                                                         utilizado,
-                                                                         tid,
-                                                                         serie)
-                                        values (seq_tab_numero_cfo_cfoc.nextval,
-                                                proximo,
-                                                :tipo_documento,
-                                                :tipo_numero,
-                                                :liberacao,
-                                                1,
-                                                0,
-                                                :tid,
-                                                serie_atual);
-                                    
-                                        proximo := proximo + 1;
-                                    end if;
-                                  end loop;
-
-                                  if v_saida = 0 then
-                                    commit;
-                                  else
-                                    rollback;
-                                  end if;
-                                end;");
-
-                comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-                comando.AdicionarParametroEntrada("serie_inicial", serie, DbType.String);
-                comando.AdicionarParametroEntrada("quantidadeDigital", liberacao.QuantidadeDigitalCFO, DbType.Int32);
-
-                comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFO, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
-                comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
-
-                banco.ExecutarNonQuery(comando);
-
-                bancoDeDados.Commit();
-            }
-        }
-
-        private void LiberarDigitalCFOC(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                bancoDeDados.IniciarTransacao();
-
-                /*verificar qual foi o último número liberado*/
-
-                //Se houver números liberados, pega o maior número liberado do ano atual.
-                //Se não houver números liberados, pega o número anterior ao menor número disponível para o ano atual.
-                Comando comando = banco.CriarComando(@"
-                                    select nvl( ( select max(t.serie||to_char(t.numero))
-                                                  from tab_liberacao_cfo_cfoc l,
-                                                       tab_numero_cfo_cfoc t
-                                                  where length(t.numero) = 8
-                                                        and t.liberacao = l.id
-                                                        and t.tipo_documento = :tipo_documento
-                                                        and t.tipo_numero = :tipo_numero
-                                                        and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ), 
-                                                ( select min(t.serie||to_char(t.numero_inicial-1))
-                                                  from cnf_doc_fito_intervalo t
-                                                  where t.tipo_documento = :tipo_documento
-                                                        and t.tipo = :tipo_numero
-                                                        and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%' ) ) valor
-                                    from dual");
-
-                comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
-
-                object objeto = banco.ExecutarScalar(comando);  //número retornado pela consulta acima, no formato série + número (ex: A32170025)
-
-                string serienum = ((objeto != null && objeto != DBNull.Value) ? objeto.ToString() : string.Empty);
-                long ultimoAdicionado = 0;
-                string serie = string.Empty;
-
-                if (serienum.Count() == 9)  //número possui série (série + num de 8 digitos)
-                {
-                    serie = serienum[0].ToString();
-                    ultimoAdicionado = Convert.ToInt64(serienum.Substring(1, 8));
-                }
-                //número não possui série
-                else
-                {
-                    ultimoAdicionado = Convert.ToInt64(serienum);
-                }
-
-                /*enquanto não atingir a quantidade desejada para liberação
-                    *verificar qual é o menor número (considerando a série) disponível para liberação
-                    *se houver número, gravar que ele foi liberado na tabela tab_numero_cfo_cfoc*/
-
-                comando = banco.CriarComandoPlSql(@"
-                                declare
-                                  proximo number;
-                                  v_aux   number := 1;
-                                  v_saida number := 0;
-                                  serie_atual varchar2 (1);
-                                begin 
-                                  proximo := :numero_inicial; --o próximo número a ser liberado é o número seguinte ao último número liberado
-                                  serie_atual := :serie_inicial;
-
-                                  --faz o loop para a quantidade de números que se deseja liberar, liberando um número por vez
-                                  --(se não conseguir liberar tudo, não commita)
-                                  for i in 1..:quantidadeDigital loop
-                                    -- verifica se o número a ser liberado está dentro de algum range de mesma série
-                                    select count(*) into v_aux
-                                    from cnf_doc_fito_intervalo c 
-                                    where c.tipo = :tipo_numero
-                                          and c.tipo_documento = :tipo_documento
-                                          and ((serie_atual is null and c.serie is null) or c.serie = serie_atual)
-                                          and proximo >= c.numero_inicial
-                                          and proximo <= c.numero_final;
-    
-                                    -- se não foi encontrado nenhum range da série atual que contenha o número:
-                                    if v_aux = 0 then
-                                      -- verifica se existe algum range com a série atual que inicie acima
-                                      -- do número a ser liberado
-                                      -- se houver, o menor número do range será o número a ser liberado
-                                      select nvl(min(t.numero_inicial), 0) into proximo
-                                      from cnf_doc_fito_intervalo t 
-                                      where t.tipo_documento = :tipo_documento
-                                            and t.tipo = :tipo_numero
-                                            and ((serie_atual is null and t.serie is null) or t.serie = serie_atual)
-                                            and t.numero_inicial > proximo
-                                            and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-      
-                                      -- se não foi encontrado nenhum range superior nessa série:
-                                      if proximo = 0 then
-                                        -- verifica se existe algum outro range acima da série atual. A série recebe a nova série
-                                        select nvl(min(p.serie), '0') into serie_atual
-                                        from cnf_doc_fito_intervalo p
-                                        where p.tipo_documento = :tipo_documento
-                                              and p.tipo = :tipo_numero
-                                              and ((serie_atual is null and p.serie >= 'A') or p.serie > serie_atual)
-                                              and to_char(p.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-                                        
-                                        -- O próximo número é o menor do range
-                                        select nvl(min(t.numero_inicial), 0) into proximo
-                                        from cnf_doc_fito_intervalo t 
-                                        where t.tipo_documento = :tipo_documento
-                                              and t.tipo = :tipo_numero
-                                              and t.serie = serie_atual
-                                              and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-        
-                                        -- se não existe nenhum número a ser liberado, saída = 1
-                                        if proximo = 0 then
-                                          v_saida := 1;/*Possui 1 não configurado*/
-                                          exit;
-                                        else
-                                          insert into tab_numero_cfo_cfoc (id, 
-                                                                           numero,
-                                                                           tipo_documento,
-                                                                           tipo_numero,
-                                                                           liberacao,
-                                                                           situacao,
-                                                                           utilizado,
-                                                                           tid,
-                                                                           serie)
-                                          values (seq_tab_numero_cfo_cfoc.nextval,
-                                                  proximo,
-                                                  :tipo_documento,
-                                                  :tipo_numero,
-                                                  :liberacao,
-                                                  1,
-                                                  0,
-                                                  :tid,
-                                                  serie_atual);
-                                    
-                                          proximo := proximo + 1;
-                                        end if;
-                                      else
-                                        insert into tab_numero_cfo_cfoc (id, 
-                                                                         numero,
-                                                                         tipo_documento,
-                                                                         tipo_numero,
-                                                                         liberacao,
-                                                                         situacao,
-                                                                         utilizado,
-                                                                         tid,
-                                                                         serie)
-                                        values (seq_tab_numero_cfo_cfoc.nextval,
-                                                proximo,
-                                                :tipo_documento,
-                                                :tipo_numero,
-                                                :liberacao,
-                                                1,
-                                                0,
-                                                :tid,
-                                                serie_atual);
-                                    
-                                        proximo := proximo + 1;
-                                      end if;
-                                    else
-                                        insert into tab_numero_cfo_cfoc (id, 
-                                                                         numero,
-                                                                         tipo_documento,
-                                                                         tipo_numero,
-                                                                         liberacao,
-                                                                         situacao,
-                                                                         utilizado,
-                                                                         tid,
-                                                                         serie)
-                                        values (seq_tab_numero_cfo_cfoc.nextval,
-                                                proximo,
-                                                :tipo_documento,
-                                                :tipo_numero,
-                                                :liberacao,
-                                                1,
-                                                0,
-                                                :tid,
-                                                serie_atual);
-                                    
-                                        proximo := proximo + 1;
-                                    end if;
-                                  end loop;
-
-                                  if v_saida = 0 then
-                                    commit;
-                                  else
-                                    rollback;
-                                  end if;
-                                end;");
-
-                comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-                comando.AdicionarParametroEntrada("serie_inicial", serie, DbType.String);
-                comando.AdicionarParametroEntrada("quantidadeDigital", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
-
-                comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
-                comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
-
-                banco.ExecutarNonQuery(comando);
-
-                bancoDeDados.Commit();
             }
         }
 
@@ -1192,7 +891,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("data_final", filtro.DataFinalEmissao, DbType.DateTime);
 				}
 
-				comando.DbCommand.CommandText += " order by t.numero";
+                comando.DbCommand.CommandText += " order by nvl(t.serie, ' '), t.numero";
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -1394,257 +1093,75 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 		}
 
-		internal bool DigitalPossuiNumeroCFONaoConfigurado(int quantidadeDigitalCFO, int credenciado)
+		internal bool DigitalPossuiNumeroCFONaoConfigurado(int quantidadeDigitalCFO)
 		{
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
-                //Se houver números liberados, pega o maior número liberado do ano atual.
-                //Se não houver números liberados, pega o número anterior ao menor número disponível para o ano atual.
 				Comando comando = banco.CriarComando(@"
-                                    select nvl( ( select max(t.serie||to_char(t.numero))
-                                                  from tab_liberacao_cfo_cfoc l,
-                                                       tab_numero_cfo_cfoc t
-                                                  where length(t.numero) = 8
-                                                        and t.liberacao = l.id
-                                                        and t.tipo_documento = 1
-                                                        and t.tipo_numero = 2
-                                                        and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ), 
-                                                ( select min(t.serie||to_char(t.numero_inicial-1))
-                                                  from cnf_doc_fito_intervalo t
-                                                  where t.tipo_documento = 1
-                                                        and t.tipo = 2
-                                                        and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%' ) ) valor
-                                    from dual");
+                                    select sum(livres_intervalo) livres
+                                    from ( select ( ( cnf.numero_final + 1 - cnf.numero_inicial )
+                                                    - ( select count(id)
+                                                        from tab_numero_cfo_cfoc tnum
+                                                        where tnum.numero >= cnf.numero_inicial
+                                                              and tnum.numero <= cnf.numero_final
+                                                              and ( tnum.serie = cnf.serie or ( tnum.serie is null and cnf.serie is null ) )
+                                                              and tnum.tipo_documento = 1
+                                                              and tnum.tipo_numero = 2 ) ) livres_intervalo
+                                           from cnf_doc_fito_intervalo cnf
+                                           where cnf.tipo_documento = 1
+                                                 and cnf.tipo = 2 )");
 
-				object objeto = banco.ExecutarScalar(comando);  //número retornado pela consulta acima, no formato série + número (ex: A32170025)
+                int livres = 0;
 
-                string serienum = ((objeto != null && objeto != DBNull.Value) ? objeto.ToString() : string.Empty);
-                long ultimoAdicionado = 0;
-                string serie = string.Empty;
+                using (IDataReader reader = banco.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        livres = reader.GetValue<int>("livres");
+                    }
 
-                //Caso em que não existe nenhum range cadastrado
-                if (String.IsNullOrWhiteSpace(serienum))
-                {
-                    return true;
-                }
-                
-                if (serienum.Count() == 9)  //número possui série (série + num de 8 digitos)
-                {
-                    serie = serienum[0].ToString();
-                    ultimoAdicionado = Convert.ToInt64(serienum.Substring(1, 8));
-                }
-                //número não possui série
-                else
-                {
-                    ultimoAdicionado = Convert.ToInt64(serienum);
+                    reader.Close();
                 }
 
-				comando = banco.CriarComandoPlSql(@"
-                                declare
-                                  proximo number;
-                                  v_aux   number := 1;
-                                  v_saida number := 0;
-                                  serie_atual varchar2 (1);
-                                begin 
-                                  proximo := :numero_inicial; --o próximo número a ser liberado é o número seguinte ao último número liberado
-                                  serie_atual := :serie_inicial;
+                bool ultrapassa = quantidadeDigitalCFO > livres;
 
-                                  --faz o loop para a quantidade de números que se deseja liberar, verificando
-                                  --se todos os números conseguirão ser liberados
-                                  --(para no primeiro que não consegue)
-                                  for i in 1..:quantidadeDigital loop
-                                    -- verifica se o número a ser liberado está dentro de algum range de mesma série
-                                    select count(*) into v_aux
-                                    from cnf_doc_fito_intervalo c 
-                                    where c.tipo = 2
-                                          and c.tipo_documento = 1
-                                          and ((serie_atual is null and c.serie is null) or c.serie = serie_atual)
-                                          and proximo >= c.numero_inicial
-                                          and proximo <= c.numero_final;
-    
-                                    -- se não foi encontrado nenhum range da série atual que contenha o número:
-                                    if v_aux = 0 then
-                                      -- verifica se existe algum range com a série atual que inicie acima
-                                      -- do número a ser liberado
-                                      -- se houver, o menor número do range será o número a ser liberado
-                                      select nvl(min(t.numero_inicial), 0) into proximo
-                                      from cnf_doc_fito_intervalo t 
-                                      where t.tipo_documento = 1
-                                            and t.tipo = 2
-                                            and ((serie_atual is null and t.serie is null) or t.serie = serie_atual)
-                                            and t.numero_inicial > proximo
-                                            and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-      
-                                      -- se não foi encontrado nenhum range superior nessa série:
-                                      if proximo = 0 then
-                                        -- verifica se existe algum outro range acima da série atual. A série recebe a nova série
-                                        select nvl(min(p.serie), '0') into serie_atual
-                                        from cnf_doc_fito_intervalo p
-                                        where p.tipo_documento = 1
-                                              and p.tipo = 2
-                                              and ((serie_atual is null and p.serie >= 'A') or p.serie > serie_atual)
-                                              and to_char(p.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-                                        
-                                        -- O próximo número é o menor do range
-                                        select nvl(min(t.numero_inicial), 0) into proximo
-                                        from cnf_doc_fito_intervalo t 
-                                        where t.tipo_documento = 1
-                                              and t.tipo = 2
-                                              and t.serie = serie_atual
-                                              and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-        
-                                        -- se não existe nenhum número a ser liberado, saída = 1
-                                        if proximo = 0 then
-                                          v_saida := 1;/*Possui 1 não configurado*/
-                                          exit;
-                                        end if;
-                                      end if;
-                                    else
-                                        proximo := proximo + 1;
-                                    end if;
-                                  end loop;
-
-                                  --retorna 0 se houver números suficientes disponíveis, 1 caso contrário
-                                  :retorno := v_saida;
-                                end;");
-
-				comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-                comando.AdicionarParametroEntrada("serie_inicial", serie, DbType.String);
-				comando.AdicionarParametroEntrada("quantidadeDigital", quantidadeDigitalCFO, DbType.Int32);
-				comando.AdicionarParametroSaida("retorno", DbType.Int32);
-
-				banco.ExecutarNonQuery(comando);
-
-                var retorno = Convert.ToInt32(comando.ObterValorParametro("retorno"));
-
-				return retorno > 0;
+				return ultrapassa;
 			}
 		}
 
-		internal bool DigitalPossuiNumeroCFOCNaoConfigurado(int quantidadeDigitalCFOC, int credenciado)
+		internal bool DigitalPossuiNumeroCFOCNaoConfigurado(int quantidadeDigitalCFOC)
 		{
             using (BancoDeDados banco = BancoDeDados.ObterInstancia())
             {
-                //Se houver números liberados, pega o maior número liberado do ano atual.
-                //Se não houver números liberados, pega o número anterior ao menor número disponível para o ano atual.
                 Comando comando = banco.CriarComando(@"
-                                    select nvl( ( select max(t.serie||to_char(t.numero))
-                                                  from tab_liberacao_cfo_cfoc l,
-                                                       tab_numero_cfo_cfoc t
-                                                  where length(t.numero) = 8
-                                                        and t.liberacao = l.id
-                                                        and t.tipo_documento = 2
-                                                        and t.tipo_numero = 2
-                                                        and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%' ), 
-                                                ( select min(t.serie||to_char(t.numero_inicial-1))
-                                                  from cnf_doc_fito_intervalo t
-                                                  where t.tipo_documento = 2
-                                                        and t.tipo = 2
-                                                        and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%' ) ) valor
-                                    from dual");
+                                    select sum(livres_intervalo) livres
+                                    from ( select ( ( cnf.numero_final + 1 - cnf.numero_inicial )
+                                                    - ( select count(id)
+                                                        from tab_numero_cfo_cfoc tnum
+                                                        where tnum.numero >= cnf.numero_inicial
+                                                              and tnum.numero <= cnf.numero_final
+                                                              and ( tnum.serie = cnf.serie or ( tnum.serie is null and cnf.serie is null ) )
+                                                              and tnum.tipo_documento = 2
+                                                              and tnum.tipo_numero = 2 ) ) livres_intervalo
+                                           from cnf_doc_fito_intervalo cnf
+                                           where cnf.tipo_documento = 2
+                                                 and cnf.tipo = 2 )");
 
-                object objeto = banco.ExecutarScalar(comando);  //número retornado pela consulta acima, no formato série + número (ex: A32170025)
+                int livres = 0;
 
-                string serienum = ((objeto != null && objeto != DBNull.Value) ? objeto.ToString() : string.Empty);
-                long ultimoAdicionado = 0;
-                string serie = string.Empty;
-
-                //Caso em que não existe nenhum range cadastrado
-                if (String.IsNullOrWhiteSpace(serienum))
+                using (IDataReader reader = banco.ExecutarReader(comando))
                 {
-                    return true;
+                    if (reader.Read())
+                    {
+                        livres = reader.GetValue<int>("livres");
+                    }
+
+                    reader.Close();
                 }
 
-                if (serienum.Count() == 9)  //número possui série (série + num de 8 digitos)
-                {
-                    serie = serienum[0].ToString();
-                    ultimoAdicionado = Convert.ToInt64(serienum.Substring(1, 8));
-                }
-                //número não possui série
-                else
-                {
-                    ultimoAdicionado = Convert.ToInt64(serienum);
-                }
+                bool ultrapassa = quantidadeDigitalCFOC > livres;
 
-                comando = banco.CriarComandoPlSql(@"
-                                declare
-                                  proximo number;
-                                  v_aux   number := 1;
-                                  v_saida number := 0;
-                                  serie_atual varchar2 (1);
-                                begin 
-                                  proximo := :numero_inicial; --o próximo número a ser liberado é o número seguinte ao último número liberado
-                                  serie_atual := :serie_inicial;
-
-                                  --faz o loop para a quantidade de números que se deseja liberar, verificando
-                                  --se todos os números conseguirão ser liberados
-                                  --(para no primeiro que não consegue)
-                                  for i in 1..:quantidadeDigital loop
-                                    -- verifica se o número a ser liberado está dentro de algum range de mesma série
-                                    select count(*) into v_aux
-                                    from cnf_doc_fito_intervalo c 
-                                    where c.tipo = 2
-                                          and c.tipo_documento = 2
-                                          and ((serie_atual is null and c.serie is null) or c.serie = serie_atual)
-                                          and proximo >= c.numero_inicial
-                                          and proximo <= c.numero_final;
-    
-                                    -- se não foi encontrado nenhum range da série atual que contenha o número:
-                                    if v_aux = 0 then
-                                      -- verifica se existe algum range com a série atual que inicie acima
-                                      -- do número a ser liberado
-                                      -- se houver, o menor número do range será o número a ser liberado
-                                      select nvl(min(t.numero_inicial), 0) into proximo
-                                      from cnf_doc_fito_intervalo t 
-                                      where t.tipo_documento = 2
-                                            and t.tipo = 2
-                                            and ((serie_atual is null and t.serie is null) or t.serie = serie_atual)
-                                            and t.numero_inicial > proximo
-                                            and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-      
-                                      -- se não foi encontrado nenhum range superior nessa série:
-                                      if proximo = 0 then
-                                        -- verifica se existe algum outro range acima da série atual. A série recebe a nova série
-                                        select nvl(min(p.serie), '0') into serie_atual
-                                        from cnf_doc_fito_intervalo p
-                                        where p.tipo_documento = 2
-                                              and p.tipo = 2
-                                              and ((serie_atual is null and p.serie >= 'A') or p.serie > serie_atual)
-                                              and to_char(p.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-                                        
-                                        -- O próximo número é o menor do range
-                                        select nvl(min(t.numero_inicial), 0) into proximo
-                                        from cnf_doc_fito_intervalo t 
-                                        where t.tipo_documento = 2
-                                              and t.tipo = 2
-                                              and t.serie = serie_atual
-                                              and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-        
-                                        -- se não existe nenhum número a ser liberado, saída = 1
-                                        if proximo = 0 then
-                                          v_saida := 1;/*Possui 1 não configurado*/
-                                          exit;
-                                        end if;
-                                      end if;
-                                    else
-                                        proximo := proximo + 1;
-                                    end if;
-                                  end loop;
-
-                                  --retorna 0 se houver números suficientes disponíveis, 1 caso contrário
-                                  :retorno := v_saida;
-                                end;");
-
-                comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-                comando.AdicionarParametroEntrada("serie_inicial", serie, DbType.String);
-                comando.AdicionarParametroEntrada("quantidadeDigital", quantidadeDigitalCFOC, DbType.Int32);
-                comando.AdicionarParametroSaida("retorno", DbType.Int32);
-
-                banco.ExecutarNonQuery(comando);
-
-                var retorno = Convert.ToInt32(comando.ObterValorParametro("retorno"));
-
-                return retorno > 0;
+                return ultrapassa;
             }
 		}
 
