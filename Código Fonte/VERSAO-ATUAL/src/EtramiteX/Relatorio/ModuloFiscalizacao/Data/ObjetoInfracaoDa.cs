@@ -179,8 +179,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     item.EspecificarIsInfracaoErosaoSolo = reader.GetValue<string>("EspecificarIsInfracao");
                     item.DeclividadeMedia = reader.GetValue<decimal>("DeclividadeMedia").ToStringTrunc();
                 });
-
-                objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroIUF) ? String.Empty : objeto.SerieTexto;
             }
 
             return objeto;

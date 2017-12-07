@@ -110,8 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 
                 objeto = bancoDeDados.ObterEntity<MaterialApreendidoRelatorioNovo>(comando);
-                objeto.ProdutosDestinacoes = ObterProdutosDestinacao(objeto.Id);
-                objeto.SerieTexto = String.IsNullOrWhiteSpace(objeto.NumeroIUF) ? String.Empty : objeto.SerieTexto;              
+                objeto.ProdutosDestinacoes = ObterProdutosDestinacao(objeto.Id);            
             }
 
             return objeto;
