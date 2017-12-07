@@ -974,6 +974,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 objeto.OutrasPenalidades = _outrasPenalidadesDa.Obter(id, bancoDeDados);
 
                 objeto.ConsideracoesFinais = _consideracoesFinaisDa.Obter(id, bancoDeDados);
+
+                objeto.ComplementacaoDados = new ComplementacaoDadosRelatorio();
+                objeto.ComplementacaoDados.VinculoPropriedade = objeto.LocalInfracao.Autuado.TipoTexto;
             }
 
             return objeto;
