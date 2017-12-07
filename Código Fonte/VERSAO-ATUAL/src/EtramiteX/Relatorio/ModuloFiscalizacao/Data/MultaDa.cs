@@ -70,6 +70,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 
 				objeto = bancoDeDados.ObterEntity<MultaRelatorio>(comando);
+
+                objeto.ValorMulta = String.Format("{0:##,###,##0.00}", Convert.ToDecimal(objeto.ValorMulta));
 			}
 
 			return objeto;
