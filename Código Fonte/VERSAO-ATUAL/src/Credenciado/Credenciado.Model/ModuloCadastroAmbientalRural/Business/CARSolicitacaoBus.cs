@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
                     #region Carga das tabelas APP Caculada e APP Escadinha
                     var qtdModuloFiscal = 0.0;
-                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+                    using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
                     {
                         #region Select QTD Modulo Fiscal
                         //Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");
