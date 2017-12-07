@@ -128,6 +128,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 if (objeto.EmpreendimentoId > 0)
                 {
                     objeto.EmpEndereco = ObterEmpEndereco(objeto.EmpreendimentoId, bancoDeDados);
+
+                    comando = bancoDeDados.CriarComando(@"
+                                select letr.texto vinculo
+                                from lov_empreendimento_tipo_resp letr,
+                                     tab_empreendimento_responsavel ter
+                                where ter.empreendimento = :empreendimento
+                                      and ter.responsavel = :autuado
+                                      and letr.id = ter.tipo", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("empreendimento", objeto.EmpreendimentoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("autuado", objeto.AutuadoEmpResponsavelId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            objeto.Autuado.TipoTexto = reader.GetValue<string>("vinculo");
+                        }
+
+                        reader.Close();
+                    }
                 }
 
             }
