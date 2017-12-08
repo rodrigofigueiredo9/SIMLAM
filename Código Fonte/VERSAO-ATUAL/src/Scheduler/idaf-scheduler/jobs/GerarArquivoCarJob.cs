@@ -2093,7 +2093,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             var tabela = schema + ".GEO_CAR_APP_CALCULADAS";
 
             var geometrias = new List<Geo>();
-            
+
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaLagoNatural,
+                "tipo = 'APP_LAGO_NATURAL'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaManguezal,
+                "tipo = 'APP_MANGUEZAL'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaNascente,
                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRioAte10,
@@ -2103,7 +2107,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio50A200,
                 "tipo = 'APP_RIO_50_A_200'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio200A600,
-                "tipo = 'APP_200_A_600'"));
+                "tipo = 'APP_RIO_200_A_600'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio600,
                 "tipo = 'APP_RIO_ACIMA_600'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaReservatorio,
