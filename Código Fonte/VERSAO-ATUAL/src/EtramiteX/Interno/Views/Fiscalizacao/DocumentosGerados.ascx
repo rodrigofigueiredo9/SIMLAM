@@ -51,6 +51,19 @@
 				<span class="btnPdfLaudo icone pdf" title="PDF do Laudo de fiscalização"></span>
 			</td>
 		</tr>
+
+        <tr>
+			<td>
+				<label title="Instrumento Único de Fiscalização">IUF</label>
+			</td>
+			<td>
+				<label title="<%= Model.Fiscalizacao.SituacaoTexto%>"><%= Model.Fiscalizacao.SituacaoTexto %></label>
+			</td>
+			<td class="tdAcoes">
+				<span class="btnPdfIUF icone pdf" title="PDF do IUF"></span>
+			</td>
+		</tr>
+
 		<% if (Model.InfracaoVM.Infracao.Arquivo.Id.GetValueOrDefault() > 0) { %>
 		<tr>
 			<td>

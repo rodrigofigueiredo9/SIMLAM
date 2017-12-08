@@ -836,6 +836,392 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return fiscalizacao;
 		}
 
+        public InstrumentoUnicoFiscalizacaoRelatorio ObterInstrumentoUnicoFiscalizacao(int id, BancoDeDados banco = null)
+        {
+            InstrumentoUnicoFiscalizacaoRelatorio fiscalizacao = new InstrumentoUnicoFiscalizacaoRelatorio();
+            Comando comando = null;
+            DateTime dt;
+            List<Hashtable> lista = null;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Cabeçalho
+
+                comando = bancoDeDados.CriarComando(@" select (select 'X' from tab_fisc_infracao tfi where tfi.fiscalizacao = tf.id and tfi.gerado_sistema = '1') is_auto_infracao, (select 'X' from 
+													tab_fisc_material_apreendido tfma where tfma.fiscalizacao = tf.id and tfma.tad_gerado = '1') is_termo_apreensao_deposito, (select 'X' from tab_fisc_obj_infracao tfoi where 
+													tfoi.fiscalizacao = tf.id and tfoi.tei_gerado_pelo_sist = '1') is_termo_embargo_interdicao, tfli.setor, tf.situacao, tf.autos, 
+													(select f.vencimento from tab_fiscalizacao f where f.id = :id)data_termo from tab_fiscalizacao tf, tab_fisc_local_infracao tfli where tf.id = 
+													tfli.fiscalizacao and tf.id = :id ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.Serie = "C";
+                        fiscalizacao.CodigoUnidadeConvenio = string.Empty;
+                        fiscalizacao.SetorId = reader.GetValue<int>("setor");
+                        fiscalizacao.SituacaoId = reader.GetValue<int>("situacao");
+                        fiscalizacao.NumeroAutoTermo = reader.GetValue<string>("autos");
+                        fiscalizacao.IsAI = reader.GetValue<string>("is_auto_infracao");
+                        fiscalizacao.IsTAD = reader.GetValue<string>("is_termo_apreensao_deposito");
+                        fiscalizacao.IsTEI = reader.GetValue<string>("is_termo_embargo_interdicao");
+
+
+                        if (reader["data_termo"] != null && !Convert.IsDBNull(reader["data_termo"]))
+                        {
+                            fiscalizacao.DataVencimento = Convert.ToDateTime(reader["data_termo"]).ToShortDateString();
+                        }
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Identificação do autuado
+
+                comando = bancoDeDados.CriarComando(@"
+					 select nvl(tp.cpf, tp.cnpj) cpf_cnpj,
+							nvl(tp.nome, tp.razao_social) nome_razao_social,
+							lpec.texto estado_civil,
+							tp.naturalidade,
+							tp.rg,
+							tpe.logradouro,
+							tpe.numero,
+							lm.texto municipio,
+							le.sigla estado,
+							tpe.bairro,
+							tpe.distrito,
+							tpe.cep,
+							tpe.complemento
+					   from {0}tab_pessoa              tp,
+							{0}lov_pessoa_estado_civil lpec,
+							{0}tab_pessoa_endereco     tpe,
+							{0}lov_municipio           lm,
+							{0}lov_estado              le,
+							{0}tab_fisc_local_infracao tfli
+					  where tp.estado_civil = lpec.id(+)
+						and tp.id = tpe.pessoa(+)
+						and tpe.municipio = lm.id(+)
+						and tpe.estado = le.id(+)
+						and tp.id = nvl(tfli.pessoa, tfli.responsavel)
+						and tfli.fiscalizacao = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.AutuadoCPFCNPJ = reader.GetValue<string>("cpf_cnpj");
+                        fiscalizacao.AutuadoEndBairro = reader.GetValue<string>("bairro");
+                        fiscalizacao.AutuadoEndCEP = reader.GetValue<string>("cep");
+                        fiscalizacao.AutuadoEndComplemento = reader.GetValue<string>("complemento");
+                        fiscalizacao.AutuadoEndDistrito = reader.GetValue<string>("distrito");
+                        fiscalizacao.AutuadoEndLogradouro = reader.GetValue<string>("logradouro");
+                        fiscalizacao.AutuadoEndMunicipio = reader.GetValue<string>("municipio");
+                        fiscalizacao.AutuadoEndNumero = reader.GetValue<string>("numero");
+                        fiscalizacao.AutuadoEndUF = reader.GetValue<string>("estado");
+                        fiscalizacao.AutuadoEstadoCivil = reader.GetValue<string>("estado_civil");
+                        fiscalizacao.AutuadoNaturalidade = reader.GetValue<string>("naturalidade");
+                        fiscalizacao.AutuadoNomeRazaoSocial = reader.GetValue<string>("nome_razao_social");
+                        fiscalizacao.AutuadoRG = reader.GetValue<string>("rg");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Enquadramento
+
+                comando = bancoDeDados.CriarComando(@"select (case
+													 when tfi.gerado_sistema = 0 and tfo.gerado_sistema <> 1 and tfm.gerado_sistema <> 1 then
+													  tfi.data_lav
+													 when tfo.gerado_sistema = 0 and tfi.gerado_sistema <> 1 and tfm.gerado_sistema <> 1 then
+													  tfo.data_lav
+													 when tfm.gerado_sistema = 0 and tfi.gerado_sistema <> 1 and tfo.gerado_sistema <> 1 then
+													  tfm.data_lav
+													 else
+													  (f.situacao_data)
+												   end) data,
+												   tfli.lat_northing,
+												   tfli.lon_easting,
+												   tfli.local
+											  from {0}tab_fisc_local_infracao tfli,
+												   {0}tab_fiscalizacao f,
+												   (select tfi.gerado_sistema,
+														   tfi.data_lavratura_auto data_lav,
+														   tfi.fiscalizacao
+													  from {0}tab_fisc_infracao tfi
+													 where tfi.fiscalizacao = :id) tfi,
+												   (select tfo.tei_gerado_pelo_sist gerado_sistema,
+														   tfo.data_lavratura_termo data_lav,
+														   tfo.fiscalizacao
+													  from {0}tab_fisc_obj_infracao tfo
+													 where tfo.fiscalizacao = :id) tfo,
+												   (select tfm.tad_gerado   gerado_sistema,
+														   tfm.tad_data     data_lav,
+														   tfm.fiscalizacao
+													  from {0}tab_fisc_material_apreendido tfm
+													 where tfm.fiscalizacao = :id) tfm
+											 where tfli.fiscalizacao = tfi.fiscalizacao(+)
+											   and tfli.fiscalizacao = tfo.fiscalizacao(+)
+											   and tfli.fiscalizacao = tfm.fiscalizacao(+)
+											   and f.id = tfli.fiscalizacao
+											   and f.id = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.CoordenadaNorthing = reader.GetValue<string>("lat_northing");
+                        fiscalizacao.CoordenadaEasting = reader.GetValue<string>("lon_easting");
+                        fiscalizacao.Local = reader.GetValue<string>("local");
+
+                        dt = reader.GetValue<DateTime>("data");
+
+                        if (dt.ToShortDateString() != "01/01/0001")
+                        {
+                            fiscalizacao.DiaAutuacao = dt.Day.ToString();
+                            fiscalizacao.MesAutuacao = _configSys.Obter<List<String>>(ConfiguracaoSistema.KeyMeses).ElementAt(dt.Month - 1);
+                            fiscalizacao.AnoAtuacao = dt.Year.ToString();
+                        }
+
+                    }
+
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@" select tfea.artigo, tfea.artigo_paragrafo, tfea.combinado_artigo, tfea.combinado_artigo_paragrafo, tfea.da_do norma_legal from tab_fisc_enquadramento
+					tfe, tab_fisc_enquadr_artig tfea where tfe.id = tfea.enquadramento_id  and tfe.fiscalizacao = :id ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                lista = bancoDeDados.ExecutarHashtable(comando);
+
+                if (lista != null && lista.Count > 0)
+                {
+                    if (lista[0] != null)
+                    {
+                        fiscalizacao.EnquadramentoArtigo1 = lista[0]["ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoArtigoItemParagrafo1 = lista[0]["ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigo1 = lista[0]["COMBINADO_ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo1 = lista[0]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCitarNormaLegal1 = lista[0]["NORMA_LEGAL"].ToString();
+                    }
+
+                    if (lista.Count > 1 && lista[1] != null)
+                    {
+                        fiscalizacao.EnquadramentoArtigo2 = lista[1]["ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoArtigoItemParagrafo2 = lista[1]["ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigo2 = lista[1]["COMBINADO_ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo2 = lista[1]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCitarNormaLegal2 = lista[1]["NORMA_LEGAL"].ToString();
+                    }
+
+                    if (lista.Count > 2 && lista[2] != null)
+                    {
+                        fiscalizacao.EnquadramentoArtigo3 = lista[2]["ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoArtigoItemParagrafo3 = lista[2]["ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigo3 = lista[2]["COMBINADO_ARTIGO"].ToString();
+                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo3 = lista[2]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
+                        fiscalizacao.EnquadramentoCitarNormaLegal3 = lista[2]["NORMA_LEGAL"].ToString();
+                    }
+                }
+                #endregion
+
+                #region Descrição da infração
+
+                comando = bancoDeDados.CriarComando(" select tfi.descricao_infracao from tab_fisc_infracao tfi where tfi.fiscalizacao = :id ");
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                fiscalizacao.DescricaoInfracao = bancoDeDados.ExecutarScalar<string>(comando);
+
+                #endregion
+
+                #region Valor
+
+                comando = bancoDeDados.CriarComando(@" select tfi.valor_multa, lficr.texto codigo_receita from tab_fisc_infracao tfi, lov_fisc_infracao_codigo_rece lficr where tfi.codigo_receita = 
+					lficr.id and tfi.fiscalizacao = :id ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.ValorMulta = reader.GetValue<decimal>("valor_multa").ToString("N2");
+                        fiscalizacao.CodigoReceita = reader.GetValue<string>("codigo_receita");
+                        fiscalizacao.ValorMultaPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorMulta), ModoEscrita.Monetario);
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Descrição da apreensão
+
+                comando = bancoDeDados.CriarComando(@"
+					 select tfma.descricao,
+							tfma.valor_produtos,
+							tfma.endereco_logradouro,
+							tfma.endereco_bairro,
+							tfma.endereco_distrito,
+							led.sigla endereco_estado,
+							lmd.texto endereco_municipio,
+							nvl(tp.nome, tp.razao_social) nome,
+							lpec.texto estado_civil,
+							tp.naturalidade,
+							tp.rg,
+							tpe.logradouro,
+							tpe.bairro,
+							tpe.distrito,
+							lm.texto municipio
+					   from {0}tab_fisc_material_apreendido tfma,
+							{0}tab_pessoa                   tp,
+							{0}tab_pessoa_endereco          tpe,
+							{0}lov_pessoa_estado_civil      lpec,
+							{0}lov_municipio                lmd,
+							{0}lov_municipio                lm,
+							{0}lov_estado                   led
+					  where tfma.depositario = tp.id
+						and tp.id = tpe.pessoa
+						and tp.estado_civil = lpec.id(+)
+						and tfma.endereco_municipio = lmd.id(+)
+						and tfma.endereco_estado = led.id(+)
+						and tpe.municipio = lm.id(+)
+						and tfma.fiscalizacao = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.DescreverApreensao = reader.GetValue<string>("descricao");
+                        fiscalizacao.ValorBemProdutoArbitrado = reader.GetValue<decimal>("valor_produtos").ToString("N2");
+                        fiscalizacao.DepositarioLogradouro = reader.GetValue<string>("endereco_logradouro");
+                        fiscalizacao.DepositarioBairro = reader.GetValue<string>("endereco_bairro");
+                        fiscalizacao.DepositarioDistrito = reader.GetValue<string>("endereco_distrito");
+                        fiscalizacao.DepositarioUF = reader.GetValue<string>("endereco_estado");
+                        fiscalizacao.DepositarioMunicipio = reader.GetValue<string>("endereco_municipio");
+                        fiscalizacao.DepositarioNome = reader.GetValue<string>("nome");
+                        fiscalizacao.DepositarioEstadoCivil = reader.GetValue<string>("estado_civil");
+                        fiscalizacao.DepositarioNaturalidade = reader.GetValue<string>("naturalidade");
+                        fiscalizacao.DepositarioRG = reader.GetValue<string>("rg");
+                        fiscalizacao.DepositarioEndLogradouro = reader.GetValue<string>("logradouro");
+                        fiscalizacao.DepositarioEndBairro = reader.GetValue<string>("bairro");
+                        fiscalizacao.DepositarioEndDistrito = reader.GetValue<string>("distrito");
+                        fiscalizacao.DepositarioEndMunicipio = reader.GetValue<string>("municipio");
+
+                        fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Descrição do embargo/interdição
+
+                comando = bancoDeDados.CriarComando(" select tfoi.desc_termo_embargo from tab_fisc_obj_infracao tfoi where tfoi.fiscalizacao = :id ");
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                fiscalizacao.DescricaoTermoEmbargo = bancoDeDados.ExecutarScalar<string>(comando);
+
+                #endregion
+
+                #region Firmas
+
+                comando = bancoDeDados.CriarComando(@"
+					select nvl(tp.nome, tp.razao_social) nome,
+						   nvl(tp.cpf, tp.cnpj) cpf,
+						   tu.nome autuante
+					  from tab_fisc_local_infracao tfli,
+						   tab_pessoa              tp,
+						   tab_fiscalizacao        tf,
+						   tab_funcionario         tu
+					 where tp.id = nvl(tfli.responsavel, tfli.pessoa)
+					   and tf.autuante = tu.id
+					   and tfli.fiscalizacao = tf.id
+					   and tf.id = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.ResponsavelEmpNomeRazaoSocial = reader.GetValue<string>("nome");
+                        fiscalizacao.ResponsavelEmpCPFCNPJ = reader.GetValue<string>("cpf");
+                        fiscalizacao.NomeUsuarioCadastro = reader.GetValue<string>("autuante");
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+
+                #region Testemunhas
+
+                comando = bancoDeDados.CriarComando(@"
+					select (case
+							 when tfcft.testemunha_setor is null then
+							  tfcft.endereco
+							 else
+							  te.endereco
+						   end) endereco,
+						   nvl(tfcft.nome, tf.nome) nome
+					  from {0}tab_fisc_consid_final tfcf,
+						   {0}tab_fisc_consid_final_test tfcft,
+						   {0}tab_funcionario tf,
+						   (select t.logradouro || ', ' || t.numero ||
+								   nvl2(t.complemento,
+										' - (Complemento: ' || t.complemento || ')',
+										'') || ' - Bairro: ' || t.bairro || ' - Cep: ' || t.cep ||
+								   ' - ' || lm.texto || '/' || le.sigla endereco,
+								   t.setor
+							  from {0}tab_setor_endereco t, {0}lov_estado le, {0}lov_municipio lm
+							 where t.municipio = lm.id(+)
+							   and lm.estado = le.id(+)) te
+					 where tfcf.id = tfcft.consid_final
+					   and tfcft.testemunha = tf.id(+)
+					   and tfcft.testemunha_setor = te.setor(+)
+					   and tfcf.fiscalizacao = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                lista = bancoDeDados.ExecutarHashtable(comando);
+
+                if (lista != null && lista.Count > 0)
+                {
+                    if (lista[0] != null)
+                    {
+                        fiscalizacao.TestemunhaNome1 = lista[0]["NOME"].ToString();
+                        fiscalizacao.TestemunhaEnd1 = lista[0]["ENDERECO"].ToString();
+                    }
+
+                    if (lista.Count > 1 && lista[1] != null)
+                    {
+                        fiscalizacao.TestemunhaNome2 = lista[1]["NOME"].ToString();
+                        fiscalizacao.TestemunhaEnd2 = lista[1]["ENDERECO"].ToString();
+                    }
+                }
+
+                #endregion
+            }
+
+            return fiscalizacao;
+        }
+
 		public FiscalizacaoRelatorio Obter(int id, BancoDeDados banco = null)
 		{
 			FiscalizacaoRelatorio objeto = new FiscalizacaoRelatorio();

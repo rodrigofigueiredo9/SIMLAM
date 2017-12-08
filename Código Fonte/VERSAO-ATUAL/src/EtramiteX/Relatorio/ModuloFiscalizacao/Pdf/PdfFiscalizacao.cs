@@ -57,6 +57,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return GerarPdf(dataSource);
 		}
 
+        public MemoryStream GerarInstrumentoUnicoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Instrumento_Unico_Fiscalizacao.docx";
+            InstrumentoUnicoFiscalizacaoRelatorio dataSource = _da.ObterInstrumentoUnicoFiscalizacao(id, banco);
+
+            dataSource.IsAI = dataSource.IsAI ?? AsposeData.Empty;
+            dataSource.IsTAD = dataSource.IsTAD ?? AsposeData.Empty;
+            dataSource.IsTEI = dataSource.IsTEI ?? AsposeData.Empty;
+
+            ObterArquivoTemplate();
+
+            dataSource.GovernoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyGovernoNome);
+            dataSource.SecretariaNome = _configSys.Obter<String>(ConfiguracaoSistema.KeySecretariaNome);
+            dataSource.OrgaoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoNome);
+            Setor setor = _configFunc.Obter<List<Setor>>(ConfiguracaoFuncionario.KeySetores).Single(x => x.Id == dataSource.SetorId);
+            dataSource.SetorNome = setor.Nome;
+            dataSource.CodigoUnidadeConvenio = setor.UnidadeConvenio;
+
+            string pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logobrasao.jpg");
+            dataSource.LogoBrasao = File.ReadAllBytes(pathImg);
+
+            dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
+
+            ConfigurarCabecarioRodape(dataSource.SetorId);
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+
+            return GerarPdf(dataSource);
+        }
+
 		public MemoryStream GerarLaudoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
 			ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao.docx";

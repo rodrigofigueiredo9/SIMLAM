@@ -66,6 +66,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Arquivo.Arquivo PdfAutoTermo { get; set; }
 		public Arquivo.Arquivo PdfLaudo { get; set; }
 		public Arquivo.Arquivo PdfCroqui { get; set; }
+        public Arquivo.Arquivo PdfIUF { get; set; }
 
 		public Fiscalizacao()
 		{
@@ -92,6 +93,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			PdfAutoTermo = new Arquivo.Arquivo();
 			PdfLaudo = new Arquivo.Arquivo();
 			PdfCroqui = new Arquivo.Arquivo();
+            PdfIUF = new Arquivo.Arquivo();
 		}
 	}
 }
