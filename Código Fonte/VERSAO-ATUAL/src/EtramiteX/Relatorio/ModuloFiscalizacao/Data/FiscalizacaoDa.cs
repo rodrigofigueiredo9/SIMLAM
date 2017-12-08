@@ -847,11 +847,44 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             {
                 #region Cabeçalho
 
-                comando = bancoDeDados.CriarComando(@" select (select 'X' from tab_fisc_infracao tfi where tfi.fiscalizacao = tf.id and tfi.gerado_sistema = '1') is_auto_infracao, (select 'X' from 
-													tab_fisc_material_apreendido tfma where tfma.fiscalizacao = tf.id and tfma.tad_gerado = '1') is_termo_apreensao_deposito, (select 'X' from tab_fisc_obj_infracao tfoi where 
-													tfoi.fiscalizacao = tf.id and tfoi.tei_gerado_pelo_sist = '1') is_termo_embargo_interdicao, tfli.setor, tf.situacao, tf.autos, 
-													(select f.vencimento from tab_fiscalizacao f where f.id = :id)data_termo from tab_fiscalizacao tf, tab_fisc_local_infracao tfli where tf.id = 
-													tfli.fiscalizacao and tf.id = :id ", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"
+                            select ( select 'X'
+                                      from tab_fisc_local_infracao tfi
+                                      where tfi.fiscalizacao = tf.id
+                                            and tfi.area_fiscalizacao = 0 ) is_ddsia,
+                                    ( select 'X'
+                                      from tab_fisc_local_infracao tfi
+                                      where tfi.fiscalizacao = tf.id
+                                            and tfi.area_fiscalizacao = 1 ) is_ddsiv,
+                                    ( select 'X'
+                                      from tab_fisc_local_infracao tfi
+                                      where tfi.fiscalizacao = tf.id
+                                            and tfi.area_fiscalizacao = 2 ) is_drnre,
+                                    tfli.setor,
+                                    tf.situacao,
+                                    tf.autos,
+                                    ( select f.vencimento
+                                      from tab_fiscalizacao f
+                                      where f.id = :id ) data_termo,
+                                    ( select distinct texto
+                                      from lov_fiscalizacao_serie lfs
+                                      where lfs.id = tfa.serie
+                                            or lfs.id = tfm.serie
+                                            or lfs.id = tfop.serie
+                                            or lfs.id = tfoi.serie ) serie,
+                                    nvl(tfa.iuf_numero, nvl(tfm.iuf_numero, nvl(tfop.iuf_numero, tfoi.iuf_numero))) numero_iuf
+                            from tab_fiscalizacao tf,
+                                 tab_fisc_local_infracao tfli,
+                                 tab_fisc_apreensao tfa,
+                                 tab_fisc_multa tfm,
+                                 tab_fisc_outras_penalidades tfop,
+                                 tab_fisc_obj_infracao tfoi
+                            where tf.id = tfli.fiscalizacao
+                                  and tfa.fiscalizacao (+)= tf.id
+                                  and tfm.fiscalizacao (+)= tf.id
+                                  and tfop.fiscalizacao (+)= tf.id
+                                  and tfoi.fiscalizacao (+)= tf.id
+                                  and tf.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -859,14 +892,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 {
                     if (reader.Read())
                     {
-                        fiscalizacao.Serie = "C";
+                        fiscalizacao.Serie = reader.GetValue<string>("serie");
                         fiscalizacao.CodigoUnidadeConvenio = string.Empty;
                         fiscalizacao.SetorId = reader.GetValue<int>("setor");
                         fiscalizacao.SituacaoId = reader.GetValue<int>("situacao");
-                        fiscalizacao.NumeroAutoTermo = reader.GetValue<string>("autos");
-                        fiscalizacao.IsAI = reader.GetValue<string>("is_auto_infracao");
-                        fiscalizacao.IsTAD = reader.GetValue<string>("is_termo_apreensao_deposito");
-                        fiscalizacao.IsTEI = reader.GetValue<string>("is_termo_embargo_interdicao");
+                        //fiscalizacao.NumeroAutoTermo = reader.GetValue<string>("autos");
+                        fiscalizacao.NumeroIUF = reader.GetValue<string>("numero_iuf");
+                        fiscalizacao.IsDDSIA = reader.GetValue<string>("is_ddsia");
+                        fiscalizacao.IsDDSIV = reader.GetValue<string>("is_ddsiv");
+                        fiscalizacao.IsDRNRE = reader.GetValue<string>("is_drnre");
 
 
                         if (reader["data_termo"] != null && !Convert.IsDBNull(reader["data_termo"]))

@@ -62,9 +62,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             ArquivoDocCaminho = @"~/Content/_pdfAspose/Instrumento_Unico_Fiscalizacao.docx";
             InstrumentoUnicoFiscalizacaoRelatorio dataSource = _da.ObterInstrumentoUnicoFiscalizacao(id, banco);
 
-            dataSource.IsAI = dataSource.IsAI ?? AsposeData.Empty;
-            dataSource.IsTAD = dataSource.IsTAD ?? AsposeData.Empty;
-            dataSource.IsTEI = dataSource.IsTEI ?? AsposeData.Empty;
+            dataSource.IsDDSIA = dataSource.IsDDSIA ?? AsposeData.Empty;
+            dataSource.IsDDSIV = dataSource.IsDDSIV ?? AsposeData.Empty;
+            dataSource.IsDRNRE = dataSource.IsDRNRE ?? AsposeData.Empty;
+
+            dataSource.NumeroIUF = "123456";    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
 
             ObterArquivoTemplate();
 
@@ -72,13 +74,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             dataSource.SecretariaNome = _configSys.Obter<String>(ConfiguracaoSistema.KeySecretariaNome);
             dataSource.OrgaoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoNome);
             Setor setor = _configFunc.Obter<List<Setor>>(ConfiguracaoFuncionario.KeySetores).Single(x => x.Id == dataSource.SetorId);
-            dataSource.SetorNome = setor.Nome;
+            //dataSource.SetorNome = setor.Nome;
+            dataSource.DocumentoNome = "INSTRUMENTO ÚNICO DE FISCALIZAÇÃO";
             dataSource.CodigoUnidadeConvenio = setor.UnidadeConvenio;
 
             string pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logobrasao.jpg");
             dataSource.LogoBrasao = File.ReadAllBytes(pathImg);
 
             dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
+
+            string pathImgMarca = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca.png");
+            dataSource.Logomarca = File.ReadAllBytes(pathImgMarca);
+
+            dataSource.Logomarca = AsposeImage.RedimensionarImagem(dataSource.Logomarca, 2);
 
             ConfigurarCabecarioRodape(dataSource.SetorId);
 

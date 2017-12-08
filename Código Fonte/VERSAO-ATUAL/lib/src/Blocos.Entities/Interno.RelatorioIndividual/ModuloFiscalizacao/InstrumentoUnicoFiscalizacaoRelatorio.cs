@@ -10,18 +10,25 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		public Int32 SetorId { get; set; }
 		public Int32 SituacaoId { get; set; }
-		public String NumeroAutoTermo { get; set; }
+        //public String NumeroAutoTermo { get; set; }
+        public string NumeroIUF { get; set; }
 		public String Serie { get; set; }
 		public String CodigoUnidadeConvenio { get; set; }
 		public String DataVencimento { get; set; }
-		public String IsAI { get; set; }
-		public String IsTAD { get; set; }
-		public String IsTEI { get; set; }
+        //public String IsAI { get; set; }
+        //public String IsTAD { get; set; }
+        //public String IsTEI { get; set; }
+
+        public String IsDDSIA { get; set; }
+        public String IsDDSIV { get; set; }
+        public String IsDRNRE { get; set; }
 		public String GovernoNome { get; set; }
 		public String SecretariaNome { get; set; }
 		public String OrgaoNome { get; set; }
-		public String SetorNome { get; set; }
+        //public String SetorNome { get; set; }
+        public String DocumentoNome { get; set; }
 		public Byte[] LogoBrasao { get; set; }
+        public Byte[] Logomarca { get; set; }
 
 		#endregion
 
