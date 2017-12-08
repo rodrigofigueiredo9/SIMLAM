@@ -2100,6 +2100,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 "tipo = 'APP_MANGUEZAL'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaNascente,
                 "tipo = 'APP_NASCENTE_OLHO_DAGUA'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaReservatorio,
+                "tipo = 'APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO'"));
+            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRestinga,
+                "tipo = 'APP_RESTINGA'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRioAte10,
                 "tipo = 'APP_RIO_ATE_10'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio10A50,
@@ -2109,13 +2113,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio200A600,
                 "tipo = 'APP_RIO_200_A_600'"));
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRio600,
-                "tipo = 'APP_RIO_ACIMA_600'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaReservatorio,
-                "tipo = 'APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO'"));
+                "tipo = 'APP_RIO_ACIMA_600'"));            
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaBordaChapada,
-                "tipo = 'APP_BORDA_CHAPADA'"));
-            geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAppCalculadaRestinga,
-                "tipo = 'APP_RESTINGA'"));
+                "tipo = 'APP_BORDA_CHAPADA'"));            
             geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.MULTIPOLYGON, Geo.TipoAppCalculadaDeclividade,
                 "tipo = 'APP_AREA_DECLIVIDADE_MAIOR_45'"));
             
