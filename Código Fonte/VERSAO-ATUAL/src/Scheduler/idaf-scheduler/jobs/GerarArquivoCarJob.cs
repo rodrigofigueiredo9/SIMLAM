@@ -485,7 +485,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
             var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
-           
 
 			var builder = new StringBuilder();
 			builder.Append(imovel.logradouro);
@@ -548,6 +547,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
                 enderecoCorrespondencia = eCorrespondencia				
 			};
+
+            ObterDadosRetificacao(conn, schema, car, requisicao.solicitacao_car);
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 			car.proprietariosPosseirosConcessionarios = proprietarios;
@@ -814,6 +815,22 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             return empreendimento;
 
+        }
+
+        private static void ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int solicitacaoCAR)
+        {
+            using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("solicitacao", solicitacaoCAR));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        car.imovel.idPai = "ES-3200904-B1420810343F4EAF989B9DA380D7D97F";//Convert.ToString(dr["CODIGO_IMOVEL"]);
+                    }
+                }
+            }
         }
 
 		/// <summary>
