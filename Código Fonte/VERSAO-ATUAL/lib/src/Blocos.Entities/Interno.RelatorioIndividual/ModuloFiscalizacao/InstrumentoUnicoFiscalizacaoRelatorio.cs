@@ -54,26 +54,21 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		public String EnquadramentoArtigo1 { get; set; }
 		public String EnquadramentoArtigoItemParagrafo1 { get; set; }
-		public String EnquadramentoCombinadoArtigo1 { get; set; }
-		public String EnquadramentoCombinadoArtigoItemParagrafo1 { get; set; }
 		public String EnquadramentoCitarNormaLegal1 { get; set; }
 
 		public String EnquadramentoArtigo2 { get; set; }
 		public String EnquadramentoArtigoItemParagrafo2 { get; set; }
-		public String EnquadramentoCombinadoArtigo2 { get; set; }
-		public String EnquadramentoCombinadoArtigoItemParagrafo2 { get; set; }
 		public String EnquadramentoCitarNormaLegal2 { get; set; }
 
 		public String EnquadramentoArtigo3 { get; set; }
 		public String EnquadramentoArtigoItemParagrafo3 { get; set; }
-		public String EnquadramentoCombinadoArtigo3 { get; set; }
-		public String EnquadramentoCombinadoArtigoItemParagrafo3 { get; set; }
 		public String EnquadramentoCitarNormaLegal3 { get; set; }
 
 		public String DiaAutuacao { get; set; }
 		public String MesAutuacao { get; set; }
 		public String AnoAtuacao { get; set; }
 		public String Local { get; set; }
+        public String Municipio { get; set; }
 		public String CoordenadaEasting { get; set; }
 		public String CoordenadaNorthing { get; set; }
 

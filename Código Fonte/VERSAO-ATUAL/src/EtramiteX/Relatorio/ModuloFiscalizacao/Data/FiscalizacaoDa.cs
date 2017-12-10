@@ -971,41 +971,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                 #region Enquadramento
 
-                comando = bancoDeDados.CriarComando(@"select (case
-													 when tfi.gerado_sistema = 0 and tfo.gerado_sistema <> 1 and tfm.gerado_sistema <> 1 then
-													  tfi.data_lav
-													 when tfo.gerado_sistema = 0 and tfi.gerado_sistema <> 1 and tfm.gerado_sistema <> 1 then
-													  tfo.data_lav
-													 when tfm.gerado_sistema = 0 and tfi.gerado_sistema <> 1 and tfo.gerado_sistema <> 1 then
-													  tfm.data_lav
-													 else
-													  (f.situacao_data)
-												   end) data,
-												   tfli.lat_northing,
-												   tfli.lon_easting,
-												   tfli.local
-											  from {0}tab_fisc_local_infracao tfli,
-												   {0}tab_fiscalizacao f,
-												   (select tfi.gerado_sistema,
-														   tfi.data_lavratura_auto data_lav,
-														   tfi.fiscalizacao
-													  from {0}tab_fisc_infracao tfi
-													 where tfi.fiscalizacao = :id) tfi,
-												   (select tfo.tei_gerado_pelo_sist gerado_sistema,
-														   tfo.data_lavratura_termo data_lav,
-														   tfo.fiscalizacao
-													  from {0}tab_fisc_obj_infracao tfo
-													 where tfo.fiscalizacao = :id) tfo,
-												   (select tfm.tad_gerado   gerado_sistema,
-														   tfm.tad_data     data_lav,
-														   tfm.fiscalizacao
-													  from {0}tab_fisc_material_apreendido tfm
-													 where tfm.fiscalizacao = :id) tfm
-											 where tfli.fiscalizacao = tfi.fiscalizacao(+)
-											   and tfli.fiscalizacao = tfo.fiscalizacao(+)
-											   and tfli.fiscalizacao = tfm.fiscalizacao(+)
-											   and f.id = tfli.fiscalizacao
-											   and f.id = :id", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"
+                                select tfli.lat_northing,
+                                       tfli.lon_easting,
+                                       nvl(tfli.local, tee.logradouro||', '||tee.numero||', '||tee.bairro) local,
+                                       ( select lm.texto
+                                         from lov_municipio lm
+                                         where lm.id = nvl(tfli.municipio, tee.municipio) ) municipio
+                                from {0}tab_fisc_local_infracao tfli,
+                                     {0}tab_fiscalizacao f,
+                                     {0}tab_empreendimento_endereco tee
+                                where f.id = tfli.fiscalizacao
+                                      and tee.empreendimento (+)= tfli.empreendimento
+                                      and tee.correspondencia = 0
+                                      and f.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1016,23 +995,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.CoordenadaNorthing = reader.GetValue<string>("lat_northing");
                         fiscalizacao.CoordenadaEasting = reader.GetValue<string>("lon_easting");
                         fiscalizacao.Local = reader.GetValue<string>("local");
-
-                        dt = reader.GetValue<DateTime>("data");
-
-                        if (dt.ToShortDateString() != "01/01/0001")
-                        {
-                            fiscalizacao.DiaAutuacao = dt.Day.ToString();
-                            fiscalizacao.MesAutuacao = _configSys.Obter<List<String>>(ConfiguracaoSistema.KeyMeses).ElementAt(dt.Month - 1);
-                            fiscalizacao.AnoAtuacao = dt.Year.ToString();
-                        }
-
+                        fiscalizacao.Municipio = reader.GetValue<string>("municipio");
                     }
 
                     reader.Close();
                 }
 
-                comando = bancoDeDados.CriarComando(@" select tfea.artigo, tfea.artigo_paragrafo, tfea.combinado_artigo, tfea.combinado_artigo_paragrafo, tfea.da_do norma_legal from tab_fisc_enquadramento
-					tfe, tab_fisc_enquadr_artig tfea where tfe.id = tfea.enquadramento_id  and tfe.fiscalizacao = :id ", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"
+                            select tfea.artigo,
+                                   tfea.artigo_paragrafo,
+                                   tfea.da_do norma_legal
+                            from {0}tab_fisc_enquadramento tfe,
+                                 {0}tab_fisc_enquadr_artig tfea
+                            where tfe.id = tfea.enquadramento_id
+                                  and tfe.fiscalizacao = :id
+                            order by tfea.id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1044,8 +1021,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.EnquadramentoArtigo1 = lista[0]["ARTIGO"].ToString();
                         fiscalizacao.EnquadramentoArtigoItemParagrafo1 = lista[0]["ARTIGO_PARAGRAFO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigo1 = lista[0]["COMBINADO_ARTIGO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo1 = lista[0]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
                         fiscalizacao.EnquadramentoCitarNormaLegal1 = lista[0]["NORMA_LEGAL"].ToString();
                     }
 
@@ -1053,8 +1028,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.EnquadramentoArtigo2 = lista[1]["ARTIGO"].ToString();
                         fiscalizacao.EnquadramentoArtigoItemParagrafo2 = lista[1]["ARTIGO_PARAGRAFO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigo2 = lista[1]["COMBINADO_ARTIGO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo2 = lista[1]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
                         fiscalizacao.EnquadramentoCitarNormaLegal2 = lista[1]["NORMA_LEGAL"].ToString();
                     }
 
@@ -1062,8 +1035,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.EnquadramentoArtigo3 = lista[2]["ARTIGO"].ToString();
                         fiscalizacao.EnquadramentoArtigoItemParagrafo3 = lista[2]["ARTIGO_PARAGRAFO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigo3 = lista[2]["COMBINADO_ARTIGO"].ToString();
-                        fiscalizacao.EnquadramentoCombinadoArtigoItemParagrafo3 = lista[2]["COMBINADO_ARTIGO_PARAGRAFO"].ToString();
                         fiscalizacao.EnquadramentoCitarNormaLegal3 = lista[2]["NORMA_LEGAL"].ToString();
                     }
                 }
