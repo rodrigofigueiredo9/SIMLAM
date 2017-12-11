@@ -1185,10 +1185,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                 #endregion Penalidades
 
-                #region Valor
+                #region Multa
 
-                comando = bancoDeDados.CriarComando(@" select tfi.valor_multa, lficr.texto codigo_receita from tab_fisc_infracao tfi, lov_fisc_infracao_codigo_rece lficr where tfi.codigo_receita = 
-					lficr.id and tfi.fiscalizacao = :id ", EsquemaBanco);
+                comando = bancoDeDados.CriarComando(@"
+                            select tfm.valor_multa,
+                                   (lficr.texto || ' - ' || lficr.descricao) codigo_receita
+                            from {0}tab_fisc_multa tfm,
+                                 {0}lov_fisc_infracao_codigo_rece lficr
+                            where tfm.codigo_receita = lficr.id
+                                  and tfm.fiscalizacao = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
