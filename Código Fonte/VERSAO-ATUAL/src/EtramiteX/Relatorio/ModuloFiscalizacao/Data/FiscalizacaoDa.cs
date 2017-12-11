@@ -1042,11 +1042,46 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                 #region Descrição da infração
 
-                comando = bancoDeDados.CriarComando(" select tfi.descricao_infracao from tab_fisc_infracao tfi where tfi.fiscalizacao = :id ");
+                comando = bancoDeDados.CriarComando(@"
+                                select tfi.descricao_infracao,
+                                       ( select 'X'
+                                         from tab_fisc_infracao inf
+                                         where inf.fiscalizacao = :id
+                                               and tfi.classificacao_infracao = 0 ) is_leve,
+                                       ( select 'X'
+                                         from tab_fisc_infracao inf
+                                         where inf.fiscalizacao = :id
+                                               and tfi.classificacao_infracao = 1 ) is_media,
+                                       ( select 'X'
+                                         from tab_fisc_infracao inf
+                                         where inf.fiscalizacao = :id
+                                               and tfi.classificacao_infracao = 2 ) is_grave,
+                                       ( select 'X'
+                                         from tab_fisc_infracao inf
+                                         where inf.fiscalizacao = :id
+                                               and tfi.classificacao_infracao = 3 ) is_gravissima,
+                                       to_char(tfi.data_constatacao, 'DD/MM/YYYY') data_constatacao,
+                                       tfi.hora_constatacao
+                                from tab_fisc_infracao tfi
+                                where tfi.fiscalizacao = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
-                fiscalizacao.DescricaoInfracao = bancoDeDados.ExecutarScalar<string>(comando);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.DescricaoInfracao = reader.GetValue<string>("descricao_infracao");
+                        fiscalizacao.DataInfracao = reader.GetValue<string>("data_constatacao");
+                        fiscalizacao.HoraInfracao = reader.GetValue<string>("hora_constatacao");
+                        fiscalizacao.InfrLeve = reader.GetValue<string>("is_leve");
+                        fiscalizacao.InfrMedia = reader.GetValue<string>("is_media");
+                        fiscalizacao.InfrGrave = reader.GetValue<string>("is_grave");
+                        fiscalizacao.InfrGravissima = reader.GetValue<string>("is_gravissima");
+                    }
+
+                    reader.Close();
+                }
 
                 #endregion
 

@@ -77,6 +77,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 		#region Descrição da infração
 
 		public String DescricaoInfracao { get; set; }
+        public String InfrLeve { get; set; }
+        public String InfrMedia { get; set; }
+        public String InfrGrave { get; set; }
+        public String InfrGravissima { get; set; }
+        public String DataInfracao { get; set; }
+        public String HoraInfracao { get; set; }
 
 		#endregion
 

@@ -66,6 +66,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             dataSource.IsDDSIV = dataSource.IsDDSIV ?? AsposeData.Empty;
             dataSource.IsDRNRE = dataSource.IsDRNRE ?? AsposeData.Empty;
 
+            dataSource.InfrLeve = dataSource.InfrLeve ?? AsposeData.Empty;
+            dataSource.InfrMedia = dataSource.InfrMedia ?? AsposeData.Empty;
+            dataSource.InfrGrave = dataSource.InfrGrave ?? AsposeData.Empty;
+            dataSource.InfrGravissima = dataSource.InfrGravissima ?? AsposeData.Empty;
+
             dataSource.NumeroIUF = "123456";    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
 
             ObterArquivoTemplate();
