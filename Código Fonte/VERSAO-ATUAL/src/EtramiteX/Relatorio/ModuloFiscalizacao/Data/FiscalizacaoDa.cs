@@ -1045,24 +1045,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 comando = bancoDeDados.CriarComando(@"
                                 select tfi.descricao_infracao,
                                        ( select 'X'
-                                         from tab_fisc_infracao inf
+                                         from {0}tab_fisc_infracao inf
                                          where inf.fiscalizacao = :id
                                                and tfi.classificacao_infracao = 0 ) is_leve,
                                        ( select 'X'
-                                         from tab_fisc_infracao inf
+                                         from {0}tab_fisc_infracao inf
                                          where inf.fiscalizacao = :id
                                                and tfi.classificacao_infracao = 1 ) is_media,
                                        ( select 'X'
-                                         from tab_fisc_infracao inf
+                                         from {0}tab_fisc_infracao inf
                                          where inf.fiscalizacao = :id
                                                and tfi.classificacao_infracao = 2 ) is_grave,
                                        ( select 'X'
-                                         from tab_fisc_infracao inf
+                                         from {0}tab_fisc_infracao inf
                                          where inf.fiscalizacao = :id
                                                and tfi.classificacao_infracao = 3 ) is_gravissima,
                                        to_char(tfi.data_constatacao, 'DD/MM/YYYY') data_constatacao,
                                        tfi.hora_constatacao
-                                from tab_fisc_infracao tfi
+                                from {0}tab_fisc_infracao tfi
                                 where tfi.fiscalizacao = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -1084,6 +1084,106 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 }
 
                 #endregion
+
+                #region Penalidades
+
+                comando = bancoDeDados.CriarComando(@"
+                            select ( select 'X'
+                                     from {0}tab_fisc_penalidades_infr p,
+                                          {0}lov_fisc_penalidades_fixas l,
+                                          {0}tab_fisc_infracao i
+                                     where p.infracao = i.id
+                                           and p.penalidade = l.id
+                                           and l.texto like '%Advertência%'
+                                           and i.fiscalizacao = :id ) TemAdvertencia,
+                                   ( select 'X'
+                                     from {0}tab_fisc_penalidades_infr p,
+                                          {0}lov_fisc_penalidades_fixas l,
+                                          {0}tab_fisc_infracao i
+                                     where p.infracao = i.id
+                                           and p.penalidade = l.id
+                                           and l.texto like '%Multa%'
+                                           and i.fiscalizacao = :id ) TemMulta,
+                                   ( select 'X'
+                                     from {0}tab_fisc_penalidades_infr p,
+                                          {0}lov_fisc_penalidades_fixas l,
+                                          {0}tab_fisc_infracao i
+                                     where p.infracao = i.id
+                                           and p.penalidade = l.id
+                                           and l.texto like '%Apreensão%'
+                                           and i.fiscalizacao = :id ) TemApreensao,
+                                   ( select 'X'
+                                     from {0}tab_fisc_penalidades_infr p,
+                                          {0}lov_fisc_penalidades_fixas l,
+                                          {0}tab_fisc_infracao i
+                                     where p.infracao = i.id
+                                           and p.penalidade = l.id
+                                           and l.texto like '%Interdição%'
+                                           and i.fiscalizacao = :id ) TemInterdicao
+                            from dual", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.TemAdvertencia = reader.GetValue<string>("TemAdvertencia");
+                        fiscalizacao.TemMulta = reader.GetValue<string>("TemMulta");
+                        fiscalizacao.TemApreensao = reader.GetValue<string>("TemApreensao");
+                        fiscalizacao.TemInterdicao = reader.GetValue<string>("TemInterdicao");
+                    }
+
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                            select cfip.item item,
+                                   cfip.descricao
+                            from tab_fisc_infracao tfi,
+                                 tab_fisc_outras_penalidad_infr tfopi,
+                                 cnf_fisc_infracao_penalidade cfip
+                            where tfopi.infracao = tfi.id
+                                  and tfopi.penalidade_outra = cfip.id
+                                  and tfi.fiscalizacao = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.TemOutra01 = "X";
+                        fiscalizacao.Outra01 = reader.GetValue<string>("item");
+                        fiscalizacao.DescricaoOutra01 = reader.GetValue<string>("descricao");
+                        fiscalizacao.DescricaoOutra01 = fiscalizacao.DescricaoOutra01.Count() <= 80 ? fiscalizacao.DescricaoOutra01 : fiscalizacao.DescricaoOutra01.Substring(0, 80);
+                    }
+                    if (reader.Read())
+                    {
+                        fiscalizacao.TemOutra02 = "X";
+                        fiscalizacao.Outra02 = reader.GetValue<string>("item");
+                        fiscalizacao.DescricaoOutra02 = reader.GetValue<string>("descricao");
+                        fiscalizacao.DescricaoOutra02 = fiscalizacao.DescricaoOutra02.Count() <= 80 ? fiscalizacao.DescricaoOutra02 : fiscalizacao.DescricaoOutra02.Substring(0, 80);
+                    }
+                    if (reader.Read())
+                    {
+                        fiscalizacao.TemOutra03 = "X";
+                        fiscalizacao.Outra03 = reader.GetValue<string>("item");
+                        fiscalizacao.DescricaoOutra03 = reader.GetValue<string>("descricao");
+                        fiscalizacao.DescricaoOutra03 = fiscalizacao.DescricaoOutra03.Count() <= 80 ? fiscalizacao.DescricaoOutra03 : fiscalizacao.DescricaoOutra03.Substring(0, 80);
+                    }
+                    if (reader.Read())
+                    {
+                        fiscalizacao.TemOutra04 = "X";
+                        fiscalizacao.Outra04 = reader.GetValue<string>("item");
+                        fiscalizacao.DescricaoOutra04 = reader.GetValue<string>("descricao");
+                        fiscalizacao.DescricaoOutra04 = fiscalizacao.DescricaoOutra04.Count() <= 80 ? fiscalizacao.DescricaoOutra04 : fiscalizacao.DescricaoOutra04.Substring(0, 80);
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion Penalidades
 
                 #region Valor
 

@@ -86,9 +86,30 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		#endregion
 
-		#region Valor
+        #region Penalidade
 
-		public String ValorMulta { get; set; }
+        public String TemAdvertencia { get; set; }
+        public String TemMulta { get; set; }
+        public String TemApreensao { get; set; }
+        public String TemInterdicao { get; set; }
+        public String TemOutra01 { get; set; }
+        public String Outra01 { get; set; }
+        public String DescricaoOutra01 { get; set; }
+        public String TemOutra02 { get; set; }
+        public String Outra02 { get; set; }
+        public String DescricaoOutra02 { get; set; }
+        public String TemOutra03 { get; set; }
+        public String Outra03 { get; set; }
+        public String DescricaoOutra03 { get; set; }
+        public String TemOutra04 { get; set; }
+        public String Outra04 { get; set; }
+        public String DescricaoOutra04 { get; set; }
+
+        #endregion
+
+        #region Valor
+
+        public String ValorMulta { get; set; }
 		public String CodigoReceita { get; set; }
 		public String ValorMultaPorExtenso { get; set; }
 

@@ -71,6 +71,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             dataSource.InfrGrave = dataSource.InfrGrave ?? AsposeData.Empty;
             dataSource.InfrGravissima = dataSource.InfrGravissima ?? AsposeData.Empty;
 
+            dataSource.TemAdvertencia = dataSource.TemAdvertencia ?? AsposeData.Empty;
+            dataSource.TemMulta = dataSource.TemMulta ?? AsposeData.Empty;
+            dataSource.TemApreensao = dataSource.TemApreensao ?? AsposeData.Empty;
+            dataSource.TemInterdicao = dataSource.TemInterdicao ?? AsposeData.Empty;
+            dataSource.TemOutra01 = dataSource.TemOutra01 ?? AsposeData.Empty;
+            dataSource.TemOutra02 = dataSource.TemOutra02 ?? AsposeData.Empty;
+            dataSource.TemOutra03 = dataSource.TemOutra03 ?? AsposeData.Empty;
+            dataSource.TemOutra04 = dataSource.TemOutra04 ?? AsposeData.Empty;
+
             dataSource.NumeroIUF = "123456";    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
 
             ObterArquivoTemplate();
