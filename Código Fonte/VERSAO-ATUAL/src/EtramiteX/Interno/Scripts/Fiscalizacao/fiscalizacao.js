@@ -1372,7 +1372,8 @@ Infracao = {
 	                DaDo: $(this).find('.txtLeiEnquadramento').val().trim(),
 	            };
 
-	            if (item.ArtigoTexto != '' && item.ArtigoParagrafo != '' && item.DaDo != '') {
+	            
+	            if (item.ArtigoTexto != '' && item.DaDo != '') {  //  && item.ArtigoParagrafo != '' // NAO PRECISA MAIS O 'item.ArtigoParagrafo' = item/	coluna: “Item/Parágrafo/Alínea”.
 	                EnquadramentoInfracao.Artigos.push(item);
 	            }
 	        });
