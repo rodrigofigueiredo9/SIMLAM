@@ -43,11 +43,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
         public const string TipoAppCalculadaLagoNatural = "APP_LAGO_NATURAL";
         public const string TipoAppCalculadaManguezal = "APP_MANGUEZAL";
 		public const string TipoAppARecuperar = "APP_A_RECUPERAR";
+        public const string TipoAppCalculadaLago = "APP_LAGO_NATURAL";
+        public const string TipoAppCalculadaManguezal = "APP_MANGUEZAL";
         public const string TipoAppCalculadaNascente = "APP_NASCENTE_OLHO_DAGUA";
         public const string TipoAppCalculadaRioAte10 = "APP_RIO_ATE_10";
         public const string TipoAppCalculadaRio10A50 = "APP_RIO_10_A_50";
         public const string TipoAppCalculadaRio50A200 = "APP_RIO_50_A_200";
-        public const string TipoAppCalculadaRio200A600 = "APP_200_A_600";
+        public const string TipoAppCalculadaRio200A600 = "APP_RIO_200_A_600";
         public const string TipoAppCalculadaRio600 = "APP_RIO_ACIMA_600";
         public const string TipoAppCalculadaReservatorio = "APP_RESERVATORIO_ARTIFICIAL_DECORRENTE_BARRAMENTO";
         public const string TipoAppCalculadaBordaChapada = "APP_BORDA_CHAPADA";
