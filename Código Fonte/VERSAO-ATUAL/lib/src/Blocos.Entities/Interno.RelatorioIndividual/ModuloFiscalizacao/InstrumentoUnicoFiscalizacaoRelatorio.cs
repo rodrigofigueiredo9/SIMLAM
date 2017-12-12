@@ -115,7 +115,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		#endregion
 
-		#region Descrição da apreensão
+		#region Apreensão
 
 		public String DescreverApreensao { get; set; }
 		public String ValorBemProdutoArbitrado { get; set; }
@@ -126,13 +126,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 		public String DepositarioMunicipio { get; set; }
 		public String DepositarioUF { get; set; }
 		public String DepositarioNome { get; set; }
-		public String DepositarioEstadoCivil { get; set; }
-		public String DepositarioNaturalidade { get; set; }
-		public String DepositarioRG { get; set; }
-		public String DepositarioEndLogradouro { get; set; }
-		public String DepositarioEndBairro { get; set; }
-		public String DepositarioEndDistrito { get; set; }
-		public String DepositarioEndMunicipio { get; set; }
+        public String DepositarioCPF { get; set; }
+        public String ApreensaoLacres { get; set; }
 
 		#endregion
 

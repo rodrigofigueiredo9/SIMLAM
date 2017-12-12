@@ -1209,40 +1209,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     reader.Close();
                 }
 
-                #endregion
+                #endregion Multa
 
-                #region Descrição da apreensão
+                #region Apreensão
 
                 comando = bancoDeDados.CriarComando(@"
-					 select tfma.descricao,
-							tfma.valor_produtos,
-							tfma.endereco_logradouro,
-							tfma.endereco_bairro,
-							tfma.endereco_distrito,
-							led.sigla endereco_estado,
-							lmd.texto endereco_municipio,
-							nvl(tp.nome, tp.razao_social) nome,
-							lpec.texto estado_civil,
-							tp.naturalidade,
-							tp.rg,
-							tpe.logradouro,
-							tpe.bairro,
-							tpe.distrito,
-							lm.texto municipio
-					   from {0}tab_fisc_material_apreendido tfma,
-							{0}tab_pessoa                   tp,
-							{0}tab_pessoa_endereco          tpe,
-							{0}lov_pessoa_estado_civil      lpec,
-							{0}lov_municipio                lmd,
-							{0}lov_municipio                lm,
-							{0}lov_estado                   led
-					  where tfma.depositario = tp.id
-						and tp.id = tpe.pessoa
-						and tp.estado_civil = lpec.id(+)
-						and tfma.endereco_municipio = lmd.id(+)
-						and tfma.endereco_estado = led.id(+)
-						and tpe.municipio = lm.id(+)
-						and tfma.fiscalizacao = :id", EsquemaBanco);
+                            select tfa.descricao,
+                                   tfa.valor_produtos_reais valor_reais,
+                                   tp.nome nome_depositario,
+                                   tp.cpf cpf_depositario,
+                                   tfa.endereco_logradouro logradouro,
+                                   tfa.endereco_bairro bairro,
+                                   tfa.endereco_distrito distrito,
+                                   lm.texto municipio,
+                                   le.sigla uf,
+                                   tfa.numero_lacres lacres
+                            from {0}tab_fisc_apreensao tfa,
+                                 {0}tab_pessoa tp,
+                                 {0}lov_municipio lm,
+                                 {0}lov_estado le
+                            where tp.id (+)= tfa.depositario
+                                  and lm.id (+)= tfa.endereco_municipio
+                                  and le.id (+)= tfa.endereco_estado
+                                  and tfa.fiscalizacao = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1251,20 +1240,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     if (reader.Read())
                     {
                         fiscalizacao.DescreverApreensao = reader.GetValue<string>("descricao");
-                        fiscalizacao.ValorBemProdutoArbitrado = reader.GetValue<decimal>("valor_produtos").ToString("N2");
-                        fiscalizacao.DepositarioLogradouro = reader.GetValue<string>("endereco_logradouro");
-                        fiscalizacao.DepositarioBairro = reader.GetValue<string>("endereco_bairro");
-                        fiscalizacao.DepositarioDistrito = reader.GetValue<string>("endereco_distrito");
-                        fiscalizacao.DepositarioUF = reader.GetValue<string>("endereco_estado");
-                        fiscalizacao.DepositarioMunicipio = reader.GetValue<string>("endereco_municipio");
-                        fiscalizacao.DepositarioNome = reader.GetValue<string>("nome");
-                        fiscalizacao.DepositarioEstadoCivil = reader.GetValue<string>("estado_civil");
-                        fiscalizacao.DepositarioNaturalidade = reader.GetValue<string>("naturalidade");
-                        fiscalizacao.DepositarioRG = reader.GetValue<string>("rg");
-                        fiscalizacao.DepositarioEndLogradouro = reader.GetValue<string>("logradouro");
-                        fiscalizacao.DepositarioEndBairro = reader.GetValue<string>("bairro");
-                        fiscalizacao.DepositarioEndDistrito = reader.GetValue<string>("distrito");
-                        fiscalizacao.DepositarioEndMunicipio = reader.GetValue<string>("municipio");
+                        fiscalizacao.ValorBemProdutoArbitrado = reader.GetValue<decimal>("valor_reais").ToString("N2");
+                        fiscalizacao.DepositarioNome = reader.GetValue<string>("nome_depositario");
+                        fiscalizacao.DepositarioCPF = reader.GetValue<string>("cpf_depositario");
+                        fiscalizacao.DepositarioLogradouro = reader.GetValue<string>("logradouro");
+                        fiscalizacao.DepositarioBairro = reader.GetValue<string>("bairro");
+                        fiscalizacao.DepositarioDistrito = reader.GetValue<string>("distrito");
+                        fiscalizacao.DepositarioMunicipio = reader.GetValue<string>("municipio");
+                        fiscalizacao.DepositarioUF = reader.GetValue<string>("uf");
+                        fiscalizacao.ApreensaoLacres = reader.GetValue<string>("lacres");
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
                     }
