@@ -821,14 +821,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 //    fiscalizacao = ObterHistorico(historico);
                 //}
 
-                if (fiscalizacao.PdfAutoTermo.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfAutoTermo.Id != arquivo))
+                if (fiscalizacao.PdfIUF.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfIUF.Id != arquivo))
                 {
                     Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
                     return null;
                 }
 
                 ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
-                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfAutoTermo.Id.GetValueOrDefault());
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfIUF.Id.GetValueOrDefault());
 
                 //if (historico > 0)
                 //{
