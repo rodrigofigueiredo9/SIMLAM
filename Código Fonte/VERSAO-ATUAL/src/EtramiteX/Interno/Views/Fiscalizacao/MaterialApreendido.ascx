@@ -39,7 +39,7 @@
         <div class="block">
             <div class="coluna15">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", ((Model.MaterialApreendido.IsDigital == true && Model.MaterialApreendido.NumeroIUF == null) ? "Gerado automaticamente" : Model.MaterialApreendido.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.MaterialApreendido.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", ((Model.MaterialApreendido.IsDigital == true && Model.MaterialApreendido.NumeroIUF == null) ? "Gerado automaticamente" : Model.MaterialApreendido.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.MaterialApreendido.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "6" }))%>
 	        </div>
 
             <div class="coluna15">

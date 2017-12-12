@@ -37,7 +37,7 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("Multa.NumeroIUF", ((Model.Multa.IsDigital == true && Model.Multa.NumeroIUF == null) ? "Gerado automaticamente" : Model.Multa.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Multa.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("Multa.NumeroIUF", ((Model.Multa.IsDigital == true && Model.Multa.NumeroIUF == null) ? "Gerado automaticamente" : Model.Multa.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Multa.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "6" }))%>
 	        </div>
 
             <div class="coluna17">

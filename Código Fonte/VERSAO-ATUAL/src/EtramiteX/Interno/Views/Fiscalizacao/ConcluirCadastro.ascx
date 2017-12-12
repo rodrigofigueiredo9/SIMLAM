@@ -270,7 +270,7 @@
         <div class="block">
             <div class="coluna15 append2">
                 <label>Nº IUF</label><br />
-				<%= Html.TextBox("MultaVM.Multa.NumeroIUF", (Model.MultaVM.Multa.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MultaVM.Multa.NumeroIUF) ? Model.MultaVM.Multa.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFMulta" }))%>
+				<%= Html.TextBox("MultaVM.Multa.NumeroIUF", (Model.MultaVM.Multa.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MultaVM.Multa.NumeroIUF) ? Model.MultaVM.Multa.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFMulta", @maxlength = "6"  }))%>
             </div>
             <div class="coluna10 append2">
                 <label>Série</label><br />
@@ -293,7 +293,7 @@
         <div class="block">
             <div class="coluna15 append2">
                 <label>Nº IUF</label><br />
-				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.NumeroIUF", (Model.ObjetoInfracaoVM.Entidade.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.ObjetoInfracaoVM.Entidade.NumeroIUF) ? Model.ObjetoInfracaoVM.Entidade.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFInterdicaoEmbargo" }))%>
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.NumeroIUF", (Model.ObjetoInfracaoVM.Entidade.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.ObjetoInfracaoVM.Entidade.NumeroIUF) ? Model.ObjetoInfracaoVM.Entidade.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFInterdicaoEmbargo", @maxlength = "6"  }))%>
             </div>
             <div class="coluna10 append2">
                 <label>Série</label><br />
@@ -316,7 +316,7 @@
         <div class="block">
             <div class="coluna15 append2">
                 <label>Nº IUF</label><br />
-				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.NumeroIUF", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF) ? Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFApreensao" }))%>
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.NumeroIUF", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF) ? Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFApreensao", @maxlength = "6"  }))%>
             </div>
             <div class="coluna10 append2">
                 <label>Série</label><br />
@@ -339,7 +339,7 @@
         <div class="block">
             <div class="coluna15 append2">
                 <label>Nº IUF</label><br />
-				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF) ? Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFOutrasPenalidades" }))%>
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF) ? Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFOutrasPenalidades", @maxlength = "6"  }))%>
             </div>
             <div class="coluna10 append2">
                 <label>Série</label><br />

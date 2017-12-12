@@ -37,7 +37,7 @@
         <div class="block">
             <div class="coluna20">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("OutrasPenalidades.NumeroIUF", ((Model.OutrasPenalidades.IsDigital == true && Model.OutrasPenalidades.NumeroIUF == null) ? "Gerado automaticamente" : Model.OutrasPenalidades.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.OutrasPenalidades.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("OutrasPenalidades.NumeroIUF", ((Model.OutrasPenalidades.IsDigital == true && Model.OutrasPenalidades.NumeroIUF == null) ? "Gerado automaticamente" : Model.OutrasPenalidades.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.OutrasPenalidades.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "6" }))%>
 	        </div>
 
             <div class="coluna17">
