@@ -157,10 +157,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		#region Testemunhas
 
-		public String TestemunhaNome1 { get; set; }
-		public String TestemunhaEnd1 { get; set; }
-		public String TestemunhaNome2 { get; set; }
-		public String TestemunhaEnd2 { get; set; }
+		public String TestemunhaNome { get; set; }
+		public String TestemunhaCPF { get; set; }
 
 		#endregion
 	}

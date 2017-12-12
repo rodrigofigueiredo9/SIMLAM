@@ -85,7 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
             dataSource.IsDesinterditado= dataSource.IsDesinterditado?? AsposeData.Empty;
             dataSource.IsDesembargado= dataSource.IsDesembargado ?? AsposeData.Empty;
 
-            dataSource.NumeroIUF = "123456";    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
+            dataSource.NumeroIUF = AsposeData.Empty;    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
 
             ObterArquivoTemplate();
 

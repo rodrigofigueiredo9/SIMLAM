@@ -1345,47 +1345,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 #region Testemunhas
 
                 comando = bancoDeDados.CriarComando(@"
-					select (case
-							 when tfcft.testemunha_setor is null then
-							  tfcft.endereco
-							 else
-							  te.endereco
-						   end) endereco,
-						   nvl(tfcft.nome, tf.nome) nome
-					  from {0}tab_fisc_consid_final tfcf,
-						   {0}tab_fisc_consid_final_test tfcft,
-						   {0}tab_funcionario tf,
-						   (select t.logradouro || ', ' || t.numero ||
-								   nvl2(t.complemento,
-										' - (Complemento: ' || t.complemento || ')',
-										'') || ' - Bairro: ' || t.bairro || ' - Cep: ' || t.cep ||
-								   ' - ' || lm.texto || '/' || le.sigla endereco,
-								   t.setor
-							  from {0}tab_setor_endereco t, {0}lov_estado le, {0}lov_municipio lm
-							 where t.municipio = lm.id(+)
-							   and lm.estado = le.id(+)) te
-					 where tfcf.id = tfcft.consid_final
-					   and tfcft.testemunha = tf.id(+)
-					   and tfcft.testemunha_setor = te.setor(+)
-					   and tfcf.fiscalizacao = :id", EsquemaBanco);
+                            select ( case when tfcft.idaf = 1 then tf.nome
+                                          when (tfcft.idaf = 0 and tfcft.nome is null) then tp.nome
+                                          else tfcft.nome
+                                     end) nome,
+                                   ( case when tfcft.idaf = 1 then tf.cpf
+                                          when (tfcft.idaf = 0 and tfcft.cpf is null) then tp.cpf
+                                          else tfcft.cpf
+                                     end) cpf
+                            from {0}tab_fisc_consid_final tfcf,
+                                 {0}tab_fisc_consid_final_test tfcft,
+                                 {0}tab_funcionario tf,
+                                 {0}tab_pessoa tp
+                            where tfcf.fiscalizacao = :id
+                                  and tfcft.consid_final = tfcf.id
+                                  and tf.id (+)= tfcft.testemunha
+                                  and tp.id (+)= tfcft.testemunha", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
-                lista = bancoDeDados.ExecutarHashtable(comando);
-
-                if (lista != null && lista.Count > 0)
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
-                    if (lista[0] != null)
+                    if (reader.Read())
                     {
-                        fiscalizacao.TestemunhaNome1 = lista[0]["NOME"].ToString();
-                        fiscalizacao.TestemunhaEnd1 = lista[0]["ENDERECO"].ToString();
+                        fiscalizacao.TestemunhaNome = reader.GetValue<string>("nome");
+                        fiscalizacao.TestemunhaCPF = reader.GetValue<string>("cpf");
                     }
 
-                    if (lista.Count > 1 && lista[1] != null)
-                    {
-                        fiscalizacao.TestemunhaNome2 = lista[1]["NOME"].ToString();
-                        fiscalizacao.TestemunhaEnd2 = lista[1]["ENDERECO"].ToString();
-                    }
+                    reader.Close();
                 }
 
                 #endregion

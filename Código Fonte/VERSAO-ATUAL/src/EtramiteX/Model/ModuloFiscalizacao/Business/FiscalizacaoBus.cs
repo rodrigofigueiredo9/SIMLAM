@@ -291,7 +291,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                         fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
                         fiscalizacao.PdfIUF.Extensao = ".pdf";
                         fiscalizacao.PdfIUF.ContentType = "application/pdf";
-                        fiscalizacao.PdfIUF.Buffer = pdf.GerarAutoTermoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                        fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
                         arquivoBus.Salvar(fiscalizacao.PdfIUF);
 
                         arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
