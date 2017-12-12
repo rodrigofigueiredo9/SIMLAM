@@ -1256,17 +1256,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     reader.Close();
                 }
 
-                #endregion
+                #endregion Apreensão
 
-                #region Descrição do embargo/interdição
+                #region Interdição / Embargo
 
-                comando = bancoDeDados.CriarComando(" select tfoi.desc_termo_embargo from tab_fisc_obj_infracao tfoi where tfoi.fiscalizacao = :id ");
+                comando = bancoDeDados.CriarComando(@"
+                            select tfoi.desc_termo_embargo,
+                                   ( select 'X'
+                                     from {0}tab_fisc_obj_infracao t
+                                     where t.fiscalizacao = :id
+                                           and t.interditado = 1) IsInterditado,
+                                   ( select 'X'
+                                     from {0}tab_fisc_obj_infracao t
+                                     where t.fiscalizacao = :id
+                                           and t.interditado = 0) IsEmbargado
+                            from {0}tab_fisc_obj_infracao tfoi
+                            where tfoi.fiscalizacao = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
-                fiscalizacao.DescricaoTermoEmbargo = bancoDeDados.ExecutarScalar<string>(comando);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.DescricaoTermoEmbargo = reader.GetValue<string>("desc_termo_embargo");
+                        fiscalizacao.IsInterditado = reader.GetValue<string>("IsInterditado");
+                        fiscalizacao.IsEmbargado = reader.GetValue<string>("IsEmbargado");
+                    }
 
-                #endregion
+                    reader.Close();
+                }
+
+                #endregion Interdição / Embargo
 
                 #region Firmas
 

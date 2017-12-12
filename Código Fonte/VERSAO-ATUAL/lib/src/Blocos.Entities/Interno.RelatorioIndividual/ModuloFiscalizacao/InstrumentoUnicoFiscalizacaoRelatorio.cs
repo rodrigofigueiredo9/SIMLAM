@@ -134,6 +134,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 		#region Descrição do embargo/interdição
 
 		public String DescricaoTermoEmbargo { get; set; }
+        public String IsInterditado { get; set; }
+        public String IsEmbargado { get; set; }
+        public String IsDesinterditado { get; set; }
+        public String IsDesembargado { get; set; }
 
 		#endregion
 
