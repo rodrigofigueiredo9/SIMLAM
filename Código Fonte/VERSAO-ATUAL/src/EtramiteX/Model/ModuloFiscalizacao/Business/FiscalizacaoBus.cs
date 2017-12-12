@@ -269,37 +269,53 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                             fiscalizacao.PdfAutoTermo.Id = null;
                         }
 
-                        #region Laudo
-                        
-                        fiscalizacao.PdfLaudo = new Arquivo();
-                        fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
-                        fiscalizacao.PdfLaudo.Extensao = ".pdf";
-                        fiscalizacao.PdfLaudo.ContentType = "application/pdf";
-                        fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacaoNovo(fiscalizacao.Id, false, bancoDeDados);
-                        arquivoBus.Salvar(fiscalizacao.PdfLaudo);
-
-                        arquivoDa.Salvar(fiscalizacao.PdfLaudo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-                            User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-
-                        fiscalizacao.PdfLaudo.Buffer.Close();
-
-                        #endregion Laudo
-
                         #region IUF
 
-                        fiscalizacao.PdfIUF = new Arquivo();
-                        fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
-                        fiscalizacao.PdfIUF.Extensao = ".pdf";
-                        fiscalizacao.PdfIUF.ContentType = "application/pdf";
-                        fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
-                        arquivoBus.Salvar(fiscalizacao.PdfIUF);
+                        try
+                        {
+                            fiscalizacao.PdfIUF = new Arquivo();
+                            fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
+                            fiscalizacao.PdfIUF.Extensao = ".pdf";
+                            fiscalizacao.PdfIUF.ContentType = "application/pdf";
+                            fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                            arquivoBus.Salvar(fiscalizacao.PdfIUF);
 
-                        arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-                            User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-
-                        fiscalizacao.PdfIUF.Buffer.Close();
+                            arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        }
+                        finally
+                        {
+                            if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                            {
+                                fiscalizacao.PdfIUF.Buffer.Close();
+                            }
+                        }
 
                         #endregion IUF
+
+                        #region Laudo
+
+                        try
+                        {
+                            fiscalizacao.PdfLaudo = new Arquivo();
+                            fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
+                            fiscalizacao.PdfLaudo.Extensao = ".pdf";
+                            fiscalizacao.PdfLaudo.ContentType = "application/pdf";
+                            fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacaoNovo(fiscalizacao.Id, false, bancoDeDados);
+                            arquivoBus.Salvar(fiscalizacao.PdfLaudo);
+
+                            arquivoDa.Salvar(fiscalizacao.PdfLaudo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        }
+                        finally
+                        {
+                            if (fiscalizacao.PdfLaudo != null && fiscalizacao.PdfLaudo.Buffer != null)
+                            {
+                                fiscalizacao.PdfLaudo.Buffer.Close();
+                            }
+                        }
+
+                        #endregion Laudo
 
                         Arquivo arqCroqui = fiscalizacao.ProjetoGeo.Arquivos.SingleOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
 
