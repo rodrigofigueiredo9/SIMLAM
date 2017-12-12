@@ -1774,6 +1774,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
         }
 
+        public ActionResult InstrumentoUnicoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0)
+        {
+            try
+            {
+                Stream strArquivo = _bus.InstrumentoUnicoFiscalizacaoPdf(id, arquivo, historico);
+
+                if (!Validacao.EhValido)
+                {
+                    return RedirectToAction("Index", Validacao.QueryParamSerializer());
+                }
+                return ViewModelHelper.GerarArquivo("Instrumento Unico de Fiscalizacao.pdf", strArquivo, "application/pdf");
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+                return RedirectToAction("Index", Validacao.QueryParamSerializer());
+            }
+        }
+
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar, ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoCriar })]
         public ActionResult LaudoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0)
         {

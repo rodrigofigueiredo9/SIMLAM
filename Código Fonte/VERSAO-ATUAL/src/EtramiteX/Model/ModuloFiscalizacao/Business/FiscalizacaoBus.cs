@@ -269,7 +269,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                             fiscalizacao.PdfAutoTermo.Id = null;
                         }
 
-                        //Laudo
+                        #region Laudo
+                        
                         fiscalizacao.PdfLaudo = new Arquivo();
                         fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
                         fiscalizacao.PdfLaudo.Extensao = ".pdf";
@@ -281,6 +282,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                             User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
 
                         fiscalizacao.PdfLaudo.Buffer.Close();
+
+                        #endregion Laudo
+
+                        #region IUF
+
+                        fiscalizacao.PdfIUF = new Arquivo();
+                        fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
+                        fiscalizacao.PdfIUF.Extensao = ".pdf";
+                        fiscalizacao.PdfIUF.ContentType = "application/pdf";
+                        fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                        arquivoBus.Salvar(fiscalizacao.PdfIUF);
+
+                        arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                            User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+
+                        fiscalizacao.PdfIUF.Buffer.Close();
+
+                        #endregion IUF
 
                         Arquivo arqCroqui = fiscalizacao.ProjetoGeo.Arquivos.SingleOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
 
@@ -768,6 +787,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return null;
 		}
+
+        public Stream InstrumentoUnicoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
+        {
+            try
+            {
+                PdfFiscalizacao _pdf = new PdfFiscalizacao();
+                Fiscalizacao fiscalizacao = Obter(id, true);
+
+                if (historico == 0 && fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                {
+                    return _pdf.GerarInstrumentoUnicoFiscalizacao(id, banco: banco);
+                }
+
+                //if (historico > 0)
+                //{
+                //    fiscalizacao = ObterHistorico(historico);
+                //}
+
+                if (fiscalizacao.PdfAutoTermo.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfAutoTermo.Id != arquivo))
+                {
+                    Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
+                    return null;
+                }
+
+                ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfAutoTermo.Id.GetValueOrDefault());
+
+                //if (historico > 0)
+                //{
+                //    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                //}
+
+                return pdf.Buffer;
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
 
 		public Stream LaudoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
 		{

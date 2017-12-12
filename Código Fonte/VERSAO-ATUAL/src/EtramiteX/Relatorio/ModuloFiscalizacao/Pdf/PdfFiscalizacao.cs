@@ -57,6 +57,63 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			return GerarPdf(dataSource);
 		}
 
+        public MemoryStream GerarInstrumentoUnicoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Instrumento_Unico_Fiscalizacao.docx";
+            InstrumentoUnicoFiscalizacaoRelatorio dataSource = _da.ObterInstrumentoUnicoFiscalizacao(id, banco);
+
+            dataSource.IsDDSIA = dataSource.IsDDSIA ?? AsposeData.Empty;
+            dataSource.IsDDSIV = dataSource.IsDDSIV ?? AsposeData.Empty;
+            dataSource.IsDRNRE = dataSource.IsDRNRE ?? AsposeData.Empty;
+
+            dataSource.InfrLeve = dataSource.InfrLeve ?? AsposeData.Empty;
+            dataSource.InfrMedia = dataSource.InfrMedia ?? AsposeData.Empty;
+            dataSource.InfrGrave = dataSource.InfrGrave ?? AsposeData.Empty;
+            dataSource.InfrGravissima = dataSource.InfrGravissima ?? AsposeData.Empty;
+
+            dataSource.TemAdvertencia = dataSource.TemAdvertencia ?? AsposeData.Empty;
+            dataSource.TemMulta = dataSource.TemMulta ?? AsposeData.Empty;
+            dataSource.TemApreensao = dataSource.TemApreensao ?? AsposeData.Empty;
+            dataSource.TemInterdicao = dataSource.TemInterdicao ?? AsposeData.Empty;
+            dataSource.TemOutra01 = dataSource.TemOutra01 ?? AsposeData.Empty;
+            dataSource.TemOutra02 = dataSource.TemOutra02 ?? AsposeData.Empty;
+            dataSource.TemOutra03 = dataSource.TemOutra03 ?? AsposeData.Empty;
+            dataSource.TemOutra04 = dataSource.TemOutra04 ?? AsposeData.Empty;
+
+            dataSource.IsInterditado = dataSource.IsInterditado ?? AsposeData.Empty;
+            dataSource.IsEmbargado = dataSource.IsEmbargado ?? AsposeData.Empty;
+            dataSource.IsDesinterditado= dataSource.IsDesinterditado?? AsposeData.Empty;
+            dataSource.IsDesembargado= dataSource.IsDesembargado ?? AsposeData.Empty;
+
+            dataSource.NumeroIUF = AsposeData.Empty;    //TEMPORÁRIO, O NÚMERO PRECISA SER DEFINIDO
+
+            ObterArquivoTemplate();
+
+            dataSource.GovernoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyGovernoNome);
+            dataSource.SecretariaNome = _configSys.Obter<String>(ConfiguracaoSistema.KeySecretariaNome);
+            dataSource.OrgaoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoNome);
+            Setor setor = _configFunc.Obter<List<Setor>>(ConfiguracaoFuncionario.KeySetores).Single(x => x.Id == dataSource.SetorId);
+            //dataSource.SetorNome = setor.Nome;
+            dataSource.DocumentoNome = "INSTRUMENTO ÚNICO DE FISCALIZAÇÃO";
+            dataSource.CodigoUnidadeConvenio = setor.UnidadeConvenio;
+
+            string pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logobrasao.jpg");
+            dataSource.LogoBrasao = File.ReadAllBytes(pathImg);
+
+            dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
+
+            string pathImgMarca = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca.png");
+            dataSource.Logomarca = File.ReadAllBytes(pathImgMarca);
+
+            dataSource.Logomarca = AsposeImage.RedimensionarImagem(dataSource.Logomarca, 2);
+
+            ConfigurarCabecarioRodape(dataSource.SetorId);
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+
+            return GerarPdf(dataSource);
+        }
+
 		public MemoryStream GerarLaudoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
 			ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao.docx";
