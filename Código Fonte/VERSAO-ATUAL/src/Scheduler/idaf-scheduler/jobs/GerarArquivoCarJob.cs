@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				//Veja se 
 				var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 
-				while (nextItem != null)
+			while (nextItem != null)
 				{
 					//Update item as Started
 
@@ -827,10 +827,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 {
                     while (dr.Read())
                     {
-                        car.imovel.idPai = "ES-3200904-B1420810343F4EAF989B9DA380D7D97F";//Convert.ToString(dr["CODIGO_IMOVEL"]);
+                        car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
                     }
                 }
             }
+            car.origem.dataProtocolo = DateTime.Now;
         }
 
 		/// <summary>
@@ -1385,10 +1386,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                           FROM CRT_DOMINIALIDADE_RESERVA t
                               INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
                               INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id AND t.TID = :dominio_tid",conn))
+                          WHERE t.DOMINIO = :dominio_id AND /*t.TID = :dominio_tid*/",conn))
                 {
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
-				cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
+				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
                 
 				using (var dr = cmd.ExecuteReader())
 				{

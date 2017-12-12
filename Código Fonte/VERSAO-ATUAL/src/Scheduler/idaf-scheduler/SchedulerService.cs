@@ -56,7 +56,7 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 		private static void CreateJobs()
 		{
-           // var IntegracaoCar = JobBuilder.Create<IntegracaoCarJob>().WithIdentity("IntegracaoCarJob").Build();
+            //var IntegracaoCar = JobBuilder.Create<IntegracaoCarJob>().WithIdentity("IntegracaoCarJob").Build();
             //JobDictionary.Add("IntegracaoCarJob", IntegracaoCar);
             
             var gerarArquivoCar = JobBuilder.Create<GerarArquivoCarJob>().WithIdentity("GerarArquivoCarJob").Build();

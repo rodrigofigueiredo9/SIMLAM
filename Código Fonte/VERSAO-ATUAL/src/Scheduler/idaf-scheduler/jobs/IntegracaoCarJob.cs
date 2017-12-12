@@ -79,9 +79,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE  ID IN (40774,45210,65651)"; // C 2300 // I 25300 // C 2100  // I 25100 // I 25000 // I 24500 // C 2000
-            
-            //string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 2300";    
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE  ID < 26500 AND PASSIVO_ENVIADO IS NULL"; // C 2300 // I 25300 // C 2100  // I 25100 // I 25000 // I 24500 // C 2000
+
+            string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 26500";    
             /*string BuildSQl = @"SELECT CAR.ID
                                 FROM TAB_CAR_SOLICITACAO CAR
                                     INNER JOIN IDAFGEO.GEO_CAR_APP_CALCULADAS GEOAPP
@@ -109,10 +109,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                     }                    
                 }
-               /*using (OracleCommand cmdUp = new OracleCommand(BuildSQlUp, conn))
+                using (OracleCommand cmdUp = new OracleCommand(BuildSQlUp, conn))
                 {
                     cmdUp.ExecuteNonQuery();                    
-                }*/                              
+                }                             
             }catch(Exception e)
             {
                 string v = e.Message;
