@@ -1289,6 +1289,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                 #endregion Interdição / Embargo
 
+                #region Descrição de outras penalidades
+
+                comando = bancoDeDados.CriarComando(@"
+                            select tfop.descricao
+                            from {0}tab_fisc_outras_penalidades tfop
+                            where tfop.fiscalizacao = :id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
+                        fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Count() <= 465 ? fiscalizacao.DescricaoOutrasPenalidades : fiscalizacao.DescricaoOutrasPenalidades.Substring(0, 465);
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion Interdição / Embargo
+
                 #region Firmas
 
                 comando = bancoDeDados.CriarComando(@"

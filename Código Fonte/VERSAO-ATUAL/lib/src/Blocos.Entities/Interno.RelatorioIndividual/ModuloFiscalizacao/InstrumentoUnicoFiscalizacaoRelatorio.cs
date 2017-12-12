@@ -141,9 +141,15 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 
 		#endregion
 
-		#region Firmas
+        #region Descrição de Outras Penalidades
 
-		public String NomeUsuarioCadastro { get; set; }
+        public String DescricaoOutrasPenalidades { get; set; }
+
+        #endregion
+
+        #region Firmas
+
+        public String NomeUsuarioCadastro { get; set; }
 		public String ResponsavelEmpNomeRazaoSocial { get; set; }
 		public String ResponsavelEmpCPFCNPJ { get; set; }
 
