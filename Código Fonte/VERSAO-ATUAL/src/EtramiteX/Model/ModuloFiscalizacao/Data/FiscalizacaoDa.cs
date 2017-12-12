@@ -225,11 +225,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_fiscalizacao t set t.pdf_auto_termo = :pdf_auto_termo, 
-					t.pdf_laudo = :pdf_laudo, t.pdf_croqui = :pdf_croqui, t.tid = :tid where t.id = :id", EsquemaBanco);
+					t.pdf_laudo = :pdf_laudo, t.pdf_croqui = :pdf_croqui, t.pdf_iuf = :pdf_iuf, t.tid = :tid where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("pdf_auto_termo", fiscalizacao.PdfAutoTermo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("pdf_laudo", fiscalizacao.PdfLaudo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("pdf_croqui", fiscalizacao.PdfCroqui.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("pdf_iuf", fiscalizacao.PdfIUF.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
 
@@ -250,7 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select t.id Id, t.situacao SituacaoId, t.situacao_data, ls.texto SituacaoTexto, t.tid Tid, tf.nome funcionarioNome, 
-				tf.id funcionarioId, tu.login funcionarioLogin, t.autos NumeroAutos, t.vencimento vencimentoFisc, p.id ProtocoloId, t.pdf_auto_termo, t.pdf_laudo 
+				tf.id funcionarioId, tu.login funcionarioLogin, t.autos NumeroAutos, t.vencimento vencimentoFisc, p.id ProtocoloId, t.pdf_auto_termo, t.pdf_laudo, t.pdf_iuf 
 				from {0}tab_fiscalizacao t, {0}tab_protocolo p, {0}lov_fiscalizacao_situacao ls, {0}tab_funcionario tf, {0}tab_usuario tu where t.situacao = ls.id(+) 
 				and t.autuante = tf.id and tf.usuario = tu.id and p.fiscalizacao(+) = t.id and t.id = :id", EsquemaBanco);
 
@@ -265,6 +266,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					fiscalizacaoItem.SituacaoAtualData.Data = reader.GetValue<DateTime>("situacao_data");
 					fiscalizacaoItem.PdfAutoTermo.Id = reader.GetValue<int>("pdf_auto_termo");
 					fiscalizacaoItem.PdfLaudo.Id = reader.GetValue<int>("pdf_laudo");
+                    fiscalizacaoItem.PdfIUF.Id = reader.GetValue<int>("pdf_iuf");
 				});
 
 				fiscalizacao.DataConclusao = ObterDataConclusao(fiscalizacao.Id);

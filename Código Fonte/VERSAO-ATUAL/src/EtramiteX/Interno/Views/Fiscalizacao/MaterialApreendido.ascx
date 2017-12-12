@@ -39,7 +39,7 @@
         <div class="block">
             <div class="coluna15">
 		        <label>Número do IUF *</label>
-		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", ((Model.MaterialApreendido.IsDigital == true && Model.MaterialApreendido.NumeroIUF == null) ? "Gerado automaticamente" : Model.MaterialApreendido.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.MaterialApreendido.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "8" }))%>
+		        <%= Html.TextBox("MaterialApreendido.NumeroIUF", ((Model.MaterialApreendido.IsDigital == true && Model.MaterialApreendido.NumeroIUF == null) ? "Gerado automaticamente" : Model.MaterialApreendido.NumeroIUF), ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.MaterialApreendido.IsDigital == true), new { @class = "text maskNumInt txtNumeroIUF", @maxlength = "6" }))%>
 	        </div>
 
             <div class="coluna15">
@@ -62,7 +62,7 @@
 
         <div class="block">
             <div class="coluna25">
-				<label>Valor dos bens apreendidos (R$) *</label>
+				<label>Valor dos bens apreendidos (R$)</label>
 				<%= Html.TextBox("MaterialApreendido.ValorProdutosReais", Model.MaterialApreendido.ValorProdutosReaisMascara, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorBensApreendidosReais", @maxlength = "13" }))%>
 			</div>
 		</div>
@@ -83,12 +83,12 @@
 
 		<div class="block" >
 			<div class="coluna60">
-				<label>Nome do Depositário *</label>
+				<label>Nome do Depositário</label>
 				<%= Html.TextBox("Depositario.NomeRazaoSocial", Model.MaterialApreendido.Depositario.NomeRazaoSocial, new { @class = "text disabled txtNome", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna16 prepend2">
-				<label>CPF *</label>
+				<label>CPF</label>
 				<%= Html.TextBox("Depositario.CPFCNPJ", Model.MaterialApreendido.Depositario.CPFCNPJ, new { @class = "text disabled txtCnpj", @disabled = "disabled" })%>
 			</div>
 
@@ -102,30 +102,30 @@
 
 		<div class="block" >
 			<div class="coluna60">
-				<label>Logradouro / Rua / Rodovia *</label>
+				<label>Logradouro / Rua / Rodovia</label>
 				<%= Html.TextBox("Depositario.Logradouro", Model.MaterialApreendido.Depositario.Logradouro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtLogradouro", @maxlength = "500" }))%>
 			</div>
 		</div>
 
 		<div class="block" >
 			<div class="coluna30 append2">
-				<label>Bairro / Gleba / Comunidade *</label>
+				<label>Bairro / Gleba / Comunidade</label>
 				<%= Html.TextBox("Depositario.Bairro", Model.MaterialApreendido.Depositario.Bairro, ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class = "text txtBairro", @maxlength = "100" }))%>
 			</div>
 
 			<div class="coluna27">
-				<label>Distrito / Localidade *</label>
+				<label>Distrito / Localidade</label>
 				<%= Html.TextBox("Depositario.Distrito", Model.MaterialApreendido.Depositario.Distrito, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDistrito", @maxlength = "100" }))%>
 			</div>
 		</div>
 
 		<div class="block divEndereco" >
 			<div class="coluna20 append2">
-				<label>UF *</label><br />
+				<label>UF</label><br />
 				<%= Html.DropDownList("Depositario.Estado", Model.Ufs, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Ufs.Count <= 1, new { @class = "text ddlEstado" }))%>
 			</div>
 			<div class="coluna37">
-				<label>Município *</label><br />
+				<label>Município</label><br />
 				<%= Html.DropDownList("Depositario.Municipio", Model.Municipios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Municipios.Count <= 1, new { @class = "text ddlMunicipio" }))%>
 			</div>
 		</div>

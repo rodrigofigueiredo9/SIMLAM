@@ -37,40 +37,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.MaterialApreendidoMsg.DescricaoObrigatorio);
                 }
 
-                if (materialApreendido.ValorProdutosReais == null || materialApreendido.ValorProdutosReais == 0)
+                if (materialApreendido.Depositario.Id.GetValueOrDefault() != 0)
                 {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.ValorProdutosObrigatorio);
-                }
+                    if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
+                    }
 
-                if (materialApreendido.Depositario.Id.GetValueOrDefault() == 0)
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioObrigatorio);
-                }
+                    if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
+                    }
 
-                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Logradouro))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioLogradouroObrigatorio);
-                }
+                    if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
+                    }
 
-                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Bairro))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioBairroObrigatorio);
-                }
+                    if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
+                    }
 
-                if (string.IsNullOrWhiteSpace(materialApreendido.Depositario.Distrito))
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioDistritoObrigatorio);
-                }
-
-                if (materialApreendido.Depositario.Estado.GetValueOrDefault() == 0)
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioEstadoObrigatorio);
-                }
-
-                if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
-                {
-                    Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
-                }
+                    if (materialApreendido.Depositario.Municipio.GetValueOrDefault() == 0)
+                    {
+                        Validacao.Add(Mensagem.MaterialApreendidoMsg.DepositarioMunicipioObrigatorio);
+                    }
+                }                
 
                 if (materialApreendido.ProdutosApreendidos.Count == 0)
                 {
