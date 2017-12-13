@@ -153,6 +153,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
             return new Mensagem() { Texto = String.Format("O empreendimento {0} foi alterado pelo IDAF. Caso deseje, clique no botão de \"Copiar do IDAF\" da tela de editar empreendimento no requerimento digital, para atualizar os dados.", empreendimentoNome) };
         }
 
+        public Mensagem retificacaoCAR(string retificacao)
+        {
+            return new Mensagem() { Texto = String.Format("Essa ação irá gerar uma retificação. A situação da solicitação de inscrição CAR será substituído para 'Retificação'. Este CAR pode estar associado a um Título CAR. Tem certeza que deseja retificar a inscrição de CAR Nº xxxx " +  retificacao) };
+        }
+
 		#region Credenciado
 
 		public Mensagem CopiarCaracterizacaoDesatualizada(List<string> caracterizacoes)

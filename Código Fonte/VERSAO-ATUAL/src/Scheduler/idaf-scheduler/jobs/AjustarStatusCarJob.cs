@@ -73,9 +73,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
 					}
-
-					LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);					
-				}
+                    try
+                    {
+                        LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
+                    }catch(Exception e)
+                    {
+                        var s = e.Message;
+                    }
+                }
 			}
 		}
 

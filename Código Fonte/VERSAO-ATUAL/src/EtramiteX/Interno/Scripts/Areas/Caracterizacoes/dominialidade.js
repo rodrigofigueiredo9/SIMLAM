@@ -98,6 +98,16 @@ Dominialidade = {
 					var container = $('.divARL', Dominialidade.container);
 					container.empty();
 					container.append(response.Html);
+					if(response.Empty)
+					{                        
+					    Modal.confirma(
+                            {
+                                conteudo: response.Html,
+                                btnOkLabel: "Confirmar",
+                                tamanhoModal: Modal.tamanhoModalMedia
+                            });
+                        
+					}
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
@@ -206,7 +216,13 @@ Dominialidade = {
 				if (response.EhValido) {
 					MasterPage.redireciona(response.UrlRedirecionar);
 					return;
-				}
+				} /*else
+				    {
+				    Modal.confirma({
+				        titulo: response.titulo,
+                        conteudo: response.Msg
+				    })
+				    }*/
 
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Dominialidade.container, response.Msg);

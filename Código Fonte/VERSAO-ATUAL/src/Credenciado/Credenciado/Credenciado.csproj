@@ -46,7 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.WebPages" />
     <Reference Include="System.Web.Helpers" />
     <Reference Include="Microsoft.CSharp" />
@@ -74,6 +77,10 @@
     </Reference>
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.EtramiteX.Perfil, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -1233,10 +1240,6 @@
     <ProjectReference Include="..\..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj">
       <Project>{722befca-5026-44e7-b158-c9da30d20c3f}</Project>
       <Name>Blocos.Autenticacao</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
-      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
-      <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
       <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>

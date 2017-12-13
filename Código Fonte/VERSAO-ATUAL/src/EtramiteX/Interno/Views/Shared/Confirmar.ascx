@@ -8,3 +8,4 @@
 <div class="block box">
 	<label><%=Model.Mensagem.Texto %></label>
 </div>
+

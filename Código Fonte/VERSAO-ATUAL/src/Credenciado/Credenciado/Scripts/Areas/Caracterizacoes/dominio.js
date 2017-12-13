@@ -47,12 +47,17 @@ Dominios = {
 		linha.closest('tbody').find('tr').removeClass('editando');
 		linha.addClass('editando');
 
+		var id = $('.hdnEmpreendimentoId').val();
 		var dominio = JSON.parse(linha.find('.hdnItemJSon').val());
 
-		Modal.abrir(Dominios.settings.urls.editar, dominio, function (container) {
+		var novoobj = {
+		    dominio: dominio,
+		    empreendimento: id
+		};
+
+		Modal.abrir(Dominios.settings.urls.editar, novoobj, function (container) {
 			Dominio.load(container, { salvarCallBack: Dominios.salvarCallBack });
 		}, Modal.tamanhoModalGrande);
-
 	},
 
 	salvarCallBack: function (dominio) {

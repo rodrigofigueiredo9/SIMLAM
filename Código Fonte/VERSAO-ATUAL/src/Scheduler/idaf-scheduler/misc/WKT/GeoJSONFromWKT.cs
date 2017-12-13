@@ -120,17 +120,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.WKT
 					break;
 				/*case "MULTIPOINT":
 					geometry = ReadMultiPointText(tokenizer);
-					break;
-				case "MULTILINESTRING":
+					break;*/
+				/*case "MULTILINESTRING":
 					geometry = ReadMultiLineStringText(tokenizer);
 					break;*/
 				case "POLYGON":
 					geometry = ReadPolygonText(tokenizer);
 					break;
-				/*case "MULTIPOLYGON":
-					geometry = ReadMultiPolygonText(tokenizer);
+				case "MULTIPOLYGON":
+                    geometry = ReadMultiPolygonText(tokenizer);	
+                //geometry = ReadMultiPolygonText(tokenizer);
 					break;
-				case "GEOMETRYCOLLECTION":
+				/*case "GEOMETRYCOLLECTION":
 					geometry = ReadGeometryCollectionText(tokenizer);
 					break;*/
 				default:
@@ -139,26 +140,41 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.WKT
 			}
 			return geometry;
 		}
-		/*
-		private static CellGeom ReadMultiPolygonText(WktStreamTokenizer tokenizer)
+	
+		private static MultiPolygon ReadMultiPolygonText(WktStreamTokenizer tokenizer)
 		{
-			CellGeom polygons = new List<List<Coordinate>>();
+            //GeoJSONObject geometry = null;
+			//var polygons = new List<List<Coordinate>>();
 			string nextToken = GetNextEmptyOrOpener(tokenizer);
-			if (nextToken == "EMPTY")
-				return polygons;
+            var pol = new List<Polygon>();                   
 
-			List<Coordinate> polygon = ReadPolygonText(tokenizer);
-			polygons.Add(polygon);
+			if (nextToken == "EMPTY")
+            {
+                var polygons = new MultiPolygon(
+				new List<Polygon>(pol)
+                
+			    ); 
+                return polygons;
+            }
+				
+            var polygon = ReadPolygonText(tokenizer);
+			pol.Add(polygon);
 			nextToken = GetNextCloserOrComma(tokenizer);
 			while (nextToken == ",")
 			{
 				polygon = ReadPolygonText(tokenizer);
-				polygons.Add(polygon);
+				pol.Add(polygon);
 				nextToken = GetNextCloserOrComma(tokenizer);
 			}
-			return polygons;
-		}*/
-
+            var pols = new MultiPolygon(
+				new List<Polygon>(pol)
+                
+			    );
+            //pols = GeoJSONFromWKT.Parse(Convert.ToString(dr["wkt"]));
+            return pols;
+		}
+       
+        
 		private static Polygon ReadPolygonText(WktStreamTokenizer tokenizer)
 		{
 			//var pol = new Polygon(new List<LineString>
@@ -225,8 +241,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.WKT
 
 			return p;
 		}
-		/*
-		private static CellGeom ReadMultiPointText(WktStreamTokenizer tokenizer)
+		/*private static CellGeom ReadMultiPointText(WktStreamTokenizer tokenizer)
 		{
 			CellGeom mp = new CellGeom();
 			mp.coordinates = new List<List<Coordinate>>();
@@ -298,8 +313,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.WKT
 			
 			return line;
 		}
-		/*
-		private static GeometryCollection ReadGeometryCollectionText(WktStreamTokenizer tokenizer)
+		/*private static GeometryCollection ReadGeometryCollectionText(WktStreamTokenizer tokenizer)
 		{
 			GeometryCollection geometries = new GeometryCollection();
 			string nextToken = GetNextEmptyOrOpener(tokenizer);

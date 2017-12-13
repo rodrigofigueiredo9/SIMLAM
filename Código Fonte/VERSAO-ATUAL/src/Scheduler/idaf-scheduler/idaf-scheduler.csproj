@@ -12,7 +12,12 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>23fd75ba</NuGetPackageImportStamp>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <PublishUrl>C:\Users\patrick.vianna\Documents\SCHEDULER\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -22,15 +27,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SccProjectName>Svn</SccProjectName>
-    <SccLocalPath>Svn</SccLocalPath>
-    <SccAuxPath>Svn</SccAuxPath>
-    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -56,6 +58,18 @@
   <PropertyGroup>
     <StartupObject>Tecnomapas.EtramiteX.Scheduler.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>A4F7922DDC3FDEBA0A7FD1832BB502D59E15CE67</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>idaf-scheduler_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.3.3.0\lib\net40\Common.Logging.dll</HintPath>
@@ -66,9 +80,8 @@
     <Reference Include="Common.Logging.Log4Net1213">
       <HintPath>..\packages\Common.Logging.Log4Net1213.3.3.0\lib\net40\Common.Logging.Log4Net1213.dll</HintPath>
     </Reference>
-    <Reference Include="GeoJSON.Net, Version=0.1.50.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\GeoJSON.Net.dll</HintPath>
+    <Reference Include="GeoJSON.Net">
+      <HintPath>..\..\..\..\VERSAO-ATUAL\src\Scheduler\packages\GeoJSON.Net.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,6 +102,7 @@
       <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -99,7 +113,13 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -112,12 +132,93 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Tecnomapas.Blocos.Entities">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Entities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="jobs\AjustarStatusCarJob.cs" />
+    <Compile Include="jobs\CARSolicitacaoFunc.cs" />
+    <Compile Include="jobs\Class\Artigo.cs" />
+    <Compile Include="jobs\Class\Atividade.cs" />
+    <Compile Include="jobs\Class\BancoDeDados.cs" />
+    <Compile Include="jobs\Class\Cargo.cs" />
+    <Compile Include="jobs\Class\CarSolicita.cs" />
+    <Compile Include="jobs\Class\CARSolicitacaoMsg.cs" />
+    <Compile Include="jobs\Class\CarUtils.cs" />
+    <Compile Include="jobs\Class\Comando.cs" />
+    <Compile Include="jobs\Class\ComplementacaoDados.cs" />
+    <Compile Include="jobs\Class\ConfiguracaoBase.cs" />
+    <Compile Include="jobs\Class\ConfiguracaoSistema.cs" />
+    <Compile Include="jobs\Class\ConsideracaoFinal.cs" />
+    <Compile Include="jobs\Class\Contato.cs" />
+    <Compile Include="jobs\Class\ContatoLst.cs" />
+    <Compile Include="jobs\Class\ControleArquivoSICAR.cs" />
+    <Compile Include="jobs\Class\Coordenada.cs" />
+    <Compile Include="jobs\Class\CoordenadaDatum.cs" />
+    <Compile Include="jobs\Class\CoordenadaHemisferio.cs" />
+    <Compile Include="jobs\Class\CoordenadaTipo.cs" />
+    <Compile Include="jobs\Class\DaHelper.cs" />
+    <Compile Include="jobs\Class\DataTecno.cs" />
+    <Compile Include="jobs\Class\Datum.cs" />
+    <Compile Include="jobs\Class\Dependencia.cs" />
+    <Compile Include="jobs\Class\DisplayAttribute.cs" />
+    <Compile Include="jobs\Class\eCarSolicitacaoOrigem.cs" />
+    <Compile Include="jobs\Class\eCARSolicitacaoSituacao.cs" />
+    <Compile Include="jobs\Class\eFiscalizacaoSituacao.cs" />
+    <Compile Include="jobs\Class\Empreendimento.cs" />
+    <Compile Include="jobs\Class\EmpreendimentoAtividade.cs" />
+    <Compile Include="jobs\Class\Endereco.cs" />
+    <Compile Include="jobs\Class\Enquadramento.cs" />
+    <Compile Include="jobs\Class\Estado.cs" />
+    <Compile Include="jobs\Class\eStatusArquivoSICAR.cs" />
+    <Compile Include="jobs\Class\eTipoContato.cs" />
+    <Compile Include="jobs\Class\eTipoMensagem.cs" />
+    <Compile Include="jobs\Class\ExtensaoBancoDeDados.cs" />
+    <Compile Include="jobs\Class\Fiscalizacao.cs" />
+    <Compile Include="jobs\Class\Fisica.cs" />
+    <Compile Include="jobs\Class\FuncionarioLst.cs" />
+    <Compile Include="jobs\Class\GerenciadorCache.cs" />
+    <Compile Include="jobs\Class\GerenciadorConfiguracao.cs" />
+    <Compile Include="jobs\Class\GerenciadorTransacao.cs" />
+    <Compile Include="jobs\Class\IConfiguracao.cs" />
+    <Compile Include="jobs\Class\IListaValor.cs" />
+    <Compile Include="jobs\Class\IListaValorString.cs" />
+    <Compile Include="jobs\Class\Infracao.cs" />
+    <Compile Include="jobs\Class\InfracaoCampo.cs" />
+    <Compile Include="jobs\Class\InfracaoPergunta.cs" />
+    <Compile Include="jobs\Class\IPessoaMsg.cs" />
+    <Compile Include="jobs\Class\IProtocolo.cs" />
+    <Compile Include="jobs\Class\Juridica.cs" />
+    <Compile Include="jobs\Class\KeyAttribute.cs" />
+    <Compile Include="jobs\Class\Lista.cs" />
+    <Compile Include="jobs\Class\ListaValor.cs" />
+    <Compile Include="jobs\Class\ListaValoresDa.cs" />
+    <Compile Include="jobs\Class\CredMensagem.cs" />
+    <Compile Include="jobs\Class\LocalInfracao.cs" />
+    <Compile Include="jobs\Class\MaterialApreendido.cs" />
+    <Compile Include="jobs\Class\MaterialApreendidoDepositado.cs" />
+    <Compile Include="jobs\Class\MaterialApreendidoMaterial.cs" />
+    <Compile Include="jobs\Class\Mensagem.cs" />
+    <Compile Include="jobs\Class\Municipio.cs" />
+    <Compile Include="jobs\Class\ObjetoInfracao.cs" />
+    <Compile Include="jobs\Class\PadraoMsg.cs" />
+    <Compile Include="jobs\Class\Pessoa.cs" />
+    <Compile Include="jobs\Class\PessoaMsg.cs" />
+    <Compile Include="jobs\Class\Profissao.cs" />
+    <Compile Include="jobs\Class\ProjetoDigital.cs" />
+    <Compile Include="jobs\Class\Protocolo.cs" />
+    <Compile Include="jobs\Class\ProtocoloTipo.cs" />
+    <Compile Include="jobs\Class\QuantPaginacao.cs" />
+    <Compile Include="jobs\Class\Requerimento.cs" />
+    <Compile Include="jobs\Class\Responsavel.cs" />
+    <Compile Include="jobs\Class\Setor.cs" />
+    <Compile Include="jobs\Class\Situacao.cs" />
+    <Compile Include="jobs\Class\Validacao.cs" />
     <Compile Include="jobs\ConsultarDUAJob.cs" />
     <Compile Include="jobs\EnviarArquivoCarJob.cs" />
     <Compile Include="jobs\GerarArquivoCarJob.cs" />
+    <Compile Include="jobs\IntegracaoCarJob.cs" />
     <Compile Include="misc\WKT\GeoJSONFromWKT.cs" />
     <Compile Include="misc\LocalDB.cs" />
     <Compile Include="misc\ItemFila.cs" />
@@ -167,6 +268,7 @@
     <Content Include="Chaves Pública e Privada.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="idaf-scheduler_TemporaryKey.pfx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -188,6 +290,15 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
