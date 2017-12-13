@@ -123,7 +123,83 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-				bancoDeDados.Commit();
+                #region Numero IUF
+
+                comando = bancoDeDados.CriarComando(@"
+                                select nvl(max(tfa.iuf_numero), 0) iuf_apreensao,
+                                       nvl(max(tfm.iuf_numero), 0) iuf_multa,
+                                       nvl(max(tfoi.iuf_numero), 0) iuf_interdicao,
+                                       nvl(max(tfop.iuf_numero), 0) iuf_outras
+                                from tab_fiscalizacao tf,
+                                     (select * from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
+                                     (select * from {0}tab_fisc_multa where iuf_digital = 1) tfm,
+                                     (select * from {0}tab_fisc_obj_infracao where iuf_digital = 1) tfoi,
+                                     (select * from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop
+                                where tf.id = :id
+                                      and tfa.fiscalizacao (+)= tf.id
+                                      and tfm.fiscalizacao (+)= tf.id
+                                      and tfoi.fiscalizacao (+)= tf.id
+                                      and tfop.fiscalizacao (+)= tf.id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+
+                int ultimo_numero = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int iuf_apreensao = reader.GetValue<int>("iuf_apreensao");
+                        if (iuf_apreensao > ultimo_numero) ultimo_numero = iuf_apreensao;
+
+                        int iuf_multa = reader.GetValue<int>("iuf_multa");
+                        if (iuf_multa > ultimo_numero) ultimo_numero = iuf_multa;
+
+                        int iuf_interdicao = reader.GetValue<int>("iuf_interdicao");
+                        if (iuf_interdicao > ultimo_numero) ultimo_numero = iuf_interdicao;
+
+                        int iuf_outras = reader.GetValue<int>("iuf_outras");
+                        if (iuf_outras > ultimo_numero) ultimo_numero = iuf_outras;
+                    }
+
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                            update {0}tab_fisc_apreensao
+                            set iuf_numero = :iuf
+                            where fiscalizacao = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando(@"
+                            update {0}tab_fisc_multa
+                            set iuf_numero = :iuf
+                            where fiscalizacao = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando(@"
+                            update {0}tab_fisc_obj_infracao
+                            set iuf_numero = :iuf
+                            where fiscalizacao = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                comando = bancoDeDados.CriarComando(@"
+                            update {0}tab_fisc_outras_penalidades
+                            set iuf_numero = :iuf
+                            where fiscalizacao = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                #endregion
+
+                bancoDeDados.Commit();
 			}
 		}
 
@@ -625,7 +701,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   --select  (select count(1) from {0}TAB_FISC_COMPL_DADOS_AUT t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Complementação de dados do autuado' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_ENQUADRAMENTO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Enquadramento' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Infração' cadastro from dual union all
-						   select  (select count(1) from {0}TAB_FISC_OBJ_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Objeto da Infração' cadastro from dual union all
+						   --select  (select count(1) from {0}TAB_FISC_OBJ_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Objeto da Infração' cadastro from dual union all
 						   --select  (select count(1) from {0}TAB_FISC_MATERIAL_APREENDIDO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Material apreendido' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_CONSID_FINAL t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Considerações finais' cadastro from dual)        
 					tab where tab.qtd = 0", EsquemaBanco);
