@@ -96,5 +96,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
 			get { return _assinanteSource; }
 			set { _assinanteSource = value; }
 		}
+
+        public Sessoes Sessao { get; set; }
 	}
 }

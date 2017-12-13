@@ -232,6 +232,7 @@
     <Compile Include="Interno.RelatorioIndividual\ModuloCFOCFOC\CFORelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloCFOCFOC\IdentificacaoProdutoRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloCFOCFOC\TratamentoFitossanitarioRelatorio.cs" />
+    <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\Sessoes.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\InstrumentoUnicoFiscalizacaoRelatorio.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\FiscalizacaoRelatorioNovo.cs" />
     <Compile Include="Interno.RelatorioIndividual\ModuloFiscalizacao\InfracaoRelatorioNovo.cs" />
