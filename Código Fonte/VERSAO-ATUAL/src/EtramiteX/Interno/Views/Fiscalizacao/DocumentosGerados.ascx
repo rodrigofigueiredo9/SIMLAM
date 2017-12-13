@@ -51,7 +51,7 @@
 				<span class="btnPdfLaudo icone pdf" title="PDF do Laudo de fiscalização"></span>
 			</td>
 		</tr>
-
+        <% if (Model.InfracaoVM.Infracao.ComInfracao == true) { %>
         <tr>
 			<td>
 				<label title="Instrumento Único de Fiscalização">IUF</label>
@@ -63,6 +63,7 @@
 				<span class="btnPdfIUF icone pdf" title="PDF do IUF"></span>
 			</td>
 		</tr>
+        <% } %>
 
 		<% if (Model.InfracaoVM.Infracao.Arquivo.Id.GetValueOrDefault() > 0) { %>
 		<tr>
