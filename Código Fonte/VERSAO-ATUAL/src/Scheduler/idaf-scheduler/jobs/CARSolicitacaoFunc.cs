@@ -66,8 +66,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             {
                 EnviarReenviarArquivoSICARInst(solicitacaoId, isEnviar, conn);
             }
+            UpdatePassivoEnviado(solicitacaoId, conn);  
+
             return null;
-            //return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -904,6 +905,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 //}
             }
         }
-        
+        //
+        internal void UpdatePassivoEnviado(int solicitacao, OracleConnection conn)
+        {
+            using (OracleCommand command = new OracleCommand("UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE ID = :id", conn))
+            {
+                command.Parameters.Add(new OracleParameter("id", solicitacao));
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

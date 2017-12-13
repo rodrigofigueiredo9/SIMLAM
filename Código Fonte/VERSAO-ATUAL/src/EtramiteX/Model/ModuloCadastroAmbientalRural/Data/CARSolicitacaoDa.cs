@@ -70,8 +70,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				insert into {0}tab_car_solicitacao(id, numero, data_emissao, situacao, situacao_data, protocolo, requerimento, protocolo_selecionado, atividade, 
-				 empreendimento, declarante, autor, tid) values({0}seq_car_solicitacao.nextval, {0}seq_car_solicitacao.currval, sysdate, :situacao, 
-				sysdate, :protocolo, :requerimento, :protocolo_selecionado, :atividade, :empreendimento, :declarante, :autor, :tid) returning id into :id", EsquemaBanco);
+				 empreendimento, declarante, autor, tid, passivo_enviado) values({0}seq_car_solicitacao.nextval, {0}seq_car_solicitacao.currval, sysdate, :situacao, 
+				sysdate, :protocolo, :requerimento, :protocolo_selecionado, :atividade, :empreendimento, :declarante, :autor, :tid, 1) returning id into :id", EsquemaBanco);
 
                 //a variavel verifcarSolicitacaoCedente nao esta sendo usada
                 //if(verificarSolicitacaoCedente) comando.AdicionarParametroEntrada("situacao", 7, DbType.Int32);

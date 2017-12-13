@@ -51,8 +51,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         private void ChamadaEnviarCarInterno(int origem, OracleConnection conn)
       {
-            var listIDCar = GetIdCar(origem, conn);
-            
+          // Get CAR que estão com a coluna PASSIVO_ENVIADO = null
+          var listIDCar = GetIdCar(origem, conn);            
 
           foreach(int solicitacaoID in listIDCar)
           {
@@ -79,23 +79,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE  ID < 26500 AND PASSIVO_ENVIADO IS NULL"; // C 2300 // I 25300 // C 2100  // I 25100 // I 25000 // I 24500 // C 2000
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL";
 
-            string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 26500";    
-            /*string BuildSQl = @"SELECT CAR.ID
-                                FROM TAB_CAR_SOLICITACAO CAR
-                                    INNER JOIN IDAFGEO.GEO_CAR_APP_CALCULADAS GEOAPP
-                                        ON GEOAPP.EMPREENDIMENTO = CAR.EMPREENDIMENTO
-                                  WHERE ROWNUM < 1000";
+            //string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 26500";    
             
-            */
-            /*string BuildSQl = @"SELECT CAR.ID
-                FROM TAB_CAR_SOLICITACAO CAR
-                    INNER JOIN IDAFGEO.GEO_CAR_ESCADINHA_CALCULADAS GEOAPP
-                        ON GEOAPP.EMPREENDIMENTO = CAR.EMPREENDIMENTO
-                  WHERE ROWNUM < 1000
-                ";
-              */
             var arrayIDS = new List<int>();
             try
             {
@@ -109,10 +96,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                     }                    
                 }
-                using (OracleCommand cmdUp = new OracleCommand(BuildSQlUp, conn))
+               /* using (OracleCommand cmdUp = new OracleCommand(BuildSQlUp, conn))
                 {
                     cmdUp.ExecuteNonQuery();                    
-                }                             
+                }*/                             
             }catch(Exception e)
             {
                 string v = e.Message;
@@ -140,9 +127,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         public void callProcedures(int origem, OracleConnection conn)
         {
-            //var listEmpreendimento = GetEmpreendimento(origem, conn);
 
             /*
+             * Função que chamaria as procedures para gerar as APP Calculadas e APP escadinha dos passivos, mas foram geradas via script
+             */
+
+            var listEmpreendimento = GetEmpreendimento(origem, conn);
+
             foreach (int solicitacaoEmp in listEmpreendimento)
             {
                 try
@@ -259,7 +250,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     string excecao = ex.Message;
                 }
             }
-            */
+            
 
         }
     }

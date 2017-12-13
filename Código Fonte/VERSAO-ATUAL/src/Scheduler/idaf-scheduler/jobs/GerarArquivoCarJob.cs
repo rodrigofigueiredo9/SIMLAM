@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				//Veja se 
 				var nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 
-			while (nextItem != null)
+			    while (nextItem != null)
 				{
 					//Update item as Started
 
@@ -819,7 +819,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         private static void ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int solicitacaoCAR)
         {
-            using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
+            using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.HST_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
             {
                 cmd.Parameters.Add(new OracleParameter("solicitacao", solicitacaoCAR));
 
@@ -827,7 +827,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 {
                     while (dr.Read())
                     {
-                        car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
+                        if (!String.IsNullOrWhiteSpace(Convert.ToString(dr["CODIGO_IMOVEL"])))
+                        {
+                            car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
+                            break;
+                        }                        
                     }
                 }
             }
@@ -1375,7 +1379,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		{
 			var resultado = new ReservaLegal();
             var dadosReceptor = new DadosReserva();
-           // var IsReceptor = false;
+            var IsValido = false;
 			using (
 				var cmd = new OracleCommand(
 						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
@@ -1386,7 +1390,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                           FROM CRT_DOMINIALIDADE_RESERVA t
                               INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
                               INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id AND /*t.TID = :dominio_tid*/",conn))
+                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ",conn))
                 {
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
@@ -1395,6 +1399,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				{
 					while (dr.Read())
 					{
+                        IsValido = true;
                         if (Convert.ToInt32(dr["situacao"]) == 1 || Convert.ToInt32(dr["situacao"]) == 2)  //1: Não informada  / 2: Proposta  / 3: Registrada                        
 						{
 							resultado.resposta = "Não";                            
@@ -1440,6 +1445,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 					}
 				}
+                if(!IsValido)
+                {
+                    resultado.resposta = "Não";
+                }
 			}
 
 			return resultado;
