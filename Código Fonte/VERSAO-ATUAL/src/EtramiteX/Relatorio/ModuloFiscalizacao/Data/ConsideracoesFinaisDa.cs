@@ -170,10 +170,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					ConsideracoesFinaisAnexoRelatorio item;
+                    int n_foto = 1;
 					while (reader.Read())
 					{
 						item = new ConsideracoesFinaisAnexoRelatorio();
-						item.Descricao = reader["descricao"].ToString();
+						item.Descricao = "Foto " + n_foto++ + " - " + reader["descricao"].ToString();
 						item.Arquivo.Id = Convert.ToInt32(reader["arquivo_id"]);
 						item.Arquivo.Caminho = reader["caminho"].ToString();
 						item.Arquivo.Nome = reader["nome"].ToString();
