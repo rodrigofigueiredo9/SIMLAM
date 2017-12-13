@@ -710,7 +710,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                                           and t.utilizado = 0
                                           and l.responsavel_tecnico = :credenciado
                                           and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'
-                                    order by nvl(t.serie, ' '), t.numero_inicial");
+                                    order by nvl(t.serie, ' '), t.numero");
 
                 comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
