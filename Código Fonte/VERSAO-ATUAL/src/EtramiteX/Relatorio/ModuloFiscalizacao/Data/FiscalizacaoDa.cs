@@ -840,7 +840,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
         {
             InstrumentoUnicoFiscalizacaoRelatorio fiscalizacao = new InstrumentoUnicoFiscalizacaoRelatorio();
             Comando comando = null;
-            DateTime dt;
             List<Hashtable> lista = null;
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -980,10 +979,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                                          where lm.id = nvl(tfli.municipio, tee.municipio) ) municipio
                                 from {0}tab_fisc_local_infracao tfli,
                                      {0}tab_fiscalizacao f,
-                                     {0}tab_empreendimento_endereco tee
+                                     ( select t.* from {0}tab_empreendimento_endereco t where t.correspondencia = 0 ) tee
                                 where f.id = tfli.fiscalizacao
                                       and tee.empreendimento (+)= tfli.empreendimento
-                                      and tee.correspondencia = 0
                                       and f.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
