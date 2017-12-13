@@ -862,9 +862,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                                     tfli.setor,
                                     tf.situacao,
                                     tf.autos,
-                                    ( select f.vencimento
+                                    ( select f.situacao_data
                                       from tab_fiscalizacao f
-                                      where f.id = :id ) data_termo,
+                                      where f.id = :id
+                                            and f.situacao != 1 ) data_termo,
                                     ( select distinct texto
                                       from lov_fiscalizacao_serie lfs
                                       where lfs.id = tfa.serie
@@ -901,6 +902,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.IsDDSIV = reader.GetValue<string>("is_ddsiv");
                         fiscalizacao.IsDRNRE = reader.GetValue<string>("is_drnre");
 
+                        if (!String.IsNullOrWhiteSpace(fiscalizacao.NumeroIUF))
+                        {
+                            fiscalizacao.NumeroIUF = String.Format("{0:000000}", Convert.ToInt64(fiscalizacao.NumeroIUF));
+                        }
 
                         if (reader["data_termo"] != null && !Convert.IsDBNull(reader["data_termo"]))
                         {
