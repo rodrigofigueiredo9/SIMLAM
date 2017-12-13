@@ -211,6 +211,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             FiscalizacaoRelatorioNovo dataSource = _da.ObterNovo(id, banco);
 
+            dataSource.Sessao = new Sessoes()
+            {
+                Empreendimento = AsposeData.Empty,
+                Multa = AsposeData.Empty,
+                InterdicaoEmbargo = AsposeData.Empty,
+                Apreensao = AsposeData.Empty,
+                OutrasPenalidades = AsposeData.Empty
+            };
+
             ConfiguracaoDefault.TextoTagAssinante = "«Assinante.Nome»";
             ConfiguracaoDefault.TextoTagAssinantes1 = "«TableStart:Assinantes1»";
             ConfiguracaoDefault.TextoTagAssinantes2 = "«TableStart:Assinantes2»";
@@ -270,10 +279,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     doc.RemovePageBreak();
                 }
 
-                //Remove as seções de infrações que não foram preenchidas
+                //Remove as seções que não foram preenchidas
                 if (fiscalizacao.Multa == null)
                 {
                     doc.Find<Row>("«Secao.Multa»").Remove();
+                }
+                else
+                {
+                    
                 }
                 if (fiscalizacao.ObjetoInfracao == null)
                 {
@@ -293,6 +306,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 if (fiscalizacao.OutrasPenalidades == null)
                 {
                     doc.Find<Row>("«Secao.OutrasPenalidades»").Remove();
+                }
+                if (fiscalizacao.LocalInfracao.EmpreendimentoId == 0)
+                {
+                    doc.Find<Row>("«Secao.Empreendimento»").Remove();
                 }
                 
                 AsposeExtensoes.RemoveTables(itenRemover);
