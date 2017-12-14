@@ -246,6 +246,7 @@ ConsultarNumeroCFOCFOCLiberado = {
 			Motivo: objetoJson.Motivo,
 			TipoDocumento: objetoJson.TipoDocumentoTexto,
 			Numero: objetoJson.Numero,
+            Serie: objetoJson.Serie,
 			IsVisualizar: visualizar
 		};
 
