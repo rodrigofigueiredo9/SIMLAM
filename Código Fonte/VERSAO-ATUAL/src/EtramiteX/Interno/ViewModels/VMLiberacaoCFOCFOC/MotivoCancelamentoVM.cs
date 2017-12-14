@@ -15,6 +15,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMLiberacaoCFOCFOC
 		public int Id { get; set; }
 		public string TipoDocumento { get; set; }
 		public string Numero { get; set; }
+        public string Serie { get; set; }
 
 		public bool IsVisualizar { get; set; }
 	}
