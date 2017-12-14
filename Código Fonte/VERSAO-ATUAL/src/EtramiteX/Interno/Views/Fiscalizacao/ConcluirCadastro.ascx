@@ -241,28 +241,6 @@
         </div>
 
 	</fieldset>
-
-	<fieldset class="box">
-
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Auto de infração?</label><br />
-				<label><%= Html.RadioButton("InfracaoVM.Infracao.IsAutuada", 1, (Model.InfracaoVM.Infracao.IsAutuada == null ? false : Model.InfracaoVM.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsAutuadaSim" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("InfracaoVM.Infracao.IsAutuada", 0, (Model.InfracaoVM.Infracao.IsAutuada == null ? false : !Model.InfracaoVM.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsAutuadaNao" }))%>Não</label>
-			</div>
-			<div class="coluna30 append2">
-				<label>Área embargada e/ou atividade interditada?</label><br />
-				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 1, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 1), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Sim</label>
-				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 0, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
-			</div>
-            <div class="coluna30 append2">
-				<label>Houve a apreensão de algum material?</label><br />
-				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos", 1, (Model.MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos.Count > 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbProdutosApreendidos" }))%>Sim</label>
-				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos", 0, (Model.MaterialApreendidoVM.MaterialApreendido.ProdutosApreendidos.Count == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
-			</div>
-		</div>
-
-	</fieldset>
     
     <fieldset class="box">
         <legend>Multa</legend>
