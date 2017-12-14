@@ -1040,7 +1040,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         #endregion
 
-        #region Infração
+        #region Infração/Fiscalização
 
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar, ePermissao.FiscalizacaoVisualizar })]
         public ActionResult Infracao(int id)
