@@ -408,6 +408,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ProjetoGeoVM.EnviarProjeto.IsVisualizar = vm.ProjetoGeoVM.IsVisualizar;
             vm.ProjetoGeoVM.Desenhador.IsVisualizar = vm.ProjetoGeoVM.IsVisualizar;
 
+            vm.LocalInfracaoVM.LocalInfracao = _busLocalInfracao.Obter(id);
+
             if (Request.IsAjaxRequest())
             {
                 return PartialView("ProjetoGeografico", vm);

@@ -177,6 +177,14 @@ ProjetoGeografico = {
 		obj.SituacaoTexto = $('.SituacaoProjetoTexto', ProjetoGeografico.container).text();
 		obj.Arquivo = EnviarProjeto.obterArquivo();
 
+		$('.rblProjGeo').each(function () {
+		    if ($(this).attr('checked') == true && $(this).val() == 1) {
+		        obj.PossuiProjetoGeo = true;
+		    } else if ($(this).attr('checked') == true && $(this).val() == 0) {
+		        obj.PossuiProjetoGeo = false;
+		    }
+		});
+
 		obj.MenorX = $('.txtMenorX', ProjetoGeografico.container).val();
 		obj.MaiorY = $('.txtMaiorY', ProjetoGeografico.container).val();
 		obj.MaiorX = $('.txtMaiorX', ProjetoGeografico.container).val();

@@ -73,31 +73,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tmp_projeto_geo p (id, fiscalizacao, situacao, nivel_precisao, mecanismo_elaboracao, 
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    update {0}tab_fiscalizacao
+                                    set possui_projeto_geo = :possui
+                                    where id = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("possui", projeto.PossuiProjetoGeo, DbType.Boolean);
+                comando.AdicionarParametroEntrada("id", projeto.FiscalizacaoId, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                if (projeto.PossuiProjetoGeo == true)
+                {
+                    comando = bancoDeDados.CriarComando(@"insert into {0}tmp_projeto_geo p (id, fiscalizacao, situacao, nivel_precisao, mecanismo_elaboracao, 
 				menor_x, menor_y, maior_x, maior_y, tid) values ({0}seq_tmp_projeto_geo.nextval, :fiscalizacao, 1, :nivel_precisao, :mecanismo_elaboracao, 
 				:menor_x, :menor_y, :maior_x, :maior_y, :tid) returning p.id into :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", projeto.FiscalizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("nivel_precisao", projeto.NivelPrecisaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("mecanismo_elaboracao", projeto.MecanismoElaboracaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("menor_x", projeto.MenorX, DbType.Decimal);
-				comando.AdicionarParametroEntrada("menor_y", projeto.MenorY, DbType.Decimal);
-				comando.AdicionarParametroEntrada("maior_x", projeto.MaiorX, DbType.Decimal);
-				comando.AdicionarParametroEntrada("maior_y", projeto.MaiorY, DbType.Decimal);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroSaida("id", DbType.Int32);
+                    comando.AdicionarParametroEntrada("fiscalizacao", projeto.FiscalizacaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("nivel_precisao", projeto.NivelPrecisaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("mecanismo_elaboracao", projeto.MecanismoElaboracaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("menor_x", projeto.MenorX, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("menor_y", projeto.MenorY, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("maior_x", projeto.MaiorX, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("maior_y", projeto.MaiorY, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                    comando.AdicionarParametroSaida("id", DbType.Int32);
 
-				bancoDeDados.ExecutarNonQuery(comando);
+                    bancoDeDados.ExecutarNonQuery(comando);
 
-				projeto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+                    projeto.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				#endregion
 
-				AlterarArquivosOrtofoto(projeto, bancoDeDados);
+                #endregion
 
-				Historico.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+                    AlterarArquivosOrtofoto(projeto, bancoDeDados);
 
-				Consulta.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                    Historico.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+
+                    Consulta.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                }
 
 				bancoDeDados.Commit();
 
@@ -113,27 +125,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tmp_projeto_geo p set p.situacao = :situacao, p.nivel_precisao = :nivel_precisao, 
-				mecanismo_elaboracao = :mecanismo_elaboracao, p.menor_x = :menor_x, p.menor_y = :menor_y, p.maior_x = :maior_x, p.maior_y = :maior_y where p.id = :id", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    update tab_fiscalizacao
+                                    set {0}possui_projeto_geo = :possui
+                                    where fiscalizacao = :id", EsquemaBanco);
+                comando.AdicionarParametroEntrada("possui", projeto.PossuiProjetoGeo, DbType.Boolean);
+                comando.AdicionarParametroEntrada("id", projeto.FiscalizacaoId, DbType.Int32);
+                bancoDeDados.ExecutarNonQuery(comando);
 
-				comando.AdicionarParametroEntrada("id", projeto.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("situacao", projeto.SituacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("mecanismo_elaboracao", projeto.MecanismoElaboracaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("nivel_precisao", projeto.NivelPrecisaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("menor_x", projeto.MenorX, DbType.Decimal);
-				comando.AdicionarParametroEntrada("menor_y", projeto.MenorY, DbType.Decimal);
-				comando.AdicionarParametroEntrada("maior_x", projeto.MaiorX, DbType.Decimal);
-				comando.AdicionarParametroEntrada("maior_y", projeto.MaiorY, DbType.Decimal);
+                if (projeto.PossuiProjetoGeo == true)
+                {
+                    comando = bancoDeDados.CriarComando(@"update {0}tmp_projeto_geo p set p.situacao = :situacao, p.nivel_precisao = :nivel_precisao, 
+				                                          mecanismo_elaboracao = :mecanismo_elaboracao, p.menor_x = :menor_x, p.menor_y = :menor_y, p.maior_x = :maior_x, p.maior_y = :maior_y where p.id = :id", EsquemaBanco);
 
-				bancoDeDados.ExecutarNonQuery(comando);
+                    comando.AdicionarParametroEntrada("id", projeto.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("situacao", projeto.SituacaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("mecanismo_elaboracao", projeto.MecanismoElaboracaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("nivel_precisao", projeto.NivelPrecisaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("menor_x", projeto.MenorX, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("menor_y", projeto.MenorY, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("maior_x", projeto.MaiorX, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("maior_y", projeto.MaiorY, DbType.Decimal);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    AlterarArquivosOrtofoto(projeto, bancoDeDados);
+
+                    Historico.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+
+                    Consulta.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                }
+                else if (projeto.PossuiProjetoGeo == false)
+                {
+                    Excluir(projeto.FiscalizacaoId, bancoDeDados);   
+                }
 
 				#endregion
-
-				AlterarArquivosOrtofoto(projeto, bancoDeDados);
-
-				Historico.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
-
-				Consulta.Gerar(projeto.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
