@@ -126,9 +126,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				bancoDeDados.IniciarTransacao();
 
                 Comando comando = bancoDeDados.CriarComando(@"
-                                    update tab_fiscalizacao
-                                    set {0}possui_projeto_geo = :possui
-                                    where fiscalizacao = :id", EsquemaBanco);
+                                    update {0}tab_fiscalizacao
+                                    set possui_projeto_geo = :possui
+                                    where id = :id", EsquemaBanco);
                 comando.AdicionarParametroEntrada("possui", projeto.PossuiProjetoGeo, DbType.Boolean);
                 comando.AdicionarParametroEntrada("id", projeto.FiscalizacaoId, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
@@ -710,7 +710,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return projeto;
 		}
 
-		internal ProjetoGeografico ObterProjetoGeograficoPorFiscalizacao(int ficalizacaoId, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
+		internal ProjetoGeografico ObterProjetoGeograficoPorFiscalizacao(int fiscalizacaoId, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
 		{
 			ProjetoGeografico projeto = new ProjetoGeografico();
 
@@ -722,7 +722,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"select g.id from {0}" + tabela + @" g where g.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", ficalizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
 				object valor = bancoDeDados.ExecutarScalar(comando);
 
@@ -733,9 +733,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				if (projeto.Id <= 0)
 				{
 					return projeto;
-				}
+                }
+                else if (projeto.PossuiProjetoGeo != true)
+                {
+                    projeto.PossuiProjetoGeo = true;
+                }
 
 				projeto = Obter(projeto.Id, bancoDeDados, simplificado, finalizado);
+
+                comando = bancoDeDados.CriarComando(@"
+                                    select f.possui_projeto_geo
+                                    from {0}tab_fiscalizacao f
+                                    where f.id = :fiscalizacao", EsquemaBanco);
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+                projeto.PossuiProjetoGeo = bancoDeDados.ExecutarScalar<int>(comando) == 1;
 			}
 
 			return projeto;

@@ -71,8 +71,8 @@
         <input type="hidden" class="hdnProjetoNivelPrecisao" value="<%= Model.ProjetoGeoVM.Projeto.NivelPrecisaoId %>" />
 
         <label for="">Fiscalização com Projeto Geográfico?</label><br />
-        <label><%= Html.RadioButton("rblProjGeo", 0, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId == 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo" }))%>Não</label>
-	    <label><%= Html.RadioButton("rblProjGeo", 1, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId > 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo prepend2" }))%>Sim</label>
+        <label><%= Html.RadioButton("rblProjGeo", 0, Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo != true && Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao != 2, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, new { @class = "radio rblProjGeo" }))%>Não</label>
+	    <label><%= Html.RadioButton("rblProjGeo", 1, Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo == true || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, new { @class = "radio rblProjGeo prepend2" }))%>Sim</label>
     </div>
 </div>
 
@@ -150,7 +150,7 @@
 				<% Html.RenderPartial("ProjetoGeoBaseReferenciaPartial", Model.ProjetoGeoVM.BaseReferencia); %>
 		</fieldset>
 
-		<fieldset class="block boxBranca fsEnviarProjeto <%= Model.ProjetoGeoVM.Projeto.Arquivos.Count > 0? "" : "hide"%>">
+		<fieldset class="block boxBranca fsEnviarProjeto <%= Model.ProjetoGeoVM.Projeto.Arquivos.Count > 0 ? "" : "hide"%>">
 			<legend>Enviar projeto geográfico</legend>
 			<% Html.RenderPartial("ProjetoGeoEnviarProjetoPartial", Model.ProjetoGeoVM.EnviarProjeto); %>
 		</fieldset>

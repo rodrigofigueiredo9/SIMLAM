@@ -357,6 +357,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 vm.ProjetoGeoVM.Projeto.FiscalizacaoEasting = fiscalizacao.LocalInfracao.LonEastingToDecimal;
                 vm.ProjetoGeoVM.Projeto.FiscalizacaoNorthing = fiscalizacao.LocalInfracao.LatNorthingToDecimal;
+
+                vm.LocalInfracaoVM.LocalInfracao = _busLocalInfracao.Obter(id);
             }
 
             if (vm.ProjetoGeoVM.Projeto.Id > 0)
