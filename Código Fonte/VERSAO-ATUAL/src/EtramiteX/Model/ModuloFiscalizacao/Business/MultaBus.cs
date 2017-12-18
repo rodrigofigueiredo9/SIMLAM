@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Web;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
+using Tecnomapas.EtramiteX.Configuracao.Interno.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -120,6 +122,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return entidade;
         }
 
+        public List<Lista> obterCodigoReceita(int idFiscalizacao)
+        {
+            ListaValoresDa lv = new ListaValoresDa();
+
+            var a = lv.ObterCodigoReceita(idFiscalizacao);
+            return a;
+        }
+        
 		#endregion
 	}
 }
