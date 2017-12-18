@@ -381,7 +381,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			_bus.ObterDominialidadeARL(caracterizacao);
 			DominialidadeVM vm = new DominialidadeVM(caracterizacao, new List<Lista>());
 
-            var qtdModuloFiscal = 0.0;
+           /* var qtdModuloFiscal = 0.0;
             #region Carga das tabelas APP Caculada e APP Escadinha
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
@@ -444,7 +444,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     @Empty = true,  //Variavel para abrir o modal
                     @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "Confirmar", mv)
                 }, JsonRequestBehavior.AllowGet);
-            }
+            }*/
 
             return Json(new
             {
