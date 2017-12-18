@@ -529,7 +529,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                                cnf.serie
                                         from cnf_doc_fito_intervalo cnf
                                         where cnf.tipo_documento = :tipo_documento
-                                              and cnf.tipo = :tipo_numero");
+                                              and cnf.tipo = :tipo_numero
+                                        order by nvl(cnf.serie, ' '), cnf.numero_inicial");
 
                 comando.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
                 comando.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
