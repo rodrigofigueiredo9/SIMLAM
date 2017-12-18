@@ -204,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				return false;
 			}
 
-			if (numero.Length != 10)
+			if (numero.Length != 8)
 			{
 				Validacao.Add(Mensagem.EmissaoCFO.NumeroInvalido);
 				return false;
