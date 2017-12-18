@@ -1414,12 +1414,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 multa = _busMulta.Obter(id);
             }
-
             vm.MultaVM = new MultaVM
             {
                 Multa = multa,
                 Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
-                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+                //CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
             };
 
             vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
@@ -1447,13 +1447,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             Multa multa = new Multa();
 
             multa = _busMulta.Obter(id);
-
+            
             vm.MultaVM = new MultaVM
             {
                 IsVisualizar = multa.Id > 0,
                 Multa = multa,
                 Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
-                CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+                //CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+                CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
             };
 
             vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
