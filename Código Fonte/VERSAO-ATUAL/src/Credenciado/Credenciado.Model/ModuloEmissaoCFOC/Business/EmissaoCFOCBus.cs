@@ -71,6 +71,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 					{
 						EmissaoCFOC entidadeBanco = Obter(entidade.Id, simplificado: true);
 						entidade.Numero = entidadeBanco.Numero;
+
+                        if (entidade.Numero.IndexOf("/") >= 0)
+                        {
+                            string[] tmpNum = entidade.Numero.Split('/');
+                            entidade.Numero = tmpNum[0];
+                            entidade.Serie = tmpNum[1];
+                        }
 					}
 				}
 
