@@ -72,6 +72,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 					{
 						EmissaoCFO entidadeBanco = Obter(cfo.Id, simplificado: true);
 						cfo.Numero = entidadeBanco.Numero;
+
+                        if (cfo.Numero.IndexOf("/") >= 0)
+                        {
+                            string[] tmpNum = cfo.Numero.Split('/');
+                            cfo.Numero = tmpNum[0];
+                            cfo.Serie = tmpNum[1];
+                        }
 					}
 				}
 
