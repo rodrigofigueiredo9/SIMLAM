@@ -112,6 +112,7 @@
                                                                                 new SelectListItem(){ Text = "S", Value="S" },
                                                                                 new SelectListItem(){ Text = "T", Value="T" },
                                                                                 new SelectListItem(){ Text = "U", Value="U" },
+                                                                                new SelectListItem(){ Text = "V", Value="V" },
                                                                                 new SelectListItem(){ Text = "W", Value="W" },
                                                                                 new SelectListItem(){ Text = "X", Value="X" },
                                                                                 new SelectListItem(){ Text = "Y", Value="Y" },
