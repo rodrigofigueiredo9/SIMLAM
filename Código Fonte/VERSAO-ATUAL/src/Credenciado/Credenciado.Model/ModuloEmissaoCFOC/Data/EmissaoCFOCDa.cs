@@ -696,7 +696,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-                                    select min(t.numero||'/'||t.serie)
+                                    select (t.numero||'/'||t.serie) numero
                                     from tab_numero_cfo_cfoc t,
                                          tab_liberacao_cfo_cfoc l
                                     where l.id = t.liberacao
@@ -709,15 +709,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                                           and t.situacao = 1
                                           and t.utilizado = 0
                                           and l.responsavel_tecnico = :credenciado
-                                          and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
+                                          and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'
+                                    order by nvl(t.serie, ' '), t.numero_inicial");
 
                 comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
-                string numeroDigital = bancoDeDados.ExecutarScalar(comando).ToString();
+                string numeroDigital = string.Empty;
 
-                if (numeroDigital.Count() == 9)     //se não tiver série, remove a barra
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
-                    numeroDigital = numeroDigital.Substring(0, 8);
+                    if (reader.Read())
+                    {
+                        numeroDigital = reader.GetValue<string>("numero");
+                    }
+
+                    reader.Close();
                 }
 
                 return numeroDigital;
