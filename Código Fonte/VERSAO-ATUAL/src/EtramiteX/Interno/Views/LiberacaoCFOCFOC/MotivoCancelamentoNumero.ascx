@@ -9,7 +9,11 @@
 		<div class="coluna40">
 			<label>Número</label>
 			<label class="lblTipoDocumento"><%=Model.TipoDocumento%></label> : 
-			<label class="lblNumero"><%=Model.Numero %></label>
+            <% if (!String.IsNullOrWhiteSpace(Model.Serie)){ %>
+			<label class="lblNumero"><%=Model.Numero + "/" + Model.Serie %></label>
+            <% } else { %>
+            <label class="lblNumero"><%=Model.Numero %></label>
+            <% } %>
 		</div>
 	</div>
 	<div class="block">

@@ -269,7 +269,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 
 					bancoDeDados.Commit();
 
-					Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroCanceladoSucesso(objeto.Numero.ToString()));
+                    String numero = !string.IsNullOrWhiteSpace(objeto.Serie) ? objeto.Numero.ToString() + "/" + objeto.Serie : objeto.Numero.ToString();
+
+					Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroCanceladoSucesso(numero));
 				}
 			}
 			catch (Exception exc)
