@@ -115,7 +115,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
 			}
 
-			if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && !x.Equals(item)) > 0)
+			if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && x.Serie == item.Serie && !x.Equals(item)) > 0)
 			{
 				Validacao.Add(Mensagem.Lote.OrigemJaAdicionada(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
 			}
@@ -137,7 +137,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 			int auxiliar = 0;
 			decimal saldoDocOrigem = 0;
-			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
+			List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, item.Serie, out auxiliar);
 			if (produtos != null)
 			{
 				switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
@@ -330,7 +330,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                 Validacao.Add(Mensagem.Lote.QuantidadeObrigatorio);
             }
 
-            if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && !x.Equals(item)) > 0)
+            if (lista.Count(x => x.OrigemTipo == item.OrigemTipo && x.OrigemNumero == item.OrigemNumero && x.Serie == item.Serie && !x.Equals(item)) > 0)
             {
                 Validacao.Add(Mensagem.Lote.OrigemJaAdicionada(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
             }
@@ -352,7 +352,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
             int auxiliar = 0;
             decimal saldoDocOrigem = 0;
-            List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, out auxiliar);
+            List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, item.Serie, out auxiliar);
             if (produtos != null)
             {
                 switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
@@ -473,13 +473,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                     }
                 }
 
-                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
+                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO || item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
                     item.Quantidade = saldoDocOrigem;
 
             }
         }
 
-		public List<IdentificacaoProduto> OrigemNumero(string numero, int origemTipo, out int origemID)
+		public List<IdentificacaoProduto> OrigemNumero(string numero, int origemTipo, string serieNumeral, out int origemID)
 		{
 			if (origemTipo == 0)
 			{
@@ -496,7 +496,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
-						EmissaoCFO CFO = emissaoCFOBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false);
+                        EmissaoCFO CFO = emissaoCFOBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false, serieNumero: serieNumeral);
 
 						if (CFO.Id > 0)
 						{
@@ -509,7 +509,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 					case eDocumentoFitossanitarioTipo.CFOC:
 						EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
-						EmissaoCFOC CFOC = emissaoCFOCBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false);
+						EmissaoCFOC CFOC = emissaoCFOCBus.ObterPorNumero(Convert.ToInt64(numero), credenciado: false, serieNumero: serieNumeral);
 
 						if (CFOC.Id > 0)
 						{

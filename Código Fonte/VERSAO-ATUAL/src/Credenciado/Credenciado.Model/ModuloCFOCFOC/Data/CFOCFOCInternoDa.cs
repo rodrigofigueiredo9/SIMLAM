@@ -51,14 +51,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 			}
 		}
 
-		public int SetarNumeroUtilizado(string numero, int tipoNumero, eDocumentoFitossanitarioTipo tipoDocumento)
+		public int SetarNumeroUtilizado(string numero, int tipoNumero, eDocumentoFitossanitarioTipo tipoDocumento, string serieNumero)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"
-				update tab_numero_cfo_cfoc t set t.utilizado = 1 
-				where t.tipo_documento = :tipo_documento and t.tipo_numero = :tipo_numero and t.numero = :numero 
-				returning t.id into :id", EsquemaBanco);
+                Comando comando;
+                if (string.IsNullOrEmpty(serieNumero))
+                {
+                    comando = bancoDeDados.CriarComando(@"
+				    update tab_numero_cfo_cfoc t set t.utilizado = 1 
+				    where t.tipo_documento = :tipo_documento and t.tipo_numero = :tipo_numero and t.numero = :numero and t.serie is null
+				    returning t.id into :id", EsquemaBanco);
+                }
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"
+				    update tab_numero_cfo_cfoc t set t.utilizado = 1 
+				    where t.tipo_documento = :tipo_documento and t.tipo_numero = :tipo_numero and t.numero = :numero and t.serie = :serie 
+				    returning t.id into :id", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("serie", serieNumero, DbType.String);
+                }
 				
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
 				comando.AdicionarParametroEntrada("tipo_documento", (int)tipoDocumento, DbType.Int32);
@@ -111,6 +123,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					comando.AdicionarParametroEntrada("data_inicial", filtro.DataInicialEmissao, DbType.DateTime);
 				}
 
+                if (!string.IsNullOrEmpty(filtro.Serie))
+                {
+                    comando.DbCommand.CommandText += " and t.serie = :serie ";
+                    comando.AdicionarParametroEntrada("serie", filtro.Serie, DbType.String);
+                }
+
 				if (!string.IsNullOrEmpty(filtro.DataFinalEmissao))
 				{
 					comando.DbCommand.CommandText += " and h.data_execucao <= :data_final";
@@ -128,6 +146,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 						item.Id = reader.GetValue<int>("id");
 						item.Numero = reader.GetValue<long>("numero");
+                        item.Serie = reader.GetValue<string>("serie");
 						item.Situacao = reader.GetValue<bool>("situacao");
 						item.Tipo = reader.GetValue<int>("tipo_documento");
 						item.TipoNumero = filtro.TipoNumero;

@@ -69,14 +69,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 				foreach (var item in configuracao.DocumentoFitossanitarioIntervalos)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final) 
-					values(seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final)");
+					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final, serie) 
+					values(seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final, :serie)");
 
 					comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", item.TipoDocumentoID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo", item.Tipo, DbType.Int32);
 					comando.AdicionarParametroEntrada("numero_inicial", item.NumeroInicial, DbType.Int64);
 					comando.AdicionarParametroEntrada("numero_final", item.NumeroFinal, DbType.Int64);
+                    comando.AdicionarParametroEntrada("serie", item.Serie, DbType.String);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -115,14 +116,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 					}
 
 					comando = bancoDeDados.CriarComando(@"
-					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final) 
-					values (seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final)");
+					insert into cnf_doc_fito_intervalo (id, tid, configuracao, tipo_documento, tipo, numero_inicial, numero_final, serie) 
+					values (seq_cnf_doc_fito_intervalo.nextval, :tid, :configuracao, :tipo_documento, :tipo, :numero_inicial, :numero_final, :serie)");
 
 					comando.AdicionarParametroEntrada("configuracao", configuracao.ID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", item.TipoDocumentoID, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo", item.Tipo, DbType.Int32);
 					comando.AdicionarParametroEntrada("numero_inicial", item.NumeroInicial, DbType.Int64);
 					comando.AdicionarParametroEntrada("numero_final", item.NumeroFinal, DbType.Int64);
+                    comando.AdicionarParametroEntrada("serie", item.Serie, DbType.String);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -160,7 +162,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                     }
 
                     comando = bancoDeDados.CriarComando(@"
-					update cnf_doc_fito_intervalo set numero_inicial=" + item.NumeroInicial + ", numero_final=" + item.NumeroFinal + " where id = " + item.ID);
+					update cnf_doc_fito_intervalo set numero_inicial=" + item.NumeroInicial + ", numero_final=" + item.NumeroFinal + ", serie='"+ item.Serie +"' where id = " + item.ID);
 
                     bancoDeDados.ExecutarNonQuery(comando);
                 }
@@ -297,13 +299,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 string anoStr = ano.ToString().Substring(2, 2);
 
-                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final 
+                comando = bancoDedados.CriarComando(@"select i.id, i.tid, i.tipo_documento, lt.texto tipo_documento_texto, i.tipo, i.numero_inicial, i.numero_final, i.serie 
 				                                      from cnf_doc_fito_intervalo i, lov_doc_fitossanitarios_tipo lt
                                                       where lt.id = i.tipo_documento
                                                             and i.configuracao = :configuracao
-                                                            and substr(i.NUMERO_INICIAL, 3, 2) = " + anoStr +    //to_char(sysdate, 'YY')
-                                                      " order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
+                                                            and substr(i.NUMERO_INICIAL, 3, 2) = :anoStr
+                                                       order by i.tipo_documento, i.numero_inicial", EsquemaBanco);
 
+                comando.AdicionarParametroEntrada("anoStr", anoStr, DbType.Int32);
                 comando.AdicionarParametroEntrada("configuracao", retorno.ID, DbType.Int32);
 
                 using (IDataReader reader = bancoDedados.ExecutarReader(comando))
@@ -320,11 +323,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                         item.Tipo = reader.GetValue<int>("tipo");
                         item.NumeroInicial = reader.GetValue<long>("numero_inicial");
                         item.NumeroFinal = reader.GetValue<long>("numero_final");
+                        item.Serie = reader.GetValue<string>("serie");
                         retorno.DocumentoFitossanitarioIntervalos.Add(item);
                     }
 
                     reader.Close();
                 }
+
+                retorno.DocumentoFitossanitarioIntervalos = retorno.DocumentoFitossanitarioIntervalos.OrderBy(a => a.NumeroInicial).OrderBy(a => a.Serie).OrderBy(a => a.TipoDocumentoTexto).ToList();
 
                 #endregion
             }
@@ -332,7 +338,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
             return retorno;
         }
 
-        internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, BancoDeDados banco = null)
+        internal List<long> LiberadosIntervalo(int tipo, long inicio, long fim, string serie, BancoDeDados banco = null)
         {
             List<long> retorno = new List<long>();
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -341,24 +347,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 
                 if (tipo == (int)eDocumentoFitossanitarioTipo.CFO || tipo == (int)eDocumentoFitossanitarioTipo.CFOC)
                 {
-                    comando = bancoDeDados.CriarComando(@"
-				              select t.*
-                              from tab_numero_cfo_cfoc t, hst_liberacao_cfo_cfoc h 
-				              where h.liberacao_id = t.liberacao
-                                    and t.numero >= " + inicio +
-                                    " and t.numero <= " + fim +
-                                    " and t.tipo_documento = " + tipo);
+                    comando = bancoDeDados.CriarComando(@"select t.*
+                                                          from tab_numero_cfo_cfoc t,
+                                                               hst_liberacao_cfo_cfoc h 
+                            				              where h.liberacao_id = t.liberacao
+                                                                and t.numero >= :inicio
+                                                                and t.numero <= :fim
+                                                                and t.tipo_documento = :tipo");
+
+                    if (serie == null)
+                    {
+                        comando.DbCommand.CommandText += " and t.serie is null";
+                    }
+                    else
+                    {
+                        comando.DbCommand.CommandText += " and t.serie = :serie";
+                        comando.AdicionarParametroEntrada("serie", serie, DbType.String);
+                    }
 
                     comando.DbCommand.CommandText += " order by t.numero";
+
+                    comando.AdicionarParametroEntrada("inicio", inicio, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fim", fim, DbType.Int64);
+                    comando.AdicionarParametroEntrada("tipo", tipo, DbType.Int32);
                 }
                 else //PTV
                 {
-                    comando = bancoDeDados.CriarComando(@"
-				              select t.NUMERO
-                              from tab_ptv t
-                              where t.NUMERO >= " + inicio +
-                                    " and t.NUMERO <= " + fim +
-                              " order by t.NUMERO");
+                    comando = bancoDeDados.CriarComando(@"select t.numero
+                                                          from tab_ptv t
+                                                          where t.numero >= :inicio
+                                                                and t.numero <= :fim
+                                                          order by t.numero");
+
+                    comando.AdicionarParametroEntrada("inicio", inicio, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fim", fim, DbType.Int64);
                 }
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -415,7 +437,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
 //                    comandtxt += @" union all select p.id, p.texto, p.codigo, p.tid, p.origem, o.texto origem_texto, max(trunc(metaphone.jaro_winkler(:filtro_fonetico,p.texto),5)) 
 //								similaridade from tab_profissao p, lov_profissao_origem o where p.origem = o.id and p.texto_fonema like upper('%' || upper(metaphone.gerarCodigo(:filtro_fonetico)) || '%') 
 //								and metaphone.jaro_winkler(:filtro_fonetico,p.texto) >= to_number(:limite_similaridade) group by p.id, p.texto, p.codigo, p.tid, p.origem, o.texto";
-                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL
+                    comandtxt += @"select td.texto TipoDocumento, tn.texto TipoNumeracao, i.NUMERO_INICIAL, i.NUMERO_FINAL, i.SERIE
                                    from CNF_DOC_FITO_INTERVALO i, lov_doc_fitossanitarios_tipo td, LOV_DOC_FITOSSANI_TIPO_NUMERO tn
                                    where i.TIPO_DOCUMENTO = " + Convert.ToInt32(filtros.Dados.TipoDocumentoID)
                                          + " and i.TIPO = " + Convert.ToInt32(filtros.Dados.TipoNumeracaoID)
@@ -455,7 +477,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                         doc.TipoDocumentoTexto = reader["TipoDocumento"].ToString();
                         doc.NumeroInicial = Convert.ToInt64(reader["NUMERO_INICIAL"]);
                         doc.NumeroFinal = Convert.ToInt64(reader["NUMERO_FINAL"]);
-
+                        doc.Serie = reader["SERIE"].ToString();
                         retorno.Itens.Add(doc);
                         //profissao.Id = Convert.ToInt32(reader["id"]);
 
@@ -614,20 +636,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                                     and l.TIPO_NUMERO = 1 --BLOCO
                               ),
                               --Digital de CFO
-                              (select count (*) lib_D_CFO,
-                                      max(l.numero) ultnum_D_CFO
+                              (select count (*) lib_D_CFO
                               from TAB_NUMERO_CFO_CFOC l
                               where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
                                     and l.TIPO_DOCUMENTO = 1  --CFO
                                     and l.TIPO_NUMERO = 2 --DIGITAL
                               ),
+                              (select (case when l.serie is null then to_char(l.numero) else concat(l.numero, concat('/', l.serie)) end) ultnum_D_CFO
+                              from TAB_NUMERO_CFO_CFOC l
+                              where l.id = (select max(a.id)
+                                            from tab_numero_cfo_cfoc a
+                                            where substr(a.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                                  and a.TIPO_DOCUMENTO = 1  --CFO
+                                                  and a.TIPO_NUMERO = 2) --DIGITAL
+                              ),
                               --Digital de CFOC
-                              (select count (*) lib_D_CFOC,
-                                      max(l.numero) ultnum_D_CFOC
+                              (select count (*) lib_D_CFOC
                               from TAB_NUMERO_CFO_CFOC l
                               where substr(l.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
                                     and l.TIPO_DOCUMENTO = 2  --CFOC
                                     and l.TIPO_NUMERO = 2 --DIGITAL
+                              ),
+                              (select (case when l.serie is null then to_char(l.numero) else concat(l.numero, concat('/', l.serie)) end) ultnum_D_CFOC
+                              from TAB_NUMERO_CFO_CFOC l
+                              where l.id = (select max(a.id)
+                                            from tab_numero_cfo_cfoc a
+                                            where substr(a.NUMERO, 3, 2) = " + filtros.Dados.AnoConsolidado.Substring(2, 2) + @"
+                                                  and a.TIPO_DOCUMENTO = 2  --CFOC
+                                                  and a.TIPO_NUMERO = 2) --DIGITAL
                               ),
                               --Digital de PTV
                               (select max(t.numero) ultnum_D_PTV
@@ -657,97 +693,98 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloConfiguracaoDocumentoFitossan
                     {
                         DocumentoFitossanitarioConsolidado doc;
 
-                        reader.Read();
+                        if (reader.Read())
+                        {
 
-                        #region Não Liberados
+                            #region Não Liberados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Não Liberados";
-                        doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
-                        doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
+                            doc.Texto = "Não Liberados";
+                            doc.QtdBlocoCFO = reader["nlib_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["nlib_B_CFOC"].ToString();
+                            doc.QtdDigitalCFO = reader["nlib_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["nlib_D_CFOC"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Liberados
+                            #region Liberados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Liberados";
-                        doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
-                        doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
+                            doc.Texto = "Liberados";
+                            doc.QtdBlocoCFO = reader["lib_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["lib_B_CFOC"].ToString();
+                            doc.QtdDigitalCFO = reader["lib_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["lib_D_CFOC"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Em Elaboração
+                            #region Em Elaboração
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Em Elaboração";
-                        doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["elab_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
+                            doc.Texto = "Em Elaboração";
+                            doc.QtdBlocoCFO = reader["elab_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["elab_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["elab_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["elab_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["elab_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["elab_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Utilizados
+                            #region Utilizados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Utilizados";
-                        doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
+                            doc.Texto = "Utilizados";
+                            doc.QtdBlocoCFO = reader["uti_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["uti_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["uti_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["uti_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["uti_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["uti_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Cancelados
+                            #region Cancelados
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Cancelados";
-                        doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
-                        doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
-                        doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
-                        doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
+                            doc.Texto = "Cancelados";
+                            doc.QtdBlocoCFO = reader["canc_B_CFO"].ToString();
+                            doc.QtdBlocoCFOC = reader["canc_B_CFOC"].ToString();
+                            doc.QtdBlocoPTV = reader["canc_B_PTV"].ToString();
+                            doc.QtdDigitalCFO = reader["canc_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["canc_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["canc_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
+                            #endregion
 
-                        #region Ultimo Liberado
+                            #region Ultimo Liberado
 
-                        doc = new DocumentoFitossanitarioConsolidado();
+                            doc = new DocumentoFitossanitarioConsolidado();
 
-                        doc.Texto = "Último nº liberado";
-                        doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
-                        doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
-                        doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
+                            doc.Texto = "Último nº liberado";
+                            doc.QtdDigitalCFO = reader["ultnum_D_CFO"].ToString();
+                            doc.QtdDigitalCFOC = reader["ultnum_D_CFOC"].ToString();
+                            doc.QtdDigitalPTV = reader["ultnum_D_PTV"].ToString();
 
-                        retorno.Itens.Add(doc);
+                            retorno.Itens.Add(doc);
 
-                        #endregion
-
+                            #endregion
+                        }
                         reader.Close();
                     }
                     #endregion Preenche o resultado

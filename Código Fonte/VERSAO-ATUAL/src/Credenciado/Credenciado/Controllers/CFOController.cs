@@ -264,9 +264,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Auxiliares
 
 		[Permite(RoleArray = new Object[] { ePermissao.CFOEmitir, ePermissao.CFOEditar })]
-		public ActionResult VerificarNumero(string numero, int tipoNumero)
+		public ActionResult VerificarNumero(string numero, int tipoNumero, string serieNumero)
 		{
-			numero = _bus.VerificarNumero(numero, tipoNumero);
+			numero = _bus.VerificarNumero(numero, tipoNumero, serieNumero);
 
 			return Json(new
 			{

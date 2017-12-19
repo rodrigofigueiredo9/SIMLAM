@@ -44,12 +44,23 @@ ConsultarNumeroCFOCFOCLiberado = {
 	},
 
 	obterFiltros: function (container) {
+
+	    var textoNumeral = $('.txtNumero', container).val();
+	    var serieNumeral = "";
+	    if (textoNumeral.indexOf("/") >= 0) {
+
+	        var arrTexto = textoNumeral.split("/");
+	        textoNumeral = arrTexto[0];
+	        serieNumeral = arrTexto[1];
+	    }
+
 		var retorno = {
 			TipoDocumento: $('.ddlTipoDocumento :selected', container).val(),
-			Numero: $('.txtNumero', container).val(),
+			Numero: textoNumeral,
 			DataInicialEmissao: $('.txtDataInicialEmissao', container).val(),
 			DataFinalEmissao: $('.txtDataFinalEmissao', container).val(),
-			TipoNumero: 0
+			TipoNumero: 0,
+            Serie: serieNumeral
 		};
 
 		return retorno;
@@ -129,7 +140,7 @@ ConsultarNumeroCFOCFOCLiberado = {
 			item = lista[i];
 
 			$('.tipoDocumento', linha).append(item.TipoDocumentoTexto);
-			$('.Numero', linha).append(item.Numero);
+			$('.Numero', linha).append(item.Numero + (item.Serie ? '/' + item.Serie : ''));
 			$('.Utilizado', linha).append(item.UtilizadoTexto);
 			$('.Situacao', linha).append(item.SituacaoTexto);
 			$('.hdnObjetoJson', linha).val(JSON.stringify(item));

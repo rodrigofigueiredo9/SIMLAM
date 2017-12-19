@@ -35,7 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				#region Dados
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select t.tid, t.situacao, t.numero, t.empreendimento, t.nome_laboratorio, t.numero_laudo_resultado_analise, le.sigla estado_sigla, lm.texto municipio, t.numero_lacre, t.numero_porao, t.numero_container, 
+				select t.tid, t.situacao, t.numero, t.serie, t.empreendimento, t.nome_laboratorio, t.numero_laudo_resultado_analise, le.sigla estado_sigla, lm.texto municipio, t.numero_lacre, t.numero_porao, t.numero_container, 
 				t.produto_especificacao, t.partida_lacrada_origem, t.validade_certificado, nvl(t.informacoes_complement_html, t.informacoes_complementares) informacoes_complement_html, lee.sigla estado_emissao_sigla, lme.texto municipio_emissao, t.data_ativacao 
 				from tab_cfoc t, lov_estado le, lov_municipio lm, lov_estado lee, lov_municipio lme 
 				where le.id(+) = t.estado and lm.id(+) = t.municipio and lee.id(+) = t.estado_emissao and lme.id(+) = t.municipio_emissao and t.id = :id", EsquemaBanco);
@@ -49,7 +49,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 						entidade.Id = id;
 						entidade.Tid = reader.GetValue<string>("tid");
 						entidade.Situacao = reader.GetValue<int>("situacao");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.Empreendimento.Id = reader.GetValue<int>("empreendimento");
 
 						entidade.NomeLaboratorio = reader.GetValue<string>("nome_laboratorio");
@@ -241,7 +241,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 					lee.sigla estado_emissao_sigla,
 					t.municipio_emissao_texto,
 					t.data_ativacao,
-					t.data_execucao
+					t.data_execucao,
+                    t.serie
 				from hst_cfoc t, lov_estado le, lov_estado lee
 				where le.id(+) = t.estado_id
 				and lee.id(+) = t.estado_emissao_id
@@ -259,7 +260,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 						entidade.Id = id;
 						entidade.Situacao = reader.GetValue<int>("situacao_id");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.Empreendimento.Id = reader.GetValue<int>("empreendimento_id");
 						entidade.Empreendimento.Tid = reader.GetValue<string>("empreendimento_tid");
 

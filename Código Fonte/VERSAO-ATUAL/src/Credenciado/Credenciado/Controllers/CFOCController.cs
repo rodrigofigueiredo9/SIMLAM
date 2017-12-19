@@ -270,9 +270,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Auxiliares
 
 		[Permite(RoleArray = new Object[] { ePermissao.CFOCEmitir, ePermissao.CFOCEditar })]
-		public ActionResult VerificarNumero(string numero, int tipoNumero)
+        public ActionResult VerificarNumero(string numero, int tipoNumero, string serieNumero)
 		{
-			numero = _bus.VerificarNumero(numero, tipoNumero);
+			numero = _bus.VerificarNumero(numero, tipoNumero, serieNumero);
 
 			return Json(new
 			{
@@ -503,10 +503,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.LoteCriar, ePermissao.LoteEditar })]
-		public ActionResult LoteVerificarNumero(int origemTipo, string origemNumero)
+        public ActionResult LoteVerificarNumero(int origemTipo, string origemNumero, string serieNumeral)
 		{
 			int origemID = 0;
-			List<IdentificacaoProduto> produtos = _loteValidar.OrigemNumero(origemNumero, origemTipo, out origemID);
+			List<IdentificacaoProduto> produtos = _loteValidar.OrigemNumero(origemNumero, origemTipo, serieNumeral, out origemID);
 			List<Lista> culturas = new List<Lista>();
 			string selecionado = "0";
 

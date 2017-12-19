@@ -54,6 +54,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 						if (_validar.VerificarNumeroDigitalDisponivel())
 						{
 							entidade.Numero = ObterNumeroDigital();
+
+                            if (entidade.Numero.IndexOf("/") >= 0)
+                            {
+                                string[] tmpNum = entidade.Numero.Split('/');
+                                entidade.Numero = tmpNum[0];
+                                entidade.Serie = tmpNum[1];
+                            }
 						}
 						else
 						{
@@ -64,6 +71,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 					{
 						EmissaoCFOC entidadeBanco = Obter(entidade.Id, simplificado: true);
 						entidade.Numero = entidadeBanco.Numero;
+
+                        if (entidade.Numero.IndexOf("/") >= 0)
+                        {
+                            string[] tmpNum = entidade.Numero.Split('/');
+                            entidade.Numero = tmpNum[0];
+                            entidade.Serie = tmpNum[1];
+                        }
 					}
 				}
 
@@ -105,9 +119,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 					_da.Salvar(entidade, bancoDeDados);
 
 					CFOCFOCInternoBus CFOCFOCInternoBus = new CFOCFOCInternoBus();
-					CFOCFOCInternoBus.SetarNumeroUtilizado(entidade.Numero, entidade.TipoNumero.GetValueOrDefault(), eDocumentoFitossanitarioTipo.CFOC);
+					CFOCFOCInternoBus.SetarNumeroUtilizado(entidade.Numero, entidade.TipoNumero.GetValueOrDefault(), eDocumentoFitossanitarioTipo.CFOC, entidade.Serie);
 
-					Validacao.Add(Mensagem.EmissaoCFOC.Salvar(entidade.Numero));
+                    if (string.IsNullOrEmpty(entidade.Serie))
+					    Validacao.Add(Mensagem.EmissaoCFOC.Salvar(entidade.Numero));
+                    else
+                        Validacao.Add(Mensagem.EmissaoCFOC.Salvar(entidade.Numero + "/" + entidade.Serie));
 
 					bancoDeDados.Commit();
 				}
@@ -205,18 +222,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			{
 				bancoDeDados.IniciarTransacao();
 
-				EmissaoCFOC entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), false, false, bancoDeDados);
-				List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
+				EmissaoCFOC entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, false, false, bancoDeDados);
 
-				//Dessassocio os Lotes
-				entidadeBanco.Produtos.Clear();
-				_da.Salvar(entidadeBanco, bancoDeDados);
+                if (entidade.Id != 0)
+                {
+                    List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
 
-				LoteBus loteBus = new LoteBus();
-				foreach (var item in lotesID)
-				{
-					loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
-				}
+                    //Dessassocio os Lotes
+                    entidadeBanco.Produtos.Clear();
+                    _da.Salvar(entidadeBanco, bancoDeDados);
+
+                    LoteBus loteBus = new LoteBus();
+                    foreach (var item in lotesID)
+                    {
+                        loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
+                    }
+                }
 
 				_da.Cancelar(entidadeBanco, bancoDeDados);
 
@@ -272,11 +293,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 			return null;
 		}
 
-		public EmissaoCFOC ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true)
+        public EmissaoCFOC ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true, string serieNumero = "")
 		{
 			try
 			{
-				return _da.ObterPorNumero(numero, simplificado, credenciado);
+				return _da.ObterPorNumero(numero, serieNumero, simplificado, credenciado);
 			}
 			catch (Exception exc)
 			{
@@ -339,7 +360,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 
 		#region Verificações
 
-		public string VerificarNumero(string numero, int tipoNumero)
+        public string VerificarNumero(string numero, int tipoNumero, string serieNumero = "")
 		{
 			try
 			{

@@ -204,11 +204,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 				#region SQL PTVProduto
 
+               
+
 				comando = bancoDeDados.CriarComando(@"select c.texto cultura,
 															cc.cultivar,
 															t.quantidade,
-															decode(t.origem_tipo, 1, (select cfo.numero from cre_cfo cfo where cfo.id = t.origem), '') as numero_cfo,
-															decode(t.origem_tipo, 2, (select cfoc.numero from cre_cfoc cfoc where cfoc.id = t.origem), '') as numero_cfoc,
+															decode(t.origem_tipo, 1, (select cfo.numero || case when cfo.serie is null then '' else '/' || cfo.serie end as numero from cre_cfo cfo where cfo.id = t.origem), '') as numero_cfo,
+															decode(t.origem_tipo, 2, (select cfoc.numero || case when cfoc.serie is null then '' else '/' || cfoc.serie end as numero from cre_cfoc cfoc where cfoc.id = t.origem), '') as numero_cfoc,
 															decode(t.origem_tipo, 3, (select ptv.numero from tab_ptv ptv where ptv.id = t.origem), 4, (select ptv.numero from tab_ptv_outrouf ptv where ptv.id = t.origem), '') as numero_ptv,
 															decode(t.origem_tipo, 5, t.numero_origem, '') as numero_cf_cfr,
 															decode(t.origem_tipo, 6, t.numero_origem, '') as numero_tf,
@@ -484,8 +486,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 				comando = bancoDeDados.CriarComando(@"select c.texto cultura, c.cultura_id,
 															cc.cultivar_nome cultivar, cc.cultivar_id,
 															t.quantidade,
-															decode(t.origem_tipo_id, 1, (select cfo.numero from cre_hst_cfo cfo where cfo.cfo_id = t.origem_id and cfo.tid = t.origem_tid), '') as numero_cfo,
-                              decode(t.origem_tipo_id, 2, (select cfoc.numero from cre_hst_cfoc cfoc where cfoc.cfoc_id = t.origem_id and cfoc.tid = t.origem_tid), '') as numero_cfoc,
+															decode(t.origem_tipo_id, 1, (select cfo.numero || case when cfo.serie is null then '' else '/' || cfo.serie end as numero from cre_hst_cfo cfo where cfo.cfo_id = t.origem_id and cfo.tid = t.origem_tid), '') as numero_cfo,
+                              decode(t.origem_tipo_id, 2, (select cfoc.numero || case when cfoc.serie is null then '' else '/' || cfoc.serie end as numero from cre_hst_cfoc cfoc where cfoc.cfoc_id = t.origem_id and cfoc.tid = t.origem_tid), '') as numero_cfoc,
                               decode(t.origem_tipo_id, 3, (select ptv.numero from hst_ptv ptv where ptv.ptv_id = t.origem_id and ptv.tid = t.origem_tid), 4, (select ptv.numero from hst_ptv_outrouf ptv where ptv.ptv_id = t.origem_id and ptv.tid = t.origem_tid), '') as numero_ptv,
                               decode(t.origem_tipo_id, 5, t.numero_origem, '') as numero_cf_cfr,
                               decode(t.origem_tipo_id, 6, t.numero_origem, '') as numero_tf,

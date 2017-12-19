@@ -72,7 +72,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             _validar.ValidarIntervalo(editar, intervalos);  //Verificações normais relativas a um intervalo
 
             //Trazer a lista de todos os numeros já LIBERADOS (CFO/CFOC) ou USADOS (PTV) dentro do intervalo
-            var lista = _bus.ObterLiberadosIntervalo(editar.TipoDocumentoID, inicioOriginal, fimOriginal);
+            var lista = _bus.ObterLiberadosIntervalo(editar.TipoDocumentoID, inicioOriginal, fimOriginal, editar.Serie);
 
             //Verifica se existem números liberados dentro do intervalo modificado
             //Se existe, verificar se a mudança de range deixa de incluir os números liberados
@@ -146,7 +146,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             DocumentoFitossanitario docExcluir = configuracao.DocumentoFitossanitarioIntervalos.FirstOrDefault(x => x.ID == id);
 
             //Trazer a lista de todos os numeros já LIBERADOS (CFO/CFOC) ou USADOS (PTV) dentro do intervalo
-            var lista = _bus.ObterLiberadosIntervalo(docExcluir.TipoDocumentoID, docExcluir.NumeroInicial, docExcluir.NumeroFinal);
+            var lista = _bus.ObterLiberadosIntervalo(docExcluir.TipoDocumentoID, docExcluir.NumeroInicial, docExcluir.NumeroFinal, docExcluir.Serie);
 
             //Se a lista não é vazia o intervalo não pode ser excluído
             if (lista.Count() > 0)

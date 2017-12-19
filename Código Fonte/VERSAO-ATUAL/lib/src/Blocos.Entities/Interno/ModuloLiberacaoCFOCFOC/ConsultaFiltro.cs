@@ -13,5 +13,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloLiberacaoCFOCFOC
 		public string DataFinalEmissao { get; set; }
 		public int CredenciadoId { get; set; }
 		public int TipoNumero { get; set; }
+        public string Serie { get; set; }
 	}
 }

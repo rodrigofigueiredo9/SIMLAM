@@ -53,7 +53,7 @@
 		</div>
 		<div class="coluna25 prepend1">
 			<label for="Origem">Número do documento *</label>
-			<%= Html.TextBox("Origem", (object)String.Empty, new { @maxlength="10",  @class = "text maskNumInt txtNumeroOrigem" })%>
+			<%= Html.TextBox("Origem", (object)String.Empty, new { @maxlength="12",  @class = "text txtNumeroOrigem" })%>
 		</div>
 		<div class="coluna9 prepend1 divVerificarNumero">
 			<button type="button" class="inlineBotao btnVerificar">Verificar</button>
@@ -127,7 +127,7 @@
            %>
 				<tr>
 					<td>
-						<label class="lblOrigem" title="<%= item.OrigemTipoTexto +"-"+ item.OrigemNumero %>"><%= item.OrigemTipoTexto +"-"+item.OrigemNumero %></label>
+						<label class="lblOrigem" title="<%= item.OrigemTipoTexto +"-"+ item.OrigemNumero + (!string.IsNullOrEmpty(item.Serie) ? "/" + item.Serie : "") %>"><%= item.OrigemTipoTexto +"-"+item.OrigemNumero + (!string.IsNullOrEmpty(item.Serie) ? "/" + item.Serie : "")  %></label>
 					</td>
 					<td>
 						<label class="lblCultivar" title="<%= item.CulturaTexto + " " + item.CultivarTexto %>"><%= item.CulturaTexto + " " + item.CultivarTexto %></label>

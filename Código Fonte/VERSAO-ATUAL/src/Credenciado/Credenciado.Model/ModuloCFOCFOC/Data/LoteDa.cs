@@ -286,10 +286,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					t.quantidade,
                     t.exibe_kilos,
 					(case 
-					when t.origem_tipo = 1 then (select cf.numero from tab_cfo cf where cf.id = t.origem)
-					when t.origem_tipo = 2 then (select cf.numero from tab_cfoc cf where cf.id = t.origem)
-					when t.origem_tipo = 4 then (select cf.numero from tab_ptv_outrouf cf where cf.id = t.origem)
-					else t.origem_numero end) origem_numero, 
+					when t.origem_tipo = 1 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from tab_cfo t where t.id = t.origem) 
+	                when t.origem_tipo = 2 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from tab_cfoc t where t.id = t.origem) 
+					when t.origem_tipo = 4 then (select to_char(cf.numero) from tab_ptv_outrouf cf where cf.id = t.origem)
+					else to_char(t.origem_numero) end) origem_numero, 
 					t.unidade_medida,
 					(select l.texto from lov_crt_uni_prod_uni_medida l where l.id = t.unidade_medida) unidade_medida_texto 
 				from tab_lote_item                t,

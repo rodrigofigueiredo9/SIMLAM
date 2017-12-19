@@ -80,10 +80,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				Comando comando = bancoDeDados.CriarComando(@"
 				insert into tab_cfoc (id, tid, tipo_numero, numero, data_emissao, situacao, empreendimento, possui_laudo_laboratorial, nome_laboratorio, numero_laudo_resultado_analise, 
 				estado, municipio, produto_especificacao, possui_trat_fito_fins_quaren, partida_lacrada_origem, numero_lacre, numero_porao, numero_container, validade_certificado, 
-				informacoes_complementares, informacoes_complement_html, estado_emissao, municipio_emissao, credenciado) 
+				informacoes_complementares, informacoes_complement_html, estado_emissao, municipio_emissao, credenciado, serie) 
 				values (seq_tab_cfoc.nextval, :tid, :tipo_numero, :numero, :data_emissao, :situacao, :empreendimento, :possui_laudo_laboratorial, :nome_laboratorio, :numero_laudo_resultado_analise, 
 				:estado, :municipio, :produto_especificacao, :possui_trat_fito_fins_quaren, :partida_lacrada_origem, :numero_lacre, :numero_porao, :numero_container, :validade_certificado, 
-				:informacoes_complementares, :informacoes_complement_html, :estado_emissao, :municipio_emissao, :credenciado) 
+				:informacoes_complementares, :informacoes_complement_html, :estado_emissao, :municipio_emissao, :credenciado, :serie) 
 				returning id into :id");
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -109,6 +109,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				comando.AdicionarParametroEntrada("estado_emissao", entidade.EstadoEmissaoId > 0 ? entidade.EstadoEmissaoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio_emissao", entidade.MunicipioEmissaoId > 0 ? entidade.MunicipioEmissaoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+                comando.AdicionarParametroEntrada("serie", entidade.Serie, DbType.String);
                 
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -195,7 +196,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				numero_laudo_resultado_analise = :numero_laudo_resultado_analise, estado = :estado, municipio = :municipio, produto_especificacao = :produto_especificacao, 
 				possui_trat_fito_fins_quaren = :possui_trat_fito_fins_quaren, partida_lacrada_origem = :partida_lacrada_origem, numero_lacre = :numero_lacre, numero_porao = :numero_porao, 
 				numero_container = :numero_container, validade_certificado = :validade_certificado, informacoes_complementares = :informacoes_complementares, informacoes_complement_html = :informacoes_complement_html, estado_emissao = :estado_emissao, 
-				municipio_emissao = :municipio_emissao where id = :id");
+				municipio_emissao = :municipio_emissao, serie = :serie where id = :id");
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -219,6 +220,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				comando.AdicionarParametroEntClob("informacoes_complement_html", entidade.DeclaracaoAdicionalHtml);				
 				comando.AdicionarParametroEntrada("estado_emissao", entidade.EstadoEmissaoId > 0 ? entidade.EstadoEmissaoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("municipio_emissao", entidade.MunicipioEmissaoId > 0 ? entidade.MunicipioEmissaoId : (object)DBNull.Value, DbType.Int32);
+                comando.AdicionarParametroEntClob("serie", entidade.Serie);				
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -407,14 +409,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 		#region Obter/Filtrar
 
-		internal EmissaoCFOC ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true, BancoDeDados banco = null)
+		internal EmissaoCFOC ObterPorNumero(long numero, string serieNumero = "", bool simplificado = false, bool credenciado = true, BancoDeDados banco = null)
 		{
 			EmissaoCFOC retorno = new EmissaoCFOC();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select id from {0}tab_cfoc where numero = :numero", EsquemaCredenciado);
+
+                string sqlCfo = @"select id from {0}tab_cfoc where numero = :numero";
+
+                if (!string.IsNullOrEmpty(serieNumero))
+                    sqlCfo += " and serie = :serie";
+
+                Comando comando = bancoDeDados.CriarComando(sqlCfo, EsquemaCredenciado);
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+
+                if (!string.IsNullOrEmpty(serieNumero))
+                    comando.AdicionarParametroEntrada("serie", serieNumero, DbType.String);
 
 				if (credenciado)
 				{
@@ -452,7 +463,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.tid, c.tipo_numero, c.numero, c.data_ativacao, c.data_emissao, c.situacao, c.empreendimento, c.possui_laudo_laboratorial, 
 				c.nome_laboratorio, c.numero_laudo_resultado_analise, c.estado, c.municipio, c.produto_especificacao, c.possui_trat_fito_fins_quaren, c.partida_lacrada_origem, 
-				c.numero_lacre, c.numero_porao, c.numero_container, c.validade_certificado, c.informacoes_complementares, c.estado_emissao, c.municipio_emissao, c.credenciado 
+				c.numero_lacre, c.numero_porao, c.numero_container, c.validade_certificado, c.informacoes_complementares, c.estado_emissao, c.municipio_emissao, c.credenciado, c.serie 
 				from tab_cfoc c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -464,7 +475,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 						entidade.Id = id;
 						entidade.Tid = reader.GetValue<string>("tid");
 						entidade.TipoNumero = reader.GetValue<int>("tipo_numero");
-						entidade.Numero = reader.GetValue<string>("numero");
+                        entidade.Numero = reader.GetValue<string>("numero") + (string.IsNullOrEmpty(reader.GetValue<string>("serie")) ? "" : "/" + reader.GetValue<string>("serie")); 
 						entidade.DataEmissao.Data = reader.GetValue<DateTime>("data_emissao");
                         entidade.DataAtivacao.Data = reader.GetValue<DateTime>("data_ativacao");
 						entidade.SituacaoId = reader.GetValue<int>("situacao");
@@ -641,7 +652,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"select * from (
-				select c.id, c.tid, c.credenciado, c.numero, ie.denominador, c.tipo_numero,
+				select c.id, c.tid, c.credenciado, c.numero || case when c.serie is null then '' else '/' || c.serie end as numero, ie.denominador, c.tipo_numero,
 				(select stragg(cu.texto||'/'||cc.cultivar) from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura cu, tab_cultura_cultivar cc 
 				where l.id = cp.lote and li.lote = l.id and cu.id = li.cultura and cc.id = li.cultivar and cp.cfoc = c.id) cultura_cultivar, c.situacao, ls.texto situacao_texto
 				from tab_cfoc c, ins_empreendimento ie, lov_doc_fitossani_situacao ls 
@@ -685,15 +696,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select min(numero) from tab_numero_cfo_cfoc t, tab_liberacao_cfo_cfoc l
-				where l.id = t.liberacao and t.tipo_documento = 2 and t.tipo_numero = 2
-				and not exists(select null from cre_cfoc c where c.numero = t.numero)
-				and t.situacao = 1 and l.responsavel_tecnico = :credenciado
-                and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%' ");
+                                    select (t.numero||'/'||t.serie) numero
+                                    from tab_numero_cfo_cfoc t,
+                                         tab_liberacao_cfo_cfoc l
+                                    where l.id = t.liberacao
+                                          and t.tipo_documento = 2
+                                          and t.tipo_numero = 2
+                                          and not exists( select null
+                                                          from cre_cfoc c
+                                                          where c.numero = t.numero
+                                                                and ( ( c.serie = t.serie ) or ( c.serie is null and t.serie is null ) ) )
+                                          and t.situacao = 1
+                                          and t.utilizado = 0
+                                          and l.responsavel_tecnico = :credenciado
+                                          and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'
+                                    order by nvl(t.serie, ' '), t.numero");
 
-				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+                comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar(comando).ToString();
+                string numeroDigital = string.Empty;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        numeroDigital = reader.GetValue<string>("numero");
+                    }
+
+                    reader.Close();
+                }
+
+                if (numeroDigital.Count() == 9) //se não possui série, tira a barra
+                {
+                    numeroDigital = numeroDigital.Substring(0, 8);
+                }
+
+                return numeroDigital;
+				
 			}
 		}
 
@@ -901,13 +940,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 
 		#region Validaçoes
 
-		public int NumeroUtilizado(long numero)
+		public int NumeroUtilizado(long numero, string serie)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfoc c where c.numero = :numero), 0) from dual", EsquemaCredenciado);
+                Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfoc c where c.numero = :numero and ( c.serie = :serie or ( c.serie is null or :serie is null ) )), 0) from dual", EsquemaCredenciado);
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                comando.AdicionarParametroEntrada("serie", serie, DbType.String);
 
 				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
@@ -936,8 +976,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l where 
-				l.id = n.liberacao and l.responsavel_tecnico = :credenciado_id and n.numero = :numero and n.tipo_documento = 2 and n.tipo_numero = 1");
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from tab_numero_cfo_cfoc n,
+                                         tab_liberacao_cfo_cfoc l
+                                    where l.id = n.liberacao
+                                          and l.responsavel_tecnico = :credenciado_id
+                                          and n.numero = :numero
+                                          and n.serie is null
+                                          and n.tipo_documento = 2
+                                          and n.tipo_numero = 1");
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
 				comando.AdicionarParametroEntrada("credenciado_id", User.FuncionarioId, DbType.Int32);
@@ -950,10 +998,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 1 and n.situacao = 0 and n.numero = :numero");
+                string numeroSem = numero;
+                string serie = "";
+                if (numero.IndexOf("/") >= 0)
+                {
+                    string[] arNum = numero.Split('/');
+                    numeroSem = arNum[0];
+                    serie = arNum[1];
 
-				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
-				return bancoDeDados.ExecutarScalar<int>(comando) <= 0;
+                }
+
+                Comando comando;
+
+                if (string.IsNullOrEmpty(serie))
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and n.serie is null");
+                else
+                {
+                    comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n where n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 0 and n.numero = :numero and n.serie = :serie");
+                    comando.AdicionarParametroEntrada("serie", serie, DbType.String);
+                }
+
+                comando.AdicionarParametroEntrada("numero", numeroSem, DbType.Int64);
+                return bancoDeDados.ExecutarScalar<int>(comando) <= 0;
 			}
 		}
 
@@ -962,11 +1028,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l 
-				where l.id = n.liberacao and n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
-				and not exists (select null from cre_cfoc c where c.numero = n.numero) 
-				and l.responsavel_tecnico = :credenciado 
-                and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
+                                     select count(*)
+                                     from tab_numero_cfo_cfoc n,
+                                          tab_liberacao_cfo_cfoc l 
+                                     where l.id = n.liberacao
+                                           and n.tipo_documento = 2
+                                           and n.tipo_numero = 2
+                                           and n.situacao = 1
+                                           and n.utilizado = 0 
+                                           and not exists ( select null
+                                                            from cre_cfoc c
+                                                            where c.numero = n.numero
+                                                                  and ( ( c.serie = n.serie ) or ( c.serie is null and n.serie is null ) ) ) 
+                                           and l.responsavel_tecnico = :credenciado 
+                                           and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;

@@ -652,12 +652,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															 pr.ptv,
 															 pr.origem_tipo,
 															 pr.origem,
-															 case pr.origem_tipo 
-															    when 1 then (select t.numero from cre_cfo t where t.id = pr.origem) 
-															    when 2 then (select t.numero from cre_cfoc t where t.id = pr.origem) 
-															    when 3 then (select t.numero from tab_ptv t where t.id = pr.origem) 
-																when 4 then (select t.numero from tab_ptv_outrouf t where t.id = pr.origem) 
-															 else pr.numero_origem end as origem_texto,
+															case pr.origem_tipo 
+															    when 1 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from cre_cfo t where t.id = pr.origem) 
+															    when 2 then (select to_char(t.numero) || case when t.serie is null then '' else '/' || t.serie end as numero from cre_cfoc t where t.id = pr.origem) 
+															    when 3 then (select to_char(t.numero) from tab_ptv t where t.id = pr.origem) 
+																when 4 then (select to_char(t.numero) from tab_ptv_outrouf t where t.id = pr.origem) 
+															 else to_char(pr.numero_origem) end as origem_texto,
 															 pr.numero_origem,
 															 t.texto tipo_origem_texto,
 															 pr.cultura,
@@ -767,31 +767,49 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
-		internal Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, long numero)
+		internal Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, long numero, string serieNumeral = "")
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Dictionary<string, object> retorno = null;
 				Comando comando = null;
+                string strSql = "";
 
 				switch (origemTipo)
 				{
-					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
-                            from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
-					case eDocumentoFitossanitarioTipo.CFOC:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
-                            from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
-					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
-                            from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
-					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
-                            from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
-                            and t.numero = :numero", EsquemaBanco); break;
+                    case eDocumentoFitossanitarioTipo.CFO:
+                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
+
+                        if (!string.IsNullOrEmpty(serieNumeral))
+                            strSql += " and serie = :serie ";
+                        else
+                            strSql += " and serie is null ";
+                        comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
+
+                    case eDocumentoFitossanitarioTipo.CFOC:
+                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
+
+                        if (!string.IsNullOrEmpty(serieNumeral))
+                            strSql += " and serie = :serie ";
+                        else
+                            strSql += " and serie is null ";
+
+                        comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
+                    case eDocumentoFitossanitarioTipo.PTV:
+                        comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
+                    case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+                        comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
+						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
+						and t.numero = :numero", EsquemaBanco); break;
 				}
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+
+                if (!string.IsNullOrEmpty(serieNumeral))
+                    comando.AdicionarParametroEntrada("serie", serieNumeral, DbType.String);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{

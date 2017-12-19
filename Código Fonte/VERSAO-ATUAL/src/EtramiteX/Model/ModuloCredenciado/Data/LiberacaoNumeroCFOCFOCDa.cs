@@ -72,12 +72,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 		public void Salvar(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
 		{
-			if (liberacao.Id > 0)
+			if (liberacao.Id == 0)
 			{
-			}
-			else
-			{
-				Criar(liberacao, banco);
+                Criar(liberacao, banco);
 			}
 		}
 
@@ -100,20 +97,124 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
             }
         }
 
-		private void Criar(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
+		private void Criar_old(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
 		{
 			IDataReader reader = null;
+
+            string serieAtual = null;
 
 			try
 			{
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
+                    bancoDeDados.IniciarTransacao();
+
+                    long ultimoNumero = 0;
+                    string ultimaSerie = null;
+
+                    int? NUMERO_MAX = 0;
+
+                    //Verifica a disponibilidade de números de acordo com a série utilizada
+                    string numeroSql="";
+
+                    if (liberacao.LiberarDigitalCFO || liberacao.LiberarDigitalCFOC)
+                    {
+
+                        if (liberacao.LiberarDigitalCFO)
+                        {
+                            string maxSql = @"select max(numero_final) numero
+                                              from cnf_doc_fito_intervalo
+                                              where tipo_documento= 1
+                                                    and tipo = 2
+                                                    and serie = null";
+                            Comando cmdSqlMax = bancoDeDados.CriarComando(maxSql);
+
+                            using (IDataReader readerMax = bancoDeDados.ExecutarReader(cmdSqlMax))
+                            {
+                                if (readerMax.Read())
+                                {
+                                    NUMERO_MAX = readerMax.GetValue<int>("numero");
+                                }
+
+                                readerMax.Close();
+                            }
+
+                            numeroSql = @"select (select max(numero) as numero from  tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and numero is not null) as numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 1 and tipo_numero = 2 and rownum = 1 order by id desc";
+                        }
+                        else
+                        {
+                            string maxSql = @"select max(numero_final) numero
+                                        from cnf_doc_fito_intervalo
+                                        where tipo_documento= 2
+                                              and tipo = 2
+                                              and serie is null";
+                            Comando cmdSqlMax = bancoDeDados.CriarComando(maxSql);
+
+                            using (IDataReader readerMax = bancoDeDados.ExecutarReader(cmdSqlMax))
+                            {
+                                if (readerMax.Read())
+                                {
+                                    NUMERO_MAX = readerMax.GetValue<int>("numero");
+                                }
+
+                                readerMax.Close();
+                            }
+
+
+                            numeroSql = @"select (select max(numero) as numero from  tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and numero is not null) as numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_documento = 2 and tipo_numero = 2 and rownum = 1 order by id desc";
+                        }
+
+                        Comando cmdSqlNumero = bancoDeDados.CriarComando(numeroSql);
+
+
+                        using (IDataReader readerNumeros = bancoDeDados.ExecutarReader(cmdSqlNumero))
+                        {
+                            string tmpNumero = "";
+                            while (readerNumeros.Read())
+                            {
+                                tmpNumero = readerNumeros["numero"].ToString();
+                                ultimaSerie = readerNumeros["serie"].ToString();
+                            }
+
+                            if (!string.IsNullOrEmpty(tmpNumero))
+                            {
+                                ultimoNumero = Convert.ToInt32(tmpNumero.Substring(4, tmpNumero.Length - 4));
+                            }
+
+                            readerNumeros.Close();
+
+                        }
+
+                        NUMERO_MAX = NUMERO_MAX != null ? Convert.ToInt32(NUMERO_MAX.ToString().Substring(6, 2)) : 0;
+
+                        if (ultimoNumero >= NUMERO_MAX || NUMERO_MAX == null)
+                        {
+
+                            if (string.IsNullOrEmpty(ultimaSerie))
+                            {
+                                serieAtual = "A";
+                            }
+                            else
+                            {
+                                char[] charArray = ultimaSerie.ToCharArray();
+
+                                char nextChar = ++charArray[0];
+
+                                serieAtual = nextChar.ToString();
+
+                            }
+
+                        }
+
+                    }
+                    
+                     
 					Comando comando = bancoDeDados.CriarComando(@"
 					insert into tab_liberacao_cfo_cfoc (id, tid, responsavel_tecnico, liberar_bloco_cfo, numero_inicial_cfo, numero_final_cfo, 
-					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero)
+					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero, serie)
 					values (seq_tab_liberacao_cfo_cfoc.nextval, :tid, :responsavel_tecnico, :liberar_bloco_cfo, :numero_inicial_cfo, :numero_final_cfo, 
 					:liberar_bloco_cfoc, :numero_inicial_cfoc, :numero_final_cfoc, :liberar_num_digital_cfo, :qtd_num_cfo, :liberar_num_digital_cfoc, 
-					:qtd_num_cfoc, :dua_numero) returning id into :liberacao_id", EsquemaBanco);
+					:qtd_num_cfoc, :dua_numero, :serie) returning id into :liberacao_id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("responsavel_tecnico", liberacao.CredenciadoId, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberar_bloco_cfo", liberacao.LiberarBlocoCFO, DbType.Int32);
@@ -127,7 +228,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("liberar_num_digital_cfoc", liberacao.LiberarDigitalCFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("qtd_num_cfoc", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
                     comando.AdicionarParametroEntrada("dua_numero", liberacao.NumeroDua, DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
+
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
 					comando.AdicionarParametroSaida("liberacao_id", DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -137,6 +241,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					//Alocar a tabela
 					comando = bancoDeDados.CriarComando(@"select * from {0}tab_numero_cfo_cfoc for update", EsquemaBanco);
 					reader = bancoDeDados.ExecutarReader(comando);
+
+
+                  
+
 
 					#region CFO
 
@@ -160,50 +268,81 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					}
 
 					comando = bancoDeDados.CriarComandoPlSql(@"
-					declare
-						v_aux            number := 0;
-						v_maior          number := 0;
-						v_quantidade_lib number := :quantidade_lib;
-					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
-										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
-										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
-						into v_maior from dual;
+					        declare
+						        v_aux            number := 0;
+						        v_maior          number := 0;
+						        v_quantidade_lib number := :quantidade_lib;
+                                v_serie          varchar2(1) := :serie;
+                                v_maior_tmp        number := 0;
+					        begin
 
-						for j in 1..v_quantidade_lib loop 
-							v_maior := v_maior + 1;
+                               if v_serie is null then
+						            select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                               else
+                                    select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where serie = v_serie and length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where serie = v_serie and c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                                end if;
 
-							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
-							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                select substr(v_maior,5) into v_maior_tmp from dual;
 
-							if (v_aux > 0) then
-								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-								values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-							else 
-								v_aux := v_maior;
+                                if (v_maior_tmp = 9975) then
+                                    v_maior := 0;
+                                end if;
 
-								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
-								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+						        for j in 1..v_quantidade_lib loop 
+							        v_maior := v_maior + 1;
+              
+                                  if v_serie is null then
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) 
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  else
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = :serie
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  end if;
+        
+							    if (v_aux > 0) then
+								    insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								    values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							    else 
+								    v_aux := v_maior;
+                                        
+                                    if v_serie is null then
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                    else
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior and serie = v_serie
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                    end if;
 
-								if(v_maior is null or v_aux = v_maior) then 
-									--Tratamento de exceção
-									Raise_application_error(-20023, 'Número não configurado');
-								else 
-									insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-									values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-								end if;
-							end if;
-						end loop;
-					end;", EsquemaBanco);
+
+							        if(v_maior is null or v_aux = v_maior) then 
+								        --Tratamento de exceção
+								        Raise_application_error(-20023, 'Número não configurado');
+							        else 
+								        insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								        values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							        end if;
+							    end if;
+						       end loop;
+					        end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("quantidade_lib", liberacao.QuantidadeDigitalCFO, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFO, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -231,50 +370,73 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					}
 
 					comando = bancoDeDados.CriarComandoPlSql(@"
-					declare
-						v_aux            number := 0;
-						v_maior          number := 0;
-						v_quantidade_lib number := :quantidade_lib;
-					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
-										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
-										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
-						into v_maior from dual;
+					  declare
+						        v_aux            number := 0;
+						        v_maior          number := 0;
+						        v_quantidade_lib number := :quantidade_lib;
+                                v_serie          varchar2(1) := :serie;
+                                v_maior_tmp        number := 0;
+					        begin
+						      if v_serie is null then
+						            select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                               else
+                                    select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where serie = v_serie and length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where serie = v_serie and c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                                end if;
 
-						for j in 1..v_quantidade_lib loop 
-							v_maior := v_maior + 1;
+                                select substr(v_maior,5) into v_maior_tmp from dual;
 
-							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
-							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                if (v_maior_tmp = 9975) then
+                                    v_maior := 0;
+                                end if;
 
-							if (v_aux > 0) then
-								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-								values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-							else 
-								v_aux := v_maior;
+						        for j in 1..v_quantidade_lib loop 
+							        v_maior := v_maior + 1;
+              
+                                 if v_serie is null then
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) 
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  else
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = :serie
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  end if;
+        
+							        if (v_aux > 0) then
+								        insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								        values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							        else 
+								        v_aux := v_maior;
 
-								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
-								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
-								if(v_maior is null or v_aux = v_maior) then 
-									--Tratamento de exceção
-									Raise_application_error(-20023, 'Número não configurado');
-								else 
-									insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-									values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-								end if;
-							end if;
-						end loop;
-					end;", EsquemaBanco);
+							            if(v_maior is null or v_aux = v_maior) then 
+								            --Tratamento de exceção
+								            Raise_application_error(-20023, 'Número não configurado');
+							            else 
+								            insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								            values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							            end if;
+							        end if;
+						       end loop;
+					        end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("quantidade_lib", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -282,7 +444,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 					Historico.Gerar(liberacao.Id, eHistoricoArtefato.liberacaocfocfoc, eHistoricoAcao.criar, bancoDeDados);
 
-					bancoDeDados.Commit();
+                    bancoDeDados.Commit();
 				}
 			}
 			finally
@@ -294,6 +456,245 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				}
 			}
 		}
+
+        private void Criar(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                //grava a liberação na tabela tab_liberacao_cfo_cfoc
+                Comando comando = bancoDeDados.CriarComando(@"
+					insert into tab_liberacao_cfo_cfoc (id, tid, responsavel_tecnico, liberar_bloco_cfo, numero_inicial_cfo, numero_final_cfo, 
+					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero)
+					values (seq_tab_liberacao_cfo_cfoc.nextval, :tid, :responsavel_tecnico, :liberar_bloco_cfo, :numero_inicial_cfo, :numero_final_cfo, 
+					:liberar_bloco_cfoc, :numero_inicial_cfoc, :numero_final_cfoc, :liberar_num_digital_cfo, :qtd_num_cfo, :liberar_num_digital_cfoc, 
+					:qtd_num_cfoc, :dua_numero) returning id into :liberacao_id", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("responsavel_tecnico", liberacao.CredenciadoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("liberar_bloco_cfo", liberacao.LiberarBlocoCFO, DbType.Int32);
+                comando.AdicionarParametroEntrada("numero_inicial_cfo", liberacao.NumeroInicialCFO > 0 ? liberacao.NumeroInicialCFO : (object)DBNull.Value, DbType.Int64);
+                comando.AdicionarParametroEntrada("numero_final_cfo", liberacao.NumeroFinalCFO > 0 ? liberacao.NumeroFinalCFO : (object)DBNull.Value, DbType.Int64);
+                comando.AdicionarParametroEntrada("liberar_bloco_cfoc", liberacao.LiberarBlocoCFOC, DbType.Int32);
+                comando.AdicionarParametroEntrada("numero_inicial_cfoc", liberacao.NumeroInicialCFOC > 0 ? liberacao.NumeroInicialCFOC : (object)DBNull.Value, DbType.Int64);
+                comando.AdicionarParametroEntrada("numero_final_cfoc", liberacao.NumeroFinalCFOC > 0 ? liberacao.NumeroFinalCFOC : (object)DBNull.Value, DbType.Int64);
+                comando.AdicionarParametroEntrada("liberar_num_digital_cfo", liberacao.LiberarDigitalCFO, DbType.Int32);
+                comando.AdicionarParametroEntrada("qtd_num_cfo", liberacao.QuantidadeDigitalCFO, DbType.Int32);
+                comando.AdicionarParametroEntrada("liberar_num_digital_cfoc", liberacao.LiberarDigitalCFOC, DbType.Int32);
+                comando.AdicionarParametroEntrada("qtd_num_cfoc", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
+                comando.AdicionarParametroEntrada("dua_numero", liberacao.NumeroDua, DbType.String);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                comando.AdicionarParametroSaida("liberacao_id", DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                //salva o id da liberação
+                liberacao.Id = comando.ObterValorParametro<int>("liberacao_id");
+
+                if (liberacao.LiberarDigitalCFO)
+                {
+                    LiberarDigitalCFOCFOC(liberacao, liberacao.QuantidadeDigitalCFO, (int)eCFOCFOCTipo.CFO, (int)eCFOCFOCTipoNumero.Digital, bancoDeDados);
+                }
+                if (liberacao.LiberarDigitalCFOC)
+                {
+                    LiberarDigitalCFOCFOC(liberacao, liberacao.QuantidadeDigitalCFOC, (int)eCFOCFOCTipo.CFOC, (int)eCFOCFOCTipoNumero.Digital, bancoDeDados);
+                }
+                if (liberacao.LiberarBlocoCFO)
+                {
+                    LiberarBlocoCFO(liberacao, bancoDeDados);
+                }
+                if (liberacao.LiberarBlocoCFOC)
+                {
+                    LiberarBlocoCFOC(liberacao, bancoDeDados);
+                }
+
+                Historico.Gerar(liberacao.Id, eHistoricoArtefato.liberacaocfocfoc, eHistoricoAcao.criar, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
+        private void LiberarDigitalCFOCFOC(LiberaracaoNumeroCFOCFOC liberacao, int quantidade, int tipoDocumento, int tipoNumero, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                int total_liberado = 0;
+
+                //pegar todos os ranges
+                Comando comando = bancoDeDados.CriarComando(@"
+                                        select cnf.numero_inicial,
+                                               cnf.numero_final,
+                                               cnf.serie
+                                        from cnf_doc_fito_intervalo cnf
+                                        where cnf.tipo_documento = :tipo_documento
+                                              and cnf.tipo = :tipo_numero
+                                        order by nvl(cnf.serie, ' '), cnf.numero_inicial");
+
+                comando.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                comando.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        Int64 numInicial = reader.GetValue<int>("numero_inicial");
+                        Int64 numFinal = reader.GetValue<int>("numero_final");
+                        string serie = reader.GetValue<string>("serie");
+
+                        for (Int64 numero = numInicial; numero <= numFinal && total_liberado < quantidade; numero++)
+                        {
+                            Comando comandoAux = bancoDeDados.CriarComando(@"
+                                                    select count(t.id) total
+                                                    from tab_numero_cfo_cfoc t
+                                                    where t.tipo_documento = :tipo_documento
+                                                          and t.tipo_numero = :tipo_numero
+                                                          and t.numero = :numero
+                                                          and ((t.serie is null and :serie_atual is null) or t.serie = :serie_atual )");
+
+                            comandoAux.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                            comandoAux.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
+                            comandoAux.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                            comandoAux.AdicionarParametroEntrada("serie_atual", serie, DbType.String);
+
+                            int total = Convert.ToInt32(bancoDeDados.ExecutarScalar(comandoAux));
+
+                            //Se não encontrou o número na tabela tab_numero_cfo_cfoc, é porque ele está disponível
+                            if (total == 0)
+                            {
+                                Comando comandoInsert = bancoDeDados.CriarComando(@"
+                                                            insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, TID, utilizado, serie)
+                                                            values (seq_tab_numero_cfo_cfoc.nextval,
+                                                                    :numero,
+                                                                    :tipo_documento,
+                                                                    :tipo_numero,
+                                                                    :liberacao,
+                                                                    1,
+                                                                    :tid,
+                                                                    0,
+                                                                    :serie)");
+
+                                comandoInsert.AdicionarParametroEntrada("numero", numero, DbType.Int64);
+                                comandoInsert.AdicionarParametroEntrada("tipo_documento", tipoDocumento, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("tipo_numero", tipoNumero, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
+                                comandoInsert.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                                comandoInsert.AdicionarParametroEntrada("serie", serie, DbType.String);
+
+                                bancoDeDados.ExecutarNonQuery(comandoInsert);
+
+                                total_liberado++;
+                            }
+                        }
+
+                        if (total_liberado == quantidade)
+                        {
+                            break;
+                        }
+                    }
+
+                    reader.Close();
+                }
+
+                if (total_liberado == quantidade)
+                {
+                    bancoDeDados.Commit();
+                }
+                else
+                {
+                    bancoDeDados.Rollback();
+                }
+            }
+        }
+
+        private void LiberarBlocoCFO(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                if (liberacao.NumeroInicialCFO > 0)
+                {
+                    Comando comando = bancoDeDados.CriarComando(@"
+                                        insert into {0}tab_numero_cfo_cfoc (id, 
+                                                                            numero,
+                                                                            tipo_documento,
+                                                                            tipo_numero,
+                                                                            liberacao,
+                                                                            situacao,
+                                                                            utilizado,
+                                                                            tid)
+                                        values (seq_tab_numero_cfo_cfoc.nextval,
+                                                :numero,
+                                                :tipo_documento,
+                                                :tipo_numero,
+                                                :liberacao,
+                                                1,
+                                                0,
+                                                :tid)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFO, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Bloco, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("numero", DbType.Int64);
+
+                    for (var numero = liberacao.NumeroInicialCFO; numero <= liberacao.NumeroFinalCFO; numero++)
+                    {
+                        comando.SetarValorParametro("numero", numero);
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                bancoDeDados.Commit();
+            }
+        }
+
+        private void LiberarBlocoCFOC(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                if (liberacao.NumeroInicialCFOC > 0)
+                {
+                    Comando comando = bancoDeDados.CriarComando(@"
+                                        insert into {0}tab_numero_cfo_cfoc (id, 
+                                                                            numero,
+                                                                            tipo_documento,
+                                                                            tipo_numero,
+                                                                            liberacao,
+                                                                            situacao,
+                                                                            utilizado,
+                                                                            tid)
+                                        values (seq_tab_numero_cfo_cfoc.nextval,
+                                                :numero,
+                                                :tipo_documento,
+                                                :tipo_numero,
+                                                :liberacao,
+                                                1,
+                                                0,
+                                                :tid)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Bloco, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("numero", DbType.Int64);
+
+                    for (var numero = liberacao.NumeroInicialCFOC; numero <= liberacao.NumeroFinalCFOC; numero++)
+                    {
+                        comando.SetarValorParametro("numero", numero);
+
+                        bancoDeDados.ExecutarNonQuery(comando);
+                    }
+                }
+
+                bancoDeDados.Commit();
+            }
+        }
 
         internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj)
         {
@@ -491,7 +892,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("data_final", filtro.DataFinalEmissao, DbType.DateTime);
 				}
 
-				comando.DbCommand.CommandText += " order by t.numero";
+                comando.DbCommand.CommandText += " order by nvl(t.serie, ' '), t.numero";
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -502,6 +903,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 						item.Id = reader.GetValue<int>("id");
 						item.Numero = reader.GetValue<long>("numero");
+                        item.Serie = reader.GetValue<string>("serie");
 						item.Situacao = reader.GetValue<bool>("situacao");
 						item.Tipo = reader.GetValue<int>("tipo_documento");
 						item.TipoNumero = filtro.TipoNumero;
@@ -692,110 +1094,76 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 		}
 
-		internal bool DigitalPossuiNumeroCFONaoConfigurado(int quantidadeDigitalCFO, int credenciado)
+		internal bool DigitalPossuiNumeroCFONaoConfigurado(int quantidadeDigitalCFO)
 		{
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"
-				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 1 and t.tipo_numero = 2
-									and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%'), 
-				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 1 and t.tipo = 2
-									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%')) from dual");
+                                    select sum(livres_intervalo) livres
+                                    from ( select ( ( cnf.numero_final + 1 - cnf.numero_inicial )
+                                                    - ( select count(id)
+                                                        from tab_numero_cfo_cfoc tnum
+                                                        where tnum.numero >= cnf.numero_inicial
+                                                              and tnum.numero <= cnf.numero_final
+                                                              and ( tnum.serie = cnf.serie or ( tnum.serie is null and cnf.serie is null ) )
+                                                              and tnum.tipo_documento = 1
+                                                              and tnum.tipo_numero = 2 ) ) livres_intervalo
+                                           from cnf_doc_fito_intervalo cnf
+                                           where cnf.tipo_documento = 1
+                                                 and cnf.tipo = 2 )");
 
-				object objeto = banco.ExecutarScalar(comando);
+                int livres = 0;
 
-				long ultimoAdicionado = ((objeto != null && objeto != DBNull.Value) ? Convert.ToInt64(objeto) : 0);
+                using (IDataReader reader = banco.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        livres = reader.GetValue<int>("livres");
+                    }
 
-				comando = banco.CriarComandoPlSql(@"
-				declare 
-					proximo number;
-					v_aux   number := 1;
-					v_saida number := 0;
-				begin 
-					proximo := :numero_inicial;
+                    reader.Close();
+                }
 
-					for i in 1..:quantidadeDigital loop
-						select count(*) into v_aux from cnf_doc_fito_intervalo c 
-						where c.tipo = 2 and c.tipo_documento = 1 and proximo >= c.numero_inicial and proximo <= c.numero_final;
+                bool ultrapassa = quantidadeDigitalCFO > livres;
 
-						if v_aux = 0 then
-							select nvl(min(t.numero_inicial), 0) into proximo from cnf_doc_fito_intervalo t 
-							where t.tipo_documento = 1 and t.tipo = 2 and t.numero_inicial > proximo
-									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-
-							if proximo = 0 then
-								v_saida := 1;/*Possui 1 não configurado*/
-								exit;
-							end if;
-						else
-							proximo := proximo + 1;
-						end if;
-					end loop;
-
-					:retorno := v_saida;
-				end;");
-
-				comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-				comando.AdicionarParametroEntrada("quantidadeDigital", quantidadeDigitalCFO, DbType.Int32);
-				comando.AdicionarParametroSaida("retorno", DbType.Int32);
-
-				banco.ExecutarNonQuery(comando);
-
-				return Convert.ToInt32(comando.ObterValorParametro("retorno")) > 0;
+				return ultrapassa;
 			}
 		}
 
-		internal bool DigitalPossuiNumeroCFOCNaoConfigurado(int quantidadeDigitalCFOC, int credenciado)
+		internal bool DigitalPossuiNumeroCFOCNaoConfigurado(int quantidadeDigitalCFOC)
 		{
-			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
-			{
-				Comando comando = banco.CriarComando(@"
-				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 2 and t.tipo_numero = 2
-									and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%'), 
-				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 2 and t.tipo = 2
-									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%')) from dual");
+            using (BancoDeDados banco = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = banco.CriarComando(@"
+                                    select sum(livres_intervalo) livres
+                                    from ( select ( ( cnf.numero_final + 1 - cnf.numero_inicial )
+                                                    - ( select count(id)
+                                                        from tab_numero_cfo_cfoc tnum
+                                                        where tnum.numero >= cnf.numero_inicial
+                                                              and tnum.numero <= cnf.numero_final
+                                                              and ( tnum.serie = cnf.serie or ( tnum.serie is null and cnf.serie is null ) )
+                                                              and tnum.tipo_documento = 2
+                                                              and tnum.tipo_numero = 2 ) ) livres_intervalo
+                                           from cnf_doc_fito_intervalo cnf
+                                           where cnf.tipo_documento = 2
+                                                 and cnf.tipo = 2 )");
 
-				object objeto = banco.ExecutarScalar(comando);
+                int livres = 0;
 
-				long ultimoAdicionado = ((objeto != null && objeto != DBNull.Value) ? Convert.ToInt64(objeto) : 0);
+                using (IDataReader reader = banco.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        livres = reader.GetValue<int>("livres");
+                    }
 
-				comando = banco.CriarComandoPlSql(@"
-				declare 
-					proximo number;
-					v_aux   number := 1;
-					v_saida number := 0;
-				begin 
-					proximo := :numero_inicial;
+                    reader.Close();
+                }
 
-					for i in 1..:quantidadeDigital loop
-						select count(*) into v_aux from cnf_doc_fito_intervalo c 
-						where c.tipo = 2 and c.tipo_documento = 2 and proximo >= c.numero_inicial and proximo <= c.numero_final;
+                bool ultrapassa = quantidadeDigitalCFOC > livres;
 
-						if v_aux = 0 then
-							select nvl(min(t.numero_inicial), 0) into proximo from cnf_doc_fito_intervalo t 
-							where t.tipo_documento = 2 and t.tipo = 2 and t.numero_inicial > proximo
-									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-
-							if proximo = 0 then
-								v_saida := 1;/*Possui 1 não configurado*/
-								exit;
-							end if;
-						else
-							proximo := proximo + 1;
-						end if;
-					end loop;
-
-					:retorno := v_saida;
-				end;");
-
-				comando.AdicionarParametroEntrada("numero_inicial", ultimoAdicionado + 1, DbType.Int64);
-				comando.AdicionarParametroEntrada("quantidadeDigital", quantidadeDigitalCFOC, DbType.Int32);
-				comando.AdicionarParametroSaida("retorno", DbType.Int32);
-
-				banco.ExecutarNonQuery(comando);
-
-				return Convert.ToInt32(comando.ObterValorParametro("retorno")) > 0;
-			}
+                return ultrapassa;
+            }
 		}
 
 		internal bool VerificarQuantidadeMaximaNumDigitalCadastradoCFO(LiberaracaoNumeroCFOCFOC liberacao)
