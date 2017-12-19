@@ -262,8 +262,8 @@ ConfigDocFitossanitario = {
 	        switch (txt) {
 	            case "CFO":
 	            case "CFOC":
-	                element.classList.remove("maskNum10");
-	                element.classList.add("maskNum8");
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
 	                break;
 
 	            default:
@@ -318,8 +318,8 @@ ConfigDocFitossanitario = {
 	        switch (tipo) {
 	            case "CFO":
 	            case "CFOC":
-	                element.classList.remove("maskNum10");
-	                element.classList.add("maskNum8");
+	                element.classList.remove("maskNum8");
+	                element.classList.add("maskNum10");
 	                break;
 
 	            default:
