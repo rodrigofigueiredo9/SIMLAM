@@ -108,7 +108,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("iuf_numero", materialApreendido.NumeroIUF, DbType.String);
                 comando.AdicionarParametroEntrada("numero_lacres", materialApreendido.NumeroLacre, DbType.String);
 				comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
-				comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
+                materialApreendido.Depositario.Id = materialApreendido.Depositario.Id == 0 ? null : materialApreendido.Depositario.Id;
+                    comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
                 materialApreendido.Depositario.Estado = materialApreendido.Depositario.Estado == 0 ? null : materialApreendido.Depositario.Estado;
 				    comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
                 materialApreendido.Depositario.Municipio = materialApreendido.Depositario.Municipio == 0 ? null : materialApreendido.Depositario.Municipio;
@@ -225,7 +226,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("iuf_numero", materialApreendido.NumeroIUF, DbType.String);
                 comando.AdicionarParametroEntrada("numero_lacres", materialApreendido.NumeroLacre, DbType.String);
                 comando.AdicionarParametroEntrada("serie", materialApreendido.SerieId, DbType.Int32);
-                comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
+                materialApreendido.Depositario.Id = materialApreendido.Depositario.Id == 0 ? null : materialApreendido.Depositario.Id;
+                    comando.AdicionarParametroEntrada("depositario", materialApreendido.Depositario.Id, DbType.Int32);
                 materialApreendido.Depositario.Estado = materialApreendido.Depositario.Estado == 0 ? null : materialApreendido.Depositario.Estado;
                     comando.AdicionarParametroEntrada("endereco_estado", materialApreendido.Depositario.Estado, DbType.Int32);
                 materialApreendido.Depositario.Municipio = materialApreendido.Depositario.Municipio == 0 ? null : materialApreendido.Depositario.Municipio;

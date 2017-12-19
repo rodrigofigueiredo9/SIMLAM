@@ -125,9 +125,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
         public List<Lista> obterCodigoReceita(int idFiscalizacao)
         {
             ListaValoresDa lv = new ListaValoresDa();
+            List<Lista> cr = null; 
 
-            var a = lv.ObterCodigoReceita(idFiscalizacao);
-            return a;
+            try
+            {
+                cr = lv.ObterCodigoReceita(idFiscalizacao);
+            }catch(Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+            return cr;
         }
         
 		#endregion
