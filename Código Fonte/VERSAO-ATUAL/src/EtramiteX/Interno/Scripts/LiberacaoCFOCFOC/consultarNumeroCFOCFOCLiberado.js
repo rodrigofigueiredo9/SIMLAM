@@ -170,7 +170,11 @@ ConsultarNumeroCFOCFOCLiberado = {
         $(container).find('.paginacaoCaixa').find('.hdnPaginaUltima').val((qtdPaginas));
         $(container).find('.paginacaoCaixa').find('.hdnPaginaAnterior').val((numeroPagina == 1 ? 1 : (numeroPagina - 1)));
 
-        $('tbody tr:not(.templateRow)', tabela).remove();
+			$('.tipoDocumento', linha).append(item.TipoDocumentoTexto);
+			$('.Numero', linha).append(item.Numero + (item.Serie ? '/' + item.Serie : ''));
+			$('.Utilizado', linha).append(item.UtilizadoTexto);
+			$('.Situacao', linha).append(item.SituacaoTexto);
+			$('.hdnObjetoJson', linha).val(JSON.stringify(item));
 
         var linha = null;
         var item = null;

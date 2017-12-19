@@ -65,7 +65,7 @@
 
 				<div class="coluna20 prepend1">
 					<label for="NumeroBloco">Número</label>
-					<%= Html.TextBox("NumeroBloco", null, new { @class = "text txtNumero maskNumInt", maxlength = "10" })%>
+					<%= Html.TextBox("NumeroBloco", null, new { @class = "text txtNumero", maxlength = "10" })%>
 				</div>
 
 				<div class="coluna20 prepend1">
@@ -137,7 +137,7 @@
 
 				<div class="coluna20 prepend1">
 					<label for="NumeroDigital">Número</label>
-					<%= Html.TextBox("NumeroDigital", null, new { @class = "text txtNumero maskNumInt", maxlength = "10" })%>
+					<%= Html.TextBox("NumeroDigital", null, new { @class = "text txtNumero", maxlength = "12" })%>
 				</div>
 
 				<div class="coluna20 prepend1">

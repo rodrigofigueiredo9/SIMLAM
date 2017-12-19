@@ -214,6 +214,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			List<NumeroCFOCFOC> retorno = _bus.FiltrarConsulta(filtro);
 
+
+
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @lstRetorno = retorno });
 		}
 
