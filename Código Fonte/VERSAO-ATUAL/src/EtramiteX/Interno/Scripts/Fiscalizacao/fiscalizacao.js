@@ -1166,7 +1166,7 @@ FiscalizacaoProjetoGeografico = {
 
 		MasterPage.botoes(projetoContainer);
 
-		if (parseInt($('.hdnProjetoId', Fiscalizacao.container).val()) > 0) {		
+		if (parseInt($('.hdnProjetoId', Fiscalizacao.container).val()) > 0 || $('.hdnJaSalvo', Fiscalizacao.container).val() == "True" ) {		
 			Fiscalizacao.salvarEdicao = false;				
 			Fiscalizacao.botoes({ btnEditar: true, spnCancelarCadastro: true });
 			FiscalizacaoProjetoGeografico.configurarBtnEditar();
@@ -1177,7 +1177,7 @@ FiscalizacaoProjetoGeografico = {
 
 		$('.projetoGeograficoContainer', Fiscalizacao.container).addClass('hide');
 		Fiscalizacao.salvarTelaAtual = FiscalizacaoProjetoGeografico.onSalvarProjetoEmBranco;
-		if ($('.hdnProjetoNivelPrecisao', Fiscalizacao.container).val().toString() != "0") {
+		if ($('.rblProjGeo:checked', Fiscalizacao.container).val().toString() == "1") {
 		    $('.projetoGeograficoContainer', Fiscalizacao.container).removeClass('hide');
 		    Fiscalizacao.salvarTelaAtual = ProjetoGeografico.onSalvar;
 		}
@@ -1226,14 +1226,13 @@ FiscalizacaoProjetoGeografico = {
 
 		arrayMensagem.push(Fiscalizacao.Mensagens.ResponsavelSalvar);
 
-		//var params = { id: $('#hdnFiscalizacaoId').val(), responsaveis: objetoResponsaveis };
-
 		return true;
-
-		//return Fiscalizacao.onSalvarStep(FiscalizacaoResponsavel.urlCriarResponsavel, params, arrayMensagem);
 	},
 
-	onSalvarProjetoEmBranco: function(){
+	onSalvarProjetoEmBranco: function () {
+
+	    ProjetoGeografico.onSalvar();
+
 	    return true;
 	},
 

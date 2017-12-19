@@ -9,6 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
 
+        public Boolean? PossuiProjetoGeo { get; set; }
 		public Int32 NivelPrecisaoId { get; set; }
 		public String NivelPrecisaoTexto { get; set; }
 		public Int32 MecanismoElaboracaoId { get; set; }
