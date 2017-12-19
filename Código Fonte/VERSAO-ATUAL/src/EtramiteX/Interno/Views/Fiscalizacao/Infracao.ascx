@@ -106,9 +106,9 @@
                                     </td>
                                     <td>
                                         <% if (!Model.IsVisualizar) { %>
-                                            <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
+                                            <input type="text" class="text txtLeiEnquadramento" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="89" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
                                         <% } else { %>
-                                            <input type="text" class="text txtLeiEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="90" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
+                                            <input type="text" class="text txtLeiEnquadramento disabled" disabled="disabled" value ="<%=(Model.Infracao.EnquadramentoInfracao.Artigos.Count > linha ? Model.Infracao.EnquadramentoInfracao.Artigos[linha].DaDo : string.Empty)%>" maxlength="89" style="border: none; width:100%; background-color:transparent; margin-bottom:1px; align-self:baseline;" />
                                         <% } %>
                                     </td>
 						        </tr>
@@ -123,7 +123,7 @@
         <div class="block divDescricaoInfracao">
 		    <div class="coluna76">
 			    <label>Descrição da infração/fiscalização *</label>
-			    <%= Html.TextArea("Infracao.DescricaoInfracao", Model.Infracao.DescricaoInfracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricaoInfracao", @maxlength = "1000" }))%>
+			    <%= Html.TextArea("Infracao.DescricaoInfracao", Model.Infracao.DescricaoInfracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricaoInfracao", @maxlength = "1050" }))%>
 		    </div>
 	    </div>
 
