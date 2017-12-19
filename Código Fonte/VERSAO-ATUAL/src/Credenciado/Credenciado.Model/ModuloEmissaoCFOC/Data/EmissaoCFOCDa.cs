@@ -705,7 +705,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                                           and not exists( select null
                                                           from cre_cfoc c
                                                           where c.numero = t.numero
-                                                                and c.serie = t.serie )
+                                                                and ( ( c.serie = t.serie ) or ( c.serie is null and t.serie is null ) ) )
                                           and t.situacao = 1
                                           and t.utilizado = 0
                                           and l.responsavel_tecnico = :credenciado
@@ -964,8 +964,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l where 
-				l.id = n.liberacao and l.responsavel_tecnico = :credenciado_id and n.numero = :numero and n.tipo_documento = 2 and n.tipo_numero = 1");
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from tab_numero_cfo_cfoc n,
+                                         tab_liberacao_cfo_cfoc l
+                                    where l.id = n.liberacao
+                                          and l.responsavel_tecnico = :credenciado_id
+                                          and n.numero = :numero
+                                          and n.serie is null
+                                          and n.tipo_documento = 2
+                                          and n.tipo_numero = 1");
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
 				comando.AdicionarParametroEntrada("credenciado_id", User.FuncionarioId, DbType.Int32);
@@ -1008,11 +1016,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select count(*) from tab_numero_cfo_cfoc n, tab_liberacao_cfo_cfoc l 
-				where l.id = n.liberacao and n.tipo_documento = 2 and n.tipo_numero = 2 and n.situacao = 1 and n.utilizado = 0 
-				and not exists (select null from cre_cfoc c where c.numero = n.numero and c.serie = n.serie) 
-				and l.responsavel_tecnico = :credenciado 
-                and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
+                                     select count(*)
+                                     from tab_numero_cfo_cfoc n,
+                                          tab_liberacao_cfo_cfoc l 
+                                     where l.id = n.liberacao
+                                           and n.tipo_documento = 2
+                                           and n.tipo_numero = 2
+                                           and n.situacao = 1
+                                           and n.utilizado = 0 
+                                           and not exists ( select null
+                                                            from cre_cfoc c
+                                                            where c.numero = n.numero
+                                                                  and ( ( c.serie = n.serie ) or ( c.serie is null and n.serie is null ) ) ) 
+                                           and l.responsavel_tecnico = :credenciado 
+                                           and to_char(n.numero) like '__'|| to_char(sysdate, 'yy') ||'%' "); 
 
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
