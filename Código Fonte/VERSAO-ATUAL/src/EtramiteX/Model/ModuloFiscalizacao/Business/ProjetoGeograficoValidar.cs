@@ -55,23 +55,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		internal bool Salvar(ProjetoGeografico projeto)
 		{
-			if (projeto.NivelPrecisaoId <= 0)
-			{
-				Validacao.Add(Mensagem.ProjetoGeografico.NivelPrecisaoObrigatorio);
-				return false;
-			}
+            if (projeto.PossuiProjetoGeo == true)
+            {
+                if (projeto.NivelPrecisaoId <= 0)
+                {
+                    Validacao.Add(Mensagem.ProjetoGeografico.NivelPrecisaoObrigatorio);
+                    return false;
+                }
 
-			if (projeto.MaiorX <= 0 || projeto.MaiorY <= 0 || projeto.MenorX <= 0 || projeto.MenorY <= 0)
-			{
-				Validacao.Add(Mensagem.ProjetoGeografico.AreaDeAbrangenciaObrigatorio);
-				return false;
-			}
+                if (projeto.MaiorX <= 0 || projeto.MaiorY <= 0 || projeto.MenorX <= 0 || projeto.MenorY <= 0)
+                {
+                    Validacao.Add(Mensagem.ProjetoGeografico.AreaDeAbrangenciaObrigatorio);
+                    return false;
+                }
 
-			if (projeto.MecanismoElaboracaoId == 0)
-			{
-				Validacao.Add(Mensagem.ProjetoGeografico.MecanismoObrigatorio);
-				return false;
-			}
+                if (projeto.MecanismoElaboracaoId == 0)
+                {
+                    Validacao.Add(Mensagem.ProjetoGeografico.MecanismoObrigatorio);
+                    return false;
+                }
+            }
 
 			return Validacao.EhValido;
 		}

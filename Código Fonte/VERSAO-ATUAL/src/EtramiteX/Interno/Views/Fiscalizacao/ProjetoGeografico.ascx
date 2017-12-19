@@ -71,8 +71,8 @@
         <input type="hidden" class="hdnProjetoNivelPrecisao" value="<%= Model.ProjetoGeoVM.Projeto.NivelPrecisaoId %>" />
 
         <label for="">Fiscalização com Projeto Geográfico?</label><br />
-        <label><%= Html.RadioButton("rblProjGeo", 0, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId == 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo" }))%>Não</label>
-	    <label><%= Html.RadioButton("rblProjGeo", 1, Model.ProjetoGeoVM.Projeto.NivelPrecisaoId > 0, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar, new { @class = "radio rblProjGeo prepend2" }))%>Sim</label>
+        <label><%= Html.RadioButton("rblProjGeo", 0, Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo != true && Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao != 2, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, new { @class = "radio rblProjGeo" }))%>Não</label>
+	    <label><%= Html.RadioButton("rblProjGeo", 1, Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo == true || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, ViewModelHelper.SetaDisabled(Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar || Model.LocalInfracaoVM.LocalInfracao.AreaFiscalizacao == 2, new { @class = "radio rblProjGeo prepend2" }))%>Sim</label>
     </div>
 </div>
 
@@ -135,6 +135,7 @@
 	<label><input type="radio" class="radioTiPoMecanismo" name="mecanismo" value="2" <%= Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar ? "disabled=\"disabled\"" : ""%>  <%= Model.ProjetoGeoVM.IsDesenhador ? "checked=\"checked\"" : ""%>/>Desenhador</label>
 
 	<input type="hidden" class="hdnProjetoId" value="<%= Model.ProjetoGeoVM.Projeto.Id %>" />
+    <input type="hidden" class="hdnJaSalvo" value="<%= (Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo != null) %>" />
 	<input type="hidden" class="hdnFiscNorthing" value="<%= Model.ProjetoGeoVM.Projeto.FiscalizacaoNorthing%>" />
 	<input type="hidden" class="hdnFiscEasting" value="<%= Model.ProjetoGeoVM.Projeto.FiscalizacaoEasting %>" />
 	<input type="hidden" class="hdnArquivoEnviadoTipo" value="<%= Model.ProjetoGeoVM.ArquivoEnviadoTipo%>" />
@@ -150,7 +151,7 @@
 				<% Html.RenderPartial("ProjetoGeoBaseReferenciaPartial", Model.ProjetoGeoVM.BaseReferencia); %>
 		</fieldset>
 
-		<fieldset class="block boxBranca fsEnviarProjeto <%= Model.ProjetoGeoVM.Projeto.Arquivos.Count > 0? "" : "hide"%>">
+		<fieldset class="block boxBranca fsEnviarProjeto <%= Model.ProjetoGeoVM.Projeto.Arquivos.Count > 0 ? "" : "hide"%>">
 			<legend>Enviar projeto geográfico</legend>
 			<% Html.RenderPartial("ProjetoGeoEnviarProjetoPartial", Model.ProjetoGeoVM.EnviarProjeto); %>
 		</fieldset>
