@@ -88,6 +88,35 @@
 			<label>Número final*</label>
 			<%= Html.TextBox("DigitalNumeroFinal", null, new {@class = "text txtNumeroFinal txtDigital maskNum10"}) %>
 		</div>
+        <div class="coluna5">
+			<label>Série</label>
+			<%= Html.DropDownList("DigitalSerie", new List<SelectListItem>() {  new SelectListItem(){ Text = "", Value="" }, 
+                                                                                new SelectListItem(){ Text = "A", Value="A" },
+                                                                                new SelectListItem(){ Text = "B", Value="B" },
+                                                                                new SelectListItem(){ Text = "C", Value="B" },
+                                                                                new SelectListItem(){ Text = "D", Value="D" },
+                                                                                new SelectListItem(){ Text = "E", Value="E" },
+                                                                                new SelectListItem(){ Text = "F", Value="F" },
+                                                                                new SelectListItem(){ Text = "G", Value="G" },
+                                                                                new SelectListItem(){ Text = "H", Value="H" },
+                                                                                new SelectListItem(){ Text = "I", Value="I" },
+                                                                                new SelectListItem(){ Text = "J", Value="J" },
+                                                                                new SelectListItem(){ Text = "K", Value="K" },
+                                                                                new SelectListItem(){ Text = "L", Value="L" },
+                                                                                new SelectListItem(){ Text = "M", Value="M" },
+                                                                                new SelectListItem(){ Text = "N", Value="N" },
+                                                                                new SelectListItem(){ Text = "O", Value="O" },
+                                                                                new SelectListItem(){ Text = "P", Value="P" },
+                                                                                new SelectListItem(){ Text = "Q", Value="Q" },
+                                                                                new SelectListItem(){ Text = "R", Value="R" },
+                                                                                new SelectListItem(){ Text = "S", Value="S" },
+                                                                                new SelectListItem(){ Text = "T", Value="T" },
+                                                                                new SelectListItem(){ Text = "U", Value="U" },
+                                                                                new SelectListItem(){ Text = "W", Value="W" },
+                                                                                new SelectListItem(){ Text = "X", Value="X" },
+                                                                                new SelectListItem(){ Text = "Y", Value="Y" },
+                                                                                new SelectListItem(){ Text = "Z", Value="Z" },}, new { @class = "text ddlDigitalSerie " })%>
+		</div>
 		<div class="coluna20">
 			<button type="button" class="inlineBotao botaoAdicionarIcone btnAdicionarNumero btnAddItem" title="Adicionar">+</button>
 		</div>
@@ -105,17 +134,28 @@
 					</tr>
 				</thead>
 				<tbody>
-					<% foreach (var item in Model.NumerosDigitais) { %>
+					<% foreach (var item in Model.NumerosDigitais) {
+
+                            string itemSerieInicial = item.NumeroInicial.ToString();
+                            string itemSerieFinal = item.NumeroFinal.ToString();
+
+                            if (!string.IsNullOrEmpty(item.Serie))
+                            {
+                                itemSerieInicial += " / " + item.Serie;
+                                itemSerieFinal += " / " + item.Serie;
+                            } 
+            
+            %>
 					<tr class="Linha">
 						<td>
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 							<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
 						</td>
 						<td>
-							<span class="NumeroInicial" title="<%:item.NumeroInicial.ToString() %>"><%:item.NumeroInicial.ToString() %></span>
+							<span class="NumeroInicial" title="<%:itemSerieInicial %>"><%:itemSerieInicial %></span>
 						</td>
 						<td>
-							<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
+							<span class="NumeroFinal" title="<%:itemSerieFinal %>"><%:itemSerieFinal %></span>
 						</td>
                         <td>
                             <input type="hidden" class="ItemID" value="<%:item.ID%>" />

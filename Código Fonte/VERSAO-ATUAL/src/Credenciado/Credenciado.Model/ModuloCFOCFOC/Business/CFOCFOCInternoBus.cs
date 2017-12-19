@@ -17,7 +17,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 		#endregion
 
-		public void SetarNumeroUtilizado(string numero, int tipoNumero, eDocumentoFitossanitarioTipo tipoDocumento)
+		public void SetarNumeroUtilizado(string numero, int tipoNumero, eDocumentoFitossanitarioTipo tipoDocumento, string serieNumero)
 		{
 			GerenciadorTransacao.ObterIDAtual();
 
@@ -25,7 +25,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 			{
 				bancoDeDados.IniciarTransacao();
 
-				if (_da.SetarNumeroUtilizado(numero, tipoNumero, tipoDocumento) <= 0)
+                if (_da.SetarNumeroUtilizado(numero, tipoNumero, tipoDocumento, serieNumero) <= 0)
 				{
 					Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.NumeroNaoEncontrado);
 				}

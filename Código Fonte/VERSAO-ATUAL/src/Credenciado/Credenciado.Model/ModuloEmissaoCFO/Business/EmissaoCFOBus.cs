@@ -54,6 +54,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 						if (_validar.VerificarNumeroDigitalDisponivel())
 						{
 							cfo.Numero = ObterNumeroDigital();
+
+                            if (cfo.Numero.IndexOf("/") >= 0 )
+                            {
+                                string[] tmpNum = cfo.Numero.Split('/');
+                                cfo.Numero = tmpNum[0];
+                                cfo.Serie = tmpNum[1];
+
+                            }
 						}
 						else
 						{
@@ -102,9 +110,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 
 					_da.Salvar(cfo, bancoDeDados);
 
-					_busInterno.SetarNumeroUtilizado(cfo.Numero, cfo.TipoNumero.GetValueOrDefault(), eDocumentoFitossanitarioTipo.CFO);
+					_busInterno.SetarNumeroUtilizado(cfo.Numero, cfo.TipoNumero.GetValueOrDefault(), eDocumentoFitossanitarioTipo.CFO, cfo.Serie);
 
-					Validacao.Add(Mensagem.EmissaoCFO.Salvar(cfo.Numero));
+                    if (string.IsNullOrEmpty(cfo.Serie))
+					    Validacao.Add(Mensagem.EmissaoCFO.Salvar(cfo.Numero));
+                    else
+                        Validacao.Add(Mensagem.EmissaoCFO.Salvar(cfo.Numero + "/" + cfo.Serie));
 
 					bancoDeDados.Commit();
 				}
@@ -193,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 			{
 				bancoDeDados.IniciarTransacao();
 
-				EmissaoCFO entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), true, false, bancoDeDados);
+				EmissaoCFO entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, true, false, bancoDeDados);
 				_da.Cancelar(entidadeBanco, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -279,11 +290,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 			return null;
 		}
 
-		public EmissaoCFO ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true)
+		public EmissaoCFO ObterPorNumero(long numero, bool simplificado = false, bool credenciado = true, string serieNumero = "")
 		{
 			try
 			{
-				return _da.ObterPorNumero(numero, simplificado, credenciado);
+				return _da.ObterPorNumero(numero, serieNumero, simplificado, credenciado);
 			}
 			catch (Exception exc)
 			{
@@ -396,7 +407,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 
 		#region Verificações
 
-		public string VerificarNumero(string numero, int tipoNumero)
+		public string VerificarNumero(string numero, int tipoNumero, string serieNumero = "")
 		{
 			try
 			{

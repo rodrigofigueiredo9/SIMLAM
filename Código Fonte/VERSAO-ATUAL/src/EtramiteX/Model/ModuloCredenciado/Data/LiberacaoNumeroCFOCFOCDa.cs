@@ -104,16 +104,80 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 		{
 			IDataReader reader = null;
 
+            string serieAtual = null;
+
 			try
 			{
+
+              
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
+
+                    bancoDeDados.IniciarTransacao();
+                    
+
+                    long ultimoNumero = 0;
+                    string ultimaSerie = null;
+
+                    const int NUMERO_MAX = 9975;
+
+
+                    //Verifica a disponibilidade de números de acordo com a série utilizada
+                    if (liberacao.LiberarDigitalCFO || liberacao.LiberarDigitalCFOC)
+                    {
+
+                        string numeroSql = @"select numero , serie from tab_numero_cfo_cfoc where length(numero) = 8 and tipo_numero = 2 and rownum = 1 order by id desc";
+
+                        Comando cmdSqlNumero = bancoDeDados.CriarComando(numeroSql);
+
+
+                        using (IDataReader readerNumeros = bancoDeDados.ExecutarReader(cmdSqlNumero))
+                        {
+                            string tmpNumero = "";
+                            while (readerNumeros.Read())
+                            {
+                                tmpNumero = readerNumeros["numero"].ToString();
+                                ultimaSerie = readerNumeros["serie"].ToString();
+                            }
+
+                            if (!string.IsNullOrEmpty(tmpNumero))
+                            {
+                                ultimoNumero = Convert.ToInt32(tmpNumero.Substring(4, tmpNumero.Length - 4));
+                            }
+
+                            readerNumeros.Close();
+
+                        }
+
+
+                        if (ultimoNumero == NUMERO_MAX)
+                        {
+
+                            if (string.IsNullOrEmpty(ultimaSerie))
+                            {
+                                serieAtual = "A";
+                            }
+                            else
+                            {
+                                char[] charArray = ultimaSerie.ToCharArray();
+
+                                char nextChar = ++charArray[0];
+
+                                serieAtual = nextChar.ToString();
+
+                            }
+
+                        }
+                    }
+                     
+
+
 					Comando comando = bancoDeDados.CriarComando(@"
 					insert into tab_liberacao_cfo_cfoc (id, tid, responsavel_tecnico, liberar_bloco_cfo, numero_inicial_cfo, numero_final_cfo, 
-					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero)
+					liberar_bloco_cfoc, numero_inicial_cfoc, numero_final_cfoc, liberar_num_digital_cfo, qtd_num_cfo, liberar_num_digital_cfoc, qtd_num_cfoc, dua_numero, serie)
 					values (seq_tab_liberacao_cfo_cfoc.nextval, :tid, :responsavel_tecnico, :liberar_bloco_cfo, :numero_inicial_cfo, :numero_final_cfo, 
 					:liberar_bloco_cfoc, :numero_inicial_cfoc, :numero_final_cfoc, :liberar_num_digital_cfo, :qtd_num_cfo, :liberar_num_digital_cfoc, 
-					:qtd_num_cfoc, :dua_numero) returning id into :liberacao_id", EsquemaBanco);
+					:qtd_num_cfoc, :dua_numero, :serie) returning id into :liberacao_id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("responsavel_tecnico", liberacao.CredenciadoId, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberar_bloco_cfo", liberacao.LiberarBlocoCFO, DbType.Int32);
@@ -127,7 +191,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					comando.AdicionarParametroEntrada("liberar_num_digital_cfoc", liberacao.LiberarDigitalCFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("qtd_num_cfoc", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
                     comando.AdicionarParametroEntrada("dua_numero", liberacao.NumeroDua, DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
+
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
 					comando.AdicionarParametroSaida("liberacao_id", DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -137,6 +204,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					//Alocar a tabela
 					comando = bancoDeDados.CriarComando(@"select * from {0}tab_numero_cfo_cfoc for update", EsquemaBanco);
 					reader = bancoDeDados.ExecutarReader(comando);
+
+
+                  
+
 
 					#region CFO
 
@@ -160,50 +231,81 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					}
 
 					comando = bancoDeDados.CriarComandoPlSql(@"
-					declare
-						v_aux            number := 0;
-						v_maior          number := 0;
-						v_quantidade_lib number := :quantidade_lib;
-					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
-										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
-										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
-						into v_maior from dual;
+					        declare
+						        v_aux            number := 0;
+						        v_maior          number := 0;
+						        v_quantidade_lib number := :quantidade_lib;
+                                v_serie          varchar2(1) := :serie;
+                                v_maior_tmp        number := 0;
+					        begin
 
-						for j in 1..v_quantidade_lib loop 
-							v_maior := v_maior + 1;
+                               if v_serie is null then
+						            select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                               else
+                                    select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where serie = v_serie and length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										            and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							            (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where serie = v_serie and c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						            into v_maior from dual;
+                                end if;
 
-							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
-							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                select substr(v_maior,5) into v_maior_tmp from dual;
 
-							if (v_aux > 0) then
-								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-								values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-							else 
-								v_aux := v_maior;
+                                if (v_maior_tmp = 9975) then
+                                    v_maior := 0;
+                                end if;
 
-								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
-								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+						        for j in 1..v_quantidade_lib loop 
+							        v_maior := v_maior + 1;
+              
+                                  if v_serie is null then
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) 
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  else
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = :serie
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  end if;
+        
+							    if (v_aux > 0) then
+								    insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								    values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							    else 
+								    v_aux := v_maior;
+                                        
+                                    if v_serie is null then
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                    else
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior and serie = v_serie
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                    end if;
 
-								if(v_maior is null or v_aux = v_maior) then 
-									--Tratamento de exceção
-									Raise_application_error(-20023, 'Número não configurado');
-								else 
-									insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-									values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-								end if;
-							end if;
-						end loop;
-					end;", EsquemaBanco);
+
+							        if(v_maior is null or v_aux = v_maior) then 
+								        --Tratamento de exceção
+								        Raise_application_error(-20023, 'Número não configurado');
+							        else 
+								        insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								        values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							        end if;
+							    end if;
+						       end loop;
+					        end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("quantidade_lib", liberacao.QuantidadeDigitalCFO, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFO, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -231,50 +333,63 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 					}
 
 					comando = bancoDeDados.CriarComandoPlSql(@"
-					declare
-						v_aux            number := 0;
-						v_maior          number := 0;
-						v_quantidade_lib number := :quantidade_lib;
-					begin
-						select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
-										and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
-							(select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
-										and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
-						into v_maior from dual;
+					  declare
+						        v_aux            number := 0;
+						        v_maior          number := 0;
+						        v_quantidade_lib number := :quantidade_lib;
+                                v_serie          varchar2(1) := :serie;
+                                v_maior_tmp        number := 0;
+					        begin
+						        select nvl((select max(d.numero) from tab_numero_cfo_cfoc d where length(numero) = 8 and d.tipo_documento = :tipo_documento and d.tipo_numero = :tipo_numero
+										        and to_char(numero) like '__'|| to_char(sysdate, 'yy') ||'%'),
+							        (select min(c.numero_inicial) - 1 from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento and c.tipo = :tipo_numero
+										        and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%'))
+						        into v_maior from dual;
 
-						for j in 1..v_quantidade_lib loop 
-							v_maior := v_maior + 1;
+                                if (v_maior_tmp = 9975) then
+                                    v_maior := 0;
+                                end if;
 
-							select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
-							and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final)
-							and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+						        for j in 1..v_quantidade_lib loop 
+							        v_maior := v_maior + 1;
+              
+                                  if v_serie is null then
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) 
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  else
+                                    select count(1) into v_aux from cnf_doc_fito_intervalo c where c.tipo_documento = :tipo_documento 
+                                    and c.tipo = :tipo_numero and (v_maior between c.numero_inicial and c.numero_final) and serie = v_serie
+                                    and to_char(v_maior) like '__'|| to_char(sysdate, 'yy') ||'%';
+                                  end if;
+        
+							        if (v_aux > 0) then
+								        insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								        values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							        else 
+								        v_aux := v_maior;
 
-							if (v_aux > 0) then
-								insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-								values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-							else 
-								v_aux := v_maior;
+							            select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
+							            where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
+							            and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
 
-								select min(t.numero_inicial) into v_maior from cnf_doc_fito_intervalo t 
-								where t.tipo_documento = :tipo_documento and t.tipo = :tipo_numero and t.numero_inicial > v_maior
-								and to_char(numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%';
-
-								if(v_maior is null or v_aux = v_maior) then 
-									--Tratamento de exceção
-									Raise_application_error(-20023, 'Número não configurado');
-								else 
-									insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid) 
-									values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid);
-								end if;
-							end if;
-						end loop;
-					end;", EsquemaBanco);
+							            if(v_maior is null or v_aux = v_maior) then 
+								            --Tratamento de exceção
+								            Raise_application_error(-20023, 'Número não configurado');
+							            else 
+								            insert into tab_numero_cfo_cfoc (id, numero, tipo_documento, tipo_numero, liberacao, situacao, utilizado, tid, serie) 
+								            values (seq_tab_numero_cfo_cfoc.nextval, v_maior, :tipo_documento, :tipo_numero, :liberacao, 1, 0, :tid, v_serie);
+							            end if;
+							        end if;
+						       end loop;
+					        end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("quantidade_lib", liberacao.QuantidadeDigitalCFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("liberacao", liberacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_documento", eCFOCFOCTipo.CFOC, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_numero", eCFOCFOCTipoNumero.Digital, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", GerenciadorTransacao.ObterIDAtual(), DbType.String);
+                    comando.AdicionarParametroEntrada("serie", serieAtual, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -282,7 +397,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 
 					Historico.Gerar(liberacao.Id, eHistoricoArtefato.liberacaocfocfoc, eHistoricoAcao.criar, bancoDeDados);
 
-					bancoDeDados.Commit();
+                    bancoDeDados.Commit();
 				}
 			}
 			finally
@@ -697,7 +812,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = banco.CriarComando(@"
-				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where t.liberacao = l.id and t.tipo_documento = 1 and t.tipo_numero = 2
+				select nvl((select max(t.numero) from tab_liberacao_cfo_cfoc l, tab_numero_cfo_cfoc t where length(numero) = 8 and t.liberacao = l.id and t.tipo_documento = 1 and t.tipo_numero = 2
 									and to_char(t.numero) like '__'|| to_char(sysdate, 'yy') ||'%'), 
 				(select min(t.numero_inicial) - 1 from cnf_doc_fito_intervalo t where t.tipo_documento = 1 and t.tipo = 2
 									and to_char(t.numero_inicial) like '__'|| to_char(sysdate, 'yy') ||'%')) from dual");

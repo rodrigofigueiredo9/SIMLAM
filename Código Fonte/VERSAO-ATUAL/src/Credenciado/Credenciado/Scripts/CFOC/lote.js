@@ -113,7 +113,7 @@ Lote = {
 
         }
 
-        if (origem.Id == Lote.settings.idsTela.TipoCFO || origem.Id == Lote.settings.idsTela.TipoCFOC) {
+        if (origem.Id == Lote.settings.idsTela.TipoCFO) {
 
             $('.txtQuantidade', Lote.container).removeClass('disabled');
             $('.txtQuantidade', Lote.container).removeAttr('disabled');
@@ -127,10 +127,19 @@ Lote = {
         var origemTipo = $('.ddlOrigem', Lote.container).val();
         var numero = $('.txtNumeroOrigem', Lote.container).val();
 
+        var textoNumeral = numero;
+        var serieNumeral = "";
+        if (textoNumeral.indexOf("/") >= 0) {
+
+            var arrTexto = textoNumeral.split("/");
+            textoNumeral = arrTexto[0];
+            serieNumeral = arrTexto[1];
+        }
+
         MasterPage.carregando(true);
         $.ajax({
             url: Lote.settings.urls.urlVefiricar,
-            data: JSON.stringify({ origemTipo: origemTipo, origemNumero: numero }),
+            data: JSON.stringify({ origemTipo: origemTipo, origemNumero: textoNumeral, serieNumeral: serieNumeral }),
             cache: false,
             async: false,
             type: 'POST',
@@ -231,13 +240,11 @@ Lote = {
                     var quantidade = JSON.stringify(response.QtdDocOrigem).replace('.', ',');
 
 
-                    if (origemTipo != Lote.settings.idsTela.TipoCFO || origemTipo != Lote.settings.idsTela.TipoCFOC) {
+                    if (origemTipo != Lote.settings.idsTela.TipoCFO) {
 
                         $('.txtQuantidade', Lote.container).val(quantidade);
                         $('.txtQuantidade', Lote.container).change();
                     }
-
-                   
 
                     if (origemTipo == Lote.settings.idsTela.TipoCFCFR || origemTipo == Lote.settings.idsTela.TipoTF)
                         $('.ddlUnidadeMedida', Lote.container).removeAttr('disabled').removeClass('disabled');
@@ -265,10 +272,21 @@ Lote = {
 
         var bExibeKg = txtUnidMedida.indexOf("KG") >= 0;
 
+        var textoNumeroOrigem = $('.txtNumeroOrigem', container).val();
+
+        var textoNumeral = textoNumeroOrigem;
+        var serieNumeral = "";
+        if (textoNumeroOrigem.indexOf("/") >= 0) {
+
+            var arrTexto = textoNumeroOrigem.split("/");
+            textoNumeral = arrTexto[0];
+            serieNumeral = arrTexto[1];
+        }
+
         var item = {
             Numero: $('.txtNumeroOrigem', container).val(),
             Origem: $('.hdnOrigemID', container).val() || 0,
-            OrigemNumero: $('.txtNumeroOrigem', container).val(),
+            OrigemNumero: textoNumeral,
             OrigemTipo: $('.ddlOrigem', container).val(),
             OrigemTipoTexto: $('.ddlOrigem option:selected', container).text(),
             Cultura: $('.ddlCultura', container).val(),
@@ -277,14 +295,15 @@ Lote = {
             CultivarTexto: $('.ddlCultivar option:selected', container).text(),
             UnidadeMedida: unidadeMedida.Id,
             Quantidade: $('.txtQuantidade', container).val(),
-            ExibeKg: bExibeKg
+            ExibeKg: bExibeKg,
+            Serie: serieNumeral
         };
 
         //Valida Item já adicionado na Grid		
         var _objeto = { Lotes: [] }
         $($('.gridLote tbody tr:not(.trTemplate) .hdnItemJson', container)).each(function () {
             _objeto.Lotes.push(JSON.parse($(this).val()));
-        }); 
+        }); 1
 
         if (_objeto.Lotes.length <= 0) {
             _objeto.Lotes = null;

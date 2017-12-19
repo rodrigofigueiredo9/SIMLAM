@@ -81,10 +81,22 @@ CFOCEmitir = {
 	},
 
 	verificarNumero: function () {
-		Mensagem.limpar();
+	    Mensagem.limpar();
+
+	    var tmpNumero = $('.txtNumero', CFOEmitir.container).val();
+
+	    var textoNumeral = tmpNumero;
+	    var serieNumero = "";
+	    if (tmpNumero.indexOf("/") >= 0) {
+
+	        var arNumero = tmpNumero.split("/");
+	        textoNumeral = arNumero[0];
+	        serieNumero = arNumero[1];
+	    }
+
 		$.ajax({
 			url: CFOCEmitir.settings.urls.verificarNumero,
-			data: JSON.stringify({ numero: $('.txtNumero', CFOCEmitir.container).val(), tipoNumero: +$('.rbTipoNumero:checked', CFOCEmitir.container).val() || 0 }),
+			data: JSON.stringify({ numero: textoNumeral, tipoNumero: +$('.rbTipoNumero:checked', CFOCEmitir.container).val() || 0, serieNumero: serieNumero }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -464,12 +476,21 @@ CFOCEmitir = {
 	},
 
 	obter: function () {
-		var empreendimento = $('.ddlEmpreendimentos', CFOCEmitir.container).ddlSelecionado();
+	    var empreendimento = $('.ddlEmpreendimentos', CFOCEmitir.container).ddlSelecionado();
+
+	    var textoNumeral = $('.txtNumero', CFOEmitir.container).val();
+	    var serieNumeral = "";
+	    if (textoNumeral.indexOf("/") >= 0) {
+
+	        var arrTexto = textoNumeral.split("/");
+	        textoNumeral = arrTexto[0];
+	        serieNumeral = arrTexto[1];
+	    }
 
 		var objeto = {
 			Id: +$('.hdnEmissaoId', CFOCEmitir.container).val(),
 			TipoNumero: +$('.rbTipoNumero:checked', CFOCEmitir.container).val(),
-			Numero: $('.txtNumero', CFOCEmitir.container).val(),
+			Numero: textoNumeral,
 			SituacaoId: $('.ddlSituacoes :selected', CFOCEmitir.container).val(),
 			DataEmissao: { DataTexto: $('.txtDataEmissao', CFOCEmitir.container).val() },
 			EmpreendimentoId: empreendimento.Id,
@@ -491,7 +512,8 @@ CFOCEmitir = {
 			MunicipioEmissaoId: $('.ddlMunicipioEmissao', CFOCEmitir.container).val(),
 			Produtos: [],
 			Pragas: [],
-			TratamentosFitossanitarios: []
+			TratamentosFitossanitarios: [],
+			Serie: serieNumeral
 		};
 
 		objeto.Produtos = CFOCEmitir.obterIdentificacoes();
