@@ -726,6 +726,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                     reader.Close();
                 }
 
+                if (numeroDigital.Count() == 9) //se não possui série, tira a barra
+                {
+                    numeroDigital = numeroDigital.Substring(0, 8);
+                }
+
                 return numeroDigital;
 				
 			}

@@ -144,8 +144,6 @@ ConsultarNumeroCFOCFOCLiberado = {
 
         $(container).find('.numerosPag').empty();
 
-        var qtdPaginas = Math.ceil(lista.length / 5);
-
         if (qtdPaginas <= 10) {
             for (var i = 0; i < qtdPaginas; i++) {
                 $(container).find('.numerosPag').append("<a class='" + (i + 1) + " paginar pag'>" + (i + 1) + "</a>");
@@ -170,11 +168,7 @@ ConsultarNumeroCFOCFOCLiberado = {
         $(container).find('.paginacaoCaixa').find('.hdnPaginaUltima').val((qtdPaginas));
         $(container).find('.paginacaoCaixa').find('.hdnPaginaAnterior').val((numeroPagina == 1 ? 1 : (numeroPagina - 1)));
 
-			$('.tipoDocumento', linha).append(item.TipoDocumentoTexto);
-			$('.Numero', linha).append(item.Numero + (item.Serie ? '/' + item.Serie : ''));
-			$('.Utilizado', linha).append(item.UtilizadoTexto);
-			$('.Situacao', linha).append(item.SituacaoTexto);
-			$('.hdnObjetoJson', linha).val(JSON.stringify(item));
+        $('tbody tr:not(.templateRow)', tabela).remove();
 
         var linha = null;
         var item = null;
@@ -185,7 +179,7 @@ ConsultarNumeroCFOCFOCLiberado = {
             item = lista[i];
 
             $('.tipoDocumento', linha).append(item.TipoDocumentoTexto);
-            $('.Numero', linha).append(item.Numero);
+            $('.Numero', linha).append(item.Numero + (item.Serie ? '/' + item.Serie : ''));
             $('.Utilizado', linha).append(item.UtilizadoTexto);
             $('.Situacao', linha).append(item.SituacaoTexto);
             $('.hdnObjetoJson', linha).val(JSON.stringify(item));
@@ -250,6 +244,7 @@ ConsultarNumeroCFOCFOCLiberado = {
             Motivo: objetoJson.Motivo,
             TipoDocumento: objetoJson.TipoDocumentoTexto,
             Numero: objetoJson.Numero,
+            Serie: objetoJson.Serie,
             IsVisualizar: visualizar
         };
 
