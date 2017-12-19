@@ -202,13 +202,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				#endregion
 
 				#region Historico/Delete Geo
-				if (possuiGeo)
-				{
-					Extensoes.Caracterizacoes.Data.Historico historicoCaract = new Extensoes.Caracterizacoes.Data.Historico();
-					historicoCaract.GerarGeo(projetoId.Value, (int)eHistoricoArtefato.fiscalizacao, eHistoricoAcao.excluir, bancoDeDados);
+                if (possuiGeo)
+                {
+                    try
+                    {
+                        Extensoes.Caracterizacoes.Data.Historico historicoCaract = new Extensoes.Caracterizacoes.Data.Historico();
+                        historicoCaract.GerarGeo(projetoId.Value, (int)eHistoricoArtefato.fiscalizacao, eHistoricoAcao.excluir, bancoDeDados);
+                    }
+                    catch
+                    {
+                    }
 
-					comando = bancoDeDados.CriarComandoPlSql(
-					@"begin 
+                    comando = bancoDeDados.CriarComandoPlSql(
+                    @"begin 
 						
 						{0}geo_operacoesprocessamentogeo.ApagarGeometriasTMP(:projeto, :fila_tipo);
 						{0}geo_operacoesprocessamentogeo.ApagarGeometriasDES(:projeto, :fila_tipo);
@@ -219,11 +225,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 					end;", EsquemaBanco, EsquemaBancoGeo);
 
-					comando.AdicionarParametroEntrada("projeto", projetoId.Value, DbType.Int32);
-					comando.AdicionarParametroEntrada("fila_tipo", (int)eFilaTipoGeo.Fiscalizacao, DbType.Int32);
+                    comando.AdicionarParametroEntrada("projeto", projetoId.Value, DbType.Int32);
+                    comando.AdicionarParametroEntrada("fila_tipo", (int)eFilaTipoGeo.Fiscalizacao, DbType.Int32);
 
-					bancoDeDados.ExecutarNonQuery(comando);
-				}
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
 				#endregion
 
 				#region Delete dos Dados Projeto
@@ -732,6 +738,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				if (projeto.Id <= 0)
 				{
+                    comando = bancoDeDados.CriarComando(@"select f.possui_projeto_geo from tab_fiscalizacao f where id = :fiscalizacao", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            projeto.PossuiProjetoGeo = reader.GetValue<bool?>("possui_projeto_geo");
+                        }
+                    }
+
 					return projeto;
                 }
                 else if (projeto.PossuiProjetoGeo != true)

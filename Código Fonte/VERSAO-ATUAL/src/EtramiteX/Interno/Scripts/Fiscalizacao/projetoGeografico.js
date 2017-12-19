@@ -141,21 +141,23 @@ ProjetoGeografico = {
 	validarProjeto: function (obj) {
 		var erroMsgs = new Array();
 
-		if (obj.NivelPrecisaoId < 1) {
-			erroMsgs.push(ProjetoGeografico.mensagens.NivelPrecisaoObrigatorio);
-		}
+		if (obj.PossuiProjetoGeo == true) {
+		    if (obj.NivelPrecisaoId < 1) {
+		        erroMsgs.push(ProjetoGeografico.mensagens.NivelPrecisaoObrigatorio);
+		    }
 
-		if ((Number(obj.MenorX) <= 0) || (Number(obj.MaiorY) <= 0) || (Number(obj.MaiorX) <= 0) || (Number(obj.MenorY) <= 0)) {
-			erroMsgs.push(ProjetoGeografico.mensagens.AreaAbrangenciaObrigatorio);
-		}
+		    if ((Number(obj.MenorX) <= 0) || (Number(obj.MaiorY) <= 0) || (Number(obj.MaiorX) <= 0) || (Number(obj.MenorY) <= 0)) {
+		        erroMsgs.push(ProjetoGeografico.mensagens.AreaAbrangenciaObrigatorio);
+		    }
 
-		if ($('.radioTiPoMecanismo:radio', ProjetoGeografico.container).is(':visible') && (obj.MecanismoElaboracaoId || 0) < 1) {
-			erroMsgs.push(ProjetoGeografico.mensagens.MecanismoObrigatorio);
-		}
+		    if ($('.radioTiPoMecanismo:radio', ProjetoGeografico.container).is(':visible') && (obj.MecanismoElaboracaoId || 0) < 1) {
+		        erroMsgs.push(ProjetoGeografico.mensagens.MecanismoObrigatorio);
+		    }
 
-		if (erroMsgs.length > 0) {
-			Mensagem.gerar(ProjetoGeografico.containerMsg, erroMsgs);
-			return false;
+		    if (erroMsgs.length > 0) {
+		        Mensagem.gerar(ProjetoGeografico.containerMsg, erroMsgs);
+		        return false;
+		    }
 		}
 
 		Mensagem.limpar(ProjetoGeografico.containerMsg);
@@ -177,13 +179,19 @@ ProjetoGeografico = {
 		obj.SituacaoTexto = $('.SituacaoProjetoTexto', ProjetoGeografico.container).text();
 		obj.Arquivo = EnviarProjeto.obterArquivo();
 
-		$('.rblProjGeo').each(function () {
-		    if ($(this).attr('checked') == true && $(this).val() == 1) {
-		        obj.PossuiProjetoGeo = true;
-		    } else if ($(this).attr('checked') == true && $(this).val() == 0) {
-		        obj.PossuiProjetoGeo = false;
-		    }
-		});
+		if ($('.rblProjGeo:checked').val() == 1) {
+		    obj.PossuiProjetoGeo = true;
+		} else {
+		    obj.PossuiProjetoGeo = false;
+		}
+
+		//$('.rblProjGeo').each(function () {
+		//    if ($(this).attr('checked') == true && $(this).val() == 1) {
+		//        obj.PossuiProjetoGeo = true;
+		//    } else if ($(this).attr('checked') == true && $(this).val() == 0) {
+		//        obj.PossuiProjetoGeo = false;
+		//    }
+		//});
 
 		obj.MenorX = $('.txtMenorX', ProjetoGeografico.container).val();
 		obj.MaiorY = $('.txtMaiorY', ProjetoGeografico.container).val();
