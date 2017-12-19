@@ -127,7 +127,7 @@
            %>
 				<tr>
 					<td>
-						<label class="lblOrigem" title="<%= item.OrigemTipoTexto +"-"+ item.OrigemNumero %>"><%= item.OrigemTipoTexto +"-"+item.OrigemNumero %></label>
+						<label class="lblOrigem" title="<%= item.OrigemTipoTexto +"-"+ item.OrigemNumero + (!string.IsNullOrEmpty(item.Serie) ? "/" + item.Serie : "") %>"><%= item.OrigemTipoTexto +"-"+item.OrigemNumero + (!string.IsNullOrEmpty(item.Serie) ? "/" + item.Serie : "")  %></label>
 					</td>
 					<td>
 						<label class="lblCultivar" title="<%= item.CulturaTexto + " " + item.CultivarTexto %>"><%= item.CulturaTexto + " " + item.CultivarTexto %></label>

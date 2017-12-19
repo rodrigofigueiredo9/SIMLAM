@@ -24,10 +24,10 @@
 						<span class="TipoDocumentoTexto" title="<%:item.TipoDocumentoTexto%>"><%:item.TipoDocumentoTexto%></span>
 					</td>
 					<td>
-						<span class="NumeroInicial" title="<%:item.NumeroInicial.ToString() %>"><%:item.NumeroInicial.ToString() %></span>
+						<span class="NumeroInicial" title="<%:item.NumeroInicial.ToString() + (string.IsNullOrEmpty(item.Serie) ? "" : "/" + item.Serie ) %>"><%:item.NumeroInicial.ToString() + (string.IsNullOrEmpty(item.Serie) ? "" : "/" + item.Serie ) %></span>
 					</td>
 					<td>
-						<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() %>"><%:item.NumeroFinal.ToString() %></span>
+						<span class="NumeroFinal" title="<%:item.NumeroFinal.ToString() + (string.IsNullOrEmpty(item.Serie) ? "" : "/" + item.Serie ) %>"><%:item.NumeroFinal.ToString() + (string.IsNullOrEmpty(item.Serie) ? "" : "/" + item.Serie ) %></span>
 					</td>
 				</tr>
 			<% } %>
