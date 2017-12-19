@@ -183,17 +183,17 @@ PTVEmitir = {
 
 		
 		if (window.location.href.indexOf("Visualizar") == -1) {
-		   
-		    $('#DataVistoria').change(function (e) {
-		        
-		            PTVEmitir.onChangeLocalVistoria();
-		            $(this).blur();
-		    });
+		    PTVEmitir.onChangeLocalVistoria();
+		    $('#DataVistoria').change();
 		}
+		
+	      
 
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
 		
         $('#DataVistoria').change();
+		
+
 		
 
 	},
