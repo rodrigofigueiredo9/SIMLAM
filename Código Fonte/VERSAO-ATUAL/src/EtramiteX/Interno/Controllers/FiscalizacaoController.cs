@@ -357,6 +357,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 vm.ProjetoGeoVM.Projeto.FiscalizacaoEasting = fiscalizacao.LocalInfracao.LonEastingToDecimal;
                 vm.ProjetoGeoVM.Projeto.FiscalizacaoNorthing = fiscalizacao.LocalInfracao.LatNorthingToDecimal;
+
+                vm.LocalInfracaoVM.LocalInfracao = _busLocalInfracao.Obter(id);
             }
 
             if (vm.ProjetoGeoVM.Projeto.Id > 0)
@@ -403,10 +405,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             vm.ProjetoGeoVM.CarregarVMs();
 
-            vm.ProjetoGeoVM.IsVisualizar = vm.ProjetoGeoVM.Projeto.Id > 0;
+            vm.ProjetoGeoVM.IsVisualizar = vm.ProjetoGeoVM.Projeto.Id > 0 || vm.ProjetoGeoVM.Projeto.PossuiProjetoGeo != null;
             vm.ProjetoGeoVM.BaseReferencia.IsVisualizar = vm.ProjetoGeoVM.IsVisualizar;
             vm.ProjetoGeoVM.EnviarProjeto.IsVisualizar = vm.ProjetoGeoVM.IsVisualizar;
             vm.ProjetoGeoVM.Desenhador.IsVisualizar = vm.ProjetoGeoVM.IsVisualizar;
+
+            vm.LocalInfracaoVM.LocalInfracao = _busLocalInfracao.Obter(id);
 
             if (Request.IsAjaxRequest())
             {
