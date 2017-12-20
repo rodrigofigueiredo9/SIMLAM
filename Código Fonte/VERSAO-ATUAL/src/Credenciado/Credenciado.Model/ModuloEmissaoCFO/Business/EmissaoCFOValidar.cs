@@ -59,7 +59,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				if (entidade.TipoNumero == (int)eDocumentoFitossanitarioTipoNumero.Digital)
 				{
 					//VerificarNumeroDigitalDisponivel foi validado na BUS
-					if (!_da.NumeroCancelado(entidade.Numero))
+                    string num_serie = entidade.Serie == null ? entidade.Numero : (entidade.Numero + "/" + entidade.Serie);
+					if (!_da.NumeroCancelado(num_serie))
 					{
 						Validacao.Add(Mensagem.EmissaoCFO.NumeroCancelado);
 						return false;
