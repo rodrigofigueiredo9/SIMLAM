@@ -63,6 +63,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
                 }
             }
+            else
+            {
+                if (localInfracao.PessoaId != localInfracao.ResponsavelId)
+                {
+                    Validacao.Add(Mensagem.LocalInfracaoMsg.AutuadoDiferenteEmpreendimento);
+                }
+            }
 
 			return Validacao.EhValido;
 		}
