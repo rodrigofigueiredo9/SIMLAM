@@ -224,6 +224,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 
 				EmissaoCFOC entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, false, false, bancoDeDados);
 
+                string numtemp = entidadeBanco.Numero;
+                if (numtemp.Count() > 8)
+                {
+                    entidadeBanco.Numero = numtemp.Substring(0, 8);
+                    entidadeBanco.Serie = numtemp[9].ToString();
+                }
+
                 if (entidade.Id != 0)
                 {
                     List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();

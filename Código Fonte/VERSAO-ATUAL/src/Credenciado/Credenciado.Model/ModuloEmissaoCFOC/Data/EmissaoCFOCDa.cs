@@ -391,9 +391,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_cfoc c set c.tid = :tid, c.situacao = :situacao where c.numero = :numero", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    update {0}tab_cfoc c
+                                    set c.tid = :tid,
+                                        c.situacao = :situacao
+                                    where c.numero = :numero
+                                          and (c.serie = :serie or (c.serie is null and :serie is null))", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("numero", entidade.Numero, DbType.Int64);
+                comando.AdicionarParametroEntrada("serie", entidade.Serie, DbType.String);
 				comando.AdicionarParametroEntrada("situacao", (int)eDocumentoFitossanitarioSituacao.Cancelado, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 

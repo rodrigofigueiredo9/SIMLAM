@@ -212,6 +212,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				bancoDeDados.IniciarTransacao();
 
 				EmissaoCFO entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, true, false, bancoDeDados);
+
+                string numtemp = entidadeBanco.Numero;
+                if (numtemp.Count() > 8)
+                {
+                    entidadeBanco.Numero = numtemp.Substring(0, 8);
+                    entidadeBanco.Serie = numtemp[9].ToString();
+                }
+
 				_da.Cancelar(entidadeBanco, bancoDeDados);
 
 				bancoDeDados.Commit();
