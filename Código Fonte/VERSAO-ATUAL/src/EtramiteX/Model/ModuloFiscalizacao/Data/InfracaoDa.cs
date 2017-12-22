@@ -527,7 +527,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                         delete
                                         from {0}tab_fisc_apreensao_produto
                                         where apreensao = :id_apreensao", EsquemaBanco);
-                            comando.AdicionarParametroEntrada("id_apreensao", id_apreensao, DbType.Int32);
+                            comando.AdicionarParametroEntrada("id_apreensao", apreensao, DbType.Int32);
                             bancoDeDados.ExecutarNonQuery(comando);
 
                             comando = bancoDeDados.CriarComando(@"
