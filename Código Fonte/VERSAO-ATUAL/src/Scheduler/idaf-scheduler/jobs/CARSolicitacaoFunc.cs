@@ -544,8 +544,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         {
             string requisicao_fila = string.Empty;
 
-            using (OracleCommand command = new OracleCommand("select s.empreendimento_id emp_id, s.empreendimento_tid emp_tid, s.solicitacao_id solic_id, s.tid solic_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
+            /*using (OracleCommand command = new OracleCommand("select s.empreendimento_id emp_id, s.empreendimento_tid emp_tid, s.solicitacao_id solic_id, s.tid solic_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
                     " and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
+            */
+            using (OracleCommand command = new OracleCommand(@"Select s.id emp_id, s.tid emp_tid, ss.id solic_id, ss.tid solic_tid 
+                                                                from tab_car_solicitacao ss inner join tab_empreendimento s on  ss.EMPREENDIMENTO = s.id
+                                                                where ss.id = :idSolicitacao order by ss.id desc",conn))
             {
                 
                 command.Parameters.Add(new OracleParameter("idSolicitacao", solicitacaoId));
