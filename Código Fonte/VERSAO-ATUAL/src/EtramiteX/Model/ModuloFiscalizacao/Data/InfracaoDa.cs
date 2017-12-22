@@ -511,8 +511,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     where fiscalizacao = :id_fiscalizacao", EsquemaBanco);
                         comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
 
-                        int? id_apreensao = bancoDeDados.ExecutarScalar<int?>(comando);
-                        if (id_apreensao > 0)
+                        int apreensao = 0;
+                        using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                        {
+                            if (reader.Read())
+                            {
+                                apreensao = reader.GetValue<int>("id");
+                            }
+
+                            reader.Close();
+                        }
+                        if (apreensao > 0)
                         {
                             comando = bancoDeDados.CriarComando(@"
                                         delete
@@ -630,8 +639,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     where fiscalizacao = :id_fiscalizacao", EsquemaBanco);
                     comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
 
-                    int? apreensao = bancoDeDados.ExecutarScalar<int?>(comando);
-                    if (apreensao.GetValueOrDefault() > 0)
+                    int apreensao = 0;
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            apreensao = reader.GetValue<int>("id");
+                        }
+
+                        reader.Close();
+                    }
+                    if (apreensao > 0)
                     {
                         comando = bancoDeDados.CriarComando(@"
                                         delete
