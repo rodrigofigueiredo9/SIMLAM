@@ -218,46 +218,5 @@
 		</div>
 	</div>
 <% } %>
-				
-	<div class="block dataGrid divPenalidades">
-		<div class="coluna82 ">
-			<table class="dataGridTable" id="Table1" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
-				<thead>
-					<tr>
-						<th width="91%">Campo</th>
-						<% if (!Model.IsVisualizar) { %>
-						<th width="9%">Ação</th>
-						<% } %>			
-					</tr>
-				</thead>
-				<tbody>
-					<% foreach (var item in Model.Configuracao.Perguntas) { %>
-					<tr>
-						<td>
-							<span class="campo" title="<%:item.CampoTexto %>"><%:item.CampoTexto %></span>
-						</td>
-						<% if (!Model.IsVisualizar) { %>
-						<td class="tdAcoes">							
-							<input type="hidden" class="hdnCampoItemJSON" value='<%= Model.JSON(item) %>' />
-							<input title="Excluir" type="button" class="icone excluir btnExcluirCampo" value="" />
-						</td>
-						<% } %>
-					</tr>		
-					<% } %>			
-				</tbody>
-			</table>
-			<% if (!Model.IsVisualizar) { %>
-			<table style="display: none; visibility: hidden;" class="hide">
-				<tr class="trCampoTemplateRow hide">
-					<td><span class="campo"></span></td>
-					<td class="tdAcoes">
-						<input type="hidden" class="hdnCampoItemJSON" value="" />
-						<input title="Excluir" type="button" class="icone excluir btnExcluirCampo" value="" />
-					</td>
-				</tr>
-			</table>
-			<% } %>
-		</div>
-	</div>
 
 </fieldset>
