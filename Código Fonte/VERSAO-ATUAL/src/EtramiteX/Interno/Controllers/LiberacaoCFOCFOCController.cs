@@ -113,7 +113,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
         [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
         public ActionResult VerificarConsultaDUA(int filaID, string NumeroDua, string cpf)
-        {
+        { 
             cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
 
             if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 @Valido = Validacao.EhValido,
                 @Msg = Validacao.Erros,
-                @FilaID = 0 //filaID
+                @FilaID = filaID
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -157,8 +157,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				credenciado = _busCredenciadoInterno.ObterPorCPF(cpf);
 			}
-
-
 
             if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
                 return Json(new
