@@ -114,17 +114,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
         public ActionResult VerificarConsultaDUA(int filaID, string NumeroDua, string cpf)
         {
-            //cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
+            cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
 
-            //if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
-            //    return Json(new
-            //    {
-            //        @Valido = Validacao.EhValido,
-            //        @Msg = Validacao.Erros,
-            //        @Consultado = false
-            //    }, JsonRequestBehavior.AllowGet);
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
 
-            //_bus.VerificarDUA(filaID, NumeroDua, cpf);
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
 
             return Json(new
             {
@@ -160,15 +160,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 
 
-            //if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
-            //    return Json(new
-            //    {
-            //        @Valido = Validacao.EhValido,
-            //        @Msg = Validacao.Erros,
-            //        @Consultado = false
-            //    }, JsonRequestBehavior.AllowGet);
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
 
-            //_bus.VerificarDUA(filaID, NumeroDua, cpf);
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
 
 
 			return Json(new { @Msg = Validacao.Erros, @EhValido = Validacao.EhValido, @Credenciado = credenciado });

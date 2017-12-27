@@ -139,60 +139,60 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				return false;
 			}
 
-            
-            //try
-            //{
-            //    DUA dua = new DUA();
 
-            //    var duaRequisicao = _da.BuscarRespostaConsultaDUA(liberacao.FilaID);
+            try
+            {
+                DUA dua = new DUA();
 
-            //    if (duaRequisicao == null)
-            //        return false;
+                var duaRequisicao = _da.BuscarRespostaConsultaDUA(liberacao.FilaID);
 
-            //    if (!duaRequisicao.Sucesso)
-            //    {
-            //        Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-            //        return false;
-            //    }
+                if (duaRequisicao == null)
+                    return false;
 
-            //    var xser = new XmlSerializer(typeof(RespostaConsultaDua));
+                if (!duaRequisicao.Sucesso)
+                {
+                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
+                    return false;
+                }
 
-            //    RespostaConsultaDua xml = null;
+                var xser = new XmlSerializer(typeof(RespostaConsultaDua));
 
-            //    try
-            //    {
-            //        xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
-            //    }
-            //    catch
-            //    {
-            //        Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-            //        return false;
-            //    }
+                RespostaConsultaDua xml = null;
 
-            //    if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
-            //    {
-            //        Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
-            //        return false;
-            //    }
+                try
+                {
+                    xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
+                }
+                catch
+                {
+                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
+                    return false;
+                }
 
-            //    dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
-            //    dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
+                if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
+                {
+                    Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
+                    return false;
+                }
 
-            //    dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
-            //    dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
-            //    dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
+                dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
+                dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
 
-            //    dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
-            //    dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
-            //    dua.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot.Replace(".",","));
-            //    dua.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
+                dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
+                dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
+                dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
 
-            //    ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
-            //}
-            //catch (Exception exc)
-            //{
-            //    Validacao.AddErro(exc);
-            //}
+                dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
+                dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
+                dua.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot.Replace(".", ","));
+                dua.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
+
+                ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
 
 			if (liberacao.LiberarBlocoCFO)
 			{
