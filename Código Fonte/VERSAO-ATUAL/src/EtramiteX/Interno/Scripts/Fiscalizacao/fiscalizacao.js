@@ -605,11 +605,15 @@ FiscalizacaoLocalInfracao = {
 				Local: $('.txtLocal', FiscalizacaoLocalInfracao.container).val(),
 				PessoaId: $('.hdnAutuadoPessoaId', FiscalizacaoLocalInfracao.container).val(),
 				EmpreendimentoId: $('.hdnAutuadoEmpreendimentoId', FiscalizacaoLocalInfracao.container).val(),
-				ResponsavelId: $('.ddlResponsaveis', FiscalizacaoLocalInfracao.container).val(),
 				ResponsavelPropriedadeId: $('.ddlResponsaveisPropriedade', FiscalizacaoLocalInfracao.container).val()
 			},
 			SituacaoId: $('.hdnFiscalizacaoSituacaoId', Fiscalizacao.container).val()
 		};
+		$('.hdnResponsavelId', FiscalizacaoLocalInfracao.container).each(function () {
+		    if (localInfracao.LocalInfracao.PessoaId == $(this).val() && $(this).val() != 0 && $(this).val() != null) {
+		        localInfracao.LocalInfracao.ResponsavelId = $(this).val();
+		    }
+		});
 
 		$('.rblAreaFiscalizacao', FiscalizacaoLocalInfracao.container).each(function () {
 		    if ($(this).attr('checked')) {

@@ -9,3 +9,9 @@ add CONSTRAINT "FK_TAB_FISC_PDF_IUF" FOREIGN KEY ("PDF_IUF")
 
 COMMENT ON COLUMN "IDAF"."TAB_FISCALIZACAO"."PDF_IUF" IS 'Chave estrangeira para tab_arquivo. Campo(ID).'
 ;
+
+alter table tab_fiscalizacao
+add POSSUI_PROJETO_GEO NUMBER(1, 0) NULL
+;
+
+COMMENT ON COLUMN "IDAF"."TAB_FISCALIZACAO"."POSSUI_PROJETO_GEO" IS 'Fiscalização possui projeto geográfico? 1 - sim; 0 - não';

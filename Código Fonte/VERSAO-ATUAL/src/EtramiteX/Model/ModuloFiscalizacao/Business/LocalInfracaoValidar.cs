@@ -31,11 +31,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 Validacao.Add(Mensagem.LocalInfracaoMsg.PessoaEmpreendimentoObrigatorio);
             }
 
-			if (localInfracao.EmpreendimentoId.GetValueOrDefault() > 0 && localInfracao.ResponsavelId.GetValueOrDefault() == 0)
-			{
-				Validacao.Add(Mensagem.LocalInfracaoMsg.ResponsavelObrigatorio);
-			}
-
 			if (localInfracao.EmpreendimentoId.GetValueOrDefault() > 0 && localInfracao.ResponsavelPropriedadeId.GetValueOrDefault() == 0)
 			{
 				Validacao.Add(Mensagem.LocalInfracaoMsg.ResponsavelPropriedadeObrigatorio);

@@ -211,13 +211,6 @@
 
 		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
 			    <div class="coluna70">
-				    <label for="LocalInfracao_ResponsavelId">Autuado *</label>
-				    <%= Html.DropDownList("LocalInfracao.ResponsavelId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveis" }))%>
-			    </div>
-		    </div>
-
-		    <div class="block divDdlResponsavel <%= Model.LocalInfracao.EmpreendimentoId > 0 ? "" : "hide" %>">
-			    <div class="coluna70">
 				    <label for="LocalInfracao_ResponsavelPropriedadeId">Responsável do Empreendimento *</label>
 				    <%= Html.DropDownList("LocalInfracao.ResponsavelPropriedadeId", Model.Responsavel, ViewModelHelper.SetaDisabled(Model.Responsavel.Count == 1 || Model.IsVisualizar, new { @class = "text ddlResponsaveisPropriedade " }))%>
 			    </div>
