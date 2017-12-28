@@ -13,12 +13,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 		#region Propriedade e Atributos
 
 		private String EsquemaBanco { get; set; }
+        private String EsquemaBancoGeo { get; set; }
 
 		#endregion
 
 		public LocalInfracaoDa(string strBancoDeDados = null)
 		{
 			EsquemaBanco = string.Empty;
+            EsquemaBancoGeo = "idafgeo";
 			if (!string.IsNullOrEmpty(strBancoDeDados))
 			{
 				EsquemaBanco = strBancoDeDados;
@@ -124,6 +126,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 objeto = bancoDeDados.ObterEntity<LocalInfracaoRelatorioNovo>(comando);
                 objeto.Autuado = ObterAutuado(objeto.AutuadoEmpResponsavelId, bancoDeDados);
                 objeto.EmpResponsavel = ObterAutuado(objeto.PropResponsavelId, bancoDeDados);
+
+                comando = bancoDeDados.CriarComando(@"
+                            select area_fiscalizacao area
+                            from {0}tab_fisc_local_infracao
+                            where fiscalizacao = :fiscalizacaoId", EsquemaBanco);
+                comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+                int area = -1;
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        area = reader.GetValue<int>("area");
+                    }
+
+                    reader.Close();
+                }
+                //se a área for DDSIA, converte as coordenadas para Grau, Minuto e Segundo
+                if (area == 0)
+                {
+                    comando = bancoDeDados.CriarComandoPlSql(@"
+                                begin
+                                    {0}coordenada.utm2gms(:datum, :easting, :northing, :fuso, 1, :longitude, :latitude);
+                                end;", EsquemaBancoGeo);
+                    comando.AdicionarParametroEntrada("datum", objeto.Datum, DbType.String);
+                    comando.AdicionarParametroEntrada("easting", objeto.CoordenadaEasting, DbType.Int64);
+                    comando.AdicionarParametroEntrada("northing", objeto.CoordenadaNorthing, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fuso", objeto.Fuso, DbType.Int32);
+                    comando.AdicionarParametroSaida("longitude", DbType.String, 100);
+                    comando.AdicionarParametroSaida("latitude", DbType.String, 100);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                    
+                    objeto.CoordenadaEasting = comando.ObterValorParametro<string>("longitude");
+                    objeto.CoordenadaNorthing = comando.ObterValorParametro<string>("latitude");
+                    objeto.SistemaCoordenada = "GMS";
+                }
 
                 if (objeto.EmpreendimentoId > 0)
                 {
