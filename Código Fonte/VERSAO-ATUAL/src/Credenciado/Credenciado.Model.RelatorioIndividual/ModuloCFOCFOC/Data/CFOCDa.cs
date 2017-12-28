@@ -334,35 +334,53 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 				comando = bancoDeDados.CriarComando(@"
 				select distinct d.lote_id,
-					d.codigo_lote,
-					d.data_criacao,
-					d.quantidade as quantidade,
-					d.unidade_medida_texto,
-                    d.exibe_kilos,
-					d.cultura,
-					d.cultivar_nome
-				from (select cp.lote_id,
-							l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote,
-							l.data_criacao,
-							case when cp.exibe_kilos is null then li.quantidade else cp.quantidade end as quantidade,
-							li.unidade_medida_texto,
-                            cp.exibe_kilos,
-							c.texto cultura,
-							cc.cultivar_nome
-						from hst_cfoc_produto     cp,
-							hst_lote             l,
-							hst_lote_item        li,
-							hst_cultura          c,
-							hst_cultura_cultivar cc
-						where l.lote_id = cp.lote_id
-						and l.tid = cp.lote_tid
-						and li.id_hst = l.id
-						and li.cultura_id = c.cultura_id
-						and li.cultura_tid = c.tid
-						and li.cultivar_id = cc.cultivar_id
-						and li.cultivar_tid = cc.tid
-						and cp.id_hst = :hst_id) d
-				", EsquemaBanco);
+					            d.codigo_lote,
+					            d.data_criacao,
+					            d.quantidade,
+					            d.unidade_medida_texto,
+                                d.exibe_kilos,
+					            d.cultura,
+					            d.cultivar_nome
+				from ( select cp.lote_id,
+			                  l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote,
+                              l.data_criacao,
+                              nvl(cp.quantidade, ( select tcp.quantidade
+                                                   from tab_cfoc_produto tcp,
+                                                        hst_cfoc hc
+                                                   where hc.cfoc_id = tcp.cfoc
+                                                         and hc.id = :hst_id ) ) quantidade,
+                              ( select li.unidade_medida_texto
+                                from hst_lote_item li
+                                where li.id_hst = l.id
+                              and rownum = 1 ) unidade_medida_texto,
+                              cp.exibe_kilos,
+                       			 c.texto cultura,
+                       			 cc.cultivar_nome
+                       from hst_cfoc_produto cp,
+                            hst_lote l,
+                            hst_cultura c,
+                            hst_cultura_cultivar cc
+                       where l.lote_id = cp.lote_id
+                             and l.tid = cp.lote_tid
+                             and c.cultura_id = ( select li.cultura_id
+                                                  from hst_lote_item li
+                                                  where li.id_hst = l.id
+                                                        and li.cultura_tid = c.tid
+                                                        and rownum = 1 )
+                             and cc.cultivar_id = ( select li.cultivar_id
+                                                    from hst_lote_item li
+                                                    where li.id_hst = l.id
+                                                          and li.cultivar_tid = cc.tid
+                                                          and rownum = 1 )
+                             and cp.id_hst = :hst_id ) d
+                group by d.lote_id,
+                         d.codigo_lote,
+                         d.data_criacao,
+                         d.quantidade,
+                         d.unidade_medida_texto,
+                         d.exibe_kilos,
+                         d.cultura,
+                         d.cultivar_nome", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("hst_id", hst_id, DbType.Int32);
 
