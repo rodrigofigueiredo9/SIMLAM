@@ -79,12 +79,52 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 
 				#region Produtos
 
-				comando = bancoDeDados.CriarComando(@"select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura, d.cultivar, sum(d.quantidade) as quantidade , d.unidade_medida, d.exibe_kilos 
-					from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.texto cultura, 
-					cc.cultivar, case when cp.exibe_kilos is null then li.quantidade else cp.quantidade end as quantidade, cp.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida 
-					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc where l.id = cp.lote and li.lote = 
-					l.id and c.id = li.cultura and cc.id = li.cultivar and cp.cfoc = :id) d group by d.id, d.tid, d.lote, d.codigo_lote, 
-					d.data_criacao, d.cultura, d.cultivar, d.unidade_medida, d.exibe_kilos", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"
+                                select d.id,
+                                       d.tid,
+                                       d.lote,
+                                       d.codigo_lote,
+                                       d.data_criacao,
+                                       d.cultura,
+                                       d.cultivar,
+                                       sum(d.quantidade) as quantidade,
+                                       d.unidade_medida,
+                                       d.exibe_kilos 
+                                from ( select cp.id,
+                                              cp.tid,
+                                              cp.lote,
+                                              l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote,
+                                              l.data_criacao,
+                                              c.texto cultura,
+                                              cc.cultivar,
+                                              cp.quantidade,
+                                              cp.exibe_kilos,
+                                              ( select lu.texto
+                                                from lov_crt_uni_prod_uni_medida lu
+                                                where lu.id = ( select li.unidade_medida
+                                                                 from tab_lote_item li
+                                                                 where li.lote = l.id and rownum = 1 ) ) unidade_medida
+                                       from tab_cfoc_produto cp,
+                                            tab_lote l,
+                                            tab_cultura c,
+                                            tab_cultura_cultivar cc
+                                       where l.id = cp.lote
+                                             and c.id = ( select li.cultura
+                                                          from tab_lote_item li
+                                                          where li.lote = l.id  and rownum = 1 )
+                                             and cc.id = ( select li.cultivar
+                                                          from tab_lote_item li
+                                                          where li.lote = l.id and rownum = 1 )
+                                             and cp.cfoc = :id ) d
+                                group by d.id,
+                                         d.tid,
+                                         d.lote,
+                                         d.codigo_lote,
+                                         d.cultura,
+                                         d.cultivar,
+                                         d.data_criacao,
+                                         d.unidade_medida,
+                                         d.exibe_kilos", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 
