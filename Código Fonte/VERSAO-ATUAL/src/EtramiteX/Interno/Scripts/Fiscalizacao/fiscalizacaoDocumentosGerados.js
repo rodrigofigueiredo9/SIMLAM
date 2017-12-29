@@ -8,6 +8,7 @@ FiscalizacaoDocumentosGerados = {
 			download: '',
 			pdfAuto: '',
 			pdfLaudo: '',
+			pdfIUF: '',
 			pdfAcompanhamento: ''
 		},
 		situacao: 0
@@ -23,6 +24,7 @@ FiscalizacaoDocumentosGerados = {
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexo', 'click', FiscalizacaoDocumentosGerados.obterAnexo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfAuto', 'click', FiscalizacaoDocumentosGerados.obterPdfAuto);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfLaudo', 'click', FiscalizacaoDocumentosGerados.obterPdfLaudo);
+		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUF', 'click', FiscalizacaoDocumentosGerados.onGerarPdfIUF);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCroqui', 'click', FiscalizacaoDocumentosGerados.obterAnexo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAcompanhamento', 'click', FiscalizacaoDocumentosGerados.obterAcompanhamento);
 
@@ -42,6 +44,10 @@ FiscalizacaoDocumentosGerados = {
 
 	obterPdfLaudo: function () {
 		MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfLaudo + "/" + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val());
+	},
+
+	onGerarPdfIUF: function () {
+	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUF + "/" + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val());
 	},
 
 	obterAcompanhamento: function () {

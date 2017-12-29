@@ -22,10 +22,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool Salvar(ConsideracaoFinal consideracao)
 		{
-			if (string.IsNullOrWhiteSpace(consideracao.Justificar))
-			{
-				Validacao.Add(Mensagem.ConsideracaoFinalMsg.JustificarObrigatorio);
-			}
+            if (string.IsNullOrWhiteSpace(consideracao.Descrever))
+            {
+                Validacao.Add(Mensagem.ConsideracaoFinalMsg.DescreverObrigatorio);
+            }
 
 			if (!consideracao.HaReparacao.HasValue)
 			{
@@ -33,7 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 			else
 			{
-				if (consideracao.HaReparacao.Value)
+				if (consideracao.HaReparacao.Value == 1)
 				{
 					if (string.IsNullOrWhiteSpace(consideracao.Reparacao))
 					{
@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						}
 					}
 				}
-				else if (!consideracao.HaReparacao.Value && string.IsNullOrWhiteSpace(consideracao.Reparacao))
+				else if (consideracao.HaReparacao.Value != -1 && string.IsNullOrWhiteSpace(consideracao.Reparacao))
 				{
 					Validacao.Add(Mensagem.ConsideracaoFinalMsg.OpinarReparacaoJustificarObrigatorio);
 				}
@@ -70,22 +70,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						{
 							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaObrigatorio, item.Colocacao.ToString());
 						}
-
-						if (item.TestemunhaSetorId.GetValueOrDefault() == 0)
-						{
-							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.SetorObrigatorio, item.Colocacao.ToString());
-						}
 					}
 					else
 					{
 						if (string.IsNullOrWhiteSpace(item.TestemunhaNome))
 						{
 							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaNomeObrigatorio, item.Colocacao.ToString());
-						}
-
-						if (string.IsNullOrWhiteSpace(item.TestemunhaEndereco))
-						{
-							AddFormarMsg(Mensagem.ConsideracaoFinalMsg.TestemunhaEnderecoObrigatorio, item.Colocacao.ToString());
 						}
 					}
 				}

@@ -34,10 +34,8 @@
 
 
 <script>
-
+    
 	Fiscalizacao.urls.localInfracaoVisualizar = '<%= Url.Action("LocalInfracaoVisualizar", "Fiscalizacao") %>';
-	Fiscalizacao.urls.complementacaoDados = '<%= Url.Action("ComplementacaoDados", "Fiscalizacao") %>';
-	Fiscalizacao.urls.enquadramento = '<%= Url.Action("Enquadramento", "Fiscalizacao") %>';
 	Fiscalizacao.urls.objetoInfracao = '<%= Url.Action("ObjetoInfracao", "Fiscalizacao") %>';
 	Fiscalizacao.urls.autuado = '<%= Url.Action("Autuado", "Fiscalizacao") %>';
 	Fiscalizacao.urls.projetoGeografico = '<%= Url.Action("ProjetoGeograficoVisualizar", "Fiscalizacao") %>';
@@ -47,23 +45,13 @@
 	Fiscalizacao.urls.infracao = '<%= Url.Action("InfracaoVisualizar", "Fiscalizacao") %>';
 	Fiscalizacao.urls.materialApreendido = '<%= Url.Action("MaterialApreendidoVisualizar", "Fiscalizacao") %>';
 	Fiscalizacao.urls.finalizar = '<%= Url.Action("Finalizar", "Fiscalizacao") %>';
-	Fiscalizacao.urls.documentosGerados = '<%= Url.Action("DownloadDocumentosGerados", "Fiscalizacao") %>';
-
+    Fiscalizacao.urls.documentosGerados = '<%= Url.Action("DownloadDocumentosGerados", "Fiscalizacao") %>';
+    Fiscalizacao.urls.multa = '<%= Url.Action("MultaVisualizar", "Fiscalizacao") %>';
+    Fiscalizacao.urls.outrasPenalidadesVisualizar = '<%= Url.Action("OutrasPenalidadesVisualizar", "Fiscalizacao") %>';
+    
 	FiscalizacaoLocalInfracao.urlCoordenadaGeo = '<%= Url.Action("AreaAbrangenciaPartial", "Mapa", new {area="GeoProcessamento"}) %>';
 	FiscalizacaoLocalInfracao.urlsObterEstadosMunicipiosPorCoordenada = '<%= Url.Action("obterEstadosMunicipiosPorCoordenada", "Mapa", new {area="GeoProcessamento"}) %>';
-
-	//Complementacao de dados do autuado
-	FiscalizacaoComplementacaoDados.settings.idsTela = <%=Model.ComplementacaoDadosVM.IdsTela%>;
-	FiscalizacaoComplementacaoDados.settings.urls.salvar = '<%= Url.Action("CriarComplementacaoDados", "Fiscalizacao") %>';
-	FiscalizacaoComplementacaoDados.settings.urls.visualizar = '<%= Url.Action("ComplementacaoDadosVisualizar", "Fiscalizacao") %>';
-	FiscalizacaoComplementacaoDados.settings.mensagens = <%=Model.ComplementacaoDadosVM.Mensagens%>;
-	FiscalizacaoComplementacaoDados.settings.urls.urlObterVinculoPropriedade = '<%= Url.Action("ObterVinculoPropriedade", "Fiscalizacao") %>';
-
-	//Enquadramento
-	FiscalizacaoEnquadramento.settings.urls.salvar = '<%= Url.Action("CriarEnquadramento", "Fiscalizacao") %>';
-	FiscalizacaoEnquadramento.settings.urls.visualizar = '<%= Url.Action("EnquadramentoVisualizar", "Fiscalizacao") %>';
-	FiscalizacaoEnquadramento.settings.mensagens = <%=Model.EnquadramentoVM.Mensagens%>;
-
+    
 	//Objeto Infração
 	FiscalizacaoObjetoInfracao.settings.urls.salvar = '<%= Url.Action("CriarObjetoInfracao", "Fiscalizacao") %>';
 	FiscalizacaoObjetoInfracao.settings.urls.visualizar = '<%= Url.Action("ObjetoInfracaoVisualizar", "Fiscalizacao") %>';

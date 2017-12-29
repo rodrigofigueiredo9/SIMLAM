@@ -33,6 +33,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ResponsavelExistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O responsável já está associado." }; } }
 		public Mensagem CodigoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Filtros_Codigo", Texto = "Código do empreendimento é obrigatório." }; } }
 		public Mensagem CodigoNaoEncontrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Campo = "Filtros_Codigo", Texto = "O código informado não foi localizado, continue o cadastro." }; } }
+        public Mensagem CpfCnpjObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "txtCpfCnpj", Texto = "O CPF/CNPJ é obrigatório." }; } }
 
 		public Mensagem EmpreedimentoAssociado(string NomeArtefato, string valorFinal)
 		{

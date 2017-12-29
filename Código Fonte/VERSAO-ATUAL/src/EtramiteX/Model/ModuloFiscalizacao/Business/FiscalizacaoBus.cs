@@ -21,6 +21,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Pdf;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -40,8 +41,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		EnquadramentoDa _daEnquadramento = new EnquadramentoDa();
 		ObjetoInfracaoDa _daObjetoInfracao = new ObjetoInfracaoDa();
 		MaterialApreendidoDa _daMaterialApreendido = new MaterialApreendidoDa();
+        MultaDa _daMulta = new MultaDa();
+        OutrasPenalidadesDa _daOutrasPenalidades = new OutrasPenalidadesDa();
 		ConsideracaoFinalDa _daConsideracaoFinal = new ConsideracaoFinalDa();
 		AcompanhamentoDa _daAcompanhamento = new AcompanhamentoDa();
+        EmpreendimentoDa _daEmpreendimento = new EmpreendimentoDa();
 
 		public static EtramitePrincipal User
 		{
@@ -89,6 +93,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						}
 
 						entidade.LocalInfracao.FiscalizacaoId = entidade.Id;
+
+                        //se não foi usado o filtro de local, as informações de local são salvas a partir do empreendimento
+                        if (entidade.LocalInfracao.EmpreendimentoId != null)
+                        {
+                            Empreendimento empreendimento = _daEmpreendimento.Obter(entidade.LocalInfracao.EmpreendimentoId.Value);
+
+                            entidade.LocalInfracao.LatNorthing = entidade.LocalInfracao.LatNorthing ?? empreendimento.Coordenada.NorthingUtm.ToString();
+                            entidade.LocalInfracao.LonEasting = entidade.LocalInfracao.LonEasting ?? empreendimento.Coordenada.EastingUtm.ToString();
+                            entidade.LocalInfracao.MunicipioId = (entidade.LocalInfracao.MunicipioId != null && entidade.LocalInfracao.MunicipioId > 0) ? entidade.LocalInfracao.MunicipioId : empreendimento.Enderecos[0].MunicipioId;
+                            entidade.LocalInfracao.Local = entidade.LocalInfracao.Local ?? empreendimento.Denominador;
+                        }
+
 						_daLocalInfracao.Salvar(entidade.LocalInfracao, bancoDeDados);
 
 						#endregion
@@ -167,9 +183,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
-						bancoDeDados.IniciarTransacao();
+                        bancoDeDados.IniciarTransacao();
 
-						fiscalizacao = Obter(fiscalizacaoId, banco: bancoDeDados);
+                        fiscalizacao = ObterParaConclusao(fiscalizacaoId, false, bancoDeDados);
 
 						//Fiscalizacao
 						gerarAutosTermo = fiscalizacao.Infracao.IsGeradaSistema.GetValueOrDefault() ||
@@ -223,79 +239,123 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 						_da.ConcluirCadastro(fiscalizacao, gerarAutosTermo, bancoDeDados);
 
-						_daPrjGeo.ConcluirCadastro(fiscalizacao.Id, bancoDeDados);
+                        List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacaoId);
+                        bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
 
-						ArquivoDa arquivoDa = new ArquivoDa();
-						ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
-						PdfFiscalizacao pdf = new PdfFiscalizacao();
+                        if (contemProjGeo)
+                        {
+                            _daPrjGeo.ConcluirCadastro(fiscalizacao.Id, bancoDeDados);
+                        }
 
-						if (gerarAutosTermo)
-						{
-							//AutoTermo
-							fiscalizacao.PdfAutoTermo = new Arquivo();
-							fiscalizacao.PdfAutoTermo.Nome = "AutoTermoFiscalizacao";
-							fiscalizacao.PdfAutoTermo.Extensao = ".pdf";
-							fiscalizacao.PdfAutoTermo.ContentType = "application/pdf";
-							fiscalizacao.PdfAutoTermo.Buffer = pdf.GerarAutoTermoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
-							arquivoBus.Salvar(fiscalizacao.PdfAutoTermo);
+                        ArquivoDa arquivoDa = new ArquivoDa();
+                        ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                        PdfFiscalizacao pdf = new PdfFiscalizacao();
 
-							arquivoDa.Salvar(fiscalizacao.PdfAutoTermo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-								User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-						}
-						else
-						{
-							fiscalizacao.PdfAutoTermo.Id = null;
-						}
+                        if (gerarAutosTermo)
+                        {
+                            //AutoTermo
+                            fiscalizacao.PdfAutoTermo = new Arquivo();
+                            fiscalizacao.PdfAutoTermo.Nome = "AutoTermoFiscalizacao";
+                            fiscalizacao.PdfAutoTermo.Extensao = ".pdf";
+                            fiscalizacao.PdfAutoTermo.ContentType = "application/pdf";
+                            fiscalizacao.PdfAutoTermo.Buffer = pdf.GerarAutoTermoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                            arquivoBus.Salvar(fiscalizacao.PdfAutoTermo);
 
-						//Laudo
-						fiscalizacao.PdfLaudo = new Arquivo();
-						fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
-						fiscalizacao.PdfLaudo.Extensao = ".pdf";
-						fiscalizacao.PdfLaudo.ContentType = "application/pdf";
-						fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
-						arquivoBus.Salvar(fiscalizacao.PdfLaudo);
+                            arquivoDa.Salvar(fiscalizacao.PdfAutoTermo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        }
+                        else
+                        {
+                            fiscalizacao.PdfAutoTermo.Id = null;
+                        }
 
-						arquivoDa.Salvar(fiscalizacao.PdfLaudo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-							User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        #region IUF
 
-						Arquivo arqCroqui = fiscalizacao.ProjetoGeo.Arquivos.SingleOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+                        try
+                        {
+                            fiscalizacao.PdfIUF = new Arquivo();
+                            fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
+                            fiscalizacao.PdfIUF.Extensao = ".pdf";
+                            fiscalizacao.PdfIUF.ContentType = "application/pdf";
+                            fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                            arquivoBus.Salvar(fiscalizacao.PdfIUF);
 
-						if (arqCroqui != null && arqCroqui.Id > 0)
-						{
-							arqCroqui = arquivoBus.Obter(arqCroqui.Id.GetValueOrDefault());
+                            arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        }
+                        finally
+                        {
+                            if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                            {
+                                fiscalizacao.PdfIUF.Buffer.Close();
+                            }
+                        }
 
-							try
-							{
-								//Croqui
-								fiscalizacao.PdfCroqui = new Arquivo();
-								fiscalizacao.PdfCroqui.Nome = "CroquiFiscalizacao";
-								fiscalizacao.PdfCroqui.Extensao = ".pdf";
-								fiscalizacao.PdfCroqui.ContentType = "application/pdf";
-								fiscalizacao.PdfCroqui.Buffer = arqCroqui.Buffer;
-								arquivoBus.Salvar(fiscalizacao.PdfCroqui);
+                        #endregion IUF
 
-								arquivoDa.Salvar(fiscalizacao.PdfCroqui, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-									User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-							}
-							finally
-							{
-								if (arqCroqui != null && arqCroqui.Buffer != null)
-								{
-									arqCroqui.Buffer.Close();
-								}
-							}
-						}
-						
+                        #region Laudo
 
-						_da.SalvarDocumentosGerados(fiscalizacao, bancoDeDados);
+                        try
+                        {
+                            fiscalizacao.PdfLaudo = new Arquivo();
+                            fiscalizacao.PdfLaudo.Nome = "LaudoFiscalizacao";
+                            fiscalizacao.PdfLaudo.Extensao = ".pdf";
+                            fiscalizacao.PdfLaudo.ContentType = "application/pdf";
+                            fiscalizacao.PdfLaudo.Buffer = pdf.GerarLaudoFiscalizacaoNovo(fiscalizacao.Id, false, bancoDeDados);
+                            arquivoBus.Salvar(fiscalizacao.PdfLaudo);
 
-						_da.GerarHistorico(fiscalizacao.Id, eHistoricoAcao.finalizar, bancoDeDados);
+                            arquivoDa.Salvar(fiscalizacao.PdfLaudo, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                        }
+                        finally
+                        {
+                            if (fiscalizacao.PdfLaudo != null && fiscalizacao.PdfLaudo.Buffer != null)
+                            {
+                                fiscalizacao.PdfLaudo.Buffer.Close();
+                            }
+                        }
 
-						_da.GerarConsulta(fiscalizacao.Id, bancoDeDados);
+                        #endregion Laudo
+
+                        Arquivo arqCroqui = fiscalizacao.ProjetoGeo.Arquivos.SingleOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+
+                        if (arqCroqui != null && arqCroqui.Id > 0)
+                        {
+                            arqCroqui = arquivoBus.Obter(arqCroqui.Id.GetValueOrDefault());
+
+                            try
+                            {
+                                //Croqui
+                                fiscalizacao.PdfCroqui = new Arquivo();
+                                fiscalizacao.PdfCroqui.Nome = "CroquiFiscalizacao";
+                                fiscalizacao.PdfCroqui.Extensao = ".pdf";
+                                fiscalizacao.PdfCroqui.ContentType = "application/pdf";
+                                fiscalizacao.PdfCroqui.Buffer = arqCroqui.Buffer;
+                                arquivoBus.Salvar(fiscalizacao.PdfCroqui);
+
+                                arquivoDa.Salvar(fiscalizacao.PdfCroqui, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                    User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                            }
+                            finally
+                            {
+                                if (arqCroqui != null && arqCroqui.Buffer != null)
+                                {
+                                    arqCroqui.Buffer.Close();
+                                }
+                            }
+                        }
+
+
+                        _da.SalvarDocumentosGerados(fiscalizacao, bancoDeDados);
+
+                        _da.GerarHistorico(fiscalizacao.Id, eHistoricoAcao.finalizar, bancoDeDados);
+
+                        _da.GerarConsulta(fiscalizacao.Id, bancoDeDados);
 
 						Validacao.Add(Mensagem.Fiscalizacao.Concluir);
 
-						bancoDeDados.Commit();
+                        bancoDeDados.Commit();
+                        //bancoDeDados.Dispose();
 					}
 				}
 			}
@@ -320,7 +380,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						if (fiscalizacao.SituacaoNovaTipo == (int)eFiscalizacaoSituacao.CancelarConclusao)
 						{
 							fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.EmAndamento;
-							_daPrjGeo.Refazer(fiscalizacao.Id, bancoDeDados);
+
+                            //List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacao.Id);
+                            //bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
+
+                            //if (contemProjGeo)
+                            //{
+                            //    _daPrjGeo.Refazer(fiscalizacao.Id, bancoDeDados);
+                            //}
 						}
 
 						_da.AlterarSituacao(fiscalizacao, bancoDeDados);
@@ -382,40 +449,68 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#region Obter
 
-		public Fiscalizacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
-		{
-			Fiscalizacao entidade = null;
-			try
-			{
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-				{
-					entidade = _da.Obter(id, bancoDeDados);
+        public Fiscalizacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
+        {
+            Fiscalizacao entidade = null;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                entidade = _da.Obter(id, bancoDeDados);
 
-					if (simplificado)
-					{
-						return entidade;
-					}
+                if (simplificado)
+                {
+                    return entidade;
+                }
 
-					entidade.LocalInfracao = _daLocalInfracao.Obter(id, bancoDeDados);
-					entidade.ComplementacaoDados = _daComplementacaoDados.Obter(id, bancoDeDados);
-					entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
-					entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
-					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
-					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
-					entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
-					entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
+                entidade.LocalInfracao = _daLocalInfracao.Obter(id, bancoDeDados);
+                //entidade.ComplementacaoDados = _daComplementacaoDados.Obter(id, bancoDeDados);
+                //entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
+                //entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
+                entidade.Infracao = _daInfracao.Obter(id, bancoDeDados);
+                entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
+                entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
 
-					entidade.AutuadoPessoa = entidade.LocalInfracao.PessoaId.GetValueOrDefault() > 0 ? new PessoaBus().Obter(entidade.LocalInfracao.PessoaId.Value) : new Pessoa();
-					entidade.AutuadoEmpreendimento = entidade.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? new EmpreendimentoBus().Obter(entidade.LocalInfracao.EmpreendimentoId.Value) : new Empreendimento();
-				}
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
+                if (entidade.MaterialApreendido == null)
+                {
+                    entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
+                }
 
-			return entidade;
-		}
+                entidade.Multa = _daMulta.Obter(id, bancoDeDados);
+
+                if (entidade.Multa == null)
+                {
+                    entidade.Multa = _daMulta.ObterAntigo(id, bancoDeDados);
+                }
+
+                entidade.OutrasPenalidades = _daOutrasPenalidades.Obter(id, bancoDeDados);
+
+                entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
+                entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (entidade.Infracao.IdsOutrasPenalidades.Count <= i)
+                    {
+                        entidade.Infracao.IdsOutrasPenalidades.Add(0);
+                    }
+                }
+
+                entidade.AutuadoPessoa = entidade.LocalInfracao.PessoaId.GetValueOrDefault() > 0 ? new PessoaBus().Obter(entidade.LocalInfracao.PessoaId.Value) : new Pessoa();
+                entidade.AutuadoEmpreendimento = entidade.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? new EmpreendimentoBus().Obter(entidade.LocalInfracao.EmpreendimentoId.Value) : new Empreendimento();
+            }
+
+            return entidade;
+        }
+
+        public Fiscalizacao ObterParaConclusao(int id, bool simplificado = false, BancoDeDados banco = null)
+        {
+            Fiscalizacao entidade = null;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                entidade = _da.Obter(id, bancoDeDados);
+            }
+
+            return entidade;
+        }
 
 		public Fiscalizacao ObterComAcompanhamento(int id, int acompanhamentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -436,7 +531,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
 					entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
 					entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);
-					entidade.MaterialApreendido = _daMaterialApreendido.Obter(id, bancoDeDados);
+					entidade.MaterialApreendido = _daMaterialApreendido.ObterAntigo(id, bancoDeDados);
 					entidade.ConsideracaoFinal = _daConsideracaoFinal.Obter(id, bancoDeDados);
 					entidade.ProjetoGeo = _daPrjGeo.ObterProjetoGeograficoPorFiscalizacao(id, bancoDeDados);
 
@@ -709,6 +804,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return null;
 		}
 
+        public Stream InstrumentoUnicoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
+        {
+            try
+            {
+                PdfFiscalizacao _pdf = new PdfFiscalizacao();
+                Fiscalizacao fiscalizacao = Obter(id, true);
+
+                if (historico == 0 && fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                {
+                    return _pdf.GerarInstrumentoUnicoFiscalizacao(id, banco: banco);
+                }
+
+                //if (historico > 0)
+                //{
+                //    fiscalizacao = ObterHistorico(historico);
+                //}
+
+                if (fiscalizacao.PdfIUF.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfIUF.Id != arquivo))
+                {
+                    Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
+                    return null;
+                }
+
+                ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfIUF.Id.GetValueOrDefault());
+
+                //if (historico > 0)
+                //{
+                //    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                //}
+
+                return pdf.Buffer;
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public Stream LaudoFiscalizacaoPdf(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
 		{
 			try
@@ -750,6 +887,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return null;
 		}
+
+        public Stream LaudoFiscalizacaoPdfNovo(int id, int arquivo = 0, int historico = 0, BancoDeDados banco = null)
+        {
+            try
+            {
+                PdfFiscalizacao _pdf = new PdfFiscalizacao();
+                Fiscalizacao fiscalizacao = Obter(id, true);
+
+                if (historico == 0 && fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                {
+                    return _pdf.GerarLaudoFiscalizacaoNovo(id, banco: banco);
+                }
+
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
+
+                if (fiscalizacao.PdfLaudo.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfLaudo.Id != arquivo))
+                {
+                    Validacao.Add(Mensagem.Fiscalizacao.ArquivoNaoEncontrado);
+                    return null;
+                }
+
+                ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
+                Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfLaudo.Id.GetValueOrDefault());
+
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
+
+                return pdf.Buffer;
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
 
 		public Arquivo BaixarArquivo(int id, int historico = 0)
 		{

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -81,6 +82,71 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			get { return _codigoReceitas; }
 			set { _codigoReceitas = value; }
 		}
+
+        private List<Lista> _penalidades = new List<Lista>();
+        public List<Lista> Penalidades
+        {
+            get
+            {
+                return _penalidades;
+            }
+            set
+            {
+                _penalidades = value;
+            }
+        }
+
+        private List<SelectListItem> _listaPenalidades01 = new List<SelectListItem>();
+        public List<SelectListItem> ListaPenalidades01
+        {
+            get
+            {
+                return _listaPenalidades01;
+            }
+            set
+            {
+                _listaPenalidades01 = value;
+            }
+        }
+
+        private List<SelectListItem> _listaPenalidades02 = new List<SelectListItem>();
+        public List<SelectListItem> ListaPenalidades02
+        {
+            get
+            {
+                return _listaPenalidades02;
+            }
+            set
+            {
+                _listaPenalidades02 = value;
+            }
+        }
+
+        private List<SelectListItem> _listaPenalidades03 = new List<SelectListItem>();
+        public List<SelectListItem> ListaPenalidades03
+        {
+            get
+            {
+                return _listaPenalidades03;
+            }
+            set
+            {
+                _listaPenalidades03 = value;
+            }
+        }
+
+        private List<SelectListItem> _listaPenalidades04 = new List<SelectListItem>();
+        public List<SelectListItem> ListaPenalidades04
+        {
+            get
+            {
+                return _listaPenalidades04;
+            }
+            set
+            {
+                _listaPenalidades04 = value;
+            }
+        }
 
 		public String TiposArquivoValido = ViewModelHelper.Json(new ArrayList { ".pdf" });
 

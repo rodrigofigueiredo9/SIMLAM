@@ -52,10 +52,65 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
+
+        public MemoryStream GerarInstrumentoUnicoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Instrumento_Unico_Fiscalizacao.docx";
+            InstrumentoUnicoFiscalizacaoRelatorio dataSource = _da.ObterInstrumentoUnicoFiscalizacao(id, banco);
+
+            dataSource.IsDDSIA = dataSource.IsDDSIA ?? AsposeData.Empty;
+            dataSource.IsDDSIV = dataSource.IsDDSIV ?? AsposeData.Empty;
+            dataSource.IsDRNRE = dataSource.IsDRNRE ?? AsposeData.Empty;
+
+            dataSource.InfrLeve = dataSource.InfrLeve ?? AsposeData.Empty;
+            dataSource.InfrMedia = dataSource.InfrMedia ?? AsposeData.Empty;
+            dataSource.InfrGrave = dataSource.InfrGrave ?? AsposeData.Empty;
+            dataSource.InfrGravissima = dataSource.InfrGravissima ?? AsposeData.Empty;
+
+            dataSource.TemAdvertencia = dataSource.TemAdvertencia ?? AsposeData.Empty;
+            dataSource.TemMulta = dataSource.TemMulta ?? AsposeData.Empty;
+            dataSource.TemApreensao = dataSource.TemApreensao ?? AsposeData.Empty;
+            dataSource.TemInterdicao = dataSource.TemInterdicao ?? AsposeData.Empty;
+            dataSource.TemOutra01 = dataSource.TemOutra01 ?? AsposeData.Empty;
+            dataSource.TemOutra02 = dataSource.TemOutra02 ?? AsposeData.Empty;
+            dataSource.TemOutra03 = dataSource.TemOutra03 ?? AsposeData.Empty;
+            dataSource.TemOutra04 = dataSource.TemOutra04 ?? AsposeData.Empty;
+
+            dataSource.IsInterditado = dataSource.IsInterditado ?? AsposeData.Empty;
+            dataSource.IsEmbargado = dataSource.IsEmbargado ?? AsposeData.Empty;
+            dataSource.IsDesinterditado= dataSource.IsDesinterditado?? AsposeData.Empty;
+            dataSource.IsDesembargado= dataSource.IsDesembargado ?? AsposeData.Empty;
+
+            ObterArquivoTemplate();
+
+            dataSource.GovernoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyGovernoNome);
+            dataSource.SecretariaNome = _configSys.Obter<String>(ConfiguracaoSistema.KeySecretariaNome);
+            dataSource.OrgaoNome = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoNome);
+            Setor setor = _configFunc.Obter<List<Setor>>(ConfiguracaoFuncionario.KeySetores).Single(x => x.Id == dataSource.SetorId);
+            //dataSource.SetorNome = setor.Nome;
+            dataSource.DocumentoNome = "INSTRUMENTO ÚNICO DE FISCALIZAÇÃO";
+            dataSource.CodigoUnidadeConvenio = setor.UnidadeConvenio;
+
+            string pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logobrasao.jpg");
+            dataSource.LogoBrasao = File.ReadAllBytes(pathImg);
+
+            dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
+
+            string pathImgMarca = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca.png");
+            dataSource.Logomarca = File.ReadAllBytes(pathImgMarca);
+
+            dataSource.Logomarca = AsposeImage.RedimensionarImagem(dataSource.Logomarca, 2);
+
+            ConfigurarCabecarioRodape(dataSource.SetorId);
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+
+            return GerarPdf(dataSource);
+        }
 
 		public MemoryStream GerarLaudoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
@@ -143,10 +198,127 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
+
+        public MemoryStream GerarLaudoFiscalizacaoNovo(int id, bool gerarTarja = true, BancoDeDados banco = null)
+        {
+            ArquivoDocCaminho = @"~/Content/_pdfAspose/Laudo_de_Fiscalizacao_Novo.docx";
+
+            FiscalizacaoRelatorioNovo dataSource = _da.ObterNovo(id, banco);
+
+            dataSource.Sessao = new Sessoes()
+            {
+                Empreendimento = AsposeData.Empty,
+                Multa = AsposeData.Empty,
+                InterdicaoEmbargo = AsposeData.Empty,
+                Apreensao = AsposeData.Empty,
+                OutrasPenalidades = AsposeData.Empty
+            };
+
+            ConfiguracaoDefault.TextoTagAssinante = "«Assinante.Nome»";
+            ConfiguracaoDefault.TextoTagAssinantes1 = "«TableStart:Assinantes1»";
+            ConfiguracaoDefault.TextoTagAssinantes2 = "«TableStart:Assinantes2»";
+
+            if (dataSource.ConsideracoesFinais != null &&
+                dataSource.ConsideracoesFinais.Assinantes != null &&
+                dataSource.ConsideracoesFinais.Assinantes.Count > 0)
+            {
+                var autor = dataSource.ConsideracoesFinais.Assinantes.First(x => x.Id == dataSource.UsuarioCadastro.Id);
+                if (autor != null)
+                {
+                    dataSource.ConsideracoesFinais.Assinantes.Remove(autor);
+                    dataSource.ConsideracoesFinais.Assinantes.Insert(0, autor);
+                }
+
+
+                ConfiguracaoDefault.Assinantes = dataSource.ConsideracoesFinais.Assinantes.Cast<IAssinante>().ToList();
+            }
+
+            ConfigurarCabecarioRodape(dataSource.LocalInfracao.SetorId);
+
+            if (dataSource.ConsideracoesFinais.Anexos != null && dataSource.ConsideracoesFinais.Anexos.Count > 0)
+            {
+                foreach (ConsideracoesFinaisAnexoRelatorio anexo in dataSource.ConsideracoesFinais.Anexos)
+                {
+                    anexo.Arquivo.Conteudo = AsposeImage.RedimensionarImagem(File.ReadAllBytes(anexo.Arquivo.Caminho), 11, eAsposeImageDimensao.Ambos);
+                }
+            }
+
+            ObterArquivoTemplate();
+
+            object objeto = dataSource;
+
+            #region Remover
+
+            this.ConfiguracaoDefault.AddLoadAcao((doc, a) =>
+            {
+                List<Table> itenRemover = new List<Table>();
+                FiscalizacaoRelatorioNovo fiscalizacao = (FiscalizacaoRelatorioNovo)dataSource;
+
+                fiscalizacao.OrgaoMunicipio = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoMunicipio);
+                fiscalizacao.OrgaoUF = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoUf);
+
+                if (fiscalizacao.Infracao.Campos.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Campos»").Remove();
+                }
+
+                if (fiscalizacao.Infracao.Perguntas.Count == 0)
+                {
+                    doc.Find<Row>("«TableStart:Infracao.Perguntas»").Remove();
+                }
+
+                if (fiscalizacao.ConsideracoesFinais.Anexos.Count == 0)
+                {
+                    itenRemover.Add(doc.Last<Table>("«TableStart:ConsideracoesFinais.Anexos»"));
+                    doc.RemovePageBreak();
+                }
+
+                //Remove as seções que não foram preenchidas
+                if (fiscalizacao.Multa == null)
+                {
+                    doc.Find<Row>("«Secao.Multa»").Remove();
+                }
+                else
+                {
+                    
+                }
+                if (fiscalizacao.ObjetoInfracao == null)
+                {
+                    doc.Find<Row>("«Secao.InterdicaoEmbargo»").Remove();
+                }
+                if (fiscalizacao.MaterialApreendido == null)
+                {
+                    doc.Find<Row>("«Secao.Apreensao»").Remove();
+                }
+                else
+                {
+                    if (fiscalizacao.MaterialApreendido.ProdutosDestinacoes == null || fiscalizacao.MaterialApreendido.ProdutosDestinacoes.Count == 0)
+                    {
+                        doc.Find<Row>("«TableStart:MaterialApreendido.ProdutosDestinacoes»").Remove();
+                    }
+                }
+                if (fiscalizacao.OutrasPenalidades == null)
+                {
+                    doc.Find<Row>("«Secao.OutrasPenalidades»").Remove();
+                }
+                if (fiscalizacao.LocalInfracao.EmpreendimentoId == 0)
+                {
+                    doc.Find<Row>("«Secao.Empreendimento»").Remove();
+                }
+                
+                AsposeExtensoes.RemoveTables(itenRemover);
+            });
+
+            #endregion Remover
+
+            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+
+            return GerarPdf(dataSource);
+        }
 
 		public MemoryStream GerarLaudoAcompanhamentoFiscalizacao(int id, bool gerarTarja = true, BancoDeDados banco = null)
 		{
@@ -220,7 +392,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -257,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}
@@ -355,7 +527,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
+			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
 
 			return GerarPdf(dataSource);
 		}

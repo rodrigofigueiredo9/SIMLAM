@@ -45,9 +45,12 @@
 					<%= Html.TextBox("Descricao", String.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricao", @maxlength = "200" }))%>
 				</div>
 
-				<div class="coluna7">
+				<!--<div class="coluna7">
 					<button type="button" style="width:60px" class="inlineBotao btnSalvar" title="Adicionar">Salvar</button>
-				</div>
+				</div> -->
+                <div class="coluna10">
+			        <button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarPenalidade" title="Adicionar penalidade">+</button>
+		        </div>
 
 				<input type="hidden" class="hdnItemId" value='0' />
 				<input type="hidden" class="hdnItemIsAtivo" value='1' />

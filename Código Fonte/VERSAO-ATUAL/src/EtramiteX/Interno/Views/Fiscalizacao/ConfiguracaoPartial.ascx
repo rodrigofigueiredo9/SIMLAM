@@ -201,22 +201,3 @@
 	</div>
 
 </fieldset>
-
-
-
-<fieldset class="fsPenalidades block box" id="fsPenalidades">
-	<legend>Campos</legend>
-
-<% if (!Model.IsVisualizar) { %>
-	<div class="block" >
-		<div class="coluna76">	
-			<label for="Campos">Campo *</label><br />
-			<%= Html.DropDownList("Campos", Model.Penalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Penalidades.Count <= 2, new { @class = "text ddlCampos" }))%>
-		</div>	
-		<div class="coluna10">
-			<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAdicionarCampo btnAddItem" title="Adicionar">+</button>
-		</div>
-	</div>
-<% } %>
-
-</fieldset>

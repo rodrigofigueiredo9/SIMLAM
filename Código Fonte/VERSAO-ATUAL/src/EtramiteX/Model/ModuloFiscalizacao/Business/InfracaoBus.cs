@@ -55,32 +55,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					{
 						bancoDeDados.IniciarTransacao();
 
-						#region Arquivo
-
-						if (entidade.Arquivo != null)
-						{
-							if (!string.IsNullOrWhiteSpace(entidade.Arquivo.Nome))
-							{
-								if (entidade.Arquivo.Id != null && entidade.Arquivo.Id == 0)
-								{
-									ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
-									entidade.Arquivo = _busArquivo.Copiar(entidade.Arquivo);
-								}
-
-								if (entidade.Arquivo.Id == 0)
-								{
-									ArquivoDa _arquivoDa = new ArquivoDa();
-									_arquivoDa.Salvar(entidade.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
-								}
-							}
-							else
-							{
-								entidade.Arquivo.Id = null;
-							}
-						}
-
-						#endregion
-
 						_da.Salvar(entidade, bancoDeDados);
 
 						bancoDeDados.Commit();

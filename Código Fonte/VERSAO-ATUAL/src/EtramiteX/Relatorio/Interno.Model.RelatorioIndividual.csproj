@@ -93,6 +93,8 @@
     <Compile Include="ModuloCaracterizacoes\Data\DominialidadeDa.cs" />
     <Compile Include="ModuloChecagemPendencia\Data\ChecagemPendenciaDa.cs" />
     <Compile Include="ModuloChecagemPendencia\Pdf\PdfChecagemPendencia.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\OutrasPenalidadesDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\MultaDa.cs" />
     <Compile Include="ModuloHabilitacaoEmissaoPTV\Data\EmissaoPTVDa.cs" />
     <Compile Include="ModuloHabilitacaoEmissaoPTV\Data\HabilitacaoEmissaoPTVDa.cs" />
     <Compile Include="ModuloHabilitacaoEmissaoPTV\Pdf\PdfEmissaoPTV.cs" />

@@ -1460,7 +1460,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<Lista> ObterInfracaoCodigoReceita()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@" select l.id, l.texto from lov_fisc_infracao_codigo_rece l order by l.texto ");
+            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@" select l.id, (l.texto || ' - ' || l.descricao) texto from lov_fisc_infracao_codigo_rece l where l.ativo = 1 order by l.texto ");
 
 			foreach (var item in daReader)
 			{
@@ -1474,6 +1474,26 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 
 			return lst;
 		}
+
+        public List<Lista> ObterCodigoReceita(int idFiscalizacao)
+        {
+            List<Lista> lst = new List<Lista>();
+            var bancoDeDados = BancoDeDados.ObterInstancia(); 
+            var retorno = DaHelper.ObterLista(bancoDeDados.CriarComando(@"  select l.id, (l.texto || ' - ' || l.descricao) texto from lov_fisc_infracao_codigo_rece l 
+                                                                where l.ativo = 1 OR l.id in 
+                                                                (SELECT M.CODIGO_RECEITA FROM TAB_FISC_MULTA M WHERE M.FISCALIZACAO = " + idFiscalizacao + ")"));
+            foreach (var item in retorno)
+            {
+                lst.Add(new Lista()
+                {
+                    Id = item["id"].ToString(),
+                    Texto = item["texto"].ToString(),
+                    IsAtivo = true
+                });
+            }
+            
+            return lst;
+        }
 
 		internal List<Lista> ObterFiscalizacaoSituacao()
 		{

@@ -364,6 +364,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return null;
 		}
 
+        public Resultados<Empreendimento> FiltrarPessoa(Paginacao paginacao, string CpfCnpj, bool validarEncontrouRegistros = true)
+        {
+            try
+            {
+                Filtro<ListarEmpreendimentoFiltro> filtro = new Filtro<ListarEmpreendimentoFiltro>(new ListarEmpreendimentoFiltro(), paginacao);
+                filtro.Dados.Responsavel.CpfCnpj = CpfCnpj;
+                Resultados<Empreendimento> resultados = _da.FiltrarEmpreendimentoPessoa(filtro);
+
+                if (validarEncontrouRegistros && resultados.Quantidade <= 0)
+                {
+                    Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+                }
+
+
+                return resultados;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public Empreendimento Obter(int id)
 		{
 			try
@@ -604,6 +628,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 				Validacao.AddErro(exc);
 			}
 		}
+
+        public void ValidarLocalizarFiscalizacaoPessoa(string CpfCnpj)
+        {
+            try
+            {
+                _validar.ValidarLocalizarFiscalizacaoPessoa(CpfCnpj);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+        }
 
 		public bool ValidarEmPosse(int id)
 		{

@@ -13,6 +13,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		private List<ConsideracaoFinalTestemunhaVM> _consideracaoFinalTestemunhaVM;
 		public List<ConsideracaoFinalTestemunhaVM> ConsideracaoFinalTestemunhaVM { get { return _consideracaoFinalTestemunhaVM; } }
 		public ArquivoVM ArquivoVM { get; set; }
+
+        public ArquivoVM ArquivoIUFVM { get; set; }
 		public FiscalizacaoAssinanteVM AssinantesVM { get; set; }
 
 		public ConsideracaoFinalVM()
@@ -22,6 +24,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			_consideracaoFinalTestemunhaVM.Add(new ConsideracaoFinalTestemunhaVM { Testemunha = new ConsideracaoFinalTestemunha { Colocacao = 1 } });
 			_consideracaoFinalTestemunhaVM.Add(new ConsideracaoFinalTestemunhaVM { Testemunha = new ConsideracaoFinalTestemunha { Colocacao = 2 } });
 			ArquivoVM = new ArquivoVM();
+            ArquivoIUFVM = new ArquivoVM();
 			ArquivoJSon = string.Empty;
 			AssinantesVM = new FiscalizacaoAssinanteVM();
 		}

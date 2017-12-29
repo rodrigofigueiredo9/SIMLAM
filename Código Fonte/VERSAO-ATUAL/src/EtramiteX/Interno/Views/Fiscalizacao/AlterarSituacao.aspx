@@ -35,7 +35,7 @@
 
 				<div class="coluna18">
 					<label for="Fiscalizacao_Data_DataTexto">Data da Vistoria</label>
-					<%= Html.TextBox("Fiscalizacao.Data.DataTexto", Model.Fiscalizacao.LocalInfracao.Data.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtFiscalizacaoData maskData" }))%>
+					<%= Html.TextBox("Fiscalizacao.Data.DataTexto", Model.Fiscalizacao.DataFiscalizacao, ViewModelHelper.SetaDisabled(true, new { @class = "text txtFiscalizacaoData maskData" }))%>
 				</div>
 			</div>
 		</fieldset>
