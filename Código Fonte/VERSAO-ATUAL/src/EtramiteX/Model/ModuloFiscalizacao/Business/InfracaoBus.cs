@@ -115,6 +115,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return _da.ObterHistoricoPorFiscalizacao(fiscalizacaoId, banco);
 		}
 
+        public bool PossuiIUFBloco(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            bool retorno = false;
+
+            try { 
+                retorno = _da.PossuiIUFBloco(fiscalizacaoId, banco);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return retorno;
+        }
+
 		#endregion
 
 		public void Mergear(Infracao entidadeAtual, Infracao entidadeNovoConfig)

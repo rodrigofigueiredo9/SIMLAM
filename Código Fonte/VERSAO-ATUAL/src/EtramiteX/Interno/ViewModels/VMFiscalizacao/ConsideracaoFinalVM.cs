@@ -10,6 +10,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 	{
 		public ConsideracaoFinal ConsideracaoFinal { get; set; }		
 		public bool IsVisualizar { get; set; }
+        public bool? IUFBloco { get; set; }
 		private List<ConsideracaoFinalTestemunhaVM> _consideracaoFinalTestemunhaVM;
 		public List<ConsideracaoFinalTestemunhaVM> ConsideracaoFinalTestemunhaVM { get { return _consideracaoFinalTestemunhaVM; } }
 		public ArquivoVM ArquivoVM { get; set; }
