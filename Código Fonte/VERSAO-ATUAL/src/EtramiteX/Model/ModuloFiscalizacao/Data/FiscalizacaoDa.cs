@@ -698,7 +698,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					select tab.cadastro from (
 						   select  (select count(1) from {0}TAB_FISC_LOCAL_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Local de Infração' cadastro from dual union all
 						   select  (select count(1) from {0}TMP_PROJETO_GEO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Projeto Geográfico' cadastro from dual union all
-						   select  (select count(1) from {0}TAB_FISC_COMPL_DADOS_AUT t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Complementação de dados do autuado' cadastro from dual union all
+						   --select  (select count(1) from {0}TAB_FISC_COMPL_DADOS_AUT t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Complementação de dados do autuado' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_ENQUADRAMENTO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Enquadramento' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Infração' cadastro from dual union all
 						   --select  (select count(1) from {0}TAB_FISC_OBJ_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Objeto da Infração' cadastro from dual union all
