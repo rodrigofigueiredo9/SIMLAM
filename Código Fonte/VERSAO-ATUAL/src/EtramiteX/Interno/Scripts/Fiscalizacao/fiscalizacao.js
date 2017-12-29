@@ -2746,10 +2746,10 @@ FiscalizacaoConsideracaoFinal = {
 	},
 
 	callBackEditarTestemunha: function (Pessoa) {
-	    $('.spanVisualizarTestemunha', FiscalizacaoMaterialApreendido.container).removeClass('hide');
-	    $('.hdnTestemunhaId', FiscalizacaoMaterialApreendido.container).val(Pessoa.Id);
-	    $('.txtTestemunhaNome', FiscalizacaoMaterialApreendido.container).val(Pessoa.NomeRazaoSocial);
-	    $('.txtTestemunhaCPF', FiscalizacaoMaterialApreendido.container).val(Pessoa.CPFCNPJ);
+	    $('.spanVisualizarTestemunha', FiscalizacaoConsideracaoFinal.container).removeClass('hide');
+	    $('.hdnTestemunhaId', FiscalizacaoConsideracaoFinal.container).val(Pessoa.Id);
+	    $('.txtTestemunhaNome', FiscalizacaoConsideracaoFinal.container).val(Pessoa.NomeRazaoSocial);
+	    $('.txtTestemunhaCPF', FiscalizacaoConsideracaoFinal.container).val(Pessoa.CPFCNPJ);
 	    return true;
 	},
 
