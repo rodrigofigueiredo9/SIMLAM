@@ -442,11 +442,17 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				query = @" select ttd.dependencia_id caract_id, ttd.dependencia_tid caract_tid, ttd.dependencia_projeto_id projeto_id, ttd.dependencia_projeto_tid projeto_tid
 					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
 			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-				query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, c.projeto_geo_id projeto_id, c.projeto_geo_tid projeto_tid 
-					from hst_car_solicitacao c where c.solicitacao_id=:id and c.tid=:tid ";
+                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid 
+                            from hst_car_solicitacao c
+                                    INNER JOIN TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID
+                                    INNER JOIN CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID
+                            where c.solicitacao_id=:id and c.tid=:tid AND PG.CARACTERIZACAO = 1";
 			else
-				query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, c.projeto_geo_id projeto_id, c.projeto_geo_tid projeto_tid 
-					from hst_car_solicitacao_cred c where c.solicitacao_id=:id and c.tid=:tid ";
+                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid 
+                            from hst_car_solicitacao_cred c 
+                                  INNER JOIN TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID
+                                  INNER JOIN CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID
+                              where c.solicitacao_id=:id and c.tid=:tid; ";
 
 			using (var cmd = new OracleCommand(query, conn))
 			{
@@ -1140,6 +1146,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                         dr.Close();
                     }
+                }
+                if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                {
+                    cadastrante.nomeMae = "Não informado";
                 }
             } else
                 //SE FOR PJ PEGA O DECLARANTE
