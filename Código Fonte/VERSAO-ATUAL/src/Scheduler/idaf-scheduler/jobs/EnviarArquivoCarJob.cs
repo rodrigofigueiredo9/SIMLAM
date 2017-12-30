@@ -135,6 +135,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//}
 					//catch (Exception) { /*ignored*/ }
 				}
+
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
 			}
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
