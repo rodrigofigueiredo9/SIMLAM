@@ -6,9 +6,9 @@
 		<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 			<thead>
 				<tr>
-					<th width="30%">Artigo</th>
+					<th width="10%">Artigo</th>
 					<th width="15%">Item</th>
-					<th width="20%">Descrição</th>
+					<th width="40%">Descrição</th>
                     <th>Situação</th>
 					<%if (!Model.IsVisualizar){%><th width="22%">Ações</th><%} %>
 				</tr>
@@ -33,6 +33,7 @@
 						<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(item)%>' />
 						<input type="hidden" value="<%= item.Id %>" class="itemId" />
 						<input title="Editar penalidade" type="button" class="icone editar btnEditarItem" value="" />
+                        
                          <input title="Desativar penalidade" type="button" class="icone cancelar btnDesativarItem" value="" />
 						<input title="Ativar penalidade" type="button" class="icone recebido btnAtivarItem" value="" />
 						<input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
@@ -44,15 +45,23 @@
 					<td><span class="artigo"></span></td>
 					<td><span class="item"></span></td>
 					<td><span class="descricao"></span></td>
+                    <td><span class="situacao"></span></td>
 					<td class="tdAcoes">
 						<input type="hidden" class="hdnItemJSon" value="" />
-						<input title="Editar campo" type="button" class="icone editar btnEditarItem" value="" />
-						<input title="Excluir campo" type="button" class="icone excluir btnExcluirItem" value="" />
-                        <input title="Desativar campo" type="button" class="icone cancelar btnDesativarItem" value="" />
-						<input title="Ativar campo" type="button" class="icone recebido btnAtivarItem" value="" />
+						<input title="Editar penalidade" type="button" class="icone editar btnEditarItem" value="" />
+						
+                        <input title="Desativar penalidade" type="button" class="icone cancelar btnDesativarItem" value="" />
+						<input title="Ativar penalidade" type="button" class="icone recebido btnAtivarItem" value="" />
+                        <input title="Excluir penalidade" type="button" class="icone excluir btnExcluirItem" value="" />
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
+</div>
+<div class="block box">
+
+	<input class="floatLeft btnSalvar" type="button" value="Salvar" />
+		
+
 </div>

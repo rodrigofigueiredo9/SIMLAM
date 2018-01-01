@@ -9,7 +9,8 @@
 			urls: {
 				download: '<%= Url.Action("Baixar", "Fiscalizacao") %>',
 				pdfAuto: '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>',
-				pdfLaudo: '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>',
+			    pdfLaudo: '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>',
+			    pdfIUF: '<%= Url.Action("InstrumentoUnicoFiscalizacaoPdf", "Fiscalizacao") %>',
 				pdfAcompanhamento: '<%= Url.Action("LaudoAcompanhamentoFiscalizacaoPdf", "Fiscalizacao") %>'
 			},
 			situacao: <%=Model.Fiscalizacao.SituacaoId %>

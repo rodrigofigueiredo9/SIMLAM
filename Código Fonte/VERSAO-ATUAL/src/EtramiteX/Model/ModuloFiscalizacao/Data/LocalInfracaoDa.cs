@@ -63,10 +63,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				insert into {0}tab_fisc_local_infracao (id, fiscalizacao, setor, sis_coord, datum, area_abrang, lat_northing, lon_easting, hemisferio, 
-				municipio, pessoa, empreendimento, tid, data, local, responsavel, resp_propriedade)
+				municipio, pessoa, empreendimento, tid, local, responsavel, resp_propriedade, area_fiscalizacao)
 				values
 				({0}seq_tab_fisc_local_infracao.nextval, :fiscalizacao, :setor, :sis_coord, :datum, :area_abrang, :lat_northing, :lon_easting, :hemisferio, 
-				:municipio, :pessoa, :empreendimento, :tid, :data, :local, :responsavel, :resp_propriedade) returning id into :id", EsquemaBanco);
+				:municipio, :pessoa, :empreendimento, :tid, :local, :responsavel, :resp_propriedade, :area_fiscalizacao) returning id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", localInfracao.FiscalizacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("setor", localInfracao.SetorId, DbType.Int32);
@@ -76,14 +76,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("lat_northing", localInfracao.LatNorthingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("lon_easting", localInfracao.LonEastingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("hemisferio", localInfracao.Hemisferio, DbType.Int32);
-				comando.AdicionarParametroEntrada("municipio", localInfracao.MunicipioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", (localInfracao.MunicipioId == 0 ? null : (int?)localInfracao.MunicipioId), DbType.Int32);
 				comando.AdicionarParametroEntrada("pessoa", localInfracao.PessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", localInfracao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroEntrada("data", localInfracao.Data.Data, DbType.DateTime);
+                //comando.AdicionarParametroEntrada("data", localInfracao.Data.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("local", DbType.String, 150, localInfracao.Local);
 				comando.AdicionarParametroEntrada("responsavel", localInfracao.ResponsavelId, DbType.Int32);
 				comando.AdicionarParametroEntrada("resp_propriedade", localInfracao.ResponsavelPropriedadeId, DbType.Int32);
+                comando.AdicionarParametroEntrada("area_fiscalizacao", localInfracao.AreaFiscalizacao, DbType.Int32);
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -91,7 +92,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				localInfracao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                if (localInfracao.MunicipioId != 0 && localInfracao.MunicipioId != null)
+                {
+                    AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                }
 
 				bancoDeDados.Commit();
 			}
@@ -107,21 +111,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 					update {0}tab_fisc_local_infracao t
-					   set t.setor            = :setor,
-						   t.sis_coord        = :sis_coord,
-						   t.datum            = :datum,
-						   t.area_abrang      = :area_abrang,
-						   t.lat_northing     = :lat_northing,
-						   t.lon_easting      = :lon_easting,
-						   t.hemisferio       = :hemisferio,
-						   t.municipio        = :municipio,
-						   t.pessoa           = :pessoa,
-						   t.empreendimento   = :empreendimento,
-						   t.tid              = :tid,
-						   t.data             = :data,
-						   t.local            = :local,
-						   t.responsavel      = :responsavel,
-						   t.resp_propriedade = :resp_propriedade
+					   set t.setor             = :setor,
+						   t.sis_coord         = :sis_coord,
+						   t.datum             = :datum,
+						   t.area_abrang       = :area_abrang,
+						   t.lat_northing      = :lat_northing,
+						   t.lon_easting       = :lon_easting,
+						   t.hemisferio        = :hemisferio,
+						   t.municipio         = :municipio,
+						   t.pessoa            = :pessoa,
+						   t.empreendimento    = :empreendimento,
+						   t.tid               = :tid,
+						   t.local             = :local,
+						   t.responsavel       = :responsavel,
+						   t.resp_propriedade  = :resp_propriedade,
+                           t.area_fiscalizacao = :area_fiscalizacao
 					 where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("setor", localInfracao.SetorId, DbType.Int32);
@@ -131,20 +135,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("lat_northing", localInfracao.LatNorthingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("lon_easting", localInfracao.LonEastingToDecimal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("hemisferio", localInfracao.Hemisferio, DbType.Int32);
-				comando.AdicionarParametroEntrada("municipio", localInfracao.MunicipioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", (localInfracao.MunicipioId == 0 ? null : (int?)localInfracao.MunicipioId), DbType.Int32);
 				comando.AdicionarParametroEntrada("pessoa", localInfracao.PessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", localInfracao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroEntrada("data", localInfracao.Data.Data, DbType.DateTime);
+                //comando.AdicionarParametroEntrada("data", localInfracao.Data.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("local", DbType.String, 150, localInfracao.Local);
 				comando.AdicionarParametroEntrada("responsavel", localInfracao.ResponsavelId, DbType.Int32);
 				comando.AdicionarParametroEntrada("resp_propriedade", localInfracao.ResponsavelPropriedadeId, DbType.Int32);
+                comando.AdicionarParametroEntrada("area_fiscalizacao", localInfracao.AreaFiscalizacao, DbType.Int32);
 
 				comando.AdicionarParametroEntrada("id", localInfracao.Id, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                if (localInfracao.MunicipioId != 0 && localInfracao.MunicipioId != null)
+                {
+                    AtualizarGeoLocalizacao(localInfracao, bancoDeDados);
+                }
 
 				bancoDeDados.Commit();
 			}
@@ -190,10 +198,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.pessoa				PessoaId,
 						   t.empreendimento		EmpreendimentoId,
 						   t.tid				Tid,
-						   t.data				dataFisc,
 						   t.local				Local,
 						   t.responsavel		ResponsavelId,
-						   t.resp_propriedade	ResponsavelPropriedadeId          
+						   t.resp_propriedade	ResponsavelPropriedadeId,
+                           t.area_fiscalizacao  AreaFiscalizacao          
 					  from {0}tab_fisc_local_infracao t, 
 						   {0}lov_municipio l
 					 where t.municipio = l.id(+)
@@ -201,7 +209,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); });
+				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
 			}
 			return localInfracao;
 		}
@@ -302,7 +310,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															t.empreendimento_id   EmpreendimentoId,
 															t.empreendimento_tid  EmpreendimentoTid,
 															t.tid                 Tid,
-															t.data                dataFisc,
+															--t.data                dataFisc,
 															t.local               Local,
 															t.responsavel_id      ResponsavelId,
 															t.resp_propriedade_id ResponsavelPropriedadeId
@@ -316,7 +324,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); });
+				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
 			}
 			return localInfracao;
 		}

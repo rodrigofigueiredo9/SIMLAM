@@ -60,6 +60,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						}
 					}
 
+                    foreach (var anexo in entidade.AnexosIUF)
+                    {
+                        if (anexo.Arquivo.Id == 0)
+                        {
+                            anexo.Arquivo = _busArquivo.Copiar(anexo.Arquivo);
+                        }
+                    }
+
 					#endregion
 
 					GerenciadorTransacao.ObterIDAtual();
@@ -84,6 +92,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 								_arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
 							}
 						}
+
+                        foreach (var anexo in entidade.AnexosIUF)
+                        {
+                            if (anexo.Arquivo.Id == 0)
+                            {
+                                _arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+                            }
+                        }
 
 						#endregion
 
@@ -122,7 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					if (x.TestemunhaIDAF.Value)
 					{
 						var setorLocalizacao = _busSetorLocalizacao.Obter(x.TestemunhaSetorId.Value);
-						x.TestemunhaEndereco = setorLocalizacao.FormatarEndereco();						
+						x.TestemunhaEndereco = setorLocalizacao.FormatarEndereco();
 					}
 				});
 				

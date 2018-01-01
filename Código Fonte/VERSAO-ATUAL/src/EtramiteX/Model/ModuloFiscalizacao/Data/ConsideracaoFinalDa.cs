@@ -68,7 +68,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					insert into {0}tab_fisc_consid_final
 					  (id,
 					   fiscalizacao,
-					   justificar,
 					   descrever,
 					   tem_reparacao,
 					   reparacao,
@@ -79,7 +78,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					values
 					  ({0}seq_tab_fisc_consid_final.nextval,
 					   :fiscalizacao,
-					   :justificar,
 					   :descrever,
 					   :tem_reparacao,
 					   :reparacao,
@@ -90,7 +88,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					returning id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", consideracaoFinal.FiscalizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("justificar", DbType.String, 500, consideracaoFinal.Justificar);
 				comando.AdicionarParametroEntClob("descrever", consideracaoFinal.Descrever);
 				comando.AdicionarParametroEntrada("tem_reparacao", consideracaoFinal.HaReparacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("reparacao", DbType.String, 2000, consideracaoFinal.Reparacao);
@@ -118,7 +115,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   nome, 
 						   endereco, 
 						   tid,
-						   testemunha_setor)
+						   testemunha_setor,
+                           cpf)
 						values
 						  ({0}seq_tab_fiscconsidfinaltest.nextval, 
 						   :consid_final, 
@@ -127,7 +125,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   :nome, 
 						   :endereco, 
 						   :tid,
-						   :testemunha_setor)
+						   :testemunha_setor,
+                           :cpf)
 						returning id into :id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
@@ -137,6 +136,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comando.AdicionarParametroEntrada("endereco", DbType.String, 200, item.TestemunhaEndereco);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("testemunha_setor", item.TestemunhaSetorId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cpf", item.TestemunhaCPF, DbType.String);
 					comando.AdicionarParametroSaida("id", DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -199,6 +199,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
+                #region Anexos IUF
+
+                foreach (var item in consideracaoFinal.AnexosIUF)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+					 insert into {0}tab_fisc_consid_final_iuf a
+					   (id, 
+						consid_final, 
+						arquivo, 
+						ordem, 
+						descricao, 
+						tid)
+					 values
+					   ({0}seq_fisc_consid_final_iuf.nextval,
+						:consid_final,
+						:arquivo,
+						:ordem,
+						:descricao,
+						:tid)", EsquemaBanco);
+
+                    comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                #endregion
+
 				Historico.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
 				Consulta.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
@@ -216,8 +247,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				  update {0}tab_fisc_consid_final t
-					 set t.justificar                = :justificar,
-						 t.descrever                 = :descrever,
+					 set t.descrever                 = :descrever,
 						 t.tem_reparacao             = :tem_reparacao,
 						 t.reparacao                 = :reparacao,
 						 t.tem_termo_comp            = :tem_termo_comp,
@@ -226,7 +256,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						 t.arquivo_termo             = :arquivo_termo
 				   where t.id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("justificar", DbType.String, 500, consideracaoFinal.Justificar);
 				comando.AdicionarParametroEntClob("descrever", consideracaoFinal.Descrever);
 				comando.AdicionarParametroEntrada("tem_reparacao", consideracaoFinal.HaReparacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("reparacao", DbType.String, 2000, consideracaoFinal.Reparacao);
@@ -258,7 +287,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 								   t.nome				= :nome, 
 								   t.endereco			= :endereco, 
 								   t.tid				= :tid,
-								   t.testemunha_setor	= :testemunha_setor
+								   t.testemunha_setor	= :testemunha_setor,
+                                   t.cpf                = :cpf
 							 where t.id = :id", EsquemaBanco);
 						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 					}
@@ -273,7 +303,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							   nome, 
 							   endereco, 
 							   tid,
-						       testemunha_setor)
+						       testemunha_setor,
+                               cpf)
 							values
 							  ({0}seq_tab_fiscconsidfinaltest.nextval, 
 							   :consid_final, 
@@ -282,7 +313,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							   :nome, 
 							   :endereco, 
 							   :tid,
-						       :testemunha_setor)
+						       :testemunha_setor,
+                               :cpf)
 							returning id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
@@ -295,6 +327,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comando.AdicionarParametroEntrada("endereco", DbType.String, 80, item.TestemunhaEndereco);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("testemunha_setor", item.TestemunhaSetorId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cpf", item.TestemunhaCPF, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -400,6 +433,59 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
+                #region Anexos IUF
+
+                comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_consid_final_iuf ra ", EsquemaBanco);
+                comando.DbCommand.CommandText += String.Format("where ra.consid_final = :consid_final{0}",
+                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.Anexos.Select(x => x.Id).ToList()));
+                comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                foreach (var item in consideracaoFinal.AnexosIUF)
+                {
+                    if (item.Id > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+							update {0}tab_fisc_consid_final_iuf t
+							   set t.arquivo   = :arquivo,
+								   t.ordem     = :ordem,
+								   t.descricao = :descricao,
+								   t.tid       = :tid
+							 where t.id = :id", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"
+							insert into {0}tab_fisc_consid_final_iuf a
+							  (id, 
+							   consid_final, 
+							   arquivo, 
+							   ordem, 
+							   descricao, 
+							   tid)
+							values
+							  ({0}seq_fisc_consid_final_iuf.nextval,
+							   :consid_final,
+							   :arquivo,
+							   :ordem,
+							   :descricao,
+							   :tid)", EsquemaBanco);
+
+                        comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+                    }
+
+                    comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                }
+
+                #endregion
+
 				Historico.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
 				Consulta.Gerar(consideracaoFinal.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
@@ -475,7 +561,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.nome             TestemunhaNome,
 						   t.endereco         TestemunhaEndereco,
 						   t.tid              Tid,
-						   t.testemunha_setor TestemunhaSetorId
+						   t.testemunha_setor TestemunhaSetorId,
+                           t.cpf              TestemunhaCPF
 					  from {0}tab_fisc_consid_final_test t
 					 where t.consid_final = :consid_final", EsquemaBanco);
 
@@ -539,6 +626,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				});
 
 				#endregion
+
+                #region Anexos IUF
+
+                comando = bancoDeDados.CriarComando(@"
+				select a.id Id,
+					   a.ordem Ordem,
+					   a.descricao Descricao,
+					   b.nome,
+					   b.extensao,
+					   b.id arquivo_id,
+					   b.caminho,
+					   a.tid Tid
+				  from {0}tab_fisc_consid_final_iuf a, 
+					   {0}tab_arquivo b
+				 where a.arquivo = b.id
+				   and a.consid_final = :consid_final
+				 order by a.ordem", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
+
+                consideracaoFinal.AnexosIUF = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
+                {
+                    item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
+                    item.Arquivo.Caminho = reader.GetValue<string>("caminho");
+                    item.Arquivo.Nome = reader.GetValue<string>("nome");
+                    item.Arquivo.Extensao = reader.GetValue<string>("extensao");
+                });
+
+                #endregion
 			}
 			return consideracaoFinal;
 		}
@@ -551,7 +667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					select t.id   Id, 
-						   t.nome Texto, 
+						   t.nome Texto,
 						   1      IsAtivo
 					  from {0}tab_funcionario t
 					 where t.situacao not in (2 /*Bloqueado*/, 4 /*Ausente*/)

@@ -75,6 +75,7 @@
         declaracaoadicional = 146,
         produtoapreendido = 147,
         fiscdestinacao = 148,
+        codigoreceita = 149,
         penalidadeinfracao = 150
 	}
 }

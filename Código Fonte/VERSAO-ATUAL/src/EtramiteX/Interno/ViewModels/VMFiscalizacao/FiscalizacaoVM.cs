@@ -42,6 +42,19 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _infracaoVM = value; }
 		}
 
+        private MultaVM _multaVM = new MultaVM();
+        public MultaVM MultaVM
+        {
+            get
+            {
+                return _multaVM;
+            }
+            set
+            {
+                _multaVM = value;
+            }
+        }
+
 		private MaterialApreendidoVM _materialapreendidoVM = new MaterialApreendidoVM();
 		public MaterialApreendidoVM MaterialApreendidoVM
 		{
@@ -62,6 +75,19 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			get { return _objetoInfracaoVM; }
 			set { _objetoInfracaoVM = value; }
 		}
+
+        private OutrasPenalidadesVM _outraspenalidadesVM = new OutrasPenalidadesVM();
+        public OutrasPenalidadesVM OutrasPenalidadesVM
+        {
+            get
+            {
+                return _outraspenalidadesVM;
+            }
+            set
+            {
+                _outraspenalidadesVM = value;
+            }
+        }
 
 		private ConsideracaoFinalVM _consideracaoFinalVM = new ConsideracaoFinalVM();
 		public ConsideracaoFinalVM ConsideracaoFinalVM
@@ -181,46 +207,46 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 
 		#endregion
 
-		#region N_TAD
+        //#region N_TAD
 
-		public string N_TAD
-		{
-			get
-			{
-				return this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.GetValueOrDefault() ? this.NumeroAutos : this.MaterialApreendidoVM.MaterialApreendido.NumeroTad;
-			}
-		}
+        //public string N_TAD
+        //{
+        //    get
+        //    {
+        //        return this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.GetValueOrDefault() ? this.NumeroAutos : this.MaterialApreendidoVM.MaterialApreendido.NumeroTad;
+        //    }
+        //}
 
-		public string N_TAD_EmitidoPor
-		{
-			get
-			{
-				if (this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.HasValue)
-				{
-					return this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.Value ? "Sistema" : "Bloco";	
-				}
-				return string.Empty;
-			}
-		}
+        //public string N_TAD_EmitidoPor
+        //{
+        //    get
+        //    {
+        //        if (this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.HasValue)
+        //        {
+        //            return this.MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.Value ? "Sistema" : "Bloco";	
+        //        }
+        //        return string.Empty;
+        //    }
+        //}
 
-		public string N_TAD_DataTermo
-		{
-			get
-			{
-				if (MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.GetValueOrDefault())
-				{
-					if (Fiscalizacao.SituacaoId != (int)eFiscalizacaoSituacao.EmAndamento)
-					{
-						return Fiscalizacao.DataConclusao.DataTexto;
-					}
+        //public string N_TAD_DataTermo
+        //{
+        //    get
+        //    {
+        //        if (MaterialApreendidoVM.MaterialApreendido.IsTadGeradoSistema.GetValueOrDefault())
+        //        {
+        //            if (Fiscalizacao.SituacaoId != (int)eFiscalizacaoSituacao.EmAndamento)
+        //            {
+        //                return Fiscalizacao.DataConclusao.DataTexto;
+        //            }
 
-					return String.Empty;
-				}
-				return this.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto;
-			}
-		}
+        //            return String.Empty;
+        //        }
+        //        return this.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto;
+        //    }
+        //}
 
-		#endregion
+        //#endregion
 
 		public string LabelTrDownload
 		{

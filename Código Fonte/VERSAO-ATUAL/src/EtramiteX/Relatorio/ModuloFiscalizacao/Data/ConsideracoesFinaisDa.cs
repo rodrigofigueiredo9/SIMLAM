@@ -35,10 +35,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 
-				comando = bancoDeDados.CriarComando(@" select c.id Id, c.justificar JustificativaValorPenalidade, c.descrever DescricaoInfracao, (case c.tem_reparacao when 1 then 'Sim' when 0 then 'Não' end)
-					IsReparacao, c.reparacao OpniaoFormaReparacao, (case when c.tem_reparacao = 0 then c.reparacao end) ReparacaoJustificativa,
-					(case c.tem_termo_comp when 1 then 'Sim' when 0 then 'Não' end) IsTermoCompromisso, c.tem_termo_comp_justificar TermoCompromissoJustificativa from {0}tab_fisc_consid_final c where 
-					c.fiscalizacao = :fiscalizacaoId ", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@" select c.id Id,
+                                                              c.justificar JustificativaValorPenalidade,
+                                                              c.descrever DescricaoInfracao,
+                                                              (case c.tem_reparacao when 1 then 'Sim' when 0 then 'Não' end) IsReparacao,
+                                                              c.reparacao OpniaoFormaReparacao,
+                                                              (case when c.tem_reparacao = 0 then c.reparacao end) ReparacaoJustificativa,
+                                                              (case c.tem_termo_comp when 1 then 'Sim' when 0 then 'Não' end) IsTermoCompromisso,
+                                                              c.tem_termo_comp_justificar TermoCompromissoJustificativa
+                                                       from {0}tab_fisc_consid_final c
+                                                       where c.fiscalizacao = :fiscalizacaoId ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
 
@@ -164,10 +170,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					ConsideracoesFinaisAnexoRelatorio item;
+                    int n_foto = 1;
 					while (reader.Read())
 					{
 						item = new ConsideracoesFinaisAnexoRelatorio();
-						item.Descricao = reader["descricao"].ToString();
+						item.Descricao = "Foto " + n_foto++ + " - " + reader["descricao"].ToString();
 						item.Arquivo.Id = Convert.ToInt32(reader["arquivo_id"]);
 						item.Arquivo.Caminho = reader["caminho"].ToString();
 						item.Arquivo.Nome = reader["nome"].ToString();

@@ -50,8 +50,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public ComplementacaoDados ComplementacaoDados { get; set; }
 		public Enquadramento Enquadramento { get; set; }
 		public Infracao Infracao { get; set; }
-		public ObjetoInfracao ObjetoInfracao { get; set; }
+        public Multa Multa { get; set; }
+		public ObjetoInfracao ObjetoInfracao { get; set; }  //Interdição/embargo
 		public MaterialApreendido MaterialApreendido { get; set; }
+        public OutrasPenalidades OutrasPenalidades { get; set; }
 		public ConsideracaoFinal ConsideracaoFinal { get; set; }
 		public ProjetoGeografico ProjetoGeo { get; set; }
 
@@ -64,6 +66,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Arquivo.Arquivo PdfAutoTermo { get; set; }
 		public Arquivo.Arquivo PdfLaudo { get; set; }
 		public Arquivo.Arquivo PdfCroqui { get; set; }
+        public Arquivo.Arquivo PdfIUF { get; set; }
 
 		public Fiscalizacao()
 		{
@@ -90,6 +93,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			PdfAutoTermo = new Arquivo.Arquivo();
 			PdfLaudo = new Arquivo.Arquivo();
 			PdfCroqui = new Arquivo.Arquivo();
+            PdfIUF = new Arquivo.Arquivo();
 		}
 	}
 }

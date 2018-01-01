@@ -8,6 +8,8 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using System.Collections.Generic;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -104,6 +106,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			try
 			{
 				entidade = _da.Obter(fiscalizacaoId);
+
+                if (entidade == null)
+                {
+                    entidade = _da.ObterAntigo(fiscalizacaoId);
+                }
 			}
 			catch (Exception exc)
 			{
@@ -112,6 +119,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return entidade;
 		}
+
+        public List<ProdutoApreendidoLst> ObterProdutosApreendidosLst(BancoDeDados banco = null)
+        {
+            List<ProdutoApreendidoLst> entidade = new List<ProdutoApreendidoLst>();
+            try
+            {
+                entidade = _da.ObterProdutosApreendidosLst(banco);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return entidade;
+        }
+
+        public List<Lista> ObterDestinosLst(BancoDeDados banco = null)
+        {
+            List<Lista> entidade = new List<Lista>();
+            try
+            {
+                entidade = _da.ObterDestinosLst(banco);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return entidade;
+        }
 
 		#endregion
 	}

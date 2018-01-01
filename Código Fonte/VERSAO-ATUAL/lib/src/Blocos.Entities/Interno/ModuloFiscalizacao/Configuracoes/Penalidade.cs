@@ -6,8 +6,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes
 {
     public class Penalidade : Lista
     {
-      
-
         public String SituacaoTexto
         {
             get
@@ -16,10 +14,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes
             }
         }
 
-
         public string Artigo { get; set;}
         public string Item { get; set; }
         public string Descricao { get; set; }
+        public int Ativo { get; set; }
 
         private List<Penalidade> _itens = new List<Penalidade>();
         public List<Penalidade> Itens

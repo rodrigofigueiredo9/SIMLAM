@@ -5,14 +5,15 @@
 <script>
 	FiscalizacaoFinalizar.settings.urls.finalizar = '<%= Url.Action("FinalizarFiscalizacao", "Fiscalizacao") %>';
 	FiscalizacaoFinalizar.settings.urls.download = '<%= Url.Action("Baixar", "Arquivo") %>';
-	FiscalizacaoFinalizar.settings.urls.pdfAuto = '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>';
+    FiscalizacaoFinalizar.settings.urls.pdfAuto = '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>';
+    FiscalizacaoFinalizar.settings.urls.pdfIUF = '<%= Url.Action("InstrumentoUnicoFiscalizacaoPdf", "Fiscalizacao") %>';
 	FiscalizacaoFinalizar.settings.urls.pdfLaudo = '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>';
 </script>
 
 <div class="divFinalizar">
 
 	<fieldset class="box">
-		<legend>Agente Fiscal</legend>
+		<legend>Autoridade Autuante</legend>
 
 		<div class="block">
 			<div class="coluna60 ">
@@ -31,7 +32,7 @@
 	</fieldset>
 
 	<fieldset class="box">
-		<legend>Local da infração</legend>
+		<legend>Local da Infração/Fiscalização</legend>
 
 		<div class="block">
 			<div class="coluna20 append2">
@@ -84,7 +85,7 @@
 	</fieldset>
 
 	<fieldset class="box">
-		<legend>Autuado</legend>
+		<legend>Autuado/Fiscalizado</legend>
 
 		<div class="block divPessoa <%= Model.LocalInfracaoVM.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
 		<%= Html.Hidden("hdnAutuadoPessoaId", Model.LocalInfracaoVM.LocalInfracao.PessoaId, new { @class = "hdnAutuadoPessoaId" })%>
@@ -121,7 +122,7 @@
 	</fieldset>
 
 	<fieldset class="box fdsInfracao">
-		<legend>Classificação da infração</legend>
+		<legend>Caracterização da Infração/Fiscalização</legend>
 
 		<div class="block">
 			<div class="coluna76">
@@ -132,7 +133,7 @@
 
 		<div class="block">
 			<div class="coluna76">
-				<label>Tipo de infração</label><br />
+				<label>Tipo de infração/Fiscalização</label><br />
 				<%= Html.DropDownList("Fiscalizacao.Infracao.Tipo", Model.InfracaoVM.Tipos, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipos" }))%>
 			</div>
 		</div>
@@ -157,87 +158,181 @@
 
 	</fieldset>
 
-	<fieldset class="box">
+    <fieldset class="box">
+		<legend>Penalidades</legend>
 
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Auto de infração?</label><br />
-				<label><%= Html.RadioButton("InfracaoVM.Infracao.IsAutuada", 1, (Model.InfracaoVM.Infracao.IsAutuada == null ? false : Model.InfracaoVM.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsAutuadaSim" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("InfracaoVM.Infracao.IsAutuada", 0, (Model.InfracaoVM.Infracao.IsAutuada == null ? false : !Model.InfracaoVM.Infracao.IsAutuada.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsAutuadaNao" }))%>Não</label>
-			</div>
-			<div class="coluna30 append2">
-				<label>Área embargada e/ou atividade interditada?</label><br />
-				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 1, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 1), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Sim</label>
-				<label><%= Html.RadioButton("ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed", 0, (Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed == 0), ViewModelHelper.SetaDisabled(true, new { @class = "rdbAreaEmbarcadaAtvIntermed" }))%>Não</label>
-			</div>
-			<div class="coluna30">
-				<label>Houve a apreensão de algum material?</label><br />
-				<label><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.IsApreendido", 1, (Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido == null ? false : Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsApreendidoSim" }))%>Sim</label>
-				<label class="append5"><%= Html.RadioButton("MaterialApreendidoVM.MaterialApreendido.IsApreendido", 0, (Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido == null ? false : !Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.Value), ViewModelHelper.SetaDisabled(true, new { @class = "radio rdoIsApreendidoNao" }))%>Não</label>
-			</div>
-		</div>
+		<label>Enquadramento da penalidade conforme Lei 10.476/2015</label>
+
+        <div class="block"  style="padding-top: 15px;">
+            <div class="block coluna25">
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.PossuiAdvertencia == null ? false : Model.InfracaoVM.Infracao.PossuiAdvertencia.Value), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeAdvertencia" }))%>Art.2º Item I - Advertência</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.PossuiMulta == null ? false : Model.InfracaoVM.Infracao.PossuiMulta.Value), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeMulta" }))%>Art.2º Item II - Multa</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.PossuiApreensao == null ? false : Model.InfracaoVM.Infracao.PossuiApreensao.Value), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeApreensao" }))%>Art.2º Item III - Apreensão</label><br />
+                </div>
+                <div class="block" style="height:28px; align-self:center;">
+                    <label><%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == null ? false : Model.InfracaoVM.Infracao.PossuiInterdicaoEmbargo.Value), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeInterdicaoEmbargo" }))%>Art.2º Item IV - Interdição ou embargo</label>
+                </div>
+            </div>
+
+            <div class="coluna1" style="border-left: 2px solid; height:130px;">
+                <%--Linha vertical--%>
+            </div>
+
+            <div class="block coluna60">
+
+                <%foreach (var item in Model.InfracaoVM.Penalidades)
+                  { %>
+                    <input type="hidden" class="hdnPenalidade<%:item.Id%>" value="<%:item.Codigo %>" />
+                <% } %>
+
+                <div class="block" style="height:28px; align-self:center;">
+                    <div class="coluna2 append2">
+                        <%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[0] != 0 ? true : false), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades01, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna50" style="height:28px; align-self:center;">
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[0] != 0 ? Model.InfracaoVM.Penalidades[0].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                    </div>
+                </div>
+
+                <div class="block">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
+                        <%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[1] != 0 ? true : false), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades02, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna50" style="height:28px; align-self:center;">
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[1] != 0 ? Model.InfracaoVM.Penalidades[1].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                    </div>
+                </div>
+
+                <div class="block">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
+                        <%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[2] != 0 ? true : false), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades03, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna50" style="height:28px; align-self:center;">
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[2] != 0 ? Model.InfracaoVM.Penalidades[2].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                    </div>
+                </div>
+
+                <div class="block">
+                    <div class="coluna2 append2" style="height:28px; align-self:center;">
+                        <%= Html.CheckBox("Penalidade.Item", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[3] != 0 ? true : false), ViewModelHelper.SetaDisabled(true, new { @class = "checkbox cbPenalidade cbPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna30 append2" style="height:28px; align-self:center;">
+                        <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades04, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
+                    </div>
+                    <div class="coluna50" style="height:28px; align-self:center;">
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[3] != 0 ? Model.InfracaoVM.Penalidades[3].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 	</fieldset>
+    
+    <fieldset class="box">
+        <legend>Multa</legend>
 
-	<fieldset class="box<%= Model.InfracaoVM.Infracao.IsAutuada.GetValueOrDefault() ? "" : " hide" %>">
-		<legend>Auto de infração</legend>
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("MultaVM.Multa.NumeroIUF", (Model.MultaVM.Multa.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MultaVM.Multa.NumeroIUF) ? Model.MultaVM.Multa.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFMulta", @maxlength = "6"  }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Serie", (Model.MultaVM.Multa.IsDigital != null ? Model.MultaVM.Multa.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFMulta" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Data", (Model.MultaVM.Multa.IsDigital == null ? string.Empty : (Model.MultaVM.Multa.DataLavratura.Data != DateTime.MinValue ? Model.MultaVM.Multa.DataLavratura.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFMulta maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("MultaVM.Multa.Emitido", (Model.MultaVM.Multa.IsDigital != null ? (Model.MultaVM.Multa.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFMulta" }))%>
+            </div>
+        </div>
+    </fieldset>
 
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº AI</label><br />
-				<%= Html.TextBox("N_AI", Model.N_AI, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_AI_EmitidoPor", Model.N_AI_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do auto</label><br />
-				<%= Html.TextBox("N_AI_DataAuto", Model.N_AI_DataAuto, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
+     <fieldset class="box">
+        <legend>Interdição/Embargo</legend>
 
-	</fieldset>
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.NumeroIUF", (Model.ObjetoInfracaoVM.Entidade.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.ObjetoInfracaoVM.Entidade.NumeroIUF) ? Model.ObjetoInfracaoVM.Entidade.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFInterdicaoEmbargo", @maxlength = "6"  }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Serie", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? Model.ObjetoInfracaoVM.Entidade.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFInterdicaoEmbargo" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Data", (Model.ObjetoInfracaoVM.Entidade.IsDigital == null ? string.Empty : (Model.ObjetoInfracaoVM.Entidade.DataLavraturaTermo.Data != DateTime.MinValue ? Model.ObjetoInfracaoVM.Entidade.DataLavraturaTermo.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFInterdicaoEmbargo maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("ObjetoInfracaoVM.Entidade.Emitido", (Model.ObjetoInfracaoVM.Entidade.IsDigital != null ? (Model.ObjetoInfracaoVM.Entidade.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFInterdicaoEmbargo" }))%>
+            </div>
+        </div>
+    </fieldset>
 
-	<fieldset class="box<%= Model.ObjetoInfracaoVM.Entidade.AreaEmbargadaAtvIntermed.GetValueOrDefault() == 1 ? "" : " hide" %>">
-		<legend>Termo de embargo e interdição</legend>
+    <fieldset class="box">
+        <legend>Apreensão</legend>
 
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº TEI</label><br />
-				<%= Html.TextBox("N_TEI", Model.N_TEI, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_TEI_EmitidoPor", Model.N_TEI_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do termo</label><br />
-				<%= Html.TextBox("N_TEI_DataTermo", Model.N_TEI_DataTermo, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.NumeroIUF", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF) ? Model.MaterialApreendidoVM.MaterialApreendido.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFApreensao", @maxlength = "6"  }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Serie", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? Model.MaterialApreendidoVM.MaterialApreendido.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFApreensao" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Data", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == null ? string.Empty : (Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.Data != DateTime.MinValue ? Model.MaterialApreendidoVM.MaterialApreendido.DataLavratura.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFApreensao maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("MaterialApreendidoVM.MaterialApreendido.Emitido", (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital != null ? (Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFApreensao" }))%>
+            </div>
+        </div>
+    </fieldset>
 
-	</fieldset>
+    <fieldset class="box">
+        <legend>Outras Penalidades</legend>
 
-	<fieldset class="box<%= Model.MaterialApreendidoVM.MaterialApreendido.IsApreendido.GetValueOrDefault() ? "" : " hide" %>">
-		<legend>Termo de apreensão e depósito</legend>
-
-		<div class="block">
-			<div class="coluna20 append2">
-				<label>Nº TAD</label><br />
-				<%= Html.TextBox("N_TAD", Model.N_TAD, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna20 append2">
-				<label>Emitido por</label><br />
-				<%= Html.TextBox("N_TAD_EmitidoPor", Model.N_TAD_EmitidoPor, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-			<div class="coluna22">
-				<label>Data da lavratura do termo</label><br />
-				<%= Html.TextBox("N_TAD_DataTermo", Model.N_TAD_DataTermo, ViewModelHelper.SetaDisabled(true, new { @class = "text" }))%>
-			</div>
-		</div>
-
-	</fieldset>
+        <div class="block">
+            <div class="coluna15 append2">
+                <label>Nº IUF</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == null ? string.Empty : (!String.IsNullOrWhiteSpace(Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF) ? Model.OutrasPenalidadesVM.OutrasPenalidades.NumeroIUF : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumIUFOutrasPenalidades", @maxlength = "6"  }))%>
+            </div>
+            <div class="coluna10 append2">
+                <label>Série</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.Serie", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? Model.OutrasPenalidadesVM.OutrasPenalidades.SerieTexto : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerieIUFOutrasPenalidades" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Data de lavratura do IUF</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidades.Data", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == null ? string.Empty : (Model.OutrasPenalidadesVM.OutrasPenalidades.DataLavratura.Data != DateTime.MinValue ? Model.OutrasPenalidadesVM.OutrasPenalidades.DataLavratura.DataTexto : "Gerado automaticamente")), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataIUFOutrasPenalidades maskData" }))%>
+            </div>
+            <div class="coluna17 append2">
+                <label>Emitido por</label><br />
+				<%= Html.TextBox("OutrasPenalidadesVM.OutrasPenalidade.Emitido", (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital != null ? (Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true ? "Sistema" : "Bloco") : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtEmitidoIUFOutrasPenalidades" }))%>
+            </div>
+        </div>
+    </fieldset>
 
 	<fieldset class="box" >
 		<legend>Documentos gerados</legend>

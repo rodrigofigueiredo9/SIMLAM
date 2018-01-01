@@ -388,8 +388,7 @@
 		RelatorioMapa,
 
         DeclaracaoAdicional,
-
+        ConfigurarCodigoReceita,
         ConfigurarPenalidade,
-        ConfigurarCodigoReceita
 	}
 }
