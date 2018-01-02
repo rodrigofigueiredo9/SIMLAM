@@ -59,7 +59,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				if (entidade.TipoNumero == (int)eDocumentoFitossanitarioTipoNumero.Digital)
 				{
 					//VerificarNumeroDigitalDisponivel foi validado na BUS
-					if (!_da.NumeroCancelado(entidade.Numero))
+                    string num_serie = entidade.Serie == null ? entidade.Numero : (entidade.Numero + "/" + entidade.Serie);
+					if (!_da.NumeroCancelado(num_serie))
 					{
 						Validacao.Add(Mensagem.EmissaoCFO.NumeroCancelado);
 						return false;
@@ -293,10 +294,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business
 				eUnidadeProducaoTipoProducao tipoProducao = ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedidaId);
 
 				DateTime dataSaldo = titulo.DataSituacao.Data.GetValueOrDefault();
-				if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
-				{
-					dataSaldo = new DateTime(DateTime.Today.Year - 1, dataSaldo.Month, dataSaldo.Day);
-				}
+                DateTime dataValidade = dataSaldo.AddYears(1); 
+				//if(titulo.DataSituacao.Data.GetValueOrDefault().Year < DateTime.Today.Year)
+                /*
+                 * Cálculo do saldo do CFO acrescenta a diferença de datas
+                 */
+                while (dataValidade < DateTime.Today)
+                {
+                    dataSaldo = dataValidade;
+                    dataValidade = dataValidade.AddYears(1);
+                }
+
+
+               
 
                 //Converte todas as quantidades para tonelada, para calcular o saldo
                 var quantidadeItem = item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade;

@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
 			return GerarPdf(dataSource);
 		}
@@ -107,7 +107,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             ConfigurarCabecarioRodape(dataSource.SetorId);
 
-            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
             return GerarPdf(dataSource);
         }
@@ -198,7 +198,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja; 
 
 			return GerarPdf(dataSource);
 		}
@@ -315,7 +315,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             #endregion Remover
 
-            ConfiguracaoDefault.ExibirSimplesConferencia = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
             return GerarPdf(dataSource);
         }
@@ -392,7 +392,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
 			return GerarPdf(dataSource);
 		}
@@ -429,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
-			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
 			return GerarPdf(dataSource);
 		}
@@ -527,7 +527,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			#endregion Remover
 
-			ConfiguracaoDefault.ExibirSimplesConferencia  = true;
+            ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
 			return GerarPdf(dataSource);
 		}

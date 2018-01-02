@@ -1004,6 +1004,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     reader.Close();
                 }
 
+                //se a área for DDSIA, converte as coordenadas para Grau, Minuto e Segundo
+                if (!String.IsNullOrWhiteSpace(fiscalizacao.IsDDSIA))
+                {
+                    String EsquemaBancoGeo = "idafgeo";
+
+                    comando = bancoDeDados.CriarComandoPlSql(@"
+                                begin
+                                    {0}coordenada.utm2gms(:datum, :easting, :northing, :fuso, 1, :longitude, :latitude);
+                                end;", EsquemaBancoGeo);
+                    comando.AdicionarParametroEntrada("datum", "SIRGAS2000", DbType.String);
+                    comando.AdicionarParametroEntrada("easting", fiscalizacao.CoordenadaEasting, DbType.Int64);
+                    comando.AdicionarParametroEntrada("northing", fiscalizacao.CoordenadaNorthing, DbType.Int64);
+                    comando.AdicionarParametroEntrada("fuso", 24, DbType.Int32);
+                    comando.AdicionarParametroSaida("longitude", DbType.String, 100);
+                    comando.AdicionarParametroSaida("latitude", DbType.String, 100);
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    fiscalizacao.CoordenadaEasting = comando.ObterValorParametro<string>("longitude");
+                    fiscalizacao.CoordenadaNorthing = comando.ObterValorParametro<string>("latitude");
+                }
+
                 comando = bancoDeDados.CriarComando(@"
                             select tfea.artigo,
                                    tfea.artigo_paragrafo,

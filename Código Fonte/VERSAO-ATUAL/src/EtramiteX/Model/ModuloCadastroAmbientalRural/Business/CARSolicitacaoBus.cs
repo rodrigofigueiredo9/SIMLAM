@@ -127,6 +127,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
                         bancoDeDados.ExecutarNonQuery(com);
                         bancoDeDados.Commit();
+
+                        bancoDeDados.IniciarTransacao();
+                        command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
+
+                        command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+
+                        bancoDeDados.ExecutarNonQuery(command);
+
+                        bancoDeDados.Commit();
                         #endregion
 
                     }
@@ -490,9 +499,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			if (resposta["status"] != "s")
 			{
 				return string.Empty;
-			}
-
-			return UrlSICAR + resposta["dados"];
+			}            
+			return UrlSICAR + resposta["dados"]; //PRODUCAO
+            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
 		}
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)

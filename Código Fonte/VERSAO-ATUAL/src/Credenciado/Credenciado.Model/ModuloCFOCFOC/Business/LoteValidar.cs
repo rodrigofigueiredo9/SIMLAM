@@ -233,15 +233,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 				string empreendimento = string.Empty;
 				switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
 				{
-					case eDocumentoFitossanitarioTipo.CFO:
-					case eDocumentoFitossanitarioTipo.CFOC:
-						empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
 
-						if (!string.IsNullOrEmpty(empreendimento))
-						{
-							Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
-						}
-						break;
+                    //    if (!string.IsNullOrEmpty(empreendimento) &&  ((eDocumentoFitossanitarioTipo)item.OrigemTipo) != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
 
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
@@ -262,16 +262,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 						Validacao.Add(Mensagem.Lote.CultivarDesassociadoUC(item.CultivarTexto));
 					}
 
+                   
+                    decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
+
+                    
+
+                    decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, DateTime.Now.Year, item.Id);
+
+
+                    if (item.ExibeKg)
+                        item.Quantidade = item.Quantidade / 1000;
+
+                    if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldoDocOrigem)
+                    {
+                        Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);
+                    }
+
                     //SALDO DA UC
                     decimal saldoUc = _da.obterSaldoRestanteCultivarUC(empreendimentoID, item.Cultivar, item.Cultura);
+
+
+
                     if (saldoUc <= 0)
                     {
                         Validacao.Add(Mensagem.Lote.CultivarSaldoTodoUtilizado);
                     }
 
-                    decimal quantidadeAdicionada = lista.Sum(x => x.Quantidade);
 
-                    if ((quantidadeAdicionada + item.Quantidade) > saldoUc)
+                    if ((quantidadeAdicionada + item.Quantidade + saldoOutrosDoc) > saldoUc)
                     {
                         Validacao.Add(Mensagem.Lote.CultivarQuantidadeSomaSuperior);
                     }
@@ -295,10 +313,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                 Validacao.Add(Mensagem.Lote.OrigemObrigatorio);
             }
 
-            if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && _da.VerificarSeCfoJaAssociadaALote(item.Origem) && !_da.VerificarSeDocumentoUtilizadoPorMesmaUC(item.Origem, empreendimentoID))
-            {
-                Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-            }
+           
 
             if (item.Cultura <= 0)
             {
@@ -428,15 +443,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                 string empreendimento = string.Empty;
                 switch ((eDocumentoFitossanitarioTipo)item.OrigemTipo)
                 {
-                    case eDocumentoFitossanitarioTipo.CFO:
-                    case eDocumentoFitossanitarioTipo.CFOC:
-                        empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
+                    //case eDocumentoFitossanitarioTipo.CFO:
+                    //case eDocumentoFitossanitarioTipo.CFOC:
+                    //    empreendimento = _da.CFOCFOCJaAssociado(item.OrigemTipo, item.Origem, empreendimentoID);
 
-                        if (!string.IsNullOrEmpty(empreendimento))
-                        {
-                            Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
-                        }
-                        break;
+                    //    if (!string.IsNullOrEmpty(empreendimento) && (eDocumentoFitossanitarioTipo)item.OrigemTipo != eDocumentoFitossanitarioTipo.CFO)
+                    //    {
+                    //        Validacao.Add(Mensagem.Lote.OrigemEmpreendimentoUtilizado(item.OrigemTipoTexto, item.OrigemNumero.ToString()));
+                    //    }
+                    //    break;
 
                     case eDocumentoFitossanitarioTipo.PTVOutroEstado:
                         empreendimento = _da.PTVOutroEstadoJaAssociado(item.Origem, empreendimentoID);
@@ -458,8 +473,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
                     }
                 }
 
-                if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO || item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
-                    item.Quantidade = saldoDocOrigem;
+                //if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFO && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFOC)
+                //{
+                //    item.Quantidade = saldoDocOrigem;
+                //}
 
             }
         }
@@ -605,7 +622,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
 		public bool Editar(Lote lote)
 		{
-			if (lote.SituacaoId != (int)eLoteSituacao.NaoUtilizado)
+            if (!LoteSituacao(lote.Id,null)) 
 			{
 				Validacao.Add(Mensagem.Lote.EditarSituacaoInvalida);
 			}

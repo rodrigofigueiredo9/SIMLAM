@@ -94,9 +94,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
 				{
-					if (resultado.mensagensResposta.Count > 1 && resultado.codigoResposta != 200)
+					if (resultado.mensagensResposta.Count > 1)
 					{
-						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + ";"));
+						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
 						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
 					}
 					else
@@ -106,6 +106,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					//pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
 				}
 			}
+            var mensagensDeResposta = String.Empty;
+            foreach (var men in resultado.mensagensResposta)
+            {
+                mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+                mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+            }
 
 			var sqlBuilder = new StringBuilder();
 			sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
@@ -141,11 +147,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
-					cmd.Parameters.Add(new OracleParameter("id", item.id));
-
+					
                     cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
                     cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
-                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
+                    
+                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
+                    //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));                    
+                    cmd.Parameters.Add(new OracleParameter("id", item.id));
 
 					cmd.ExecuteNonQuery();
 				}
@@ -179,6 +187,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append(":data_gerado,:data_envio,:arquivo,:pendencias,:codigo_imovel,");
 			sqlBuilder.Append(":url_recibo,:status_sicar,:condicao,:solicitacao_car_esquema,CURRENT_TIMESTAMP, :CODIGO_RESPOSTA, :CODIGO_IMOVEL_MASC, :MENSAGEM_RESPOSTA)");
 
+            var mensagensDeResposta = String.Empty;
+            foreach (var men in resultado.mensagensResposta)
+            {
+                mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+                mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+            }
 			try
 			{
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
@@ -202,7 +216,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
                     cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
                     cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
-                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
+                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
+                    //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
 
 					cmd.ExecuteNonQuery();
 				}

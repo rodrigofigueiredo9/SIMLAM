@@ -926,6 +926,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				new Lista { Texto = "Não", Id = "2" } 
 			};
 
+            vm.ConsideracaoFinalVM.IUFBloco = _busInfracao.PossuiIUFBloco(id);
+
             vm.ConsideracaoFinalVM.IsVisualizar = fiscalizacao.ConsideracaoFinal.Id > 0;
             vm.ConsideracaoFinalVM.ArquivoVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;
             vm.ConsideracaoFinalVM.ArquivoIUFVM.IsVisualizar = vm.ConsideracaoFinalVM.IsVisualizar;

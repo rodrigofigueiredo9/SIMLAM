@@ -47,7 +47,7 @@ Dominios = {
 		linha.closest('tbody').find('tr').removeClass('editando');
 		linha.addClass('editando');
 
-		var id = $('.hdnEmpreendimentoId', Dominio.container).val();
+		var id = $('.hdnEmpreendimentoId').val();
 		var dominio = JSON.parse(linha.find('.hdnItemJSon').val());
 
 		var novoobj = {
@@ -58,7 +58,6 @@ Dominios = {
 		Modal.abrir(Dominios.settings.urls.editar, novoobj, function (container) {
 			Dominio.load(container, { salvarCallBack: Dominios.salvarCallBack });
 		}, Modal.tamanhoModalGrande);
-
 	},
 
 	salvarCallBack: function (dominio) {

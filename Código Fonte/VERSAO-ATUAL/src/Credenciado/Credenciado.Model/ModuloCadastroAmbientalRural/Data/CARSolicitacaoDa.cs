@@ -64,13 +64,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				insert into {0}tab_car_solicitacao(id, numero, data_emissao, situacao, situacao_data, requerimento,  atividade, empreendimento, declarante, tid, credenciado, projeto_digital) 
-				values(:id, :id, :data_emissao, :situacao, :situacao_data, :requerimento, :atividade, :empreendimento, :declarante, :tid, :credenciado, :projeto_digital)",
+				insert into {0}tab_car_solicitacao(id, numero, data_emissao, situacao, situacao_data, requerimento,  atividade, empreendimento, declarante, tid, credenciado, projeto_digital, passivo_enviado) 
+				values(:id, :id, :data_emissao, :situacao, :situacao_data, :requerimento, :atividade, :empreendimento, :declarante, :tid, :credenciado, :projeto_digital, 1)",
 				UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", solicitacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_emissao", DateTime.Now, DbType.Date);
-				comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.Valido, DbType.Int32);
+				//comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.Valido, DbType.Int32);
+                comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao_data", DateTime.Now, DbType.Date);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				comando.AdicionarParametroEntrada("requerimento", solicitacao.Requerimento.Id, DbType.Int32);

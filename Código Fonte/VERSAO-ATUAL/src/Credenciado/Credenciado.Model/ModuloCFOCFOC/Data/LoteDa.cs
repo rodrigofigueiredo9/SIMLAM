@@ -383,7 +383,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                              select nvl(sum( case when cfoc.exibe_kilos is null then li.quantidade else cfoc.quantidade end ),0) from tab_cfoc_produto cfoc 
                                                                inner join tab_cfoc tc on tc.id = cfoc.cfoc
                                                                left join tab_lote_item li on li.origem = tc.id
-                                                               where tc.situacao = 2 and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
+                                                               where tc.situacao in (2,3) and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
                   c.unidade_medida_texto, emp.denominador
 				        from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
 					        (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade,
@@ -410,7 +410,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					        l.credenciado, c.cultura_id, c.cultura, c.cultivar_id, c.cultivar, c.cultura || '/' || c.cultivar cultura_cultivar,c.quantidade as saldo_total,  c.quantidade - (
                              select nvl(sum( case when cfoc.exibe_kilos is null then (select sum(li.quantidade) from tab_lote_item li where li.lote=cfoc.lote) else cfoc.quantidade end ),0) from tab_cfoc_produto cfoc 
                                                                inner join tab_cfoc tc on tc.id = cfoc.cfoc
-                                                               where tc.situacao = 2 and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
+                                                               where tc.situacao in (2,3) and cfoc.lote = l.id ) as quantidade, c.unidade_medida, c.exibe_kilos,
                   c.unidade_medida_texto, emp.denominador
 				        from tab_lote l, lov_lote_situacao ls, IDAF.tab_empreendimento emp,
 					        (select i.lote, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade,
@@ -781,7 +781,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 
 
 						comando = bancoDeDados.CriarComando(@"
-						select lu.id, lu.texto
+						select distinct lu.id, lu.texto
 						from tab_cfoc_produto            cp,
 							tab_lote                     l,
 							tab_lote_item                li,

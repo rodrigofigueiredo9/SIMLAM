@@ -175,12 +175,11 @@ PTVEmitir = {
 		    e.preventDefault();
 		    return false;
 		});
+
+
+		
 	    
-		$('#DataVistoria').change(function (e) {
-		        
-		    PTVEmitir.onChangeLocalVistoria();
-		    $(this).blur();
-		});
+		
 
 		
 		if (window.location.href.indexOf("Visualizar") == -1) {
@@ -190,8 +189,10 @@ PTVEmitir = {
 		
 	      
 
-		   
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
+		
+        $('#DataVistoria').change();
+		
 
 		
 
@@ -238,6 +239,7 @@ PTVEmitir = {
 			    datelist = lstDatas; // populate the array
 			   
 			    $("#DataVistoria").datepicker("refresh"); // 
+			 
 
 			}
 		});

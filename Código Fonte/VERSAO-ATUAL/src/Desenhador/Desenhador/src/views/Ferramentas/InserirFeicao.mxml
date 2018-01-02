@@ -164,16 +164,15 @@
 						pausado = false;
 						dispatchEvent(new FerramentaGeometriaControllerEvent(FerramentaGeometriaControllerEvent.LIGAR_DESLIGAR_PAN,null, this,false));
 												
-						if (estavaPausado)
+						if (estavaPausado && deixarHabilitadoSnap)
 						{
 							desabilitaSnap = true;
-							estavaPausado = estavaPausado;
 						}
 					}
 					else
 					{
 						
-						estavaPausado = !estavaPausado;
+						estavaPausado = FeicoesSnapSelecionadas.getInstance().feicoes && FeicoesSnapSelecionadas.getInstance().feicoes.length>0;
 						desabilitaSnap = false;
 						desligarSemApagarFeicao(deixarHabilitadoSnap);
 						ligado = true;

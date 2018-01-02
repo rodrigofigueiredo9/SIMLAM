@@ -47,7 +47,8 @@ Dominios = {
 		linha.closest('tbody').find('tr').removeClass('editando');
 		linha.addClass('editando');
 
-		var id = $('.hdnEmpreendimentoId', Dominio.container).val();
+		//var id = $('.hdnEmpreendimentoId', Dominio.container).val();
+		var id = $('.hdnEmpreendimentoId').val();
 
 		var dominio = JSON.parse(linha.find('.hdnItemJSon').val());
 

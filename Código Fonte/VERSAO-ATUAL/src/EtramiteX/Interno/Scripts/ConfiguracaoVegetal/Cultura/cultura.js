@@ -144,7 +144,7 @@ Cultura = {
 		Mensagem.limpar(Cultura.container);		
 		var item = {
 			Index: $(this).closest('tr').find('.hdnItemIndex').val(),
-			Texto: $(this).closest('tr').find('.lblNome').text().trim(),
+			Texto: $(this).closest('tr').find('.lblNome').html(),
 			IndexProducao: $(this).closest('tr').find('.hdnItemIndexProducao').val(),
 			IndexDeclaracaoAdicional: $(this).closest('tr').find('.hdnItemIndexDeclaracao').val()			
 		};

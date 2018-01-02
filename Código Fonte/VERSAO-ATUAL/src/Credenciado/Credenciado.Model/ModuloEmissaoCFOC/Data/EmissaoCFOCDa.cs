@@ -391,9 +391,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_cfoc c set c.tid = :tid, c.situacao = :situacao where c.numero = :numero", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    update {0}tab_cfoc c
+                                    set c.tid = :tid,
+                                        c.situacao = :situacao
+                                    where c.numero = :numero
+                                          and (c.serie = :serie or (c.serie is null and :serie is null))", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("numero", entidade.Numero, DbType.Int64);
+                comando.AdicionarParametroEntrada("serie", entidade.Serie, DbType.String);
 				comando.AdicionarParametroEntrada("situacao", (int)eDocumentoFitossanitarioSituacao.Cancelado, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -512,7 +518,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 				#region Produtos
 
 				comando = bancoDeDados.CriarComando(@"
-				select d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.quantidade, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto 
+				select distinct d.id, d.tid, d.lote, d.codigo_lote, d.data_criacao, d.cultura_id, d.cultura, d.cultivar_id, d.cultivar, d.quantidade, d.unidade_medida, d.exibe_kilos, d.unidade_medida_texto 
 				from (select cp.id, cp.tid, cp.lote, l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote, l.data_criacao, c.id cultura_id, c.texto cultura, cc.id cultivar_id, cc.cultivar, case when cp.exibe_kilos is null then li.quantidade else cp.quantidade end as quantidade , 
 					li.unidade_medida, cp.exibe_kilos, (select lu.texto from lov_crt_uni_prod_uni_medida lu where lu.id = li.unidade_medida) unidade_medida_texto 
 					from tab_cfoc_produto cp, tab_lote l, tab_lote_item li, tab_cultura c, tab_cultura_cultivar cc
@@ -726,10 +732,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
                     reader.Close();
                 }
 
+                if (numeroDigital.Count() == 9) //se não possui série, tira a barra
+                {
+                    numeroDigital = numeroDigital.Substring(0, 8);
+                }
+
                 return numeroDigital;
 				
 			}
 		}
+
+        internal List<Lista> ObterEmpreendimentosListaEtramiteX(BancoDeDados banco = null)
+        {
+            List<Lista> retorno = null;
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select distinct emp.id, emp.denominador from crt_unidade_consolidacao c, crt_unidade_cons_cultivar u,
+                tab_empreendimento emp, tab_titulo t, esp_abertura_livro_uc uc, esp_aber_livro_uc_cultura ucu  
+                where  emp.id = c.empreendimento and c.id = u.unidade_consolidacao and ucu.especificidade = uc.id
+                and c.empreendimento = t.empreendimento ");
+
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    retorno = new List<Lista>();
+
+                    while (reader.Read())
+                    {
+                        retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("denominador") });
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
 
 		internal List<Lista> ObterEmpreendimentosLista(int credenciadoID, BancoDeDados banco = null)
 		{

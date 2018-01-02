@@ -252,12 +252,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.OrigemObrigatorio);
 			}
 
-			var loteBus = new LoteBus();
-			if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
-			{
-				Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-				return false;
-			}
+            //var loteBus = new LoteBus();
+            //if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
+            //{
+            //    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
+            //    return false;
+            //}
 
 			#region Saldo
 

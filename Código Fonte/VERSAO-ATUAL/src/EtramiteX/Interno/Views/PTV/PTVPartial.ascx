@@ -3,47 +3,10 @@
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPessoa" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
-<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
 
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
-
-<fieldset class="box">
-	<div class="block">
-		<div class="coluna22 divDUA">
-			<label for="NumeroDua">Número DUA*</label>
-			<%=Html.TextBox("NumeroDua", Model.PTV.NumeroDua , ViewModelHelper.SetaDisabled(Model.PTV.Id > 0 , new { @class="text txtNumeroDua maskNumInt", @maxlength="80"}))%>
-		</div>
-
-		<div class="coluna20 divDUA">
-			<label for="PessoaTipo">Tipo *</label><br />
-			<label><%= Html.RadioButton("TipoPessoa", PessoaTipo.FISICA, Model.PTV.TipoPessoa != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaf rdbPessaoTipo" }))%> Física</label>							
-			<label class="append5"><%= Html.RadioButton("TipoPessoa", PessoaTipo.JURIDICA, Model.PTV.TipoPessoa == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaj rdbPessaoTipo" }))%> Jurídica</label>
-		</div>
-
-		<div class="coluna20 prepend7 divDUA">
-			<div class="CpfPessoaFisicaContainer <%= Model.PTV.TipoPessoa != PessoaTipo.JURIDICA ? "" : "hide" %> ">
-				<label for="CPFCNPJDUA">CPF *</label>
-				<%= Html.TextBox("CPFCNPJDUA", Model.PTV.CPFCNPJDUA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "text maskCpf txtCPFDUA" }))%>
-			</div>
-			<div class="CnpjPessoaJuridicaContainer <%= Model.PTV.TipoPessoa == PessoaTipo.JURIDICA ? "" : "hide" %> ">
-				<label for="CPFCNPJDUA">CNPJ *</label>
-				<%= Html.TextBox("CPFCNPJDUA", Model.PTV.CPFCNPJDUA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "text maskCnpj txtCNPJDUA" }))%>
-			</div>
-		</div>
-
-		<% if (!Model.IsVisualizar) { %>
-		<div class="coluna10">
-			<button type="button" class="inlineBotao btnVerificarDua <%= Model.PTV.Id > 0 ? "hide":""%>">Verificar</button>
-			<button type="button" class="inlineBotao btnLimparDua <%= Model.PTV.Id <= 0 ? "hide":""%>">Editar</button>
-		</div>
-		<% } %>
-		</div>
-</fieldset>
-
-<div class="linhaConteudo2 <%= Model.PTV.Id <= 0 ? "hide":""%>">
-
 <fieldset class="box">
 	<div class="block">
 		<div class="coluna21 divNumeroEnter">
@@ -74,10 +37,6 @@
 		</div>
 	</div>
 </fieldset>
-</div>
-
-
-
 
 <fieldset class="block box identificacao_produto campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Identificação do produto</legend>
@@ -196,24 +155,15 @@
     <div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="coluna58">
 			<label for="EmpreendimentoTexto">Empreendimento *</label>
-            <% if ( !string.IsNullOrEmpty(Model.PTV.EmpreendimentoSemDoc) ) { %>
-			    <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoSemDoc, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
-            <%} else { %>
-                <%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+			<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
 			<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
-              <% } %>
 		</div>		
 	</div>
 
 	<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="coluna58">
 			<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-            <% if (Model.PTV.Produtos.Count > 0 && Model.PTV.Produtos[0].OrigemTipo > (int)eDocumentoFitossanitarioTipo.PTVOutroEstado )
-               { %>
-			    <%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.ResponsavelSemDoc , ViewModelHelper.SetaDisabled(true, new { @class="text ddlResponsaveis"}))%>
-            <% } else { %>
-                <%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 2, new { @class="text ddlResponsaveis"}))%>
-            <% } %>
+			<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
 		</div>
 	</div>
 </fieldset>

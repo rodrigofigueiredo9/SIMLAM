@@ -160,7 +160,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 
 			this.lsLocalVistoria = ViewModelHelper.CriarSelectList(LsSetor, true, true, ptv.LocalVistoriaId.ToString());
 
-			this.lsDiaHoraVistoria = ViewModelHelper.CriarSelectList(lsDiaHoraVistoria, true, true, ptv.DataHoraVistoriaId.ToString());
+			this.lsDiaHoraVistoria = ViewModelHelper.CriarSelectList(lsDiaHoraVistoria, false, false, ptv.DataHoraVistoriaId.ToString());
 		}
 
 		public List<Acao> SetarAcoesTela(List<Acao> acoes)

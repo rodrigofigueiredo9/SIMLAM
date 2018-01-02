@@ -316,7 +316,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					t.tid,
 					t.numero,
 					t.situacao_id,
-					e.denominador,
+					nvl(e.denominador, t.empreendimento_sem_doc) as denominador,
 					e.cnpj,
 					le.sigla as uf,
 					ee.municipio_texto as municipio,
@@ -550,7 +550,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						item.DeclaracaoAdicional = String.Join(" ", listDeclaracoesAdicionaisAux.Distinct().ToList());
 						listDeclaracoesAdicionais.AddRange(listDeclaracoesAdicionaisAux);
 					}
-					emissaoPTV.DeclaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
+                    emissaoPTV.DeclaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList());
 				}
 
 				#endregion

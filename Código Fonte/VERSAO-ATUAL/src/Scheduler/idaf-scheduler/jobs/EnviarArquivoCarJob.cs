@@ -80,6 +80,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
 							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 						}
+                        //resultadoEnvio.codigoResposta = 200;
                         
 						//Salvar no diretorio de arquivos do SIMLAM Institucional
 						string arquivoFinal;

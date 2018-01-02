@@ -65,7 +65,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 			QRCodeEncoder qrCodeEncoder = new QRCodeEncoder();
 			qrCodeEncoder.QRCodeScale = 2;
 
-			string url = String.Format("{0}/{1}/{2}", UrlPDFPublico, "ptv/GerarPdfCredenciado", id);
+            string url = String.Format("{0}/{1}/{2}", UrlPDFPublico, "ptv/GerarPdfInterno", ptvID);
 
 			System.Drawing.Image imageQRCode = qrCodeEncoder.Encode(url);
 

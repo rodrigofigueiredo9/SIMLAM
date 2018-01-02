@@ -16,10 +16,10 @@ namespace AlterarSenhas
         {
             // Instância: ATENTAR no config! 
             // "default"=Institucional, "idafcredenciado"=Credenciado, etc.
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("default")) 
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafcredenciado")) 
             {
 
-                Comando comando = bancoDeDados.CriarComando(@"Select * from tab_usuario where login = 'livia.almeida'");
+                Comando comando = bancoDeDados.CriarComando(@"Select * from tab_usuario where login = 'pedrosposito'");
                 string senhaHash = "", id = "";
                 ArrayList alterar = new ArrayList();
 
