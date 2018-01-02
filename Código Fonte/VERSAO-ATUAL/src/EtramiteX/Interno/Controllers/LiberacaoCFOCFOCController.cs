@@ -116,15 +116,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         { 
             cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
 
-            //if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
-            //    return Json(new
-            //    {
-            //        @Valido = Validacao.EhValido,
-            //        @Msg = Validacao.Erros,
-            //        @Consultado = false
-            //    }, JsonRequestBehavior.AllowGet);
+            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
+                return Json(new
+                {
+                    @Valido = Validacao.EhValido,
+                    @Msg = Validacao.Erros,
+                    @Consultado = false
+                }, JsonRequestBehavior.AllowGet);
 
-            //_bus.VerificarDUA(filaID, NumeroDua, cpf);
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
 
             return Json(new
             {
@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             {
                 @Valido = Validacao.EhValido,
                 @Msg = Validacao.Erros,
-                @FilaID = 0 //filaID
+                @FilaID = filaID
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -166,7 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     @Consultado = false
                 }, JsonRequestBehavior.AllowGet);
 
-            //_bus.VerificarDUA(filaID, NumeroDua, cpf);
+            _bus.VerificarDUA(filaID, NumeroDua, cpf);
 
 
 			return Json(new { @Msg = Validacao.Erros, @EhValido = Validacao.EhValido, @Credenciado = credenciado });
