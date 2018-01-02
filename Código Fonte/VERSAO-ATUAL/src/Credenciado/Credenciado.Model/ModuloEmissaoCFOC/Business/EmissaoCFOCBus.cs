@@ -224,29 +224,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business
 
 				EmissaoCFOC entidadeBanco = _da.ObterPorNumero(Convert.ToInt64(entidade.Numero), entidade.Serie, false, false, bancoDeDados);
 
-                string numtemp = entidadeBanco.Numero;
-                if (numtemp.Count() > 8)
+                if (!String.IsNullOrWhiteSpace(entidadeBanco.Numero))
                 {
-                    entidadeBanco.Numero = numtemp.Substring(0, 8);
-                    entidadeBanco.Serie = numtemp[9].ToString();
-                }
-
-                if (entidade.Id != 0)
-                {
-                    List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
-
-                    //Dessassocio os Lotes
-                    entidadeBanco.Produtos.Clear();
-                    _da.Salvar(entidadeBanco, bancoDeDados);
-
-                    LoteBus loteBus = new LoteBus();
-                    foreach (var item in lotesID)
+                    string numtemp = entidadeBanco.Numero;
+                    if (numtemp.Count() > 8)
                     {
-                        loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
+                        entidadeBanco.Numero = numtemp.Substring(0, 8);
+                        entidadeBanco.Serie = numtemp[9].ToString();
                     }
-                }
 
-				_da.Cancelar(entidadeBanco, bancoDeDados);
+                    if (entidade.Id != 0)
+                    {
+                        List<int> lotesID = entidadeBanco.Produtos.Select(x => x.LoteId).ToList();
+
+                        //Dessassocio os Lotes
+                        entidadeBanco.Produtos.Clear();
+                        _da.Salvar(entidadeBanco, bancoDeDados);
+
+                        LoteBus loteBus = new LoteBus();
+                        foreach (var item in lotesID)
+                        {
+                            loteBus.AlterarSituacaoLote(item, eLoteSituacao.NaoUtilizado, bancoDeDados);
+                        }
+                    }
+
+                    _da.Cancelar(entidadeBanco, bancoDeDados);
+                }
 
 				if(!Validacao.EhValido)
 				{
