@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL AND SITUACAO NOT IN (1,3) ";
+            string BuildSQl = "SELECT ID FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL AND SITUACAO NOT IN (1,3)";
 
             //string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 26500";    
             
@@ -109,7 +109,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         public List<int> GetEmpreendimento(int origem, OracleConnection conn)
         {
-            string BuildSQl = "SELECT EMPREENDIMENTO FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL AND SITUACAO NOT IN (1,3) ";
+            string BuildSQl = "SELECT EMPREENDIMENTO FROM TAB_CAR_SOLICITACAO WHERE SITUACAO NOT IN (1,3) ";
             var arrayIDS = new List<int>();
 
             using (OracleCommand command = new OracleCommand(BuildSQl, conn))
