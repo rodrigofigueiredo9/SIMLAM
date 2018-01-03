@@ -152,6 +152,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						_daMaterialApreendido.Excluir(id, bancoDeDados);
 						_daConsideracaoFinal.Excluir(id, bancoDeDados);
 
+                        //novas seções
+                        _daMulta.Excluir(id, bancoDeDados);
+                        _daOutrasPenalidades.Excluir(id, bancoDeDados);
+
 						_da.Excluir(id, bancoDeDados);
 
 						_da.DeletarConsulta(id, bancoDeDados);
