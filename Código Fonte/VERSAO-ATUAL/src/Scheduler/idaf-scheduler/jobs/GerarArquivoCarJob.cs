@@ -2221,6 +2221,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			var geometrias = new List<Geo>();
 
+            //   Traamento para dois casos que tem aspas simples em uma string   ( ' => '')
+            bool i = identificacaoReserva.Contains("'");
+            if (i)
+            {
+                identificacaoReserva = identificacaoReserva.Replace("\'", "''");             
+            }
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
 				Geo.TipoArlProposta, "codigo = '" + identificacaoReserva + "'"));
 
