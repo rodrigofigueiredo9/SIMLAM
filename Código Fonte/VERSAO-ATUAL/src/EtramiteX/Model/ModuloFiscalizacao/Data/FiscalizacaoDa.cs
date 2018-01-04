@@ -130,18 +130,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                        nvl(max(tfm.iuf_numero), 0) iuf_multa,
                                        nvl(max(tfoi.iuf_numero), 0) iuf_interdicao,
                                        nvl(max(tfop.iuf_numero), 0) iuf_outras
-                                from tab_fiscalizacao tf,
-                                     (select * from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
+                                from (select * from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
                                      (select * from {0}tab_fisc_multa where iuf_digital = 1) tfm,
                                      (select * from {0}tab_fisc_obj_infracao where iuf_digital = 1) tfoi,
-                                     (select * from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop
-                                where tf.id = :id
-                                      and tfa.fiscalizacao (+)= tf.id
-                                      and tfm.fiscalizacao (+)= tf.id
-                                      and tfoi.fiscalizacao (+)= tf.id
-                                      and tfop.fiscalizacao (+)= tf.id", EsquemaBanco);
-
-                comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
+                                     (select * from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
 
                 int ultimo_numero = 0;
 
