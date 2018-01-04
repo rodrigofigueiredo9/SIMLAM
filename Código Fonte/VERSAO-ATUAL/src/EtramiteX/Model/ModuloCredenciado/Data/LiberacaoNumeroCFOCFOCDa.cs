@@ -605,6 +605,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                 else
                 {
                     bancoDeDados.Rollback();
+
+                    if (tipoDocumento == 1)
+                    {
+                        Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumDigitalCFOUltrapassaConfiguradaSistema);
+                    }
+
+                    if (tipoDocumento == 2)
+                    {
+                        Validacao.Add(Mensagem.LiberacaoNumeroCFOCFOC.QuantidadeNumDigitalCFOCUltrapassaConfiguradaSistema);
+                    }
                 }
             }
         }
@@ -1111,7 +1121,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                                               and tnum.tipo_numero = 2 ) ) livres_intervalo
                                            from cnf_doc_fito_intervalo cnf
                                            where cnf.tipo_documento = 1
-                                                 and cnf.tipo = 2 )");
+                                                 and cnf.tipo = 2
+                                                 and substr(cnf.numero_inicial, 3, 2) = to_char(sysdate, 'YY') )");
 
                 int livres = 0;
 
@@ -1147,7 +1158,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                                                               and tnum.tipo_numero = 2 ) ) livres_intervalo
                                            from cnf_doc_fito_intervalo cnf
                                            where cnf.tipo_documento = 2
-                                                 and cnf.tipo = 2 )");
+                                                 and cnf.tipo = 2
+                                                 and substr(cnf.numero_inicial, 3, 2) = to_char(sysdate, 'YY') )");
 
                 int livres = 0;
 
