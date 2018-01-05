@@ -344,11 +344,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				from ( select cp.lote_id,
 			                  l.codigo_uc || l.ano || lpad(l.numero, 4, '0') codigo_lote,
                               l.data_criacao,
-                              nvl(cp.quantidade, ( select tcp.quantidade
+                              /*nvl(cp.quantidade, ( select tcp.quantidade
                                                    from tab_cfoc_produto tcp,
                                                         hst_cfoc hc
                                                    where hc.cfoc_id = tcp.cfoc
-                                                         and hc.id = :hst_id ) ) quantidade,
+                                                         and hc.id = :hst_id ) ) quantidade,*/
+                              cp.quantidade,
                               ( select li.unidade_medida_texto
                                 from hst_lote_item li
                                 where li.id_hst = l.id
@@ -388,16 +389,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCFOCF
 				{
 					while (reader.Read())
 					{
-						entidade.Produtos.Add(new IdentificacaoProdutoRelatorio()
-						{
-							LoteCodigo = reader.GetValue<string>("codigo_lote"),
-							CulturaTexto = reader.GetValue<string>("cultura"),
-							CultivarTexto = reader.GetValue<string>("cultivar_nome"),
-							UnidadeMedida = reader.GetValue<string>("unidade_medida_texto"),
-							Quantidade = reader.GetValue<decimal>("quantidade"),
+                        IdentificacaoProdutoRelatorio temp = new IdentificacaoProdutoRelatorio()
+                        {
+                            LoteCodigo = reader.GetValue<string>("codigo_lote"),
+                            CulturaTexto = reader.GetValue<string>("cultura"),
+                            CultivarTexto = reader.GetValue<string>("cultivar_nome"),
+                            UnidadeMedida = reader.GetValue<string>("unidade_medida_texto"),
+                            //Quantidade = reader.GetValue<decimal>("quantidade"),
                             ExibeQtdKg = reader.GetValue<string>("exibe_kilos") == "1" ? true : false,
-							DataConsolidacao = reader.GetValue<DateTime>("data_criacao").ToShortDateString()
-						});
+                            DataConsolidacao = reader.GetValue<DateTime>("data_criacao").ToShortDateString()
+                        };
+
+                        if (reader["quantidade"] != null)
+                        {
+                            temp.Quantidade = reader.GetValue<decimal>("quantidade");
+                        }
+                        else
+                        {
+                            int id_lote = reader.GetValue<int>("lote_id");
+                            Comando comandoAux = bancoDeDados.CriarComando(@"
+                                                    select tc.quantidade
+                                                    from {0}tab_cfoc_produto tc
+                                                    where tc.cfoc = :id
+                                                          and tc.lote = :lote_id", EsquemaBanco);
+                            comandoAux.AdicionarParametroEntrada("id", id, DbType.Int32);
+                            comandoAux.AdicionarParametroEntrada("lote_id", id_lote, DbType.Int32);
+
+                            using (IDataReader readerAux = bancoDeDados.ExecutarReader(comandoAux))
+                            {
+                                if (readerAux.Read())
+                                {
+                                    temp.Quantidade = readerAux.GetValue<decimal>("quantidade");
+                                }
+                                readerAux.Close();
+                            }
+                        }
+
+						entidade.Produtos.Add(temp);
 					}
 
 					reader.Close();

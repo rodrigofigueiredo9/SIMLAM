@@ -352,6 +352,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
 
             int auxiliar = 0;
             decimal saldoDocOrigem = 0;
+
+            if (item.OrigemNumero.Count() > 8)
+            {
+                var temp = item.OrigemNumero;
+                item.OrigemNumero = temp.Substring(0, 8);
+                item.Serie = temp[9].ToString();
+            }
+
             List<IdentificacaoProduto> produtos = OrigemNumero(item.OrigemNumero, item.OrigemTipo, item.Serie, out auxiliar);
             if (produtos != null)
             {
