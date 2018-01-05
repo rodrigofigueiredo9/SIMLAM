@@ -759,17 +759,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					case eDocumentoFitossanitarioTipo.CFOC:
 
                         comandoQtd = bancoDeDados.CriarComando(@"
-					    select sum(cp.quantidade)
-						from tab_cfoc_produto            cp,
-							tab_lote                     l,
-							tab_lote_item                li,
-							lov_crt_uni_prod_uni_medida lu
-						where l.id = cp.lote
-							and li.lote = l.id
-							and li.unidade_medida = lu.id
-							and li.cultivar = :cultivarID
-							and li.cultura = :culturaID
-							and cp.cfoc = :origemID", EsquemaBanco);
+                                        select sum(cp.quantidade)
+                                        from tab_cfoc_produto cp,
+                                             tab_lote l
+                                        where cp.cfoc = :origemID
+                                              and l.id = cp.lote
+                                              and ( select count(1)
+                                                    from tab_lote_item li
+                                                    where li.lote = l.id
+                                                          and li.cultura = :culturaID
+                                                          and li.cultivar = :cultivarID ) > 0", EsquemaBanco);
 
 
                         comandoQtd.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
