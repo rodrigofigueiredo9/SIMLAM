@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return novoId;
 		}
 
-		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "")
+		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "")
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -94,7 +94,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
 				{
-					if (resultado.mensagensResposta.Count > 1)
+                    if (resultado.mensagensResposta.Count > 1 || (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1))
 					{
 						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
 						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
