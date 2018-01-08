@@ -130,10 +130,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                        nvl(max(tfm.iuf_numero), 0) iuf_multa,
                                        nvl(max(tfoi.iuf_numero), 0) iuf_interdicao,
                                        nvl(max(tfop.iuf_numero), 0) iuf_outras
-                                from (select * from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
-                                     (select * from {0}tab_fisc_multa where iuf_digital = 1) tfm,
-                                     (select * from {0}tab_fisc_obj_infracao where iuf_digital = 1) tfoi,
-                                     (select * from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
+                                from (select iuf_numero from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
+                                     (select iuf_numero from {0}tab_fisc_multa where iuf_digital = 1) tfm,
+                                     (select iuf_numero from {0}tab_fisc_obj_infracao where iuf_digital = 1) tfoi,
+                                     (select iuf_numero from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
 
                 int ultimo_numero = 0;
 
@@ -157,36 +157,75 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     reader.Close();
                 }
 
+                int prox_numero = ultimo_numero + 1;
+                bool existe = true;
+
+                while (existe)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                            select count(1) existe
+                            from (select iuf_numero from {0}tab_fisc_apreensao where iuf_numero = :numero) tfa,
+                                 (select iuf_numero from {0}tab_fisc_multa where iuf_numero = :numero) tfm,
+                                 (select iuf_numero from {0}tab_fisc_obj_infracao where iuf_numero = :numero) tfoi,
+                                 (select iuf_numero from {0}tab_fisc_outras_penalidades where iuf_numero = :numero) tfop", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("numero", prox_numero, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            if (reader.GetValue<int>("existe") == 0)
+                            {
+                                existe = false;
+                            }
+                            else
+                            {
+                                prox_numero++;
+                            }
+                        }
+                        else
+                        {
+                            existe = false;
+                        }
+
+                        reader.Close();
+                    }
+                }
+                
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_apreensao
                             set iuf_numero = :iuf
-                            where fiscalizacao = :id", EsquemaBanco);
+                            where fiscalizacao = :id
+                                  and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", prox_numero, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_multa
                             set iuf_numero = :iuf
-                            where fiscalizacao = :id", EsquemaBanco);
+                            where fiscalizacao = :id
+                                  and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", prox_numero, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_obj_infracao
                             set iuf_numero = :iuf
-                            where fiscalizacao = :id", EsquemaBanco);
+                            where fiscalizacao = :id
+                                  and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", prox_numero, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_outras_penalidades
                             set iuf_numero = :iuf
-                            where fiscalizacao = :id", EsquemaBanco);
+                            where fiscalizacao = :id
+                                  and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("iuf", ultimo_numero + 1, DbType.Int32);
+                comando.AdicionarParametroEntrada("iuf", prox_numero, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 #endregion

@@ -237,6 +237,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 							fiscalizacao.Vencimento.Data = DateTime.Now.AddDays(_prazoVencimentoDias);
 						}
 
+                        //Aqui é gerado o número do IUF (digital) e mudado o status da fiscalização
 						_da.ConcluirCadastro(fiscalizacao, gerarAutosTermo, bancoDeDados);
 
                         List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacaoId);
