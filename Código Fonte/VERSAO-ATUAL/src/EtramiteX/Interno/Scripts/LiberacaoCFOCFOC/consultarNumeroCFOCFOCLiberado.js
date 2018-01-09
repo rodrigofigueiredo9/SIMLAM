@@ -90,6 +90,11 @@ ConsultarNumeroCFOCFOCLiberado = {
             CredenciadoId: $('.hdnCredenciadoId', ConsultarNumeroCFOCFOCLiberado.container).val()
         };
 
+        if (retorno.Numero.length > 8) {
+            retorno.Numero = $('.txtNumero', container).val().substr(0, 8);
+            retorno.Serie = $('.txtNumero', container).val().substr(9, 1);
+        }
+
         return retorno;
     },
 
