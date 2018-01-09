@@ -165,7 +165,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			//Inserir no Histórico
 			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
-
+            if(item == null)
+            {
+                return 0;
+            }
 			return item.id;
 		}
 
