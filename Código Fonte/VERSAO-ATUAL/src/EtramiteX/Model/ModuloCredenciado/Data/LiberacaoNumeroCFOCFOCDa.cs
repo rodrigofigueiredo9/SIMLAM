@@ -878,6 +878,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 				comando.AdicionarParametroEntrada("credenciado_id", filtro.CredenciadoId, DbType.Int32);
 
 				comando.DbCommand.CommandText += comando.FiltroAnd("t.numero", "numero", filtro.Numero);
+                comando.DbCommand.CommandText += comando.FiltroAnd("t.serie", "serie", filtro.Serie);
 
 				comando.DbCommand.CommandText += comando.FiltroAnd("t.tipo_documento", "tipo_documento", filtro.TipoDocumento);
 
