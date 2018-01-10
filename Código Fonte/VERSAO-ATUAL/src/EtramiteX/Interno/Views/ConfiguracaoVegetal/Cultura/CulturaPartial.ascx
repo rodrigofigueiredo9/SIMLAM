@@ -13,7 +13,7 @@
 
 		<div class="block coluna88 ultima">
 			<label>Cultivar *</label>
-			<%=Html.TextBox("Cultura.Cultivar", string.Empty, new { @class="txtCultivar text", @maxlength="100" }) %>
+			<%=Html.TextBox("Cultura.Cultivar", string.Empty, new { @class="txtCultivar text", @maxlength="250" }) %>
 		</div>
 
 		<div class="coluna10">
@@ -38,7 +38,7 @@
 					%>
 						<tr>
 							<td>
-								<label class="lblNome" title="<%= item.Nome %>"><%= item.Nome %> </label>
+								<label class="lblNome" title="<%= item.Nome %>"><%= item.Nome %></label>
 							</td>
 							<td>
 								<a class="icone editar btnItemEditar" title="Editar"></a>
