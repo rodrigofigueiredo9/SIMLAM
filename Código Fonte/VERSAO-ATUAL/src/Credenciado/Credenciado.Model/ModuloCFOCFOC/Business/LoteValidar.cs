@@ -353,7 +353,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business
             int auxiliar = 0;
             decimal saldoDocOrigem = 0;
 
-            if (item.OrigemNumero.Count() > 8)
+            if ( item.OrigemNumero.Count() > 8
+                 && ( (eDocumentoFitossanitarioTipo)item.OrigemTipo == eDocumentoFitossanitarioTipo.CFO
+                       || (eDocumentoFitossanitarioTipo)item.OrigemTipo == eDocumentoFitossanitarioTipo.CFOC ) )
             {
                 var temp = item.OrigemNumero;
                 item.OrigemNumero = temp.Substring(0, 8);
