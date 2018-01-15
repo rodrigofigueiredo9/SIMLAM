@@ -999,17 +999,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				switch (origemTipo)
 				{
-					case (int)eDocumentoFitossanitarioTipo.CFO: comando = bancoDeDados.CriarComando(@"select distinct c.id cultura_id, c.texto  cultura 
-															  from {0}tab_cfo_produto              cp,
-																   {0}ins_crt_unidade_prod_unidade i,
-																	  tab_cultura                  c,
-																	  tab_cultura_cultivar         cc,
-																	  lov_crt_uni_prod_uni_medida  lu
-																where i.id = cp.unidade_producao
-																  and c.id = i.cultura
-																  and cc.id = i.cultivar
-																  and i.estimativa_unid_medida = lu.id
-																  and cp.cfo = :numeroOrigem", UsuarioCredenciado); break;
+                    case (int)eDocumentoFitossanitarioTipo.CFO: comando = bancoDeDados.CriarComando(@"SELECT DISTINCT C.ID cultura_id, C.TEXTO cultura 
+                                                    FROM {0}TAB_CFO_PRODUTO CP 
+                                                            INNER JOIN {0}HST_CRT_UNIDADE_PROD_UNIDADE UP ON CP.UNIDADE_PRODUCAO = UP.UNIDADE_PRODUCAO_UNIDADE_ID
+                                                            iNNER JOIN TAB_CULTURA C ON C.ID = UP.CULTURA_ID
+                                                            INNER JOIN TAB_CULTURA_CULTIVAR CC ON CC.ID = UP.CULTIVAR_ID
+                                                            INNER JOIN LOV_CRT_UNI_PROD_UNI_MEDIDA LU ON  LU.ID = UP.ESTIMATIVA_UNID_MEDIDA_ID
+                                                            WHERE CP.CFO = :numeroOrigem", UsuarioCredenciado); break;
 					case (int)eDocumentoFitossanitarioTipo.CFOC: comando = bancoDeDados.CriarComando(@"select distinct c.id cultura_id, c.texto cultura                
 																from {0}tab_cfoc_produto    cp,
 																	{0}tab_lote             l,
