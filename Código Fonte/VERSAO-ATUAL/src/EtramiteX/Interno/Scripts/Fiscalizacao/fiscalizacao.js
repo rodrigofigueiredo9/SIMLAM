@@ -79,7 +79,7 @@ Fiscalizacao = {
 		}
 
 		if (Fiscalizacao.modo == 1) {
-			if (Fiscalizacao.salvarEdicao) {
+		    if (Fiscalizacao.stepAtual != 9 && Fiscalizacao.salvarEdicao) {
 				if (!Fiscalizacao.salvarTelaAtual()) {
 					return;
 				}
