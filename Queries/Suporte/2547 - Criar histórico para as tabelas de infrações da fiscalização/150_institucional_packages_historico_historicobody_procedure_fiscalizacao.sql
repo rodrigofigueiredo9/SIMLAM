@@ -523,6 +523,71 @@
 					 j.especificacao);
 			
 			end loop;
+			
+			for j in (select tfopi.id,
+							 tfopi.penalidade_outra penalidade_outra_id,
+							 cfip.tid penalidade_outra_tid,
+							 cfip.artigo penalidade_outra_artigo,
+							 cfip.item penalidade_outra_item,
+							 cfip.descricao penalidade_outra_descricao,
+							 tfopi.tid
+						from tab_fisc_outras_penalidad_infr tfopi,
+							 cnf_fisc_infracao_penalidade cfip
+					   where tfopi.penalidade_outra = cfip.id(+)
+							 and tfopi.infracao = i.id) loop
+			
+				insert into hst_fisc_outras_penalidad_infr
+					(id,
+					 id_hst,
+					 outras_pen_infr_id,
+					 infracao_id,
+					 pen_outr_id,
+					 pen_outr_tid,
+					 pen_outr_artigo,
+					 pen_outr_item,
+					 pen_outr_descricao,
+					 tid)
+				values
+					(seq_hst_fisc_outr_penali_infr.nextval,
+					 seq_hst_fisc_infracao.currval,
+					 j.id,
+					 i.id,
+					 j.penalidade_outra_id,
+					 j.penalidade_outra_tid,
+					 j.penalidade_outra_artigo,
+					 j.penalidade_outra_item,
+					 j.penalidade_outra_descricao,
+					 v_tid);
+			
+			end loop;
+			
+			for j in (select tfpi.id,
+							 tfpi.penalidade penalidade_id,
+							 lfpf.texto penalidade_texto,
+							 tfpi.tid
+						from tab_fisc_penalidades_infr tfpi,
+							 lov_fisc_penalidades_fixas lfpf
+					   where tfpi.penalidade = lfpf.id(+)
+							 and tfpi.infracao = i.id) loop
+			
+				insert into hst_fisc_penalidades_infr
+					(id,
+					 id_hst,
+					 penalidades_infr_id,
+					 infracao_id,
+					 penalidade_id,
+					 penalidade_texto,
+					 tid)
+				values
+					(seq_hst_fisc_penalidades_infr.nextval,
+					 seq_hst_fisc_infracao.currval,
+					 j.id,
+					 i.id,
+					 j.penalidade_id,
+					 j.penalidade_texto,
+					 v_tid);
+			
+			end loop;
 		
 		end loop;
 		------------------------------------------------------------
@@ -884,71 +949,113 @@
 						 tfm.iuf_digital,
 						 tfm.iuf_numero,
 						 tfm.iuf_data,
-						 tfm.serie,
+						 tfm.serie serie_id,
+						 lfs.texto serie_texto,
 						 tfm.valor_multa,
-						 tfm.arquivo,
+						 tfm.arquivo arquivo_id,
+						 ta.tid arquivo_tid,
 						 tfm.justificar,
-						 tfm.codigo_receita,
+						 tfm.codigo_receita codigo_receita_id,
+						 lficr.texto codigo_receita_texto,
+						 lficr.descricao codigo_receita_descricao,
 						 tfm.tid
-					from tab_fisc_multa tfm
-				   where 
+					from tab_fisc_multa tfm,
+						 lov_fiscalizacao_serie lfs,
+						 tab_arquivo ta,
+						 lov_fisc_infracao_codigo_rece lficr
+				   where tfm.serie = lfs.id(+)
+						 and tfm.arquivo = ta.id(+)
+						 and tfm.codigo_receita = lficr.id(+)
 						 and tfm.fiscalizacao = p_id ) loop
 		
-			insert into hst_fisc_apreensao
+			insert into hst_fisc_multa
 				(id,
 				 id_hst,
-				 apreensao_id,
+				 multa_id,
 				 fiscalizacao_id,
 				 iuf_digital,
 				 iuf_numero,
 				 iuf_data,
-				 numero_lacres,
 				 arquivo_id,
 				 arquivo_tid,
 				 serie_id,
 				 serie_texto,
-				 descricao,
-				 valor_produtos,
-				 depositario_id,
-				 depositario_nome,
-				 depositario_cpf,
-				 endereco_logradouro,
-				 endereco_bairro,
-				 endereco_distrito,
-				 endereco_estado_id,
-				 endereco_estado,
-				 endereco_municipio_id,
-				 endereco_municipio,
-				 opiniao,
-				 valor_produtos_reais,
+				 valor_multa,
+				 justificar,
+				 codigo_receita_id,
+				 cod_receita_texto,
+				 cod_receita_descricao,
 				 tid)
 			values
-				(seq_hst_fisc_apreensao.nextval,
+				(seq_hst_fisc_multa.nextval,
 				 seq_hst_fiscalizacao.currval,
 				 i.id,
 				 p_id,
 				 i.iuf_digital,
 				 i.iuf_numero,
 				 i.iuf_data,
-				 i.numero_lacres,
+				 i.arquivo_id,
+				 i.arquivo_tid,
+				 i.serie_id,
+				 i.serie_texto,
+				 i.valor_multa,
+				 i.justificar,
+				 i.codigo_receita_id,
+				 i.codigo_receita_texto,
+				 i.codigo_receita_descricao,
+				 v_tid);
+		
+		end loop;
+		------------------------------------------------------------ 
+		
+		
+		------------------------------------------------------------
+		-- Fiscalização - Outras Penalidades - NOVA 
+		------------------------------------------------------------ 
+		for i in (select tfop.id,
+						 tfop.iuf_digital,
+						 tfop.iuf_numero,
+						 tfop.iuf_data,
+						 tfop.serie serie_id,
+						 lfs.texto serie_texto,
+						 tfop.descricao,
+						 tfop.arquivo arquivo_id,
+						 ta.tid arquivo_tid,
+						 tfop.tid
+					from tab_fisc_outras_penalidades tfop,
+						 lov_fiscalizacao_serie lfs,
+						 tab_arquivo ta
+				   where tfop.serie = lfs.id(+)
+						 and tfop.arquivo = ta.id(+)
+						 and tfop.fiscalizacao = p_id ) loop
+		
+			insert into hst_fisc_outras_penalidades
+				(id,
+				 id_hst,
+				 outras_penalidades_id,
+				 fiscalizacao_id,
+				 iuf_digital,
+				 iuf_numero,
+				 iuf_data,
+				 arquivo_id,
+				 arquivo_tid,
+				 serie_id,
+				 serie_texto,
+				 descricao,
+				 tid)
+			values
+				(seq_hst_fisc_outras_penal.nextval,
+				 seq_hst_fiscalizacao.currval,
+				 i.id,
+				 p_id,
+				 i.iuf_digital,
+				 i.iuf_numero,
+				 i.iuf_data,
 				 i.arquivo_id,
 				 i.arquivo_tid,
 				 i.serie_id,
 				 i.serie_texto,
 				 i.descricao,
-				 i.valor_produtos,
-				 i.depositario_id,
-				 i.depositario_nome,
-				 i.depositario_cpf,
-				 i.endereco_logradouro,
-				 i.endereco_bairro,
-				 i.endereco_distrito,
-				 i.endereco_estado_id,
-				 i.endereco_estado_texto,
-				 i.endereco_municipio_id,
-				 i.endereco_municipio_texto,
-				 i.opiniao,
-				 i.valor_produtos_reais,
 				 v_tid);
 		
 		end loop;
