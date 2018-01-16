@@ -182,9 +182,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-                //Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+                Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
-                //Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -322,9 +322,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-                //Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+                Historico.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
-                //Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+                Consulta.Gerar(materialApreendido.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
