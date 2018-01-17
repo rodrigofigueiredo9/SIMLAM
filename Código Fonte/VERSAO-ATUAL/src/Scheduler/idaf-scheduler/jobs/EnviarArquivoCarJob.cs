@@ -60,6 +60,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
+                    if (item.Requisicao == null)
+                    {
+                        nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+                        continue;
+                    }
+
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
