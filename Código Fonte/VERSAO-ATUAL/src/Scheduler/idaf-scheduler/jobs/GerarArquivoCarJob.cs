@@ -849,33 +849,38 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
              */
             #region [[  CONSULTAS  ]]
 
-            var q1 = @"select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+            var q1 = @"select /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
                                             from hst_car_solicitacao_cred c    
-                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID   
-                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
+                                                  INNER JOIN CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.INTERNO
+                                                   
                                               where c.solicitacao_id=:id and c.tid=:tid";
 
             // -- EMPREENDIMENTOS JÁ IMPORTADOS (POSSUI CÓDIGO E INTERNO)
-            var q2 = @" SELECT CS.dominialidade_id caract_id, CS.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+            var q2 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
                                 FROM idafcredenciadogeo.GEO_ATP GA 
                                         INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
                                         INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
                                         INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                        INNER JOIN CRT_DOMINIALIDADE                    DM  ON  DM.EMPREENDIMENTO = EM.INTERNO
                                     WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid
                         UNION ALL   
-                        SELECT CS.dominialidade_id caract_id, CS.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.INTERNO_ID projeto_id, /*c.projeto_geo_tid*/ PG.INTERNO_TID projeto_tid      
+                        SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.INTERNO_ID projeto_id, /*c.projeto_geo_tid*/ PG.INTERNO_TID projeto_tid      
                                 FROM idafgeo.GEO_ATP GA 
                                         INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.INTERNO_ID = GA.PROJETO
                                         INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
                                         INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                        INNER JOIN CRT_DOMINIALIDADE                    DM  ON  DM.EMPREENDIMENTO = EM.INTERNO
                                     WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid ";
-            
+
             //-- EMPREENDIMENTOS NÃO IMPORTADOS AINDA (NÃO POSSUI CÓDIGO, NEM INTERNO) 
-            var q3 = @" SELECT CS.dominialidade_id caract_id, CS.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+            var q3 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
                               FROM idafcredenciadogeo.TMP_ATP GA 
                                       INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
                                       INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
                                       INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                      INNER JOIN IDAFCREDENCIADO.CRT_DOMINIALIDADE    DM  ON  DM.EMPREENDIMENTO = EM.ID
                                   WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid";
 
             #endregion
