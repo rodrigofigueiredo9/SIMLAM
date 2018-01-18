@@ -297,6 +297,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"select t.id         Id,
 															t.fiscalizacao_id     FiscalizacaoId,
 															t.setor_id            SetorId,
+                                                            t.area_fiscalizacao   AreaFiscalizacao,
 															t.sis_coord_id        SistemaCoordId,
 															t.datum_id            Datum,
 															t.area_abrang         AreaAbrangencia,
@@ -313,6 +314,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															--t.data                dataFisc,
 															t.local               Local,
 															t.responsavel_id      ResponsavelId,
+                                                            t.responsavel_tid     ResponsavelTid,
 															t.resp_propriedade_id ResponsavelPropriedadeId
 														from {0}hst_fisc_local_infracao t
 														where t.fiscalizacao_id = :fiscalizacao
@@ -324,7 +326,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
+                //localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        localInfracao.Id = reader.GetValue<int>("Id");
+                        localInfracao.FiscalizacaoId = reader.GetValue<int>("FiscalizacaoId");
+                        localInfracao.SetorId = reader.GetValue<int>("SetorId");
+                        localInfracao.AreaFiscalizacao  = reader.GetValue<int?>("AreaFiscalizacao");
+                        localInfracao.SistemaCoordId = reader.GetValue<int>("SistemaCoordId");
+                        localInfracao.Datum  = reader.GetValue<int>("Datum");
+                        localInfracao.AreaAbrangencia  = reader.GetValue<string>("AreaAbrangencia");
+                        localInfracao.LatNorthing = reader.GetValue<string>("LatNorthing");
+                        localInfracao.LonEasting = reader.GetValue<string>("LonEasting");
+                        localInfracao.Hemisferio = reader.GetValue<int>("Hemisferio");
+                        localInfracao.MunicipioId  = reader.GetValue<int>("MunicipioId");
+                        localInfracao.MunicipioTexto = reader.GetValue<string>("MunicipioTexto");
+                        localInfracao.PessoaId  = reader.GetValue<int>("PessoaId");
+                        localInfracao.PessoaTid = reader.GetValue<string>("PessoaTid");
+                        localInfracao.EmpreendimentoId  = reader.GetValue<int>("EmpreendimentoId");
+                        localInfracao.EmpreendimentoTid = reader.GetValue<string>("EmpreendimentoTid");
+                        localInfracao.Tid = reader.GetValue<string>("Tid");
+                        localInfracao.Local = reader.GetValue<string>("Local");
+                        localInfracao.ResponsavelId  = reader.GetValue<int>("ResponsavelId");
+                        localInfracao.ResponsavelPropriedadeId = reader.GetValue<int>("ResponsavelPropriedadeId");
+
+                        if (string.IsNullOrWhiteSpace(localInfracao.PessoaTid))
+                        {
+                            localInfracao.PessoaTid = reader.GetValue<string>("ResponsavelTid");
+                        }
+                    }
+
+                    reader.Close();
+                }
 			}
 			return localInfracao;
 		}

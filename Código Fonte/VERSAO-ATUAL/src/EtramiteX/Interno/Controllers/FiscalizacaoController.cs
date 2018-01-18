@@ -269,9 +269,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
             else
             {
-                //fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
-                fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(id);   //temporário
+                fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
                 lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
+
+                if (fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0) == 0)
+                {
+                    fiscalizacao.LocalInfracao.PessoaId = fiscalizacao.LocalInfracao.ResponsavelId;
+                }
+
                 pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
             }
 
