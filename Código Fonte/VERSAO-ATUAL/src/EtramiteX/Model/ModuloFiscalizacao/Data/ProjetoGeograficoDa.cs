@@ -722,22 +722,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 			string tabela = finalizado ? "tab_fisc_prj_geo" : "tmp_projeto_geo";
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				#region Obter Id Projeto
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Obter Id Projeto
 
-				Comando comando = bancoDeDados.CriarComando(@"select g.id from {0}" + tabela + @" g where g.fiscalizacao = :fiscalizacao", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"select g.id from {0}" + tabela + @" g where g.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-				object valor = bancoDeDados.ExecutarScalar(comando);
+                object valor = bancoDeDados.ExecutarScalar(comando);
 
-				projeto.Id = (valor != null && !Convert.IsDBNull(valor)) ? Convert.ToInt32(valor) : 0;
+                projeto.Id = (valor != null && !Convert.IsDBNull(valor)) ? Convert.ToInt32(valor) : 0;
 
-				#endregion
+                #endregion
 
-				if (projeto.Id <= 0)
-				{
+                if (projeto.Id <= 0)
+                {
                     comando = bancoDeDados.CriarComando(@"select f.possui_projeto_geo from tab_fiscalizacao f where id = :fiscalizacao", EsquemaBanco);
                     comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
@@ -749,22 +749,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         }
                     }
 
-					return projeto;
-                }
-                else if (projeto.PossuiProjetoGeo != true)
-                {
-                    projeto.PossuiProjetoGeo = true;
+                    return projeto;
                 }
 
-				projeto = Obter(projeto.Id, bancoDeDados, simplificado, finalizado);
+                projeto = Obter(projeto.Id, bancoDeDados, simplificado, finalizado);
 
                 comando = bancoDeDados.CriarComando(@"
                                     select f.possui_projeto_geo
                                     from {0}tab_fiscalizacao f
                                     where f.id = :fiscalizacao", EsquemaBanco);
                 comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
-                projeto.PossuiProjetoGeo = bancoDeDados.ExecutarScalar<int>(comando) == 1;
-			}
+                projeto.PossuiProjetoGeo = bancoDeDados.ExecutarScalar<int>(comando) == 1 || projeto.Id > 0;
+            }
 
 			return projeto;
 		}
