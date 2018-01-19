@@ -1490,13 +1490,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT dominialidade_dominio_id,tid,tipo_id,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao_texto FROM " +
+						"SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
 						schema +
-						".HST_CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade_id = :dominialidade_id AND dominialidade_tid = :dominialidade_tid",
+						".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
 						conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-				cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+				//cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
 
 				using (var dr = cmd.ExecuteReader())
 				{
@@ -1512,7 +1512,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						};
 
 
-						var tipo = Convert.ToInt32(dr["tipo_id"]);
+						var tipo = Convert.ToInt32(dr["tipo"]);
 						doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
 
 						if ((tipo == 1) || (tipo == 2))
@@ -1541,7 +1541,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
 							doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
 
-							var emissorDocumento = Convert.ToString(dr["comprovacao_texto"]) + " " + Convert.ToString(dr["registro"]);
+							var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
 							doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
 								? emissorDocumento.Substring(0, 100)
 								: emissorDocumento);
@@ -1549,7 +1549,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 
 						doc.ccir = Convert.ToString(dr["numero_ccri"]);
-						doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["dominialidade_dominio_id"]),
+						doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
 							Convert.ToString(dr["tid"]));
 
 						resultado.Add(doc);
