@@ -914,6 +914,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     }
                 }
 
+                #region Penalidades de fiscalizações antigas
+                
+                if (infracao.PossuiMulta == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_infracao hfi
+                                where hfi.fiscalizacao_id = :fiscalizacao_id
+                                      and hfi.valor_multa is not null
+                                      and hfi.id = ( select max(h.id)
+                                                     from {0}hst_fisc_infracao h
+                                                     where h.fiscalizacao_id = :fiscalizacao_id )", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("fiscalizacao_id", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiMulta = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Penalidades de fiscalizações antigas
+
                 #endregion
 
                 #region Outras Penalidades
@@ -1225,6 +1257,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         if (interdicao) infracao.PossuiInterdicaoEmbargo = true;
                     }
                 }
+
+                #region Penalidades de fiscalizações antigas
+
+                if (infracao.PossuiMulta == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_infracao hfi
+                                where hfi.fiscalizacao_id = :fiscalizacao_id
+                                      and hfi.valor_multa is not null
+                                      and hfi.id = ( select max(h.id)
+                                                     from {0}hst_fisc_infracao h
+                                                     where h.fiscalizacao_id = :fiscalizacao_id )", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("fiscalizacao_id", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiMulta = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Penalidades de fiscalizações antigas
 
                 #endregion
 
