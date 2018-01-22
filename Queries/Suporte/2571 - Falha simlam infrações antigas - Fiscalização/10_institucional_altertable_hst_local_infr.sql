@@ -1,9 +1,9 @@
-/*alter table HST_FISC_LOCAL_INFRACAO
+alter table HST_FISC_LOCAL_INFRACAO
 add AREA_FISCALIZACAO	NUMBER(1,0)
 ;
 
 COMMENT ON COLUMN "IDAF"."HST_FISC_LOCAL_INFRACAO"."AREA_FISCALIZACAO" IS 'Área da fiscalização. 0 - DDSIA; 1 - DDSIV; 2 - DRNRE';
-*/
+
 begin
 
 for i in ( select tfli.id,

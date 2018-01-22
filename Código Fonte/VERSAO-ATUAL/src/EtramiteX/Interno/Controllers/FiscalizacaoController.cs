@@ -1140,8 +1140,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> series = new List<Lista>();
             List<Lista> penalidades = new List<Lista>();
 
-            //infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
-            infracao = _busInfracao.Obter(id, true);
+            infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            //infracao = _busInfracao.Obter(id, true);
 
             for (int i = 0; i < 4; i++)
             {

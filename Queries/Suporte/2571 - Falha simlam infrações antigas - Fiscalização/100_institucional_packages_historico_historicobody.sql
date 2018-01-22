@@ -379,7 +379,11 @@
 						 tfi.configuracao,
 						 cfi.tid                        configuracao_tid,
 						 tfi.arquivo,
-						 a.tid                          arquivo_tid
+						 a.tid                          arquivo_tid,
+						 tfi.possui_infracao,
+						 tfi.data_constatacao,
+						 tfi.hora_constatacao,
+						 tfi.classificacao_infracao
 					from tab_fisc_infracao             tfi,
 						 cnf_fisc_infracao_tipo        cfit,
 						 cnf_fisc_infracao_item        cfii,
@@ -426,7 +430,11 @@
 				 configuracao_id,
 				 configuracao_tid,
 				 arquivo_id,
-				 arquivo_tid)
+				 arquivo_tid,
+				 possui_infracao,
+				 data_constatacao,
+				 hora_constatacao,
+				 classificacao_infracao)
 			values
 				(seq_hst_fisc_infracao.nextval,
 				 v_tid,
@@ -454,7 +462,11 @@
 				 i.configuracao,
 				 i.configuracao_tid,
 				 i.arquivo,
-				 i.arquivo_tid);
+				 i.arquivo_tid,
+				 i.possui_infracao,
+				 i.data_constatacao,
+				 i.hora_constatacao,
+				 i.classificacao_infracao);
 		
 			for j in (select tfic.id,
 							 tfic.campo,
