@@ -319,7 +319,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             ValorMulta = reader.GetValue<decimal>("valor_multa"),
                             CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
                             FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
-                            Justificativa = reader.GetValue<string>("justificar")
+                            Justificativa = reader.GetValue<string>("justificar"),
+                            Id = 1,
+                            IsDigital = false
                         };
 
                         multa.Arquivo = new Arquivo

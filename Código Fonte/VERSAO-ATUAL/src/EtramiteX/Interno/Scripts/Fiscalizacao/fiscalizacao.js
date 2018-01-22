@@ -115,7 +115,7 @@ Fiscalizacao = {
 			case 2:
 				Fiscalizacao.onObterStep(Fiscalizacao.urls.projetoGeografico, objeto.params, function () {
 					FiscalizacaoProjetoGeografico.callBackObterProjetoGeograficoVisualizar();
-					Fiscalizacao.gerenciarVisualizacao('.hdnProjetoId');
+					Fiscalizacao.gerenciarVisualizacao('.hdnJaSalvo');
 				});
 				break;
 

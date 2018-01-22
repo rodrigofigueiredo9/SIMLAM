@@ -232,6 +232,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						
 						objetoInfracao.Tid = reader["tid"].ToString();
 
+                        //fiscalizações antigas
+                        if (objetoInfracao.FiscalizacaoSituacaoId != 1 && objetoInfracao.IsDigital == null)
+                        {
+                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist");
+                            objetoInfracao.SerieId = reader.GetValue<int?>("tei_gerado_pelo_sist_serie");
+                            objetoInfracao.NumeroIUF = reader.GetValue<string>("num_tei_bloco");
+                        }
+
                         if (reader["interditado"] != null && !Convert.IsDBNull(reader["interditado"]))
                         {
                             objetoInfracao.Interditado = Convert.ToBoolean(reader["interditado"]);
