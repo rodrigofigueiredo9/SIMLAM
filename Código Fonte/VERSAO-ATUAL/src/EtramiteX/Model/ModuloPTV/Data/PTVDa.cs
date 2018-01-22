@@ -1001,7 +1001,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
                     case (int)eDocumentoFitossanitarioTipo.CFO: comando = bancoDeDados.CriarComando(@"SELECT DISTINCT C.ID cultura_id, C.TEXTO cultura 
                                                     FROM {0}TAB_CFO_PRODUTO CP 
-                                                            INNER JOIN {0}HST_CRT_UNIDADE_PROD_UNIDADE UP ON CP.UNIDADE_PRODUCAO = UP.UNIDADE_PRODUCAO_UNIDADE_ID
+                                                            INNER JOIN HST_CRT_UNIDADE_PROD_UNIDADE UP ON CP.UNIDADE_PRODUCAO = UP.UNIDADE_PRODUCAO_UNIDADE_ID
                                                             iNNER JOIN TAB_CULTURA C ON C.ID = UP.CULTURA_ID
                                                             INNER JOIN TAB_CULTURA_CULTIVAR CC ON CC.ID = UP.CULTIVAR_ID
                                                             INNER JOIN LOV_CRT_UNI_PROD_UNI_MEDIDA LU ON  LU.ID = UP.ESTIMATIVA_UNID_MEDIDA_ID
@@ -1122,12 +1122,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar
-															  from {0}tab_cfo_produto t, crt_unidade_producao_unidade u, tab_cultura_cultivar cc
-															  where u.id = t.unidade_producao
-															    and cc.id = u.cultivar
-															    and u.cultura = :cultura
-																and t.cfo = :origemID", UsuarioCredenciado);
+                        comando = bancoDeDados.CriarComando(@"SELECT distinct cc.id, cc.cultivar 
+                                            FROM {0}TAB_CFO_PRODUTO CP 
+                                                    INNER JOIN  HST_CRT_UNIDADE_PROD_UNIDADE  UP  ON CP.UNIDADE_PRODUCAO = UP.UNIDADE_PRODUCAO_UNIDADE_ID
+                                                    INNER JOIN  TAB_CULTURA_CULTIVAR             CC  ON CC.ID = UP.CULTIVAR_ID             
+                                                    WHERE CP.CFO = :origemID AND UP.CULTURA_ID = :cultura", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("cultura", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
@@ -1191,8 +1190,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
 						comando = bancoDeDados.CriarComando(@"
-						select distinct lu.id, lu.texto unidade_medida, exibe_kilos from {0}tab_cfo_produto cp, crt_unidade_producao_unidade i, lov_crt_uni_prod_uni_medida  lu
-						where i.id = cp.unidade_producao and i.estimativa_unid_medida = lu.id and i.cultivar = :cultivarID and cp.cfo = :origemID", UsuarioCredenciado);
+						SELECT DISTINCT LU.ID id, LU.TEXTO unidade_medida, CP.EXIBE_KILOS exibe_kilos
+                            FROM {0}TAB_CFO_PRODUTO CP 
+                                    INNER JOIN  HST_CRT_UNIDADE_PROD_UNIDADE  UP  ON  CP.UNIDADE_PRODUCAO = UP.UNIDADE_PRODUCAO_UNIDADE_ID
+                                    INNER JOIN  LOV_CRT_UNI_PROD_UNI_MEDIDA                   LU  ON  LU.ID = UP.ESTIMATIVA_UNID_MEDIDA_ID
+                                WHERE CP.CFO = :origemID AND UP.CULTIVAR_ID = :cultivarID", UsuarioCredenciado);
 
 						comando.AdicionarParametroEntrada("cultivarID", cultivarID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int32);
