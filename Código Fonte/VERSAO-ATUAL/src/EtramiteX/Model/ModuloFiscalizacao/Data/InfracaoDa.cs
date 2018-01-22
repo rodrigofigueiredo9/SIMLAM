@@ -915,7 +915,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 }
 
                 #region Penalidades de fiscalizações antigas
-                
+
+                #region multa
+
                 if (infracao.PossuiMulta == false)
                 {
                     comando = bancoDeDados.CriarComando(@"
@@ -943,6 +945,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         reader.Close();
                     }
                 }
+
+                #endregion multa
+
+                #region Apreensão
+
+                if (infracao.PossuiApreensao == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_material_apreendido h
+                                where h.fiscalizacao_id = :id_fiscalizacao
+                                      and h.houve_material = 1", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiApreensao = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Apreensão
 
                 #endregion Penalidades de fiscalizações antigas
 
@@ -1260,16 +1293,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 #region Penalidades de fiscalizações antigas
 
+                #region Multa
                 if (infracao.PossuiMulta == false)
                 {
                     comando = bancoDeDados.CriarComando(@"
                                 select count(id) existe
                                 from {0}hst_fisc_infracao hfi
                                 where hfi.fiscalizacao_id = :fiscalizacao_id
-                                      and hfi.valor_multa is not null
-                                      and hfi.id = ( select max(h.id)
-                                                     from {0}hst_fisc_infracao h
-                                                     where h.fiscalizacao_id = :fiscalizacao_id )", EsquemaBanco);
+                                      and hfi.valor_multa is not null", EsquemaBanco);
                     comando.AdicionarParametroEntrada("fiscalizacao_id", infracao.FiscalizacaoId, DbType.Int32);
 
                     using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -1287,6 +1318,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         reader.Close();
                     }
                 }
+                #endregion Multa
+
+                #region Apreensão
+
+                if (infracao.PossuiApreensao == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_material_apreendido h
+                                where h.fiscalizacao_id = :id_fiscalizacao
+                                      and h.houve_material = 1", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiApreensao = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Apreensão
 
                 #endregion Penalidades de fiscalizações antigas
 
