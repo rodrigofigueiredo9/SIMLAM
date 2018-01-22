@@ -1043,11 +1043,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             DescricaoInfracao = reader.GetValue<string>("descricao_infracao"),
                             ConfiguracaoTid = reader.GetValue<string>("configuracao_tid"),
                             FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
-                            ComInfracao = reader.GetValue<bool>("possui_infracao"),
+                            ComInfracao = reader.GetValue<bool?>("possui_infracao"),
                             HoraConstatacao = reader.GetValue<string>("hora_constatacao"),
-                            ClassificacaoInfracao = reader.GetValue<int>("classificacao_infracao"),
+                            ClassificacaoInfracao = reader.GetValue<int?>("classificacao_infracao"),
                             FiscalizacaoId = reader.GetValue<int>("fiscalizacao_id")
 						};
+
+                        if (infracao.ComInfracao == null)
+                        {
+                            infracao.ComInfracao = reader.GetValue<bool?>("infracao_autuada");
+                        }
 
                         infracao.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
 
