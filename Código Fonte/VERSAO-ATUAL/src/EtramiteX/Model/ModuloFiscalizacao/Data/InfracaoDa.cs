@@ -977,6 +977,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 #endregion Apreensão
 
+                #region Interdição/embargo
+
+                if (infracao.PossuiInterdicaoEmbargo == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_obj_infracao h
+                                where h.fiscalizacao_id = :id_fiscalizacao", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiInterdicaoEmbargo = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Interdição/embargo
+
                 #endregion Penalidades de fiscalizações antigas
 
                 #endregion
@@ -1348,6 +1376,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 }
 
                 #endregion Apreensão
+
+                #region Interdição/embargo
+
+                if (infracao.PossuiInterdicaoEmbargo == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_obj_infracao h
+                                where h.fiscalizacao_id = :id_fiscalizacao", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiInterdicaoEmbargo = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Interdição/embargo
 
                 #endregion Penalidades de fiscalizações antigas
 
