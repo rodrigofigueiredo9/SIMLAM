@@ -1284,6 +1284,8 @@ Infracao = {
 	    Infracao.container.delegate('.ddlItens', 'change', Infracao.onSelecionarItem);
 	    Infracao.container.delegate('.cbPenalidade', 'change', Infracao.onMarcarPenalidade);
 	    Infracao.container.delegate('.ddlTiposPenalidade', 'change', Infracao.onSelecionarPenalidade);
+	    Infracao.container.delegate('.rdoIsEspecificar', 'change', Infracao.onSelecionarIsEspecificar);
+	    Infracao.container.delegate('.rdoIsNotEspecificar', 'change', Infracao.onSelecionarIsNotEspecificar);
 
 		Mascara.load(Infracao.container);
 
@@ -1614,6 +1616,18 @@ Infracao = {
 
 	    $('.divDescricaoInfracao', Infracao.container).hide();
 	    $('.divClassificacao', Infracao.container).hide();
+	},
+
+	onSelecionarIsEspecificar: function () {
+	    var perguntaId = $(this, Infracao.container).attr('perguntaId');
+	    $('.divEspecificacao' + perguntaId, Infracao.container).show();
+	    $('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('1');
+	},
+
+	onSelecionarIsNotEspecificar: function () {
+	    var perguntaId = $(this, Infracao.container).attr('perguntaId');
+	    $('.divEspecificacao' + perguntaId, Infracao.container).hide();
+	    $('.hdnRespostaEspecificar' + perguntaId, Infracao.container).val('0');
 	},
 
 	onMarcarPenalidade: function(){
