@@ -194,7 +194,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_apreensao
-                            set iuf_numero = :iuf
+                            set iuf_numero = :iuf, iuf_data = sysdate
                             where fiscalizacao = :id
                                   and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
@@ -203,7 +203,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_multa
-                            set iuf_numero = :iuf
+                            set iuf_numero = :iuf, iuf_data = sysdate
                             where fiscalizacao = :id
                                   and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
@@ -212,7 +212,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_obj_infracao
-                            set iuf_numero = :iuf
+                            set iuf_numero = :iuf, iuf_data = sysdate
                             where fiscalizacao = :id
                                   and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
@@ -221,7 +221,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_outras_penalidades
-                            set iuf_numero = :iuf
+                            set iuf_numero = :iuf, iuf_data = sysdate
                             where fiscalizacao = :id
                                   and iuf_digital = 1", EsquemaBanco);
                 comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
