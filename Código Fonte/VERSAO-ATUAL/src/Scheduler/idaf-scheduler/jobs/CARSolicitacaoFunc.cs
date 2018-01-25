@@ -501,7 +501,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 }
             }*/
 
-            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro)
+            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido )//|| entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro)
             {
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaEnviarSituacaoSICARInvalida(entidade.SituacaoTexto));
                 return false;
