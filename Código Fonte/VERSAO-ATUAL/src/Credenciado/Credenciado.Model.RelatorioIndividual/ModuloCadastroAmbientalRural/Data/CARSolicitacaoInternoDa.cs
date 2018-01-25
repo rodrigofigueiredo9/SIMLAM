@@ -176,7 +176,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				#region Solicitação
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select hcs.tid,
+				select DISTINCT hcs.tid,
                 hcs.dominialidade_id,
                 hcs.dominialidade_tid,
                 hcs.numero,
@@ -215,7 +215,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 hcsicar.codigo_imovel numero_sicar,
                 hcsicar.pendencias pendencias_sicar        
                 from hst_car_solicitacao hcs, hst_pessoa hp, hst_pessoa_endereco hpe,lov_estado lem, hst_empreendimento he, 
-                  hst_empreendimento_endereco hee, lov_estado lee, hst_empreendimento_coord hec, hst_controle_sicar hcsicar          
+                  hst_empreendimento_endereco hee, lov_estado lee, hst_empreendimento_coord hec, TAB_controle_sicar hcsicar          
                 where hp.pessoa_id = hcs.declarante_id and hp.tid = hcs.declarante_tid 
                 and hp.id = hpe.id_hst
                 and lem.id = hpe.estado_id
@@ -227,8 +227,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 and hcs.solicitacao_id = :id
                 and hcs.id = (select max(id) from hst_car_solicitacao hcs1 where hcs1.solicitacao_id = hcs.solicitacao_id)        
                 and hcs.solicitacao_id = hcsicar.solicitacao_car(+)
-                and ((select min(hctrs.id) from hst_controle_sicar hctrs where hctrs.solicitacao_car = hcs.solicitacao_id 
-						and hctrs.solicitacao_car_esquema = 1 and hctrs.data_execucao >= hcs.data_execucao) = hcsicar.id or hcsicar.id is null)", EsquemaBanco);
+                and ((select min(hctrs.id) from TAB_controle_sicar hctrs where hctrs.solicitacao_car = hcs.solicitacao_id 
+						and hctrs.solicitacao_car_esquema = 1 /*and hctrs.data_execucao >= hcs.data_execucao*/) = hcsicar.id or hcsicar.id is null)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
