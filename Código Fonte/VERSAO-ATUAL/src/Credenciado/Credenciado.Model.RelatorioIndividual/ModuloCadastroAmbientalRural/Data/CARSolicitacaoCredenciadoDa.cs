@@ -234,7 +234,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						lov_coordenada_tipo            lct,
 						lov_municipio                  lme,
 						lov_municipio                  lmp,
-						hst_controle_sicar             hcsicar
+						TAB_controle_sicar             hcsicar
 					where hp.pessoa_id(+) = hcs.declarante_id
 					and hp.tid(+) = hcs.declarante_tid
 					and he.empreendimento_id(+) = hcs.empreendimento_id
@@ -252,10 +252,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 					and lme.id(+) = hee.municipio_id
 					and lmp.id(+) = hpe.municipio_id
 					and hcsicar.solicitacao_car(+) = hcs.solicitacao_id
-					and hcsicar.solicitacao_car_tid(+) = hcs.tid
+					--and hcsicar.solicitacao_car_tid(+) = hcs.tid
 					and hcs.id = (select max(id) from hst_car_solicitacao hcs1 where hcs1.solicitacao_id = hcs.solicitacao_id)
-					and ((select min(hctrs.id) from hst_controle_sicar hctrs where hctrs.solicitacao_car = hcs.solicitacao_id
-							and hctrs.solicitacao_car_esquema = 2 and hctrs.data_execucao >= hcs.data_execucao) = hcsicar.id or hcsicar.id is null)
+                    and ((select min(hctrs.id) from TAB_controle_sicar hctrs where hctrs.solicitacao_car = hcs.solicitacao_id
+							and hctrs.solicitacao_car_esquema = 2 /*and hctrs.data_execucao >= hcs.data_execucao*/) = hcsicar.id or hcsicar.id is null)
 					and hcs.solicitacao_id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
