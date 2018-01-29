@@ -121,8 +121,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("tid = :tid,");
 			sqlBuilder.Append("situacao_envio = :situacao_envio,");
 			sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
-	
-			if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
+
+            if (tipo.Equals("gerar-car"))
+                sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
+			//if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
+            else
 				sqlBuilder.Append("data_envio = CURRENT_TIMESTAMP,");
 			if (arquivoCar != "")
 				sqlBuilder.Append("arquivo = '" + arquivoCar + "',");
