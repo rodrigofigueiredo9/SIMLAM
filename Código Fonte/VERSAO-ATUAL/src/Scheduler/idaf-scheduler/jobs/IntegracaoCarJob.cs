@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         public List<int> GetIdCar(int origem, OracleConnection conn)
         {
             //Busca os IDs para fazer o loop nos cadastros CAR passivo
-            string BuildSQl = @"SELECT ID FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL AND SITUACAO NOT IN (1,3)";
+            string BuildSQl = @"SELECT ID FROM TAB_CAR_SOLICITACAO WHERE PASSIVO_ENVIADO IS NULL AND SITUACAO NOT IN (3)";
 
             //string BuildSQlUp = "UPDATE TAB_CAR_SOLICITACAO SET PASSIVO_ENVIADO = 1 WHERE PASSIVO_ENVIADO IS NULL AND ID < 26500";    
             
