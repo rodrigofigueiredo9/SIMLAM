@@ -152,6 +152,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     {
                         cmd.ExecuteNonQuery();
                     }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%TCP%'", conn))
+                 {
+                     cmd.ExecuteNonQuery();
+                 }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Object reference%'", conn))
+                 {
+                     cmd.ExecuteNonQuery();
+                 }
 			}
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
