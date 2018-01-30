@@ -1339,10 +1339,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 if(tipo == 2)
                 {
                     using (var cmd =
-                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CPF 
+                        new OracleCommand(@"SELECT PP.NOME AS NOME, PP.CPF AS CPF, PP.MAE AS MAE, PP.DATA_NASCIMENTO AS DATA_NASCIMENTO 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
                                                 INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
                                                 INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA_REPRESENTANTE         PR  ON  PR.PESSOA = P.PESSOA_ID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA                       PP  ON  PP.ID = PR.REPRESENTANTE
                                                 WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
@@ -1354,7 +1356,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             {
                                 cadastrante.nome = Convert.ToString(dr["NOME"]);
                                 cadastrante.cpf = Convert.ToString(dr["CPF"]);
-                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");                               
+                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
+                                cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
                             }
                             dr.Close();
                         }
