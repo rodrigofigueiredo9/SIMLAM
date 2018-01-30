@@ -1561,6 +1561,79 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				}
 			}
 
+            if(resultado.Count == 0)
+            {
+                using (
+                var cmd =
+                    new OracleCommand(
+                        "SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+                        "IDAF" +
+                        ".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+                        conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+                    //cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var doc = new Documento
+                            {
+                                detalheDocumentoPosse = new DetalheDocumentoPosse
+                                {
+                                    enderecoDeclarante = new EnderecoDeclarante()
+                                },
+                                detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+                            };
+
+
+                            var tipo = Convert.ToInt32(dr["tipo"]);
+                            doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+
+                            if ((tipo == 1) || (tipo == 2))
+                            {
+                                doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+                            }
+
+                            if (tipo == 1)
+                            {
+                                doc.tipo = Documento.TipoPropriedade;
+
+                                doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+                                doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+                                {
+                                    numeroMatricula = Convert.ToString(dr["matricula"]),
+                                    livro = Convert.ToString(dr["livro"]),
+                                    folha = Convert.ToString(dr["folha"]),
+                                    dataRegistro = new DateTime(1900, 01, 01),
+                                    municipioCartorio = empreendimentoMunicipio
+                                };
+                            }
+                            else
+                            {
+                                doc.tipo = Documento.TipoPosse;
+
+                                doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+                                doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+                                var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+                                doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+                                    ? emissorDocumento.Substring(0, 100)
+                                    : emissorDocumento);
+                                doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+                            }
+
+                            doc.ccir = Convert.ToString(dr["numero_ccri"]);
+                            doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+                                Convert.ToString(dr["tid"]));
+
+                            resultado.Add(doc);
+                        }
+                    }
+                }
+            }
+
 			return resultado;
 		}
 
