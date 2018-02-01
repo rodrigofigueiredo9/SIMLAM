@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloProjetoDigital;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
@@ -379,7 +380,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             {
                 if(solicitacao.SituacaoId == 2)
                 {
-                    //RQF - 03
+                    List<CaracterizacaoLst> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesPorProjetoDigital(entidade.ProjetoId);
+                    
+                    foreach(var carac in caracterizacoes)
+                    {
+                        if (carac.Id == 22) //Caracterização CAR
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred5());
+                            return false;
+                        }
+                    }
                 }
                 if(solicitacao.SituacaoId == 5)
                 {
