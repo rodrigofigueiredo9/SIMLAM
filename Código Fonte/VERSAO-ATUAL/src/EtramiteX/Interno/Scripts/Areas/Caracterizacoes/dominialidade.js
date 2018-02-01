@@ -103,7 +103,8 @@ Dominialidade = {
 					    Modal.confirma(
                             {
                                 conteudo: response.Html,
-                                btnOkLabel: "Confirmar",
+                                btnOkLabel: "OK",
+                                removerCancelar: true,
                                 tamanhoModal: Modal.tamanhoModalMedia
                             });
                         
