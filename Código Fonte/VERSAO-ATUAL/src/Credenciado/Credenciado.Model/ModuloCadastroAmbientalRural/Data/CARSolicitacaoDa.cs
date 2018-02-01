@@ -842,6 +842,68 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return solicitacao;
 		}
 
+        internal CARSolicitacao ObterPorProjetoDigitalSituacao(int projetoDigitalId, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c where situacao != 3 and projeto_digital = :id ", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("id", projetoDigitalId, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId <= 0 ? null : Obter(solicitacaoId, banco: bancoDeDados);
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
+        internal CARSolicitacao ObterPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c where situacao != 3 and empreendimento = :id ", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("id", empreendimentoId, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId <= 0 ? null : Obter(solicitacaoId, banco: bancoDeDados);
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
 		internal Resultados<SolicitacaoListarResultados> Filtrar(Filtro<SolicitacaoListarFiltro> filtros, BancoDeDados banco = null)
 		{
 			Resultados<SolicitacaoListarResultados> retorno = new Resultados<SolicitacaoListarResultados>();

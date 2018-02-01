@@ -346,5 +346,51 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 			return Validacao.EhValido;
 		}
+
+        public bool RetificacaoValidar(CARSolicitacao entidade, int origem)
+        {
+            string situacao = string.Empty;
+            CARSolicitacao solicitacao = new CARSolicitacao();
+            //EmpreendimentoCaracterizacao empreendimento = _busCaracterizacao.ObterEmpreendimentoSimplificado(projetoDigital.EmpreendimentoId.GetValueOrDefault());
+            //situacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacao(entidade.Empreendimento.Id);
+            /*if (!string.IsNullOrEmpty(situacao))
+            {
+                Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
+                return false;
+            }*/
+
+            solicitacao = _daCarSolicitacao.ObterPorProjetoDigitalSituacao(entidade.ProjetoId);
+            if(solicitacao != null)
+            {
+                if (solicitacao.SituacaoId == 1 || solicitacao.SituacaoId == 6)
+                {
+                    Validacao.Add(Mensagem.Retificacao.msgCred1(entidade.Requerimento.Id, solicitacao.Id));
+                    return false;
+                }
+                if (solicitacao.SituacaoId == 2 || solicitacao.SituacaoId == 5)
+                {
+                    Validacao.Add(Mensagem.Retificacao.msgCred3(entidade.Requerimento.Id, solicitacao.Id));
+                    return false;
+                }
+            }
+
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Id);
+            if(solicitacao != null)
+            {
+                if(solicitacao.SituacaoId == 2)
+                {
+                    //RQF - 03
+                }
+                if(solicitacao.SituacaoId == 5)
+                {
+                    //RQF- 02
+                }
+                Validacao.Add(Mensagem.Retificacao.msgCred2(entidade.Requerimento.Id, solicitacao.Id));
+                return false;
+            }
+            Validacao.Add(Mensagem.Retificacao.msgCred6());
+            return false;
+            //return Validacao.EhValido;
+        }
 	}
 }
