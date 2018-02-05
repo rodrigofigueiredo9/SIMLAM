@@ -845,6 +845,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return possui;
 		}
 
+        public bool PossuiDigital(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            bool possui = false;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Cabeçalho
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(tf.id) possui
+                                    from tab_fiscalizacao tf
+                                    where tf.id = :id
+                                          and ( ( select count(m.id) from tab_fisc_multa m where m.fiscalizacao = :id and m.iuf_digital = 1 ) > 0
+                                                or ( select count(a.id) from tab_fisc_apreensao a where a.fiscalizacao = :id and a.iuf_digital = 1 ) > 0
+                                                or ( select count(oi.id) from tab_fisc_obj_infracao oi where oi.fiscalizacao = :id and oi.iuf_digital = 1 ) > 0
+                                                or ( select count(op.id) from tab_fisc_outras_penalidades op where op.fiscalizacao = :id and op.iuf_digital = 1 ) > 0 )", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id", fiscalizacaoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        possui = reader.GetValue<Int32>("possui") > 0;
+                    }
+
+                    reader.Close();
+                }
+
+                #endregion
+            }
+
+            return possui;
+        }
+
 		#endregion
 	}
 }

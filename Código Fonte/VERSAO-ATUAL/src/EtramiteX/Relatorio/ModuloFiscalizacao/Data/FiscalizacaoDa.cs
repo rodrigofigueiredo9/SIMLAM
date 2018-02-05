@@ -875,10 +875,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                                     nvl(tfa.iuf_numero, nvl(tfm.iuf_numero, nvl(tfop.iuf_numero, tfoi.iuf_numero))) numero_iuf
                             from tab_fiscalizacao tf,
                                  tab_fisc_local_infracao tfli,
-                                 tab_fisc_apreensao tfa,
-                                 tab_fisc_multa tfm,
-                                 tab_fisc_outras_penalidades tfop,
-                                 tab_fisc_obj_infracao tfoi
+                                 (select * from tab_fisc_apreensao a where a.iuf_digital = 1) tfa,
+                                 (select * from tab_fisc_multa m where m.iuf_digital = 1) tfm,
+                                 (select * from tab_fisc_outras_penalidades op where op.iuf_digital = 1) tfop,
+                                 (select * from tab_fisc_obj_infracao oi where oi.iuf_digital = 1) tfoi
                             where tf.id = tfli.fiscalizacao
                                   and tfa.fiscalizacao (+)= tf.id
                                   and tfm.fiscalizacao (+)= tf.id
