@@ -57,13 +57,11 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.Extensoes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll</HintPath>
+    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.Extensoes">
+      <HintPath>..\Credenciado.Model.Extensoes\bin\Debug\Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll</HintPath>
+    <Reference Include="Tecnomapas.EtramiteX.Credenciado.Model.WebService">
+      <HintPath>..\Credenciado.Model.WebService\bin\Debug\Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
