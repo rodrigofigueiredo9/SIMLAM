@@ -1340,10 +1340,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 {
                     String cpf = null;
                     using (var cmd =
-                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CPF 
+                        new OracleCommand(@"SELECT PP.NOME AS NOME, PP.CPF AS CPF, PP.MAE AS MAE, PP.DATA_NASCIMENTO AS DATA_NASCIMENTO 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
                                                 INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
                                                 INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA_REPRESENTANTE         PR  ON  PR.PESSOA = P.PESSOA_ID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA                       PP  ON  PP.ID = PR.REPRESENTANTE
                                                 WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
@@ -1355,7 +1357,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             {
                                 cadastrante.nome = Convert.ToString(dr["NOME"]);
                                 cadastrante.cpf = Convert.ToString(dr["CPF"]);
-                                cpf = cadastrante.cpf;
+                                if (cadastrante.cpf != null) cpf = cadastrante.cpf;
                                 if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
                                 cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
                                 cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
@@ -1581,6 +1583,79 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					}
 				}
 			}
+
+            if(resultado.Count == 0)
+            {
+                using (
+                var cmd =
+                    new OracleCommand(
+                        "SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+                        "IDAF" +
+                        ".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+                        conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+                    //cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var doc = new Documento
+                            {
+                                detalheDocumentoPosse = new DetalheDocumentoPosse
+                                {
+                                    enderecoDeclarante = new EnderecoDeclarante()
+                                },
+                                detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+                            };
+
+
+                            var tipo = Convert.ToInt32(dr["tipo"]);
+                            doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+
+                            if ((tipo == 1) || (tipo == 2))
+                            {
+                                doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+                            }
+
+                            if (tipo == 1)
+                            {
+                                doc.tipo = Documento.TipoPropriedade;
+
+                                doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+                                doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+                                {
+                                    numeroMatricula = Convert.ToString(dr["matricula"]),
+                                    livro = Convert.ToString(dr["livro"]),
+                                    folha = Convert.ToString(dr["folha"]),
+                                    dataRegistro = new DateTime(1900, 01, 01),
+                                    municipioCartorio = empreendimentoMunicipio
+                                };
+                            }
+                            else
+                            {
+                                doc.tipo = Documento.TipoPosse;
+
+                                doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+                                doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+                                var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+                                doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+                                    ? emissorDocumento.Substring(0, 100)
+                                    : emissorDocumento);
+                                doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+                            }
+
+                            doc.ccir = Convert.ToString(dr["numero_ccri"]);
+                            doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+                                Convert.ToString(dr["tid"]));
+
+                            resultado.Add(doc);
+                        }
+                    }
+                }
+            }
 
 			return resultado;
 		}
