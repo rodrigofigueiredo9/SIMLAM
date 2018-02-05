@@ -1338,6 +1338,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 //SE FOR PJ PEGA O DECLARANTE
                 if(tipo == 2)
                 {
+                    String cpf = null;
                     using (var cmd =
                         new OracleCommand(@"SELECT PP.NOME AS NOME, PP.CPF AS CPF, PP.MAE AS MAE, PP.DATA_NASCIMENTO AS DATA_NASCIMENTO 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
@@ -1356,11 +1357,33 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             {
                                 cadastrante.nome = Convert.ToString(dr["NOME"]);
                                 cadastrante.cpf = Convert.ToString(dr["CPF"]);
+                                if (cadastrante.cpf != null) cpf = cadastrante.cpf;
                                 if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
                                 cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
                                 cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
                             }
                             dr.Close();
+                        }
+                    }
+                    if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                    {
+                        using (var cmd =
+                        new OracleCommand(@"SELECT MAE FROM IDAFCREDENCIADO.TAB_PESSOA WHERE MAE IS NOT NULL AND CPF = :cpf", conn))
+                        {
+                            cmd.Parameters.Add(new OracleParameter("cpf", cpf));
+
+                            using (var dr = cmd.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                }
+                                dr.Close();
+                            }
+                        }
+                        if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                        {
+                            cadastrante.nomeMae = "Não informado";
                         }
                     }
                 }
