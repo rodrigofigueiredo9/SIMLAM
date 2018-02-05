@@ -276,23 +276,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
                         #region IUF
 
-                        try
-                        {
-                            fiscalizacao.PdfIUF = new Arquivo();
-                            fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
-                            fiscalizacao.PdfIUF.Extensao = ".pdf";
-                            fiscalizacao.PdfIUF.ContentType = "application/pdf";
-                            fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
-                            arquivoBus.Salvar(fiscalizacao.PdfIUF);
+                        //Só gera IUF se for digital
+                        bool isDigital = _da.PossuiDigital(fiscalizacao.Id);
 
-                            arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-                        }
-                        finally
+                        if (isDigital)
                         {
-                            if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                            try
                             {
-                                fiscalizacao.PdfIUF.Buffer.Close();
+                                fiscalizacao.PdfIUF = new Arquivo();
+                                fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
+                                fiscalizacao.PdfIUF.Extensao = ".pdf";
+                                fiscalizacao.PdfIUF.ContentType = "application/pdf";
+                                fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                                arquivoBus.Salvar(fiscalizacao.PdfIUF);
+
+                                arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                    User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                            }
+                            finally
+                            {
+                                if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                                {
+                                    fiscalizacao.PdfIUF.Buffer.Close();
+                                }
                             }
                         }
 
