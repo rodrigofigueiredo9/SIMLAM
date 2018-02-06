@@ -404,8 +404,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							if (dadosReserva.data == DateTime.MinValue)
 								dadosReserva.data = DATA_VAZIA;
 
-							if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
-								dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
+							//if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
+							//	dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
 						}
 					}
 
@@ -1750,7 +1750,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente, string requisicaoOrigem)
 		{
             var origem = requisicaoOrigem == "credenciado" ? 2 : 1;
-			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
+			using (var cmd = new OracleCommand("select s.codigo_imovel from IDAF.tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoCedente));
                 cmd.Parameters.Add(new OracleParameter("origem", origem));
