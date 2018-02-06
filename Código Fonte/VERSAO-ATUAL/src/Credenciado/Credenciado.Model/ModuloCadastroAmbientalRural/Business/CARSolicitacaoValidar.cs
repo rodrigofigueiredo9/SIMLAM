@@ -18,6 +18,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloPro
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business
 {
@@ -32,6 +33,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		CARSolicitacaoDa _daCarSolicitacao = null;
 		CARSolicitacaoInternoDa _carSolicitacaoInternoDa = null;
 		RequerimentoCredenciadoValidar _requerimentoValidar = null;
+        TituloCredenciadoBus _busTitulo = null;
+
 		public static EtramiteIdentity User
 		{
 			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
@@ -46,6 +49,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			_busRequerimento = new RequerimentoCredenciadoBus();
 			_daCarSolicitacao = new CARSolicitacaoDa();
 			_carSolicitacaoInternoDa = new CARSolicitacaoInternoDa();
+            _busTitulo = new TituloCredenciadoBus();
+            
 		}
 
 		#endregion
@@ -414,7 +419,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             {
                 if(solicitacao.SituacaoId == 2)
                 {
-                    List<CaracterizacaoLst> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesPorProjetoDigital(entidade.ProjetoId);
+                    List<Caracterizacao> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesAssociadasProjetoDigital(entidade.ProjetoId);
                     
                     foreach(var carac in caracterizacoes)
                     {
@@ -427,10 +432,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
                 if(solicitacao.SituacaoId == 5)
                 {
-                    //RQF- 02
+                    if (_busTitulo.ObterPorEmpreendimento(entidade.Empreendimento.Id))
+                    {
+                        Validacao.Add(Mensagem.Retificacao.msgCred6());
+                        return false;
+                    }
+                    else
+                    {
+                        List<CaracterizacaoLst> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesPorProjetoDigital(entidade.ProjetoId);
+
+                        foreach (var carac in caracterizacoes)
+                        {
+                            if (carac.Id == 22) //Caracterização CAR
+                            {
+                                Validacao.Add(Mensagem.Retificacao.msgCred5());
+                                return false;
+                            }
+                        }
+                    }
                 }
-                Validacao.Add(Mensagem.Retificacao.msgCred2(entidade.Requerimento.Id, solicitacao.Id));
-                return false;
+                if (solicitacao.SituacaoId == 1 || solicitacao.SituacaoId == 6)
+                {
+                    Validacao.Add(Mensagem.Retificacao.msgCred2(entidade.Requerimento.Id, solicitacao.Id));
+                    return false;
+                }
             }
             Validacao.Add(Mensagem.Retificacao.msgCred6());
             return false;

@@ -57,6 +57,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			return null;
 		}
 
+        public bool ObterPorEmpreendimento(int empreendimentoId)
+        {
+            try
+            {
+                Resultados<Titulo> titulos = _busInterno.ObterPorEmpreendimento(empreendimentoId);
+                if (titulos == null)
+                    return false;
+                if(titulos.Itens.Count() > 1) 
+                    return true;
+                else 
+                    return false;
+               
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return false;
+        }
+
 		public List<Situacao> ObterSituacoes()
 		{
 			//2 - Emitido | 3 - Concluído | 4 - Assinado | 6 - Prorrogado

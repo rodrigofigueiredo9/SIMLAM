@@ -447,6 +447,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return caracterizacoes;
 		}
 
+        public bool ExisteCaracterizacaoPorProjetoDigital(int projetoDigitalID, BancoDeDados banco = null)
+        {
+            List<Caracterizacao> caracterizacoes = null;
+
+            try
+            {
+                caracterizacoes = ObterCaracterizacoesAssociadasProjetoDigital(projetoDigitalID);
+
+                foreach (var carac in caracterizacoes)
+                {
+                    if (carac.Id == 22) //Caracterização CAR
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return false;
+        }
+
 		public List<Caracterizacao> ObterCaracterizacoesAtuais(int empreendimentoID, List<Caracterizacao> caracterizacoes)
 		{
 			try

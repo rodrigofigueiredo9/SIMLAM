@@ -185,6 +185,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			return null;
 		}
 
+        public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
+        {
+            try
+            {
+                Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
+
+                return resultados;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public Titulo ObterSimplificado(int id, BancoDeDados banco = null)
 		{
 			try
