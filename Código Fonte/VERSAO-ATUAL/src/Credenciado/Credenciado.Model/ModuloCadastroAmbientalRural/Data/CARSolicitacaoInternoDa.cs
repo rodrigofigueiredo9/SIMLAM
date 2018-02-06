@@ -276,6 +276,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
+        internal CARSolicitacao EmpreendimentoPossuiSolicitacaoProjetoDigital(int empreendimentoId, BancoDeDados banco = null)
+        {
+            CARSolicitacao car = new CARSolicitacao();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, pd.id projeto_digital from tab_car_solicitacao t, lov_car_solicitacao_situacao l, tmp_projeto_digital pd 
+				where t.situacao = l.id and t.empreendimento = :empreendimentoID and situacao in (1, 2, 4) and t.empreendimento = pd.empreendimento_id", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        car.Id = reader.GetValue<Int32>("id");
+                        car.SituacaoId = reader.GetValue<Int32>("situacao");
+                        car.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+                    }
+                    reader.Close();
+                }
+
+                return car;
+            }
+        }
+
 		internal string EmpreendimentoPossuiSolicitacao(string CNPJ, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))

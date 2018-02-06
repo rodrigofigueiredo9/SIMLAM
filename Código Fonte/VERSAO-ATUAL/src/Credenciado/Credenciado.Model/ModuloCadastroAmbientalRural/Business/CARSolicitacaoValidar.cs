@@ -248,28 +248,62 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			}
 			else
 			{
+                CARSolicitacao solicitacao = new CARSolicitacao();
 				if (empreendimento.InternoID > 0)
 				{
-					situacao = _daCarSolicitacao.EmpreendimentoPossuiSolicitacao(empreendimento.InternoID);
-					if (!string.IsNullOrEmpty(situacao))
+                    solicitacao = _daCarSolicitacao.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
+                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
 					{
-						Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
+                        if (solicitacao.SituacaoId ==2)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred5());
+                        }
+                        else if (solicitacao.SituacaoId == 5)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred6());
+                        }
+                        else
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.ProjetoId, solicitacao.Id));
+                        }
 						return false;
 					}
 
-					situacao = _carSolicitacaoInternoDa.EmpreendimentoPossuiSolicitacao(empreendimento.InternoID);
-					if (!string.IsNullOrEmpty(situacao))
+                    solicitacao = _carSolicitacaoInternoDa.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
+                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
 					{
-						Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
+                        if (solicitacao.SituacaoId == 2)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred5());
+                        }
+                        else if (solicitacao.SituacaoId == 5)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred6());
+                        }
+                        else
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.ProjetoId, solicitacao.Id));
+                        }
 						return false;
 					}
 				}
 				else
 				{
-					situacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacao(empreendimento.Id);
-					if (!string.IsNullOrEmpty(situacao))
+                    solicitacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacaoProjetoDigital(empreendimento.Id);
+                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
 					{
-						Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
+                        if (solicitacao.SituacaoId == 2)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred5());
+                        }
+                        else if (solicitacao.SituacaoId == 5)
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred6());
+                        }
+                        else
+                        {
+                            Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.ProjetoId, solicitacao.Id));
+                        }
 						return false;
 					}
 				}
