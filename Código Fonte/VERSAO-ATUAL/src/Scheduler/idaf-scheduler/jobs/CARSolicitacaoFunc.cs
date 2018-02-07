@@ -501,7 +501,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 }
             }*/
 
-            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro)
+            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido )//|| entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro)
             {
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaEnviarSituacaoSICARInvalida(entidade.SituacaoTexto));
                 return false;
@@ -544,8 +544,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
         {
             string requisicao_fila = string.Empty;
 
-            using (OracleCommand command = new OracleCommand("select s.empreendimento_id emp_id, s.empreendimento_tid emp_tid, s.solicitacao_id solic_id, s.tid solic_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
+            /*using (OracleCommand command = new OracleCommand("select s.empreendimento_id emp_id, s.empreendimento_tid emp_tid, s.solicitacao_id solic_id, s.tid solic_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao" +
                     " and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", conn))
+            */
+            using (OracleCommand command = new OracleCommand(@"Select s.id emp_id, s.tid emp_tid, ss.id solic_id, ss.tid solic_tid 
+                                                                from tab_car_solicitacao ss inner join tab_empreendimento s on  ss.EMPREENDIMENTO = s.id
+                                                                where ss.id = :idSolicitacao order by ss.id desc",conn))
             {
                 
                 command.Parameters.Add(new OracleParameter("idSolicitacao", solicitacaoId));
@@ -607,32 +611,34 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
               }                            
 
                #endregion
-
-                if (controleArquivoSICAR.Id == 0) 
+            using (var connInst = new OracleConnection(Tecnomapas.EtramiteX.Scheduler.jobs.Class.CarUtils.GetBancoInstitucional()))
+            {
+                connInst.Open();
+                if (controleArquivoSICAR.Id == 0)
                 {
                     #region Criar controle arquivo SICAR
                     using (OracleCommand comand = new OracleCommand(
                         " insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema) " +
                         "  values " +
                         "  (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema) " +
-                        "  returning id into :id", conn)) 
-                     {
+                        "  returning id into :id", connInst))
+                    {
 
-                         comand.Parameters.Add(new OracleParameter("tid", GerenciadorTransacao.ObterIDAtual()));
+                        comand.Parameters.Add(new OracleParameter("tid", GerenciadorTransacao.ObterIDAtual()));
                         comand.Parameters.Add(new OracleParameter("empreendimento", Convert.ToInt32(controleArquivoSICAR.EmpreendimentoId)));
                         comand.Parameters.Add(new OracleParameter("empreendimento_tid", Convert.ToString(controleArquivoSICAR.EmpreendimentoTid)));
                         comand.Parameters.Add(new OracleParameter("solicitacao_car", Convert.ToInt32(controleArquivoSICAR.SolicitacaoCarId)));
                         comand.Parameters.Add(new OracleParameter("solicitacao_car_tid", Convert.ToString(controleArquivoSICAR.SolicitacaoCarTid)));
-                        comand.Parameters.Add(new OracleParameter("situacao_envio", Convert.ToInt32(statusArquivoSICAR))); 
+                        comand.Parameters.Add(new OracleParameter("situacao_envio", Convert.ToInt32(statusArquivoSICAR)));
                         comand.Parameters.Add(new OracleParameter("solicitacao_car_esquema", Convert.ToInt32(solicitacaoOrigem)));
-                        comand.Parameters.Add(new OracleParameter("id", OracleDbType.Int32, ParameterDirection.Output)); 
-                                                
+                        comand.Parameters.Add(new OracleParameter("id", OracleDbType.Int32, ParameterDirection.Output));
+
                         comand.ExecuteNonQuery();
 
-                        controleArquivoSICAR.Id = int.Parse(comand.Parameters["id"].Value.ToString()); 
+                        controleArquivoSICAR.Id = int.Parse(comand.Parameters["id"].Value.ToString());
 
                     }
-                    
+
                     #endregion
                 }
                 else
@@ -640,7 +646,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     #region Editar controle arquivo SICAR
                     using (OracleCommand comand = new OracleCommand(
                        " update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, " +
-                       " r.tid = :tid, r.arquivo = null where r.id = :id", conn))
+                       " r.tid = :tid, r.arquivo = null where r.id = :id", connInst))
                     {
                         comand.Parameters.Add("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid);
                         comand.Parameters.Add("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid);
@@ -650,11 +656,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
                         comand.ExecuteNonQuery();
                     }
-                    
+
                     #endregion
                 }
-                
-                GerarHistoricoControleArquivoCarSicarCred(controleArquivoSICAR.Id, conn);             
+
+                GerarHistoricoControleArquivoCarSicarCred(controleArquivoSICAR.Id, conn);
+                connInst.Close();
+            }
         }        
         //
         internal void GerarHistoricoControleArquivoCarSicarCred(int controleArquivoId, OracleConnection conn) //BancoDeDados banco = null)

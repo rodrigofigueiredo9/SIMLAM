@@ -60,6 +60,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
+                    if (item.Requisicao == null)
+                    {
+                        nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+                        continue;
+                    }
+
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
@@ -135,6 +141,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//}
 					//catch (Exception) { /*ignored*/ }
 				}
+
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
+                    {
+                        cmd.ExecuteNonQuery();                            
+                    }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Value cannot be null.%'", conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%TCP%'", conn))
+                 {
+                     cmd.ExecuteNonQuery();
+                 }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Object reference%'", conn))
+                 {
+                     cmd.ExecuteNonQuery();
+                 }
 			}
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));

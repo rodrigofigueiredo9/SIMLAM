@@ -29,6 +29,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		public static readonly string STRING_VAZIA = "Não Informado";
 		public static readonly DateTime DATA_VAZIA = new DateTime(1900, 01, 01);
 		public static readonly string DATA_STR_VAZIA = DATA_VAZIA.ToString("dd/MM/yyyy");
+        public static int GlobalControleCredenciado;// variavel para alguns casos a area total da propriedade ser pega na tabela TMP.ATP
 
 		/// <summary>
 		/// Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.ITrigger" />
@@ -144,7 +145,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, "", "gerar-car");
 					}
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
@@ -157,6 +158,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             cmd.ExecuteNonQuery();
                         }
+                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado = '%Transporte de Rede%'", conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
 			}
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
@@ -398,8 +404,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							if (dadosReserva.data == DateTime.MinValue)
 								dadosReserva.data = DATA_VAZIA;
 
-							if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
-								dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
+							//if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
+							//	dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
 						}
 					}
 
@@ -410,7 +416,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			#endregion
 		}
 
-		private void ObterDadosRequisicao(OracleConnection conn, RequisicaoJobCar requisicao)
+        private void ObterDadosRequisicao(OracleConnection conn, RequisicaoJobCar requisicao)
 		{
 			var tituloId = 0;
 			var tituloTid = string.Empty;
@@ -442,34 +448,51 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				query = @" select ttd.dependencia_id caract_id, ttd.dependencia_tid caract_tid, ttd.dependencia_projeto_id projeto_id, ttd.dependencia_projeto_tid projeto_tid
 					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
 			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-				query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, c.projeto_geo_id projeto_id, c.projeto_geo_tid projeto_tid 
-					from hst_car_solicitacao c where c.solicitacao_id=:id and c.tid=:tid ";
+            {
+                query = @" select /*c.dominialidade_id*/ D.ID caract_id, /*c.dominialidade_tid*/ D.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
+                            from hst_car_solicitacao c   
+                                    INNER JOIN TAB_EMPREENDIMENTO   E   ON  c.EMPREENDIMENTO_ID = E.ID  
+                                    INNER JOIN CRT_PROJETO_GEO      PG  ON  PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN CRT_DOMINIALIDADE    D   ON  D.EMPREENDIMENTO = E.ID
+                            where c.solicitacao_id=:id and c.tid=:tid AND PG.CARACTERIZACAO = 1  ";
+
+                using (var cmd = new OracleCommand(query, conn))
+                {
+                    if (requisicao.tem_titulo)
+                    {
+                        cmd.Parameters.Add(new OracleParameter("id", tituloId));
+                        //cmd.Parameters.Add(new OracleParameter("tid", tituloTid));
+                    }
+                    else
+                    {
+                        cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                        cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+                    }
+
+                    using (var dr = cmd.ExecuteReader())
+                        if (dr.Read())
+                        {
+                            requisicao.caracterizacao_id = Convert.ToInt32(dr["caract_id"]);
+                            requisicao.caracterizacao_tid = Convert.ToString(dr["caract_tid"]);
+                            requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
+                            requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
+                        }
+                }
+            }                
 			else
-				query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, c.projeto_geo_id projeto_id, c.projeto_geo_tid projeto_tid 
-					from hst_car_solicitacao_cred c where c.solicitacao_id=:id and c.tid=:tid ";
+            {
+//                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
+//                            from hst_car_solicitacao_cred c    
+//                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID   
+//                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+//                              where c.solicitacao_id=:id and c.tid=:tid ";
 
-			using (var cmd = new OracleCommand(query, conn))
-			{
-				if (requisicao.tem_titulo)
-				{
-					cmd.Parameters.Add(new OracleParameter("id", tituloId));
-					//cmd.Parameters.Add(new OracleParameter("tid", tituloTid));
-				}
-				else
-				{
-					cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
-					cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
-				}
+                GlobalControleCredenciado = 0; // variavel para alguns casos a area total da propriedade ser pega na tabela TMP.ATP
+                requisicao = ObterDadosRequisicaoCredenciado(conn, requisicao);
+            }
+                
 
-				using (var dr = cmd.ExecuteReader())
-					if (dr.Read())
-					{
-						requisicao.caracterizacao_id = Convert.ToInt32(dr["caract_id"]);
-						requisicao.caracterizacao_tid = Convert.ToString(dr["caract_tid"]);
-						requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
-						requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
-					}
-			}
+			
 		}
 
 		/// <summary>
@@ -817,6 +840,173 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         }
 
+        private static RequisicaoJobCar ObterDadosRequisicaoCredenciado(OracleConnection conn, RequisicaoJobCar requisicao)
+        {
+            /*
+             *  Função para resolver problema de não achar ATP do credenciado:
+             *  Anterior o credenciado não podia inscrever o imovel no CAR, era função do institucional. 
+             *  Casos em que a ATP não é encontrado é devido ao procedimento de importação do Empreendimento do credenciado para o institucional 
+             *  e cópia  do institucional para o credenciado não ter sido finalizado em sua totalidade
+             */
+            #region [[  CONSULTAS  ]]
+
+            var q1 = @"select /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+                                            from hst_car_solicitacao_cred c    
+                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
+                                                  INNER JOIN CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.INTERNO
+                                                   
+                                              where c.solicitacao_id=:id and c.tid=:tid";
+
+            // -- EMPREENDIMENTOS JÁ IMPORTADOS (POSSUI CÓDIGO E INTERNO)
+            var q2 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+                                FROM idafcredenciadogeo.GEO_ATP GA 
+                                        INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
+                                        INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
+                                        INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                        INNER JOIN CRT_DOMINIALIDADE                    DM  ON  DM.EMPREENDIMENTO = EM.INTERNO
+                                    WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid
+                        UNION ALL   
+                        SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.INTERNO_ID projeto_id, /*c.projeto_geo_tid*/ PG.INTERNO_TID projeto_tid      
+                                FROM idafgeo.GEO_ATP GA 
+                                        INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.INTERNO_ID = GA.PROJETO
+                                        INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
+                                        INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                        INNER JOIN CRT_DOMINIALIDADE                    DM  ON  DM.EMPREENDIMENTO = EM.INTERNO
+                                    WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid ";
+
+            //-- EMPREENDIMENTOS NÃO IMPORTADOS AINDA (NÃO POSSUI CÓDIGO, NEM INTERNO) 
+            var q3 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+                              FROM idafcredenciadogeo.TMP_ATP GA 
+                                      INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
+                                      INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
+                                      INNER JOIN HST_CAR_SOLICITACAO_CRED             CS  ON  CS.EMPREENDIMENTO_ID = EM.ID
+                                      INNER JOIN IDAFCREDENCIADO.CRT_DOMINIALIDADE    DM  ON  DM.EMPREENDIMENTO = EM.ID
+                                  WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid";
+
+            #endregion
+
+            Int32? emp_id ;
+            Int32? interno_id = null;
+            var query = @"SELECT ID FROM IDAFCREDENCIADOGEO.GEO_ATP GA WHERE GA.PROJETO IN (
+                                        select PG.ID projeto_id   
+                                            from hst_car_solicitacao_cred c    
+                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+                                              where c.solicitacao_id=:id and c.tid=:tid ) ";
+
+            using (var cmd = new OracleCommand(query, conn))
+            {
+		
+					cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+					cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+			
+
+				using (var dr = cmd.ExecuteReader())
+					if (dr.Read())
+                    {
+                        using (var cmdr = new OracleCommand(q1, conn))
+                        {
+
+                            cmdr.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                            cmdr.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+
+                            using (var dra = cmdr.ExecuteReader())
+                                if (dra.Read())
+                                {
+                                    requisicao.caracterizacao_id = Convert.ToInt32(dra["caract_id"]);
+                                    requisicao.caracterizacao_tid = Convert.ToString(dra["caract_tid"]);
+                                    requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
+                                    requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
+                                    dra.Close();
+                                }
+                            
+                            return requisicao;
+                        }
+                        dr.Close();
+					}
+                
+			}
+            // VERIFICA SE O EMPREENDIMENTO TEM INTERNO
+            query = "SELECT ID, INTERNO FROM IDAFCREDENCIADO.TAB_EMPREENDIMENTO WHERE id = :emp_id";
+            using (var cmd = new OracleCommand(query, conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("emp_id", requisicao.empreendimento));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        emp_id = Convert.ToInt32(dr["ID"]);
+                        if (dr["INTERNO"] != null && !Convert.IsDBNull(dr["INTERNO"]))
+                            interno_id = Convert.ToInt32(dr["INTERNO"]);
+                        else interno_id = null;
+                    }
+                    dr.Close();
+                }
+            }
+            // SE TIVER INTERNO FAZ ESSA CONSULTA
+            if(interno_id != null && interno_id != 0)
+            {
+                using (var cmd = new OracleCommand(q2, conn))
+                {
+
+                    cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                    cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+                    using (var dr = cmd.ExecuteReader())
+                        if (dr.Read())
+                        {
+                            requisicao.caracterizacao_id = Convert.ToInt32(dr["caract_id"]);
+                            requisicao.caracterizacao_tid = Convert.ToString(dr["caract_tid"]);
+                            requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
+                            requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
+
+                            GlobalControleCredenciado = 1;  // ATRIBUIDO 1 NA GLOBAL PARA PESQUISAR NA TABELA "IDAFGEO.GEO_ATP", EM VEZ DE "IDAFCREDENCIADOGEO.GEO_ATP"
+
+                            dr.Close();
+                            return requisicao;
+                        }
+                        else
+                        {
+                            //throw new Exception("Erro ao buscar os dados - Imóvel sem caracterização.");
+                        }
+                }
+
+                
+
+            }else
+            {   //SE INTERNO FAZ ESSA CONSULTA
+                using (var cmd = new OracleCommand(q3, conn))
+                {
+
+                    cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                    cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+                    using (var dr = cmd.ExecuteReader())
+                        if (dr.Read())
+                        {
+                            requisicao.caracterizacao_id = Convert.ToInt32(dr["caract_id"]);
+                            requisicao.caracterizacao_tid = Convert.ToString(dr["caract_tid"]);
+                            requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
+                            requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
+
+                            GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
+
+                            dr.Close();
+                            return requisicao;
+                        }
+                }
+                
+            }
+
+            //throw new Exception("Erro ao buscar os dados - Imóvel sem caracterização.");
+
+            return requisicao;
+
+        }
+
         private static void ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int solicitacaoCAR)
         {
             using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.HST_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
@@ -1141,15 +1331,22 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         dr.Close();
                     }
                 }
+                if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                {
+                    cadastrante.nomeMae = "Não informado";
+                }
             } else
                 //SE FOR PJ PEGA O DECLARANTE
                 if(tipo == 2)
                 {
+                    String cpf = null;
                     using (var cmd =
-                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CPF 
+                        new OracleCommand(@"SELECT PP.NOME AS NOME, PP.CPF AS CPF, PP.MAE AS MAE, PP.DATA_NASCIMENTO AS DATA_NASCIMENTO 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
                                                 INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
                                                 INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA_REPRESENTANTE         PR  ON  PR.PESSOA = P.PESSOA_ID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA                       PP  ON  PP.ID = PR.REPRESENTANTE
                                                 WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
@@ -1161,9 +1358,33 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             {
                                 cadastrante.nome = Convert.ToString(dr["NOME"]);
                                 cadastrante.cpf = Convert.ToString(dr["CPF"]);
-                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");                               
+                                if (cadastrante.cpf != null) cpf = cadastrante.cpf;
+                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
+                                cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
                             }
                             dr.Close();
+                        }
+                    }
+                    if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                    {
+                        using (var cmd =
+                        new OracleCommand(@"SELECT MAE FROM IDAFCREDENCIADO.TAB_PESSOA WHERE MAE IS NOT NULL AND CPF = :cpf", conn))
+                        {
+                            cmd.Parameters.Add(new OracleParameter("cpf", cpf));
+
+                            using (var dr = cmd.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                }
+                                dr.Close();
+                            }
+                        }
+                        if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                        {
+                            cadastrante.nomeMae = "Não informado";
                         }
                     }
                 }
@@ -1297,13 +1518,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT dominialidade_dominio_id,tid,tipo_id,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao_texto FROM " +
+						"SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
 						schema +
-						".HST_CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade_id = :dominialidade_id AND dominialidade_tid = :dominialidade_tid",
+						".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
 						conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-				cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+				//cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
 
 				using (var dr = cmd.ExecuteReader())
 				{
@@ -1319,7 +1540,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						};
 
 
-						var tipo = Convert.ToInt32(dr["tipo_id"]);
+						var tipo = Convert.ToInt32(dr["tipo"]);
 						doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
 
 						if ((tipo == 1) || (tipo == 2))
@@ -1348,7 +1569,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
 							doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
 
-							var emissorDocumento = Convert.ToString(dr["comprovacao_texto"]) + " " + Convert.ToString(dr["registro"]);
+							var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
 							doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
 								? emissorDocumento.Substring(0, 100)
 								: emissorDocumento);
@@ -1356,13 +1577,86 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 
 						doc.ccir = Convert.ToString(dr["numero_ccri"]);
-						doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["dominialidade_dominio_id"]),
+						doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
 							Convert.ToString(dr["tid"]));
 
 						resultado.Add(doc);
 					}
 				}
 			}
+
+            if(resultado.Count == 0)
+            {
+                using (
+                var cmd =
+                    new OracleCommand(
+                        "SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+                        "IDAF" +
+                        ".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+                        conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+                    //cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var doc = new Documento
+                            {
+                                detalheDocumentoPosse = new DetalheDocumentoPosse
+                                {
+                                    enderecoDeclarante = new EnderecoDeclarante()
+                                },
+                                detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+                            };
+
+
+                            var tipo = Convert.ToInt32(dr["tipo"]);
+                            doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+
+                            if ((tipo == 1) || (tipo == 2))
+                            {
+                                doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+                            }
+
+                            if (tipo == 1)
+                            {
+                                doc.tipo = Documento.TipoPropriedade;
+
+                                doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+                                doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+                                {
+                                    numeroMatricula = Convert.ToString(dr["matricula"]),
+                                    livro = Convert.ToString(dr["livro"]),
+                                    folha = Convert.ToString(dr["folha"]),
+                                    dataRegistro = new DateTime(1900, 01, 01),
+                                    municipioCartorio = empreendimentoMunicipio
+                                };
+                            }
+                            else
+                            {
+                                doc.tipo = Documento.TipoPosse;
+
+                                doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+                                doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+                                var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+                                doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+                                    ? emissorDocumento.Substring(0, 100)
+                                    : emissorDocumento);
+                                doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+                            }
+
+                            doc.ccir = Convert.ToString(dr["numero_ccri"]);
+                            doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+                                Convert.ToString(dr["tid"]));
+
+                            resultado.Add(doc);
+                        }
+                    }
+                }
+            }
 
 			return resultado;
 		}
@@ -1457,7 +1751,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente, string requisicaoOrigem)
 		{
             var origem = requisicaoOrigem == "credenciado" ? 2 : 1;
-			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
+			using (var cmd = new OracleCommand("select s.codigo_imovel from IDAF.tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoCedente));
                 cmd.Parameters.Add(new OracleParameter("origem", origem));
@@ -1478,7 +1772,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <param name="empreendimentoId">The empreendimento identifier.</param>
 		/// <param name="empreendimentoTid">The empreendimento tid.</param>
 		/// <returns></returns>
-		private static List<Geo> ObterGeometriasImovel(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid, int dominialidadeId, string dominialidadeTid, int projetoGeoId, string projetoGeoTid)
+        private static List<Geo> ObterGeometriasImovel(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid, int dominialidadeId, string dominialidadeTid, int projetoGeoId, string projetoGeoTid)
 		{
 			var geo = new List<Geo>();
 
@@ -1780,9 +2074,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <exception cref="System.Exception">Erro ao buscar os dados Geo - ATP do imóvel inexistente.</exception>
 		private static Geo ObterGeometriaAreaImovel(OracleConnection conn, string schema, int projetoGeoId, string projetoGeoTid)
 		{
-			var tabela = schema + ".GEO_ATP";
+            var tabela = schema + ".GEO_ATP";
+            var geometrias = new List<Geo>();
 
-			var geometrias = new List<Geo>();
+            if (GlobalControleCredenciado == 2)
+            {
+                tabela = schema + ".TMP_ATP";
+            }else if(GlobalControleCredenciado == 1)
+            {
+                geometrias.AddRange(ObterGeometrias(conn, "IDAFGEO.GEO_ATP", projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAreaImovel));
+            }			    			
 
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON, Geo.TipoAreaImovel));
 
@@ -2211,6 +2512,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			var geometrias = new List<Geo>();
 
+            //   Traamento para dois casos que tem aspas simples em uma string   ( ' => '')
+            bool i = identificacaoReserva.Contains("'");
+            if (i)
+            {
+                identificacaoReserva = identificacaoReserva.Replace("\'", "''");             
+            }
 			geometrias.AddRange(ObterGeometrias(conn, tabela, projetoGeoId, projetoGeoTid, Geometria.POLYGON,
 				Geo.TipoArlProposta, "codigo = '" + identificacaoReserva + "'"));
 

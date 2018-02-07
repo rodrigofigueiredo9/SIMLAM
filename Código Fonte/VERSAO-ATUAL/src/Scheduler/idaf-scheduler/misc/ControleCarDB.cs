@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return novoId;
 		}
 
-		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "")
+		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "")
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -94,7 +94,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
 				{
-					if (resultado.mensagensResposta.Count > 1)
+                    if (resultado.mensagensResposta.Count > 1 || 
+                        (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
+                         resultado.codigoResposta == 400 ||
+                         resultado.codigoResposta == 500)
 					{
 						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
 						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
@@ -118,14 +121,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("tid = :tid,");
 			sqlBuilder.Append("situacao_envio = :situacao_envio,");
 			sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
-	
-			if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
+
+            if (tipo.Equals("gerar-car"))
+                sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
+			//if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
+            else
 				sqlBuilder.Append("data_envio = CURRENT_TIMESTAMP,");
 			if (arquivoCar != "")
 				sqlBuilder.Append("arquivo = '" + arquivoCar + "',");
 
 			sqlBuilder.Append("pendencias = :pendencias,");
-			sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
+            if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+                sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
 			sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
@@ -143,7 +150,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("situacao_envio", situacaoEnvio));
 					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
 					cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
-					cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
+                    if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+					    cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
@@ -165,7 +173,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			//Inserir no Histórico
 			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
-
+            if(item == null)
+            {
+                return 0;
+            }
 			return item.id;
 		}
 
