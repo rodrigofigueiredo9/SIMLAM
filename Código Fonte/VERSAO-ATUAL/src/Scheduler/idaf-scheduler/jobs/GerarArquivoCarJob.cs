@@ -449,10 +449,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
 			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
             {
-                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
+                query = @" select /*c.dominialidade_id*/ D.ID caract_id, /*c.dominialidade_tid*/ D.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
                             from hst_car_solicitacao c   
-                                    INNER JOIN TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID  
-                                    INNER JOIN CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN TAB_EMPREENDIMENTO   E   ON  c.EMPREENDIMENTO_ID = E.ID  
+                                    INNER JOIN CRT_PROJETO_GEO      PG  ON  PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN CRT_DOMINIALIDADE    D   ON  D.EMPREENDIMENTO = E.ID
                             where c.solicitacao_id=:id and c.tid=:tid AND PG.CARACTERIZACAO = 1  ";
 
                 using (var cmd = new OracleCommand(query, conn))
