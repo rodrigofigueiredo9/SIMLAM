@@ -419,15 +419,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             {
                 if(solicitacao.SituacaoId == 2)
                 {
-                    List<Caracterizacao> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesAssociadasProjetoDigital(entidade.ProjetoId);
-                    
-                    foreach(var carac in caracterizacoes)
+                    if(_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
                     {
-                        if (carac.Id == 22) //Caracterização CAR
-                        {
-                            Validacao.Add(Mensagem.Retificacao.msgCred5());
-                            return false;
-                        }
+                        Validacao.Add(Mensagem.Retificacao.msgCred5());
+                        return false;
                     }
                 }
                 if(solicitacao.SituacaoId == 5)
@@ -439,15 +434,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                     }
                     else
                     {
-                        List<CaracterizacaoLst> caracterizacoes = _busCaracterizacao.ObterCaracterizacoesPorProjetoDigital(entidade.ProjetoId);
-
-                        foreach (var carac in caracterizacoes)
+                        if (_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
                         {
-                            if (carac.Id == 22) //Caracterização CAR
-                            {
-                                Validacao.Add(Mensagem.Retificacao.msgCred5());
-                                return false;
-                            }
+                            Validacao.Add(Mensagem.Retificacao.msgCred5());
+                            return false;
                         }
                     }
                 }
