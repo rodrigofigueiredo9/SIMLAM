@@ -404,8 +404,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							if (dadosReserva.data == DateTime.MinValue)
 								dadosReserva.data = DATA_VAZIA;
 
-							if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
-								dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
+							//if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
+							//	dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
 						}
 					}
 
@@ -449,10 +449,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
 			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
             {
-                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
+                query = @" select /*c.dominialidade_id*/ D.ID caract_id, /*c.dominialidade_tid*/ D.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
                             from hst_car_solicitacao c   
-                                    INNER JOIN TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID  
-                                    INNER JOIN CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN TAB_EMPREENDIMENTO   E   ON  c.EMPREENDIMENTO_ID = E.ID  
+                                    INNER JOIN CRT_PROJETO_GEO      PG  ON  PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN CRT_DOMINIALIDADE    D   ON  D.EMPREENDIMENTO = E.ID
                             where c.solicitacao_id=:id and c.tid=:tid AND PG.CARACTERIZACAO = 1  ";
 
                 using (var cmd = new OracleCommand(query, conn))
@@ -1338,11 +1339,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 //SE FOR PJ PEGA O DECLARANTE
                 if(tipo == 2)
                 {
+                    String cpf = null;
                     using (var cmd =
-                        new OracleCommand(@"SELECT P.RAZAO_SOCIAL AS NOME, P.CNPJ AS CPF 
+                        new OracleCommand(@"SELECT PP.NOME AS NOME, PP.CPF AS CPF, PP.MAE AS MAE, PP.DATA_NASCIMENTO AS DATA_NASCIMENTO 
                                             FROM IDAFCREDENCIADO.HST_CAR_SOLICITACAO CAR
                                                 INNER JOIN IDAFCREDENCIADO.HST_CREDENCIADO  CR  ON  CAR.CREDENCIADO_ID = CR.CREDENCIADO_ID AND CAR.CREDENCIADO_TID = CR.TID
                                                 INNER JOIN IDAFCREDENCIADO.HST_PESSOA       P   ON  P.PESSOA_ID = CR.PESSOA_ID AND P.TID = CR.PESSOA_TID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA_REPRESENTANTE         PR  ON  PR.PESSOA = P.PESSOA_ID
+                                                INNER JOIN IDAFCREDENCIADO.TAB_PESSOA                       PP  ON  PP.ID = PR.REPRESENTANTE
                                                 WHERE CAR.SOLICITACAO_ID = :id AND CAR.TID = :tid", conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("id", solicitacaoCar));
@@ -1354,9 +1358,33 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             {
                                 cadastrante.nome = Convert.ToString(dr["NOME"]);
                                 cadastrante.cpf = Convert.ToString(dr["CPF"]);
-                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");                               
+                                if (cadastrante.cpf != null) cpf = cadastrante.cpf;
+                                if (cadastrante.cpf != null) cadastrante.cpf = Regex.Replace(cadastrante.cpf, @"[^0-9a-zA-Z]+", "");
+                                cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                cadastrante.dataNascimento = Convert.ToDateTime(dr["DATA_NASCIMENTO"]);
                             }
                             dr.Close();
+                        }
+                    }
+                    if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                    {
+                        using (var cmd =
+                        new OracleCommand(@"SELECT MAE FROM IDAFCREDENCIADO.TAB_PESSOA WHERE MAE IS NOT NULL AND CPF = :cpf", conn))
+                        {
+                            cmd.Parameters.Add(new OracleParameter("cpf", cpf));
+
+                            using (var dr = cmd.ExecuteReader())
+                            {
+                                while (dr.Read())
+                                {
+                                    cadastrante.nomeMae = Convert.ToString(dr["MAE"]);
+                                }
+                                dr.Close();
+                            }
+                        }
+                        if (String.IsNullOrWhiteSpace(cadastrante.nomeMae))
+                        {
+                            cadastrante.nomeMae = "Não informado";
                         }
                     }
                 }
@@ -1557,6 +1585,79 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				}
 			}
 
+            if(resultado.Count == 0)
+            {
+                using (
+                var cmd =
+                    new OracleCommand(
+                        "SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+                        "IDAF" +
+                        ".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+                        conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+                    //cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var doc = new Documento
+                            {
+                                detalheDocumentoPosse = new DetalheDocumentoPosse
+                                {
+                                    enderecoDeclarante = new EnderecoDeclarante()
+                                },
+                                detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+                            };
+
+
+                            var tipo = Convert.ToInt32(dr["tipo"]);
+                            doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+
+                            if ((tipo == 1) || (tipo == 2))
+                            {
+                                doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+                            }
+
+                            if (tipo == 1)
+                            {
+                                doc.tipo = Documento.TipoPropriedade;
+
+                                doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+                                doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+                                {
+                                    numeroMatricula = Convert.ToString(dr["matricula"]),
+                                    livro = Convert.ToString(dr["livro"]),
+                                    folha = Convert.ToString(dr["folha"]),
+                                    dataRegistro = new DateTime(1900, 01, 01),
+                                    municipioCartorio = empreendimentoMunicipio
+                                };
+                            }
+                            else
+                            {
+                                doc.tipo = Documento.TipoPosse;
+
+                                doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+                                doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+                                var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+                                doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+                                    ? emissorDocumento.Substring(0, 100)
+                                    : emissorDocumento);
+                                doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+                            }
+
+                            doc.ccir = Convert.ToString(dr["numero_ccri"]);
+                            doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+                                Convert.ToString(dr["tid"]));
+
+                            resultado.Add(doc);
+                        }
+                    }
+                }
+            }
+
 			return resultado;
 		}
 
@@ -1650,7 +1751,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente, string requisicaoOrigem)
 		{
             var origem = requisicaoOrigem == "credenciado" ? 2 : 1;
-			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
+			using (var cmd = new OracleCommand("select s.codigo_imovel from IDAF.tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoCedente));
                 cmd.Parameters.Add(new OracleParameter("origem", origem));
