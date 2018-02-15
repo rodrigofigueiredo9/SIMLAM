@@ -821,10 +821,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     return _pdf.GerarInstrumentoUnicoFiscalizacao(id, banco: banco);
                 }
 
-                //if (historico > 0)
-                //{
-                //    fiscalizacao = ObterHistorico(historico);
-                //}
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
 
                 if (fiscalizacao.PdfIUF.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfIUF.Id != arquivo))
                 {
