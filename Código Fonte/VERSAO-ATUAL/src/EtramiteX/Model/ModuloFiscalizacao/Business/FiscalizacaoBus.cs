@@ -831,10 +831,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
                 Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfIUF.Id.GetValueOrDefault());
 
-                //if (historico > 0)
-                //{
-                //    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
-                //}
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
 
                 return pdf.Buffer;
 
