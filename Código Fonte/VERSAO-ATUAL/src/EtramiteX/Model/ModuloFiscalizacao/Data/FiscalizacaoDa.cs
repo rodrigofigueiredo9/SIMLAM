@@ -388,7 +388,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select t.fiscalizacao_id Id, t.situacao_id SituacaoId, t.situacao_data, t.situacao_texto SituacaoTexto, 
-					t.tid Tid, t.autos NumeroAutos, t.vencimento vencimentoFisc, t.pdf_auto_termo, t.pdf_laudo, t.pdf_croqui
+					t.tid Tid, t.autos NumeroAutos, t.vencimento vencimentoFisc, t.pdf_auto_termo, t.pdf_laudo, t.pdf_croqui, t.pdf_iuf
 					from {0}hst_fiscalizacao t where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -401,6 +401,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					fiscalizacaoItem.PdfAutoTermo.Id = reader.GetValue<Int32>("pdf_auto_termo");
 					fiscalizacaoItem.PdfLaudo.Id = reader.GetValue<Int32>("pdf_laudo");
 					fiscalizacaoItem.PdfCroqui.Id = reader.GetValue<Int32>("pdf_croqui");
+                    fiscalizacaoItem.PdfIUF.Id = reader.GetValue<Int32>("pdf_iuf");
 				});
 			}
 
