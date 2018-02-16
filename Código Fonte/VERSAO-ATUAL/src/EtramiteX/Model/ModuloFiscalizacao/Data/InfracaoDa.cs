@@ -914,6 +914,99 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     }
                 }
 
+                #region Penalidades de fiscalizações antigas
+
+                #region multa
+
+                if (infracao.PossuiMulta == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_infracao hfi
+                                where hfi.fiscalizacao_id = :fiscalizacao_id
+                                      and hfi.valor_multa is not null
+                                      and hfi.id = ( select max(h.id)
+                                                     from {0}hst_fisc_infracao h
+                                                     where h.fiscalizacao_id = :fiscalizacao_id )", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("fiscalizacao_id", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiMulta = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion multa
+
+                #region Apreensão
+
+                if (infracao.PossuiApreensao == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_material_apreendido h
+                                where h.fiscalizacao_id = :id_fiscalizacao
+                                      and h.houve_material = 1", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiApreensao = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Apreensão
+
+                #region Interdição/embargo
+
+                if (infracao.PossuiInterdicaoEmbargo == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_obj_infracao h
+                                where h.fiscalizacao_id = :id_fiscalizacao", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiInterdicaoEmbargo = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Interdição/embargo
+
+                #endregion Penalidades de fiscalizações antigas
+
                 #endregion
 
                 #region Outras Penalidades
@@ -971,15 +1064,50 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				#region Infração
 
-				Comando comando = bancoDeDados.CriarComando(@"select tfi.infracao_id id, f.situacao_id, tfi.classificacao_id classificacao, tfi.classificacao_texto,
-															tfi.tipo_id tipo, lt.texto tipo_texto, tfi.item_id item, cfi.texto item_texto, tfi.subitem_id subitem,
-															cfs.texto subitem_texto, tfi.infracao_autuada, tfi.gerado_sistema, tfi.valor_multa, tfi.codigo_receita_id codigo_receita,
-															tfi.numero_auto_infracao_bloco, tfi.descricao_infracao, tfi.data_lavratura_auto, tfi.serie_id serie, tfi.configuracao_id configuracao,
-															tfi.arquivo_id arquivo, a.nome arquivo_nome, tfi.configuracao_tid from hst_fisc_infracao tfi, hst_fiscalizacao f,
-															tab_arquivo a, lov_cnf_fisc_infracao_classif lc, cnf_fisc_infracao_tipo lt, cnf_fisc_infracao_item cfi,
-															cnf_fisc_infracao_subitem cfs where tfi.arquivo_id = a.id(+) and tfi.classificacao_id = lc.id(+) and tfi.tipo_id = lt.id(+)
-															and tfi.item_id = cfi.id(+) and tfi.subitem_id = cfs.id(+) and tfi.fiscalizacao_id_hst = f.id 
-															and tfi.id = (select max(t.id) id from hst_fisc_infracao t where t.infracao_id = :id)", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select tfi.infracao_id id,
+                                    	   tfi.classificacao_id classificacao,
+                                    	   tfi.classificacao_texto,
+                                    	   tfi.tipo_id tipo,
+                                    	   f.situacao_id,
+                                    	   lt.texto tipo_texto,
+                                    	   tfi.item_id item,
+                                    	   cfi.texto item_texto,
+                                    	   tfi.subitem_id subitem,
+                                    	   cfs.texto subitem_texto,
+                                    	   tfi.infracao_autuada,
+                                    	   tfi.gerado_sistema,
+                                    	   tfi.valor_multa,
+                                    	   tfi.codigo_receita_id codigo_receita,
+                                    	   tfi.numero_auto_infracao_bloco,
+                                    	   tfi.descricao_infracao,
+                                    	   tfi.data_lavratura_auto,
+                                    	   tfi.serie_id serie,
+                                    	   tfi.configuracao_id configuracao,
+                                    	   tfi.configuracao_tid,
+                                    	   tfi.arquivo_id arquivo,
+                                    	   a.nome arquivo_nome,
+                                    	   tfi.possui_infracao,
+                                    	   tfi.data_constatacao,
+                                    	   tfi.hora_constatacao,
+                                    	   tfi.classificacao_infracao,
+                                           tfi.fiscalizacao_id
+                                    from hst_fisc_infracao tfi,
+                                    	 hst_fiscalizacao f,
+                                    	 tab_arquivo a,
+                                    	 lov_cnf_fisc_infracao_classif lc,
+                                    	 cnf_fisc_infracao_tipo lt,
+                                    	 cnf_fisc_infracao_item cfi,
+                                    	 cnf_fisc_infracao_subitem cfs
+                                    where tfi.arquivo_id = a.id(+)
+                                    	  and tfi.classificacao_id = lc.id(+)
+                                    	  and tfi.tipo_id = lt.id(+)
+                                    	  and tfi.item_id = cfi.id(+)
+                                    	  and tfi.subitem_id = cfs.id(+)
+                                    	  and tfi.fiscalizacao_id_hst = f.id
+                                    	  and tfi.id = ( select max(t.id) id
+                                    					 from hst_fisc_infracao t
+                                    					 where t.infracao_id = :id )", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -989,26 +1117,64 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					{
 						infracao = new Infracao
 						{
-							Id = reader.GetValue<int>("id"),
-							ClassificacaoId = reader.GetValue<int>("classificacao"),
-							ClassificacaoTexto = reader.GetValue<string>("classificacao_texto"),
-							TipoId = reader.GetValue<int>("tipo"),
-							TipoTexto = reader.GetValue<string>("tipo_texto"),
-							ItemId = reader.GetValue<int>("item"),
-							ItemTexto = reader.GetValue<string>("item_texto"),
-							SubitemId = reader.GetValue<int>("subitem"),
-							SubitemTexto = reader.GetValue<string>("subitem_texto"),
-							SerieId = reader.GetValue<int>("serie"),
-							ConfiguracaoId = reader.GetValue<int>("configuracao"),
-							IsAutuada = reader.GetValue<bool>("infracao_autuada"),
-							IsGeradaSistema = reader.GetValue<bool?>("gerado_sistema"),
-							ValorMulta = reader.GetValue<string>("valor_multa"),
-							CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
-							NumeroAutoInfracaoBloco = reader.GetValue<string>("numero_auto_infracao_bloco"),
-							DescricaoInfracao = reader.GetValue<string>("descricao_infracao"),
-							ConfiguracaoTid = reader.GetValue<string>("configuracao_tid"),
-							FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id")
+                            Id = reader.GetValue<int>("id"),
+                            ClassificacaoId = reader.GetValue<int>("classificacao"),
+                            ClassificacaoTexto = reader.GetValue<string>("classificacao_texto"),
+                            TipoId = reader.GetValue<int>("tipo"),
+                            TipoTexto = reader.GetValue<string>("tipo_texto"),
+                            ItemId = reader.GetValue<int>("item"),
+                            ItemTexto = reader.GetValue<string>("item_texto"),
+                            SubitemId = reader.GetValue<int>("subitem"),
+                            SubitemTexto = reader.GetValue<string>("subitem_texto"),
+                            SerieId = reader.GetValue<int>("serie"),
+                            ConfiguracaoId = reader.GetValue<int>("configuracao"),
+                            IsAutuada = reader.GetValue<bool>("infracao_autuada"),
+                            IsGeradaSistema = reader.GetValue<bool?>("gerado_sistema"),
+                            ValorMulta = reader.GetValue<string>("valor_multa"),
+                            CodigoReceitaId = reader.GetValue<int>("codigo_receita"),
+                            NumeroAutoInfracaoBloco = reader.GetValue<string>("numero_auto_infracao_bloco"),
+                            DescricaoInfracao = reader.GetValue<string>("descricao_infracao"),
+                            ConfiguracaoTid = reader.GetValue<string>("configuracao_tid"),
+                            FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
+                            ComInfracao = reader.GetValue<bool?>("possui_infracao"),
+                            HoraConstatacao = reader.GetValue<string>("hora_constatacao"),
+                            ClassificacaoInfracao = reader.GetValue<int?>("classificacao_infracao"),
+                            FiscalizacaoId = reader.GetValue<int>("fiscalizacao_id")
 						};
+
+                        if (infracao.ComInfracao == null)
+                        {
+                            infracao.ComInfracao = reader.GetValue<bool?>("infracao_autuada");
+                        }
+
+                        infracao.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
+
+                        if (infracao.DataConstatacao.Data == DateTime.MinValue)
+                        {
+                            Comando comandoAux = bancoDeDados.CriarComando(@"
+                                                    select tfli.data data_antiga
+                                                    from {0}hst_fisc_local_infracao tfli
+                                                    where tfli.fiscalizacao_id = :id_fiscalizacao
+                                                          and tfli.id = ( select max(t.id) id
+                                                                          from {0}hst_fisc_local_infracao t
+                                                                          where t.fiscalizacao_id = :id_fiscalizacao )", EsquemaBanco);
+                            comandoAux.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
+
+                            using (IDataReader readerAux = bancoDeDados.ExecutarReader(comandoAux))
+                            {
+                                if (readerAux.Read())
+                                {
+                                    infracao.DataConstatacao.Data = readerAux.GetValue<DateTime>("data_antiga");
+                                }
+
+                                readerAux.Close();
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(reader.GetValue<string>("data_lavratura_auto")))
+                        {
+                            infracao.DataLavraturaAuto.DataTexto = reader.GetValue<string>("data_lavratura_auto");
+                        }
 
 						infracao.Arquivo = new Arquivo
 						{
@@ -1111,7 +1277,158 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					reader.Close();
 				}
 
-				#endregion
+                #endregion
+
+                #region Enquadramento
+
+                EnquadramentoDa _enquadramentoDA = new EnquadramentoDa();
+
+                infracao.EnquadramentoInfracao = _enquadramentoDA.Obter(infracao.FiscalizacaoId, banco);
+
+                #endregion
+
+                #region Penalidades Fixas
+
+                infracao.PossuiAdvertencia = infracao.PossuiMulta = infracao.PossuiApreensao = infracao.PossuiInterdicaoEmbargo = false;
+
+                comando = bancoDeDados.CriarComando(@"
+                            select (case when lfpf.texto like '%Advertência%' then 1 else 0 end) advertencia,
+                                   (case when lfpf.texto like '%Multa%' then 1 else 0 end) multa,
+                                   (case when lfpf.texto like '%Apreensão%' then 1 else 0 end) apreensao,
+                                   (case when lfpf.texto like '%Interdição%' then 1 else 0 end) interdicao
+                            from tab_fisc_penalidades_infr tfpi,
+                                 lov_fisc_penalidades_fixas lfpf
+                            where tfpi.penalidade = lfpf.id
+                                  and tfpi.infracao = :id_infracao", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        var advertencia = reader.GetValue<bool>("advertencia");
+                        var multa = reader.GetValue<bool>("multa");
+                        var apreensao = reader.GetValue<bool>("apreensao");
+                        var interdicao = reader.GetValue<bool>("interdicao");
+
+                        if (advertencia) infracao.PossuiAdvertencia = true;
+                        if (multa) infracao.PossuiMulta = true;
+                        if (apreensao) infracao.PossuiApreensao = true;
+                        if (interdicao) infracao.PossuiInterdicaoEmbargo = true;
+                    }
+                }
+
+                #region Penalidades de fiscalizações antigas
+
+                #region Multa
+                if (infracao.PossuiMulta == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_infracao hfi
+                                where hfi.fiscalizacao_id = :fiscalizacao_id
+                                      and hfi.valor_multa is not null", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("fiscalizacao_id", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiMulta = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+                #endregion Multa
+
+                #region Apreensão
+
+                if (infracao.PossuiApreensao == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_material_apreendido h
+                                where h.fiscalizacao_id = :id_fiscalizacao
+                                      and h.houve_material = 1", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiApreensao = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Apreensão
+
+                #region Interdição/embargo
+
+                if (infracao.PossuiInterdicaoEmbargo == false)
+                {
+                    comando = bancoDeDados.CriarComando(@"
+                                select count(id) existe
+                                from {0}hst_fisc_obj_infracao h
+                                where h.fiscalizacao_id = :id_fiscalizacao", EsquemaBanco);
+                    comando.AdicionarParametroEntrada("id_fiscalizacao", infracao.FiscalizacaoId, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            int existe = reader.GetValue<int>("existe");
+
+                            if (existe > 0)
+                            {
+                                infracao.PossuiInterdicaoEmbargo = true;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+
+                #endregion Interdição/embargo
+
+                #endregion Penalidades de fiscalizações antigas
+
+                #endregion
+
+                #region Outras Penalidades
+
+                infracao.IdsOutrasPenalidades = new List<int>();
+
+                comando = bancoDeDados.CriarComando(@"
+                            select penalidade_outra idPenalidade
+                            from tab_fisc_outras_penalidad_infr
+                            where infracao = :id_infracao", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        infracao.IdsOutrasPenalidades.Add(reader.GetValue<int>("idPenalidade"));
+                    }
+                }
+
+                #endregion
 			}
 
 			return infracao;
