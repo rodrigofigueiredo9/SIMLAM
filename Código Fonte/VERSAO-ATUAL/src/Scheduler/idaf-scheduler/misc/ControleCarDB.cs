@@ -85,6 +85,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			var pendencias = "";
 			var condicao = "Aguardando Análise";
+            var mensagensDeResposta = String.Empty;
 
 			if (resultado == null)
 			{
@@ -92,29 +93,39 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			else
 			{
-				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
-				{
-                    if (resultado.mensagensResposta.Count > 1 || 
-                        (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
-                         resultado.codigoResposta == 400 ||
-                         resultado.codigoResposta == 500)
-					{
-						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
-						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
-					}
-					else
-					{
-						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
-					}
-					//pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
-				}
+                if (resultado.mensagensResposta == null) 
+                {
+                    mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
+                    situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+                }
+                else
+                {
+                    if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
+                    {
+                        if (resultado.mensagensResposta.Count > 1 ||
+                            (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
+                             resultado.codigoResposta == 400 ||
+                             resultado.codigoResposta == 500)
+                        {
+                            pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
+                            situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+                        }
+                        else
+                        {
+                            situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
+                        }
+                        //pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
+                    }
+
+                    foreach (var men in resultado.mensagensResposta)
+                    {
+                        mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+                        mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+                    }
+                }				
 			}
-            var mensagensDeResposta = String.Empty;
-            foreach (var men in resultado.mensagensResposta)
-            {
-                mensagensDeResposta = String.Concat(mensagensDeResposta, men);
-                mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
-            }
+            
+            
 
 			var sqlBuilder = new StringBuilder();
 			sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
@@ -190,19 +201,28 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("INSERT INTO " + schema + ".HST_CONTROLE_SICAR ");
 			sqlBuilder.Append("(id,tid,empreendimento,empreendimento_tid,solicitacao_car,solicitacao_car_tid,situacao_envio,");
 			sqlBuilder.Append("chave_protocolo,data_gerado,data_envio,arquivo,pendencias,codigo_imovel,");
-			sqlBuilder.Append("url_recibo,status_sicar,condicao,solicitacao_car_esquema,data_execucao,");
-            sqlBuilder.Append("CODIGO_RESPOSTA, CODIGO_IMOVEL_MASC, MENSAGEM_RESPOSTA)");
+			sqlBuilder.Append("url_recibo,status_sicar,condicao,solicitacao_car_esquema,data_execucao/*,");
+            sqlBuilder.Append("CODIGO_RESPOSTA, CODIGO_IMOVEL_MASC, MENSAGEM_RESPOSTA*/)");
 			sqlBuilder.Append(" values ");
 			sqlBuilder.Append("(" + schema + ".SEQ_HST_CONTROLE_SICAR.nextval,:tid,:empreendimento,:empreendimento_tid,");
 			sqlBuilder.Append(":solicitacao_car,:solicitacao_car_tid,:situacao_envio,:chave_protocolo,");
 			sqlBuilder.Append(":data_gerado,:data_envio,:arquivo,:pendencias,:codigo_imovel,");
-			sqlBuilder.Append(":url_recibo,:status_sicar,:condicao,:solicitacao_car_esquema,CURRENT_TIMESTAMP, :CODIGO_RESPOSTA, :CODIGO_IMOVEL_MASC, :MENSAGEM_RESPOSTA)");
+			sqlBuilder.Append(":url_recibo,:status_sicar,:condicao,:solicitacao_car_esquema,CURRENT_TIMESTAMP/*, :CODIGO_RESPOSTA, :CODIGO_IMOVEL_MASC, :MENSAGEM_RESPOSTA*/)");
 
             var mensagensDeResposta = String.Empty;
-            foreach (var men in resultado.mensagensResposta)
+
+            if (resultado.mensagensResposta == null)
             {
-                mensagensDeResposta = String.Concat(mensagensDeResposta, men);
-                mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+                mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
+                //situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+            }
+            else
+            {
+                foreach (var men in resultado.mensagensResposta)
+                {
+                    mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+                    mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+                }
             }
 			try
 			{
@@ -225,10 +245,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("condicao", item.condicao));
 					cmd.Parameters.Add(new OracleParameter("solicitacao_car_esquema", item.solicitacao_car_esquema));
 
-                    cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
+                    /*cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
                     cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
                     cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-                    //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
+                    */ //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
 
 					cmd.ExecuteNonQuery();
 				}
