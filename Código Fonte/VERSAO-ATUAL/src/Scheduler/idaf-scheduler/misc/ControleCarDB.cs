@@ -365,7 +365,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao", situacao));
-					cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
+                    if (situacao == 2) cmd.Parameters.Add(new OracleParameter("motivo", " "));
+                    if (situacao == 6 ||situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
 					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
 					cmd.ExecuteNonQuery();
