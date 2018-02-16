@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
-						var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, "", "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
