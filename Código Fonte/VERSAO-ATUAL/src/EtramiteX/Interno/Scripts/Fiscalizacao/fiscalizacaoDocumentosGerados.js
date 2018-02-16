@@ -31,6 +31,7 @@ FiscalizacaoDocumentosGerados = {
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCancelado', 'click', FiscalizacaoDocumentosGerados.obterAnexoCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfAutoCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfAutoCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfLaudoCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfLaudoCancelado);
+		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUFCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfIUFCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCroquiCancelado', 'click', FiscalizacaoDocumentosGerados.obterAnexoCancelado);
 	},
 
@@ -72,6 +73,13 @@ FiscalizacaoDocumentosGerados = {
 																		+ '&historico=' + $('.hdnHistoricoId', $(this).closest('td')).val()
 																		+ '&id=' + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val();
 		MasterPage.redireciona(url);
+	},
+
+	obterPdfIUFCancelado: function () {
+	    var url = FiscalizacaoDocumentosGerados.settings.urls.pdfIUF + "/?arquivo=" + $('.hdnArquivoId', $(this).closest('td')).val()
+																		+ '&historico=' + $('.hdnHistoricoId', $(this).closest('td')).val()
+																		+ '&id=' + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val();
+	    MasterPage.redireciona(url);
 	}
 
 }
