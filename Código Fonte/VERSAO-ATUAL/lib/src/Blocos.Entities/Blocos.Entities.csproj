@@ -287,6 +287,7 @@
     <Compile Include="Interno\ModuloCredenciado\Praga.cs" />
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Notificacao.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\DestinacaoProduto.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\Penalidade.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ProdutoApreendido.cs" />

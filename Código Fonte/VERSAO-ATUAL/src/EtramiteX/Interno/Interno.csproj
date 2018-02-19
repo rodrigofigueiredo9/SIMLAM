@@ -26,6 +26,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -276,6 +278,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
@@ -682,6 +685,7 @@
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
+    <Content Include="Scripts\Fiscalizacao\notificacao.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\habilitacaoEmissaoPTV.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\listar.js" />
     <Content Include="Scripts\Agrotoxico\listar.js" />
@@ -1704,6 +1708,8 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
+    <Content Include="Views\Fiscalizacao\NotificacaoPartial.ascx" />
+    <Content Include="Views\Fiscalizacao\Notificacao.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarPenalidade.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarProdutosDestinacao.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />

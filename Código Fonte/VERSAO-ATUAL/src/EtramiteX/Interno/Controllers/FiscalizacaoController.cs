@@ -66,7 +66,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         ConfigFiscalizacaoValidar _validarConfigFisc = new ConfigFiscalizacaoValidar();
         AcompanhamentoValidar _validarAcompanhamento = new AcompanhamentoValidar();
 
-        public static EtramitePrincipal Usuario
+		NotificacaoBus _busNotificacao = new NotificacaoBus();
+
+		public static EtramitePrincipal Usuario
         {
             get { return (System.Web.HttpContext.Current.User as EtramitePrincipal); }
         }
@@ -2887,8 +2889,34 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
         }
 
-        #endregion
+		#endregion
 
-        #endregion Acompanhamentos
-    }
+		#endregion Acompanhamentos
+
+		#region Notificacao
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+		public ActionResult Notificacao(int id)
+		{
+			var fiscalizacao = _bus.Obter(id, true);
+			var vm = new NotificacaoVM();
+
+			vm.fiscalizacaoId = id;
+			vm.Notificacao = _busNotificacao.Obter(id);
+			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
+			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
+
+			return View(vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult NotificacaoCriar(Notificacao notificacao)
+		{
+			_busNotificacao.Salvar(notificacao);
+
+			return Json(new { id = notificacao.Id, Msg = Validacao.Erros });
+		}
+		#endregion Notificacao
+	}
 }

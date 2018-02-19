@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
 FiscalizacaoListar = {
@@ -9,6 +9,7 @@ FiscalizacaoListar = {
 	urlVisualizarPdf: '',
 	urlAlterarSituacao: '',
 	urlAcompanhamentos: '',
+	urlNotificacao: '',
 	container: null,
 	settings: {
 		associarFuncao: null
@@ -26,6 +27,7 @@ FiscalizacaoListar = {
 		FiscalizacaoListar.container.delegate('.btnAssociar', 'click', FiscalizacaoListar.associar);
 		FiscalizacaoListar.container.delegate('.btnDocumentos', 'click', FiscalizacaoListar.documentosGerados);
 		FiscalizacaoListar.container.delegate('.btnAcompanhamentos', 'click', FiscalizacaoListar.acompanhamentos);
+		FiscalizacaoListar.container.delegate('.btNotificacao', 'click', FiscalizacaoListar.notificacao);
 
 		FiscalizacaoListar.container.delegate('.radioAutuadoCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioAutuadoCpfCnpj', FiscalizacaoListar.container));
@@ -79,6 +81,11 @@ FiscalizacaoListar = {
 	acompanhamentos: function () {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
 		MasterPage.redireciona(FiscalizacaoListar.urlAcompanhamentos + '/' + itemId);
+	},
+
+	notificacao: function () {
+		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
+		MasterPage.redireciona(FiscalizacaoListar.urlNotificacao + '/' + itemId);
 	},
 
 	excluir: function () {

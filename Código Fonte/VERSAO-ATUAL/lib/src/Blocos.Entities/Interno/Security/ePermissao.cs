@@ -287,7 +287,7 @@
 		AcompanhamentoEditar,
 		AcompanhamentoExcluir,
 		AcompanhamentoAlterarSituacao,
-
+		
 		CadastroAmbientalRuralSolicitacaoCriar,
 		CadastroAmbientalRuralSolicitacaoListar,
 		CadastroAmbientalRuralSolicitacaoVisualizar,

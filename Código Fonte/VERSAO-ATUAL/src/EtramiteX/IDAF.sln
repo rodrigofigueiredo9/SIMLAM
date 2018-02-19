@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interno.Model", "Model\Interno.Model.csproj", "{1A2007A6-9C00-4169-930C-FC338A1AADA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interno.Model.Extensoes", "Model.Extencao\Interno.Model.Extensoes.csproj", "{F7BAF119-128E-4151-89B3-35F1367ADD15}"
@@ -37,6 +39,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.RelatorioIndividual", "..\Credenciado\Credenciado.Model.RelatorioIndividual\Credenciado.Model.RelatorioIndividual.csproj", "{5E0F5C2F-0105-4709-9553-48101BB78A4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credenciado.Model.WebService", "..\Credenciado\Credenciado.Model.WebService\Credenciado.Model.WebService.csproj", "{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A42A1E58-D793-4963-8CD2-BC009F5FDB72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,9 +104,16 @@ Global
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A42A1E58-D793-4963-8CD2-BC009F5FDB72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A42A1E58-D793-4963-8CD2-BC009F5FDB72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A42A1E58-D793-4963-8CD2-BC009F5FDB72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A42A1E58-D793-4963-8CD2-BC009F5FDB72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2592512-ADE8-47DA-B1D7-7A47653B2708}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

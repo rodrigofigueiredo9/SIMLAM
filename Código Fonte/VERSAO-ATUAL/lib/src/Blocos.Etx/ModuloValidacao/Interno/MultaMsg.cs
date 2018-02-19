@@ -8,6 +8,13 @@
 			get { return _multaMsg; }
 			set { _multaMsg = value; }
 		}
+
+		private static NotificacaoMsg _notificacaoMsg = new NotificacaoMsg();
+		public static NotificacaoMsg NotificacaoMsg
+		{
+			get { return _notificacaoMsg; }
+			set { _notificacaoMsg = value; }
+		}
 	}
 
 	public class MultaMsg
@@ -23,5 +30,15 @@
 		public Mensagem ValorMultaInvalido { get { return new Mensagem() { Campo = "Multa_ValorMulta", Tipo = eTipoMensagem.Advertencia, Texto = "Valor da multa inválido." }; } }
 		public Mensagem ArquivoObrigatorio { get { return new Mensagem() { Campo = "file", Tipo = eTipoMensagem.Advertencia, Texto = "Arquivo é obrigatório." }; } }
         public Mensagem ArquivoNaoEhPdf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Arquivo_Nome", Texto = "Arquivo não é do tipo pdf" }; } }
+	}
+
+	public class NotificacaoMsg
+	{
+		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Notificacao salva com sucesso." }; } }
+
+		public Mensagem FormaIUFObrigatorio { get { return new Mensagem() { Campo = "Notificacao_FormaIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Forma de notificação da IUF é obrigatório." }; } }
+		public Mensagem DataIUFObrigatorio { get { return new Mensagem() { Campo = "Notificacao_DataIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação IUF obrigatório." }; } }
+		public Mensagem DataJIAPIObrigatorio { get { return new Mensagem() { Campo = "Notificacao_DataJIAPI", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação JIAPI obrigatório." }; } }
+		public Mensagem DataCOREObrigatorio { get { return new Mensagem() { Campo = "Notificacao_DataCORE", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação CORE obrigatório." }; } }
 	}
 }
