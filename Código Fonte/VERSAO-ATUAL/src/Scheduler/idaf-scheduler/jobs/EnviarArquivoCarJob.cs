@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                      cmd.ExecuteNonQuery();
                  }
                  using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Object reference%'", conn))
+                                                WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
                  {
                      cmd.ExecuteNonQuery();
                  }

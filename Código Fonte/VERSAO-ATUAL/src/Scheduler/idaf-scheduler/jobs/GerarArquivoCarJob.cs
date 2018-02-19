@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
-						var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, "", "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
@@ -404,8 +404,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							if (dadosReserva.data == DateTime.MinValue)
 								dadosReserva.data = DATA_VAZIA;
 
-							if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
-								dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
+							//if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR))
+							//	dadosReserva.numeroCAR = "ES-0000001-00000000000000000000000000000001";
 						}
 					}
 
@@ -449,10 +449,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
 			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
             {
-                query = @" select c.dominialidade_id caract_id, c.dominialidade_tid caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
+                query = @" select /*c.dominialidade_id*/ D.ID caract_id, /*c.dominialidade_tid*/ D.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
                             from hst_car_solicitacao c   
-                                    INNER JOIN TAB_EMPREENDIMENTO E ON c.EMPREENDIMENTO_ID = E.ID  
-                                    INNER JOIN CRT_PROJETO_GEO PG   ON PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN TAB_EMPREENDIMENTO   E   ON  c.EMPREENDIMENTO_ID = E.ID  
+                                    INNER JOIN CRT_PROJETO_GEO      PG  ON  PG.EMPREENDIMENTO = E.ID   
+                                    INNER JOIN CRT_DOMINIALIDADE    D   ON  D.EMPREENDIMENTO = E.ID
                             where c.solicitacao_id=:id and c.tid=:tid AND PG.CARACTERIZACAO = 1  ";
 
                 using (var cmd = new OracleCommand(query, conn))
@@ -1750,7 +1751,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static string ObterNumeroSICAR(OracleConnection conn, string schema, int empreendimentoCedente, string requisicaoOrigem)
 		{
             var origem = requisicaoOrigem == "credenciado" ? 2 : 1;
-			using (var cmd = new OracleCommand("select s.codigo_imovel from " + schema + ".tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
+			using (var cmd = new OracleCommand("select s.codigo_imovel from IDAF.tab_controle_sicar s where s.empreendimento=:empreendimento and s.solicitacao_car_esquema = :origem", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoCedente));
                 cmd.Parameters.Add(new OracleParameter("origem", origem));
