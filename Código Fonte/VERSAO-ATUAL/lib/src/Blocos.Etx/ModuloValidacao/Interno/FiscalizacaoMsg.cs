@@ -23,6 +23,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem Excluir(int numero) { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = String.Format("Fiscalização número {0} excluído com sucesso.", numero) }; }
 		public Mensagem ExcluirConfirmacao(int numero) { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = String.Format("Tem certeza que deseja excluir a fiscalização número \"{0}\"?", numero) }; }
 		public Mensagem ExcluirInvalido(string strSituacao) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não é possível excluir a fiscalização na situação \"{0}\".", strSituacao) }; }
+        public Mensagem ExcluirIUFGerado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir uma fiscalização que tenha número de IUF digital gerado." }; } }
 		public Mensagem ExcluirCertidaoDebidoFiscalizacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A fiscalização não poderá ser excluída pois possui certidão de débito." }; } }
 		public Mensagem AgenteFiscalInvalido(string strAcao) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("É preciso ser o agente fiscal para {0} esta fiscalização.", strAcao) }; }
 		public Mensagem ConfiguracaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Configuração não encontrada." }; } }
