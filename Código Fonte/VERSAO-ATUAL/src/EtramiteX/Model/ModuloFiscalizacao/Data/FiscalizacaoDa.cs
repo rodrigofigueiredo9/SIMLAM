@@ -130,10 +130,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                        nvl(max(tfm.iuf_numero), 0) iuf_multa,
                                        nvl(max(tfoi.iuf_numero), 0) iuf_interdicao,
                                        nvl(max(tfop.iuf_numero), 0) iuf_outras
-                                from (select iuf_numero from {0}tab_fisc_apreensao where iuf_digital = 1) tfa,
-                                     (select iuf_numero from {0}tab_fisc_multa where iuf_digital = 1) tfm,
-                                     (select iuf_numero from {0}tab_fisc_obj_infracao where iuf_digital = 1) tfoi,
-                                     (select iuf_numero from {0}tab_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
+                                from (select iuf_numero from {0}hst_fisc_apreensao where iuf_digital = 1) tfa,
+                                     (select iuf_numero from {0}hst_fisc_multa where iuf_digital = 1) tfm,
+                                     (select iuf_numero from {0}hst_fisc_obj_infracao where iuf_digital = 1) tfoi,
+                                     (select iuf_numero from {0}hst_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
 
                 int ultimo_numero = 0;
 
@@ -164,10 +164,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 {
                     comando = bancoDeDados.CriarComando(@"
                             select count(1) existe
-                            from (select iuf_numero from {0}tab_fisc_apreensao where iuf_numero = :numero) tfa,
-                                 (select iuf_numero from {0}tab_fisc_multa where iuf_numero = :numero) tfm,
-                                 (select iuf_numero from {0}tab_fisc_obj_infracao where iuf_numero = :numero) tfoi,
-                                 (select iuf_numero from {0}tab_fisc_outras_penalidades where iuf_numero = :numero) tfop", EsquemaBanco);
+                            from (select iuf_numero from {0}hst_fisc_apreensao where iuf_numero = :numero) tfa,
+                                 (select iuf_numero from {0}hst_fisc_multa where iuf_numero = :numero) tfm,
+                                 (select iuf_numero from {0}hst_fisc_obj_infracao where iuf_numero = :numero) tfoi,
+                                 (select iuf_numero from {0}hst_fisc_outras_penalidades where iuf_numero = :numero) tfop", EsquemaBanco);
                     comando.AdicionarParametroEntrada("numero", prox_numero, DbType.Int32);
 
                     using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -765,6 +765,88 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
+
+        public bool GeradoNumeroIUFDigital(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            bool gerado = false;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Apreensão
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_apreensao fa
+                                    where fa.fiscalizacao_id = :fiscalizacao
+                                          and fa.iuf_digital = 1
+                                          and fa.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Apreensão
+
+                #region Multa
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_multa fm
+                                    where fm.fiscalizacao_id = :fiscalizacao
+                                          and fm.iuf_digital = 1
+                                          and fm.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Multa
+
+                #region Interdição/Embargo
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_obj_infracao foi
+                                    where foi.fiscalizacao_id = :fiscalizacao
+                                          and foi.iuf_digital = 1
+                                          and foi.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Interdição/Embargo
+
+                #region Outras Penalidades
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_outras_penalidades fop
+                                    where fop.fiscalizacao_id = :fiscalizacao
+                                          and fop.iuf_digital = 1
+                                          and fop.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Outras Penalidades
+            }
+
+            return gerado;
+        }
 
 		#endregion
 
