@@ -13,10 +13,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if (notificacao.FormaIUF > 0 && !notificacao.DataIUF.IsValido)
 				Validacao.Add(Mensagem.NotificacaoMsg.DataIUFObrigatorio);
 
-			if (notificacao.FormaJIAPI > 0 && !notificacao.DataJIAPI.IsValido)
+			if ((notificacao.FormaJIAPI == 1 || notificacao.FormaJIAPI == 2) && !notificacao.DataJIAPI.IsValido)
 				Validacao.Add(Mensagem.NotificacaoMsg.DataJIAPIObrigatorio);
 
-			if (notificacao.FormaCORE > 0 && !notificacao.DataCORE.IsValido)
+			if ((notificacao.FormaCORE == 1 || notificacao.FormaCORE == 2) && !notificacao.DataCORE.IsValido)
 				Validacao.Add(Mensagem.NotificacaoMsg.DataCOREObrigatorio);
 
 			return Validacao.EhValido;

@@ -31,7 +31,7 @@
 
     <div class="box">
         <div class="coluna25">
-            <label>Forma de notificação do IUF *</label><br />
+            <label><b>Forma de notificação do IUF *</b></label><br />
             <span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpnFormaIUF">
                 <label><%= Html.RadioButton("Notificacao.FormaIUF", 1, (Model.Notificacao.FormaIUF == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaIUF" }))%>Pessoal (em mãos)</label><br />
                 <label><%= Html.RadioButton("Notificacao.FormaIUF", 2, (Model.Notificacao.FormaIUF == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaIUF" }))%>AR - Aviso de Recebimento</label><br />
@@ -44,7 +44,7 @@
         </div>
 
         <div class="coluna25">
-            <label>Forma de notificação do JIAPI</label><br />
+            <label><b>Forma de notificação do JIAPI</b></label><br />
             <span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpnFormaJIAPI">
                 <label><%= Html.RadioButton("Notificacao.FormaJIAPI", 1, (Model.Notificacao.FormaJIAPI == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI", @onclick= "$('.jiapi').css('visibility', '');" }))%>Pessoal (em mãos)</label><br />
                 <label><%= Html.RadioButton("Notificacao.FormaJIAPI", 2, (Model.Notificacao.FormaJIAPI == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI", @onclick= "$('.jiapi').css('visibility', '');" }))%>AR - Aviso de Recebimento</label><br />
@@ -60,7 +60,7 @@
 
         <div class="block">
             <div class="coluna72">
-                <label>Forma de notificação do CORE</label><br />
+                <label><b>Forma de notificação do CORE</b></label><br />
                 <span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpnFormaCORE">
                     <label><%= Html.RadioButton("Notificacao.FormaCORE", 1, (Model.Notificacao.FormaCORE == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE", @onclick= "$('.core').css('visibility', '');" }))%>Pessoal (em mãos)</label><br />
                     <label><%= Html.RadioButton("Notificacao.FormaCORE", 2, (Model.Notificacao.FormaCORE == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE", @onclick= "$('.core').css('visibility', '');" }))%>AR - Aviso de Recebimento</label><br />

@@ -18,6 +18,7 @@ Notificacao = {
 		Notificacao.container = MasterPage.getContent(container);
 		Notificacao.container.delegate('.btnSalvar', 'click', Notificacao.salvar);
 		Mascara.load();
+		Notificacao.alterarVisibilidadeData();
 	},
 
 	obter: function () {
@@ -26,9 +27,9 @@ Notificacao = {
 		var obj = {
 			Id: $('.hdnNotificacaoId', container).val(),
 			FiscalizacaoId: $('.hdnFiscalizacaoId', container).val(),
-			FormaIUF: $('.rbdFormaIUF:checked', container).val(),
-			FormaJIAPI: $('.rbdFormaJIAPI:checked', container).val(),
-			FormaCORE: $('.rbdFormaCORE:checked', container).val(),
+			FormaIUF: $('.rdbFormaIUF:checked', container).val(),
+			FormaJIAPI: $('.rdbFormaJIAPI:checked', container).val(),
+			FormaCORE: $('.rdbFormaCORE:checked', container).val(),
 			DataIUF: { DataTexto: $('.txtDataIUF', container).val() },
 			DataJIAPI: { DataTexto: $('.txtDataJIAPI', container).val() },
 			DataCORE: { DataTexto: $('.txtDataCORE', container).val() },
@@ -62,5 +63,13 @@ Notificacao = {
 			}
 		});
 		MasterPage.carregando(false);
+	},
+
+	alterarVisibilidadeData: function () {
+		var obj = Notificacao.obter();
+		if (obj.FormaJIAPI > 0)
+			$('.jiapi').css('visibility', '');
+		if (obj.FormaCORE > 0)
+			$('.core').css('visibility', '');
 	}
 }

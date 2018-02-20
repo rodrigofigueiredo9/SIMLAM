@@ -190,16 +190,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
                             NumeroIUF = reader.GetValue<string>("iuf_numero"),
 							FormaIUF = reader.GetValue<int>("forma_iuf"),
-                            FormaJIAPI = reader.GetValue<int>("forma_iuf"),
+                            FormaJIAPI = reader.GetValue<int>("forma_jiapi"),
                             FormaCORE = reader.GetValue<int>("forma_core"),
 							AutuadoPessoaId = reader.GetValue<int>("pessoa")
 						};
 
 						notificacao.DataIUF.Data = reader.GetValue<DateTime>("forma_iuf_data");
-						if (!notificacao.DataIUF.IsValido)
-							notificacao.DataIUF = new DateTecno();
 						notificacao.DataJIAPI.Data = reader.GetValue<DateTime>("forma_jiapi_data");
 						notificacao.DataCORE.Data = reader.GetValue<DateTime>("forma_core_data");
+						if (notificacao.DataIUF.Data.HasValue && notificacao.DataIUF.Data.Value.Year == 1)
+							notificacao.DataIUF = new DateTecno();
+						if (notificacao.DataJIAPI.Data.HasValue && notificacao.DataJIAPI.Data.Value.Year == 1)
+							notificacao.DataJIAPI = new DateTecno();
+						if (notificacao.DataCORE.Data.HasValue && notificacao.DataCORE.Data.Value.Year == 1)
+							notificacao.DataCORE = new DateTecno();
 						notificacao.AutuadoPessoa = notificacao.AutuadoPessoaId > 0 ? new PessoaBus().Obter(notificacao.AutuadoPessoaId) : new Pessoa();
                     }
                     else
