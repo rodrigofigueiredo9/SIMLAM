@@ -994,8 +994,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                     reader.Close();
                 }
 
+                int dia = dataTitulo.Day;
+                if (DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) < dataTitulo.Day)
+                {
+                    dia = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                }
 
-                DateTime dataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dataTitulo.Day);
+                DateTime dataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dia);
+
                 if (DateTime.Now.Day < dataTitulo.Day)
                 {
                     dataInicio = dataInicio.AddMonths(-1);
