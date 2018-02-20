@@ -752,6 +752,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			}
 		}
 
+        public bool GeradoNumeroIUFDigital(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_apreensao fa,
+                                         {0}hst_fisc_multa fm,
+                                         {0}hst_fisc_obj_infracao foi,
+                                         {0}hst_fisc_outras_penalidades fop
+                                    where ( fa.fiscalizacao_id = :fiscalizacao
+                                            and fa.iuf_digital = 1
+                                            and fa.iuf_numero is not null )
+                                          or ( fm.fiscalizacao_id = :fiscalizacao
+                                               and fm.iuf_digital = 1
+                                               and fm.iuf_numero is not null )
+                                          or ( foi.fiscalizacao_id = :fiscalizacao
+                                               and foi.iuf_digital = 1
+                                               and foi.iuf_numero is not null )
+                                          or ( fop.fiscalizacao_id = :fiscalizacao
+                                               and fop.iuf_digital = 1
+                                               and fop.iuf_numero is not null )", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+            }
+        }
+
 		#endregion
 
 		#region Auxiliares
