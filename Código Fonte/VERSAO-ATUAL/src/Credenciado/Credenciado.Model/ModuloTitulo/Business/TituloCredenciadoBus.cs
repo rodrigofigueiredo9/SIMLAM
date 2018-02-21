@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			return null;
 		}
 
-        public bool ObterPorEmpreendimento(int empreendimentoId)
+        public bool ExistePorEmpreendimento(int empreendimentoId)
         {
             try
             {

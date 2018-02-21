@@ -571,7 +571,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 enderecoCorrespondencia = eCorrespondencia				
 			};
 
-            ObterDadosRetificacao(conn, schema, car, requisicao.solicitacao_car);
+            car = ObterDadosRetificacao(conn, schema, car, requisicao.empreendimento);
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 			car.proprietariosPosseirosConcessionarios = proprietarios;
@@ -1007,12 +1007,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         }
 
-        private static void ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int solicitacaoCAR)
+        private static CAR ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int empreendimentoId)
         {
-            using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.HST_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
-            {
-                cmd.Parameters.Add(new OracleParameter("solicitacao", solicitacaoCAR));
+           var schemaN = schema == "IDAF" ? 1 : 2;
 
+            using (var cmd = new OracleCommand(@"SELECT DISTINCT S.CODIGO_IMOVEL
+                                                FROM (
+                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.HST_CONTROLE_SICAR C
+                                                                INNER JOIN idafcredenciado.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
+                                                                INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
+                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
+                                                        UNION ALL
+                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.TAB_CONTROLE_SICAR C
+                                                                INNER JOIN idafcredenciado.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
+                                                                INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
+                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
+                                                       ) S ", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
+                cmd.Parameters.Add(new OracleParameter("schema", schemaN));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -1026,6 +1039,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 }
             }
             car.origem.dataProtocolo = DateTime.Now;
+            return car;
         }
 
 		/// <summary>
