@@ -1707,7 +1707,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
-                Comando comando = bancoDeDados.CriarComando(@"SELECT ID, SITUACAO, EMPREENDIMENTO FROM TAB_TITULO WHERE MODELO = 66 /*CAR*/AND SITUACAO != 5 /*Encerrado*/ AND SITUACAO = 3/*Concluido*/ AND EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ID, SITUACAO, EMPREENDIMENTO FROM TAB_TITULO WHERE MODELO = 49 /*CAR*/ AND SITUACAO != 5 /*Encerrado*/ AND SITUACAO = 3/*Concluido*/ AND EMPREENDIMENTO = :empreendimento", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
