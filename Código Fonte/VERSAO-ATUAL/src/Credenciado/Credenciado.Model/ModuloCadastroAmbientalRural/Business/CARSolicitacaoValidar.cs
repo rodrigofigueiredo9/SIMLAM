@@ -391,14 +391,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
         {
             string situacao = string.Empty;
             CARSolicitacao solicitacao = new CARSolicitacao();
-            //EmpreendimentoCaracterizacao empreendimento = _busCaracterizacao.ObterEmpreendimentoSimplificado(projetoDigital.EmpreendimentoId.GetValueOrDefault());
-            //situacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacao(entidade.Empreendimento.Id);
-            /*if (!string.IsNullOrEmpty(situacao))
-            {
-                Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                return false;
-            }*/
 
+            //Verificar se existe solicitação para o projeto digital
             solicitacao = _daCarSolicitacao.ObterPorProjetoDigitalSituacao(entidade.ProjetoId);
             if(solicitacao != null)
             {
@@ -414,7 +408,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
             }
 
-            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Id);
+            //Verificar se existe solicitação para o empreendimento
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, entidade.Empreendimento.Id);
             if(solicitacao != null)
             {
                 if(solicitacao.SituacaoId == 2)
@@ -447,9 +442,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                     return false;
                 }
             }
-            Validacao.Add(Mensagem.Retificacao.msgCred6());
-            return false;
-            //return Validacao.EhValido;
+            return Validacao.EhValido;
         }
 	}
 }
