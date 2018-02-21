@@ -337,7 +337,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("pdf_auto_termo", fiscalizacao.PdfAutoTermo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("pdf_laudo", fiscalizacao.PdfLaudo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("pdf_croqui", fiscalizacao.PdfCroqui.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("pdf_iuf", fiscalizacao.PdfIUF.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("pdf_iuf", (fiscalizacao.PdfIUF.Id == 0 ? null : fiscalizacao.PdfIUF.Id), DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", fiscalizacao.Id, DbType.Int32);
 
