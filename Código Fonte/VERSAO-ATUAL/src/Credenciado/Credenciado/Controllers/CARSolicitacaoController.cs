@@ -331,6 +331,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
         public ActionResult BaixarDemonstrativoCar(int id)
         {
+            var schemaSolicitacao = _busInterno.ExisteCredenciado(id) ? 2 : 1;
+
+            var url = _busInterno.ObterUrlDemonstrativo(id, schemaSolicitacao);
+
+            return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
         }
 	}
 }

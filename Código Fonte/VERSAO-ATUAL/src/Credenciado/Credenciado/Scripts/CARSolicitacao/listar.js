@@ -128,8 +128,36 @@ CARSolicitacaoListar = {
 
 	baixarDemonstrativoCar: function () {
 	    var objeto = CARSolicitacaoListar.obter(this);
+	    var data = { solicitacaoId: objeto.Id };
 
-	    MasterPage.redireciona(CARSolicitacaoListar.urlBaixarDemonstrativoCAR + '/' + objeto.ArquivoSICAR);
+	    MasterPage.carregando(true);
+	    $.ajax({
+	        url: CARSolicitacaoListar.urlBaixarDemonstrativoCAR + '/' + objeto.Id,
+	        cache: false,
+	        //data: data,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, CARSolicitacaoListar.container);
+	            MasterPage.carregando(false);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            MasterPage.carregando(false);
+	            if (response.UrlPdfDemonstrativo) {
+	                window.open(response.UrlPdfDemonstrativo);
+	            }
+	            else {
+	                Mensagem.limpar(CARSolicitacaoListar.container);
+	                Mensagem.gerar(CARSolicitacaoListar.container, [CARSolicitacaoListar.mensagens.GerarPdfSICARUrlNaoEncontrada]);
+	            }
+
+
+	            CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
+	        }
+	    });
+	    MasterPage.carregando(false);
 	},
 
 	gerarPDFPendencia: function () {
