@@ -8,6 +8,7 @@ CARSolicitacaoListar = {
 	urlPDFPendencia: null,
 	urlEnviarReenviarArquivoSICAR: null,
 	urlMensagemErroEnviarArquivoSICAR: null,
+    urlBaixarDemonstrativoCAR: null,
 	idsTela: null,
 	mensagens: null,
 	container: null,
@@ -32,7 +33,7 @@ CARSolicitacaoListar = {
 		container.delegate('.btnPdfPendencia', 'click', CARSolicitacaoListar.gerarPDFPendencia);
 		container.delegate('.btnPdfSicar', 'click', CARSolicitacaoListar.redirecionarLinkPdfSICAR);
 		container.delegate('.btnBaixarArquivoSicar', 'click', CARSolicitacaoListar.baixarArquivoSicar);
-		
+		container.delegate('.btnDemonstrativoCar', 'click', CARSolicitacaoListar.baixarDemonstrativoCar);
 
 		container.delegate('.radioDeclaranteCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioDeclaranteCpfCnpj', container));
@@ -123,6 +124,12 @@ CARSolicitacaoListar = {
 		var objeto = CARSolicitacaoListar.obter(this);
 
 		MasterPage.redireciona(CARSolicitacaoListar.urlBaixarAquivoSICAR + '/' + objeto.ArquivoSICAR);
+	},
+
+	baixarDemonstrativoCar: function () {
+	    var objeto = CARSolicitacaoListar.obter(this);
+
+	    MasterPage.redireciona(CARSolicitacaoListar.urlBaixarDemonstrativoCAR + '/' + objeto.ArquivoSICAR);
 	},
 
 	gerarPDFPendencia: function () {

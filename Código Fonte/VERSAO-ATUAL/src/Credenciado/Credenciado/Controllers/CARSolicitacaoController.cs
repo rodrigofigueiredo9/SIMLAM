@@ -328,5 +328,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			return ViewModelHelper.BaixarArquivoInterno(id);
 		}
+
+        public ActionResult BaixarDemonstrativoCar(int id)
+        {
+        }
 	}
 }
