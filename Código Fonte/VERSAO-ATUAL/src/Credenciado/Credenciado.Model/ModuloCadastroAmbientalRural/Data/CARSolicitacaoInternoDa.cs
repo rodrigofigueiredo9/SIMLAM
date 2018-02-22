@@ -488,6 +488,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
+        internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+
+                return bancoDeDados.ExecutarScalar<String>(comando);
+            }
+        }
+
 		internal bool ExisteCredenciado(int solicitacaoId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
