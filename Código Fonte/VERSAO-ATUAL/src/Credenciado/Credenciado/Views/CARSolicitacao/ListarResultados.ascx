@@ -40,7 +40,12 @@
                        { %><input type="button" title="Relatório de pendencias" class="icone pdfGeo btnPdfPendencia" /><% } %>
 					<% if (Model.PodeVisualizar && item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoEntregue) 
                        { %> <input type="button" title="Recibo de Inscrição no SICAR" class="icone link btnPdfSicar" /><% } %>
-					<% if (Model.PodeVisualizar && !String.IsNullOrWhiteSpace(item.ArquivoSICAR)) { %> <input type="button" title="Baixar arquivo .CAR" class="icone download btnBaixarArquivoSicar" /><% } %>
+					<% if (Model.PodeVisualizar && !String.IsNullOrWhiteSpace(item.ArquivoSICAR)) 
+                    { %> 
+                    <input type="button" title="Baixar arquivo .CAR" class="icone download btnBaixarArquivoSicar" />
+                    <input type="button" title="Baixar Demonstrativo do CAR" class="icone documentText btnDemonstrativoCar" />
+                    <% } %>
+                    
 				</td>
 			</tr>
 		<% } %>

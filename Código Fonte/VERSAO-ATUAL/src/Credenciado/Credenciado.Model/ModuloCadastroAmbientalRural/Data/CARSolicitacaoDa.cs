@@ -842,6 +842,97 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return solicitacao;
 		}
 
+        internal CARSolicitacao ObterPorProjetoDigitalSituacao(int projetoDigitalId, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c where situacao != 3 and projeto_digital = :id ", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("id", projetoDigitalId, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId <= 0 ? null : Obter(solicitacaoId, banco: bancoDeDados);
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
+        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, Int32 empreendimentoId, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                     inner join tab_empreendimento e on e.id = c.empreendimento 
+                                                                 where c.situacao != 3 and e.codigo = :codigo ", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId > 0 ? Obter(solicitacaoId, banco: bancoDeDados) : null;
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
+        internal ControleArquivoSICAR ObterControleArquivoSicar(int empreendimentoId, BancoDeDados banco = null)
+        {
+            ControleArquivoSICAR controleSicar = new ControleArquivoSICAR();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"SELECT CODIGO_IMOVEL, STATUS_SICAR, SOLICITACAO_CAR  FROM {0}TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR_ESQUEMA = 2 AND EMPREENDIMENTO = :id ", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("id", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        controleSicar.CodigoImovel = reader.GetValue<String>("CODIGO_IMOVEL");
+                        controleSicar.InscricaoSicar = reader.GetValue<String>("STATUS_SICAR");
+                        controleSicar.SolicitacaoCarId = reader.GetValue<Int32>("SOLICITACAO_CAR");
+                    }
+                    reader.Close();
+                }              
+                #endregion
+            }
+
+            return controleSicar;
+        }
 		internal Resultados<SolicitacaoListarResultados> Filtrar(Filtro<SolicitacaoListarFiltro> filtros, BancoDeDados banco = null)
 		{
 			Resultados<SolicitacaoListarResultados> retorno = new Resultados<SolicitacaoListarResultados>();
@@ -1106,6 +1197,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
+        internal CARSolicitacao EmpreendimentoPossuiSolicitacaoProjetoDigital(int empreendimentoInternoID, BancoDeDados banco = null)
+        {
+            CARSolicitacao car = new CARSolicitacao();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.projeto_digital from tab_car_solicitacao t, tab_empreendimento e, lov_car_solicitacao_situacao ls 
+				where t.empreendimento = e.id and t.situacao = ls.id and e.interno = :empreendimentoID and t.situacao in (1, 2, 4) /*Em cadastro, Válido, Suspenso*/", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoInternoID, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        car.Id = reader.GetValue<Int32>("id");
+                        car.SituacaoId = reader.GetValue<Int32>("situacao");
+                        car.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+                    }
+                    reader.Close();
+                }
+
+                return car; //Convert.ToString(bancoDeDados.ExecutarScalar(comando));
+            }
+        }
 		internal string EmpreendimentoCredenciadoPossuiSolicitacao(int empreendimentoID, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -1118,6 +1233,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				return Convert.ToString(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
+        
+        internal CARSolicitacao EmpreendimentoCredenciadoPossuiSolicitacaoProjetoDigital(int empreendimentoID, BancoDeDados banco = null)
+        {
+            CARSolicitacao car = new CARSolicitacao();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.projeto_digital from tab_car_solicitacao t, lov_car_solicitacao_situacao ls
+				where t.situacao = ls.id and t.empreendimento = :empreendimentoID and t.situacao in (1, 2, 4) /*Em cadastro, Válido, Suspenso*/", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoID, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        car.Id = reader.GetValue<Int32>("id");
+                        car.SituacaoId = reader.GetValue<Int32>("situacao");
+                        car.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+                    }
+                    reader.Close();
+                }
+
+                return car;
+            }
+        }
 
 		internal string EmpreendimentoPossuiSolicitacao(string cnpj, BancoDeDados banco = null)
 		{

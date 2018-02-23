@@ -1009,11 +1009,12 @@ Modal = {
 		var defaults = {
 			btnOkCallback: null,       // função que será chamada quando o botão [Ok] for clicado, se esta função retornar false o diálogo não é fechado. Para esta função é passado por parâmetro a div do diálogo.
 			btnOkData: null,           // Dados a serem passados para a funcao [btnOkCallback]
-			removerFechar: false,      // Remove o botão de fechar da modal
+			removerFechar: false,      // Remove o botão de fechar da modal [X]
+            removerCancelar: false,     // Remove o botão cancelar do modal [Cancelar]
 			btnCancelCallback: null,   // função que será chamada quando o botão [Cancelar] for clicado, se esta função retornar false o diálogo não é fechado. Para esta função é passado por parâmetro a div do diálogo.
 			btnCancelData: null,       // Dados a serem passados para a funcao [btnCancelCallback]
 			btnOkLabel: 'Sim',         // Label do botão [Ok] ("Ok", "Excluir" , "Confirmar", "Sim", etc..)
-			btCancelLabel: 'Cancelar', // Label do botão [Cancelar] ("Cancelar", "Voltar", "Não" , etc...)
+			btCancelLabel: false, // Label do botão [Cancelar] ("Cancelar", "Voltar", "Não" , etc...)
 			url: '',                   // Url a ser carregada na modal. Pode-se usar "conteudo" ao invés da "url" para preencher a modal
 			conteudo: '', 		   // Conteúdo para preencher a modal. Pode-se usar "url" ao invés de "conteudo" para preencher a modal
 			urlData: null,             // Dados a serem passados para a "url"
@@ -1032,7 +1033,8 @@ Modal = {
 				settings.btnCancelCallback,
 				settings.btCancelLabel,
 				settings.btnCancelData,
-				settings.removerFechar);
+				settings.removerFechar,
+                settings.removerCancelar);
 
 			var modalLoadFunction = null;
 
@@ -1069,7 +1071,7 @@ Modal = {
 		buttonContainer.remove();
 	},
 
-	defaultButtons: function (modal, okFunction, okLabel, okData, cancelFunction, cancelLabel, cancelData, removerFechar) {
+	defaultButtons: function (modal, okFunction, okLabel, okData, cancelFunction, cancelLabel, cancelData, removerFechar, removerCancelar) {
 		if (!modal.hasClass('fundoModal')) {
 			modal = modal.closest('.fundoModal')
 		}
@@ -1078,9 +1080,17 @@ Modal = {
 
 		var btnOk = buttonsContainer.find(".btnModalOk");
 		if (typeof okLabel != 'undefined' && okLabel != null) {
-			btnOk.click(function () {
-				okFunction(modal, okData);
-			});
+
+		    if (removerCancelar) {
+		        btnOk.click(function () {
+		            Modal.fechar(modal);
+		        });
+		    } else {
+		        btnOk.click(function () {
+		            okFunction(modal, okData);
+		        });
+		    }
+			
 			if (okLabel && typeof okLabel == 'string') {
 				btnOk.val(okLabel);
 			}
@@ -1093,27 +1103,41 @@ Modal = {
 		}
 
 		var btnCancel = buttonsContainer.find(".linkCancelar");
-		if (typeof cancelFunction == 'function') {
-			btnCancel.click(function () {
-				if (cancelFunction(modal, cancelData) !== false) {
-					Modal.fechar(modal);
-				}
-			});
-		}
-		else {
-			btnCancel.click(function () {
-				Modal.fechar(modal);
-			});
-		}
+		if (removerCancelar)
+		{
+		    btnCancel.remove();
+		    $('.btnModalOu', buttonsContainer).remove();
 
-		if (btnCancel && btnCancel.length > 0 &&
-			 typeof cancelLabel == 'string') {
-			btnCancel.text(cancelLabel);
+		    btnOk.click(function () {
+		        Modal.fechar(modal);
+		    });	   
+		} else
+		{
+		    if (typeof cancelFunction == 'function') {
+		        btnCancel.click(function () {
+		            if (cancelFunction(modal, cancelData) !== false) {
+		                Modal.fechar(modal);
+		            }
+		        });
+		    }
+		    else {
+		        btnCancel.click(function () {
+		            Modal.fechar(modal);
+		        });
+		    }
+
+		    if (btnCancel && btnCancel.length > 0 &&
+                 typeof cancelLabel == 'string') {
+		        btnCancel.text(cancelLabel);
+		    }
+		    
 		}
 
 		if (removerFechar) {
-			modal.find(".fMdl").remove();
+		    modal.find(".fMdl").remove();
 		}
+		
+		
 	},
 
 	buttons: function (modal, controle) {
