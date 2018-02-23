@@ -1231,6 +1231,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.CodigoReceita = reader.GetValue<string>("codigo_receita");
                         fiscalizacao.ValorMultaPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorMulta), ModoEscrita.Monetario);
                     }
+                    else
+                    {
+                        fiscalizacao.TemMulta = null;
+                    }
 
                     reader.Close();
                 }
@@ -1279,6 +1283,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
                     }
+                    else
+                    {
+                        fiscalizacao.TemApreensao = null;
+                    }
 
                     reader.Close();
                 }
@@ -1311,6 +1319,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.IsInterditado = reader.GetValue<string>("IsInterditado");
                         fiscalizacao.IsEmbargado = reader.GetValue<string>("IsEmbargado");
                     }
+                    else
+                    {
+                        fiscalizacao.TemInterdicao = null;
+                    }
 
                     reader.Close();
                 }
@@ -1333,6 +1345,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
                         fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Count() <= 465 ? fiscalizacao.DescricaoOutrasPenalidades : fiscalizacao.DescricaoOutrasPenalidades.Substring(0, 465);
+                    }
+                    else
+                    {
+                        fiscalizacao.TemAdvertencia = null;
+                        fiscalizacao.TemOutra01 = null;
+                        fiscalizacao.TemOutra02 = null;
+                        fiscalizacao.TemOutra03 = null;
+                        fiscalizacao.TemOutra04 = null;
                     }
 
                     reader.Close();
