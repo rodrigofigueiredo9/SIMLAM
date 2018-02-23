@@ -873,6 +873,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
             vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
+            if (id != null)
+            {
+                vm.ConsideracaoFinalVM.IUFBloco = _busInfracao.PossuiIUFBloco(id.Value);
+            }
+
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
                 vm.ConsideracaoFinalVM.ConsideracaoFinalTestemunhaVM.ForEach(x =>
@@ -1756,6 +1761,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
             vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(id);
             vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
+            vm.MultaVM.Multa = fiscalizacao.Multa;
+            vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
 
             vm.DocumentosCancelados = _bus.ObterHistoricoDocumentosCancelados(id);
