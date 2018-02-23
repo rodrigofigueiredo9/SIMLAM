@@ -1394,7 +1394,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					and ss.situacao_envio=6 and e.id=:empreendimento)";
 
 			//TODO:Validacao Sem considerar Situacao de Arquivo .car
-			sql = @"select sum(valor)
+            sql = @"select sum(valor)
 			  from (select count(c.id) valor
 					  from tab_car_solicitacao c
 					 where c.empreendimento = :empreendimento
@@ -1402,10 +1402,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					select count(cc.id) valor
 					  from tab_car_solicitacao_cred cc,
 						   cre_empreendimento       ce,
-						   tab_empreendimento       e
-					 where cc.empreendimento = ce.id
-					   and ce.codigo = e.codigo
-					   and e.id = :empreendimento)";
+						   tab_empreendimento       e,
+                           tab_controle_sicar       cs
+					             where cc.empreendimento = ce.id
+					                and ce.codigo = e.codigo
+					                and e.id = :empreendimento
+                                    and cs.empreendimento = e.id
+             
+                                    and c.situacao = 2 /*Válido*/
+                                    and cs.situacao_envio = 6 /*Arquivo Entregue*/)";
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{

@@ -133,10 +133,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			#region  Solitação de CAR
 
 			EmpreendimentoCaracterizacao empreendimento = _busCaracterizacao.ObterEmpreendimentoSimplificado(carSolicitacao.Empreendimento.Id);
-			if (!EmpreendimentoSolicitacaoCAR(empreendimento))
+			/*if (!EmpreendimentoSolicitacaoCAR(empreendimento))
 			{
 				return false;
-			}
+			}*/
 
 			#endregion  Solitação de CAR
 
@@ -193,11 +193,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 			#region  Solitação de CAR
 
-			EmpreendimentoCaracterizacao empreendimento = _busCaracterizacao.ObterEmpreendimentoSimplificado(projetoDigital.EmpreendimentoId.GetValueOrDefault());
+			/*EmpreendimentoCaracterizacao empreendimento = _busCaracterizacao.ObterEmpreendimentoSimplificado(projetoDigital.EmpreendimentoId.GetValueOrDefault());
 			if (!EmpreendimentoSolicitacaoCAR(empreendimento))
 			{
 				return;
-			}
+			}*/
 
 			#endregion  Solitação de CAR
 
