@@ -450,7 +450,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
             sqlBuilder.Append("NVL(T.SOLICITACAO_SITUACAO_APROVADO, 2)SOLICITACAO_SITUACAO_APROVADO FROM IDAF.TAB_CONTROLE_SICAR t ");
             sqlBuilder.Append("INNER JOIN "+ schema+ ".TAB_EMPREENDIMENTO E1 ON E1.ID = t.EMPREENDIMENTO  ");
             sqlBuilder.Append("INNER JOIN " + schema + ".TAB_EMPREENDIMENTO E2 ON E2.CODIGO = E1.CODIGO WHERE ");
-            sqlBuilder.Append("E2.ID = : empreendimento AND t.SOLICITACAO_CAR != :car AND t.SITUACAO_ENVIO != 4 AND t.SOLICITACAO_CAR_ESQUEMA = :schema ");
+            sqlBuilder.Append("E2.ID = : empreendimento AND t.SOLICITACAO_CAR != :car AND t.SITUACAO_ENVIO NOT IN (4,8) AND t.SOLICITACAO_CAR_ESQUEMA = :schema ");
             sqlBuilder.Append("AND rownum = 1 ORDER BY id DESC");
 
             try
