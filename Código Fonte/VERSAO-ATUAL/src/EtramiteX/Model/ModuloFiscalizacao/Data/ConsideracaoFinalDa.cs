@@ -437,7 +437,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_consid_final_iuf ra ", EsquemaBanco);
                 comando.DbCommand.CommandText += String.Format("where ra.consid_final = :consid_final{0}",
-                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.Anexos.Select(x => x.Id).ToList()));
+                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.AnexosIUF.Select(x => x.Id).ToList()));
                 comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);

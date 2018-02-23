@@ -1218,7 +1218,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                             from {0}tab_fisc_multa tfm,
                                  {0}lov_fisc_infracao_codigo_rece lficr
                             where tfm.codigo_receita = lficr.id
-                                  and tfm.fiscalizacao = :id", EsquemaBanco);
+                                  and tfm.fiscalizacao = :id
+                                  and tfm.iuf_digital = 1", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1229,6 +1230,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.ValorMulta = reader.GetValue<decimal>("valor_multa").ToString("N2");
                         fiscalizacao.CodigoReceita = reader.GetValue<string>("codigo_receita");
                         fiscalizacao.ValorMultaPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorMulta), ModoEscrita.Monetario);
+                    }
+                    else
+                    {
+                        fiscalizacao.TemMulta = null;
                     }
 
                     reader.Close();
@@ -1256,7 +1261,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                             where tp.id (+)= tfa.depositario
                                   and lm.id (+)= tfa.endereco_municipio
                                   and le.id (+)= tfa.endereco_estado
-                                  and tfa.fiscalizacao = :id", EsquemaBanco);
+                                  and tfa.fiscalizacao = :id
+                                  and tfa.iuf_digital = 1", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1277,6 +1283,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
                     }
+                    else
+                    {
+                        fiscalizacao.TemApreensao = null;
+                    }
 
                     reader.Close();
                 }
@@ -1296,7 +1306,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                                      where t.fiscalizacao = :id
                                            and t.interditado = 0) IsEmbargado
                             from {0}tab_fisc_obj_infracao tfoi
-                            where tfoi.fiscalizacao = :id", EsquemaBanco);
+                            where tfoi.fiscalizacao = :id
+                                  and tfoi.iuf_digital = 1", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1307,6 +1318,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.DescricaoTermoEmbargo = reader.GetValue<string>("desc_termo_embargo");
                         fiscalizacao.IsInterditado = reader.GetValue<string>("IsInterditado");
                         fiscalizacao.IsEmbargado = reader.GetValue<string>("IsEmbargado");
+                    }
+                    else
+                    {
+                        fiscalizacao.TemInterdicao = null;
                     }
 
                     reader.Close();
@@ -1319,7 +1334,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 comando = bancoDeDados.CriarComando(@"
                             select tfop.descricao
                             from {0}tab_fisc_outras_penalidades tfop
-                            where tfop.fiscalizacao = :id", EsquemaBanco);
+                            where tfop.fiscalizacao = :id
+                                  and tfop.iuf_digital = 1", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -1329,6 +1345,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
                         fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Count() <= 465 ? fiscalizacao.DescricaoOutrasPenalidades : fiscalizacao.DescricaoOutrasPenalidades.Substring(0, 465);
+                    }
+                    else
+                    {
+                        fiscalizacao.TemAdvertencia = null;
+                        fiscalizacao.TemOutra01 = null;
+                        fiscalizacao.TemOutra02 = null;
+                        fiscalizacao.TemOutra03 = null;
+                        fiscalizacao.TemOutra04 = null;
                     }
 
                     reader.Close();
