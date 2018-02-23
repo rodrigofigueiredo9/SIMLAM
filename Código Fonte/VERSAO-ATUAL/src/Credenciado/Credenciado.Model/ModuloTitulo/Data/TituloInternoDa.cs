@@ -1701,6 +1701,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			return retorno;
 		}
 
+        internal Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+        {
+            Resultados<Titulo> retorno = new Resultados<Titulo>();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"SELECT ID, SITUACAO, EMPREENDIMENTO FROM TAB_TITULO WHERE MODELO = 49 /*CAR*/ AND SITUACAO != 5 /*Encerrado*/ AND SITUACAO = 3/*Concluido*/ AND EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        Titulo titulo = new Titulo();
+                        titulo.Id = reader.GetValue<int>("ID");
+                        titulo.Situacao.Id = reader.GetValue<int>("SITUACAO");
+                        titulo.EmpreendimentoId = reader.GetValue<int>("EMPREENDIMENTO");
+                        retorno.Itens.Add(titulo);
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return retorno;
+        }
+
+
+
 		#endregion Obter / Filtrar
 
 		#region Validações

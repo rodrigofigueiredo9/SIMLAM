@@ -1528,7 +1528,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					"        c.situacao_data = sysdate, " +
 					"        c.situacao_anterior = i.situacao, " +
 					"        c.situacao_anterior_data = i.situacao_data " +
-					"    where c.id = i.id; " +
+					"    where c.id = i.id and c.situacao = 2 /*Válido*/; " +
 					"   end loop; " +
 					" end; ");
 
