@@ -544,6 +544,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			return solicitacao;
 		}
 
+        internal CARSolicitacao ObterPorEmpreendimentoCod(Int64 empreendimentoCod, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                     inner join tab_empreendimento e on e.id = c.empreendimento 
+                                                                 where c.situacao != 3 and e.codigo = :codigo ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId > 0 ? Obter(solicitacaoId, banco: bancoDeDados) : null;
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
 		internal CARSolicitacao ObterHistorico(int id, string tid, bool simplificado = false, BancoDeDados banco = null)
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
