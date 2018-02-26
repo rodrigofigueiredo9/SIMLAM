@@ -187,6 +187,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 
 		#region Obter/Validações
 
+        public bool ExisteCaracterizacaoPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+        {
+            List<Caracterizacao> caracterizacoes = null;
+
+            try
+            {
+                caracterizacoes = ObterCaracterizacoesEmpreendimento(empreendimentoId);
+
+                foreach (var carac in caracterizacoes)
+                {
+                    if (carac.Id == 22) //Caracterização CAR
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return false;
+        }
+
 		public List<Caracterizacao> ObterCaracterizacoesEmpreendimento(int empreendimentoId)
 		{
 			try
