@@ -1417,6 +1417,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			}
 		}
 
+        internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+
+                comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+
+                return bancoDeDados.ExecutarScalar<String>(comando);
+            }
+        } 
+
 		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
 		{
 			//TODO:Validacao de Solicitacao de Inscricao para Salvar Titulo CAR

@@ -507,6 +507,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
 		}
 
+        public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        {
+            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao);
+
+            RequestJson requestJson = new RequestJson();
+
+            //urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
+            urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+
+            var strResposta = requestJson.Executar(urlGerar);
+
+            var resposta = requestJson.Deserializar<dynamic>(strResposta);
+
+            if (resposta["status"] != "s")
+            {
+                return string.Empty;
+            }
+
+            //return UrlSICAR + resposta["dados"];  // PRODUCAO 
+            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+        } 
+
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)
 		{
 			throw new NotImplementedException();
