@@ -571,7 +571,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 enderecoCorrespondencia = eCorrespondencia				
 			};
 
-            car = ObterDadosRetificacao(conn, schema, car, requisicao.empreendimento);
+            car = ObterDadosRetificacao(conn, schema, car, requisicao);
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 			car.proprietariosPosseirosConcessionarios = proprietarios;
@@ -1007,7 +1007,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         }
 
-        private static CAR ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int empreendimentoId)
+        private static CAR ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, RequisicaoJobCar requisicao)
         {
            var schemaN = schema == "IDAF" ? 1 : 2;
 
@@ -1024,7 +1024,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                                             WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
                                                        ) S ", conn))
             {
-                cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
+                cmd.Parameters.Add(new OracleParameter("empreendimento", requisicao.empreendimento));
                 cmd.Parameters.Add(new OracleParameter("schema", schemaN));
                 using (var dr = cmd.ExecuteReader())
                 {
@@ -1038,7 +1038,19 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     }
                 }
             }
-            car.origem.dataProtocolo = DateTime.Now;
+            using (var cmd = new OracleCommand("SELECT DATA_EMISSAO FROM "+schema+".TAB_CAR_SOLICITACAO WHERE ID = :solicitacao", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        car.origem.dataProtocolo = Convert.ToDateTime(dr["DATA_EMISSAO"]);
+                    }
+                }
+            }
+
             return car;
         }
 
