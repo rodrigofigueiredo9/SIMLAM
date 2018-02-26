@@ -1229,6 +1229,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.ValorMulta = reader.GetValue<decimal>("valor_multa").ToString("N2");
                         fiscalizacao.CodigoReceita = reader.GetValue<string>("codigo_receita");
                         fiscalizacao.ValorMultaPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorMulta), ModoEscrita.Monetario);
+
+                        fiscalizacao.ValorMultaPorExtenso = fiscalizacao.ValorMultaPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorMultaPorExtenso.Substring(1);
                     }
 
                     reader.Close();
@@ -1276,6 +1278,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.ApreensaoLacres = reader.GetValue<string>("lacres");
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
+                        fiscalizacao.ValorBemPorExtenso = fiscalizacao.ValorBemPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorBemPorExtenso.Substring(1);
                     }
 
                     reader.Close();
