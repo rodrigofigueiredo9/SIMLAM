@@ -223,13 +223,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Justificativa = reader.GetValue<string>("justificar")
                         };
 
-                        multa.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
-
                         multa.Arquivo = new Arquivo
                         {
                             Id = reader.GetValue<int>("arquivo"),
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
+
+                        if (multa.IsDigital == true && multa.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            multa.NumeroIUF = null;
+                            multa.DataLavratura.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            multa.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
                     }
                     else
                     {
