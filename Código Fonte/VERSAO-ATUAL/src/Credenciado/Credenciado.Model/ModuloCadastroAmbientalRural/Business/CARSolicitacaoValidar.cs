@@ -409,7 +409,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             }
 
             //Verificar se existe solicitação para o empreendimento
-            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, entidade.Empreendimento.Id);
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0);
             if(solicitacao != null)
             {
                 if(solicitacao.SituacaoId == 2)

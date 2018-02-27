@@ -873,7 +873,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             return solicitacao;
         }
 
-        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, Int32 empreendimentoId, BancoDeDados banco = null)
+        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, BancoDeDados banco = null)
         {
             CARSolicitacao solicitacao = new CARSolicitacao();
 
