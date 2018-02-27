@@ -25,6 +25,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 
         private string _situacao;
         public string Situacao { get { return _situacao == "0" ? "" : _situacao; } set { _situacao = value; } }
+        
+        private string _situacaoSicar;
+        public string SituacaoSicar { get { return _situacaoSicar == "0" ? "" : _situacaoSicar; } set { _situacaoSicar = value; } }
 
         public Int32? Origem { get; set; }
 
@@ -33,6 +36,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
         {
             get { return _situacoes; }
             set { _situacoes = value; }
+        }
+
+        private List<String> _situacoesSicar = new List<String>();
+        public List<String> SituacoesSicar
+        {
+            get { return _situacoesSicar; }
+            set { _situacoesSicar = value; }
         }
 
         private ProtocoloNumero _protocolo = new ProtocoloNumero();
