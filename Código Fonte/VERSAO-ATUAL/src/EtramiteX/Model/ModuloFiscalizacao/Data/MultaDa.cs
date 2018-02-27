@@ -335,6 +335,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Id = reader.GetValue<int>("arquivo"),
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
+
+                        if (multa.ValorMulta == 0) multa = new Multa();
                     }
                     reader.Close();
                 }
