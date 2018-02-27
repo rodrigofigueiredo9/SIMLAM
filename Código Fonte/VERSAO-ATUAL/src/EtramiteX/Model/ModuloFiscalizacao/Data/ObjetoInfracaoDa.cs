@@ -241,10 +241,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             objetoInfracao.Interditado = null;
                         }
 
-						if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
-						{
-							objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
-						}
+                        if (objetoInfracao.IsDigital == true && objetoInfracao.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            objetoInfracao.NumeroIUF = null;
+                            objetoInfracao.DataLavraturaTermo.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            objetoInfracao.DataLavraturaTermo.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
+
+                        //if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
+                        //{
+                        //    objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
+                        //}
 
 						if (reader["opniao_area_danificada"] != null && !Convert.IsDBNull(reader["opniao_area_danificada"]))
 						{

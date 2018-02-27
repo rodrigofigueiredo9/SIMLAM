@@ -253,13 +253,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id")
                         };
 
-                        outrasPenalidades.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
-
                         outrasPenalidades.Arquivo = new Arquivo
                         {
                             Id = reader.GetValue<int>("arquivo"),
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
+
+                        if (outrasPenalidades.IsDigital == true && outrasPenalidades.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            outrasPenalidades.NumeroIUF = null;
+                            outrasPenalidades.DataLavratura.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            outrasPenalidades.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
                     }
                     reader.Close();
                 }

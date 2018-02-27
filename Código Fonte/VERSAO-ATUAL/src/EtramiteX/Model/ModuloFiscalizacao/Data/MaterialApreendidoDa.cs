@@ -530,7 +530,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
 
-                        materialApreendido.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        if (materialApreendido.IsDigital == true && materialApreendido.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            materialApreendido.NumeroIUF = null;
+                            materialApreendido.DataLavratura.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            materialApreendido.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
                     }
                     reader.Close();
                 }
