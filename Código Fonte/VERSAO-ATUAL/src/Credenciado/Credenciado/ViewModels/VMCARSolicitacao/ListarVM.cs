@@ -33,6 +33,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMCARSolicitacao
             set { _situacoes = value; }
         }
 
+        private List<SelectListItem> _situacoesSicar = new List<SelectListItem>();
+        public List<SelectListItem> SituacoesSicar
+        {
+            get { return _situacoesSicar; }
+            set { _situacoesSicar = value; }
+        }
+
 		private Paginacao _paginacao = new Paginacao();
 		public Paginacao Paginacao
 		{
