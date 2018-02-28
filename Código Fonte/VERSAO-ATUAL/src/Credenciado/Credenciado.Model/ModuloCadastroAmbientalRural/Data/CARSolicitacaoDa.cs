@@ -882,8 +882,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                 #region Solicitação
 
                 Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
-                                                                     inner join tab_empreendimento e on e.id = c.empreendimento 
-                                                                 where c.situacao != 3 and e.codigo = :codigo ", UsuarioCredenciado);
+                                                                    inner join tab_empreendimento ec on ec.id = c.empreendimento 
+                                                                where c.situacao != 3 and ec.codigo = :codigo ");
 
                 comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
@@ -898,7 +898,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     reader.Close();
                 }
 
-                solicitacao = solicitacaoId > 0 ? Obter(solicitacaoId, banco: bancoDeDados) : null;
+                if (solicitacaoId > 0)
+                {
+                    solicitacao =  Obter(solicitacaoId, banco: bancoDeDados);
+                }
+                else
+                {
+                    using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
+                    {
+                        #region Solicitação
+
+                        comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                    inner join tab_empreendimento ei on ei.id = c.empreendimento 
+                                                                where c.situacao != 3 and ei.codigo = :codigo ");
+
+                        comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                        solicitacaoId = 0;
+
+                        using (IDataReader reader = bd.ExecutarReader(comando))
+                        {
+                            if (reader.Read())
+                            {
+                                solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                            }
+                            reader.Close();
+                        }
+                        CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+                        solicitacao = solicitacaoId > 0 ? _da.Obter(solicitacaoId, banco: bd) : null;
+                        #endregion
+                    }
+                }
+                
 
                 #endregion
             }
