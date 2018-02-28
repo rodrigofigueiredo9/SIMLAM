@@ -959,11 +959,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Data
 			}
 		}
 
+        //usado somente para validar números de BLOCO de CFOC (portanto, não tem série)
 		internal bool NumeroJaExiste(string numero, int id)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_cfoc c where c.numero = :numero and c.credenciado = :credenciado", EsquemaCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_cfoc c where c.numero = :numero and c.serie is null and c.credenciado = :credenciado", EsquemaCredenciado);
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
