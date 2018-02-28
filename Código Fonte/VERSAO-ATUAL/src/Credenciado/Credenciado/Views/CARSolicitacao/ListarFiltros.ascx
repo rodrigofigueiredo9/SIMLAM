@@ -85,7 +85,7 @@
 
 				<div class="coluna28">
 					<label for="Filtros_EmpreendimentoMunicipio">Situação Arquivo SICAR</label>
-					<%= Html.DropDownList("Filtros.Sicar", Model.SituacoesSicar, new { @class = "text" })%>
+					<%= Html.DropDownList("Filtros.SituacaoSicar", Model.SituacoesSicar, new { @class = "text" })%>
 				</div>
 			</div>
 		</div>

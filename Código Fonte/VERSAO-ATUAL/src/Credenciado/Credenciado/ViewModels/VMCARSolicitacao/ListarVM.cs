@@ -19,6 +19,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMCARSolicitacao
 		public Boolean PodeExcluir { get; set; }
 		public Boolean PodeAlterarSituacao { get; set; }
 
+        public String codigoImovelSicar { get; set; }
+
 		private List<SelectListItem> _listaMunicipios = new List<SelectListItem>();
 		public List<SelectListItem> ListaMunicipios
 		{

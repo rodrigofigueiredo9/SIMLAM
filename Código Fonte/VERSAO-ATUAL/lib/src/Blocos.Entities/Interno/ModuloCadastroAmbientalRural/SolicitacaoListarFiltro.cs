@@ -22,6 +22,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
         public Int64? Requerimento { get; set; }
         public String AutorCPFCNPJ { get; set; }
         public string SolicitacaoTituloNumero { get; set; }
+        public string codigoImovelSicar { get; set; }
 
         private string _situacao;
         public string Situacao { get { return _situacao == "0" ? "" : _situacao; } set { _situacao = value; } }
