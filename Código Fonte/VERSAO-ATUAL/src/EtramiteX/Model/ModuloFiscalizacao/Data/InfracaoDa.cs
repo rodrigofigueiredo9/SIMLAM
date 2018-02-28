@@ -1207,16 +1207,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
                 Comando comando = bancoDeDados.CriarComando(@"
                                     select count(1) valor
-                                    from tab_fisc_apreensao tfa,
-                                         tab_fisc_multa tfm,
-                                         tab_fisc_obj_infracao tfoi,
-                                         tab_fisc_outras_penalidades tfop
-                                    where (tfa.iuf_digital = 0 and tfa.fiscalizacao = :fiscalizacao)
-                                          or (tfm.iuf_digital = 0 and tfm.fiscalizacao = :fiscalizacao)
-                                          or (tfoi.iuf_digital = 0 and tfoi.fiscalizacao = :fiscalizacao)
-                                          or (tfop.iuf_digital = 0 and tfop.fiscalizacao = :fiscalizacao)", EsquemaBanco);
-
-                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+                                    from tab_fisc_apreensao tfa
+                                    where tfa.iuf_digital = 0 and tfa.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -1228,6 +1220,77 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     }
 
                     reader.Close();
+                }
+
+                if (retorno == true)
+                {
+                    return retorno;
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(1) valor
+                                    from tab_fisc_multa tfm
+                                    where tfm.iuf_digital = 0 and tfm.fiscalizacao = :fiscalizacao", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int existe = reader.GetValue<int>("valor");
+
+                        retorno = existe > 0;
+                    }
+
+                    reader.Close();
+                }
+
+                if (retorno == true)
+                {
+                    return retorno;
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(1) valor
+                                    from tab_fisc_obj_infracao tfoi
+                                    where tfoi.iuf_digital = 0 and tfoi.fiscalizacao = :fiscalizacao", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int existe = reader.GetValue<int>("valor");
+
+                        retorno = existe > 0;
+                    }
+
+                    reader.Close();
+                }
+
+                if (retorno == true)
+                {
+                    return retorno;
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(1) valor
+                                    from tab_fisc_outras_penalidades tfop
+                                    where tfop.iuf_digital = 0 and tfop.fiscalizacao = :fiscalizacao", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int existe = reader.GetValue<int>("valor");
+
+                        retorno = existe > 0;
+                    }
+
+                    reader.Close();
+                }
+
+                if (retorno == true)
+                {
+                    return retorno;
                 }
             }
 
