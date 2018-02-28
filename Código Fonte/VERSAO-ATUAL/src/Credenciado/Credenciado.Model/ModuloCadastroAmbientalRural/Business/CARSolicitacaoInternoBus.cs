@@ -108,9 +108,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				return string.Empty;
 			}
 
-			return UrlSICAR + resposta["dados"];  // PRODUCAO
-            //return "http://homolog-car.mma.gov.br/" + resposta["dados"]; // HOMOLOG
+			//return UrlSICAR + resposta["dados"];  // PRODUCAO
+            return "http://homolog-car.mma.gov.br/" + resposta["dados"]; // HOMOLOG
 		}
+
+        public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        {
+            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao);
+
+            RequestJson requestJson = new RequestJson();
+
+            //urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+            urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+
+            var strResposta = requestJson.Executar(urlGerar);
+
+            var resposta = requestJson.Deserializar<dynamic>(strResposta);
+
+            if (resposta["status"] != "s")
+            {
+                return string.Empty;
+            }
+
+            //return UrlSICAR + resposta["dados"];  // PRODUCAO
+            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
+        }
 
 
 		public int ObterIdAquivoSICAR(int solicitacaoId, int schemaSolicitacao)

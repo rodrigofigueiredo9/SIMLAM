@@ -17,7 +17,8 @@
 		    CARSolicitacaoListar.urlEnviarReenviarArquivoSICAR = '<%= Url.Action("EnviarReenviarArquivoSICAR", "CARSolicitacao") %>';
 			CARSolicitacaoListar.urlMensagemErroEnviarArquivoSICAR = '<%= Url.Action("MensagemErroEnviarArquivoSICAR", "CARSolicitacao") %>';
 			CARSolicitacaoListar.urlGerarPdfComprovanteSICAR= '<%= Url.Action("GerarPdfComprovanteSICAR", "CARSolicitacao") %>';
-			CARSolicitacaoListar.urlBaixarAquivoSICAR= '<%= Url.Action("BaixarAquivoSICAR", "CARSolicitacao") %>';
+		    CARSolicitacaoListar.urlBaixarAquivoSICAR= '<%= Url.Action("BaixarAquivoSICAR", "CARSolicitacao") %>';
+		    CARSolicitacaoListar.urlBaixarDemonstrativoCAR= '<%= Url.Action("BaixarDemonstrativoCar", "CARSolicitacao")%>'; 
 		    CARSolicitacaoListar.idsTela = <%=Model.IdsTela %>;
 		    CARSolicitacaoListar.mensagens = <%=Model.Mensagens %>;
 			CARSolicitacaoListar.load($('#central'));

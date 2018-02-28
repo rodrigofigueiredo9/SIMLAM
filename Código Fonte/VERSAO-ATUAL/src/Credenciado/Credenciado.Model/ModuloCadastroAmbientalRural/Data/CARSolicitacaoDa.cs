@@ -873,7 +873,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             return solicitacao;
         }
 
-        internal CARSolicitacao ObterPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, BancoDeDados banco = null)
         {
             CARSolicitacao solicitacao = new CARSolicitacao();
 
@@ -881,9 +881,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             {
                 #region Solicitação
 
-                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c where situacao != 3 and empreendimento = :id ", UsuarioCredenciado);
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                     inner join tab_empreendimento e on e.id = c.empreendimento 
+                                                                 where c.situacao != 3 and e.codigo = :codigo ", UsuarioCredenciado);
 
-                comando.AdicionarParametroEntrada("id", empreendimentoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
                 int solicitacaoId = 0;
 
@@ -896,7 +898,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     reader.Close();
                 }
 
-                solicitacao = solicitacaoId <= 0 ? null : Obter(solicitacaoId, banco: bancoDeDados);
+                solicitacao = solicitacaoId > 0 ? Obter(solicitacaoId, banco: bancoDeDados) : null;
 
                 #endregion
             }
@@ -904,6 +906,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             return solicitacao;
         }
 
+        internal ControleArquivoSICAR ObterControleArquivoSicar(int empreendimentoId, BancoDeDados banco = null)
+        {
+            ControleArquivoSICAR controleSicar = new ControleArquivoSICAR();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"SELECT CODIGO_IMOVEL, STATUS_SICAR, SOLICITACAO_CAR  FROM {0}TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR_ESQUEMA = 2 AND EMPREENDIMENTO = :id ", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("id", empreendimentoId, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    while (reader.Read())
+                    {
+                        controleSicar.CodigoImovel = reader.GetValue<String>("CODIGO_IMOVEL");
+                        controleSicar.InscricaoSicar = reader.GetValue<String>("STATUS_SICAR");
+                        controleSicar.SolicitacaoCarId = reader.GetValue<Int32>("SOLICITACAO_CAR");
+                    }
+                    reader.Close();
+                }              
+                #endregion
+            }
+
+            return controleSicar;
+        }
 		internal Resultados<SolicitacaoListarResultados> Filtrar(Filtro<SolicitacaoListarFiltro> filtros, BancoDeDados banco = null)
 		{
 			Resultados<SolicitacaoListarResultados> retorno = new Resultados<SolicitacaoListarResultados>();
@@ -937,6 +966,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 				comandtxt += comando.FiltroAnd("l.origem", "origem", filtros.Dados.Origem);
 
+                comandtxt += comando.FiltroAnd("l.situacao_envio_id", "situacao_envio", filtros.Dados.SituacaoSicar);
+
+                comandtxt += comando.FiltroAnd("l.codigo_imovel", "codigo_imovel", filtros.Dados.codigoImovelSicar);
+
 				if (!String.IsNullOrWhiteSpace(filtros.Dados.Situacao))
 				{
 					comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
@@ -953,7 +986,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
                     credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
                     s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel 
                     from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
                     and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
@@ -968,7 +1001,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
                     s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
                     s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo,
-                    null situacao_envio_id, null situacao_envio_texto, null url_recibo 
+                    null situacao_envio_id, null situacao_envio_texto, null url_recibo , null codigo_imovel
                     from lst_car_solic_tit s where s.tipo = 2 
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
@@ -982,7 +1015,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
                     c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
                     c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel
                     from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses
                     where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
@@ -1006,7 +1039,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
                     credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
                     s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel 
                     from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
                     and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
@@ -1021,7 +1054,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
                     s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
                     s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 2 tipo,
-                    null situacao_envio_id, null situacao_envio_texto, null url_recibo, null arquivo
+                    null situacao_envio_id, null situacao_envio_texto, null url_recibo, null arquivo, null codigo_imovel
                     from lst_car_solic_tit s where s.tipo = 2 
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
@@ -1035,7 +1068,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
                     c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
                     c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.situacao_motivo, c.requerimento, 2 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo  
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel  
                     from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses 
                     where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) 
                     and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
@@ -1168,6 +1201,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
+        internal CARSolicitacao EmpreendimentoPossuiSolicitacaoProjetoDigital(int empreendimentoInternoID, BancoDeDados banco = null)
+        {
+            CARSolicitacao car = new CARSolicitacao();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.projeto_digital from tab_car_solicitacao t, tab_empreendimento e, lov_car_solicitacao_situacao ls 
+				where t.empreendimento = e.id and t.situacao = ls.id and e.interno = :empreendimentoID and t.situacao in (1, 2, 4) /*Em cadastro, Válido, Suspenso*/", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoInternoID, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        car.Id = reader.GetValue<Int32>("id");
+                        car.SituacaoId = reader.GetValue<Int32>("situacao");
+                        car.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+                    }
+                    reader.Close();
+                }
+
+                return car; //Convert.ToString(bancoDeDados.ExecutarScalar(comando));
+            }
+        }
 		internal string EmpreendimentoCredenciadoPossuiSolicitacao(int empreendimentoID, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -1180,6 +1237,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				return Convert.ToString(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
+        
+        internal CARSolicitacao EmpreendimentoCredenciadoPossuiSolicitacaoProjetoDigital(int empreendimentoID, BancoDeDados banco = null)
+        {
+            CARSolicitacao car = new CARSolicitacao();
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.projeto_digital from tab_car_solicitacao t, lov_car_solicitacao_situacao ls
+				where t.situacao = ls.id and t.empreendimento = :empreendimentoID and t.situacao in (1, 2, 4) /*Em cadastro, Válido, Suspenso*/", UsuarioCredenciado);
+
+                comando.AdicionarParametroEntrada("empreendimentoID", empreendimentoID, DbType.Int32);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        car.Id = reader.GetValue<Int32>("id");
+                        car.SituacaoId = reader.GetValue<Int32>("situacao");
+                        car.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+                    }
+                    reader.Close();
+                }
+
+                return car;
+            }
+        }
 
 		internal string EmpreendimentoPossuiSolicitacao(string cnpj, BancoDeDados banco = null)
 		{

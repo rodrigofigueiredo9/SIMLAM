@@ -448,7 +448,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             ConfirmarVM mv = new ConfirmarVM();
             
             mv.Id = caracterizacao.EmpreendimentoId;
-            mv.Mensagem = Mensagem.Retificacao.msgCred1("123", "666");
+            mv.Mensagem = Mensagem.Retificacao.msgCred1(123, 666);
             mv.Titulo = "Confirmação da Retificação";
             //return PartialView("Confirmar", mv);
             return Json(new

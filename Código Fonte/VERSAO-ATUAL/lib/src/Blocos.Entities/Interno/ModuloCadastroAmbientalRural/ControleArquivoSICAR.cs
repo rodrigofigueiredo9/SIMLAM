@@ -13,5 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public String SolicitacaoCarTid { get; set; }
         public eStatusArquivoSICAR SituacaoEnvio { get; set; }
         public eCARSolicitacaoOrigem SolicitacaoCarEsquema { get; set; }
+        public String CodigoImovel { get; set; }
+        public String InscricaoSicar { get; set; }
     }
 }

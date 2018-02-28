@@ -1645,6 +1645,22 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			return lst;
 		}
 
+        internal List<Lista> ObterSicarSituacao()
+        {
+            List<Lista> lst = new List<Lista>();
+            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_situacao_envio_sicar t order by t.id");
+            foreach (var item in daReader)
+            {
+                lst.Add(new Lista()
+                {
+                    Id = Convert.ToString(item["id"]),
+                    Texto = Convert.ToString(item["texto"]),
+                    IsAtivo = true
+                });
+            }
+            return lst;
+        }
+
 		internal List<Lista> ObterCadastroAmbientalRuralSolicitacaoOrigem()
 		{
 			List<Lista> lst = new List<Lista>();
