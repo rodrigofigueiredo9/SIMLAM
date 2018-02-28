@@ -438,7 +438,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
                 if (solicitacao.SituacaoId == 1 || solicitacao.SituacaoId == 6)
                 {
-                    Validacao.Add(Mensagem.Retificacao.msgCred2(entidade.Requerimento.Id, solicitacao.Id));
+                    Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
                     return false;
                 }
             }
