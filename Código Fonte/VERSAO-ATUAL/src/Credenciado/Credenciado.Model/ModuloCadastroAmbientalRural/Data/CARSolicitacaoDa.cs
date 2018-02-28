@@ -966,6 +966,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 				comandtxt += comando.FiltroAnd("l.origem", "origem", filtros.Dados.Origem);
 
+                comandtxt += comando.FiltroAnd("l.situacao_envio_id", "situacao_envio", filtros.Dados.SituacaoSicar);
+
+                comandtxt += comando.FiltroAnd("l.codigo_imovel", "codigo_imovel", filtros.Dados.codigoImovelSicar);
+
 				if (!String.IsNullOrWhiteSpace(filtros.Dados.Situacao))
 				{
 					comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
@@ -982,7 +986,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
                     credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
                     s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel 
                     from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
                     and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
@@ -997,7 +1001,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
                     s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
                     s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo,
-                    null situacao_envio_id, null situacao_envio_texto, null url_recibo 
+                    null situacao_envio_id, null situacao_envio_texto, null url_recibo , null codigo_imovel
                     from lst_car_solic_tit s where s.tipo = 2 
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
@@ -1011,7 +1015,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
                     c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
                     c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel
                     from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses
                     where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
@@ -1035,7 +1039,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
                     credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
                     s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo 
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel 
                     from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
                     and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
@@ -1050,7 +1054,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
                     s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
                     s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 2 tipo,
-                    null situacao_envio_id, null situacao_envio_texto, null url_recibo, null arquivo
+                    null situacao_envio_id, null situacao_envio_texto, null url_recibo, null arquivo, null codigo_imovel
                     from lst_car_solic_tit s where s.tipo = 2 
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
@@ -1064,7 +1068,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
                     c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
                     c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.situacao_motivo, c.requerimento, 2 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo  
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel  
                     from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses 
                     where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) 
                     and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id

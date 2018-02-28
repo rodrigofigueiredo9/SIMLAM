@@ -46,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			ListarVM vm = new ListarVM(ListaCredenciadoBus.QuantPaginacao, ListaCredenciadoBus.Municipios(ViewModelHelper.EstadoDefaultId()));
 
 			vm.Situacoes = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.CARSolicitacaoSituacoes, true, true);
+            vm.SituacoesSicar = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.SicarSituacoes, true, true);
 
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return View(vm);
