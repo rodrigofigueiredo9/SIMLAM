@@ -414,7 +414,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             {
                 if(solicitacao.SituacaoId == 2)
                 {
-                    if(_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
+                    if (_busCaracterizacao.ExisteCaracterizacao(entidade.ProjetoId, entidade.Empreendimento.Codigo ?? 0))
                     {
                         Validacao.Add(Mensagem.Retificacao.msgCred5());
                         return false;
@@ -429,7 +429,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                     }
                     else
                     {
-                        if (_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
+                        if (_busCaracterizacao.ExisteCaracterizacao(entidade.ProjetoId, entidade.Empreendimento.Codigo ?? 0))
                         {
                             Validacao.Add(Mensagem.Retificacao.msgCred5());
                             return false;
