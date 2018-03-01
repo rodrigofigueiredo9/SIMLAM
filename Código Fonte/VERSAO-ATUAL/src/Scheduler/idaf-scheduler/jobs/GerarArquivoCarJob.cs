@@ -1022,6 +1022,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                                                 INNER JOIN idafcredenciado.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
                                                                 INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
                                                             WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
+                                                        UNION ALL
+                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.HST_CONTROLE_SICAR C
+                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
+                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
+                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
+                                                        UNION ALL
+                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.TAB_CONTROLE_SICAR C
+                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
+                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
+                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
                                                        ) S ", conn))
             {
                 cmd.Parameters.Add(new OracleParameter("empreendimento", requisicao.empreendimento));
