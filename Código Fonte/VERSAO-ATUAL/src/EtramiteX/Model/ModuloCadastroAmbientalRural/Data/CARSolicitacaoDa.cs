@@ -544,6 +544,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			return solicitacao;
 		}
 
+        internal CARSolicitacao ObterPorEmpreendimentoCod(Int64 empreendimentoCod, BancoDeDados banco = null)
+        {
+            CARSolicitacao solicitacao = new CARSolicitacao();
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            {
+                #region Solicitação
+
+                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                     inner join tab_empreendimento e on e.id = c.empreendimento 
+                                                                 where c.situacao != 3 and e.codigo = :codigo ", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                int solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                solicitacao = solicitacaoId > 0 ? Obter(solicitacaoId, banco: bancoDeDados) : null;
+
+                #endregion
+            }
+
+            return solicitacao;
+        }
+
 		internal CARSolicitacao ObterHistorico(int id, string tid, bool simplificado = false, BancoDeDados banco = null)
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
@@ -1384,6 +1417,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			}
 		}
 
+        internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+            {
+                Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+
+                comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
+                comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+
+                return bancoDeDados.ExecutarScalar<String>(comando);
+            }
+        } 
+
 		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
 		{
 			//TODO:Validacao de Solicitacao de Inscricao para Salvar Titulo CAR
@@ -1394,7 +1440,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					and ss.situacao_envio=6 and e.id=:empreendimento)";
 
 			//TODO:Validacao Sem considerar Situacao de Arquivo .car
-			sql = @"select sum(valor)
+            sql = @"select sum(valor)
 			  from (select count(c.id) valor
 					  from tab_car_solicitacao c
 					 where c.empreendimento = :empreendimento
@@ -1402,10 +1448,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					select count(cc.id) valor
 					  from tab_car_solicitacao_cred cc,
 						   cre_empreendimento       ce,
-						   tab_empreendimento       e
-					 where cc.empreendimento = ce.id
-					   and ce.codigo = e.codigo
-					   and e.id = :empreendimento)";
+						   tab_empreendimento       e,
+                           tab_controle_sicar       cs
+					             where cc.empreendimento = ce.id
+					                and ce.codigo = e.codigo
+					                and e.id = :empreendimento
+                                    and cs.empreendimento = e.id
+             
+                                    and c.situacao = 2 /*Válido*/
+                                    and cs.situacao_envio = 6 /*Arquivo Entregue*/)";
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
@@ -1528,7 +1579,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					"        c.situacao_data = sysdate, " +
 					"        c.situacao_anterior = i.situacao, " +
 					"        c.situacao_anterior_data = i.situacao_data " +
-					"    where c.id = i.id; " +
+					"    where c.id = i.id and c.situacao = 2 /*Válido*/; " +
 					"   end loop; " +
 					" end; ");
 

@@ -403,6 +403,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 			}
 		}
 
+        public static List<Lista> SicarSituacoes
+        {
+            get
+            {
+                GerenciadorConfiguracao<ConfiguracaoCadastroAmbientalRural> configSys = new GerenciadorConfiguracao<ConfiguracaoCadastroAmbientalRural>(new ConfiguracaoCadastroAmbientalRural());
+                return configSys.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeySicarSituacao);
+            }
+        }
+
 		public static List<Situacao> CredenciadoTipos
 		{
 			get
