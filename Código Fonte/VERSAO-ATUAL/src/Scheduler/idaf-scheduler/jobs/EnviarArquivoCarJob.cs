@@ -73,6 +73,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					try
 					{
 						//Atualizar controle de envio do SICAR
+                        ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
 						var controleCar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 
