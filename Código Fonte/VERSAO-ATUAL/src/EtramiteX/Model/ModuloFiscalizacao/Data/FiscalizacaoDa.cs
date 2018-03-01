@@ -125,17 +125,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 #region Numero IUF
 
-                comando = bancoDeDados.CriarComando(@"
-                                select nvl(max(tfa.iuf_numero), 0) iuf_apreensao,
-                                       nvl(max(tfm.iuf_numero), 0) iuf_multa,
-                                       nvl(max(tfoi.iuf_numero), 0) iuf_interdicao,
-                                       nvl(max(tfop.iuf_numero), 0) iuf_outras
-                                from (select iuf_numero from {0}hst_fisc_apreensao where iuf_digital = 1) tfa,
-                                     (select iuf_numero from {0}hst_fisc_multa where iuf_digital = 1) tfm,
-                                     (select iuf_numero from {0}hst_fisc_obj_infracao where iuf_digital = 1) tfoi,
-                                     (select iuf_numero from {0}hst_fisc_outras_penalidades where iuf_digital = 1) tfop", EsquemaBanco);
-
                 int ultimo_numero = 0;
+
+                comando = bancoDeDados.CriarComando(@"
+                            select nvl(max(tfa.iuf_numero), 0) iuf_apreensao
+                            from {0}tab_fisc_apreensao tfa
+                            where tfa.iuf_digital = 1", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -143,13 +138,52 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     {
                         int iuf_apreensao = reader.GetValue<int>("iuf_apreensao");
                         if (iuf_apreensao > ultimo_numero) ultimo_numero = iuf_apreensao;
+                    }
 
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                            select nvl(max(tfm.iuf_numero), 0) iuf_multa
+                            from {0}tab_fisc_multa tfm
+                            where tfm.iuf_digital = 1", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
                         int iuf_multa = reader.GetValue<int>("iuf_multa");
                         if (iuf_multa > ultimo_numero) ultimo_numero = iuf_multa;
+                    }
 
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                            select nvl(max(tfoi.iuf_numero), 0) iuf_interdicao
+                            from {0}tab_fisc_obj_infracao  tfoi
+                            where tfoi.iuf_digital = 1", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
                         int iuf_interdicao = reader.GetValue<int>("iuf_interdicao");
                         if (iuf_interdicao > ultimo_numero) ultimo_numero = iuf_interdicao;
+                    }
 
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                            select nvl(max(tfop.iuf_numero), 0) iuf_outras
+                            from {0}hst_fisc_outras_penalidades tfop
+                            where tfop.iuf_digital = 1", EsquemaBanco);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
                         int iuf_outras = reader.GetValue<int>("iuf_outras");
                         if (iuf_outras > ultimo_numero) ultimo_numero = iuf_outras;
                     }
@@ -158,39 +192,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 }
 
                 int prox_numero = ultimo_numero + 1;
-                bool existe = true;
-
-                while (existe)
-                {
-                    comando = bancoDeDados.CriarComando(@"
-                            select count(1) existe
-                            from (select iuf_numero from {0}hst_fisc_apreensao where iuf_numero = :numero) tfa,
-                                 (select iuf_numero from {0}hst_fisc_multa where iuf_numero = :numero) tfm,
-                                 (select iuf_numero from {0}hst_fisc_obj_infracao where iuf_numero = :numero) tfoi,
-                                 (select iuf_numero from {0}hst_fisc_outras_penalidades where iuf_numero = :numero) tfop", EsquemaBanco);
-                    comando.AdicionarParametroEntrada("numero", prox_numero, DbType.Int32);
-
-                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                    {
-                        if (reader.Read())
-                        {
-                            if (reader.GetValue<int>("existe") == 0)
-                            {
-                                existe = false;
-                            }
-                            else
-                            {
-                                prox_numero++;
-                            }
-                        }
-                        else
-                        {
-                            existe = false;
-                        }
-
-                        reader.Close();
-                    }
-                }
                 
                 comando = bancoDeDados.CriarComando(@"
                             update {0}tab_fisc_apreensao
