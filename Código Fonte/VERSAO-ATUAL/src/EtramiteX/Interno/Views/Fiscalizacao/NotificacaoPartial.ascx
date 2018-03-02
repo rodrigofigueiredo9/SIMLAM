@@ -72,8 +72,13 @@
                     Data da Notificação
                 </label>
                 <br />
-                <%= Html.TextBox("Notificacao.DataCORE.DataTexto", Model.Notificacao.DataJIAPI.DataTexto, ViewModelHelper.SetaDisabled(false, new { @class = "text txtDataCORE setarFoco maskData" }))%>
+                <%= Html.TextBox("Notificacao.DataCORE.DataTexto", Model.Notificacao.DataCORE.DataTexto, ViewModelHelper.SetaDisabled(false, new { @class = "text txtDataCORE setarFoco maskData" }))%>
             </div>
         </div>
     </div>
+
+    <fieldset class="block box fsArquivos">
+        <legend>Arquivos Complementares</legend>
+        <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
+    </fieldset>
 </div>

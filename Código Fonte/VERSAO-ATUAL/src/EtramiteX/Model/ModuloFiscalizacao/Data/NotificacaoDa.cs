@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
@@ -90,9 +91,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("forma_iuf", notificacao.FormaIUF, DbType.Int32);
                 comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaCORE, DbType.Int32);
                 comando.AdicionarParametroEntrada("forma_core", notificacao.FormaJIAPI, DbType.Int32);
-				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.DataTexto, DbType.Date);
-				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.DataTexto, DbType.Date);
-				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.DataTexto, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.Data, DbType.Date);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -100,7 +101,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 notificacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-                Historico.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+				#region Anexos
+
+				foreach (var item in (notificacao.Anexos ?? new List<Anexo>()))
+				{
+					comando = bancoDeDados.CriarComando(@"
+					 insert into {0}tab_fisc_notificacao_arq a
+					   (id, 
+						notificacao, 
+						arquivo, 
+						ordem, 
+						descricao, 
+						tid)
+					 values
+					   ({0}seq_tab_fisc_notificacao_arq.nextval,
+						:notificacao,
+						:arquivo,
+						:ordem,
+						:descricao,
+						:tid)", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+					comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
+				Historico.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
                 Consulta.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
@@ -116,7 +148,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 bancoDeDados.IniciarTransacao();
 
                 Comando comando = bancoDeDados.CriarComando(@"
-                                    update {0}tab_fisc_Notificacao t
+                                    update {0}tab_fisc_notificacao t
                                     set t.fiscalizacao = :fiscalizacao,
 										t.forma_iuf = :forma_iuf,
                                         t.forma_jiapi = :forma_jiapi,
@@ -132,14 +164,67 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("forma_iuf", notificacao.FormaIUF, DbType.Int32);
 				comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaCORE, DbType.Int32);
 				comando.AdicionarParametroEntrada("forma_core", notificacao.FormaJIAPI, DbType.Int32);
-				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.DataTexto, DbType.Date);
-				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.DataTexto, DbType.Date);
-				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.DataTexto, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
-                Historico.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
+				#region Anexos
+
+				comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_notificacao_arq ra ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where ra.notificacao = :notificacao{0}",
+					comando.AdicionarNotIn("and", "ra.id", DbType.Int32, notificacao.Anexos?.Select(x => x.Id).ToList()));
+				comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				foreach (var item in (notificacao.Anexos ?? new List<Anexo>()))
+				{
+					if (item.Id > 0)
+					{
+						comando = bancoDeDados.CriarComando(@"
+							update {0}tab_fisc_notificacao_arq t
+							   set t.arquivo   = :arquivo,
+								   t.ordem     = :ordem,
+								   t.descricao = :descricao,
+								   t.tid       = :tid
+							 where t.id = :id", EsquemaBanco);
+						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+					}
+					else
+					{
+						comando = bancoDeDados.CriarComando(@"
+							insert into {0}tab_fisc_notificacao_arq a
+							  (id, 
+							   notificacao, 
+							   arquivo, 
+							   ordem, 
+							   descricao, 
+							   tid)
+							values
+							  ({0}seq_tab_fisc_notificacao_arq.nextval,
+							   :notificacao,
+							   :arquivo,
+							   :ordem,
+							   :descricao,
+							   :tid)", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
+					}
+					
+					comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+					comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
+				Historico.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.atualizar, bancoDeDados);
 
                 Consulta.Gerar(notificacao.FiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
 
@@ -148,11 +233,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return notificacao;
         }
 
+		public bool Excluir(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando("update {0}tab_fisc_notificacao t set t.tid = :tid where t.fiscalizacao = :fiscalizacao");
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+				#region Histórico
+
+				Historico.Gerar(fiscalizacaoId, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.excluir, bancoDeDados);
+
+				#endregion
+
+				comando = bancoDeDados.CriarComando(
+					"begin " +
+						"delete {0}tab_fisc_notificacao t where t.fiscalizacao = :fiscalizacao; " +
+					"end;", EsquemaBanco);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				#region Consulta
+
+				Consulta.Deletar(fiscalizacaoId, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+
+				#endregion
+
+				bancoDeDados.Commit();
+
+				return true;
+			}
+		}
+
 		#endregion
 
 		#region Obter / Filtrar
 
-        public Notificacao Obter(int fiscalizacaoId, BancoDeDados banco = null)
+		public Notificacao Obter(int fiscalizacaoId, BancoDeDados banco = null)
         {
             var notificacao = new Notificacao();
             
@@ -212,9 +333,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     }
                     reader.Close();
                 }
-            }
 
-            return notificacao;
+				#region Anexos
+
+				comando = bancoDeDados.CriarComando(@"
+				select a.id Id,
+					   a.ordem Ordem,
+					   a.descricao Descricao,
+					   b.nome,
+					   b.extensao,
+					   b.id arquivo_id,
+					   b.caminho,
+					   a.tid Tid
+				  from {0}tab_fisc_notificacao_arq a, 
+					   {0}tab_arquivo b
+				 where a.arquivo = b.id
+				   and a.notificacao = :notificacao
+				 order by a.ordem", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
+
+				notificacao.Anexos = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
+				{
+					item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
+					item.Arquivo.Caminho = reader.GetValue<string>("caminho");
+					item.Arquivo.Nome = reader.GetValue<string>("nome");
+					item.Arquivo.Extensao = reader.GetValue<string>("extensao");
+				});
+
+				#endregion
+			}
+
+			return notificacao;
         }
 
         internal int ObterID(int fiscalizacao, BancoDeDados banco = null)

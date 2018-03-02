@@ -7,28 +7,16 @@ namespace Tecnomapas.EtramiteX.Configuracao
 	{
 		IConfiguracao _config;
 
-		public GerenciadorConfiguracao(IConfiguracao confg)
-		{
-			_config = confg;			
-		}
+		public GerenciadorConfiguracao(IConfiguracao confg) => _config = confg;
 
-		public TRet Obter<TRet>(String idx)
-		{
-			return (TRet)_config[idx];
-		}
+		public TRet Obter<TRet>(String idx) => (TRet)_config[idx];
 
-		public Object Obter(String idx)
-		{
-			return _config[idx];
-		}
+		public Object Obter(String idx) => _config[idx];
 	}
 
 	public class GerenciadorConfiguracao<T> : GerenciadorConfiguracao
 	{
-		public GerenciadorConfiguracao(IConfiguracao confg)
-			: base(confg)
-		{
-		}
+		public GerenciadorConfiguracao(IConfiguracao confg) : base(confg) { }
 
 		public T Instancia { get; set; }
 	}

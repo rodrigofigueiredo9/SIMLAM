@@ -287,6 +287,10 @@
     <Compile Include="Interno\ModuloCredenciado\Praga.cs" />
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ParametrizacaoListarFiltro.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ParametrizacaoListarResultado.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Vrte.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\Parametrizacao.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Notificacao.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\DestinacaoProduto.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\Penalidade.cs" />

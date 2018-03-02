@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
 
@@ -1163,6 +1163,73 @@ Item = {
 
 	callBackExcluir: function (data) {
 		MasterPage.redireciona(data.urlRedireciona);
+	}
+}
+
+ConfigurarParametrizacao = {
+	settings: {
+		urls: {
+			salvar: ''
+		},
+
+		mensagens: null
+	},
+
+	container: null,
+
+	load: function (container, options) {
+		if (options) { $.extend(ConfigurarParametrizacao.settings, options); }
+		ConfigurarParametrizacao.container = container;
+
+		container.delegate('.btnSalvar', 'click', ConfigurarParametrizacao.salvar);
+
+		$('.ddlCodigoReceita', container).focus();
+	},
+
+	obter: function () {
+		var container = ConfigurarParametrizacao.container;
+
+		var obj = {
+			Id: $('.hdnParametrizacaoId', container).val(),
+			CodigoReceitaId: $('.ddlCodigoReceita :selected', container).val(),
+			InicioVigencia: { DataTexto: $('.txtInicioVigencia', container).val() },
+			FimVigencia: { DataTexto: $('.txtFimVigencia', container).val() },
+			MaximoParcelas: $('.txtMaximoParcelas', container).val(),
+			ValorMinimoPF: $('.txtValorMinimoPF', container).val(),
+			ValorMinimoPJ: $('.txtValorMinimoPJ', container).val(),
+			MultaPercentual: $('.txtMulta', container).val(),
+			JurosPercentual: $('.txtJuros', container).val(),
+			DescontoPercentual: $('.txtDesconto', container).val(),
+			PrazoDescontoUnidade: $('.txtPrazoDescontoUnidade', container).val(),
+			PrazoDescontoDecorrencia: $('.ddlPrazoDescontoDecorrencia :selected', container).val()
+		}
+
+		return obj;
+	},
+
+	salvar: function () {
+		MasterPage.carregando(true);
+		$.ajax({
+			url: ConfigurarParametrizacao.settings.urls.salvar,
+			data: JSON.stringify(ConfigurarParametrizacao.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarParametrizacao.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(ConfigurarParametrizacao.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
 	}
 }
 

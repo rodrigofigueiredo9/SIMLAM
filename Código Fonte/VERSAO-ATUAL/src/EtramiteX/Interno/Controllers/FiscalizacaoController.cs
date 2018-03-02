@@ -33,11 +33,10 @@ using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMProjetoGeografico;
 using FiscalizacaoDa = Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Data.FiscalizacaoDa;
 using RelFiscalizacaoLib = Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscalizacao;
-using RelFiscalizacao = Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
-    public class FiscalizacaoController : DefaultController
+	public class FiscalizacaoController : DefaultController
     {
         #region Propriedades
 
@@ -2627,13 +2626,160 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
         }
 
-        #endregion
+		#endregion
 
-        #endregion
+		#region Vrte
 
-        #region Passivo de Pdfs da Fiscalizacao
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarCodigoReceita })]
+		public ActionResult ConfigurarVrte()
+		{
+			VrteVM vm = new VrteVM();
+			vm.ListaVrte = _busConfiguracao.ObterVrte();
 
-        public FileStreamResult GerarPassivoConcluido()
+			return View(vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		public ActionResult ConfigurarVrte(List<Vrte> listaVrte)
+		{
+			if (listaVrte == null)
+				listaVrte = new List<Vrte>();
+
+			_busConfiguracao.SalvarVrte(listaVrte);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@Url = Url.Action("ConfigurarVrte", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		public ActionResult ExcluirVrte(Vrte vrteExcluido)
+		{
+			if (vrteExcluido != null && vrteExcluido.Id != 0)
+			{
+				_busConfiguracao.PermiteExcluirVrte(vrteExcluido);
+			}
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@Url = Url.Action("ConfigurarVrte", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
+		#endregion Vrte
+
+		#region Parametrizacao
+
+		#region Filtrar
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ConfigurarParametrizacaoListar()
+		{
+			ParametrizacaoListarVM vm = new ParametrizacaoListarVM(_busLista.QuantPaginacao, _busLista.InfracaoCodigoReceita);
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			return PartialView(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ConfigurarParametrizacaoFiltrar(ParametrizacaoListarVM vm, Paginacao paginacao)
+		{
+			if (!String.IsNullOrEmpty(vm.UltimaBusca))
+				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ParametrizacaoListarVM>(vm.UltimaBusca).Filtros;
+
+			vm.Paginacao = paginacao;
+			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(_busLista.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			Resultados<ParametrizacaoListarResultado> resultados = _busConfiguracao.ParametrizacaoFiltrar(vm.Filtros, vm.Paginacao);
+			if (resultados == null)
+				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+
+			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.Resultados = resultados.Itens;
+
+			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ConfigurarParametrizacaoListarResultados", vm) }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ConfigurarParametrizacao(int? id)
+		{
+			var entidade = _busConfiguracao.ObterParametrizacao(id.GetValueOrDefault(0)) ?? new Parametrizacao();
+			var vm = new ParametrizacaoVM(entidade, _busLista.InfracaoCodigoReceita);
+
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ConfigurarParametrizacaoVisualizar(int id)
+		{
+			ParametrizacaoVM vm = new ParametrizacaoVM(_busConfiguracao.ObterParametrizacao(id), _busLista.InfracaoCodigoReceita, true);
+			return View(vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ConfigurarParametrizacao(Parametrizacao entidade)
+		{
+			_busConfiguracao.SalvarParametrizacao(entidade);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("ConfigurarParametrizacaoListar", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+
+		}
+
+		#region Excluir
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ExcluirParametrizacaoConfirm(int id)
+		{
+			var vm = new ExcluirVM();
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(id);
+
+			vm.Id = id;
+			vm.Mensagem = Mensagem.FiscalizacaoConfiguracao.ExcluirParametrizacaoMensagem("\"" + parametrizacao.CodigoReceitaTexto + "- vigência: " +
+				parametrizacao.InicioVigencia.DataTexto + "-" + parametrizacao.FimVigencia.DataTexto + "\" ");
+			vm.Titulo = "Excluir Parametrizacao";
+
+			return PartialView("Excluir", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		public ActionResult ExcluirParametrizacao(int id)
+		{
+			string urlRedireciona = string.Empty;
+
+			if (_busConfiguracao.ExcluirParametrizacao(id))
+				urlRedireciona = Url.Action("ConfigurarParametrizacao", "Fiscalizacao", new { id = id, Msg = Validacao.QueryParam() });
+
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		#endregion
+
+		#endregion
+
+		#region Passivo de Pdfs da Fiscalizacao
+
+		public FileStreamResult GerarPassivoConcluido()
         {
             PdfFiscalizacao pdf = new PdfFiscalizacao();
             FileStreamResult result = new FileStreamResult(pdf.GerarPassivoZip(), "application / pdf");
@@ -2903,6 +3049,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			vm.fiscalizacaoId = id;
 			vm.Notificacao = _busNotificacao.Obter(id);
+            vm.ArquivoVM.Anexos = vm.Notificacao.Anexos;
 			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
 			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
 

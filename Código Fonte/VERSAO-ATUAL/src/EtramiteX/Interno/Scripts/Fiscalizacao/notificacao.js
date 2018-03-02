@@ -17,6 +17,7 @@ Notificacao = {
 		if (options) { $.extend(Notificacao.settings, options); }
 		Notificacao.container = MasterPage.getContent(container);
 		Notificacao.container.delegate('.btnSalvar', 'click', Notificacao.salvar);
+		$('.fsArquivos', Notificacao.container).arquivo({ extPermitidas: [] });
 		Mascara.load();
 		Notificacao.alterarVisibilidadeData();
 	},
@@ -33,6 +34,7 @@ Notificacao = {
 			DataIUF: { DataTexto: $('.txtDataIUF', container).val() },
 			DataJIAPI: { DataTexto: $('.txtDataJIAPI', container).val() },
 			DataCORE: { DataTexto: $('.txtDataCORE', container).val() },
+			Anexos: $('.fsArquivos', Notificacao.container).arquivo('obterObjeto')
 		};
 
 		return obj;

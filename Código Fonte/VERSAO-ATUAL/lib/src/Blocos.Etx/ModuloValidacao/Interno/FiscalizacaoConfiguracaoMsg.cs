@@ -176,9 +176,28 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
         public Mensagem SalvarCodigoReceita { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de Códigos da Receita salva com sucesso." }; } }
         public Mensagem ErroCodigoUsado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir. O código da receita já está sendo usado no sistema." }; } }
 
-        #endregion Códigos da Receita
+		#endregion Códigos da Receita
 
-        public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
+		#region Vrte
+		public Mensagem AnoObrigatorio { get { return new Mensagem() { Campo = "Vrte_Ano", Tipo = eTipoMensagem.Advertencia, Texto = "Ano é obrigatório." }; } }
+		public Mensagem VrteObrigatorio { get { return new Mensagem() { Campo = "Vrte_VrteEmReais", Tipo = eTipoMensagem.Advertencia, Texto = "VRTE é obrigatório." }; } } 
+        public Mensagem VrteDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Vrte_Ano", Texto = "Já existe configuração de VRTE para este ano." }; } }
+        public Mensagem SalvarVrte { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de VRTE salva com sucesso." }; } }
+		#endregion Vrte
+
+		#region Parametrizacao
+		public Mensagem ParCodigoReceitaObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_CodigoReceitaId", Tipo = eTipoMensagem.Advertencia, Texto = "Código da receita é obrigatório." }; } }
+		public Mensagem InicioVigenciaObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_InicioVigencia", Tipo = eTipoMensagem.Advertencia, Texto = "Data de início de vigência é obrigatório." }; } }
+		public Mensagem MaximoParcelasObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_MaximoParcelas", Tipo = eTipoMensagem.Advertencia, Texto = "Nº máximo de parcelas é obrigatório." }; } }
+		public Mensagem ValorMinimoPFObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_ValorMinimoPF", Tipo = eTipoMensagem.Advertencia, Texto = "Valor mínimo para pessoa física é obrigatório." }; } }
+		public Mensagem ValorMinimoPJObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_ValorMinimoPJ", Tipo = eTipoMensagem.Advertencia, Texto = "Valor mínimo para pessoa jurídica é obrigatório." }; } }
+		public Mensagem SalvarParametrizacao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Parametrização salva com sucesso." }; } }
+		public Mensagem ExcluirParametrizacao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Parametrização excluída com sucesso." }; } }
+		public Mensagem ExcluirParametrizacaoMensagem(String strPergunta) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir a parametrização {0}?", strPergunta) }; }
+        public Mensagem ParametrizacaoDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Já existe uma parametrização para este código de receita dentro deste período de vigência." }; } }
+		#endregion Parametrizacao
+
+		public Mensagem ClassificacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Classificacao", Texto = "Classificação é obrigatório." }; } }
 		public Mensagem TipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Tipo", Texto = "Tipo de infração é obrigatório." }; } }
 		public Mensagem ItemObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Configuracao_Item", Texto = "Item é obrigatório." }; } }
 		public Mensagem ItemDesativado(string strCampo, string strNome, bool isPlural = false) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format((isPlural ? "Os (as)" : "O (a)") + " {0} \"{1}\" " + (isPlural ? "estão" : "está") + " na situação desativado.", strCampo, strNome) }; }

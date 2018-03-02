@@ -695,7 +695,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
         #endregion
 
-
         #region Penalidade
 
         public void ExcluirPenalidade(int id, BancoDeDados banco = null)
@@ -807,7 +806,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
         }
 
         #endregion
-
 
         #region Campo Infracao
 
@@ -1481,13 +1479,236 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
         }
 
 
-        #endregion Códigos da Receita Infracao
+		#endregion Códigos da Receita Infracao
 
-        #endregion
+		#region Códigos da Receita Infracao
 
-        #region Obter / Filtrar
+		internal void SalvarVrte(List<Vrte> listaVrte, BancoDeDados banco = null)
+		{
+			if (listaVrte == null)
+			{
+				throw new Exception("Objeto Códigos da Receita é nulo.");
+			}
 
-        internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando;
+
+				bancoDeDados.IniciarTransacao();
+
+				eHistoricoAcao? acao;
+
+				foreach (var vrte in listaVrte)
+				{
+					acao = null;
+					comando = null;
+
+					if (vrte.Id == 0)    // novo, incluir  
+					{
+						acao = eHistoricoAcao.criar;
+
+						comando = bancoDeDados.CriarComando(@"insert into tab_fisc_vrte(id, ano, vrte, tid)  
+                                                              values(seq_fisc_vrte.nextval, :ano, :vrte,:tid) 
+                                                              returning id into :id", EsquemaBanco);
+
+						comando.AdicionarParametroSaida("id", DbType.Int32);
+						comando.AdicionarParametroEntrada("ano", vrte.Ano, DbType.Int32);
+						comando.AdicionarParametroEntrada("vrte", vrte.VrteEmReais, DbType.Decimal);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						vrte.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+						#region Histórico
+
+						Historico.Gerar(vrte.Id, eHistoricoArtefato.vrte, (eHistoricoAcao)acao, bancoDeDados, null);
+
+						#endregion
+					}
+					else if (vrte.Excluir == false && vrte.Editado == true)  // existente, editar  
+					{
+						acao = eHistoricoAcao.atualizar;
+
+						comando = bancoDeDados.CriarComando(@"update tab_fisc_vrte 
+                                                              set ano = :ano, 
+                                                                  vrte = :vrte, 
+                                                                  tid = :tid 
+                                                              where id = :id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("id", vrte.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("ano", vrte.Ano, DbType.Int32);
+						comando.AdicionarParametroEntrada("vrte", vrte.VrteEmReais, DbType.Decimal);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						#region Histórico
+
+						Historico.Gerar(vrte.Id, eHistoricoArtefato.vrte, (eHistoricoAcao)acao, bancoDeDados, null);
+
+						#endregion
+					}
+					else if (vrte.Excluir == true)  
+					{
+						acao = eHistoricoAcao.excluir;
+
+						comando = bancoDeDados.CriarComando(@"delete from tab_fisc_vrte 
+                                                              where id = :id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("id", vrte.Id, DbType.Int32);
+
+						#region Histórico
+
+						//No excluir, o histórico deve ser preenchido primeiro, para poder pegar o elemento antes que ele seja excluído  
+						Historico.Gerar(vrte.Id, eHistoricoArtefato.vrte, (eHistoricoAcao)acao, bancoDeDados, null);
+
+						#endregion
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+				}
+
+				bancoDeDados.Commit();
+			}
+		}
+
+		internal List<Vrte> ObterVrte(BancoDeDados banco = null)
+		{
+			List<Vrte> listaVrte = new List<Vrte>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+
+				bancoDeDados.IniciarTransacao();
+
+				comando = bancoDeDados.CriarComando(@"select id, ano, vrte, tid  
+                                                      from tab_fisc_vrte 
+                                                      order by ano, vrte", EsquemaBanco);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Vrte codReceita = new Vrte();
+
+						codReceita.Id = reader.GetValue<int>("id");
+						codReceita.Ano = reader.GetValue<int>("ano");
+						codReceita.VrteEmReais = reader.GetValue<decimal>("vrte");
+						codReceita.Tid = reader.GetValue<string>("tid");
+
+						listaVrte.Add(codReceita);
+					}
+				}
+			}
+
+			return listaVrte;
+		}
+
+		internal bool PermiteExcluirVrte(Vrte codigo, BancoDeDados banco = null) => true;
+
+		#endregion Códigos da Receita Infracao
+
+		#region Parametrizacao 
+
+		internal int SalvarParametrizacao(Parametrizacao entidade, BancoDeDados banco = null)
+		{
+			if (entidade == null)
+				throw new Exception("Objeto Parametrizacao é nulo.");
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+
+				bancoDeDados.IniciarTransacao();
+
+				eHistoricoAcao acao = eHistoricoAcao.criar;
+
+				if (entidade.Id <= 0)
+				{
+					comando = bancoDeDados.CriarComando(@" insert into {0}tab_fisc_parametrizacao (id,
+											codigoreceita, iniciovigencia, fimvigencia, maximoparcelas, valorminimo_pf, valorminimo_pj, multa_perc, juros_perc,
+											desconto_perc, desconto_und, desconto_decor, tid)
+											values ({0}seq_fisc_parametrizacao.nextval,
+                                            :codigoreceita, :iniciovigencia, :fimvigencia, :maximoparcelas, :valorminimo_pf, :valorminimo_pj,
+											:multa_perc, :juros_perc, :desconto_perc, :desconto_und, :desconto_decor, :tid)
+														returning id into :id", EsquemaBanco);
+
+					comando.AdicionarParametroSaida("id", DbType.Int32);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"update cnf_fisc__Parametrizacao c set c.texto = :texto, c.ativo = :ativo, c.tid = :tid 
+														where c.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
+					acao = eHistoricoAcao.atualizar;
+				}
+
+				comando.AdicionarParametroEntrada("codigoreceita", entidade.CodigoReceitaId, DbType.Int32);
+				comando.AdicionarParametroEntrada("iniciovigencia", entidade.InicioVigencia.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("fimvigencia", entidade.FimVigencia.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("maximoparcelas", entidade.MaximoParcelas, DbType.Int32);
+				comando.AdicionarParametroEntrada("valorminimo_pf", entidade.ValorMinimoPF, DbType.Int32);
+				comando.AdicionarParametroEntrada("valorminimo_pj", entidade.ValorMinimoPJ, DbType.Int32);
+				comando.AdicionarParametroEntrada("multa_perc", entidade.MultaPercentual, DbType.Int32);
+				comando.AdicionarParametroEntrada("juros_perc", entidade.JurosPercentual, DbType.Int32);
+				comando.AdicionarParametroEntrada("desconto_perc", entidade.DescontoPercentual, DbType.Int32);
+				comando.AdicionarParametroEntrada("desconto_und", entidade.PrazoDescontoUnidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("desconto_decor", entidade.PrazoDescontoDecorrencia, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				if (entidade.Id <= 0)
+					entidade.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+				Historico.Gerar(Convert.ToInt32(entidade.Id), eHistoricoArtefato.parametrizacao, acao, bancoDeDados, null);
+
+				bancoDeDados.Commit();
+
+				return entidade.Id;
+			}
+		}
+
+		public void ExcluirParametrizacao(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = null;
+
+				#region Histórico
+
+				//Atualizar o tid para a nova ação
+				comando = bancoDeDados.CriarComando(@"update {0}tab_fisc_parametrizacao t set t.tid = :tid where t.id = :id", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(id, eHistoricoArtefato.parametrizacao, eHistoricoAcao.excluir, bancoDeDados, null);
+
+				#endregion
+
+				comando = bancoDeDados.CriarComando(@"delete from {0}tab_fisc_parametrizacao p where p.id = :id;", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+			}
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Obter / Filtrar
+
+		internal ConfigFiscalizacao Obter(int id, BancoDeDados banco = null)
         {
             ConfigFiscalizacao configFiscalizacao = new ConfigFiscalizacao();
 
@@ -1609,7 +1830,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
             return config;
         }
-
 
         internal List<Item> ObterTipoInfracao()
         {
@@ -1824,7 +2044,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return lista;
         }
 
-
         internal PerguntaInfracao ObterPerguntaRespostasInfracao(int id)
         {
             PerguntaInfracao pergunta = null;
@@ -1875,7 +2094,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
             return pergunta;
         }
-
 
         internal List<Item> ObterTipos(int classificacaoId = 0)
         {
@@ -2510,11 +2728,301 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return retorno;
         }
 
-        #endregion
+		#region Parametrizacao
 
-        #region Validacoes
+		internal Parametrizacao ObterParametrizacao(int id)
+		{
+			Parametrizacao parametrizacao = null;
 
-        internal bool TipoIsAtivo(int tipoId)
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
+											p.codigoreceita,
+											lov.texto,
+											p.iniciovigencia,
+											p.fimvigencia,
+											p.maximoparcelas,
+											p.valorminimo_pf,
+											p.valorminimo_pj,
+											p.multa_perc,
+											p.juros_perc,
+											p.desconto_perc,
+											p.desconto_und,
+											p.desconto_decor,
+											p.tid
+										from {0}tab_fisc_parametrizacao p 
+										inner join lov_fisc_infracao_codigo_rece lov 
+											on (lov.id = p.codigoreceita )
+										where p.id = :id order by p.codigoreceita", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						parametrizacao = new Parametrizacao
+						{
+							Id = reader.GetValue<int>("id"),
+							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
+							CodigoReceitaTexto = reader.GetValue<string>("texto"),
+							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
+							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
+							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
+							MultaPercentual = reader.GetValue<int>("multa_perc"),
+							JurosPercentual = reader.GetValue<int>("juros_perc"),
+							DescontoPercentual = reader.GetValue<int>("desconto_perc"),
+							PrazoDescontoUnidade = reader.GetValue<int>("desconto_und"),
+							PrazoDescontoDecorrencia = reader.GetValue<int>("desconto_decor"),
+						};
+
+						parametrizacao.InicioVigencia.Data = reader.GetValue<DateTime>("iniciovigencia");
+						parametrizacao.FimVigencia.Data = reader.GetValue<DateTime>("fimvigencia");
+						if (parametrizacao.InicioVigencia.Data.HasValue && parametrizacao.InicioVigencia.Data.Value.Year == 1)
+							parametrizacao.InicioVigencia = new DateTecno();
+						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
+							parametrizacao.FimVigencia = new DateTecno();
+					}
+
+					reader.Close();
+				}
+			}
+
+			return parametrizacao;
+		}
+
+		internal Parametrizacao ObterParametrizacao(int codigoReceita, DateTime data)
+		{
+			Parametrizacao parametrizacao = null;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
+											p.codigoreceita,
+											lov.texto,
+											p.iniciovigencia,
+											p.fimvigencia,
+											p.maximoparcelas,
+											p.valorminimo_pf,
+											p.valorminimo_pj,
+											p.multa_perc,
+											p.juros_perc,
+											p.desconto_perc,
+											p.desconto_und,
+											p.desconto_decor,
+											p.tid
+										from {0}tab_fisc_parametrizacao p 
+										inner join lov_fisc_infracao_codigo_rece lov 
+											on (lov.id = p.codigoreceita )
+										where p.codigoreceita = :codigoreceita								
+										and p.iniciovigencia <= :data
+										and
+										(
+											p.fimvigencia > :data
+											or p.fimvigencia is null
+										)
+										order by p.codigoreceita", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("codigoreceita", codigoReceita, DbType.Int32);
+				comando.AdicionarParametroEntrada("data", data, DbType.Date);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						parametrizacao = new Parametrizacao
+						{
+							Id = reader.GetValue<int>("id"),
+							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
+							CodigoReceitaTexto = reader.GetValue<string>("texto"),
+							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
+							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
+							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
+							MultaPercentual = reader.GetValue<int>("multa_perc"),
+							JurosPercentual = reader.GetValue<int>("juros_perc"),
+							DescontoPercentual = reader.GetValue<int>("desconto_perc"),
+							PrazoDescontoUnidade = reader.GetValue<int>("desconto_und"),
+							PrazoDescontoDecorrencia = reader.GetValue<int>("desconto_decor"),
+						};
+
+						parametrizacao.InicioVigencia.Data = reader.GetValue<DateTime>("iniciovigencia");
+						parametrizacao.FimVigencia.Data = reader.GetValue<DateTime>("fimvigencia");
+						if (parametrizacao.InicioVigencia.Data.HasValue && parametrizacao.InicioVigencia.Data.Value.Year == 1)
+							parametrizacao.InicioVigencia = new DateTecno();
+						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
+							parametrizacao.FimVigencia = new DateTecno();
+					}
+
+					reader.Close();
+				}
+			}
+
+			return parametrizacao;
+		}
+
+		internal List<Parametrizacao> ObterParametrizacao()
+		{
+			List<Parametrizacao> lista = new List<Parametrizacao>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
+											p.codigoreceita,
+											lov.texto,
+											p.iniciovigencia,
+											p.fimvigencia,
+											p.maximoparcelas,
+											p.valorminimo_pf,
+											p.valorminimo_pj,
+											p.multa_perc,
+											p.juros_perc,
+											p.desconto_perc,
+											p.desconto_und,
+											p.desconto_decor,
+											p.tid
+										from {0}tab_fisc_parametrizacao p 
+										inner join lov_fisc_infracao_codigo_rece lov 
+											on (lov.id = p.codigoreceita )
+										order by p.codigoreceita", EsquemaBanco);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var parametrizacao = new Parametrizacao
+						{
+							Id = reader.GetValue<int>("id"),
+							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
+							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
+							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
+							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
+							MultaPercentual = reader.GetValue<int>("multa_perc"),
+							JurosPercentual = reader.GetValue<int>("juros_perc"),
+							DescontoPercentual = reader.GetValue<int>("desconto_perc"),
+							PrazoDescontoUnidade = reader.GetValue<int>("desconto_und"),
+							PrazoDescontoDecorrencia = reader.GetValue<int>("desconto_decor"),
+						};
+
+						parametrizacao.InicioVigencia.Data = reader.GetValue<DateTime>("forma_iuf_data");
+						parametrizacao.FimVigencia.Data = reader.GetValue<DateTime>("fimvigencia");
+						if (parametrizacao.InicioVigencia.Data.HasValue && parametrizacao.InicioVigencia.Data.Value.Year == 1)
+							parametrizacao.InicioVigencia = new DateTecno();
+						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
+							parametrizacao.FimVigencia = new DateTecno();
+
+						lista.Add(parametrizacao);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return lista;
+		}
+
+		internal Resultados<ParametrizacaoListarResultado> ParametrizacaoFiltrar(Filtro<ParametrizacaoListarFiltro> filtros, BancoDeDados banco = null)
+		{
+			var retorno = new Resultados<ParametrizacaoListarResultado>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				string comandtxt = string.Empty;
+				Comando comando = bancoDeDados.CriarComando("");
+
+				#region Adicionando Filtros
+
+				comandtxt += comando.FiltroAnd("p.codigoreceita", "codigoreceita", filtros.Dados.CodigoReceitaId);
+
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "codigoreceita", "iniciovigencia", "fimvigencia", "multa_perc", "juros_perc", "desconto_perc", "desconto_und", "desconto_decor desc" };
+
+				if (filtros.OdenarPor > 0)
+				{
+					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+				}
+				else
+				{
+					ordenar.Add("codigoreceita");
+				}
+
+				#endregion
+
+				#region Quantidade de registro do resultado
+
+				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select p.id from tab_fisc_parametrizacao p
+															  where 1=1 " + comandtxt + ")", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtros.Menor);
+				comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+				comandtxt = String.Format(@"select p.id,
+											p.codigoreceita,
+											lov.texto,
+											p.iniciovigencia,
+											p.fimvigencia,
+											p.maximoparcelas,
+											p.valorminimo_pf,
+											p.valorminimo_pj,
+											p.multa_perc,
+											p.juros_perc,
+											p.desconto_perc,
+											p.desconto_und,
+											p.desconto_decor,
+											p.tid
+											from tab_fisc_parametrizacao p
+											inner join lov_fisc_infracao_codigo_rece lov 
+											 on (lov.id = p.codigoreceita )
+											where 1=1 " + comandtxt
+									+ DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					#region Adicionando os dados na classe de retorno
+
+					ParametrizacaoListarResultado entidade;
+
+					while (reader.Read())
+					{
+						entidade = new ParametrizacaoListarResultado();
+						entidade.Id = Convert.ToInt32(reader["id"].ToString());
+						entidade.CodigoReceitaId = Convert.ToInt32(reader["codigoreceita"].ToString());
+						entidade.CodigoReceitaTexto = reader["texto"].ToString();
+						entidade.MaximoParcelas = Convert.ToInt32(reader["maximoparcelas"].ToString());
+						entidade.ValorMinimoPF = Convert.ToInt32(reader["valorminimo_pf"].ToString());
+						entidade.ValorMinimoPJ = Convert.ToInt32(reader["valorminimo_pj"].ToString());
+						entidade.MultaPercentual = Convert.ToInt32(reader["multa_perc"]?.ToString());
+						entidade.JurosPercentual = Convert.ToInt32(reader["juros_perc"]?.ToString());
+						entidade.DescontoPercentual = Convert.ToInt32(reader["desconto_perc"]?.ToString());
+						entidade.PrazoDescontoUnidade = Convert.ToInt32(reader["desconto_und"]?.ToString());
+						entidade.PrazoDescontoDecorrencia = Convert.ToInt32(reader["desconto_decor"]?.ToString());
+						entidade.InicioVigencia = Convert.ToDateTime(reader["iniciovigencia"]?.ToString());
+						if(!string.IsNullOrWhiteSpace(reader["fimvigencia"].ToString()))
+							entidade.FimVigencia = Convert.ToDateTime(reader["fimvigencia"]?.ToString());
+
+						retorno.Itens.Add(entidade);
+					}
+
+					reader.Close();
+
+					#endregion
+				}
+			}
+
+			return retorno;
+		}
+		#endregion Parametrizacao
+
+		#endregion
+
+		#region Validacoes
+
+		internal bool TipoIsAtivo(int tipoId)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
@@ -2728,9 +3236,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             }
         }
 
-
-
-
 		public void AlterarSituacaoCampoInfracao(int campoId, int situacaoNova, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -2787,7 +3292,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 bancoDeDados.Commit();
             }
         }
-
 
         internal List<String> ObterIdsConfiguracoesAssociadasTipoInfracao(int tipo)
         {
