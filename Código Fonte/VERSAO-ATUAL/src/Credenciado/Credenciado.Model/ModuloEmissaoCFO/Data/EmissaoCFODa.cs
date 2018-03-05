@@ -1328,7 +1328,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaCredenciado))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfo c where c.numero = :numero and ( c.serie = :serie or ( c.serie is null or :serie is null ) ) ), 0) from dual", EsquemaCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"select nvl((select c.id from {0}tab_cfo c where c.numero = :numero and ( c.serie = :serie or ( c.serie is null and :serie is null ) ) ), 0) from dual", EsquemaCredenciado);
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
                 comando.AdicionarParametroEntrada("serie", serie, DbType.String);
