@@ -1009,46 +1009,32 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         private static CAR ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int empreendimentoId)
         {
-           var schemaN = schema == "IDAF" ? 1 : 2;
-
-            using (var cmd = new OracleCommand(@"SELECT DISTINCT S.CODIGO_IMOVEL
-                                                FROM (
-                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.HST_CONTROLE_SICAR C
-                                                                INNER JOIN idafcredenciado.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
-                                                                INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
-                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
-                                                        UNION ALL
-                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.TAB_CONTROLE_SICAR C
-                                                                INNER JOIN idafcredenciado.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
-                                                                INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
-                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
-                                                        UNION ALL
-                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.HST_CONTROLE_SICAR C
-                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
-                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
-                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
-                                                        UNION ALL
-                                                        SELECT C.CODIGO_IMOVEL, C.SOLICITACAO_CAR_ESQUEMA FROM IDAF.TAB_CONTROLE_SICAR C
-                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E1  ON E1.ID = C.EMPREENDIMENTO
-                                                                INNER JOIN IDAF.TAB_EMPREENDIMENTO E2  ON E2.CODIGO = E1.CODIGO 
-                                                            WHERE C.CODIGO_IMOVEL IS NOT NULL AND E2.ID =  :empreendimento AND C.SOLICITACAO_CAR_ESQUEMA = :schema
-                                                       ) S ", conn))
+            
+            using (var cmd = new OracleCommand(@"SELECT CODIGO_IMOVEL FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
             {
-                cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
-                cmd.Parameters.Add(new OracleParameter("schema", schemaN));
+                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
                 using (var dr = cmd.ExecuteReader())
                 {
-                    while (dr.Read())
+                    if (dr.Read())
                     {
-                        if (!String.IsNullOrWhiteSpace(Convert.ToString(dr["CODIGO_IMOVEL"])))
-                        {
-                            car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
-                            break;
-                        }                        
+                        car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
                     }
                 }
             }
-            car.origem.dataProtocolo = DateTime.Now;
+
+            using (var cmd = new OracleCommand("SELECT DATA_EMISSAO FROM "+schema+".TAB_CAR_SOLICITACAO WHERE ID = :solicitacao", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        car.origem.dataProtocolo = Convert.ToDateTime(dr["DATA_EMISSAO"]);
+                    }
+                }
+            }
+
             return car;
         }
 
