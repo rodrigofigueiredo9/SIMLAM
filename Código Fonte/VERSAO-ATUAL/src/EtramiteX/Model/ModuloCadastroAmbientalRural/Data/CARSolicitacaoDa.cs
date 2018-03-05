@@ -1398,14 +1398,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			  from (select count(c.id) valor
 					  from tab_car_solicitacao c
 					 where c.empreendimento = :empreendimento
+                        and cs.solicitacao_car = c.id
+                        and c.situacao = 2 /*Válido*/
+                        and cs.situacao_envio = 6 /*Arquivo Entregue*/
 					union all
 					select count(cc.id) valor
 					  from tab_car_solicitacao_cred cc,
 						   cre_empreendimento       ce,
-						   tab_empreendimento       e
-					 where cc.empreendimento = ce.id
-					   and ce.codigo = e.codigo
-					   and e.id = :empreendimento)";
+						   tab_empreendimento       e,
+                           tab_controle_sicar       cs
+					             where cc.empreendimento = ce.id
+					                and ce.codigo = e.codigo
+					                and e.id = :empreendimento
+                                    and cs.solicitacao_car = cc.id
+             
+                                    and cc.situacao = 2 /*Válido*/
+                                    and cs.situacao_envio = 6 /*Arquivo Entregue*/)";
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
