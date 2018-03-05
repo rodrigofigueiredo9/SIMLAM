@@ -251,6 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando = bancoDeDados.CriarComando(
 					"begin " +
+						"delete {0}tab_fisc_notificacao_arq a where exists (select 1 from tab_fisc_notificacao t where t.id = a.notificacao and t.fiscalizacao = :fiscalizacao); " +
 						"delete {0}tab_fisc_notificacao t where t.fiscalizacao = :fiscalizacao; " +
 					"end;", EsquemaBanco);
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);

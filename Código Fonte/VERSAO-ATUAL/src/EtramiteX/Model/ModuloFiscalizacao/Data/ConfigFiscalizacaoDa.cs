@@ -1481,7 +1481,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#endregion Códigos da Receita Infracao
 
-		#region Códigos da Receita Infracao
+		#region VRTE
 
 		internal void SalvarVrte(List<Vrte> listaVrte, BancoDeDados banco = null)
 		{
@@ -1549,7 +1549,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 						#endregion
 					}
-					else if (vrte.Excluir == true)  
+					else if (vrte.Excluir)  
 					{
 						acao = eHistoricoAcao.excluir;
 
@@ -1608,7 +1608,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		internal bool PermiteExcluirVrte(Vrte codigo, BancoDeDados banco = null) => true;
 
-		#endregion Códigos da Receita Infracao
+		#endregion VRTE
 
 		#region Parametrizacao 
 
@@ -1692,7 +1692,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-				comando = bancoDeDados.CriarComando(@"delete from {0}tab_fisc_parametrizacao p where p.id = :id;", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(
+                    "begin " +
+						"delete from {0}tab_fisc_parametrizacao p where p.id = :id;" +
+					"end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -2903,7 +2906,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							PrazoDescontoDecorrencia = reader.GetValue<int>("desconto_decor"),
 						};
 
-						parametrizacao.InicioVigencia.Data = reader.GetValue<DateTime>("forma_iuf_data");
+						parametrizacao.InicioVigencia.Data = reader.GetValue<DateTime>("iniciovigencia");
 						parametrizacao.FimVigencia.Data = reader.GetValue<DateTime>("fimvigencia");
 						if (parametrizacao.InicioVigencia.Data.HasValue && parametrizacao.InicioVigencia.Data.Value.Year == 1)
 							parametrizacao.InicioVigencia = new DateTecno();

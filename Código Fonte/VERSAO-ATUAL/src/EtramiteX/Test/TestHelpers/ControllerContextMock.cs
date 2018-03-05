@@ -3,7 +3,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using Tecnomapas.EtramiteX.Interno.Model.Security;
 
 namespace Tests.TestHelpers
 {
@@ -45,8 +45,8 @@ namespace Tests.TestHelpers
                new HttpRequest(null, "http://tempuri.org", null),
                new HttpResponse(null)
             );
-			//HttpContext.Current.User = new EtramitePrincipal() { };
 
+			GerenciarAutenticacao.CarregarUser("jose.osmar");
 
 			return context;
         }
