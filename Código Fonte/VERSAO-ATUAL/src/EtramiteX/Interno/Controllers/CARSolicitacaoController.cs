@@ -330,7 +330,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
 			{
-				_busCredenciado.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+                _busCredenciado.EnviarReenviarArquivoSICAR(solicitacao, isEnviar);
 			}
 			else
 			{
