@@ -409,12 +409,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             }
 
             //Verificar se existe solicitação para o empreendimento
-            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, entidade.Empreendimento.Id);
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0);
             if(solicitacao != null)
             {
                 if(solicitacao.SituacaoId == 2)
                 {
-                    if(_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
+                    if (_busCaracterizacao.ExisteCaracterizacao(entidade.ProjetoId, entidade.Empreendimento.Codigo ?? 0))
                     {
                         Validacao.Add(Mensagem.Retificacao.msgCred5());
                         return false;
@@ -422,14 +422,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
                 if(solicitacao.SituacaoId == 5)
                 {
-                    if (_busTitulo.ExistePorEmpreendimento(entidade.Empreendimento.Id))
+                    String tituloSituacao = _carSolicitacaoInternoDa.ObterSituacaoTituloCARCodigoEmp(entidade.Empreendimento.Codigo ?? 0);
+
+                    if (!String.IsNullOrWhiteSpace(tituloSituacao))
+                    //if (_busTitulo.ExistePorEmpreendimento(entidade.Empreendimento.Id))
                     {
                         Validacao.Add(Mensagem.Retificacao.msgCred6());
                         return false;
                     }
                     else
                     {
-                        if (_busCaracterizacao.ExisteCaracterizacaoPorProjetoDigital(entidade.ProjetoId))
+                        if (_busCaracterizacao.ExisteCaracterizacao(entidade.ProjetoId, entidade.Empreendimento.Codigo ?? 0))
                         {
                             Validacao.Add(Mensagem.Retificacao.msgCred5());
                             return false;
@@ -438,7 +441,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
                 if (solicitacao.SituacaoId == 1 || solicitacao.SituacaoId == 6)
                 {
-                    Validacao.Add(Mensagem.Retificacao.msgCred2(entidade.Requerimento.Id, solicitacao.Id));
+                    Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
                     return false;
                 }
             }

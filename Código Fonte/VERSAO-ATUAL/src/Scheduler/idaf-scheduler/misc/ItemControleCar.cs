@@ -10,6 +10,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 		public string empreendimento_tid { get; set; }
 		public int solicitacao_car { get; set; }
 		public string solicitacao_car_tid { get; set; }
+        public int solicitacao_car_anterior { get; set; }
+        public string solicitacao_car_anterior_tid { get; set; }
+        public int solicitacao_car_anterior_esquema { get; set; }
 		public int situacao_envio { get; set; }
 		public string chave_protocolo { get; set; }
 		public DateTime data_gerado { get; set; }
