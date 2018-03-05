@@ -326,7 +326,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			}
 		}
         
-        public void EnviarReenviarArquivoSICAR(int solicitacaoId, bool isEnviar, BancoDeDados banco = null)
+        public void EnviarReenviarArquivoSICAR(CARSolicitacao solicitacao, bool isEnviar, BancoDeDados banco = null)
         {
             try
             {
@@ -336,7 +336,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 {
                     bancoDeDados.IniciarTransacao();
 
-                    _da.InserirFilaArquivoCarSicar(solicitacaoId, eCARSolicitacaoOrigem.Credenciado, bancoDeDados);
+                    _da.InserirFilaArquivoCarSicar(solicitacao, eCARSolicitacaoOrigem.Credenciado, bancoDeDados);
 
                     bancoDeDados.Commit();
 

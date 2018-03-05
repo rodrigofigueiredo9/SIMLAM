@@ -13,6 +13,9 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno
 		public const string KeyCadastroAmbientalRuralSolicitacaoSituacao = "CadastroAmbientalRuralSolicitacaoSituacao";
 		public List<Lista> CadastroAmbientalRuralSolicitacaoSituacao { get { return _daLista.ObterCadastroAmbientalRuralSolicitacaoSituacao(); } }
 
+        public const string KeySicarSituacao = "SicarSituacao";
+		public List<Lista> SicarSituacao { get { return _daLista.ObterSicarSituacao(); } }
+
 		public const string KeyCadastroAmbientalRuralSolicitacaoOrigem = "CadastroAmbientalRuralSolicitacaoOrigem";
 		public List<Lista> CadastroAmbientalRuralSolicitacaoOrigem { get { return _daLista.ObterCadastroAmbientalRuralSolicitacaoOrigem(); } }
 
