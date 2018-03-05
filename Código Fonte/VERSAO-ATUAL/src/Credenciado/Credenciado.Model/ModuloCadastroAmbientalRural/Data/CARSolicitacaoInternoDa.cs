@@ -263,6 +263,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
+        internal string ObterSituacaoTituloCARCodigoEmp(Int64 empreendimentoCod, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                Comando comando = bancoDeDados.CriarComando(@"
+				select ls.texto situacao_texto from tab_titulo t
+                    inner join lov_titulo_situacao ls on ls.id = t.situacao
+                    inner join tab_empreendimento e on t.empreendimento = e.id
+				where t.situacao <> 5 /*Encerrado*/ and t.modelo = (select id from tab_titulo_modelo where codigo = 49 /*Cadastro Ambiental Rural*/)
+				and e.codigo = :empreendimento", UsuarioInterno);
+
+                comando.AdicionarParametroEntrada("empreendimento", empreendimentoCod, DbType.Int32);
+
+                return Convert.ToString(bancoDeDados.ExecutarScalar(comando));
+            }
+        }
+
 		internal string EmpreendimentoPossuiSolicitacao(int empreendimentoId, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))

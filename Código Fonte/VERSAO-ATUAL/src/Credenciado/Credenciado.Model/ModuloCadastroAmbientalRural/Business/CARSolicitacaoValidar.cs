@@ -422,7 +422,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
                 }
                 if(solicitacao.SituacaoId == 5)
                 {
-                    if (_busTitulo.ExistePorEmpreendimento(entidade.Empreendimento.Id))
+                    String tituloSituacao = _carSolicitacaoInternoDa.ObterSituacaoTituloCARCodigoEmp(entidade.Empreendimento.Codigo ?? 0);
+
+                    if (!String.IsNullOrWhiteSpace(tituloSituacao))
+                    //if (_busTitulo.ExistePorEmpreendimento(entidade.Empreendimento.Id))
                     {
                         Validacao.Add(Mensagem.Retificacao.msgCred6());
                         return false;
