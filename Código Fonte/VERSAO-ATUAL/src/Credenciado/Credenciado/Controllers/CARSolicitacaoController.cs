@@ -302,7 +302,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
             if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
             {
-                _bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+                _bus.EnviarReenviarArquivoSICAR(carSolicitacao, isEnviar);
             }
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();

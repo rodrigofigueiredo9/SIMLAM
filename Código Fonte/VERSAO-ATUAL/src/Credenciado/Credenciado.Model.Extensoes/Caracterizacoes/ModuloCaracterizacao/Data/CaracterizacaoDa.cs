@@ -371,7 +371,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return lista;
 		}
 
-        public List<Caracterizacao> ObterCaracterizacoesEmpreendimento(Int64 empreendimentoCod, BancoDeDados banco = null)
+        public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod, BancoDeDados banco = null)
         {
             List<Caracterizacao> lista = new List<Caracterizacao>();
 			String select = String.Empty;

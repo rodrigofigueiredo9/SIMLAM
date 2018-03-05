@@ -204,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
-            sqlBuilder.Append("tid = :tid,");
+            //sqlBuilder.Append("tid = :tid,");
             sqlBuilder.Append("situacao_envio = :situacao_envio,");
             sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
 
@@ -226,13 +226,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
             sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
             sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
             sqlBuilder.Append("MENSAGEM_RESPOSTA = :mensagem_resposta ");
-            sqlBuilder.Append(" WHERE id = :id");
+            sqlBuilder.Append(" WHERE solicitacao_car = :id");
 
             try
             {
                 using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
                 {
-                    cmd.Parameters.Add(new OracleParameter("tid", tid));
+                    //cmd.Parameters.Add(new OracleParameter("tid", item.solicitacao_car_anterior_tid));
                     cmd.Parameters.Add(new OracleParameter("situacao_envio", SITUACAO_ENVIO_ARQUIVO_RETIFICADO));
                     cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
                     cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
@@ -247,7 +247,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
                     cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
                     //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));                    
-                    cmd.Parameters.Add(new OracleParameter("id", item.id));
+                    cmd.Parameters.Add(new OracleParameter("solicitacao_car", item.solicitacao_car_anterior));
 
                     cmd.ExecuteNonQuery();
                 }
@@ -260,8 +260,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
             RequisicaoJobCar requisicao = new RequisicaoJobCar();
             requisicao.empreendimento = item.empreendimento;
             requisicao.empreendimento_tid = item.empreendimento_tid;
-            requisicao.solicitacao_car = item.solicitacao_car;
-            requisicao.solicitacao_car_tid = item.solicitacao_car_tid;
+            requisicao.solicitacao_car = item.solicitacao_car_anterior;
+            requisicao.solicitacao_car_tid = item.solicitacao_car_anterior_tid;
 
             //Inserir no Histórico
             InserirHistoricoControleCar(conn, requisicao, tid, resultado);
@@ -434,32 +434,17 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
         public static ItemControleCar ObterItemControleCarRetificacao(OracleConnection conn, RequisicaoJobCar requisicao)
         {
-            //var schema = CarUtils.GetEsquemaInstitucional();
-            var schema = (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
-               ? "IDAF"
-               : "IDAFCREDENCIADO";
-
-            var schemaN = (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL) 
-               ? 1 : 2;
             var item = new ItemControleCar();
-
             var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("SELECT T.ID, T.TID, T.EMPREENDIMENTO, T.EMPREENDIMENTO_TID,T.SOLICITACAO_CAR, T.SOLICITACAO_CAR_TID,  ");
-            sqlBuilder.Append("T.SITUACAO_ENVIO, T.CHAVE_PROTOCOLO,T.DATA_GERADO,T.DATA_ENVIO,T.PENDENCIAS,T.CODIGO_IMOVEL, ");
-            sqlBuilder.Append("T.URL_RECIBO,T.STATUS_SICAR,T.CONDICAO,T.SOLICITACAO_CAR_ESQUEMA,NVL(T.SOLICITACAO_PASSIVO, 0)SOLICITACAO_PASSIVO, ");
-            sqlBuilder.Append("NVL(T.SOLICITACAO_SITUACAO_APROVADO, 2)SOLICITACAO_SITUACAO_APROVADO FROM IDAF.TAB_CONTROLE_SICAR t ");
-            sqlBuilder.Append("INNER JOIN "+ schema+ ".TAB_EMPREENDIMENTO E1 ON E1.ID = t.EMPREENDIMENTO  ");
-            sqlBuilder.Append("INNER JOIN " + schema + ".TAB_EMPREENDIMENTO E2 ON E2.CODIGO = E1.CODIGO WHERE ");
-            sqlBuilder.Append("E2.ID = : empreendimento AND t.SOLICITACAO_CAR != :car AND t.SITUACAO_ENVIO NOT IN (4,8) AND t.SOLICITACAO_CAR_ESQUEMA = :schema ");
-            sqlBuilder.Append("AND rownum = 1 ORDER BY id DESC");
-
+           
             try
             {
-                using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+                using (var cmd = new OracleCommand(@"SELECT ID, TID, EMPREENDIMENTO, EMPREENDIMENTO_TID, SOLICITACAO_CAR, SOLICITACAO_CAR_TID, 
+                                                    SOLICITACAO_CAR_ANTERIOR, SITUACAO_ENVIO, CHAVE_PROTOCOLO, DATA_GERADO, DATA_ENVIO, PENDENCIAS, 
+                                                    CODIGO_IMOVEL, SOLICITACAO_CAR_ESQUEMA, SOLICITACAO_CAR_ANT_ESQUEMA, SOLICITACAO_CAR_ANTERIOR_TID 
+                                                    FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
                 {
-                    cmd.Parameters.Add(new OracleParameter("empreendimento", requisicao.empreendimento));
-                    cmd.Parameters.Add(new OracleParameter("car", requisicao.solicitacao_car));
-                    cmd.Parameters.Add(new OracleParameter("schema", schemaN));
+                    cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
 
                     using (var dr = cmd.ExecuteReader())
                     {
@@ -474,18 +459,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
                             empreendimento_tid = dr.GetValue<string>("empreendimento_tid"),
                             solicitacao_car = dr.GetValue<Int32>("solicitacao_car"),
                             solicitacao_car_tid = dr.GetValue<string>("solicitacao_car_tid"),
+                            solicitacao_car_anterior = dr.GetValue<Int32>("solicitacao_car_anterior"),
                             situacao_envio = dr.GetValue<int>("situacao_envio"),
                             chave_protocolo = dr.GetValue<string>("chave_protocolo"),
                             data_gerado = dr.GetValue<DateTime>("data_gerado"),
                             data_envio = dr.GetValue<DateTime>("data_envio"),
                             pendencias = dr.GetValue<string>("pendencias"),
                             codigo_imovel = dr.GetValue<string>("codigo_imovel"),
-                            url_recibo = dr.GetValue<string>("url_recibo"),
-                            status_sicar = dr.GetValue<string>("status_sicar"),
-                            condicao = dr.GetValue<string>("condicao"),
                             solicitacao_car_esquema = dr.GetValue<int>("solicitacao_car_esquema"),
-                            solicitacao_passivo = Convert.ToInt32(dr["solicitacao_passivo"]),
-                            solicitacao_situacao_aprovado = Convert.ToInt32(dr["solicitacao_situacao_aprovado"]),
+                            solicitacao_car_anterior_esquema = dr.GetValue<Int32>("solicitacao_car_ant_esquema"),
+                            solicitacao_car_anterior_tid = dr.GetValue<string>("solicitacao_car_anterior_tid"),
                         };
                     }
                 }
@@ -533,7 +516,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao", situacao));
-                    if (situacao == 2) cmd.Parameters.Add(new OracleParameter("motivo", " "));
+                    if (situacao == 2 || situacao == 1) cmd.Parameters.Add(new OracleParameter("motivo", " "));
                     if (situacao == 6 ||situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
 					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
@@ -562,9 +545,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			InserirHistoricoSolicitacaoCar(conn, origem, solicitacaoId);
 		}
 
-        public static void AtualizarSolicitacaoCarRetificacao(OracleConnection conn, string origem, int solicitacaoId, string tid)
+        public static void AtualizarSolicitacaoCarRetificacao(OracleConnection conn, int origem, int solicitacaoId, string tid)
         {
-            var tabela = (origem == RequisicaoJobCar.INSTITUCIONAL)
+            var tabela = (origem == 1)
                 ? "TAB_CAR_SOLICITACAO"
                 : "TAB_CAR_SOLICITACAO_CRED";
 
@@ -591,7 +574,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
                 }
 
                 var strQuery = string.Empty;
-                if (origem == RequisicaoJobCar.INSTITUCIONAL)
+                if (origem == 1)
                     strQuery = "begin LST_CONSULTA.carSolicitacaoTitulo(:id); end;";
                 else
                     strQuery = "begin LST_CONSULTA_CRED.carSolicitacao(:id); end;";
@@ -607,9 +590,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
             {
                 Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
             }
-
+            var schema = (origem == 1)
+                ? "institucional"
+                : "credenciado";
             //Inserir no Histórico
-            InserirHistoricoSolicitacaoCar(conn, origem, solicitacaoId);
+            InserirHistoricoSolicitacaoCar(conn, schema, solicitacaoId);
         }
 		private static void InserirHistoricoSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId)
 		{

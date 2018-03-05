@@ -1446,7 +1446,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
                             tab_empreendimento      e,
                             tab_controle_sicar      cs  
 					 where c.empreendimento = :empreendimento
-                        and cs.empreendimento = e.id
+                        and cs.solicitacao_car = c.id
                         and c.situacao = 2 /*Válido*/
                         and cs.situacao_envio = 6 /*Arquivo Entregue*/
 					union all
@@ -1458,7 +1458,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					             where cc.empreendimento = ce.id
 					                and ce.codigo = e.codigo
 					                and e.id = :empreendimento
-                                    and cs.empreendimento = e.id
+                                    and cs.solicitacao_car = cc.id
              
                                     and cc.situacao = 2 /*Válido*/
                                     and cs.situacao_envio = 6 /*Arquivo Entregue*/)";

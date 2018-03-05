@@ -88,7 +88,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				bancoDeDados.Commit();
 
 				//Inserir na fila para gerar o .CAR para envio para o SICAR
-				InserirFilaArquivoCarSicar(solicitacao.Id, eCARSolicitacaoOrigem.Credenciado, banco);
+				InserirFilaArquivoCarSicar(solicitacao, eCARSolicitacaoOrigem.Credenciado, banco);
 
 				return solicitacao.Id;
 
@@ -123,7 +123,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			}
 		}
 
-		internal void InserirFilaArquivoCarSicar(int solicitacaoId, eCARSolicitacaoOrigem solicitacaoOrigem, BancoDeDados banco = null)
+		internal void InserirFilaArquivoCarSicar(CARSolicitacao solicitacao, eCARSolicitacaoOrigem solicitacaoOrigem, BancoDeDados banco = null)
 		{
 			string requisicao_fila = string.Empty;
             var selectNULO = true;
@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				Comando comando = bancoDeDados.CriarComando("select s.solicitacao_id solic_id, s.tid solic_tid, s.empreendimento_id emp_id, s.empreendimento_tid emp_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao       "+
 					"and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc", UsuarioCredenciado);
 
-				comando.AdicionarParametroEntrada("idSolicitacao", solicitacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("idSolicitacao", solicitacao.Id, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -164,7 +164,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
-					SalvarControleArquivoCarSicar(solicitacaoId, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, banco);
+					SalvarControleArquivoCarSicar(solicitacao, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, banco);
 
 					bancoDeDados.Commit();
 				}
@@ -181,7 +181,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     Comando comando = bancoDeDados.CriarComando("select s.solicitacao_id solic_id, s.tid solic_tid, s.empreendimento_id emp_id, s.empreendimento_tid emp_tid from hst_car_solicitacao s where s.solicitacao_id = :idSolicitacao    "+
 					" and s.tid = (select ss.tid from tab_car_solicitacao ss where ss.id= :idSolicitacao) order by id desc");
 
-                    comando.AdicionarParametroEntrada("idSolicitacao", solicitacaoId, DbType.Int32);
+                    comando.AdicionarParametroEntrada("idSolicitacao", solicitacao.Id, DbType.Int32);
 
                     using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                     {
@@ -209,7 +209,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
                         bancoDeDados.ExecutarNonQuery(comando);
 
-                        SalvarControleArquivoCarSicar(solicitacaoId, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, banco);
+                        SalvarControleArquivoCarSicar(solicitacao, eStatusArquivoSICAR.AguardandoEnvio, solicitacaoOrigem, banco);
 
                         bancoDeDados.Commit();
                     }
@@ -219,10 +219,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             #endregion
         }
 
-		internal void SalvarControleArquivoCarSicar(int solicitacaoId, eStatusArquivoSICAR statusArquivoSICAR, eCARSolicitacaoOrigem solicitacaoOrigem, BancoDeDados banco = null)
+		internal void SalvarControleArquivoCarSicar(CARSolicitacao solicitacao, eStatusArquivoSICAR statusArquivoSICAR, eCARSolicitacaoOrigem solicitacaoOrigem, BancoDeDados banco = null)
 		{
 			ControleArquivoSICAR controleArquivoSICAR = new ControleArquivoSICAR();
-			controleArquivoSICAR.SolicitacaoCarId = solicitacaoId;
+			controleArquivoSICAR.SolicitacaoCarId = solicitacao.Id;
+            CARSolicitacao retificado = new CARSolicitacao();
+
+            retificado = ObterPorEmpreendimento(solicitacao.Empreendimento.Codigo ?? 0);
+            String codigoRetificacao = String.Empty;
+
+            if (retificado != null)
+            {
+                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			    {
+				    bancoDeDados.IniciarTransacao();
+
+				    #region Coleta de dados
+                    Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs 
+                                                                    where tcs.solicitacao_car = :idSolicitacao and solicitacao_car_esquema = :schema");
+                    comando.AdicionarParametroEntrada("idSolicitacao", retificado.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("schema", retificado.Esquema, DbType.Int32);
+
+                    using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            codigoRetificacao = reader.GetValue<String>("codigo_imovel");
+                        }
+                        reader.Close();
+                    }
+                    #endregion
+                }
+            }
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
@@ -255,9 +283,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				{
 					#region Criar controle arquivo SICAR
 					comando = bancoDeDados.CriarComando(@"
-				    insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema)
+				    insert into tab_controle_sicar (id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio, solicitacao_car_esquema, solicitacao_car_anterior, solicitacao_car_anterior_tid, solicitacao_car_ant_esquema, codigo_imovel)
                     values
-                    (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema)
+                    (seq_tab_controle_sicar.nextval, :tid, :empreendimento, :empreendimento_tid, :solicitacao_car, :solicitacao_car_tid, :situacao_envio, :solicitacao_car_esquema, :solicitacao_car_anterior, :solicitacao_car_anterior_tid, :solicitacao_car_ant_esquema, :codigo_imovel)
                      returning id into :id", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("empreendimento", controleArquivoSICAR.EmpreendimentoId, DbType.Int32);
@@ -266,6 +294,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
 					comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
 					comando.AdicionarParametroEntrada("solicitacao_car_esquema", (int)solicitacaoOrigem, DbType.Int32);
+                    comando.AdicionarParametroEntrada("solicitacao_car_anterior", retificado.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
+                    comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
+                    comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
 
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -315,17 +347,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					begin
 						for j in (select tcs.id, tcs.tid, tcs.empreendimento, tcs.empreendimento_tid, tcs.solicitacao_car, tcs.solicitacao_car_tid,
 										 tcs.situacao_envio, tcs.chave_protocolo, tcs.data_gerado, tcs.data_envio, tcs.arquivo, tcs.pendencias,
-										 tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema
+										 tcs.codigo_imovel, tcs.url_recibo, tcs.status_sicar, tcs.condicao, tcs.solicitacao_car_esquema, 
+                                         solicitacao_car_anterior, solicitacao_car_anterior_tid, solicitacao_car_ant_esquema
 								  from tab_controle_sicar tcs
 								  where tcs.id = :id) loop  
 						   INSERT INTO HST_CONTROLE_SICAR
 							 (id, controle_sicar_id, tid, empreendimento, empreendimento_tid, solicitacao_car, solicitacao_car_tid, situacao_envio,
 							  chave_protocolo, data_gerado, data_envio, arquivo, pendencias, codigo_imovel, url_recibo, status_sicar, condicao,
-							  solicitacao_car_esquema, data_execucao)
+							  solicitacao_car_esquema, data_execucao, solicitacao_car_anterior, solicitacao_car_anterior_tid, solicitacao_car_ant_esquema)
 						   values
 							 (SEQ_HST_CONTROLE_SICAR.nextval, j.id, j.tid, j.empreendimento, j.empreendimento_tid, j.solicitacao_car, j.solicitacao_car_tid,
 							  j.situacao_envio, j.chave_protocolo, j.data_gerado, j.data_envio, j.arquivo, j.pendencias, j.codigo_imovel, j.url_recibo,
-							  j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP);
+							  j.status_sicar, j.condicao, j.solicitacao_car_esquema, CURRENT_TIMESTAMP, 
+                              j.solicitacao_car_anterior, j.solicitacao_car_anterior_tid, j.solicitacao_car_ant_esquema);
 						end loop;
 					end;", UsuarioCredenciado);
 
@@ -879,11 +913,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
             {
-                #region Solicitação
-
+                #region Solicitação Valida
+                // Busca a solicitação valida ou a ultima solicitação
+                //CREDENCIADO
                 Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
                                                                     inner join tab_empreendimento ec on ec.id = c.empreendimento 
-                                                                where c.situacao != 3 and ec.codigo = :codigo ");
+                                                                where c.situacao = 2 and ec.codigo = :codigo order by 1 desc");
 
                 comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
@@ -901,40 +936,99 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                 if (solicitacaoId > 0)
                 {
                     solicitacao =  Obter(solicitacaoId, banco: bancoDeDados);
+                    solicitacao.Esquema = 2;
+                    return solicitacao;
                 }
-                else
+
+                //INSTITUCIONAL
+                using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
                 {
-                    using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
+                    comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                inner join tab_empreendimento ei on ei.id = c.empreendimento 
+                                                            where c.situacao = 2 and ei.codigo = :codigo order by 1 desc");
+
+                    comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                    solicitacaoId = 0;
+
+                    using (IDataReader reader = bd.ExecutarReader(comando))
                     {
-                        #region Solicitação
-
-                        comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
-                                                                    inner join tab_empreendimento ei on ei.id = c.empreendimento 
-                                                                where c.situacao != 3 and ei.codigo = :codigo ");
-
-                        comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
-
-                        solicitacaoId = 0;
-
-                        using (IDataReader reader = bd.ExecutarReader(comando))
+                        if (reader.Read())
                         {
-                            if (reader.Read())
-                            {
-                                solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-                            }
-                            reader.Close();
+                            solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
                         }
-                        CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
-                        solicitacao = solicitacaoId > 0 ? _da.Obter(solicitacaoId, banco: bd) : null;
-                        #endregion
+                        reader.Close();
+                    }
+                    CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+
+                    if (solicitacaoId > 0)
+                    {
+                        solicitacao = _da.Obter(solicitacaoId, banco: bd);
+                        solicitacao.Esquema = 1;
+                        return solicitacao;
                     }
                 }
-                
+                #endregion
 
+                #region Solicitação Resto
+
+                //CREDENCIADO
+                comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                    inner join tab_empreendimento ec on ec.id = c.empreendimento 
+                                                                where c.situacao != 3 and ec.codigo = :codigo order by 1 desc");
+
+                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                solicitacaoId = 0;
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                    }
+                    reader.Close();
+                }
+
+                if (solicitacaoId > 0)
+                {
+                    solicitacao = Obter(solicitacaoId, banco: bancoDeDados);
+                    solicitacao.Esquema = 2;
+                    return solicitacao;
+                }
+
+                //INSTITUCIONAL
+                using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
+                {
+                    comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                                                                inner join tab_empreendimento ei on ei.id = c.empreendimento 
+                                                            where c.situacao != 3 and ei.codigo = :codigo order by 1 desc");
+
+                    comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+                    solicitacaoId = 0;
+
+                    using (IDataReader reader = bd.ExecutarReader(comando))
+                    {
+                        if (reader.Read())
+                        {
+                            solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+                        }
+                        reader.Close();
+                    }
+                    CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+
+                    if (solicitacaoId > 0)
+                    {
+                        solicitacao = _da.Obter(solicitacaoId, banco: bd);
+                        solicitacao.Esquema = 1;
+                        return solicitacao;
+                    }
+                }
                 #endregion
             }
 
-            return solicitacao;
+            return null;
         }
 
         internal ControleArquivoSICAR ObterControleArquivoSicar(int empreendimentoId, BancoDeDados banco = null)
