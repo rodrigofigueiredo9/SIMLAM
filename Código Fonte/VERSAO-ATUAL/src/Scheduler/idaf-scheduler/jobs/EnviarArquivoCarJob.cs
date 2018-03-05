@@ -111,9 +111,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
                             if(itemSicar != null)
                             {
-                                if (!String.IsNullOrWhiteSpace(itemSicar.codigo_imovel) && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
+                                if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
                                 {
-                                    ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, requisicao.origem, itemSicar.solicitacao_car, tid);
+                                    ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
                                     ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
                                 }
                             }                            
