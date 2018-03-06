@@ -252,7 +252,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return Validacao.EhValido;
 		}
 
-		public void EnviarReenviarArquivoSICAR(int solicitacaoId, bool isEnviar, BancoDeDados banco = null)
+		public void EnviarReenviarArquivoSICAR(CARSolicitacao solicitacao, bool isEnviar, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -262,7 +262,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				{
 					bancoDeDados.IniciarTransacao();
 
-					_da.InserirFilaArquivoCarSicar(solicitacaoId, eCARSolicitacaoOrigem.Institucional, bancoDeDados);
+					_da.InserirFilaArquivoCarSicar(solicitacao, eCARSolicitacaoOrigem.Institucional, bancoDeDados);
 
 					bancoDeDados.Commit();
 
