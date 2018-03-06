@@ -3065,5 +3065,52 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { id = notificacao.Id, Msg = Validacao.Erros });
 		}
 		#endregion Notificacao
+
+		#region Cobranca
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarCodigoReceita })]
+		public ActionResult Cobranca()
+		{
+			CobrancaVM vm = new CobrancaVM();
+			vm.ListaCobranca = _busConfiguracao.ObterCobranca();
+
+			return View(vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		public ActionResult Cobranca(List<Cobranca> listaCobranca)
+		{
+			if (listaCobranca == null)
+				listaCobranca = new List<Cobranca>();
+
+			_busConfiguracao.SalvarCobranca(listaCobranca);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@Url = Url.Action("Cobranca", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		public ActionResult ExcluirCobranca(Cobranca CobrancaExcluido)
+		{
+			if (CobrancaExcluido != null && CobrancaExcluido.Id != 0)
+			{
+				_busConfiguracao.PermiteExcluirCobranca(CobrancaExcluido);
+			}
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@Url = Url.Action("Cobranca", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
+		#endregion Cobranca
 	}
 }

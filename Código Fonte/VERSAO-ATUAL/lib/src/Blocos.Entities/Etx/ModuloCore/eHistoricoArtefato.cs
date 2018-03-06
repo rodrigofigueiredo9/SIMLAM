@@ -78,6 +78,7 @@
         codigoreceita = 149,
         penalidadeinfracao = 150,
 		parametrizacao = 151,
-		vrte = 152	
+		vrte = 152,
+		cobranca = 153
 	}
 }

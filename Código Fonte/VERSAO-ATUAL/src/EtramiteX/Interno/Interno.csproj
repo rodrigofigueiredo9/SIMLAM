@@ -281,6 +281,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CobrancaVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
@@ -686,6 +687,7 @@
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
+    <Content Include="Scripts\Fiscalizacao\cobranca.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
@@ -1713,13 +1715,17 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
+    <Content Include="Views\Fiscalizacao\Cobranca.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacao.aspx" />
+    <Content Include="Views\Fiscalizacao\CobrancaPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListar.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarFiltros.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarResultados.ascx" />
+    <Content Include="Views\Fiscalizacao\CobrancaVisualizar.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoVisualizar.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarVrte.aspx" />
+    <Content Include="Views\Fiscalizacao\CobrancaParcelamento.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoVrte.ascx" />
     <Content Include="Views\Fiscalizacao\NotificacaoPartial.ascx" />
     <Content Include="Views\Fiscalizacao\Notificacao.aspx" />

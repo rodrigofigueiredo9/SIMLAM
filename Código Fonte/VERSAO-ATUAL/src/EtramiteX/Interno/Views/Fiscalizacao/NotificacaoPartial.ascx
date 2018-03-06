@@ -44,11 +44,11 @@
         </div>
 
         <div class="coluna25">
-            <label><b>Forma de notificação do JIAPI</b></label><br />
+            <label class="lblFormaJIAPI"><b>Forma de notificação do JIAPI</b></label><br />
             <span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpnFormaJIAPI">
-                <label><%= Html.RadioButton("Notificacao.FormaJIAPI", 1, (Model.Notificacao.FormaJIAPI == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI", @onclick= "$('.jiapi').css('visibility', '');" }))%>Pessoal (em mãos)</label><br />
-                <label><%= Html.RadioButton("Notificacao.FormaJIAPI", 2, (Model.Notificacao.FormaJIAPI == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI", @onclick= "$('.jiapi').css('visibility', '');" }))%>AR - Aviso de Recebimento</label><br />
-                <label><%= Html.RadioButton("Notificacao.FormaJIAPI", 3, (Model.Notificacao.FormaJIAPI == 3), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI", @onclick= "$('.jiapi').css('visibility', '');" }))%>Por Edital</label><br />
+                <label class="lblFormaJIAPI"><%= Html.RadioButton("Notificacao.FormaJIAPI", 1, (Model.Notificacao.FormaJIAPI == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI" }))%>Pessoal (em mãos)</label><br />
+                <label class="lblFormaJIAPI"><%= Html.RadioButton("Notificacao.FormaJIAPI", 2, (Model.Notificacao.FormaJIAPI == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI" }))%>AR - Aviso de Recebimento</label><br />
+                <label class="lblFormaJIAPI"><%= Html.RadioButton("Notificacao.FormaJIAPI", 3, (Model.Notificacao.FormaJIAPI == 3), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaJIAPI" }))%>Por Edital</label><br />
             </span>
             <br />
 
@@ -60,11 +60,11 @@
 
         <div class="block">
             <div class="coluna72">
-                <label><b>Forma de notificação do CORE</b></label><br />
+                <label class="lblFormaCORE"><b>Forma de notificação do CORE</b></label><br />
                 <span style="border-style: solid; border-width: 1px; padding: 0 3px 0 0; border-color: transparent;" class="text" id="SpnFormaCORE">
-                    <label><%= Html.RadioButton("Notificacao.FormaCORE", 1, (Model.Notificacao.FormaCORE == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE", @onclick= "$('.core').css('visibility', '');" }))%>Pessoal (em mãos)</label><br />
-                    <label><%= Html.RadioButton("Notificacao.FormaCORE", 2, (Model.Notificacao.FormaCORE == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE", @onclick= "$('.core').css('visibility', '');" }))%>AR - Aviso de Recebimento</label><br />
-                    <label><%= Html.RadioButton("Notificacao.FormaCORE", 3, (Model.Notificacao.FormaCORE == 3), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE", @onclick= "$('.core').css('visibility', '');" }))%>Por Edital</label><br />
+                    <label class="lblFormaCORE"><%= Html.RadioButton("Notificacao.FormaCORE", 1, (Model.Notificacao.FormaCORE == 1), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE" }))%>Pessoal (em mãos)</label><br />
+                    <label class="lblFormaCORE"><%= Html.RadioButton("Notificacao.FormaCORE", 2, (Model.Notificacao.FormaCORE == 2), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE" }))%>AR - Aviso de Recebimento</label><br />
+                    <label class="lblFormaCORE"><%= Html.RadioButton("Notificacao.FormaCORE", 3, (Model.Notificacao.FormaCORE == 3), ViewModelHelper.SetaDisabled(false, new { @class = "rdbFormaCORE" }))%>Por Edital</label><br />
                 </span>
             </div>
             <div class="coluna52 append2 core" style="visibility: hidden;">
@@ -75,10 +75,10 @@
                 <%= Html.TextBox("Notificacao.DataCORE.DataTexto", Model.Notificacao.DataCORE.DataTexto, ViewModelHelper.SetaDisabled(false, new { @class = "text txtDataCORE setarFoco maskData" }))%>
             </div>
         </div>
-    </div>
 
-    <fieldset class="block box fsArquivos">
-        <legend>Arquivos Complementares</legend>
-        <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
-    </fieldset>
+        <fieldset class="block box fsArquivos">
+            <legend style="color: #000000"><b>Cópia de Notificação</b></legend>
+            <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
+        </fieldset>
+    </div>
 </div>

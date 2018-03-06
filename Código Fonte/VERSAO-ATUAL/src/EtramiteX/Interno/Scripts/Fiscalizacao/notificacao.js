@@ -17,7 +17,10 @@ Notificacao = {
 		if (options) { $.extend(Notificacao.settings, options); }
 		Notificacao.container = MasterPage.getContent(container);
 		Notificacao.container.delegate('.btnSalvar', 'click', Notificacao.salvar);
-		$('.fsArquivos', Notificacao.container).arquivo({ extPermitidas: [] });
+		Notificacao.container.delegate('.rdbFormaIUF', 'change', Notificacao.alterarVisibilidadeData);
+		Notificacao.container.delegate('.rdbFormaJIAPI', 'change', Notificacao.alterarVisibilidadeData);
+		Notificacao.container.delegate('.rdbFormaCORE', 'change', Notificacao.alterarVisibilidadeData);
+		$('.fsArquivos', Notificacao.container).arquivo({ extPermitidas: ['pdf'] });
 		Mascara.load();
 		Notificacao.alterarVisibilidadeData();
 	},
@@ -69,9 +72,30 @@ Notificacao = {
 
 	alterarVisibilidadeData: function () {
 		var obj = Notificacao.obter();
-		if (obj.FormaJIAPI > 0)
+
+		if (obj.FormaIUF > 0) {
+			$('.rdbFormaJIAPI').css('visibility', '');
+			$('.lblFormaJIAPI').css('visibility', '');
+		}
+		else {
+			$('.rdbFormaJIAPI').css('visibility', 'hidden');
+			$('.lblFormaJIAPI').css('visibility', 'hidden');
+		}
+
+		if (obj.FormaJIAPI > 0) {
 			$('.jiapi').css('visibility', '');
-		if (obj.FormaCORE > 0)
+			$('.rdbFormaCORE').css('visibility', '');
+			$('.lblFormaCORE').css('visibility', '');
+		}
+		else {
+			$('.jiapi').css('visibility', 'hidden');
+			$('.rdbFormaCORE').css('visibility', 'hidden');
+			$('.lblFormaCORE').css('visibility', 'hidden');
+		}
+
+		if (obj.FormaCORE  > 0) 
 			$('.core').css('visibility', '');
+		else
+			$('.core').css('visibility', 'hidden');
 	}
 }

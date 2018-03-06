@@ -817,4 +817,17 @@ procedure fiscdestinacao(p_id               number,
 							p_executor_tipo_id number,
 							p_executor_tid     varchar2);
 	--------------------------------------------------------- 
+  
+  ---------------------------------------------------------
+	--  COBRANCA
+	---------------------------------------------------------
+    
+  procedure cobranca(p_id               number,
+							p_acao             number,
+							p_executor_id      number,
+							p_executor_nome    varchar2,
+							p_executor_login   varchar2,
+							p_executor_tipo_id number,
+							p_executor_tid     varchar2);
+	--------------------------------------------------------- 
 end;
