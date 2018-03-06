@@ -334,7 +334,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			else
 			{
-				_bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+				_bus.EnviarReenviarArquivoSICAR(solicitacao, isEnviar);
 			}
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();

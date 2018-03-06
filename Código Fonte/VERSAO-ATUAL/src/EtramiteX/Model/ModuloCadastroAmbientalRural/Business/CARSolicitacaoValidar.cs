@@ -110,33 +110,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             {
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoEmpreendimentoObrigatorio);
             }
-            else
-            {
-                String situacao = _da.EmpreendimentoPossuiSolicitacao(entidade.Id, entidade.Empreendimento.Id);
-                if (!String.IsNullOrEmpty(situacao))
-                {
-                    Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                    return Validacao.EhValido;
-                }
-
-                situacao = _carSolicitacaoCredenciadoBus.EmpreendimentoPossuiSolicitacao(entidade.Empreendimento.Id);
-                if (!String.IsNullOrEmpty(situacao))
-                {
-                    Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                    return Validacao.EhValido;
-                }
-
-                entidade.Empreendimento.CNPJ = _da.ObterCNPJEmpreendimento(entidade.Empreendimento.Id);
-                if (!String.IsNullOrWhiteSpace(entidade.Empreendimento.CNPJ))
-                {
-                    situacao = _carSolicitacaoCredenciadoBus.EmpreendimentoPossuiSolicitacao(entidade.Empreendimento.CNPJ);
-                    if (!String.IsNullOrEmpty(situacao))
-                    {
-                        Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                        return Validacao.EhValido;
-                    }
-                }
-            }
 
             #endregion Empreendimento
 
