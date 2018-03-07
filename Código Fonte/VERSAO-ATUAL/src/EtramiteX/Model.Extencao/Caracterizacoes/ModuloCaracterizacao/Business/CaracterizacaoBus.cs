@@ -187,21 +187,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 
 		#region Obter/Validações
 
-        public bool ExisteCaracterizacaoPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+        public bool ExisteCaracterizacaoPorEmpreendimento(Int64 empreendimentoCod, int empreendimentoId, BancoDeDados banco = null)
         {
             List<Caracterizacao> caracterizacoes = null;
 
             try
             {
+                /*
                 caracterizacoes = ObterCaracterizacoesEmpreendimento(empreendimentoId);
 
                 foreach (var carac in caracterizacoes)
                 {
-                    if (carac.Id == 22) //Caracterização CAR
+                    if (carac.Tipo == eCaracterizacao.CadastroAmbientalRural)
+                    {
+                        return true;
+                    }
+                }*/
+
+                caracterizacoes = ObterCaracterizacoesCAR(empreendimentoCod);
+
+                foreach (var carac in caracterizacoes)
+                {
+                    if (carac.Tipo == eCaracterizacao.CadastroAmbientalRural)
                     {
                         return true;
                     }
                 }
+
                 return false;
             }
             catch (Exception exc)
@@ -226,6 +238,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 			return null;
 		}
 
+        public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod)
+        {
+            try
+            {
+                return _da.ObterCaracterizacoesCAR(empreendimentoCod);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+        
 		public EmpreendimentoCaracterizacao ObterEmpreendimentoSimplificado(int id)
 		{
 			try

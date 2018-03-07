@@ -110,33 +110,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             {
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoEmpreendimentoObrigatorio);
             }
-            else
-            {
-                String situacao = _da.EmpreendimentoPossuiSolicitacao(entidade.Id, entidade.Empreendimento.Id);
-                if (!String.IsNullOrEmpty(situacao))
-                {
-                    Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                    return Validacao.EhValido;
-                }
-
-                situacao = _carSolicitacaoCredenciadoBus.EmpreendimentoPossuiSolicitacao(entidade.Empreendimento.Id);
-                if (!String.IsNullOrEmpty(situacao))
-                {
-                    Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                    return Validacao.EhValido;
-                }
-
-                entidade.Empreendimento.CNPJ = _da.ObterCNPJEmpreendimento(entidade.Empreendimento.Id);
-                if (!String.IsNullOrWhiteSpace(entidade.Empreendimento.CNPJ))
-                {
-                    situacao = _carSolicitacaoCredenciadoBus.EmpreendimentoPossuiSolicitacao(entidade.Empreendimento.CNPJ);
-                    if (!String.IsNullOrEmpty(situacao))
-                    {
-                        Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoJaPossuiSolicitacao(situacao));
-                        return Validacao.EhValido;
-                    }
-                }
-            }
 
             #endregion Empreendimento
 
@@ -385,11 +358,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 && (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
-            if (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
+            /*if (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
             {
                 if (situacaoArquivo != eStatusArquivoSICAR.Nulo && situacaoArquivo != eStatusArquivoSICAR.ArquivoReprovado)
                     Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacaoSolicitacaoEnviadaSICAR);
-            }
+            }*/
 
             return Validacao.EhValido;
         }
@@ -421,7 +394,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 {
                     if (solicitacao.SituacaoId == 2)
                     {
-                        if (_caracterizacaoBus.ExisteCaracterizacaoPorEmpreendimento(entidade.Empreendimento.Id))
+                        if (_caracterizacaoBus.ExisteCaracterizacaoPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, entidade.Empreendimento.Id))
                         {
                             Validacao.Add(Mensagem.Retificacao.msgInst5());
                             return false;
@@ -437,7 +410,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                                 return false;
                             }
                             else
-                                if (_caracterizacaoBus.ExisteCaracterizacaoPorEmpreendimento(entidade.Empreendimento.Id))
+                                if (_caracterizacaoBus.ExisteCaracterizacaoPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, entidade.Empreendimento.Id))
                                 {
                                     Validacao.Add(Mensagem.Retificacao.msgCred5());
                                     return false;

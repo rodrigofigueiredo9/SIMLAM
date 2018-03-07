@@ -796,7 +796,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
                 Resultados<Titulo> titulos = ObterPorEmpreendimento(empreendimentoId);
                 if (titulos == null)
                     return false;
-                if (titulos.Itens.Count() > 1)
+                if (titulos.Itens.Count() > 0)
                     return true;
                 else
                     return false;
