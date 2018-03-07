@@ -410,7 +410,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return retorno;
 		}
 
-		internal CARSolicitacao Obter(int id, BancoDeDados banco = null)
+		public CARSolicitacao Obter(int id, BancoDeDados banco = null)
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
@@ -913,73 +913,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
             {
-                #region Solicitação Valida
-                // Busca a solicitação valida ou a ultima solicitação
+                #region Solicitação não válida
                 //CREDENCIADO
                 Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
                                                                     inner join tab_empreendimento ec on ec.id = c.empreendimento 
-                                                                where c.situacao = 2 and ec.codigo = :codigo order by 1 desc");
+                                                                where c.situacao != 3 and ec.codigo = :codigo order by c.situacao desc");
 
                 comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
                 int solicitacaoId = 0;
-
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-                    }
-                    reader.Close();
-                }
-
-                if (solicitacaoId > 0)
-                {
-                    solicitacao =  Obter(solicitacaoId, banco: bancoDeDados);
-                    solicitacao.Esquema = 2;
-                    return solicitacao;
-                }
-
-                //INSTITUCIONAL
-                using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
-                {
-                    comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
-                                                                inner join tab_empreendimento ei on ei.id = c.empreendimento 
-                                                            where c.situacao = 2 and ei.codigo = :codigo order by 1 desc");
-
-                    comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
-
-                    solicitacaoId = 0;
-
-                    using (IDataReader reader = bd.ExecutarReader(comando))
-                    {
-                        if (reader.Read())
-                        {
-                            solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-                        }
-                        reader.Close();
-                    }
-                    CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
-
-                    if (solicitacaoId > 0)
-                    {
-                        solicitacao = _da.Obter(solicitacaoId, banco: bd);
-                        solicitacao.Esquema = 1;
-                        return solicitacao;
-                    }
-                }
-                #endregion
-
-                #region Solicitação Resto
-
-                //CREDENCIADO
-                comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
-                                                                    inner join tab_empreendimento ec on ec.id = c.empreendimento 
-                                                                where c.situacao != 3 and ec.codigo = :codigo order by 1 desc");
-
-                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
-
-                solicitacaoId = 0;
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -1002,7 +944,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                 {
                     comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
                                                                 inner join tab_empreendimento ei on ei.id = c.empreendimento 
-                                                            where c.situacao != 3 and ei.codigo = :codigo order by 1 desc");
+                                                            where c.situacao != 3 and ei.codigo = :codigo order by c.situacao desc");
 
                     comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
