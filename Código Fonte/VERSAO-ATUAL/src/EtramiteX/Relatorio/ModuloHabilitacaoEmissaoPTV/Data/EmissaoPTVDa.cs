@@ -684,7 +684,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
                                 string cmdSql = string.Format(@"select distinct ld.Texto as DeclaracaoAdicionalTexto 
                                                                 from tab_cultivar_configuracao t, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot, tab_cfoc_praga cfpraga
                                                                 where t.cultivar = {1} and ld.id = ot.declaracao_adicional and ot.ptv = {0} and cfpraga.praga = ot.praga and t.tipo_producao = {2}
-                                                                and cfpraga.cfoc = {3} ", kv.Value, cultivarID, tipoProducaoID, origem);
+                                                                and cfpraga.cfoc = {3} and t.praga = ot.praga", kv.Value, cultivarID, tipoProducaoID, origem);
 
                                 comandoCred = bancoDeDadosCred.CriarComando(cmdSql, EsquemaBancoCredenciado);
 
