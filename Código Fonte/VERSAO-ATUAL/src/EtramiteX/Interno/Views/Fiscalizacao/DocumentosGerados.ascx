@@ -51,7 +51,10 @@
 				<span class="btnPdfLaudo icone pdf" title="PDF do Laudo de fiscalização"></span>
 			</td>
 		</tr>
-        <% if (Model.InfracaoVM.Infracao.ComInfracao == true) { %>
+        <% if (Model.MultaVM.Multa.IsDigital == true
+               || Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true
+               || Model.ObjetoInfracaoVM.Entidade.IsDigital == true
+               || Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true) { %>
         <tr>
 			<td>
 				<label title="Instrumento Único de Fiscalização">IUF</label>
