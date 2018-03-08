@@ -388,7 +388,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select t.fiscalizacao_id Id, t.situacao_id SituacaoId, t.situacao_data, t.situacao_texto SituacaoTexto, 
-					t.tid Tid, t.autos NumeroAutos, t.vencimento vencimentoFisc, t.pdf_auto_termo, t.pdf_laudo, t.pdf_croqui
+					t.tid Tid, t.autos NumeroAutos, t.vencimento vencimentoFisc, t.pdf_auto_termo, t.pdf_laudo, t.pdf_croqui, t.pdf_iuf
 					from {0}hst_fiscalizacao t where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -401,6 +401,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					fiscalizacaoItem.PdfAutoTermo.Id = reader.GetValue<Int32>("pdf_auto_termo");
 					fiscalizacaoItem.PdfLaudo.Id = reader.GetValue<Int32>("pdf_laudo");
 					fiscalizacaoItem.PdfCroqui.Id = reader.GetValue<Int32>("pdf_croqui");
+                    fiscalizacaoItem.PdfIUF.Id = reader.GetValue<Int32>("pdf_iuf");
 				});
 			}
 
@@ -648,19 +649,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			List<FiscalizacaoDocumento> lst = new List<FiscalizacaoDocumento>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select f.id hst_id, f.pdf_auto_termo, f.pdf_laudo, f.situacao_data, f.pdf_croqui croqui, fi.arquivo_id arq_auto_infracao, 
-					  fob.arquivo arq_termo_emb_int, fm.arquivo_id arq_termo_apree_dep, fcf.arquivo_termo_id arq_termo_comp  
-					  from {0}hst_fiscalizacao f, {0}hst_fisc_infracao fi, {0}hst_fisc_obj_infracao fob, 
-						{0}hst_fisc_material_apreendido fm, {0}hst_fisc_consid_final fcf
-					  where 
-					  f.fiscalizacao_id = :fiscalizacao and 
-					  f.situacao_anterior_id = 2 
-					  and f.situacao_id = 1 
-					  and f.acao_executada = 301 
-					  and f.id = fi.fiscalizacao_id_hst
-					  and f.id = fob.fiscalizacao_id_hst
-					  and f.id = fm.fiscalizacao_id_hst
-					  and f.id = fcf.id_hst order by f.situacao_data desc", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select f.id hst_id,
+                                           f.pdf_auto_termo,
+                                           f.pdf_laudo,
+                                           f.situacao_data,
+                                           f.pdf_croqui croqui,
+                                           f.pdf_iuf,
+                                           fi.arquivo_id arq_auto_infracao,
+                                           fob.arquivo arq_termo_emb_int,
+                                           fm.arquivo_id arq_termo_apree_dep,
+                                           fcf.arquivo_termo_id arq_termo_comp
+                                    from hst_fiscalizacao f,
+                                         hst_fisc_infracao fi,
+                                         hst_fisc_obj_infracao fob,
+                                         hst_fisc_material_apreendido fm,
+                                         hst_fisc_consid_final fcf
+                                    where f.fiscalizacao_id = :fiscalizacao
+                                          and f.situacao_anterior_id = 2
+                                          and f.situacao_id = 1
+                                          and f.acao_executada = 301
+                                          and f.id = fi.fiscalizacao_id_hst
+                                          and f.id = fob.fiscalizacao_id_hst(+)
+                                          and f.id = fm.fiscalizacao_id_hst(+)
+                                          and f.id = fcf.id_hst
+                                    order by f.situacao_data desc", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
@@ -680,6 +693,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					documento.PdfTermoEmbargoInter.Id = item.GetValue<int>("arq_termo_emb_int");
 					documento.PdfTermoApreensaoDep.Id = item.GetValue<int>("arq_termo_apree_dep");
 					documento.PdfTermoCompromisso.Id = item.GetValue<int>("arq_termo_comp");
+                    documento.PdfGeradoIUF.Id = item.GetValue<int>("pdf_iuf");
 
 					lst.Add(documento);
 				}

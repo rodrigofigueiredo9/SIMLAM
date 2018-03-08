@@ -726,6 +726,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					x.PdfAutoInfracao = arquivoDa.Obter(x.PdfAutoInfracao.Id??0, bancoDeDados);
 					x.PdfGeradoAutoTermo = arquivoDa.Obter(x.PdfGeradoAutoTermo.Id ?? 0, bancoDeDados);
 					x.PdfGeradoLaudo = arquivoDa.Obter(x.PdfGeradoLaudo.Id ?? 0, bancoDeDados);
+                    x.PdfGeradoIUF = arquivoDa.Obter(x.PdfGeradoIUF.Id ?? 0, bancoDeDados);
 					x.PdfTermoApreensaoDep = arquivoDa.Obter(x.PdfTermoApreensaoDep.Id ?? 0, bancoDeDados);
 					x.PdfTermoCompromisso = arquivoDa.Obter(x.PdfTermoCompromisso.Id ?? 0, bancoDeDados);
 					x.PdfTermoEmbargoInter = arquivoDa.Obter(x.PdfTermoEmbargoInter.Id ?? 0, bancoDeDados);
@@ -739,6 +740,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					{
 						x.PdfGeradoAutoTermo.Nome = "AutoTermoFiscalizacao";
 					}
+
+                    if (x.PdfGeradoIUF != null && x.PdfGeradoIUF.Id.GetValueOrDefault() > 0)
+                    {
+                        x.PdfGeradoLaudo.Nome = "Instrumento Único de Fiscalização";
+                    }
 
 				});	
 			}
@@ -823,10 +829,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     return _pdf.GerarInstrumentoUnicoFiscalizacao(id, banco: banco);
                 }
 
-                //if (historico > 0)
-                //{
-                //    fiscalizacao = ObterHistorico(historico);
-                //}
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
 
                 if (fiscalizacao.PdfIUF.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfIUF.Id != arquivo))
                 {
@@ -837,10 +843,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
                 Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfIUF.Id.GetValueOrDefault());
 
-                //if (historico > 0)
-                //{
-                //    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
-                //}
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
 
                 return pdf.Buffer;
 
