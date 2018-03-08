@@ -162,6 +162,50 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return outrasPenalidades;
         }
 
+        public void Excluir(int idFiscalizacao, BancoDeDados banco = null)
+        {
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                bancoDeDados.IniciarTransacao();
+
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select nvl(tfop.arquivo, 0) arquivo
+                                    from {0}tab_fisc_outras_penalidades tfop
+                                    where tfop.fiscalizacao = :idFiscalizacao", EsquemaBanco);
+                comando.AdicionarParametroEntrada("idFiscalizacao", idFiscalizacao, DbType.Int32);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int idArquivo = reader.GetValue<int>("arquivo");
+
+                        if (idArquivo > 0)
+                        {
+                            Comando comandoAux = bancoDeDados.CriarComando(@"
+                                                    delete from {0}tab_arquivo ta
+                                                    where id = :idArquivo", EsquemaBanco);
+                            comando.AdicionarParametroEntrada("idArquivo", idArquivo, DbType.Int32);
+                            bancoDeDados.ExecutarNonQuery(comando);
+                        }
+                    }
+                    reader.Close();
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                                    delete from {0}tab_fisc_outras_penalidades tfop
+                                    where tfop.fiscalizacao = :idFiscalizacao", EsquemaBanco);
+                comando.AdicionarParametroEntrada("idFiscalizacao", idFiscalizacao, DbType.Int32);
+
+                bancoDeDados.ExecutarNonQuery(comando);
+
+                Historico.Gerar(idFiscalizacao, eHistoricoArtefato.fiscalizacao, eHistoricoAcao.excluir, bancoDeDados);
+
+                Consulta.Gerar(idFiscalizacao, eHistoricoArtefato.fiscalizacao, bancoDeDados);
+
+                bancoDeDados.Commit();
+            }
+        }
+
 		#endregion
 
 		#region Obter / Filtrar
