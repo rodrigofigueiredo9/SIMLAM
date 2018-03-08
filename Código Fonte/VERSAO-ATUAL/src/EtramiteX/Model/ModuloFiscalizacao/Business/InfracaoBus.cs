@@ -119,7 +119,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
         {
             bool retorno = false;
 
-            try { 
+            try
+            {
                 retorno = _da.PossuiIUFBloco(fiscalizacaoId, banco);
             }
             catch (Exception exc)

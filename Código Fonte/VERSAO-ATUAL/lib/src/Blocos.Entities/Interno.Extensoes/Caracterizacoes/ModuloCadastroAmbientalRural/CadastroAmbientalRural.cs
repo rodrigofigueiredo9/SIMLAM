@@ -51,10 +51,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_TOTAL_CROQUI);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area!= null && area.Valor > 0)
+				if (area!= null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -66,10 +67,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_PRESERVADA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -81,10 +83,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_RECUPERACAO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -96,10 +99,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_USO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -111,10 +115,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_RECUPERAR_CALCULADO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -126,10 +131,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_RECUPERAR_EFETIVA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -141,10 +147,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.APP_USO_CONSOLIDADO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -156,10 +163,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_CROQUI);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -171,10 +179,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_DOCUMENTO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -186,10 +195,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_APP);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -200,10 +210,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_PRESERVADA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -214,10 +225,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_RECUPERACAO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -228,10 +240,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_RECUPERAR);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -242,10 +255,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get 
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_EMPREENDIMENTO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0; 
@@ -256,10 +270,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.TOTAL_ARL_CEDENTE);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return ((area.Valor / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor) * 100);
+					return ((area.Valor / areaATP.Valor) * 100);
 				}
 
 				return 0;
@@ -270,10 +285,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.TOTAL_ARL_RECEPTORA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return ((area.Valor / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor) * 100);
+					return ((area.Valor / areaATP.Valor) * 100);
 				}
 
 				return 0;
@@ -284,10 +300,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_CEDENTE_PRESERVADA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return ((area.Valor / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor) * 100);
+					return ((area.Valor / areaATP.Valor) * 100);
 				}
 
 				return 0;
@@ -298,10 +315,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_CEDENTE_EM_RECUPERACAO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -312,10 +330,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_CEDENTE_RECUPERAR);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -326,10 +345,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_RECEPTORA_PRESERVADA);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -340,10 +360,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_RECEPTORA_EM_RECUPERACAO);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;
@@ -354,10 +375,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCad
 			get
 			{
 				Area area = ObterArea(eCadastroAmbientalRuralArea.ARL_RECEPTORA_RECUPERAR);
+                Area areaATP = ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI);
 
-				if (area != null && area.Valor > 0)
+				if (area != null && area.Valor > 0 && areaATP.Valor > 0)
 				{
-					return (area.Valor * 100) / ObterArea(eCadastroAmbientalRuralArea.ATP_CROQUI).Valor;
+					return (area.Valor * 100) / areaATP.Valor;
 				}
 
 				return 0;

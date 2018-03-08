@@ -232,6 +232,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						
 						objetoInfracao.Tid = reader["tid"].ToString();
 
+                        //fiscalizações antigas
+                        if (objetoInfracao.FiscalizacaoSituacaoId != 1 && objetoInfracao.IsDigital == null)
+                        {
+                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist");
+                            objetoInfracao.SerieId = reader.GetValue<int?>("tei_gerado_pelo_sist_serie");
+                            objetoInfracao.NumeroIUF = reader.GetValue<string>("num_tei_bloco");
+                        }
+
                         if (reader["interditado"] != null && !Convert.IsDBNull(reader["interditado"]))
                         {
                             objetoInfracao.Interditado = Convert.ToBoolean(reader["interditado"]);
@@ -241,10 +249,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             objetoInfracao.Interditado = null;
                         }
 
-						if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
-						{
-							objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
-						}
+                        if (objetoInfracao.IsDigital == true && objetoInfracao.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            objetoInfracao.NumeroIUF = null;
+                            objetoInfracao.DataLavraturaTermo.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            objetoInfracao.DataLavraturaTermo.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
+
+                        //if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
+                        //{
+                        //    objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
+                        //}
 
 						if (reader["opniao_area_danificada"] != null && !Convert.IsDBNull(reader["opniao_area_danificada"]))
 						{

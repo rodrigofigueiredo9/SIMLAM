@@ -389,7 +389,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
-							ValorProdutosExtenso = reader.GetValue<string>("valor_produtos"),
+							ValorProdutosReais = reader.GetValue<decimal?>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),
 							Opiniao = reader.GetValue<string>("opiniao"),
 							FiscalizacaoSituacaoId = reader.GetValue<int>("situacao_id"),
@@ -404,7 +404,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 								Distrito = reader.GetValue<string>("endereco_distrito"),
 								Estado = reader.GetValue<int>("endereco_estado"),
 								Municipio = reader.GetValue<int>("endereco_municipio")
-							}
+							},
+                            IsDigital = false
 						};
 
 						materialApreendido.Arquivo = new Arquivo
@@ -530,7 +531,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Nome = reader.GetValue<string>("arquivo_nome")
                         };
 
-                        materialApreendido.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        if (materialApreendido.IsDigital == true && materialApreendido.FiscalizacaoSituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+                        {
+                            materialApreendido.NumeroIUF = null;
+                            materialApreendido.DataLavratura.Data = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            materialApreendido.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+                        }
                     }
                     reader.Close();
                 }

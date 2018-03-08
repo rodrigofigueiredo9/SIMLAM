@@ -112,6 +112,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.Fiscalizacao.ExcluirCertidaoDebidoFiscalizacao);
 			}
 
+            if (_da.GeradoNumeroIUFDigital(fiscalizacao.Id))
+            {
+                Validacao.Add(Mensagem.Fiscalizacao.ExcluirIUFGerado);
+            }
+
 			return Validacao.EhValido;
 		}
 

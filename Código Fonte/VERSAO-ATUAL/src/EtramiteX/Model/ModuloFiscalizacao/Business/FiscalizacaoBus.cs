@@ -152,6 +152,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						_daMaterialApreendido.Excluir(id, bancoDeDados);
 						_daConsideracaoFinal.Excluir(id, bancoDeDados);
 
+                        //novas seções
+                        _daMulta.Excluir(id, bancoDeDados);
+                        _daOutrasPenalidades.Excluir(id, bancoDeDados);
+
 						_da.Excluir(id, bancoDeDados);
 
 						_da.DeletarConsulta(id, bancoDeDados);
@@ -272,23 +276,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
                         #region IUF
 
-                        try
-                        {
-                            fiscalizacao.PdfIUF = new Arquivo();
-                            fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
-                            fiscalizacao.PdfIUF.Extensao = ".pdf";
-                            fiscalizacao.PdfIUF.ContentType = "application/pdf";
-                            fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
-                            arquivoBus.Salvar(fiscalizacao.PdfIUF);
+                        //Só gera IUF se for digital
+                        bool isDigital = _da.PossuiDigital(fiscalizacao.Id);
 
-                            arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
-                                User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
-                        }
-                        finally
+                        if (isDigital)
                         {
-                            if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                            try
                             {
-                                fiscalizacao.PdfIUF.Buffer.Close();
+                                fiscalizacao.PdfIUF = new Arquivo();
+                                fiscalizacao.PdfIUF.Nome = "InstrumentoUnicoFiscalizacao";
+                                fiscalizacao.PdfIUF.Extensao = ".pdf";
+                                fiscalizacao.PdfIUF.ContentType = "application/pdf";
+                                fiscalizacao.PdfIUF.Buffer = pdf.GerarInstrumentoUnicoFiscalizacao(fiscalizacao.Id, false, bancoDeDados);
+                                arquivoBus.Salvar(fiscalizacao.PdfIUF);
+
+                                arquivoDa.Salvar(fiscalizacao.PdfIUF, User.EtramiteIdentity.FuncionarioId, User.EtramiteIdentity.Name,
+                                    User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
+                            }
+                            finally
+                            {
+                                if (fiscalizacao.PdfIUF != null && fiscalizacao.PdfIUF.Buffer != null)
+                                {
+                                    fiscalizacao.PdfIUF.Buffer.Close();
+                                }
                             }
                         }
 
@@ -720,6 +730,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					x.PdfAutoInfracao = arquivoDa.Obter(x.PdfAutoInfracao.Id??0, bancoDeDados);
 					x.PdfGeradoAutoTermo = arquivoDa.Obter(x.PdfGeradoAutoTermo.Id ?? 0, bancoDeDados);
 					x.PdfGeradoLaudo = arquivoDa.Obter(x.PdfGeradoLaudo.Id ?? 0, bancoDeDados);
+                    x.PdfGeradoIUF = arquivoDa.Obter(x.PdfGeradoIUF.Id ?? 0, bancoDeDados);
 					x.PdfTermoApreensaoDep = arquivoDa.Obter(x.PdfTermoApreensaoDep.Id ?? 0, bancoDeDados);
 					x.PdfTermoCompromisso = arquivoDa.Obter(x.PdfTermoCompromisso.Id ?? 0, bancoDeDados);
 					x.PdfTermoEmbargoInter = arquivoDa.Obter(x.PdfTermoEmbargoInter.Id ?? 0, bancoDeDados);
@@ -733,6 +744,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					{
 						x.PdfGeradoAutoTermo.Nome = "AutoTermoFiscalizacao";
 					}
+
+                    if (x.PdfGeradoIUF != null && x.PdfGeradoIUF.Id.GetValueOrDefault() > 0)
+                    {
+                        x.PdfGeradoLaudo.Nome = "Instrumento Único de Fiscalização";
+                    }
 
 				});	
 			}
@@ -817,10 +833,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     return _pdf.GerarInstrumentoUnicoFiscalizacao(id, banco: banco);
                 }
 
-                //if (historico > 0)
-                //{
-                //    fiscalizacao = ObterHistorico(historico);
-                //}
+                if (historico > 0)
+                {
+                    fiscalizacao = ObterHistorico(historico);
+                }
 
                 if (fiscalizacao.PdfIUF.Id.GetValueOrDefault() == 0 || (historico > 0 && fiscalizacao.PdfIUF.Id != arquivo))
                 {
@@ -831,10 +847,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                 ArquivoBus arquivoBus = new ArquivoBus(eExecutorTipo.Interno);
                 Arquivo pdf = arquivoBus.Obter(fiscalizacao.PdfIUF.Id.GetValueOrDefault());
 
-                //if (historico > 0)
-                //{
-                //    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
-                //}
+                if (historico > 0)
+                {
+                    pdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(pdf.Buffer, "CANCELADO " + fiscalizacao.SituacaoAtualData.DataTexto);
+                }
 
                 return pdf.Buffer;
 

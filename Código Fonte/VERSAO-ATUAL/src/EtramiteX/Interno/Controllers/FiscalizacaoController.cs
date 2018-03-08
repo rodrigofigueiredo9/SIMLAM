@@ -269,9 +269,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
             else
             {
-                //fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
-                fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(id);   //temporário
+                fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
                 lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
+
+                if (fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0) == 0)
+                {
+                    fiscalizacao.LocalInfracao.PessoaId = fiscalizacao.LocalInfracao.ResponsavelId;
+                }
+
                 pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
             }
 
@@ -868,6 +873,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
             vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
+            if (id != null)
+            {
+                vm.ConsideracaoFinalVM.IUFBloco = _busInfracao.PossuiIUFBloco(id.Value);
+            }
+
             if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
             {
                 vm.ConsideracaoFinalVM.ConsideracaoFinalTestemunhaVM.ForEach(x =>
@@ -1135,8 +1145,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             List<Lista> series = new List<Lista>();
             List<Lista> penalidades = new List<Lista>();
 
-            //infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
-            infracao = _busInfracao.Obter(id, true);
+            infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+            //infracao = _busInfracao.Obter(id, true);
 
             for (int i = 0; i < 4; i++)
             {
@@ -1751,6 +1761,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
             vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(id);
             vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
+            vm.MultaVM.Multa = fiscalizacao.Multa;
+            vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
             vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
 
             vm.DocumentosCancelados = _bus.ObterHistoricoDocumentosCancelados(id);

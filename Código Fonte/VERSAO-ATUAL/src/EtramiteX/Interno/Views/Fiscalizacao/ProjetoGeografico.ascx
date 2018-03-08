@@ -135,7 +135,7 @@
 	<label><input type="radio" class="radioTiPoMecanismo" name="mecanismo" value="2" <%= Model.ProjetoGeoVM.IsFinalizado || Model.ProjetoGeoVM.IsVisualizar ? "disabled=\"disabled\"" : ""%>  <%= Model.ProjetoGeoVM.IsDesenhador ? "checked=\"checked\"" : ""%>/>Desenhador</label>
 
 	<input type="hidden" class="hdnProjetoId" value="<%= Model.ProjetoGeoVM.Projeto.Id %>" />
-    <input type="hidden" class="hdnJaSalvo" value="<%= (Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo != null) %>" />
+    <input type="hidden" class="hdnJaSalvo" value="<%= (Model.ProjetoGeoVM.Projeto.PossuiProjetoGeo != null || Model.ProjetoGeoVM.Projeto.Id > 0) ? 1 : 0 %>" />
 	<input type="hidden" class="hdnFiscNorthing" value="<%= Model.ProjetoGeoVM.Projeto.FiscalizacaoNorthing%>" />
 	<input type="hidden" class="hdnFiscEasting" value="<%= Model.ProjetoGeoVM.Projeto.FiscalizacaoEasting %>" />
 	<input type="hidden" class="hdnArquivoEnviadoTipo" value="<%= Model.ProjetoGeoVM.ArquivoEnviadoTipo%>" />
