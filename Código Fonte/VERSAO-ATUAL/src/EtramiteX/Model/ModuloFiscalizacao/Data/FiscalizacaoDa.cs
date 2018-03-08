@@ -129,8 +129,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@" 
                             select nvl(max(tfa.iuf_numero), 0) iuf_apreensao 
-                            from {0}tab_fisc_apreensao tfa 
-                            where tfa.iuf_digital = 1", EsquemaBanco);
+                            from {0}hst_fisc_apreensao tfa 
+                            where tfa.iuf_digital = 1 and tfa.iuf_numero is not null", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -145,8 +145,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@" 
                             select nvl(max(tfm.iuf_numero), 0) iuf_multa 
-                            from {0}tab_fisc_multa tfm 
-                            where tfm.iuf_digital = 1", EsquemaBanco);
+                            from {0}hst_fisc_multa tfm 
+                            where tfm.iuf_digital = 1 and tfm.iuf_numero is not null", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -160,8 +160,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando(@" 
                             select nvl(max(tfoi.iuf_numero), 0) iuf_interdicao 
-                            from {0}tab_fisc_obj_infracao  tfoi 
-                            where tfoi.iuf_digital = 1", EsquemaBanco);
+                            from {0}hst_fisc_obj_infracao  tfoi 
+                            where tfoi.iuf_digital = 1 and tfoi.iuf_numero is not null", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
@@ -177,7 +177,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando = bancoDeDados.CriarComando(@" 
                             select nvl(max(tfop.iuf_numero), 0) iuf_outras 
                             from {0}hst_fisc_outras_penalidades tfop 
-                            where tfop.iuf_digital = 1", EsquemaBanco);
+                            where tfop.iuf_digital = 1 and tfop.iuf_numero is not null", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
