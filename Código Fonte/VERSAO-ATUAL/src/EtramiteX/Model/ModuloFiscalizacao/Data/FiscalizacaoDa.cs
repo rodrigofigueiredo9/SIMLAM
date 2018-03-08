@@ -766,7 +766,89 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             }
         }
 
-        #endregion
+        public bool GeradoNumeroIUFDigital(int fiscalizacaoId, BancoDeDados banco = null)
+        {
+            bool gerado = false;
+
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+            {
+                #region Apreensão
+                Comando comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_apreensao fa
+                                    where fa.fiscalizacao_id = :fiscalizacao
+                                          and fa.iuf_digital = 1
+                                          and fa.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Apreensão
+
+                #region Multa
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_multa fm
+                                    where fm.fiscalizacao_id = :fiscalizacao
+                                          and fm.iuf_digital = 1
+                                          and fm.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Multa
+
+                #region Interdição/Embargo
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_obj_infracao foi
+                                    where foi.fiscalizacao_id = :fiscalizacao
+                                          and foi.iuf_digital = 1
+                                          and foi.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Interdição/Embargo
+
+                #region Outras Penalidades
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(*)
+                                    from {0}hst_fisc_outras_penalidades fop
+                                    where fop.fiscalizacao_id = :fiscalizacao
+                                          and fop.iuf_digital = 1
+                                          and fop.iuf_numero is not null", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+                gerado = Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+
+                if (gerado == true)
+                {
+                    return gerado;
+                }
+                #endregion Outras Penalidades
+            }
+
+            return gerado;
+        }
+
+		#endregion
 
         #region Auxiliares
 

@@ -503,6 +503,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(
 					"begin " +
 					  "delete {0}tab_fisc_consid_final_arq t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
+                      "delete {0}tab_fisc_consid_final_iuf t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final_test t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final_ass t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final t where t.fiscalizacao = :fiscalizacao; " +
