@@ -897,7 +897,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.SetorId = reader.GetValue<int>("setor");
                         fiscalizacao.SituacaoId = reader.GetValue<int>("situacao");
                         //fiscalizacao.NumeroAutoTermo = reader.GetValue<string>("autos");
-                        fiscalizacao.NumeroIUF = reader.GetValue<string>("numero_iuf");
+
+                        if (fiscalizacao.SituacaoId != (int)eFiscalizacaoSituacaoRelatorio.EmAndamento)
+                        {
+                            fiscalizacao.NumeroIUF = reader.GetValue<string>("numero_iuf");
+
+                            if (reader["data_termo"] != null && !Convert.IsDBNull(reader["data_termo"]))
+                            {
+                                fiscalizacao.DataVencimento = Convert.ToDateTime(reader["data_termo"]).ToShortDateString();
+                            }
+                        }
+
                         fiscalizacao.IsDDSIA = reader.GetValue<string>("is_ddsia");
                         fiscalizacao.IsDDSIV = reader.GetValue<string>("is_ddsiv");
                         fiscalizacao.IsDRNRE = reader.GetValue<string>("is_drnre");
@@ -905,11 +915,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         if (!String.IsNullOrWhiteSpace(fiscalizacao.NumeroIUF))
                         {
                             fiscalizacao.NumeroIUF = String.Format("{0:000000}", Convert.ToInt64(fiscalizacao.NumeroIUF));
-                        }
-
-                        if (reader["data_termo"] != null && !Convert.IsDBNull(reader["data_termo"]))
-                        {
-                            fiscalizacao.DataVencimento = Convert.ToDateTime(reader["data_termo"]).ToShortDateString();
                         }
                     }
 
@@ -1569,6 +1574,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 objeto.Multa = _multaDa.Obter(id, bancoDeDados);
                 objeto.MaterialApreendido = _materialApreendidoDa.ObterNovo(id, bancoDeDados);
                 objeto.OutrasPenalidades = _outrasPenalidadesDa.Obter(id, bancoDeDados);
+
+                //Se a fiscalização está em andamento, não pode haver números e datas de IUF digital
+                if (objeto.SituacaoId == (int)eFiscalizacaoSituacaoRelatorio.EmAndamento)
+                {
+                    if (objeto.ObjetoInfracao.SerieTexto == "E")
+                    {
+                        objeto.ObjetoInfracao.NumeroIUF = null;
+                        objeto.ObjetoInfracao.DataLavraturaIUF = null;
+                    }
+
+                    if (objeto.Multa.SerieTexto == "E")
+                    {
+                        objeto.Multa.NumeroIUF = null;
+                        objeto.Multa.DataLavraturaIUF = null;
+                    }
+
+                    if (objeto.MaterialApreendido.SerieTexto == "E")
+                    {
+                        objeto.MaterialApreendido.NumeroIUF = null;
+                        objeto.MaterialApreendido.DataLavraturaIUF = null;
+                    }
+
+                    if (objeto.OutrasPenalidades.SerieTexto == "E")
+                    {
+                        objeto.OutrasPenalidades.NumeroIUF = null;
+                        objeto.OutrasPenalidades.DataLavraturaIUF = null;
+                    }
+                }
 
                 objeto.ConsideracoesFinais = _consideracoesFinaisDa.Obter(id, bancoDeDados);
 
