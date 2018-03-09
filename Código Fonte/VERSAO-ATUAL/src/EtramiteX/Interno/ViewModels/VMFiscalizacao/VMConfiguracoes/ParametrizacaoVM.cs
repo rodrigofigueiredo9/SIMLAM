@@ -66,9 +66,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 			IsVisualizar = isVisualizar;
 			Decorrencia = new List<SelectListItem>()
 			{
-				new SelectListItem(){ Value = "1", Text = "Dia" },
-				new SelectListItem(){ Value = "2", Text = "Mês" },
-				new SelectListItem(){ Value = "3", Text = "Ano" }
+				new SelectListItem(){ Value = ((int)eDecorrencia.Dia).ToString() , Text = "Dia", Selected = entidade.PrazoDescontoDecorrencia == (int)eDecorrencia.Dia },
+				new SelectListItem(){ Value = ((int)eDecorrencia.Mes).ToString(), Text = "Mês", Selected = entidade.PrazoDescontoDecorrencia == (int)eDecorrencia.Mes },
+				new SelectListItem(){ Value = ((int)eDecorrencia.Ano).ToString(), Text = "Ano", Selected = entidade.PrazoDescontoDecorrencia == (int)eDecorrencia.Ano }
 			};
 			var listaCodigoReceita = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
 			var item = listaCodigoReceita.Find(x => x.Value == entidade.CodigoReceitaId.ToString());

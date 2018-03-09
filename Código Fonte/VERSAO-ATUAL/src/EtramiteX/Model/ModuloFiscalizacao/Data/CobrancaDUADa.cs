@@ -39,18 +39,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
         public CobrancaDUA Salvar(CobrancaDUA cobrancaDUA, BancoDeDados banco = null)
         {
             if (cobrancaDUA == null)
-            {
                 throw new Exception("Cobranca é nulo.");
-            }
 
-            if (cobrancaDUA.Id <= 0)
-            {
+			if (cobrancaDUA.ParcelaPaiId == 0)
+				cobrancaDUA.ParcelaPaiId = null;
+
+			if (cobrancaDUA.Id <= 0)
                 cobrancaDUA = Criar(cobrancaDUA, banco);
-            }
             else
-            {
                 cobrancaDUA = Editar(cobrancaDUA, banco);
-            }
 
             return cobrancaDUA;
         }

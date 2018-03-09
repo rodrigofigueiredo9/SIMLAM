@@ -58,11 +58,11 @@
         </div>
         <div class="coluna15">
             <label for="Cobranca_DataJIAPI">Data da Notificação JIAPI</label><br />
-            <%= Html.TextBox("Cobranca.DataJIAPI", Model.Entidade.DataJIAPI.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataJIAPI", @maxlength = "100" }))%>
+            <%= Html.TextBox("Cobranca.DataJIAPI", Model.Entidade.DataJIAPI.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || (Model.Entidade.Notificacao == null ? false : Model.Entidade.Notificacao.Id > 0), new { @class = "text maskData txtDataJIAPI", @maxlength = "100" }))%>
         </div>
         <div class="coluna15">
             <label for="Cobranca_DataCORE">Data da Notificação CORE</label><br />
-            <%= Html.TextBox("Cobranca.DataCORE", Model.Entidade.DataCORE.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataCORE", @maxlength = "100" }))%>
+            <%= Html.TextBox("Cobranca.DataCORE", Model.Entidade.DataCORE.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || (Model.Entidade.Notificacao == null ? false : Model.Entidade.Notificacao.Id > 0), new { @class = "text maskData txtDataCORE", @maxlength = "100" }))%>
         </div>
     </div>
 
@@ -79,17 +79,17 @@
 
         <div class="coluna15">
             <label for="Cobranca_Parcelas">Parcelas *</label>
-            <%= Html.DropDownList("Cobranca.Parcelas", Model.Parcelas, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.Id > 0, new { @class = "text ddlParcelas", @style = "height:21px;" }))%>
+            <%= Html.DropDownList("Cobranca.Parcelas", Model.Parcelas, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.DUAS.FindAll(x => x.Id > 0).Count > 0, new { @class = "text ddlParcelas", @style = "height:21px;" }))%>
         </div>
 
         <div class="coluna15">
             <label for="Cobranca_Data1Vencimento">Data 1º Vencimento</label><br />
-            <%= Html.TextBox("Cobranca.Data1Vencimento", Model.Parcelamento.Data1Vencimento.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtData1Vencimento", @maxlength = "100" }))%>
+            <%= Html.TextBox("Cobranca.Data1Vencimento", Model.Parcelamento.Data1Vencimento.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.DUAS.FindAll(x => x.Id > 0).Count > 0, new { @class = "text maskData txtData1Vencimento", @maxlength = "100" }))%>
         </div>
 
         <div class="coluna15">
             <label for="Cobranca_DataEmissao">Data Emissão</label><br />
-            <%= Html.TextBox("Cobranca.DataEmissao", Model.Parcelamento.DataEmissao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataEmissao", @maxlength = "100" }))%>
+            <%= Html.TextBox("Cobranca.DataEmissao", Model.Parcelamento.DataEmissao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.Id > 0, new { @class = "text maskData txtDataEmissao", @maxlength = "100" }))%>
         </div>
     </div>
 

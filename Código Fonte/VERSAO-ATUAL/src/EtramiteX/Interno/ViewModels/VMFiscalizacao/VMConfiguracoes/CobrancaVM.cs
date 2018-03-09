@@ -46,6 +46,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 			{
 				return ViewModelHelper.Json(new
 				{
+                    @Salvar = Mensagem.CobrancaMsg.Salvar,
+
 					@NumeroAutosObrigatorio = Mensagem.CobrancaMsg.NumeroAutosObrigatorio,
 					@NumeroFiscalizacaoObrigatorio = Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio,
 					@NumeroIUFObrigatorio = Mensagem.CobrancaMsg.NumeroIUFObrigatorio,
@@ -64,25 +66,25 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 			}
 		}
 
-		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, bool isVisualizar = false)
+		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, int? maximoParcelas = null, bool isVisualizar = false)
 		{
 			Entidade = entidade;
 			IsVisualizar = isVisualizar;
 			Parcelamento = entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
 			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
-			Parcelas = GetListParcelas(Parcelamento.QuantidadeParcelas);
+			Parcelas = GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
 		}
 
-		private List<SelectListItem> GetListParcelas(int quantidadeParcelas)
+		private List<SelectListItem> GetListParcelas(int quantidadeParcelas, int parcelaSelected)
 		{
 			var parcelas = new List<SelectListItem>();
 			parcelas.Add(new SelectListItem() { Text = "", Value = "0" });
 			for (int i = 1; i <= quantidadeParcelas; i++)
 			{
-				if(i != quantidadeParcelas)
-					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString() });
-				else
+				if(i == parcelaSelected)
 					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString(), Selected = true });
+				else
+					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString() });
 			}
 
 			return parcelas;

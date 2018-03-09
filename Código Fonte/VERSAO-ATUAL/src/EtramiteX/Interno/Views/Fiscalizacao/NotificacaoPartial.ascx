@@ -12,19 +12,19 @@
         <div class="block">
             <div class="coluna15">
                 <label>N° Fiscalização</label><br />
-                <%= Html.TextBox("Notificacao.FiscalizacaoId", Model.Notificacao.FiscalizacaoId, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFiscalizacao setarFoco" }))%>
+                <%= Html.TextBox("Notificacao.FiscalizacaoId", Model.Notificacao.FiscalizacaoId, ViewModelHelper.SetaDisabled(true, new { @class = "text txtFiscalizacao setarFoco" }))%>
             </div>
             <div class="coluna15">
                 <label>N° do IUF</label><br />
-                <%= Html.TextBox("Notificacao.NumeroIUF", Model.Notificacao.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroIUF setarFoco" }))%>
+                <%= Html.TextBox("Notificacao.NumeroIUF", Model.Notificacao.NumeroIUF, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroIUF setarFoco" }))%>
             </div>
             <div class="coluna35">
                 <label>Autuado</label><br />
-                <%= Html.TextBox("Notificacao.AutuadoPessoa.NomeRazaoSocial", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.NomeRazaoSocial : "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAutuadoNome setarFoco" }))%>
+                <%= Html.TextBox("Notificacao.AutuadoPessoa.NomeRazaoSocial", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.NomeRazaoSocial : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoNome setarFoco" }))%>
             </div>
             <div class="coluna25">
                 <label>CPF autuado</label><br />
-                <%= Html.TextBox("Notificacao.AutuadoPessoa.CPFCNPJ", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.CPFCNPJ : "", ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAutuadoCpfCnpj setarFoco" }))%>
+                <%= Html.TextBox("Notificacao.AutuadoPessoa.CPFCNPJ", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.CPFCNPJ : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoCpfCnpj setarFoco" }))%>
             </div>
         </div>
     </div>

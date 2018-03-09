@@ -33,13 +33,13 @@
                         <span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
                     </td>
                     <td>
-                        <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%:parcela.ValorDUA%></span>
+                        <span class="valorDUA maskDecimalPonto2" title="<%:parcela.ValorDUA%>"><%:parcela.ValorDUA%></span>
                     </td>
                     <td>
                         <input class="valorPago maskArea72" value="<%:parcela.ValorPago%>" style="width: 100%;" />
                     </td>
                     <td>
-                        <span class="vrte" title="<%:parcela.VRTE%>"><%:parcela.VRTE%></span>
+                        <span class="vrte maskDecimalPonto4" title="<%:parcela.VRTE%>"><%:parcela.VRTE%></span>
                     </td>
                     <td>
                         <input class="dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />

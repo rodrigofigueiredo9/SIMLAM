@@ -3,6 +3,13 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 {
+	public enum eDecorrencia
+	{
+		Dia = 1,
+		Mes = 2,
+		Ano = 3
+	}
+
 	public class Parametrizacao
 	{
 		#region Constructor

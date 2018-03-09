@@ -191,6 +191,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		#endregion
 
 		#region Cálculo
+		private int GetPrazoDesconto(int prazoDescontoDecorrencia)
+		{
+			var prazoDesconto = 0;
+			if (prazoDescontoDecorrencia == (int)eDecorrencia.Dia)
+				prazoDesconto = prazoDescontoDecorrencia * 1;
+			else if (prazoDescontoDecorrencia == (int)eDecorrencia.Mes)
+				prazoDesconto = prazoDescontoDecorrencia * 30;
+			else if (prazoDescontoDecorrencia == (int)eDecorrencia.Ano)
+				prazoDesconto = prazoDescontoDecorrencia * 365;
+
+			return prazoDesconto;
+		}
 
 		public bool CalcularParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
@@ -198,36 +210,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataLavratura.Data.Value.Year) ?? new Vrte();
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
-			if (parametrizacao == null)
-				return retorno;
+			if (parametrizacao == null) return retorno;
 
-			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
-			var multaVRTE = valorAtualizadoVRTE * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
-			var jurosVRTE = new Decimal();
-			var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
-			if (diasJuros > 0)
-				jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
-			var valorTotalVRTE = valorAtualizadoVRTE + multaVRTE + (valorAtualizadoVRTE * jurosVRTE);
-
+			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;			
 			var parcelas = parcelamento.DUAS;
-			var parcelaAnterior = new CobrancaDUA();
-			var valorJuros = 1 + (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
 
-			foreach (var parcela in parcelas)
+			if (parcelas.Count == 1)
 			{
+				var parcela = parcelas[0];
 				if (parcela.ValorDUA == 0)
 				{
-					if (parcela.Parcela[0] == '1')
-						parcela.VRTE = Math.Round(valorTotalVRTE / parcelamento.QuantidadeParcelas, 4);
-					else
-						parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
+					var prazoDesconto = GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
 
-					var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
-					if (vrteParcela.Id > 0)
-						parcela.ValorDUA = Math.Round(parcela.VRTE * vrteParcela.VrteEmReais, 2);
+					if (parcela.DataVencimento.Data <= cobranca.DataIUF.Data.Value.AddDays(prazoDesconto))
+					{
+						parcela.VRTE = valorAtualizadoVRTE * (1 - (Convert.ToDecimal(parametrizacao.DescontoPercentual) / 100));
+						var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
+						if (vrteParcela.Id > 0)
+							parcela.ValorDUA = Math.Round(parcela.VRTE * vrteParcela.VrteEmReais, 2);
+					}
 				}
-				parcelaAnterior = parcela;
+
 				retorno = true;
+			}
+			else
+			{
+				var multaVRTE = valorAtualizadoVRTE * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
+				var jurosVRTE = new Decimal();
+				var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
+				if (diasJuros > 0)
+					jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
+				var valorTotalVRTE = valorAtualizadoVRTE + multaVRTE + (valorAtualizadoVRTE * jurosVRTE);
+
+				var parcelaAnterior = new CobrancaDUA();
+				var valorJuros = 1 + (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
+
+				foreach (var parcela in parcelas)
+				{
+					if (parcela.ValorDUA == 0)
+					{
+						if (parcela.Parcela[0] == '1')
+							parcela.VRTE = Math.Round(valorTotalVRTE / parcelamento.QuantidadeParcelas, 4);
+						else
+							parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
+
+						var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
+						if (vrteParcela.Id > 0)
+							parcela.ValorDUA = Math.Round(parcela.VRTE * vrteParcela.VrteEmReais, 2);
+					}
+					parcelaAnterior = parcela;
+					retorno = true;
+				}
 			}
 
 			return retorno;

@@ -8,7 +8,6 @@ Cobranca = {
 			salvar: '',
 			carregar: ''
 		},
-
 		mensagens: null
 	},
 
@@ -19,7 +18,8 @@ Cobranca = {
 		Cobranca.container = container;
 
 		container.delegate('.btnSalvar', 'click', Cobranca.salvar);
-
+		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
+		
 		$('.txtProcessoNumero', container).focus();
 	},
 
@@ -55,7 +55,13 @@ Cobranca = {
 		var lista = [];
 
 		$($('.tabParcelas tbody tr:not(.trTemplateRow) .hdnItemJSon', Cobranca.container)).each(function () {
-			lista.push(JSON.parse($(this).val()));
+			var item = JSON.parse($(this).val());
+			var itensHtml = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('input') > -1)
+			item.NumeroDUA = itensHtml[0].children[0].value;
+			item.ValorPago = itensHtml[1].children[0].value;
+			item.DataPagamento = { DataTexto: itensHtml[2].children[0].value };
+			item.InformacoesComplementares = itensHtml[3].children[0].value;
+			lista.push(item);
 		});
 
 		return lista;
@@ -86,30 +92,14 @@ Cobranca = {
 		MasterPage.carregando(false);
 	},
 
-	gerarParcelas: function () {
-		var obj = Cobranca.obter();
-
+	alterarParcelas: function () {
 		MasterPage.carregando(true);
-		$.ajax({
-			url: Cobranca.settings.urls.salvar,
-			data: JSON.stringify(obj),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, Cobranca.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + obj.NumeroFiscalizacao);
-				}
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(Cobranca.container, response.Msg);
-				}
-			}
-		});
+
+		var container = Cobranca.container;
+		var id = $('.hdnCobrancaId', container).val();
+		var parcela = $('.ddlParcelas :selected', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.carregar + "?parcela=" + parcela);
+
 		MasterPage.carregando(false);
 	}
 }
