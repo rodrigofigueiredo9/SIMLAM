@@ -15,6 +15,8 @@
 			FiscalizacaoListar.urlAlterarSituacao = '<%= Url.Action("AlterarSituacao", "Fiscalizacao") %>';
 			FiscalizacaoListar.urlAcompanhamentos = '<%= Url.Action("Acompanhamentos", "Fiscalizacao") %>';
 			FiscalizacaoListar.urlNotificacao = '<%= Url.Action("Notificacao", "Fiscalizacao") %>';
+			FiscalizacaoListar.urlNotificacaoVisualizar = '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>';
+			FiscalizacaoListar.urlNotificacaoId = '<%= Url.Action("GetNotificacaoId", "Fiscalizacao") %>';
 			FiscalizacaoListar.load($('#central'));
 
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>

@@ -10,7 +10,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if (cobranca.NumeroAutos == 0)
 				Validacao.Add(Mensagem.CobrancaMsg.NumeroAutosObrigatorio);
 
-			if (cobranca.FiscalizacaoId == 0)
+			if (cobranca.NumeroFiscalizacao == 0)
 				Validacao.Add(Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio);
 
 			if (string.IsNullOrWhiteSpace(cobranca.NumeroIUF))

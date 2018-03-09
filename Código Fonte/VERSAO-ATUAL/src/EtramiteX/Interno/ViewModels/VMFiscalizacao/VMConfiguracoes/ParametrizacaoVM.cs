@@ -70,7 +70,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 				new SelectListItem(){ Value = "2", Text = "Mês" },
 				new SelectListItem(){ Value = "3", Text = "Ano" }
 			};
-			CodigoReceita = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
+			var listaCodigoReceita = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
+			var item = listaCodigoReceita.Find(x => x.Value == entidade.CodigoReceitaId.ToString());
+			if(item != null)
+				item.Selected = true;
+			CodigoReceita = listaCodigoReceita;
 		}
 	}
 }

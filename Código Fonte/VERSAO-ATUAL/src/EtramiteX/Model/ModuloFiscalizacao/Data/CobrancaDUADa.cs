@@ -62,7 +62,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 bancoDeDados.IniciarTransacao();
 
                 Comando comando = bancoDeDados.CriarComando(@"
-                                    insert into {0}tab_fisc_cobranca (id,
+                                    insert into {0}tab_fisc_cob_dua (id,
 																vencimento_data,
 																dataemissao,
 																parcela,				  
@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																pai_dua, 
 																cob_parc,
                                                                 tid)
-                                    values ({0}seq_tab_fisc_cobranca.nextval,
+                                    values ({0}seq_fisc_cob_dua.nextval,
 											:vencimento_data,
 											:dataemissao,
 											:parcela,				  
@@ -96,7 +96,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_dua", cobrancaDUA.ValorDUA, DbType.Decimal);
 				comando.AdicionarParametroEntrada("valor_pago", cobrancaDUA.ValorPago, DbType.Decimal);
-				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Int32);
+				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Decimal);
 				comando.AdicionarParametroEntrada("pagamento_data", cobrancaDUA.DataPagamento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("complemento", cobrancaDUA.InformacoesComplementares, DbType.String);
 				comando.AdicionarParametroEntrada("pai_dua", cobrancaDUA.ParcelaPaiId, DbType.Int32);
@@ -110,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Historico.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
-                Consulta.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -147,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_dua", cobrancaDUA.ValorDUA, DbType.Decimal);
 				comando.AdicionarParametroEntrada("valor_pago", cobrancaDUA.ValorPago, DbType.Decimal);
-				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Int32);
+				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Decimal);
 				comando.AdicionarParametroEntrada("pagamento_data", cobrancaDUA.DataPagamento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("complemento", cobrancaDUA.InformacoesComplementares, DbType.String);
 				comando.AdicionarParametroEntrada("pai_dua", cobrancaDUA.ParcelaPaiId, DbType.Int32);
@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Historico.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
-                Consulta.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobrancaDUA.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -191,7 +191,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Consulta
 
-				Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
+				//Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
 
 				#endregion
 
@@ -241,7 +241,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							NumeroDUA = reader.GetValue<int>("numero_dua"),
 							ValorDUA = reader.GetValue<decimal>("valor_dua"),
 							ValorPago = reader.GetValue<decimal>("valor_pago"),
-							VRTE= reader.GetValue<int>("vrte"),
+							VRTE= reader.GetValue<decimal>("vrte"),
 							InformacoesComplementares= reader.GetValue<string>("complemento"),
 							ParcelaPaiId = reader.GetValue<int>("pai_dua"),
 							ParcelamentoId = reader.GetValue<int>("cob_parc"),
@@ -269,25 +269,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return cobrancaDUA;
         }
 
-		public List<CobrancaDUA> Obter(int parcelamentoId)
+		public List<CobrancaDUA> Obter(int parcelamentoId, BancoDeDados banco = null)
 		{
 			var lista = new List<CobrancaDUA>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select d.id
-											d.vencimento_data
-											d.dataemissao
-											d.parcela
-											d.numero_dua
-											d.valor_dua
-											d.valor_pago
-											d.vrte
-											d.pagamento_data
-											d.complemento
-											d.pai_dua
-											d.cob_parc
-											d.tid
+				Comando comando = bancoDeDados.CriarComando(@"select d.id,
+											d.vencimento_data,
+											d.dataemissao,
+											d.parcela,
+											d.numero_dua,
+											d.valor_dua,
+											d.valor_pago,
+											d.vrte,
+											d.pagamento_data,
+											d.complemento,
+											d.pai_dua,
+											d.cob_parc,
+											d.tid,
+											case 
+											when d.pagamento_data is null 
+												and d.vencimento_data >= sysdate
+												or d.valor_dua is null
+												or d.valor_dua = 0
+												then 'Em Aberto'
+											when d.pagamento_data is not null
+												and d.valor_pago >= d.valor_dua
+												then 'Pago'
+											when d.pagamento_data is not null
+												and d.valor_pago < d.valor_dua
+												and not exists (select 1 from tab_fisc_cob_dua dc where dc.id = d.pai_dua)
+												then 'Pago Parcial'
+											when d.pagamento_data is null and d.vencimento_data < sysdate
+												then 'Atrasado'
+											end as situacao
 										from {0}tab_fisc_cob_dua d
 										where d.cob_parc = :parcelamentoId", EsquemaBanco);
 
@@ -304,11 +320,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							NumeroDUA = reader.GetValue<int>("numero_dua"),
 							ValorDUA = reader.GetValue<decimal>("valor_dua"),
 							ValorPago = reader.GetValue<decimal>("valor_pago"),
-							VRTE = reader.GetValue<int>("vrte"),
+							VRTE = reader.GetValue<decimal>("vrte"),
 							InformacoesComplementares = reader.GetValue<string>("complemento"),
 							ParcelaPaiId = reader.GetValue<int>("pai_dua"),
 							ParcelamentoId = reader.GetValue<int>("cob_parc"),
-							Tid = reader.GetValue<string>("autuado")
+							Tid = reader.GetValue<string>("tid"),
+							Situacao = reader.GetValue<string>("situacao")
 						};
 
 						cobrancaDUA.DataVencimento.Data = reader.GetValue<DateTime>("vencimento_data");
@@ -320,7 +337,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							cobrancaDUA.DataEmissao = new DateTecno();
 						if (cobrancaDUA.DataPagamento.Data.HasValue && cobrancaDUA.DataPagamento.Data.Value.Year == 1)
 							cobrancaDUA.DataPagamento = new DateTecno();
-						cobrancaDUA.ParcelaPai = this.ObterDUA(cobrancaDUA.ParcelaPaiId);
+						if(cobrancaDUA.ParcelaPaiId > 0)
+							cobrancaDUA.ParcelaPai = this.ObterDUA(cobrancaDUA.ParcelaPaiId.Value);
 
 						lista.Add(cobrancaDUA);
 					}

@@ -137,6 +137,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return entidade;
 		}
 
+
+		public int ObterId(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			var id = 0;
+
+			try
+			{
+				id = _da.ObterID(fiscalizacaoId, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return id;
+		}
+
 		#endregion
 	}
 }

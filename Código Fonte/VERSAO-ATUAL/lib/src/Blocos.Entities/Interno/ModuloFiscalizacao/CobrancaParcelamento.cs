@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 {
@@ -7,12 +8,36 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 	{
 		#region Constructor
 		public CobrancaParcelamento() { }
+
+		public CobrancaParcelamento(Fiscalizacao fiscalizacao, DateTime dataVencimento)
+		{
+			ValorMulta = fiscalizacao.Multa.ValorMulta;
+			DataEmissao = new DateTecno() { Data = DateTime.Now };
+			Data1Vencimento = new DateTecno() { Data = dataVencimento };
+		}
 		#endregion
 
 		#region Properties
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
 		public Int32 CobrancaId { get; set; }
+		public Int32 QuantidadeParcelas { get; set; }
+		public Decimal ValorMulta { get; set; }
+
+		private DateTecno _data1Vencimento = new DateTecno();
+		public DateTecno Data1Vencimento
+		{
+			get { return _data1Vencimento; }
+			set { _data1Vencimento = value; }
+		}
+
+		private DateTecno _dataEmissao = new DateTecno();
+		public DateTecno DataEmissao
+		{
+			get { return _dataEmissao; }
+			set { _dataEmissao = value; }
+		}
+
 		public List<CobrancaDUA> DUAS { get; set; }
 		#endregion
 	}

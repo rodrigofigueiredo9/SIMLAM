@@ -1,7 +1,11 @@
   CREATE TABLE "IDAF"."TAB_FISC_COB_PARCELAMENTO"
   (
     "ID"                NUMBER(38,0) NOT NULL ENABLE,
-    "COBRANCA"         NUMBER(38,0) NOT NULL ENABLE,
+    "COBRANCA"          NUMBER(38,0) NOT NULL ENABLE,
+    "VALOR_MULTA"       NUMBER,
+    "QTDPARCELAS"       NUMBER(2,0),    
+    "VENCIMENTO_DATA" 	DATE,
+    "DATAEMISSAO" 	    DATE,
     "TID"               VARCHAR2(36 BYTE) NOT NULL ENABLE,
     CONSTRAINT "PK_FIS_COB_PARC" PRIMARY KEY ("ID") 
     USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
@@ -19,6 +23,10 @@
  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."ID" IS 'Chave primaria. Utiliza a sequencia seq_fisc_cob_parc.';
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."COBRANCA" IS 'Chave estrangeira da tab_fisc_cobranca. Campo (ID))';
+  COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."VALOR_MULTA" IS 'Informa o valor da multa.';
+  COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."QTDPARCELAS" IS 'Informa a quantidade de parcelas que será gerada para o parcelamento da cobrança.';
+  COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."VENCIMENTO_DATA" IS 'Data de vencimento da primeira parcela.';
+  COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."DATAEMISSAO" IS 'Data de emissão da cobrança.';
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_PARCELAMENTO"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
   COMMENT ON TABLE "IDAF"."TAB_FISC_COB_PARCELAMENTO"  IS 'Tabela de Parcelamento.';
  

@@ -11,14 +11,14 @@ namespace Test
 	[TestClass]
 	public class NotificacaoTest
 	{
-		private int fiscalizacaoId = 8851; //Ao executar o teste, preencher com o Id de uma fiscalização válida
-		NotificacaoBus _busNotificacao = new NotificacaoBus();
-		public AutenticacaoController testController = new AutenticacaoController(new FakeFormsAuthenticationService());
-
 		public NotificacaoTest()
 		{
 			ControllerContextMock.SetupNormalContext(testController);
 		}
+
+		private int fiscalizacaoId = 8851; //Ao executar o teste, preencher com o Id de uma fiscalização válida
+		NotificacaoBus _busNotificacao = new NotificacaoBus();
+		public AutenticacaoController testController = new AutenticacaoController(new FakeFormsAuthenticationService());
 
 		[TestMethod]
 		public void CadastrarNotificacaoTest()

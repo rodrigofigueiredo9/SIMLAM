@@ -16,10 +16,6 @@
   "NOT_IUF_DATA"   	  DATE,
   "NOT_JIAPI_DATA"   	DATE,
   "NOT_CORE_DATA"   	DATE,
-  "VALOR_MULTA"       NUMBER,
-  "QTDPARCELAS"       NUMBER(2,0),    
-  "VENCIMENTO_DATA" 	DATE,
-  "DATAEMISSAO" 	    DATE,
   "TID"	VARCHAR2(36 BYTE)	NOT NULL,  
   "EXECUTOR_ID" NUMBER(38,0), 
 	"EXECUTOR_TID" VARCHAR2(36 BYTE), 
@@ -55,10 +51,6 @@
   COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."NOT_IUF_DATA" IS 'Data da notificação IUF.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."NOT_JIAPI_DATA" IS 'Data da notificação JIAPI.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."NOT_CORE_DATA" IS 'Data da notificação CORE.';
-  COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."VALOR_MULTA" IS 'Informa o valor da multa.';
-  COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."QTDPARCELAS" IS 'Informa a quantidade de parcelas que será gerada para o parcelamento da cobrança.';
-  COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."VENCIMENTO_DATA" IS 'Data de vencimento da primeira parcela.';
-  COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."DATAEMISSAO" IS 'Data de emissão da cobrança.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_COBRANCA"."TID" IS 'Id transacional. Esse valor garante a ligacao entre todas as tabelas relacionadas com essa transaction.';
  
 	COMMENT ON TABLE "IDAF"."HST_FISC_COBRANCA"  IS 'Tabela com o historico da tabela tab_fisc_cobranca da Fiscalizacao.';

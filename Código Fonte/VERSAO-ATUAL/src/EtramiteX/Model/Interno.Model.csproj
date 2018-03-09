@@ -89,6 +89,8 @@
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoBus.cs" />
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\CobrancaDUAValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaBus.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaParcelamentoValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\NotificacaoBus.cs" />
     <Compile Include="ModuloFiscalizacao\Business\CobrancaValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\NotificacaoValidar.cs" />

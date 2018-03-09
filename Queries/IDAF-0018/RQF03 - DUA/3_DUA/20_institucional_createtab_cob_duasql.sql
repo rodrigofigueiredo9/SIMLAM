@@ -7,7 +7,7 @@
     "NUMERO_DUA"        NUMBER(38,0),
     "VALOR_DUA"         NUMBER,
     "VALOR_PAGO"        NUMBER,
-    "VRTE"              NUMBER(5,0) NOT NULL ENABLE,
+    "VRTE"             NUMBER(15,4) NOT NULL ENABLE,
     "PAGAMENTO_DATA"    DATE,
     "COMPLEMENTO"       VARCHAR2(80 BYTE),    
     "PAI_DUA"           NUMBER(38,0),    

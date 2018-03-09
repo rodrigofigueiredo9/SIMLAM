@@ -10,6 +10,8 @@ FiscalizacaoListar = {
 	urlAlterarSituacao: '',
 	urlAcompanhamentos: '',
 	urlNotificacao: '',
+	urlNotificacaoVisualizar: '',
+	urlNotificacaoId: '',
 	container: null,
 	settings: {
 		associarFuncao: null
@@ -85,7 +87,12 @@ FiscalizacaoListar = {
 
 	notificacao: function () {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
-		MasterPage.redireciona(FiscalizacaoListar.urlNotificacao + '/' + itemId);
+		$.get(FiscalizacaoListar.urlNotificacaoId + "/" + itemId, function (response) {
+			if (response.id > 0)
+				MasterPage.redireciona(FiscalizacaoListar.urlNotificacaoVisualizar + '/' + itemId);
+			else
+				MasterPage.redireciona(FiscalizacaoListar.urlNotificacao + '/' + itemId);
+		});
 	},
 
 	excluir: function () {

@@ -659,6 +659,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
+		public Vrte ObterVrte(int ano)
+		{
+			var vrte = new Vrte();
+
+			try
+			{
+				vrte = _da.ObterVrte(ano);
+			}
+			catch (Exception e)
+			{
+				Validacao.AddErro(e);
+			}
+
+			return vrte;
+		}
+
 		public List<Vrte> ObterVrte()
 		{
 			List<Vrte> listaVrte = new List<Vrte>();
@@ -1194,6 +1210,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return parametrizacao;
 		}
+
+		public Parametrizacao ObterParametrizacao(int codigoReceita, DateTime data)
+		{
+			Parametrizacao parametrizacao = null;
+			try
+			{
+				parametrizacao = _da.ObterParametrizacao(codigoReceita, data);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return parametrizacao;
+		}
+
 		#endregion Parametrizacao
 
 		public Resultados<ConfigFiscalizacao> Filtrar(ConfigFiscalizacaoListarFiltro filtrosListar, Paginacao paginacao)

@@ -29,10 +29,6 @@
                       not_iuf_data,
                       not_jiapi_data,
                       not_core_data,
-                      valor_multa,
-                      qtdparcelas,
-                      vencimento_data,
-                      dataemissao,
 											tid
 					from tab_fisc_cobranca t
 				   where t.id = p_id) loop
@@ -54,10 +50,6 @@
          not_iuf_data,
          not_jiapi_data,
          not_core_data,
-         valor_multa,
-         qtdparcelas,
-         vencimento_data,
-         dataemissao,
          tid,
 				 executor_id,
 				 executor_tid,
@@ -90,10 +82,6 @@
          i.not_iuf_data,
          i.not_jiapi_data,
          i.not_core_data,
-         i.valor_multa,
-         i.qtdparcelas,
-         i.vencimento_data,
-         i.dataemissao,
          i.tid,
 				 p_executor_id,
 				 p_executor_tid,

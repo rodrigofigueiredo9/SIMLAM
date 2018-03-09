@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
+    <Compile Include="TestClass\CobrancaTest.cs" />
     <Compile Include="TestClass\VrteTest.cs" />
     <Compile Include="TestClass\ParametrizacaoTest.cs" />
     <Compile Include="TestClass\NotificacaoTest.cs" />

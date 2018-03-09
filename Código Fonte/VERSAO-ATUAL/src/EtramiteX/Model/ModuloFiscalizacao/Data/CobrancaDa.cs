@@ -76,12 +76,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																	  not_iuf_data,
 																	  not_jiapi_data,
 																	  not_core_data,
-																	  valor_multa,
-																	  qtdparcelas,
-																	  vencimento_data,
-																	  dataemissao,
                                                                    tid)
-                                    values ({0}seq_tab_fisc_cobranca.nextval,
+                                    values ({0}seq_fisc_cobranca.nextval,
 											:fiscalizacao,
 											:autuado,
 											:codigoreceita,
@@ -93,15 +89,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											:not_iuf_data,
 											:not_jiapi_data,
 											:not_core_data,
-											:valor_multa,
-											:qtdparcelas,
-											:vencimento_data,
-											:dataemissao,
                                             :tid)
                                     returning id into :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao, DbType.Int32);
-                comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoa.Id, DbType.Int32);
+                comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoaId, DbType.Int32);
                 comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
                 comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
@@ -111,10 +103,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
                 comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
                 comando.AdicionarParametroEntrada("not_core_data", cobranca.DataCORE.Data, DbType.DateTime);
-                comando.AdicionarParametroEntrada("valor_multa", cobranca.ValorMulta, DbType.Decimal);
-                comando.AdicionarParametroEntrada("qtdparcelas", cobranca.QuantidadeParcelas, DbType.Int32);
-                comando.AdicionarParametroEntrada("vencimento_data", cobranca.Data1Vencimento.Data, DbType.DateTime);
-                comando.AdicionarParametroEntrada("dataemissao", cobranca.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -122,9 +110,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 cobranca.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
+				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.criar, bancoDeDados);
 
-                Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -149,18 +137,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 										t.protoc_num = :protoc_num,
 										t.autos = :autos,
 										t.not_iuf_data = :not_iuf_data,
-										t.not_jiapi_dat = :not_jiapi_data,
+										t.not_jiapi_data = :not_jiapi_data,
 										t.not_core_data = :not_core_data,
-										t.valor_multa = :valor_multa,
-										t.qtdparcelas = :qtdparcelas,
-										t.vencimento_da = :vencimento_data,
-										t.dataemissao = :dataemissao,
                                         t.tid = :tid
                                     where t.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", cobranca.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao, DbType.Int32);
-				comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoa.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
@@ -170,17 +154,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_core_data", cobranca.DataCORE.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("valor_multa", cobranca.ValorMulta, DbType.Decimal);
-				comando.AdicionarParametroEntrada("qtdparcelas", cobranca.QuantidadeParcelas, DbType.Int32);
-				comando.AdicionarParametroEntrada("vencimento_data", cobranca.Data1Vencimento.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("dataemissao", cobranca.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
 				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
-                Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -213,7 +193,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Consulta
 
-				Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
+				//Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
 
 				#endregion
 
@@ -227,10 +207,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#region Obter / Filtrar
 
-		public Cobranca Obter(int cobrancaId, BancoDeDados banco = null)
+		public Cobranca Obter(int fiscalizacao, BancoDeDados banco = null)
         {
-            var Cobranca = new Cobranca();
-            
+            var cobranca = new Cobranca();
+			var cobrancaParcelamentoDa = new CobrancaParcelamentoDa();
+
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 Comando comando = bancoDeDados.CriarComando(@"
@@ -251,21 +232,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											c.autos,
 											c.not_iuf_data,
 											c.not_jiapi_data,
-											c.not_core_data,
-											c.valor_multa,
-											c.qtdparcelas,
-											c.vencimento_data,
-											c.dataemissao
+											c.not_core_data
 										from tab_fisc_cobranca c
-										where c.id = :id", EsquemaBanco);
+										where c.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("id", cobrancaId, DbType.Int32);
+                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacao, DbType.Int32);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
                     if (reader.Read())
                     {
-                        Cobranca = new Cobranca
+                        cobranca = new Cobranca
                         {
                             Id = reader.GetValue<int>("id"),
 							NumeroFiscalizacao = reader.GetValue<int>("fiscalizacao"),
@@ -276,41 +253,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							SerieTexto = reader.GetValue<string>("serie_texto"),
 							AutuadoPessoaId = reader.GetValue<int>("autuado"),
 							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
-							CodigoReceitaTexto = reader.GetValue<string>("codigoreceita_texto"),
-							ValorMulta = reader.GetValue<decimal>("valor_multa"),
-							QuantidadeParcelas = reader.GetValue<int>("qtdparcelas"),
+							CodigoReceitaTexto = reader.GetValue<string>("codigoreceita_texto")
 						};
 
-						Cobranca.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
-						Cobranca.DataIUF.Data = reader.GetValue<DateTime>("not_iuf_data");
-						Cobranca.DataJIAPI.Data = reader.GetValue<DateTime>("not_jiapi_data");
-						Cobranca.DataCORE.Data = reader.GetValue<DateTime>("not_core_data");
-						Cobranca.Data1Vencimento.Data = reader.GetValue<DateTime>("vencimento_data");
-						Cobranca.DataEmissao.Data = reader.GetValue<DateTime>("dataemissao");
-						if (Cobranca.DataLavratura.Data.HasValue && Cobranca.DataLavratura.Data.Value.Year == 1)
-							Cobranca.DataLavratura = new DateTecno();
-						if (Cobranca.DataIUF.Data.HasValue && Cobranca.DataIUF.Data.Value.Year == 1)
-							Cobranca.DataIUF = new DateTecno();
-						if (Cobranca.DataJIAPI.Data.HasValue && Cobranca.DataJIAPI.Data.Value.Year == 1)
-							Cobranca.DataJIAPI = new DateTecno();
-						if (Cobranca.DataCORE.Data.HasValue && Cobranca.DataCORE.Data.Value.Year == 1)
-							Cobranca.DataCORE = new DateTecno();
-						if (Cobranca.DataEmissao.Data.HasValue && Cobranca.DataEmissao.Data.Value.Year == 1)
-							Cobranca.DataEmissao = new DateTecno();
-						if (Cobranca.DataEmissao.Data.HasValue && Cobranca.DataEmissao.Data.Value.Year == 1)
-							Cobranca.DataEmissao = new DateTecno();
-						Cobranca.AutuadoPessoa = Cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(Cobranca.AutuadoPessoaId) : new Pessoa();
-						Cobranca.Notificacao = Cobranca.NumeroFiscalizacao > 0 ? new NotificacaoBus().Obter(Cobranca.NumeroFiscalizacao) : new Notificacao();
-                    }
+						cobranca.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+						cobranca.DataIUF.Data = reader.GetValue<DateTime>("not_iuf_data");
+						cobranca.DataJIAPI.Data = reader.GetValue<DateTime>("not_jiapi_data");
+						cobranca.DataCORE.Data = reader.GetValue<DateTime>("not_core_data");
+						if (cobranca.DataLavratura.Data.HasValue && cobranca.DataLavratura.Data.Value.Year == 1)
+							cobranca.DataLavratura = new DateTecno();
+						if (cobranca.DataIUF.Data.HasValue && cobranca.DataIUF.Data.Value.Year == 1)
+							cobranca.DataIUF = new DateTecno();
+						if (cobranca.DataJIAPI.Data.HasValue && cobranca.DataJIAPI.Data.Value.Year == 1)
+							cobranca.DataJIAPI = new DateTecno();
+						if (cobranca.DataCORE.Data.HasValue && cobranca.DataCORE.Data.Value.Year == 1)
+							cobranca.DataCORE = new DateTecno();
+						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
+						cobranca.Notificacao = cobranca.NumeroFiscalizacao > 0 ? new NotificacaoBus().Obter(cobranca.NumeroFiscalizacao) : new Notificacao();
+						cobranca.Parcelamentos = cobrancaParcelamentoDa.Obter(cobranca.Id);
+					}
                     else
                     {
-                        Cobranca = null;
+                        cobranca = null;
                     }
                     reader.Close();
                 }
 			}
 
-			return Cobranca;
+			return cobranca;
         }
 
 		#endregion

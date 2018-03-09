@@ -1573,6 +1573,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			}
 		}
 
+		internal Vrte ObterVrte(int ano, BancoDeDados banco = null)
+		{
+			var vrte = new Vrte();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+
+				bancoDeDados.IniciarTransacao();
+
+				comando = bancoDeDados.CriarComando(@"select id, ano, vrte, tid  
+                                                      from tab_fisc_vrte
+													  where ano = :ano", EsquemaBanco);
+
+                comando.AdicionarParametroEntrada("ano", ano, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						vrte = new Vrte()
+						{
+							Id = reader.GetValue<int>("id"),
+							Ano = reader.GetValue<int>("ano"),
+							VrteEmReais = reader.GetValue<decimal>("vrte"),
+							Tid = reader.GetValue<string>("tid")
+						};
+					}
+                    reader.Close();
+				}
+			}
+
+			return vrte;
+		}
+
 		internal List<Vrte> ObterVrte(BancoDeDados banco = null)
 		{
 			List<Vrte> listaVrte = new List<Vrte>();
@@ -1639,16 +1673,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				}
 				else
 				{
-					comando = bancoDeDados.CriarComando(@"update cnf_fisc__Parametrizacao c set c.texto = :texto, c.ativo = :ativo, c.tid = :tid 
-														where c.id = :id", EsquemaBanco);
+					comando = bancoDeDados.CriarComando(@"update tab_fisc_parametrizacao p set
+														p.codigoreceita = :codigoreceita,
+														p.iniciovigencia = :iniciovigencia,
+														p.fimvigencia = :fimvigencia,
+														p.maximoparcelas = :maximoparcelas,
+														p.valorminimo_pf = :valorminimo_pf,
+														p.valorminimo_pj = :valorminimo_pj,
+														p.multa_perc = :multa_perc,
+														p.juros_perc = :juros_perc,
+														p.desconto_perc = :desconto_perc,
+														p.desconto_und = :desconto_und,
+														p.desconto_decor = :desconto_decor,
+														p.tid = :tid
+														where p.id = :id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
 					acao = eHistoricoAcao.atualizar;
 				}
 
 				comando.AdicionarParametroEntrada("codigoreceita", entidade.CodigoReceitaId, DbType.Int32);
-				comando.AdicionarParametroEntrada("iniciovigencia", entidade.InicioVigencia.Data, DbType.Date);
-				comando.AdicionarParametroEntrada("fimvigencia", entidade.FimVigencia.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("iniciovigencia", entidade.InicioVigencia.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("fimvigencia", entidade.FimVigencia.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("maximoparcelas", entidade.MaximoParcelas, DbType.Int32);
 				comando.AdicionarParametroEntrada("valorminimo_pf", entidade.ValorMinimoPF, DbType.Int32);
 				comando.AdicionarParametroEntrada("valorminimo_pj", entidade.ValorMinimoPJ, DbType.Int32);
@@ -2827,7 +2873,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 										order by p.codigoreceita", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("codigoreceita", codigoReceita, DbType.Int32);
-				comando.AdicionarParametroEntrada("data", data, DbType.Date);
+				comando.AdicionarParametroEntrada("data", data, DbType.DateTime);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{

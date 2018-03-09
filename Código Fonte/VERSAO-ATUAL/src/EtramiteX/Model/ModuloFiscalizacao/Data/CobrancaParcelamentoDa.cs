@@ -66,23 +66,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 Comando comando = bancoDeDados.CriarComando(@"
                                     insert into {0}tab_fisc_cob_parcelamento (id,
-																   cobranca,
-                                                                   tid)
+																cobranca,
+																valor_multa,
+																qtdparcelas,
+																vencimento_data,
+																dataemissao,
+                                                                tid)
                                     values ({0}seq_fisc_cob_parc.nextval,
 											:cobranca,
+											:valor_multa,
+											:qtdparcelas,
+											:vencimento_data,
+											:dataemissao,
                                             :tid)
                                     returning id into :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("cobranca", cobrancaParcelamento.CobrancaId, DbType.Int32);
-                comando.AdicionarParametroSaida("id", DbType.Int32);
+				comando.AdicionarParametroEntrada("valor_multa", cobrancaParcelamento.ValorMulta, DbType.Decimal);
+				comando.AdicionarParametroEntrada("qtdparcelas", cobrancaParcelamento.QuantidadeParcelas, DbType.Int32);
+				comando.AdicionarParametroEntrada("vencimento_data", cobrancaParcelamento.Data1Vencimento.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("dataemissao", cobrancaParcelamento.DataEmissao.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroSaida("id", DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 cobrancaParcelamento.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				Historico.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
+				Historico.Gerar(cobrancaParcelamento.CobrancaId, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
-                Consulta.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -99,18 +112,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     update {0}tab_fisc_cob_parcelamento t
                                     set 
 										t.cobranca = :cobranca,
+										t.valor_multa = :valor_multa,
+										t.qtdparcelas = :qtdparcelas,
+										t.vencimento_data = :vencimento_data,
+										t.dataemissao = :dataemissao,
                                         t.tid = :tid
                                     where t.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", cobrancaParcelamento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("cobranca", cobrancaParcelamento.CobrancaId, DbType.Int32);
+				comando.AdicionarParametroEntrada("valor_multa", cobrancaParcelamento.ValorMulta, DbType.Decimal);
+				comando.AdicionarParametroEntrada("qtdparcelas", cobrancaParcelamento.QuantidadeParcelas, DbType.Int32);
+				comando.AdicionarParametroEntrada("vencimento_data", cobrancaParcelamento.Data1Vencimento.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("dataemissao", cobrancaParcelamento.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
-				Historico.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
+				Historico.Gerar(cobrancaParcelamento.CobrancaId, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
-                Consulta.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, bancoDeDados);
+                //Consulta.Gerar(cobrancaParcelamento.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
                 bancoDeDados.Commit();
             }
@@ -143,7 +164,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Consulta
 
-				Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
+				//Consulta.Deletar(id, eHistoricoArtefato.cobranca, bancoDeDados);
 
 				#endregion
 
@@ -166,6 +187,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
 											p.cobranca,
+											p.valor_multa,
+											p.qtdparcelas,
+											p.vencimento_data,
+											p.dataemissao,
 											p.tid
 										from {0}tab_fisc_cob_parcelamento p
 										where p.cobranca = :cobranca", EsquemaBanco);
@@ -180,8 +205,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						{
 							Id = reader.GetValue<int>("id"),
 							CobrancaId = reader.GetValue<int>("cobranca"),
+							ValorMulta = reader.GetValue<decimal>("valor_multa"),
+							QuantidadeParcelas = reader.GetValue<int>("qtdparcelas"),
 						};
-						cobrancaParcelamento.DUAS = cobrancaDUADa.Obter(cobrancaParcelamento.CobrancaId);
+						cobrancaParcelamento.Data1Vencimento.Data = reader.GetValue<DateTime>("vencimento_data");
+						cobrancaParcelamento.DataEmissao.Data = reader.GetValue<DateTime>("dataemissao");
+						if (cobrancaParcelamento.DataEmissao.Data.HasValue && cobrancaParcelamento.DataEmissao.Data.Value.Year == 1)
+							cobrancaParcelamento.DataEmissao = new DateTecno();
+						if (cobrancaParcelamento.DataEmissao.Data.HasValue && cobrancaParcelamento.DataEmissao.Data.Value.Year == 1)
+							cobrancaParcelamento.DataEmissao = new DateTecno();
+						cobrancaParcelamento.DUAS = cobrancaDUADa.Obter(cobrancaParcelamento.Id);
 
 						lista.Add(cobrancaParcelamento);
 					}

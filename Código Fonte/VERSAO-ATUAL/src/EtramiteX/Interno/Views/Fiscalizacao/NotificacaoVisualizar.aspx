@@ -2,7 +2,7 @@
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<NotificacaoVM>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Salvar Notificações/Financeiro</asp:Content>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Notificações/Financeiro</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/Fiscalizacao/notificacao.js") %>"></script>
@@ -12,7 +12,8 @@
 		$(function () {
 			Notificacao.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("NotificacaoCriar", "Fiscalizacao") %>'
+					editar: '<%= Url.Action("Notificacao", "Fiscalizacao") %>',
+					cobranca: '<%= Url.Action("Cobranca", "Fiscalizacao") %>'
 				}
 			});
 
@@ -31,14 +32,21 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div id="central">
 
-        <h1 class="titTela">Salvar Notificações/Financeiro</h1>
+        <h1 class="titTela">Visualizar Notificações/Financeiro</h1>
         <br />
 
         <% Html.RenderPartial("NotificacaoPartial", Model); %>
 
         <div class="block box">
-            <input class="floatLeft btnSalvar" type="button" value="Salvar" />
+            <div class="coluna5 append1">
+            <input class="floatLeft btnEditar" type="button" value="Editar" />
+				</div>
+			<% if (Model.ListaCobranca.Count == 0) { %>
+				<input class="floatLeft btnCadastrarCobranca" type="button" value="Cadastrar Cobrança" />
+			<%}	else { %>
+				<input class="floatLeft btnCadastrarCobranca" type="button" value="Editar Cobrança" />
+			<%} %>
             <span class="floatRight spnCancelarCadastro"><a class="linkCancelar" href="<%= Url.Action("Index","Fiscalizacao") %>" title="Cancelar">Cancelar</a></span>
-        </div>
+    </div>
     </div>
 </asp:Content>

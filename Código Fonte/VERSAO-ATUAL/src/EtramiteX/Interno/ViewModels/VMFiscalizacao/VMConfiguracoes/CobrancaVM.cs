@@ -18,6 +18,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 			set { _entidade = value; }
 		}
 
+
+		private CobrancaParcelamento _parcelamento = new CobrancaParcelamento();
+		public CobrancaParcelamento Parcelamento
+		{
+			get { return _parcelamento; }
+			set { _parcelamento = value; }
+		}
+
 		private List<SelectListItem> _codigoReceita = new List<SelectListItem>();
 		public List<SelectListItem> CodigoReceita
 		{
@@ -60,7 +68,33 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 		{
 			Entidade = entidade;
 			IsVisualizar = isVisualizar;
-			CodigoReceita = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
+			Parcelamento = entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
+			Parcelas = GetListParcelas(Parcelamento.QuantidadeParcelas);
+		}
+
+		private List<SelectListItem> GetListParcelas(int quantidadeParcelas)
+		{
+			var parcelas = new List<SelectListItem>();
+			parcelas.Add(new SelectListItem() { Text = "", Value = "0" });
+			for (int i = 1; i <= quantidadeParcelas; i++)
+			{
+				if(i != quantidadeParcelas)
+					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString() });
+				else
+					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString(), Selected = true });
+			}
+
+			return parcelas;
+		}
+
+		private List<SelectListItem> GetListCodigoReceita(List<Lista> codigoReceita, int idCodigoReceita)
+		{
+			var list = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
+			var item = list.Find(x => x.Value == idCodigoReceita.ToString());
+			item.Selected = true;
+
+			return list;
 		}
 	}
 }

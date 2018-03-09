@@ -12,10 +12,6 @@
     "NOT_IUF_DATA"   	  DATE,
     "NOT_JIAPI_DATA"   	DATE,
     "NOT_CORE_DATA"   	DATE,
-    "VALOR_MULTA"       NUMBER,
-    "QTDPARCELAS"       NUMBER(2,0),    
-    "VENCIMENTO_DATA" 	DATE,
-    "DATAEMISSAO" 	    DATE,
     "TID"               VARCHAR2(36 BYTE) NOT NULL ENABLE,
     CONSTRAINT "PK_FIS_COBRANCA" PRIMARY KEY ("ID") 
     USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
@@ -36,39 +32,18 @@
   TABLESPACE "IDAF_TBS" ;
  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."ID" IS 'Chave primaria. Utiliza a sequencia seq_fisc_cobranca.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."FISCALIZACAO" IS 'Informa o número da fiscalizacao (poderá existir na tabela tab_fiscalizacao. Campo (ID))';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."AUTUADO" IS 'Chave estrangeira com a tabela tab_pessoa. Campo (ID)';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."CODIGORECEITA" IS 'Chave estrangeira para lov_fisc_infracao_codigo_rece. Campo(ID).';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."SERIE" IS 'Chave estrangeira para lov_fiscalizacao_serie. Campo(ID).';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."IUF_NUMERO" IS 'Informa o número do IUF.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."IUF_DATA" IS 'Data do IUF..';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."PROTOC_NUM" IS 'Informa o número de protocolo.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."AUTOS" IS 'Numero de Autos/Temos de N? AI, N? TEI e N? TAD. Utiliza a sequencia seq_fiscalizacao_autos.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."NOT_IUF_DATA" IS 'Data da notificação IUF.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."NOT_JIAPI_DATA" IS 'Data da notificação JIAPI.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."NOT_CORE_DATA" IS 'Data da notificação CORE.';
-  
-  COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."VALOR_MULTA" IS 'Informa o valor da multa.';
-  
-  COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."QTDPARCELAS" IS 'Informa a quantidade de parcelas que será gerada para o parcelamento da cobrança.';
-  
-  COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."VENCIMENTO_DATA" IS 'Data de vencimento da primeira parcela.';
-  
-  COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."DATAEMISSAO" IS 'Data de emissão da cobrança.';
-  
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COBRANCA"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
-  
   COMMENT ON TABLE "IDAF"."TAB_FISC_COBRANCA"  IS 'Tabela de Cobrança.';
  
   CREATE INDEX "IDAF"."IDX_FIS_COB_TID" ON "IDAF"."TAB_FISC_COBRANCA" ("TID") 

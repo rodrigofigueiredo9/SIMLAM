@@ -66,6 +66,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         AcompanhamentoValidar _validarAcompanhamento = new AcompanhamentoValidar();
 
 		NotificacaoBus _busNotificacao = new NotificacaoBus();
+		CobrancaBus _busCobranca = new CobrancaBus();
 
 		public static EtramitePrincipal Usuario
         {
@@ -3042,19 +3043,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Notificacao
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Notificacao(int id)
-		{
-			var fiscalizacao = _bus.Obter(id, true);
-			var vm = new NotificacaoVM();
+		public ActionResult Notificacao(int id) => View(this.GetNotificacaoVM(id, false));
 
-			vm.fiscalizacaoId = id;
-			vm.Notificacao = _busNotificacao.Obter(id);
-            vm.ArquivoVM.Anexos = vm.Notificacao.Anexos;
-			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
-			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
-
-			return View(vm);
-		}
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+		public ActionResult NotificacaoVisualizar(int id) => View(this.GetNotificacaoVM(id, true));
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
@@ -3064,53 +3057,88 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return Json(new { id = notificacao.Id, Msg = Validacao.Erros });
 		}
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult GetNotificacaoId(int id) => Json(new { id = _busNotificacao.ObterId(id), Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+
+		private NotificacaoVM GetNotificacaoVM(int id, bool visualizar)
+		{
+			var vm = new NotificacaoVM();
+
+			vm.fiscalizacaoId = id;
+			vm.Notificacao = _busNotificacao.Obter(id);
+			vm.ArquivoVM.Anexos = vm.Notificacao.Anexos;
+			vm.IsVisualizar = visualizar;
+			vm.ArquivoVM.IsVisualizar = visualizar;
+			var cobranca = _busCobranca.Obter(vm.Notificacao.FiscalizacaoId);
+			vm.ListaCobranca = _busCobranca.ObterCobrancaDUA(cobranca?.Parcelamentos?.FindLast(x => x.Id > 0)?.Id ?? 0);
+			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
+			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
+
+			return vm;
+		}
 		#endregion Notificacao
 
 		#region Cobranca
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+		public ActionResult Cobranca(int? id) => View(this.GetCobrancaVM(id, false));
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarCodigoReceita })]
-		public ActionResult Cobranca()
-		{
-			CobrancaVM vm = new CobrancaVM();
-			vm.ListaCobranca = _busConfiguracao.ObterCobranca();
-
-			return View(vm);
-		}
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
+		public ActionResult CobrancaVisualizar(int id) => View(this.GetCobrancaVM(id, true));
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
-		public ActionResult Cobranca(List<Cobranca> listaCobranca)
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult CobrancaCriar(Cobranca cobranca)
 		{
-			if (listaCobranca == null)
-				listaCobranca = new List<Cobranca>();
-
-			_busConfiguracao.SalvarCobranca(listaCobranca);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@Url = Url.Action("Cobranca", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-
+			_busCobranca.Salvar(cobranca);
+			
+			return Json(new { id = cobranca.Id, Msg = Validacao.Erros });
 		}
 
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
-		public ActionResult ExcluirCobranca(Cobranca CobrancaExcluido)
+		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, bool visualizar)
 		{
-			if (CobrancaExcluido != null && CobrancaExcluido.Id != 0)
+			var cobranca = _busCobranca.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
+
+			if (fiscalizacaoId > 0)
 			{
-				_busConfiguracao.PermiteExcluirCobranca(CobrancaExcluido);
+				var fiscalizacao = _bus.Obter(fiscalizacaoId.Value);
+				var notificacao = _busNotificacao.Obter(fiscalizacaoId.Value) ?? new Notificacao();
+				if (cobranca.Id == 0)
+				{
+					cobranca = new Cobranca(fiscalizacao, notificacao);
+					var parcelamento = cobranca.Parcelamentos[0];
+					parcelamento.QuantidadeParcelas = _busCobranca.GetMaximoParcelas(cobranca, parcelamento);
+					parcelamento.DUAS = new List<CobrancaDUA>();
+				}
+				else if (cobranca.Parcelamentos.Count == 0)
+				{
+					var dataVencimento = notificacao.DataIUF.Data.Value.AddDays(30);
+					if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)
+						dataVencimento = dataVencimento.AddDays(2);
+					else if (dataVencimento.DayOfWeek == DayOfWeek.Monday)
+						dataVencimento = dataVencimento.AddDays(1);
+
+					var parcelamento = new CobrancaParcelamento(fiscalizacao, dataVencimento);
+					parcelamento.QuantidadeParcelas = _busCobranca.GetMaximoParcelas(cobranca, parcelamento);
+					parcelamento.DUAS = new List<CobrancaDUA>();
+					cobranca.Parcelamentos = new List<CobrancaParcelamento>();
+					cobranca.Parcelamentos.Add(parcelamento);
+				}
+
+				var ultimoParcelamento = cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+				if (ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0)
+				{
+					ultimoParcelamento.DUAS = _busCobranca.GerarParcelas(cobranca, ultimoParcelamento);
+					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
+				}
 			}
+			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, visualizar);
 
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@Url = Url.Action("Cobranca", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
+			return vm;
+		} 
 		#endregion Cobranca
 	}
 }

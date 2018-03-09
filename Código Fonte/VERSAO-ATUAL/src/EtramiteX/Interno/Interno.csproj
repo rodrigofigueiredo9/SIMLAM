@@ -1726,6 +1726,8 @@
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoVisualizar.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarVrte.aspx" />
     <Content Include="Views\Fiscalizacao\CobrancaParcelamento.ascx" />
+    <Content Include="Views\Fiscalizacao\NotificacaoVisualizar.aspx" />
+    <Content Include="Views\Fiscalizacao\NotificacaoCobranca.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoVrte.ascx" />
     <Content Include="Views\Fiscalizacao\NotificacaoPartial.ascx" />
     <Content Include="Views\Fiscalizacao\Notificacao.aspx" />

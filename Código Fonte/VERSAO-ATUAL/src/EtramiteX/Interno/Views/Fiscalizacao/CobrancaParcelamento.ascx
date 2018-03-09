@@ -2,20 +2,20 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="block dataGrid">
-    <div class="coluna25">
+    <div class="coluna100">
         <table class="dataGridTable tabParcelas" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
             <thead>
                 <tr>
-                    <th width="10%">Parcela</th>
+                    <th width="5%">Parcela</th>
                     <th width="10%">N° DUA</th>
                     <th width="10%">Vencimento</th>
                     <th width="10%">Valor (R$)</th>
                     <th width="10%">Valor Pago (R$)</th>
-                    <th width="10%">VRTE</th>
-                    <th width="10%">Pagamento</th>
+                    <th width="5%">VRTE</th>
+                    <th width="8%">Pagamento</th>
                     <th width="10%">Situação</th>
-                    <th width="10%">Informações COmplementares</th>
-                    <th width="10%">Ações</th>
+                    <th width="27%">Informações Complementares</th>
+                    <th width="5%">Ações</th>
                 </tr>
             </thead>
 
@@ -27,34 +27,34 @@
                         <span class="parcela" title="<%:parcela.Parcela%>"><%:parcela.Parcela%></span>
                     </td>
                     <td>
-                        <input class="numeroDUA maskNum8" value="<%:parcela.NumeroDUA%>" />
+                        <input class="numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
                     </td>
                     <td>
-                        <input class="dataVencimento maskData" value="<%:parcela.DataVencimento%>" />
+                        <span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
                     </td>
                     <td>
                         <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%:parcela.ValorDUA%></span>
                     </td>
                     <td>
-                        <input class="valorPago maskDecimal" value="<%:parcela.ValorPago%>" />
+                        <input class="valorPago maskArea72" value="<%:parcela.ValorPago%>" style="width: 100%;" />
                     </td>
                     <td>
                         <span class="vrte" title="<%:parcela.VRTE%>"><%:parcela.VRTE%></span>
                     </td>
                     <td>
-                        <input class="dataPagamento maskData" value="<%:parcela.DataPagamento%>" />
+                        <input class="dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
                     </td>
                     <td>
                         <span class="situacao" title="<%:parcela.Situacao%>"><%:parcela.Situacao%></span>
                     </td>
                     <td>
-                        <input class="informacoesComplementares maskData" value="<%:parcela.InformacoesComplementares%>" />
+                        <input class="informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
                     </td>
                     <td class="tdAcoes">
                         <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(parcela)%>' />
                         <input type="hidden" value="<%= parcela.Id %>" class="parcelaId" />
 
-                        <input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" />
+                        <input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" disabled />
                     </td>
                 </tr>
                 <%} %>
@@ -73,7 +73,7 @@
                         <input type="hidden" value="" class="hdnItemJSon" />
                         <input type="hidden" value="" class="parcelaId" />
 
-                        <input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" disabled="disabled" value="" />
+                        <input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" disabled value="" />
                     </td>
                 </tr>
             </tbody>

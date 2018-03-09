@@ -31,7 +31,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 NumeroDUA { get; set; }
 		public Decimal ValorDUA { get; set; }
 		public Decimal ValorPago { get; set; }
-		public Int32 VRTE { get; set; }
+		public Decimal VRTE { get; set; }
 
 		private DateTecno _dataPagamento = new DateTecno();
 		public DateTecno DataPagamento
@@ -42,7 +42,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 
 		public String Situacao { get; set; }
 		public String InformacoesComplementares { get; set; }
-		public Int32 ParcelaPaiId { get; set; }
+		public Int32? ParcelaPaiId { get; set; }
 		public CobrancaDUA ParcelaPai { get; set; }
 		public Int32 ParcelamentoId { get; set; }
 		#endregion

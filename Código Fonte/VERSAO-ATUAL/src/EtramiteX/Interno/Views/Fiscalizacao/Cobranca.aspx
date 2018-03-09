@@ -9,7 +9,8 @@
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>'
+					salvar: '<%= Url.Action("CobrancaCriar", "Fiscalizacao") %>',
+					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

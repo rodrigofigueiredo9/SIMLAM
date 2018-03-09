@@ -10,7 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		#region Constructor
 		public Cobranca() { }
 
-		public Cobranca(Fiscalizacao fiscalizacao)
+		public Cobranca(Fiscalizacao fiscalizacao, Notificacao notificacao)
 		{
 			NumeroFiscalizacao = fiscalizacao.Id;
 			ProcessoNumero = fiscalizacao.ProcessoNumero;
@@ -20,7 +20,25 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			SerieTexto = fiscalizacao.Multa.SerieTexto;
 			DataLavratura = fiscalizacao.Multa.DataLavratura;
 			AutuadoPessoa = fiscalizacao.AutuadoPessoa;
-			ValorMulta = fiscalizacao.Multa.ValorMulta;
+			AutuadoPessoaId = fiscalizacao.AutuadoPessoa.Id;
+			CodigoReceitaId = fiscalizacao.Multa.CodigoReceitaId ?? 0;
+
+			var dataVencimento = new DateTime();
+			if (notificacao.Id > 0)
+			{
+				Notificacao = notificacao;
+				DataIUF = notificacao.DataIUF;
+				DataJIAPI = notificacao.DataJIAPI;
+				DataCORE = notificacao.DataCORE;
+				dataVencimento = notificacao.DataIUF.Data.Value.AddDays(30);
+				if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)
+					dataVencimento = dataVencimento.AddDays(2);
+				else if (dataVencimento.DayOfWeek == DayOfWeek.Monday)
+					dataVencimento = dataVencimento.AddDays(1);
+			}
+
+			Parcelamentos = new List<CobrancaParcelamento>();
+			Parcelamentos.Add(new CobrancaParcelamento(fiscalizacao, dataVencimento));
 		}
 		#endregion
 
@@ -68,23 +86,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 
 		public Int32 CodigoReceitaId { get; set; }
 		public String CodigoReceitaTexto { get; set; }
-		public Decimal ValorMulta { get; set; }
-		public Int32 QuantidadeParcelas { get; set; }
 
-		private DateTecno _data1Vencimento = new DateTecno();
-		public DateTecno Data1Vencimento
-		{
-			get { return _data1Vencimento; }
-			set { _data1Vencimento = value; }
-		}
-
-		private DateTecno _dataEmissao = new DateTecno();
-		public DateTecno DataEmissao
-		{
-			get { return _dataEmissao; }
-			set { _dataEmissao = value; }
-		}
-
+		public CobrancaParcelamento UltimoParcelamento { get; set; }
 		public List<CobrancaParcelamento> Parcelamentos { get; set; }
 		#endregion
 	}
