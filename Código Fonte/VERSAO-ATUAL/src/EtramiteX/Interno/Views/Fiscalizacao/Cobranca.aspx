@@ -10,7 +10,8 @@
 			Cobranca.load($('#central'), {
 				urls: {
 					salvar: '<%= Url.Action("CobrancaCriar", "Fiscalizacao") %>',
-					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>'
+					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
+					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

@@ -39,10 +39,10 @@
                 <span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto%>"><%:parcela.DataPagamento.DataTexto%></span> 
               </td> 
               <td> 
-                <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%:parcela.ValorDUA%></span> 
+                <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%: String.Format("{0:N}", parcela.ValorDUA) %></span> 
               </td> 
               <td> 
-                <span class="valorPago" title="<%:parcela.ValorPago%>"><%:parcela.ValorPago%></span> 
+                <span class="valorPago" title="<%:parcela.ValorPago%>"><%: String.Format("{0:N}", parcela.ValorPago) %></span> 
               </td>          
             </tr> 
           <%} %> 

@@ -3,6 +3,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CobrancaVM>" %>
 
 <input type="hidden" class="hdnCobrancaId" value="<%:Model.Entidade.Id %>" />
+<input type="hidden" class="hdnVisualizar" value="<%:Model.IsVisualizar %>" />
 
 <fieldset class="block box">
     <div class="block">
@@ -74,7 +75,7 @@
 
         <div class="coluna15">
             <label for="Cobranca_ValorMulta">Valor (R$) *</label>
-            <%= Html.TextBox("Cobranca.ValorMulta", Model.Parcelamento.ValorMulta, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimal txtValorMulta" }))%>
+            <%= Html.TextBox("Cobranca.ValorMulta", String.Format("{0:N2}", Model.Parcelamento.ValorMulta), ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto2 txtValorMulta" }))%>
         </div>
 
         <div class="coluna15">
@@ -94,7 +95,7 @@
     </div>
 
     <div class="block DivParcelas">
-        <% Html.RenderPartial("CobrancaParcelamento", Model.Parcelamento); %>
+        <% Html.RenderPartial("CobrancaParcelamento", Model); %>
         <input type="hidden" class="hdnParcelamento" value='<%: ViewModelHelper.Json(Model.Parcelamento)%>' />
     </div>
 
@@ -110,19 +111,16 @@
 </fieldset>
 
 <div class="block box">
-    <%if (Model.IsVisualizar)
-		{%>
-    <span class="cancelarCaixa"><a class="linkCancelar" href="#" onclick="window.history.go(-1);">Cancelar</a></span>
-    <%}
-		else
-		{ %>
-    <div class="coluna7 append1">
-        <input class="floatLeft btnRecalcular" type="button" value="Recalcular" disabled />
-    </div>
-    <div class="coluna5 append1">
-        <input class="floatLeft btnSalvar" type="button" value="Salvar" />
-    </div>
-    <input class="floatLeft btnNovoParcelamento" type="button" value="Novo Parcelamento" disabled />
-    <span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="#" onclick="window.history.go(-1);">Cancelar</a></span>
+    <%if (Model.IsVisualizar) {%>
+		<input class="floatLeft btnEditar" type="button" value="Editar Cobrança" />
+    <%} else { %>
+		<div class="coluna7 append1">
+			<input class="floatLeft btnRecalcular" type="button" value="Recalcular" disabled />
+		</div>
+		<div class="coluna5 append1">
+			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
+		</div>
+		<input class="floatLeft btnNovoParcelamento" type="button" value="Novo Parcelamento" disabled />
     <%} %>
+	<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="#">Cancelar</a></span>
 </div>

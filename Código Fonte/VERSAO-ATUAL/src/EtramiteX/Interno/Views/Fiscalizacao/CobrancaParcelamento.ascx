@@ -8,54 +8,74 @@
                 <tr>
                     <th width="5%">Parcela</th>
                     <th width="10%">N° DUA</th>
-                    <th width="10%">Vencimento</th>
+                    <th width="9%">Vencimento</th>
                     <th width="10%">Valor (R$)</th>
                     <th width="10%">Valor Pago (R$)</th>
-                    <th width="5%">VRTE</th>
+                    <th width="8%">VRTE</th>
                     <th width="8%">Pagamento</th>
                     <th width="10%">Situação</th>
                     <th width="27%">Informações Complementares</th>
-                    <th width="5%">Ações</th>
+					<% if (!Model.IsVisualizar) { %>
+						<th width="5%">Ações</th>
+					<%} %>
                 </tr>
             </thead>
 
             <tbody>
-                <% foreach (var parcela in Model.DUAS)
+                <% foreach (var parcela in Model.Parcelamento.DUAS)
 					{ %>
                 <tr>
                     <td>
                         <span class="parcela" title="<%:parcela.Parcela%>"><%:parcela.Parcela%></span>
                     </td>
                     <td>
-                        <input class="numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
+						<% if (Model.IsVisualizar) { %>
+							<span class="numeroDUA" title="<%:parcela.NumeroDUA%>"><%:parcela.NumeroDUA%></span>
+						<%} else {%>
+							<input class="numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
+						<%} %>
                     </td>
                     <td>
                         <span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
                     </td>
                     <td>
-                        <span class="valorDUA maskDecimalPonto2" title="<%:parcela.ValorDUA%>"><%:parcela.ValorDUA%></span>
+                        <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%: String.Format("{0:N}", parcela.ValorDUA) %></span>
                     </td>
                     <td>
-                        <input class="valorPago maskArea72" value="<%:parcela.ValorPago%>" style="width: 100%;" />
+						<% if (Model.IsVisualizar) { %>
+							<span class="valorPago" title="<%:parcela.ValorPago%>"><%:parcela.ValorPago%></span>
+						<%} else {%>
+							<input class="valorPago maskArea72" value="<%:parcela.ValorPago%>" style="width: 100%;" />
+						<%} %>
                     </td>
                     <td>
-                        <span class="vrte maskDecimalPonto4" title="<%:parcela.VRTE%>"><%:parcela.VRTE%></span>
+                        <span class="vrte" title="<%:parcela.VRTE%>"><%: String.Format("{0:N4}", parcela.VRTE) %></span>
                     </td>
                     <td>
-                        <input class="dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
+						<% if (Model.IsVisualizar) { %>
+							<span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto%>"><%:parcela.DataPagamento.DataTexto%></span>
+						<%} else {%>
+							<input class="dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
+						<%} %>
                     </td>
                     <td>
                         <span class="situacao" title="<%:parcela.Situacao%>"><%:parcela.Situacao%></span>
                     </td>
                     <td>
-                        <input class="informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
+						<% if (Model.IsVisualizar) { %>
+							<span class="informacoesComplementares" title="<%:parcela.InformacoesComplementares ?? ""%>"><%:parcela.InformacoesComplementares ?? ""%></span>
+						<%} else {%>
+							<input class="informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
+						<%} %>
                     </td>
-                    <td class="tdAcoes">
-                        <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(parcela)%>' />
-                        <input type="hidden" value="<%= parcela.Id %>" class="parcelaId" />
+					<% if (!Model.IsVisualizar) { %>
+						<td class="tdAcoes">
+							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(parcela)%>' />
+							<input type="hidden" value="<%= parcela.Id %>" class="parcelaId" />
 
-                        <input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" disabled />
-                    </td>
+							<input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" disabled />
+						</td>
+					<%} %>
                 </tr>
                 <%} %>
 

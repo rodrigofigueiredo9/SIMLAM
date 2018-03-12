@@ -60,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						bancoDeDados.IniciarTransacao();
 						_da.Salvar(entidade, bancoDeDados);
 						entidade.UltimoParcelamento.CobrancaId = entidade.Id;
-						this.Salvar(entidade.UltimoParcelamento);
+						this.Salvar(entidade.UltimoParcelamento, bancoDeDados);
 						bancoDeDados.Commit();
 					}
 				}
@@ -73,7 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
-		public bool Salvar(CobrancaParcelamento parcelamento)
+		public bool Salvar(CobrancaParcelamento parcelamento, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -81,14 +81,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
 						bancoDeDados.IniciarTransacao();
 						_daParcelamento.Salvar(parcelamento, bancoDeDados);
 						foreach (var dua in parcelamento.DUAS)
 						{
 							dua.ParcelamentoId = parcelamento.Id;
-							Salvar(dua);
+							this.Salvar(dua, bancoDeDados);
 						}
 						bancoDeDados.Commit();
 					}
@@ -102,7 +102,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
-		public bool Salvar(CobrancaDUA cobrancaDUA)
+		public bool Salvar(CobrancaDUA cobrancaDUA, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -110,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
 						bancoDeDados.IniciarTransacao();
 						_daDUA.Salvar(cobrancaDUA, bancoDeDados);
@@ -208,11 +208,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		{
 			var retorno = false;
 
-			var vrte = _busConfiguracao.ObterVrte(cobranca.DataLavratura.Data.Value.Year) ?? new Vrte();
+			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
 			if (parametrizacao == null) return retorno;
 
-			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;			
+			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
 			var parcelas = parcelamento.DUAS;
 
 			if (parcelas.Count == 1)
@@ -306,19 +306,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public int GetMaximoParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
-			if(cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido))
-				return 0;
+			if (cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido)) return 0;
 
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
-			if (parametrizacao == null)
-				return 0;
+			if (parametrizacao == null) return 0;
 
+			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
+			if (vrte == null) return 0;
+
+			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
 			var parcela = 0;
 
 			if (cobranca.AutuadoPessoa.IsFisica)
-				parcela = Decimal.ToInt32(parcelamento.ValorMulta / parametrizacao.ValorMinimoPF);
+				parcela = Decimal.ToInt32(valorAtualizadoVRTE / parametrizacao.ValorMinimoPF);
 			else
-				parcela = Decimal.ToInt32(parcelamento.ValorMulta / parametrizacao.ValorMinimoPJ);
+				parcela = Decimal.ToInt32(valorAtualizadoVRTE / parametrizacao.ValorMinimoPJ);
 
 			if (parcela > parametrizacao.MaximoParcelas)
 				return parametrizacao.MaximoParcelas;

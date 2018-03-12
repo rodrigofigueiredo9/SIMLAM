@@ -45,6 +45,7 @@ namespace Test.TestClass
 				{
 					Id = 1,
 					DataLavratura = new DateTecno() { Data = DateTime.Now.AddDays(-60) },
+					DataIUF = new DateTecno() { Data = DateTime.Now.AddDays(-60) },
 					CodigoReceitaId = codigoReceita,
 					AutuadoPessoa = _busPessoa.Obter(2525)
 				};
@@ -72,7 +73,7 @@ namespace Test.TestClass
 		[TestMethod]
 		public void CalculoDuaComParametrizacaoExistenteTest()
 		{
-			var cobranca = this.GetCobranca(23);
+			var cobranca = this.GetCobranca(3);
 			var parcelamento = cobranca.Parcelamentos[0];
 			Assert.IsTrue(_bus.CalcularParcelas(cobranca, parcelamento));
 		}
@@ -80,7 +81,7 @@ namespace Test.TestClass
 		[TestMethod]
 		public void CalculoDuaComParametrizacaoNaoExistenteTest()
 		{
-			var cobranca = this.GetCobranca(3);
+			var cobranca = this.GetCobranca(23);
 			var parcelamento = cobranca.Parcelamentos[0];
 			Assert.IsFalse(_bus.CalcularParcelas(cobranca, parcelamento));
 		}

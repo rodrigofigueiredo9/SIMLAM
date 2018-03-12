@@ -6,7 +6,8 @@ Cobranca = {
 	settings: {
 		urls: {
 			salvar: '',
-			carregar: ''
+			carregar: '',
+			cancelar: ''
 		},
 		mensagens: null
 	},
@@ -18,7 +19,9 @@ Cobranca = {
 		Cobranca.container = container;
 
 		container.delegate('.btnSalvar', 'click', Cobranca.salvar);
+		container.delegate('.btnEditar', 'click', Cobranca.editar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
+		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
 		
 		$('.txtProcessoNumero', container).focus();
 	},
@@ -99,6 +102,26 @@ Cobranca = {
 		var id = $('.hdnCobrancaId', container).val();
 		var parcela = $('.ddlParcelas :selected', container).val();
 		MasterPage.redireciona(Cobranca.settings.urls.carregar + "?parcela=" + parcela);
+
+		MasterPage.carregando(false);
+	},
+
+	editar: function () {
+		MasterPage.carregando(true);
+
+		var container = Cobranca.container;
+		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + fiscalizacaoId);
+
+		MasterPage.carregando(false);
+	},
+
+	cancelar: function () {
+		MasterPage.carregando(true);
+
+		var container = Cobranca.container;
+		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.cancelar + "/" + fiscalizacaoId);
 
 		MasterPage.carregando(false);
 	}

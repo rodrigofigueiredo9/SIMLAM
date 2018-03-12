@@ -13,7 +13,8 @@
 			Notificacao.load($('#central'), {
 				urls: {
 					editar: '<%= Url.Action("Notificacao", "Fiscalizacao") %>',
-					cobranca: '<%= Url.Action("Cobranca", "Fiscalizacao") %>'
+					cobranca: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
+					cobrancaVisualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>'
 				}
 			});
 
@@ -38,13 +39,13 @@
         <% Html.RenderPartial("NotificacaoPartial", Model); %>
 
         <div class="block box">
-            <div class="coluna5 append1">
-            <input class="floatLeft btnEditar" type="button" value="Editar" />
+            <div class="coluna10 append2">
+            <input class="floatLeft btnEditar" type="button" value="Editar Notificação" />
 				</div>
-			<% if (Model.ListaCobranca.Count == 0) { %>
+			<% if (Model.ListaCobranca.Count == 0 && Model.ListaCobranca.Where(x => !x.Situacao.Contains("Pago")).Count() == 0) { %>
 				<input class="floatLeft btnCadastrarCobranca" type="button" value="Cadastrar Cobrança" />
 			<%}	else { %>
-				<input class="floatLeft btnCadastrarCobranca" type="button" value="Editar Cobrança" />
+				<input class="floatLeft btnVisualizarCobranca" type="button" value="Visualizar Cobrança" />
 			<%} %>
             <span class="floatRight spnCancelarCadastro"><a class="linkCancelar" href="<%= Url.Action("Index","Fiscalizacao") %>" title="Cancelar">Cancelar</a></span>
     </div>

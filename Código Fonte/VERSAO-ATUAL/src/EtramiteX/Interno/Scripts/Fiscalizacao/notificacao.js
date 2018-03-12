@@ -20,6 +20,7 @@ Notificacao = {
 		Notificacao.container.delegate('.btnSalvar', 'click', Notificacao.salvar);
 		Notificacao.container.delegate('.btnEditar', 'click', Notificacao.editar);
 		Notificacao.container.delegate('.btnCadastrarCobranca', 'click', Notificacao.cobranca);
+		Notificacao.container.delegate('.btnVisualizarCobranca', 'click', Notificacao.cobrancaVisualizar);
 		Notificacao.container.delegate('.rdbFormaIUF', 'change', Notificacao.alterarVisibilidadeData);
 		Notificacao.container.delegate('.rdbFormaJIAPI', 'change', Notificacao.alterarVisibilidadeData);
 		Notificacao.container.delegate('.rdbFormaCORE', 'change', Notificacao.alterarVisibilidadeData);
@@ -110,5 +111,10 @@ Notificacao = {
 	cobranca: function () {
 		var obj = Notificacao.obter();
 		MasterPage.redireciona(Notificacao.settings.urls.cobranca + "/" + obj.FiscalizacaoId);
+	},
+
+	cobrancaVisualizar: function () {
+		var obj = Notificacao.obter();
+		MasterPage.redireciona(Notificacao.settings.urls.cobrancaVisualizar + "/" + obj.FiscalizacaoId);
 	}
 }

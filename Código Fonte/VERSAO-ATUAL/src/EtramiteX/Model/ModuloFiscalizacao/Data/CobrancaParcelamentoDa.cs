@@ -66,12 +66,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 Comando comando = bancoDeDados.CriarComando(@"
                                     insert into {0}tab_fisc_cob_parcelamento (id,
-																cobranca,
-																valor_multa,
-																qtdparcelas,
-																vencimento_data,
-																dataemissao,
-                                                                tid)
+											cobranca,
+											valor_multa,
+											qtdparcelas,
+											vencimento_data,
+											dataemissao,
+											tid)
                                     values ({0}seq_fisc_cob_parc.nextval,
 											:cobranca,
 											:valor_multa,

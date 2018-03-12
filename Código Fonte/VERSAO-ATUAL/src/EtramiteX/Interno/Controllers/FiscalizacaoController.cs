@@ -3055,7 +3055,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_busNotificacao.Salvar(notificacao);
 
-			return Json(new { id = notificacao.Id, Msg = Validacao.Erros });
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("NotificacaoVisualizar", "Fiscalizacao", new { id = notificacao.FiscalizacaoId, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.NotificacaoMsg.Salvar }) })
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpGet]
@@ -3099,7 +3104,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("Cobranca", "Fiscalizacao", new { id = cobranca.NumeroFiscalizacao, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.Salvar }) })
+				@UrlRedirecionar = Url.Action("CobrancaVisualizar", "Fiscalizacao", new { id = cobranca.NumeroFiscalizacao, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.Salvar }) })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
