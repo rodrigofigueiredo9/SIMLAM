@@ -95,6 +95,22 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			else
 			{
+				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
+				{
+                    if (resultado.mensagensResposta.Count > 1 || 
+                        (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
+                         resultado.codigoResposta == 400 ||
+                         resultado.codigoResposta == 500)
+					{
+						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
+						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+					}
+					else
+					{
+						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
+					}
+					//pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
+				}
                 if (resultado.mensagensResposta == null) 
                 {
                     mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";

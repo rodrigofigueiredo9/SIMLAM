@@ -1578,25 +1578,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 //Se a fiscalização está em andamento, não pode haver números e datas de IUF digital
                 if (objeto.SituacaoId == (int)eFiscalizacaoSituacaoRelatorio.EmAndamento)
                 {
-                    if (objeto.ObjetoInfracao.SerieTexto == "E")
+                    if (objeto.ObjetoInfracao != null && objeto.ObjetoInfracao.SerieTexto == "E")
                     {
                         objeto.ObjetoInfracao.NumeroIUF = null;
                         objeto.ObjetoInfracao.DataLavraturaIUF = null;
                     }
 
-                    if (objeto.Multa.SerieTexto == "E")
+                    if (objeto.Multa != null && objeto.Multa.SerieTexto == "E")
                     {
                         objeto.Multa.NumeroIUF = null;
                         objeto.Multa.DataLavraturaIUF = null;
                     }
 
-                    if (objeto.MaterialApreendido.SerieTexto == "E")
+                    if (objeto.MaterialApreendido != null && objeto.MaterialApreendido.SerieTexto == "E")
                     {
                         objeto.MaterialApreendido.NumeroIUF = null;
                         objeto.MaterialApreendido.DataLavraturaIUF = null;
                     }
 
-                    if (objeto.OutrasPenalidades.SerieTexto == "E")
+                    if (objeto.OutrasPenalidades != null && objeto.OutrasPenalidades.SerieTexto == "E")
                     {
                         objeto.OutrasPenalidades.NumeroIUF = null;
                         objeto.OutrasPenalidades.DataLavraturaIUF = null;
