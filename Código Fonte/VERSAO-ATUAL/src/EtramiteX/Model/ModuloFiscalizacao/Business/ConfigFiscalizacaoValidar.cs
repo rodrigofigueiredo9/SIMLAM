@@ -336,6 +336,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 				if (item.VrteEmReais == 0)
 					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.VrteObrigatorio);
+
+				var itemDuplicado = _da.ObterVrte(item.Ano);
+				if(itemDuplicado?.Id > 0 && itemDuplicado?.Id != item.Id)
+					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.VrteDuplicado);
 			}
 
 			return Validacao.EhValido;

@@ -1299,6 +1299,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 			}
 		}
 
+		internal bool NotificacaoIsValida(int protocolo)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_protocolo p
+															where p.id = :protocolo
+															and
+															(
+																p.fiscalizacao is null
+																or exists
+																(
+																	select 1 from tab_fiscalizacao f
+																	where f.id = p.fiscalizacao
+																	and 
+																	(
+																		not exists
+																		(
+																			select 1 from tab_fisc_multa m
+																			where f.id = m.fiscalizacao
+																		)
+																		or exists
+																		(
+																			select 1 from tab_fisc_notificacao n
+																			where f.id = n.fiscalizacao
+																		)
+																	)  
+																)
+															)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("protocolo", protocolo, DbType.Int32);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
 		#endregion
 	}
 }

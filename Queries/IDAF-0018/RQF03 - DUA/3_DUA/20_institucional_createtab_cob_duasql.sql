@@ -7,11 +7,12 @@
     "NUMERO_DUA"        NUMBER(38,0),
     "VALOR_DUA"         NUMBER,
     "VALOR_PAGO"        NUMBER,
-    "VRTE"             NUMBER(15,4) NOT NULL ENABLE,
+    "VRTE"              NUMBER(15,4) NOT NULL ENABLE,
     "PAGAMENTO_DATA"    DATE,
     "COMPLEMENTO"       VARCHAR2(80 BYTE),    
     "PAI_DUA"           NUMBER(38,0),    
     "COB_PARC"          NUMBER(38,0) NOT NULL ENABLE,    
+    "CANCELAMENTO_DATA" DATE,
     "TID"               VARCHAR2(36 BYTE) NOT NULL ENABLE,
     CONSTRAINT "PK_FIS_COB_DUA" PRIMARY KEY ("ID") 
     USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
@@ -41,6 +42,7 @@
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_DUA"."COMPLEMENTO" IS 'Informações complementares do DUA.';
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_DUA"."PAI_DUA" IS 'Informa o DUA(parcela) que orginou esta.';
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_DUA"."COB_PARC" IS 'Informa o Parcelamento que este DUA(parcela) está inserido.';
+  COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_DUA"."CANCELAMENTO_DATA" IS 'Informa a data de cancelamento.';
   COMMENT ON COLUMN "IDAF"."TAB_FISC_COB_DUA"."TID" IS 'Id transacional. Esse valor garante a ligação entre todas as tabelas relacionadas com essa transaction.';
   COMMENT ON TABLE "IDAF"."TAB_FISC_COB_DUA"  IS 'Tabela de DUA.';
  

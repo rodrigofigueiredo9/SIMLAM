@@ -284,8 +284,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											d.complemento,
 											d.pai_dua,
 											d.cob_parc,
+											d.cancelamento_data,
 											d.tid,
-											case 
+											case
+											when d.cancelamento_data is not null
+												then 'Cancelado'
 											when d.pagamento_data is null 
 												and d.vencimento_data >= sysdate
 												or d.valor_dua is null
@@ -328,13 +331,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						cobrancaDUA.DataVencimento.Data = reader.GetValue<DateTime>("vencimento_data");
 						cobrancaDUA.DataEmissao.Data = reader.GetValue<DateTime>("dataemissao");
 						cobrancaDUA.DataPagamento.Data = reader.GetValue<DateTime>("pagamento_data");
+						cobrancaDUA.DataCancelamento.Data = reader.GetValue<DateTime>("cancelamento_data");
 						if (cobrancaDUA.DataVencimento.Data.HasValue && cobrancaDUA.DataVencimento.Data.Value.Year == 1)
 							cobrancaDUA.DataVencimento = new DateTecno();
 						if (cobrancaDUA.DataEmissao.Data.HasValue && cobrancaDUA.DataEmissao.Data.Value.Year == 1)
 							cobrancaDUA.DataEmissao = new DateTecno();
 						if (cobrancaDUA.DataPagamento.Data.HasValue && cobrancaDUA.DataPagamento.Data.Value.Year == 1)
 							cobrancaDUA.DataPagamento = new DateTecno();
-						if(cobrancaDUA.ParcelaPaiId > 0)
+						if (cobrancaDUA.DataCancelamento.Data.HasValue && cobrancaDUA.DataCancelamento.Data.Value.Year == 1)
+							cobrancaDUA.DataCancelamento = new DateTecno();
+						if (cobrancaDUA.ParcelaPaiId > 0)
 							cobrancaDUA.ParcelaPai = this.ObterDUA(cobrancaDUA.ParcelaPaiId.Value);
 
 						lista.Add(cobrancaDUA);

@@ -98,7 +98,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
                 comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
                 comando.AdicionarParametroEntrada("iuf_data", cobranca.DataLavratura.Data, DbType.DateTime);
-                comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.Int32);
+                comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
                 comando.AdicionarParametroEntrada("autos", cobranca.NumeroAutos, DbType.Int32);
                 comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
                 comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
@@ -149,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataLavratura.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.Int32);
+				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
 				comando.AdicionarParametroEntrada("autos", cobranca.NumeroAutos, DbType.Int32);
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
@@ -225,15 +225,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											c.serie,
 											(select lfs.texto
 												from lov_fiscalizacao_serie lfs
-												where lfs.id = c.serie) as serie_texto,
-											c.iuf_numero,
-											c.iuf_data,
-											c.protoc_num,
-											c.autos,
-											c.not_iuf_data,
-											c.not_jiapi_data,
-											c.not_core_data
+												where lfs.id = c.serie) serie_texto,
+											coalesce(m.iuf_numero, c.iuf_numero) iuf_numero,
+											coalesce(m.iuf_data, c.iuf_data) iuf_data,
+											case when p.id > 0
+											  then concat(concat(cast(p.numero as VARCHAR2(30)), '/'), cast(p.ano as VARCHAR2(30)))
+											  else cast(c.protoc_num as VARCHAR2(30)) end protoc_num,
+											coalesce(f.autos, c.autos) autos,
+											coalesce(n.forma_iuf_data, c.not_iuf_data) not_iuf_data,
+											coalesce(n.forma_jiapi_data, c.not_jiapi_data) not_jiapi_data,
+											coalesce(n.forma_core_data, c.not_core_data) not_core_data
 										from tab_fisc_cobranca c
+										left join tab_fiscalizacao f
+											on (f.id = c.fiscalizacao)
+										left join tab_protocolo p
+											on (p.fiscalizacao = c.fiscalizacao)
+										left join tab_fisc_notificacao n
+											on (n.fiscalizacao = c.fiscalizacao)
+										left join tab_fisc_multa m
+											on (m.fiscalizacao = c.fiscalizacao)
 										where c.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacao, DbType.Int32);

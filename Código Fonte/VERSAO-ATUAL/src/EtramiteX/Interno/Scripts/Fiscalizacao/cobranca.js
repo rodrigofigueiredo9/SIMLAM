@@ -61,7 +61,7 @@ Cobranca = {
 			var item = JSON.parse($(this).val());
 			var itensHtml = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('input') > -1)
 			item.NumeroDUA = itensHtml[0].children[0].value;
-			item.ValorPago = itensHtml[1].children[0].value;
+			item.ValorPago = parseFloat(itensHtml[1].children[0].value.replaceAll('.', '').replaceAll(',', '.'));
 			item.DataPagamento = { DataTexto: itensHtml[2].children[0].value };
 			item.InformacoesComplementares = itensHtml[3].children[0].value;
 			lista.push(item);

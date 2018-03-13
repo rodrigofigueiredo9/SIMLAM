@@ -7,7 +7,7 @@
     "SERIE"           	NUMBER(38,0),
     "IUF_NUMERO"        NUMBER(38,0),
     "IUF_DATA"        	DATE,
-    "PROTOC_NUM"        NUMBER(38, 0),
+    "PROTOC_NUM"        VARCHAR2(36 BYTE),
     "AUTOS"             NUMBER(38,0),    
     "NOT_IUF_DATA"   	  DATE,
     "NOT_JIAPI_DATA"   	DATE,

@@ -73,6 +73,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		private void CopiarArquivosParaDiretorioPadrao(Notificacao entidade)
 		{
+			if (entidade?.Anexos == null) return;
+
 			var _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 			foreach (var anexo in entidade.Anexos)
 			{
@@ -83,8 +85,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		private void SalvarArquivos(Notificacao entidade, BancoDeDados bancoDeDados)
 		{
-			var _arquivoDa = new ArquivoDa();
+			if (entidade?.Anexos == null) return;
 
+			var _arquivoDa = new ArquivoDa();
 			foreach (var anexo in entidade.Anexos)
 			{
 				if (anexo.Arquivo.Id == 0)

@@ -181,7 +181,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		#region Vrte
 		public Mensagem AnoObrigatorio { get { return new Mensagem() { Campo = "Vrte_Ano", Tipo = eTipoMensagem.Advertencia, Texto = "Ano é obrigatório." }; } }
 		public Mensagem VrteObrigatorio { get { return new Mensagem() { Campo = "Vrte_VrteEmReais", Tipo = eTipoMensagem.Advertencia, Texto = "VRTE é obrigatório." }; } } 
-        public Mensagem VrteDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Vrte_Ano", Texto = "Já existe configuração de VRTE para este ano." }; } }
+        public Mensagem VrteDuplicado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Vrte_Ano", Texto = "Existe(m) configuração(s) de VRTE em duplicidade para um mesmo ano." }; } }
         public Mensagem SalvarVrte { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Configuração de VRTE salva com sucesso." }; } }
 		#endregion Vrte
 

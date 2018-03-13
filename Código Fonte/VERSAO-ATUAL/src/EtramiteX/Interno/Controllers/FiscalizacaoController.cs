@@ -3130,7 +3130,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				}
 				else
 				{
-					var dataVencimento = notificacao.DataIUF.Data.Value.AddDays(30);
+					var dataVencimento = notificacao.DataIUF?.Data.Value.AddDays(30) ?? cobranca.DataIUF.Data.Value.AddDays(30);
 					if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)
 						dataVencimento = dataVencimento.AddDays(2);
 					else if (dataVencimento.DayOfWeek == DayOfWeek.Monday)

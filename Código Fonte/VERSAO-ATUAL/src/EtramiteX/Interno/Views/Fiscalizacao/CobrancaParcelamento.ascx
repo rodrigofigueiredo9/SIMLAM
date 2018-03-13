@@ -32,7 +32,7 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="numeroDUA" title="<%:parcela.NumeroDUA%>"><%:parcela.NumeroDUA%></span>
 						<%} else {%>
-							<input class="numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
+							<input class="text numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
 						<%} %>
                     </td>
                     <td>
@@ -45,7 +45,8 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="valorPago" title="<%:parcela.ValorPago%>"><%:parcela.ValorPago%></span>
 						<%} else {%>
-							<input class="valorPago maskArea72" value="<%:parcela.ValorPago%>" style="width: 100%;" />
+							<% string valorPago = Convert.ToString(parcela.ValorPago); %>
+							<%= Html.TextBox("valorPago", valorPago, new { @class = "text maskDecimalPonto2 valorPago", @maxlength = "13", @width = "100%" })%> 
 						<%} %>
                     </td>
                     <td>
@@ -55,7 +56,7 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto%>"><%:parcela.DataPagamento.DataTexto%></span>
 						<%} else {%>
-							<input class="dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
+							<input class="text dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
 						<%} %>
                     </td>
                     <td>
@@ -65,7 +66,7 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="informacoesComplementares" title="<%:parcela.InformacoesComplementares ?? ""%>"><%:parcela.InformacoesComplementares ?? ""%></span>
 						<%} else {%>
-							<input class="informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
+							<input class="text informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
 						<%} %>
                     </td>
 					<% if (!Model.IsVisualizar) { %>

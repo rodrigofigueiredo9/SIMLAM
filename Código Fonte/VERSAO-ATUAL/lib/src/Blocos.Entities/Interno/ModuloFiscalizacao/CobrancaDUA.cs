@@ -40,6 +40,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			set { _dataPagamento = value; }
 		}
 
+		private DateTecno _dataCancelamento = new DateTecno();
+		public DateTecno DataCancelamento
+		{
+			get { return _dataCancelamento; }
+			set { _dataCancelamento = value; }
+		}
+
 		public String Situacao { get; set; }
 		public String InformacoesComplementares { get; set; }
 		public Int32? ParcelaPaiId { get; set; }
