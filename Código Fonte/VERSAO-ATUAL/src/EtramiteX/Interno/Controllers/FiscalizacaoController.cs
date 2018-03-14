@@ -289,7 +289,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.InfracaoVM = new InfracaoVM();
             vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
 
-            if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;   //apenas para carregar a aba
+            vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
+
+            //apenas para carregar a aba
+            if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;
+            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null) vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;   //fiscalizações antigas
 
             return View("Visualizar", vm);
         }
@@ -1624,8 +1628,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis);
             vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
             vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
+            vm.ObjetoInfracaoVM.Entidade = _busObjetoInfracao.Obter(fiscalizacao.Id);
 
             vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null)
+            {
+                vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;
+            }
 
             List<Lista> penalidades = _busConfiguracao.ObterPenalidadesLista();
             vm.InfracaoVM.Penalidades = penalidades;

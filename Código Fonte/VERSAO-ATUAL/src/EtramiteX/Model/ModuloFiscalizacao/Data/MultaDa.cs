@@ -309,14 +309,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                            a.nome arquivo_nome,
                                            tfi.gerado_sistema,
                                            tfi.serie,
+                                           lfs.texto serie_texto,
                                            tfi.data_lavratura_auto,
                                            tfi.numero_auto_infracao_bloco,
                                            f.autos
                                     from {0}tab_fisc_infracao tfi,
                                          {0}tab_fisc_consid_final tfcf,
                                          {0}tab_fiscalizacao f,
-                                         {0}tab_arquivo a
+                                         {0}tab_arquivo a,
+                                         {0}lov_fiscalizacao_serie lfs
                                     where tfi.arquivo = a.id(+)
+                                          and tfi.serie = lfs.id(+)
                                           and tfi.fiscalizacao = :fiscalizacao
                                           and tfcf.fiscalizacao = :fiscalizacao
                                           and f.id = tfi.fiscalizacao", EsquemaBanco);
@@ -335,7 +338,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Justificativa = reader.GetValue<string>("justificar"),
                             Id = 1,
                             IsDigital = reader.GetValue<bool>("gerado_sistema"),
-                            SerieId = reader.GetValue<int>("serie")
+                            SerieId = reader.GetValue<int>("serie"),
+                            SerieTexto = reader.GetValue<string>("serie_texto")
                         };
 
                         multa.NumeroIUF = multa.IsDigital != true ? reader.GetValue<string>("numero_auto_infracao_bloco") : reader.GetValue<string>("autos");
