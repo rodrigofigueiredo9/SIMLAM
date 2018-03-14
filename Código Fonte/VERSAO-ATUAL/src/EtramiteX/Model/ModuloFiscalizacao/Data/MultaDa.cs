@@ -339,15 +339,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             Id = 1,
                             IsDigital = reader.GetValue<bool>("gerado_sistema"),
                             SerieId = reader.GetValue<int>("serie"),
-                            SerieTexto = reader.GetValue<string>("serie_texto")
+                            SerieTexto = reader.GetValue<string>("serie_texto"),
+                            FiscalizacaoId = fiscalizacaoId
                         };
 
                         multa.NumeroIUF = multa.IsDigital != true ? reader.GetValue<string>("numero_auto_infracao_bloco") : reader.GetValue<string>("autos");
 
-                        DateTime data = reader.GetValue<DateTime>("data_lavratura_auto");
-                        if (data != null)
+                        if (reader["data_lavratura_auto"] != null && !Convert.IsDBNull(reader["data_lavratura_auto"]))
                         {
-                            multa.DataLavratura.Data = data;
+                            multa.DataLavratura.Data = Convert.ToDateTime(reader["data_lavratura_auto"]);
+                        }
+                        else
+                        {
+                            FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
+                            multa.DataLavratura = _fiscDA.ObterDataConclusao(multa.FiscalizacaoId);
                         }
 
                         multa.Arquivo = new Arquivo

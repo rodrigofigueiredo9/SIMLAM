@@ -285,6 +285,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                 FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
                                 objetoInfracao.DataLavraturaTermo = _fiscDA.ObterDataConclusao(objetoInfracao.FiscalizacaoId);
                             }
+
+                            comando = bancoDeDados.CriarComando(@"select texto from {0}lov_fisc_obj_infra_serie where id = :idserie", EsquemaBanco);
+                            comando.AdicionarParametroEntrada("idserie", objetoInfracao.SerieId, DbType.Int32);
+
+                            using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+                            {
+                                if (readerAux.Read())
+                                {
+                                    objetoInfracao.SerieTexto = readerAux.GetValue<string>("texto");
+                                }
+                                readerAux.Close();
+                            }
                         }
 					}
 					reader.Close();
