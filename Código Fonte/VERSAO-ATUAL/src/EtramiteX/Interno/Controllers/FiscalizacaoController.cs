@@ -3088,7 +3088,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Cobranca
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Cobranca(int? id, int? parcela) => View(this.GetCobrancaVM(id, parcela, false));
+		public ActionResult Cobranca(int? id, int? parcela, int? recalcular) => View(this.GetCobrancaVM(id, parcela, false, Convert.ToBoolean(recalcular)));
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
@@ -3108,7 +3108,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
-		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, int? parcela, bool visualizar)
+		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, int? parcela, bool visualizar, bool recalcular = false)
 		{
 			var cobranca = _busCobranca.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
 			var maximoParcelas = 0;
@@ -3158,6 +3158,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					ultimoParcelamento.DUAS = _busCobranca.GerarParcelas(cobranca, ultimoParcelamento);
 					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
 				}
+				else if(recalcular)
+					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
 			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar);
 

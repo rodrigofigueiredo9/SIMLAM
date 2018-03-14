@@ -115,7 +115,7 @@
 		<input class="floatLeft btnEditar" type="button" value="Editar Cobrança" />
     <%} else { %>
 		<div class="coluna7 append1">
-			<input class="floatLeft btnRecalcular" type="button" value="Recalcular" disabled />
+			<input class="floatLeft btnRecalcular" type="button" value="Recalcular" />
 		</div>
 		<div class="coluna5 append1">
 			<input class="floatLeft btnSalvar" type="button" value="Salvar" />

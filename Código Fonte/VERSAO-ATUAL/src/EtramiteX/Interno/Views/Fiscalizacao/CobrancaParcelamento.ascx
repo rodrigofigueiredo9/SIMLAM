@@ -6,7 +6,7 @@
         <table class="dataGridTable tabParcelas" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
             <thead>
                 <tr>
-                    <th width="5%">Parcela</th>
+                    <th width="10%">Parcela</th>
                     <th width="10%">N° DUA</th>
                     <th width="9%">Vencimento</th>
                     <th width="10%">Valor (R$)</th>
@@ -14,9 +14,9 @@
                     <th width="8%">VRTE</th>
                     <th width="8%">Pagamento</th>
                     <th width="10%">Situação</th>
-                    <th width="27%">Informações Complementares</th>
+                    <th width="22%">Informações Complementares</th>
 					<% if (!Model.IsVisualizar) { %>
-						<th width="5%">Ações</th>
+						<th width="3%">Ações</th>
 					<%} %>
                 </tr>
             </thead>
@@ -36,7 +36,11 @@
 						<%} %>
                     </td>
                     <td>
-                        <span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
+						<% if (Model.IsVisualizar || parcela.DataVencimento.IsValido) { %>
+							<span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
+						<%} else {%>
+							<input class="text dataVencimento maskData" value="<%:parcela.DataVencimento.DataTexto%>" style="width: 100%;" />
+						<%} %>
                     </td>
                     <td>
                         <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%: String.Format("{0:N}", parcela.ValorDUA) %></span>
@@ -45,7 +49,7 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="valorPago" title="<%:parcela.ValorPago%>"><%:parcela.ValorPago%></span>
 						<%} else {%>
-							<% string valorPago = Convert.ToString(parcela.ValorPago); %>
+							<% string valorPago = parcela.ValorPago.ToString("N2"); %>
 							<%= Html.TextBox("valorPago", valorPago, new { @class = "text maskDecimalPonto2 valorPago", @maxlength = "13", @width = "100%" })%> 
 						<%} %>
                     </td>
@@ -60,7 +64,7 @@
 						<%} %>
                     </td>
                     <td>
-                        <span class="situacao" title="<%:parcela.Situacao%>"><%:parcela.Situacao%></span>
+                        <span class="situacao" title="<%:parcela.Situacao ?? ""%>"><%:parcela.Situacao ?? ""%></span>
                     </td>
                     <td>
 						<% if (Model.IsVisualizar) { %>
@@ -74,7 +78,7 @@
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(parcela)%>' />
 							<input type="hidden" value="<%= parcela.Id %>" class="parcelaId" />
 
-							<input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" disabled />
+							<input title="Adicionar Subparcela" type="button" class="icone adicionar btnAddSubparcela" value="" />
 						</td>
 					<%} %>
                 </tr>
@@ -83,7 +87,7 @@
                 <tr class="trTemplateRow hide">
                     <td><span class="parcela" title=""></span></td>
                     <td><span class="numeroDUA" title=""></span></td>
-                    <td><span class="dataVencimento" title=""></span></td>
+                    <td><input class="dataVencimento" title="" /></td>
                     <td><span class="valorDUA" title=""></span></td>
                     <td><span class="valorPago" title=""></span></td>
                     <td><span class="vrte" title=""></span></td>

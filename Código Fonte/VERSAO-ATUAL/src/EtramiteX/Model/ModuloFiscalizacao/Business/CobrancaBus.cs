@@ -249,10 +249,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				{
 					if (parcela.ValorDUA == 0)
 					{
-						if (parcela.Parcela[0] == '1')
-							parcela.VRTE = Math.Round(valorTotalVRTE / parcelamento.QuantidadeParcelas, 4);
-						else
-							parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
+						if (parcela.VRTE == 0)
+						{
+							if (parcela.Parcela[0] == '1')
+								parcela.VRTE = Math.Round(valorTotalVRTE / parcelamento.QuantidadeParcelas, 4);
+							else
+								parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
+						}
 
 						var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
 						if (vrteParcela.Id > 0)
