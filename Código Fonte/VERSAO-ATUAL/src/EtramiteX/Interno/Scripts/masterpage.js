@@ -703,18 +703,14 @@ Mascara = {
 		//DATA - Campo de data padrão
 		$(".maskData", container).unmask().mask("39/19/9999");
 
-		//Número da caixa do arquivo (3 dig.)
+		//Número da caixa do arquivo (X dig.)
+		$(".maskNum2", container).unmask().mask("99");
 		$(".maskNum3", container).unmask().mask("999");
-
-		//Número da caixa do arquivo (4 dig.)
 		$(".maskNum4", container).unmask().mask("9999");
-
-		$(".maskNum10", container).unmask().mask("9999999999");
+		$(".maskNum5", container).unmask().mask("99999");
 		$(".maskNum8", container).unmask().mask("99999999");
-
+		$(".maskNum10", container).unmask().mask("9999999999");
 		$(".maskNum15", container).unmask().mask("999999999999999");
-
-		//Número da caixa do arquivo (38 dig.)
 		$(".maskNum38", container).unmask().mask("99999999999999999999999999999999999999");
 
 		//Número do Endereço

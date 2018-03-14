@@ -697,6 +697,7 @@ input[type=button].icone.unlink, .icone.unlink { background-position: -1196px to
 input[type=button].icone.unlink:hover, .icone.unlink:hover { background-position: -1196px center; }
 input[type=button].icone.unlink.desativado, .icone.unlink.desativado { background-position: -1196px bottom; }
 
+input[type=button].icone.adicionar, .icone.adicionar { background: url(../_img/add.png) no-repeat;	}
 
 .icone.desativado { cursor: default !important; }
 

@@ -40,6 +40,7 @@
 					<%if (Model.PodeAlterarSituacao){%><button type="button" title="Alterar Situação" class="icone sitTitulo btnAlterarSituacao"></button><% } %>
 					<%if (Model.PodeVisualizar) {%><button type="button" title="Documentos gerados" class="icone anexos btnDocumentos"></button><% } %>
 					<%if (Model.PodeVisualizarAcompanhamentos) {%><button type="button" title="Acompanhamentos" class="icone btnAcompanhamentos acompanhamento"></button><% } %>
+					<%if (Model.PodeVisualizar) {%><button type="button" title="Notificação" class="icone pendencias btNotificacao"></button><% } %>
 				</td>
 			</tr>
 		<% } %>
