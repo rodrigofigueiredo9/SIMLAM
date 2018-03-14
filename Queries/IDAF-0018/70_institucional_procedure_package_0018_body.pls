@@ -10897,10 +10897,6 @@ procedure codigoreceita(p_id     number,
                       not_iuf_data,
                       not_jiapi_data,
                       not_core_data,
-                      valor_multa,
-                      qtdparcelas,
-                      vencimento_data,
-                      dataemissao,
 											tid
 					from tab_fisc_cobranca t
 				   where t.id = p_id) loop
