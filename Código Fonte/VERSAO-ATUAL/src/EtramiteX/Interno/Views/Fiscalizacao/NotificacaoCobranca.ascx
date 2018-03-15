@@ -7,18 +7,18 @@
       <thead> 
         <tr> 
           <th width="10%">N° DUA</th> 
-          <th width="5%">Parcela</th> 
+          <th width="15%">Parcela</th> 
           <th width="10%">Data Emissão</th> 
           <th width="10%">Data Vencimento</th> 
           <th width="15%">Situação</th> 
           <th width="10%">Data Pagamento</th> 
-          <th width="20%">Valor (R$)</th> 
-          <th width="20%">Valor Pago (R$)</th> 
+          <th width="15%">Valor (R$)</th> 
+          <th width="15%">Valor Pago (R$)</th> 
         </tr>
       </thead>
        
       <tbody>
-          <% foreach (var parcela in Model.ListaCobranca){ %>
+          <% foreach (var parcela in Model.UltimoParcelamento.DUAS){ %>
             <tr> 
               <td> 
                 <span class="numeroDua" title="<%:parcela.NumeroDUA%>"><%:parcela.NumeroDUA%></span> 

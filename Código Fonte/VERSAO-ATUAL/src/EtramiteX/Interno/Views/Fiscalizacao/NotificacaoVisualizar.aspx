@@ -40,11 +40,11 @@
 
         <div class="block box">
             <div class="coluna10 append2">
-				<% if (Model.ListaCobranca.Count == 0 || Model.ListaCobranca.Where(x => !x.Situacao.Contains("Cancelado")).Count() == 0) {%>
+				<% if (Model.UltimoParcelamento.DUAS.Count == 0 || Model.UltimoParcelamento.DUAS.Where(x => !x.Situacao.Contains("Cancelado")).Count() == 0) {%>
 					<input class="floatLeft btnEditar" type="button" value="Editar Notificação" />
 				<%} %>
 			</div>
-			<% if (Model.ListaCobranca.Count == 0) { %>
+			<% if (Model.UltimoParcelamento.Id == 0) { %>
 				<input class="floatLeft btnCadastrarCobranca" type="button" value="Cadastrar Cobrança" />
 			<%}	else { %>
 				<input class="floatLeft btnVisualizarCobranca" type="button" value="Visualizar Cobrança" />

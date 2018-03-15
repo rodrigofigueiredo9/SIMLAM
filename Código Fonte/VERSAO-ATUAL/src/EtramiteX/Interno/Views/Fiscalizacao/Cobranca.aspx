@@ -11,7 +11,8 @@
 				urls: {
 					salvar: '<%= Url.Action("CobrancaCriar", "Fiscalizacao") %>',
 					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>'
+					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>',
+					novoParcelamento: '<%= Url.Action("CobrancaNovoParcelamento", "Fiscalizacao") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

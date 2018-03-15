@@ -6,8 +6,10 @@ Cobranca = {
 	settings: {
 		urls: {
 			salvar: '',
+			visualizar: '',
 			carregar: '',
-			cancelar: ''
+			cancelar: '',
+			novoParcelamento: ''
 		},
 		mensagens: null
 	},
@@ -20,11 +22,14 @@ Cobranca = {
 
 		container.delegate('.btnSalvar', 'click', Cobranca.salvar);
 		container.delegate('.btnEditar', 'click', Cobranca.editar);
-		container.delegate('.btnRecalcular', 'click', Cobranca.recalcular);
 		container.delegate('.btnAddSubparcela', 'click', Cobranca.addSubparcela);
+		container.delegate('.btnRecalcular', 'click', Cobranca.recalcular);
+		container.delegate('.btnNovoParcelamento', 'click', Cobranca.novoParcelamento);
+		container.delegate('.btnParcelamentoAnterior', 'click', Cobranca.parcelamentoAnterior);
+		container.delegate('.btnParcelamentoPosterior', 'click', Cobranca.parcelamentoPosterior);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
-		
+
 		$('.txtProcessoNumero', container).focus();
 	},
 
@@ -76,11 +81,11 @@ Cobranca = {
 				var parcela = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('parcela') > -1);
 				item.Parcela = parcela[0].children[0].innerText;
 				var vrteHtml = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('vrte') > -1);
-				item.VRTE = parseFloat(vrteHtml[0].children[0].innerText.replaceAll('.', '').replaceAll(',', '.'));				
+				item.VRTE = parseFloat(vrteHtml[0].children[0].innerText.replaceAll('.', '').replaceAll(',', '.'));
 				var situacao = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('situacao') > -1);
 				item.Situacao = situacao[0].children[0].innerText;
 				var valorDua = Array.from(this.parentElement.parentElement.children).filter(x => x.innerHTML.indexOf('valorDUA') > -1);
-				item.ValorDUA = parseFloat(valorDua[0].children[0].innerText.replaceAll('.', '').replaceAll(',', '.'));		
+				item.ValorDUA = parseFloat(valorDua[0].children[0].innerText.replaceAll('.', '').replaceAll(',', '.'));
 				item.Tid = "";
 				if (lista.filter(x => x.Id == item.Id).length > 0) {
 					item.ParcelaPaiId = item.Id;
@@ -175,17 +180,60 @@ Cobranca = {
 			var vrte = parseFloat(newRow[0].children[5].children[0].innerText.replaceAll('.', '').replaceAll(',', '.'));
 			vrte = valorDua / vrte;
 			var valorRestante = valorDua - valorPago;
-			
+
 			newRow[0].children[3].children[0].innerText = "";
 			newRow[0].children[4].children[0].value = "";
-			newRow[0].children[5].children[0].innerText = (valorRestante/vrte).formatMoney(4, ',', '.');;
+			newRow[0].children[5].children[0].innerText = (valorRestante / vrte).formatMoney(4, ',', '.');;
 			newRow[0].children[6].children[0].value = "";
 			newRow[0].children[7].children[0].innerText = "Em Aberto";
 			$('.tabParcelas tbody').append(newRow);
 			Mascara.load(Cobranca.container);
 		} else {
-			ExibirMensagemErro('É permitido adicionar subparcela apenas para uma parcela com situação \"Pago Parcial\".');
+			ExibirMensagemValidacao('É permitido adicionar subparcela apenas para uma parcela com situação \"Pago Parcial\".');
 		}
+	},
+
+	novoParcelamento: function () {
+		if (confirm("Esta ação realizará o cancelamento das parcelas que não estejam na situação \"Pago\" ou \"Pago Parcial\" e criará um novo parcelamento com valor atualizado. Deseja continuar?")) {
+			MasterPage.carregando(true);
+			$.ajax({
+				url: Cobranca.settings.urls.novoParcelamento,
+				data: JSON.stringify(Cobranca.obter()),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: function (XMLHttpRequest, textStatus, erroThrown) {
+					Aux.error(XMLHttpRequest, textStatus, erroThrown, Cobranca.container);
+				},
+				success: function (response, textStatus, XMLHttpRequest) {
+					if (response.EhValido) {
+						MasterPage.redireciona(response.UrlRedirecionar);
+					}
+					if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(Cobranca.container, response.Msg);
+					}
+				}
+			});
+			MasterPage.carregando(false);
+		}
+	},
+
+	parcelamentoAnterior: function () {
+		MasterPage.carregando(true);
+		var container = Cobranca.container;
+		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() - 1));
+		MasterPage.carregando(false);
+	},
+
+	parcelamentoPosterior: function () {
+		MasterPage.carregando(true);
+		var container = Cobranca.container;
+		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() + 1));
+		MasterPage.carregando(false);
 	}
 }
 
@@ -204,9 +252,9 @@ Number.prototype.formatMoney = function (c, d, t) {
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 };
 
-function ExibirMensagemErro(erro) {
+function ExibirMensagemValidacao(erro) {
 	var mensagem = '\
-			<div class=\"mensagemSistema erro ui-draggable\" style=\"position: relative;\">\
+			<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
 				<div class=\"textoMensagem \">\
 					<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
 					<p> Mensagem do Sistema</p>\

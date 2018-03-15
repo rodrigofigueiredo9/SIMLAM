@@ -99,15 +99,19 @@
         <input type="hidden" class="hdnParcelamento" value='<%: ViewModelHelper.Json(Model.Parcelamento)%>' />
     </div>
 
+    <%if (Model.IsVisualizar) {%>
     <div class="block">
+		<% var indexParcelamento = Model.Entidade.Parcelamentos.IndexOf(Model.Parcelamento); %>
         <div class="coluna2">
-            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" disabled />
+            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" <%= indexParcelamento == 0 ? "disabled" : "" %> />
         </div>
         <div class="coluna9">
-            Parcelamento 1/1 
+            Parcelamento <%= indexParcelamento + 1 %>/<%= Model.Entidade.Parcelamentos.Count%> 
         </div>
-        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" disabled />
+        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value=""  <%= indexParcelamento == (Model.Entidade.Parcelamentos.Count - 1) ? "disabled" : "" %>  />
+		<input type="hidden" class="hdnIndexParcelamento" value="<%= indexParcelamento %>" />
     </div>
+    <%} %>
 </fieldset>
 
 <div class="block box">
@@ -120,7 +124,7 @@
 		<div class="coluna5 append1">
 			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
 		</div>
-		<input class="floatLeft btnNovoParcelamento" type="button" value="Novo Parcelamento" disabled />
+		<input class="floatLeft btnNovoParcelamento" type="button" value="Novo Parcelamento" />
     <%} %>
 	<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="#">Cancelar</a></span>
 </div>

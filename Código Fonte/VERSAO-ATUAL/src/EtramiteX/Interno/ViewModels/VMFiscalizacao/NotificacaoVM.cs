@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
@@ -12,7 +11,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		public Boolean PodeEditar { get; set; }
 		public Notificacao Notificacao { get; set; }
 		public ArquivoVM ArquivoVM { get; set; }
-		public List<CobrancaDUA> ListaCobranca { get; set; }
+		public CobrancaParcelamento UltimoParcelamento { get; set; }
 
 		public NotificacaoVM()
 		{

@@ -5,7 +5,9 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
+using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
@@ -151,6 +153,48 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
+		public bool NovoParcelamento(Cobranca cobranca)
+		{
+			try
+			{
+				if (_validar.Salvar(cobranca))
+				{
+					var parcelas = cobranca.UltimoParcelamento.DUAS;
+					var valorRestante = 0M;
+					foreach (var parcela in parcelas)
+					{
+						if (!parcela.DataPagamento.IsValido && parcela.ValorPago == 0)
+							parcela.DataCancelamento = new DateTecno() { Data = DateTime.Now };
+						valorRestante += parcela.ValorDUA - parcela.ValorPago;
+					}
+
+					cobranca.UltimoParcelamento.DUAS = parcelas;
+					this.Salvar(cobranca.UltimoParcelamento);
+
+					var parcelamento = new CobrancaParcelamento()
+					{
+						CobrancaId = cobranca.Id,
+						Data1Vencimento = new DateTecno() { Data = DateTime.Now.AddDays(15) },
+						DataEmissao = new DateTecno() { Data = DateTime.Now },
+						ValorMulta = valorRestante,
+						DUAS = new List<CobrancaDUA>()
+					};
+
+					if(cobranca.AutuadoPessoa == null)
+						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
+					parcelamento.QuantidadeParcelas = this.GetMaximoParcelas(cobranca, parcelamento);
+					
+					this.Salvar(parcelamento);
+				}
+			}
+			catch (Exception e)
+			{
+				Validacao.AddErro(e);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		#endregion
 
 		#region Obter
@@ -210,12 +254,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
-			if (parametrizacao == null) return retorno;
+			if (parametrizacao == null || (vrte?.Id ?? 0) == 0) return retorno;
 
 			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
 			var parcelas = parcelamento.DUAS;
 
-			if (parcelas.Count == 1)
+			if (parcelas.Count == 1 && cobranca.Parcelamentos?.Count <= 1)
 			{
 				var parcela = parcelas[0];
 				if (parcela.ValorDUA == 0)
@@ -314,8 +358,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
 			if (parametrizacao == null) return 0;
 
-			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
-			if (vrte == null) return 0;
+			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
+			if ((vrte?.Id ?? 0) == 0) return 0;
 
 			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
 			var parcela = 0;

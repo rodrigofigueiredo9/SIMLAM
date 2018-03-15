@@ -3077,7 +3077,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.IsVisualizar = visualizar;
 			vm.ArquivoVM.IsVisualizar = visualizar;
 			var cobranca = _busCobranca.Obter(vm.Notificacao.FiscalizacaoId);
-			vm.ListaCobranca = _busCobranca.ObterCobrancaDUA(cobranca?.Parcelamentos?.FindLast(x => x.Id > 0)?.Id ?? 0);
+			vm.UltimoParcelamento = cobranca?.Parcelamentos?.FindLast(x => x.Id > 0) ?? new CobrancaParcelamento();
 			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
 			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
 
@@ -3092,7 +3092,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult CobrancaVisualizar(int id) => View(this.GetCobrancaVM(id, 0, true));
+		public ActionResult CobrancaVisualizar(int id, int? index) => View(this.GetCobrancaVM(id, 0, true, false, index));
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
@@ -3108,7 +3108,21 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
-		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, int? parcela, bool visualizar, bool recalcular = false)
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult CobrancaNovoParcelamento(Cobranca cobranca)
+		{
+			_busCobranca.NovoParcelamento(cobranca);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("Cobranca", "Fiscalizacao", new { id = cobranca.NumeroFiscalizacao, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.NovoParcelamento }) })
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, int? parcela, bool visualizar, bool recalcular = false, int? index = null)
 		{
 			var cobranca = _busCobranca.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
 			var maximoParcelas = 0;
@@ -3147,8 +3161,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 							parcelamento.QuantidadeParcelas = maximoParcelas;
 
 						parcelamento.DUAS = new List<CobrancaDUA>();
-						cobranca.Parcelamentos = new List<CobrancaParcelamento>();
-						cobranca.Parcelamentos.Add(parcelamento);
+						if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
+						{
+							cobranca.Parcelamentos = new List<CobrancaParcelamento>();
+							cobranca.Parcelamentos.Add(parcelamento);
+						}
 					}
 				}
 
@@ -3161,7 +3178,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				else if(recalcular)
 					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
-			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar);
+			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar, index);
 
 			return vm;
 		}

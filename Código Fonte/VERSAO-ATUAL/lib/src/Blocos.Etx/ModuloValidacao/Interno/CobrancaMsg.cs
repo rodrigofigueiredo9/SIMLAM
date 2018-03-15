@@ -13,6 +13,7 @@
 	public class CobrancaMsg
 	{
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Cobrança salva com sucesso." }; } }
+		public Mensagem NovoParcelamento { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Novo parcelamento gerado com sucesso." }; } }
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Cobrança removida com sucesso." }; } }
 
 		public Mensagem NumeroAutosObrigatorio { get { return new Mensagem() { Campo = "Cobranca_NumeroAutos", Tipo = eTipoMensagem.Advertencia, Texto = "Nº Autuação(SEP) é obrigatório." }; } }

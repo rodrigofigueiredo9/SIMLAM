@@ -66,11 +66,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 			}
 		}
 
-		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, int? maximoParcelas = null, bool isVisualizar = false)
+		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, int? maximoParcelas = null, bool isVisualizar = false, int? index = null)
 		{
 			Entidade = entidade;
 			IsVisualizar = isVisualizar;
-			Parcelamento = entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+			Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
 			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
 			Parcelas = GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
 		}

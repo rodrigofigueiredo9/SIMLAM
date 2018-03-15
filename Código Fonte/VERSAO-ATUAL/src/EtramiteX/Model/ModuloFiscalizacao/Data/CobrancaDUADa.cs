@@ -71,6 +71,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																complemento,
 																pai_dua, 
 																cob_parc,
+																cancelamento_data,
                                                                 tid)
                                     values ({0}seq_fisc_cob_dua.nextval,
 											:vencimento_data,
@@ -84,6 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											:complemento,
 											:pai_dua, 
 											:cob_parc,
+											:cancelamento_data,
                                             :tid)
                                     returning id into :id", EsquemaBanco);
 
@@ -98,6 +100,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("complemento", cobrancaDUA.InformacoesComplementares, DbType.String);
 				comando.AdicionarParametroEntrada("pai_dua", cobrancaDUA.ParcelaPaiId, DbType.Int32);
 				comando.AdicionarParametroEntrada("cob_parc", cobrancaDUA.ParcelamentoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("cancelamento_data", cobrancaDUA.DataCancelamento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -134,6 +137,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 										t.complemento = :complemento,
 										t.pai_dua = :pai_dua,
 										t.cob_parc = :cob_parc,
+										t.cancelamento_data = :cancelamento_data,
                                         t.tid = :tid
                                     where t.id = :id", EsquemaBanco);
 
@@ -149,6 +153,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("complemento", cobrancaDUA.InformacoesComplementares, DbType.String);
 				comando.AdicionarParametroEntrada("pai_dua", cobrancaDUA.ParcelaPaiId, DbType.Int32);
 				comando.AdicionarParametroEntrada("cob_parc", cobrancaDUA.ParcelamentoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("cancelamento_data", cobrancaDUA.DataCancelamento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
                 bancoDeDados.ExecutarNonQuery(comando);

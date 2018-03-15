@@ -7,13 +7,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 	public class CobrancaParcelamento
 	{
 		#region Constructor
-		public CobrancaParcelamento() { }
+		public CobrancaParcelamento()
+		{
+			DUAS = new List<CobrancaDUA>();
+		}
 
 		public CobrancaParcelamento(Fiscalizacao fiscalizacao, DateTime dataVencimento)
 		{
 			ValorMulta = fiscalizacao.Multa.ValorMulta;
 			DataEmissao = new DateTecno() { Data = DateTime.Now };
 			Data1Vencimento = new DateTecno() { Data = dataVencimento };
+			DUAS = new List<CobrancaDUA>();
 		}
 		#endregion
 

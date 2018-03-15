@@ -9,6 +9,7 @@
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
+					visualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>',
 					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
 					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>'
 				}
