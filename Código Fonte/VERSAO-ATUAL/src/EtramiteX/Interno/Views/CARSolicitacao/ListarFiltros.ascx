@@ -84,6 +84,17 @@
 					<%= Html.DropDownList("Filtros.Origem", Model.OrigemLst, new { @class = "text" })%>
 				</div>
 			</div>
+            <div class="block hide">
+				<div class="coluna58 append1">
+					<label for="Filtros_EmpreendimentoDenominador">N° SICAR</label>
+					<%= Html.TextBox("Filtros.codigoImovelSicar", null, new { @class = "text"})%>
+				</div>
+
+				<div class="coluna28">
+					<label for="Filtros_EmpreendimentoMunicipio">Situação Arquivo SICAR</label>
+					<%= Html.DropDownList("Filtros.SituacaoSicar", Model.SituacoesSicar, new { @class = "text" })%>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

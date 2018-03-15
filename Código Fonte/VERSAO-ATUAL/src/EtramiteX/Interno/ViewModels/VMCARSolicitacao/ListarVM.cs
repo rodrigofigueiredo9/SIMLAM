@@ -31,6 +31,13 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
 			set { _situacaoLst = value; }
 		}
 
+        private List<SelectListItem> _situacoesSicar = new List<SelectListItem>();
+        public List<SelectListItem> SituacoesSicar
+        {
+            get { return _situacoesSicar; }
+            set { _situacoesSicar = value; }
+        } 
+
 		private List<SelectListItem> _origemLst = new List<SelectListItem>();
 		public List<SelectListItem> OrigemLst
 		{
