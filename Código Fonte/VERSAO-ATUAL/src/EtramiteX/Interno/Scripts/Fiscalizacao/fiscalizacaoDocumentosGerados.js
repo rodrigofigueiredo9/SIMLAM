@@ -9,7 +9,7 @@ FiscalizacaoDocumentosGerados = {
 			pdfAuto: '',
 			pdfLaudo: '',
 			pdfIUF: '',
-            pdfIIUFBloco: '',
+            pdfIUFBloco: '',
 			pdfAcompanhamento: ''
 		},
 		situacao: 0
@@ -54,7 +54,7 @@ FiscalizacaoDocumentosGerados = {
 	},
 
 	onGerarPdfIUFBloco: function () {
-	    MasterPage.redireciona(FiscalizacaoFinalizar.settings.urls.pdfIUFBloco + "/" + $(this).closest('td').find('.hdnArquivoIUFBlocoId').val());
+	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUFBloco + "/" + $(this).closest('td').find('.hdnArquivoIUFBlocoId').val());
 	},
 
 	obterAcompanhamento: function () {
