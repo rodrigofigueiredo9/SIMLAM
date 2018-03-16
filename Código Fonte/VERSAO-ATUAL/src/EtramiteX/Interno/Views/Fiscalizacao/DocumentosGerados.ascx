@@ -51,10 +51,10 @@
 				<span class="btnPdfLaudo icone pdf" title="PDF do Laudo de fiscalização"></span>
 			</td>
 		</tr>
-        <% if ((Model.MultaVM.Multa.IsDigital == true
+        <% if (Model.MultaVM.Multa.IsDigital == true
                || Model.MaterialApreendidoVM.MaterialApreendido.IsDigital == true
                || Model.ObjetoInfracaoVM.Entidade.IsDigital == true
-               || Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true) && Model.Fiscalizacao.PdfIUF.Id.GetValueOrDefault() > 0)
+               || Model.OutrasPenalidadesVM.OutrasPenalidades.IsDigital == true)
            { %>
         <tr>
 			<td>
@@ -67,21 +67,21 @@
 				<span class="btnPdfIUF icone pdf" title="PDF do IUF"></span>
 			</td>
 		</tr>
-        <% } %>
-
-        <% foreach (var item in Model.Fiscalizacao.ConsideracaoFinal.AnexosIUF) { %>
-            <tr>
-		    	<td>
-		    		<label title="<%=item.Descricao %>"><%=item.Descricao %></label>
-		    	</td>
-		    	<td>
-		    		<label title="<%= Model.Fiscalizacao.SituacaoTexto%>"><%= Model.Fiscalizacao.SituacaoTexto %></label>
-		    	</td>
-		    	<td class="tdAcoes">
-                    <%= Html.Hidden("hdnArquivoIUFBloco", item.Arquivo.Id.GetValueOrDefault(), new { @class = "hdnArquivoIUFBlocoId" })%>
-		    		<span class="btnPdfIUFBloco icone pdf" title="PDF do <%=item.Descricao %>"></span>
-		    	</td>
-		    </tr>
+        <% } else { %>
+            <% foreach (var item in Model.Fiscalizacao.ConsideracaoFinal.AnexosIUF) { %>
+                <tr>
+		        	<td>
+		        		<label title="<%=item.Descricao %>"><%=item.Descricao %></label>
+		        	</td>
+		        	<td>
+		        		<label title="<%= Model.Fiscalizacao.SituacaoTexto%>"><%= Model.Fiscalizacao.SituacaoTexto %></label>
+		        	</td>
+		        	<td class="tdAcoes">
+                        <%= Html.Hidden("hdnArquivoIUFBloco", item.Arquivo.Id.GetValueOrDefault(), new { @class = "hdnArquivoIUFBlocoId" })%>
+		        		<span class="btnPdfIUFBloco icone pdf" title="PDF do <%=item.Descricao %>"></span>
+		        	</td>
+		        </tr>
+            <% } %>
         <% } %>
 
 
