@@ -224,6 +224,166 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
+                #region Ingredientes Ativos
+
+                agrotoxico.IngredientesAtivos.ForEach(ingrediente =>
+                {
+                    if (ingrediente.IdRelacionamento > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"update {0}tab_agrotoxico_ing_ativo set agrotoxico =: agrotoxico, ingrediente_ativo =: ingrediente_ativo, 
+						concentracao = :concentracao, unidade_medida = :unidade_medida, unidade_medida_outro = :unidade_medida_outro, tid =:tid where id =:id_rel", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id_rel", ingrediente.IdRelacionamento, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"insert into {0}tab_agrotoxico_ing_ativo (id, agrotoxico, ingrediente_ativo, concentracao, unidade_medida, unidade_medida_outro, tid) 
+						values (seq_tab_agrotoxico_ing_ativo.nextval, :agrotoxico, :ingrediente_ativo, :concentracao, :unidade_medida, :unidade_medida_outro, :tid)", EsquemaBanco);
+                    }
+
+                    comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("ingrediente_ativo", ingrediente.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("concentracao", ingrediente.Concentracao, DbType.Decimal);
+                    comando.AdicionarParametroEntrada("unidade_medida", ingrediente.UnidadeMedidaId > 0 ? ingrediente.UnidadeMedidaId : (object)DBNull.Value, DbType.Int32);
+                    comando.AdicionarParametroEntrada("unidade_medida_outro", DbType.String, 30, ingrediente.UnidadeMedidaOutro);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+
+                #endregion
+
+                #region Classes Uso
+
+                agrotoxico.ClassesUso.ForEach(classe =>
+                {
+                    if (classe.IdRelacionamento > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_classe_uso set agrotoxico =:agrotoxico, classe_uso =:classe_uso, tid =:tid 
+						where id = :id_rel", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id_rel", classe.IdRelacionamento, DbType.Int32);
+
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_classe_uso (id, agrotoxico, classe_uso, tid) values (seq_tab_agrotoxico_classe_uso.nextval, 
+						:agrotoxico, :classe_uso, :tid)", EsquemaBanco);
+                    }
+
+                    comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("classe_uso", classe.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+
+                #endregion
+
+                #region Grupos Químicos
+
+                agrotoxico.GruposQuimicos.ForEach(grupo =>
+                {
+                    if (grupo.IdRelacionamento > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_grupo_quimico set agrotoxico =:agrotoxico , grupo_quimico =:grupo_quimico, tid =: tid where id =:id_rel", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id_rel", grupo.IdRelacionamento, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_grupo_quimico (id, agrotoxico, grupo_quimico, tid) values 
+						(seq_tab_agrotox_grupo_quimico.nextval, :agrotoxico, :grupo_quimico, :tid)", EsquemaBanco);
+                    }
+
+                    comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("grupo_quimico", grupo.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+                });
+
+                #endregion
+
+                #region Culturas
+
+                agrotoxico.Culturas.ForEach(cultura =>
+                {
+                    if (cultura.IdRelacionamento > 0)
+                    {
+                        comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_cultura set agrotoxico =: agrotoxico, cultura =:cultura, intervalo_seguranca =:intervalo_seguranca, 
+						tid =: tid where id =:id_rel", EsquemaBanco);
+                        comando.AdicionarParametroEntrada("id_rel", cultura.IdRelacionamento, DbType.Int32);
+                    }
+                    else
+                    {
+                        comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_cultura (id, agrotoxico, cultura, intervalo_seguranca,tid) values (seq_tab_agrotoxico_cultura.nextval, 
+						:agrotoxico, :cultura, :intervalo_seguranca,:tid) returning id into :cultura_id", EsquemaBanco);
+                        comando.AdicionarParametroSaida("cultura_id", DbType.Int32);
+
+                    }
+
+                    comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("cultura", cultura.Cultura.Id, DbType.Int32);
+                    comando.AdicionarParametroEntrada("intervalo_seguranca", DbType.String, 3, cultura.IntervaloSeguranca);
+                    comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                    bancoDeDados.ExecutarNonQuery(comando);
+
+                    cultura.IdRelacionamento = cultura.IdRelacionamento > 0 ? cultura.IdRelacionamento : comando.ObterValorParametro<int>("cultura_id");
+
+                    #region Praga
+
+                    Comando comandoAux = null;
+
+                    cultura.Pragas.ForEach(praga =>
+                    {
+                        if (praga.IdRelacionamento > 0)
+                        {
+                            comandoAux = bancoDeDados.CriarComando(@"update tab_agrotoxico_cultura_praga set agrotoxico_cultura =:agrotoxico_cultura, praga =:praga, tid =:tid
+							where id =:id_rel", EsquemaBanco);
+
+                            comandoAux.AdicionarParametroEntrada("id_rel", praga.IdRelacionamento, DbType.Int32);
+                        }
+                        else
+                        {
+                            comandoAux = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_cultura_praga (id, agrotoxico_cultura, praga, tid) values 
+							(seq_tab_agrotox_cultura_praga.nextval, :agrotoxico_cultura, :praga, :tid)", EsquemaBanco);
+                        }
+
+                        comandoAux.AdicionarParametroEntrada("agrotoxico_cultura", cultura.IdRelacionamento, DbType.Int32);
+                        comandoAux.AdicionarParametroEntrada("praga", praga.Id, DbType.Int32);
+                        comandoAux.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comandoAux);
+                    });
+
+                    #endregion
+
+                    #region Modalidades de aplicação
+
+                    cultura.ModalidadesAplicacao.ForEach(modalidade =>
+                    {
+                        if (modalidade.IdRelacionamento > 0)
+                        {
+                            comandoAux = bancoDeDados.CriarComando(@"update tab_agro_cult_moda_aplicacao set agrotoxico_cultura =:agrotoxico_cultura, modalidade_aplicacao 
+							=:modalidade_aplicacao, tid =: tid where id =:id_rel", EsquemaBanco);
+                            comandoAux.AdicionarParametroEntrada("id_rel", modalidade.IdRelacionamento, DbType.Int32);
+                        }
+                        else
+                        {
+                            comandoAux = bancoDeDados.CriarComando(@"insert into tab_agro_cult_moda_aplicacao (id, agrotoxico_cultura, modalidade_aplicacao, tid) values 
+							(seq_tab_agro_cult_moda_aplic.nextval, :agrotoxico_cultura, :modalidade_aplicacao, :tid)", EsquemaBanco);
+                        }
+
+                        comandoAux.AdicionarParametroEntrada("agrotoxico_cultura", cultura.IdRelacionamento, DbType.Int32);
+                        comandoAux.AdicionarParametroEntrada("modalidade_aplicacao", modalidade.Id, DbType.Int32);
+                        comandoAux.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+                        bancoDeDados.ExecutarNonQuery(comandoAux);
+                    });
+
+                    #endregion
+                });
+
+                #endregion
+
 				#region Deletando dados
 
 				//Modalidades de aplicação
@@ -271,165 +431,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 
 				#endregion
 
-				#region Ingredientes Ativos
-
-				agrotoxico.IngredientesAtivos.ForEach(ingrediente =>
-				{
-					if (ingrediente.IdRelacionamento > 0)
-					{
-						comando = bancoDeDados.CriarComando(@"update {0}tab_agrotoxico_ing_ativo set agrotoxico =: agrotoxico, ingrediente_ativo =: ingrediente_ativo, 
-						concentracao = :concentracao, unidade_medida = :unidade_medida, unidade_medida_outro = :unidade_medida_outro, tid =:tid where id =:id_rel", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id_rel", ingrediente.IdRelacionamento, DbType.Int32);
-					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"insert into {0}tab_agrotoxico_ing_ativo (id, agrotoxico, ingrediente_ativo, concentracao, unidade_medida, unidade_medida_outro, tid) 
-						values (seq_tab_agrotoxico_ing_ativo.nextval, :agrotoxico, :ingrediente_ativo, :concentracao, :unidade_medida, :unidade_medida_outro, :tid)", EsquemaBanco);
-					}
-
-					comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("ingrediente_ativo", ingrediente.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("concentracao", ingrediente.Concentracao, DbType.Decimal);
-					comando.AdicionarParametroEntrada("unidade_medida", ingrediente.UnidadeMedidaId > 0 ? ingrediente.UnidadeMedidaId : (object)DBNull.Value, DbType.Int32);
-					comando.AdicionarParametroEntrada("unidade_medida_outro", DbType.String, 30, ingrediente.UnidadeMedidaOutro);
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-					bancoDeDados.ExecutarNonQuery(comando);
-				});
-
-				#endregion
-
-				#region Classes Uso
-
-				agrotoxico.ClassesUso.ForEach(classe =>
-				{
-					if (classe.IdRelacionamento > 0)
-					{
-						comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_classe_uso set agrotoxico =:agrotoxico, classe_uso =:classe_uso, tid =:tid 
-						where id = :id_rel", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id_rel", classe.IdRelacionamento, DbType.Int32);
-
-					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_classe_uso (id, agrotoxico, classe_uso, tid) values (seq_tab_agrotoxico_classe_uso.nextval, 
-						:agrotoxico, :classe_uso, :tid)", EsquemaBanco);
-					}
-
-					comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("classe_uso", classe.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-					bancoDeDados.ExecutarNonQuery(comando);
-				});
-
-				#endregion
-
-				#region Grupos Químicos
-
-				agrotoxico.GruposQuimicos.ForEach(grupo =>
-				{
-					if (grupo.IdRelacionamento > 0)
-					{
-						comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_grupo_quimico set agrotoxico =:agrotoxico , grupo_quimico =:grupo_quimico, tid =: tid where id =:id_rel", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id_rel", grupo.IdRelacionamento, DbType.Int32);
-					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_grupo_quimico (id, agrotoxico, grupo_quimico, tid) values 
-						(seq_tab_agrotox_grupo_quimico.nextval, :agrotoxico, :grupo_quimico, :tid)", EsquemaBanco);
-					}
-
-					comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("grupo_quimico", grupo.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-					bancoDeDados.ExecutarNonQuery(comando);
-				});
-
-				#endregion
-
-				#region Culturas
-
-				agrotoxico.Culturas.ForEach(cultura =>
-				{
-					if (cultura.IdRelacionamento > 0)
-					{
-						comando = bancoDeDados.CriarComando(@"update tab_agrotoxico_cultura set agrotoxico =: agrotoxico, cultura =:cultura, intervalo_seguranca =:intervalo_seguranca, 
-						tid =: tid where id =:id_rel", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id_rel", cultura.IdRelacionamento, DbType.Int32);
-					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_cultura (id, agrotoxico, cultura, intervalo_seguranca,tid) values (seq_tab_agrotoxico_cultura.nextval, 
-						:agrotoxico, :cultura, :intervalo_seguranca,:tid) returning id into :cultura_id", EsquemaBanco);
-						comando.AdicionarParametroSaida("cultura_id", DbType.Int32);
-
-					}
-
-					comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("cultura", cultura.Cultura.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("intervalo_seguranca", DbType.String, 3, cultura.IntervaloSeguranca);
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-					bancoDeDados.ExecutarNonQuery(comando);
-
-					cultura.IdRelacionamento = cultura.IdRelacionamento > 0 ? cultura.IdRelacionamento : comando.ObterValorParametro<int>("cultura_id");
-
-					#region Praga
-
-					Comando comandoAux = null;
-
-					cultura.Pragas.ForEach(praga =>
-					{
-						if (praga.IdRelacionamento > 0)
-						{
-							comandoAux = bancoDeDados.CriarComando(@"update tab_agrotoxico_cultura_praga set agrotoxico_cultura =:agrotoxico_cultura, praga =:praga, tid =:tid
-							where id =:id_rel", EsquemaBanco);
-
-							comandoAux.AdicionarParametroEntrada("id_rel", praga.IdRelacionamento, DbType.Int32);
-						}
-						else
-						{
-							comandoAux = bancoDeDados.CriarComando(@"insert into tab_agrotoxico_cultura_praga (id, agrotoxico_cultura, praga, tid) values 
-							(seq_tab_agrotox_cultura_praga.nextval, :agrotoxico_cultura, :praga, :tid)", EsquemaBanco);
-						}
-
-						comandoAux.AdicionarParametroEntrada("agrotoxico_cultura", cultura.IdRelacionamento, DbType.Int32);
-						comandoAux.AdicionarParametroEntrada("praga", praga.Id, DbType.Int32);
-						comandoAux.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-						bancoDeDados.ExecutarNonQuery(comandoAux);
-					});
-
-					#endregion
-
-					#region Modalidades de aplicação
-
-					cultura.ModalidadesAplicacao.ForEach(modalidade =>
-					{
-						if (modalidade.IdRelacionamento > 0)
-						{
-							comandoAux = bancoDeDados.CriarComando(@"update tab_agro_cult_moda_aplicacao set agrotoxico_cultura =:agrotoxico_cultura, modalidade_aplicacao 
-							=:modalidade_aplicacao, tid =: tid where id =:id_rel", EsquemaBanco);
-							comandoAux.AdicionarParametroEntrada("id_rel", modalidade.IdRelacionamento, DbType.Int32);
-						}
-						else
-						{
-							comandoAux = bancoDeDados.CriarComando(@"insert into tab_agro_cult_moda_aplicacao (id, agrotoxico_cultura, modalidade_aplicacao, tid) values 
-							(seq_tab_agro_cult_moda_aplic.nextval, :agrotoxico_cultura, :modalidade_aplicacao, :tid)", EsquemaBanco);
-						}
-
-						comandoAux.AdicionarParametroEntrada("agrotoxico_cultura", cultura.IdRelacionamento, DbType.Int32);
-						comandoAux.AdicionarParametroEntrada("modalidade_aplicacao", modalidade.Id, DbType.Int32);
-						comandoAux.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-						bancoDeDados.ExecutarNonQuery(comandoAux);
-					});
-
-					#endregion
-				});
-
-				#endregion
+				
 
 				Historico.Gerar(agrotoxico.Id, eHistoricoArtefato.agrotoxico, eHistoricoAcao.atualizar, bancoDeDados);
 
