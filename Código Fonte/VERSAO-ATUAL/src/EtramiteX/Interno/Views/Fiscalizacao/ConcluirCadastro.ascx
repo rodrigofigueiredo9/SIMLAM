@@ -7,6 +7,7 @@
 	FiscalizacaoFinalizar.settings.urls.download = '<%= Url.Action("Baixar", "Arquivo") %>';
     FiscalizacaoFinalizar.settings.urls.pdfAuto = '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>';
     FiscalizacaoFinalizar.settings.urls.pdfIUF = '<%= Url.Action("InstrumentoUnicoFiscalizacaoPdf", "Fiscalizacao") %>';
+    FiscalizacaoFinalizar.settings.urls.pdfIUFBloco = '<%= Url.Action("Baixar", "Arquivo") %>';
 	FiscalizacaoFinalizar.settings.urls.pdfLaudo = '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>';
 </script>
 

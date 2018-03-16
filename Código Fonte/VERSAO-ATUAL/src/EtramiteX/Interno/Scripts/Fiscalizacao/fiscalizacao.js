@@ -3238,6 +3238,7 @@ FiscalizacaoFinalizar = {
 			download: '',
 			pdfAuto: '',
 			pdfIUF: '',
+            pdfIUFBloco: '',
 			pdfLaudo: ''
 		}
 	},
@@ -3264,6 +3265,7 @@ FiscalizacaoFinalizar = {
 		$('.btnPdfAuto', FiscalizacaoFinalizar.container).click(FiscalizacaoFinalizar.onGerarPdfAuto);
 		$('.btnPdfLaudo', FiscalizacaoFinalizar.container).click(FiscalizacaoFinalizar.onGerarPdfLaudo);
 		$('.btnPdfIUF', FiscalizacaoFinalizar.container).click(FiscalizacaoFinalizar.onGerarPdfIUF);
+		$('.btnPdfIUFBloco', FiscalizacaoFinalizar.container).click(FiscalizacaoFinalizar.onGerarPdfIUFBloco);
 
 		MasterPage.carregando(false);
 	},
@@ -3304,6 +3306,9 @@ FiscalizacaoFinalizar = {
 	},
 	onGerarPdfIUF: function () {
 	    MasterPage.redireciona(FiscalizacaoFinalizar.settings.urls.pdfIUF + "/" + $('.hdnFiscalizacaoId', Fiscalizacao.container).val());
+	},
+	onGerarPdfIUFBloco: function () {
+	    MasterPage.redireciona(FiscalizacaoFinalizar.settings.urls.pdfIUFBloco + "/" + $(this).closest('td').find('.hdnArquivoIUFBlocoId').val());
 	},
 	onGerarPdfLaudo: function () {
 		MasterPage.redireciona(FiscalizacaoFinalizar.settings.urls.pdfLaudo + "/" + $('.hdnFiscalizacaoId', Fiscalizacao.container).val());

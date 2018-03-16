@@ -69,6 +69,23 @@
 		</tr>
         <% } %>
 
+        <% foreach (var item in Model.Fiscalizacao.ConsideracaoFinal.AnexosIUF) { %>
+            <tr>
+		    	<td>
+		    		<label title="<%=item.Descricao %>"><%=item.Descricao %></label>
+		    	</td>
+		    	<td>
+		    		<label title="<%= Model.Fiscalizacao.SituacaoTexto%>"><%= Model.Fiscalizacao.SituacaoTexto %></label>
+		    	</td>
+		    	<td class="tdAcoes">
+                    <%= Html.Hidden("hdnArquivoIUFBloco", item.Arquivo.Id.GetValueOrDefault(), new { @class = "hdnArquivoIUFBlocoId" })%>
+		    		<span class="btnPdfIUFBloco icone pdf" title="PDF do <%=item.Descricao %>"></span>
+		    	</td>
+		    </tr>
+        <% } %>
+
+
+
 		<% if (Model.InfracaoVM.Infracao.Arquivo.Id.GetValueOrDefault() > 0) { %>
 		<tr>
 			<td>
