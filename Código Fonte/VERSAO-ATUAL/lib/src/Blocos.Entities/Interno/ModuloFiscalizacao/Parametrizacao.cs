@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
@@ -38,7 +39,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			get { return _fimVigencia; }
 			set { _fimVigencia = value; }
 		}
-		public Int32 MaximoParcelas { get; set; }
 		public Int32 ValorMinimoPF { get; set; }
 		public Int32 ValorMinimoPJ { get; set; }
 		public Int32 MultaPercentual { get; set; }
@@ -46,6 +46,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 DescontoPercentual { get; set; }
 		public Int32 PrazoDescontoUnidade { get; set; }
 		public Int32 PrazoDescontoDecorrencia { get; set; }
+		public List<ParametrizacaoDetalhe> ParametrizacaoDetalhes { get; set; }
 		#endregion
 	}
 }

@@ -292,6 +292,7 @@
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ParametrizacaoListarResultado.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Cobranca.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\CobrancaDUA.cs" />
+    <Compile Include="Interno\ModuloFiscalizacao\ParametrizacaoDetalhe.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Vrte.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Parametrizacao.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Notificacao.cs" />

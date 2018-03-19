@@ -24,17 +24,12 @@
     <div class="block">
         <div class="coluna45 append2">
             <div class="coluna31 append2">
-                <label for="Parametrizacao_MaximoParcelas">N° Máximo Parcelas *</label>
-                <%= Html.TextBox("Parametrizacao.MaximoParcelas", Model.Entidade.MaximoParcelas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum2 txtMaximoParcelas" }))%>
-            </div>
-
-            <div class="coluna31 append2">
-                <label for="Parametrizacao_ValorMinimoPF">Valo Mínimo PF (VRTE) *</label>
+                <label for="Parametrizacao_ValorMinimoPF">Valor Mínimo PF (VRTE) *</label>
                 <%= Html.TextBox("Parametrizacao.ValorMinimoPF", Model.Entidade.ValorMinimoPF, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum5 txtValorMinimoPF" }))%>
             </div>
 
             <div class="coluna31">
-                <label for="Parametrizacao_ValorMinimoPJ">Valo Mínimo PJ (VRTE) *</label>
+                <label for="Parametrizacao_ValorMinimoPJ">Valor Mínimo PJ (VRTE) *</label>
                 <%= Html.TextBox("Parametrizacao.ValorMinimoPJ", Model.Entidade.ValorMinimoPJ, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum5 txtValorMinimoPJ" }))%>
             </div>
         </div>
@@ -52,7 +47,6 @@
         </div>
     </div>
     <div class="block">
-
         <div class="coluna45 append3">
             <div class="coluna31 append2">
                 <label for="Parametrizacao_DescontoPercentual">Desconto (%)</label>
@@ -70,7 +64,35 @@
             </div>
         </div>
     </div>
+    <fieldset class="block box">
+        <legend><b>Detalhe</b></legend>
+        <div class="block">
+            <div class="coluna5 append1">
+                <label for="Parametrizacao_ValorInicial">Valor Inicial (R$)</label>
+                <%= Html.TextBox("ValorInicial",String.Empty, new { @class = "text maskDecimalPonto2 txtValorInicial", @maxlength = "17"})%>
+            </div>
 
+            <div class="coluna12 append2">
+                <label for="Parametrizacao_ValorFinal">Valor Final (R$)</label>
+                <%= Html.TextBox("ValorFinal",String.Empty, new { @class = "text maskDecimalPonto2 txtValorFinal", @maxlength = "17"})%>
+            </div>
+
+			 <div class="coluna12 append2">
+                <label for="Parametrizacao_MaximoParcelas">N° Máx. Parcelas</label>
+                <%= Html.TextBox("MaximoParcelas",String.Empty, new { @class = "text maskInteger txtMaximoParcelas", @maxlength = "3"})%>
+            </div>
+
+            <div class="coluna7">
+                <button type="button" style="width: 35px" class="inlineBotao botaoAdicionarIcone btnAdicionarDetale" title="Adicionar Detalhe">+</button>
+            </div>
+
+            <input type="hidden" class="hdnDetalheId" value='0' />
+        </div>
+
+        <div class="DivItens">
+            <% Html.RenderPartial("ConfigurarParametrizacaoDetalhe"); %>
+        </div>
+    </fieldset>
 </fieldset>
 
 <div class="block box">

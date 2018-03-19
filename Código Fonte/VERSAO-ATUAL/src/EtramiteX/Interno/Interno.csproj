@@ -689,6 +689,7 @@
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
     <Content Include="Scripts\Fiscalizacao\cobranca.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
+    <Content Include="Scripts\Fiscalizacao\parametrizacaoDetalhe.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
@@ -1726,6 +1727,7 @@
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoVisualizar.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarVrte.aspx" />
     <Content Include="Views\Fiscalizacao\CobrancaParcelamento.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoDetalhe.ascx" />
     <Content Include="Views\Fiscalizacao\NotificacaoVisualizar.aspx" />
     <Content Include="Views\Fiscalizacao\NotificacaoCobranca.ascx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoVrte.ascx" />

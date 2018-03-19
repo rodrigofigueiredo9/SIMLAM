@@ -367,14 +367,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ParametrizacaoDuplicada);
 			}
 
-			if (parametrizacao.MaximoParcelas == 0)
-				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.MaximoParcelasObrigatorio);
-
 			if (parametrizacao.ValorMinimoPF == 0)
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ValorMinimoPFObrigatorio);
 
 			if (parametrizacao.ValorMinimoPJ == 0)
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ValorMinimoPJObrigatorio);
+
+			if ((parametrizacao.ParametrizacaoDetalhes?.Count ?? 0) == 0)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.MaximoParcelasObrigatorio);
 
 			return Validacao.EhValido;
 		}

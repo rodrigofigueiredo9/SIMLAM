@@ -1662,7 +1662,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				if (entidade.Id <= 0)
 				{
 					comando = bancoDeDados.CriarComando(@" insert into {0}tab_fisc_parametrizacao (id,
-											codigoreceita, iniciovigencia, fimvigencia, maximoparcelas, valorminimo_pf, valorminimo_pj, multa_perc, juros_perc,
+											codigoreceita, iniciovigencia, fimvigencia, valorminimo_pf, valorminimo_pj, multa_perc, juros_perc,
 											desconto_perc, desconto_und, desconto_decor, tid)
 											values ({0}seq_fisc_parametrizacao.nextval,
                                             :codigoreceita, :iniciovigencia, :fimvigencia, :maximoparcelas, :valorminimo_pf, :valorminimo_pj,
@@ -1677,7 +1677,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 														p.codigoreceita = :codigoreceita,
 														p.iniciovigencia = :iniciovigencia,
 														p.fimvigencia = :fimvigencia,
-														p.maximoparcelas = :maximoparcelas,
 														p.valorminimo_pf = :valorminimo_pf,
 														p.valorminimo_pj = :valorminimo_pj,
 														p.multa_perc = :multa_perc,
@@ -1695,7 +1694,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("codigoreceita", entidade.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("iniciovigencia", entidade.InicioVigencia.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("fimvigencia", entidade.FimVigencia.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("maximoparcelas", entidade.MaximoParcelas, DbType.Int32);
 				comando.AdicionarParametroEntrada("valorminimo_pf", entidade.ValorMinimoPF, DbType.Int32);
 				comando.AdicionarParametroEntrada("valorminimo_pj", entidade.ValorMinimoPJ, DbType.Int32);
 				comando.AdicionarParametroEntrada("multa_perc", entidade.MultaPercentual, DbType.Int32);
@@ -1703,6 +1701,62 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("desconto_perc", entidade.DescontoPercentual, DbType.Int32);
 				comando.AdicionarParametroEntrada("desconto_und", entidade.PrazoDescontoUnidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("desconto_decor", entidade.PrazoDescontoDecorrencia, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				if (entidade.Id <= 0)
+					entidade.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+				Historico.Gerar(Convert.ToInt32(entidade.Id), eHistoricoArtefato.parametrizacao, acao, bancoDeDados, null);
+
+				bancoDeDados.Commit();
+
+				return entidade.Id;
+			}
+		}
+
+		internal int SalvarParametrizacaoDetalhe(ParametrizacaoDetalhe entidade, BancoDeDados banco = null)
+		{
+			if (entidade == null)
+				throw new Exception("Objeto Parametrizacao é nulo.");
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+
+				bancoDeDados.IniciarTransacao();
+
+				eHistoricoAcao acao = eHistoricoAcao.criar;
+
+				if (entidade.Id <= 0)
+				{
+					comando = bancoDeDados.CriarComando(@" insert into {0}tab_fisc_param_detalhe (id,
+											parametrizacao, maximoparcelas, valorinicial, valorfinal, tid)
+											values ({0}seq_fisc_parametrizacao.nextval,
+											:parametrizacao, :maximoparcelas, :valorinicial, :valorfinal, :tid)
+														returning id into :id", EsquemaBanco);
+
+					comando.AdicionarParametroSaida("id", DbType.Int32);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"update tab_fisc_param_detalhe p set
+														p.parametrizacao = :parametrizacao,
+														p.maximoparcelas = :maximoparcelas,
+														p.valorinicial = :valorinicial,
+														p.valorfinal = :valorfinal,
+														p.tid = :tid
+														where p.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
+					acao = eHistoricoAcao.atualizar;
+				}
+
+				comando.AdicionarParametroEntrada("parametrizacao", entidade.ParametrizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("maximoparcelas", entidade.MaximoParcelas, DbType.Int32);
+				comando.AdicionarParametroEntrada("valorinicial", entidade.ValorInicial, DbType.Decimal);
+				comando.AdicionarParametroEntrada("valorfinal", entidade.ValorFinal, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -2790,7 +2844,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											lov.texto,
 											p.iniciovigencia,
 											p.fimvigencia,
-											p.maximoparcelas,
 											p.valorminimo_pf,
 											p.valorminimo_pj,
 											p.multa_perc,
@@ -2815,7 +2868,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
 							CodigoReceitaTexto = reader.GetValue<string>("texto"),
-							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
 							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
 							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
 							MultaPercentual = reader.GetValue<int>("multa_perc"),
@@ -2831,6 +2883,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							parametrizacao.InicioVigencia = new DateTecno();
 						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
 							parametrizacao.FimVigencia = new DateTecno();
+						parametrizacao.ParametrizacaoDetalhes = this.ObterParametrizacaoDetalhe(parametrizacao.Id);
 					}
 
 					reader.Close();
@@ -2851,7 +2904,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											lov.texto,
 											p.iniciovigencia,
 											p.fimvigencia,
-											p.maximoparcelas,
 											p.valorminimo_pf,
 											p.valorminimo_pj,
 											p.multa_perc,
@@ -2884,7 +2936,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
 							CodigoReceitaTexto = reader.GetValue<string>("texto"),
-							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
 							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
 							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
 							MultaPercentual = reader.GetValue<int>("multa_perc"),
@@ -2900,6 +2951,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							parametrizacao.InicioVigencia = new DateTecno();
 						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
 							parametrizacao.FimVigencia = new DateTecno();
+						parametrizacao.ParametrizacaoDetalhes = this.ObterParametrizacaoDetalhe(parametrizacao.Id);
 					}
 
 					reader.Close();
@@ -2920,7 +2972,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											lov.texto,
 											p.iniciovigencia,
 											p.fimvigencia,
-											p.maximoparcelas,
 											p.valorminimo_pf,
 											p.valorminimo_pj,
 											p.multa_perc,
@@ -2942,7 +2993,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						{
 							Id = reader.GetValue<int>("id"),
 							CodigoReceitaId = reader.GetValue<int>("codigoreceita"),
-							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
 							ValorMinimoPF = reader.GetValue<int>("valorminimo_pf"),
 							ValorMinimoPJ = reader.GetValue<int>("valorminimo_pj"),
 							MultaPercentual = reader.GetValue<int>("multa_perc"),
@@ -2958,8 +3008,50 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							parametrizacao.InicioVigencia = new DateTecno();
 						if (parametrizacao.FimVigencia.Data.HasValue && parametrizacao.FimVigencia.Data.Value.Year == 1)
 							parametrizacao.FimVigencia = new DateTecno();
+						parametrizacao.ParametrizacaoDetalhes = this.ObterParametrizacaoDetalhe(parametrizacao.Id);
 
 						lista.Add(parametrizacao);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return lista;
+		}
+
+		private List<ParametrizacaoDetalhe> ObterParametrizacaoDetalhe(int parametrizacao)
+		{
+			List<ParametrizacaoDetalhe> lista = new List<ParametrizacaoDetalhe>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
+											p.parametrizacao,
+											p.maximoparcelas,
+											p.valorinicial,
+											p.valorfinal,
+											p.tid
+										from {0}tab_fisc_param_detalhe p
+										where p.parametrizacao = :parametrizacao
+										order by p.valorinicial", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("parametrizacao", parametrizacao, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var parametrizacaoDetalhe = new ParametrizacaoDetalhe
+						{
+							Id = reader.GetValue<int>("id"),
+							ParametrizacaoId = reader.GetValue<int>("parametrizacao"),
+							MaximoParcelas = reader.GetValue<int>("maximoparcelas"),
+							ValorInicial = reader.GetValue<decimal>("valorinicial"),
+							ValorFinal = reader.GetValue<decimal>("valorfinal")
+						};
+
+						lista.Add(parametrizacaoDetalhe);
 					}
 
 					reader.Close();
@@ -3011,7 +3103,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											lov.texto,
 											p.iniciovigencia,
 											p.fimvigencia,
-											p.maximoparcelas,
 											p.valorminimo_pf,
 											p.valorminimo_pj,
 											p.multa_perc,
@@ -3042,7 +3133,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						entidade.Id = Convert.ToInt32(reader["id"].ToString());
 						entidade.CodigoReceitaId = Convert.ToInt32(reader["codigoreceita"].ToString());
 						entidade.CodigoReceitaTexto = reader["texto"].ToString();
-						entidade.MaximoParcelas = Convert.ToInt32(reader["maximoparcelas"].ToString());
 						entidade.ValorMinimoPF = Convert.ToInt32(reader["valorminimo_pf"].ToString());
 						entidade.ValorMinimoPJ = Convert.ToInt32(reader["valorminimo_pj"].ToString());
 						entidade.MultaPercentual = Convert.ToInt32(reader["multa_perc"]?.ToString());

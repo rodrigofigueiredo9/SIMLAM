@@ -4,7 +4,6 @@
     "CODIGORECEITA"     NUMBER(38,0) NOT NULL ENABLE,
     "INICIOVIGENCIA"    DATE,
     "FIMVIGENCIA"       DATE,
-    "MAXIMOPARCELAS"    NUMBER(2,0) NOT NULL ENABLE,
     "VALORMINIMO_PF"    NUMBER(5,0) NOT NULL ENABLE,
     "VALORMINIMO_PJ"    NUMBER(5,0) NOT NULL ENABLE,
     "MULTA_PERC"        NUMBER(3,0) NOT NULL ENABLE,
@@ -29,8 +28,6 @@
   COMMENT ON COLUMN "IDAF"."TAB_FISC_PARAMETRIZACAO"."INICIOVIGENCIA" IS 'Data inicio de vigência da parametrização.';
   
   COMMENT ON COLUMN "IDAF"."TAB_FISC_PARAMETRIZACAO"."FIMVIGENCIA" IS 'Data fim de vigência da parametrização.';
-  
-  COMMENT ON COLUMN "IDAF"."TAB_FISC_PARAMETRIZACAO"."MAXIMOPARCELAS" IS 'Informa o número máximo de parcelas permitido.';
   
   COMMENT ON COLUMN "IDAF"."TAB_FISC_PARAMETRIZACAO"."VALORMINIMO_PF" IS 'Informa o valor mínimo para parcela de pessoa física.';
 

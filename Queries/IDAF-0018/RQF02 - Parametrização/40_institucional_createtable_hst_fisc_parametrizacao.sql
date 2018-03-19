@@ -6,7 +6,6 @@
   "CODIGORECEITA_TEXTO"	VARCHAR2(50 BYTE),  
   "INICIOVIGENCIA"	DATE,
   "FIMVIGENCIA"	DATE,
-  "MAXIMOPARCELAS"	 NUMBER(2,0),
   "VALORMINIMO_PF"   NUMBER(5,0),
   "VALORMINIMO_PJ"   NUMBER(5,0),
 	"MULTA_PERC" NUMBER(3,0), 
@@ -39,7 +38,6 @@
 	COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."CODIGORECEITA_TEXTO"      IS 'Código de receita utilizado. Campo (TEXTO) da tabela lov_fisc_infracao_codigo_rece.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."INICIOVIGENCIA"           IS 'Data inicio de vigência.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."FIMVIGENCIA"              IS 'Data fim de vigência.';
-	COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."MAXIMOPARCELAS"           IS 'Informa o número máximo de parcelas permitido.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."VALORMINIMO_PF"           IS 'Informa o valor mínimo para parcela de pessoa física.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."VALORMINIMO_PJ"           IS 'Informa o valor mínimo para parcela de pessoa jurídica.';
   COMMENT ON COLUMN "IDAF"."HST_FISC_PARAMETRIZACAO"."MULTA_PERC"               IS 'Informa o percentual utilizado para realizar o cálculo de multa.';
