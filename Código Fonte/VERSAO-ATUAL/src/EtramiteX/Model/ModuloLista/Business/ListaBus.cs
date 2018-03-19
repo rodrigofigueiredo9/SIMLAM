@@ -867,6 +867,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 		{
 			get { return _configCadastroAmbientalRural.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeyCadastroAmbientalRuralSolicitacaoOrigem); }
 		}
+        public List<Lista> SicarSituacoes
+        {
+            get
+            {
+                GerenciadorConfiguracao<ConfiguracaoCadastroAmbientalRural> configSys = new GerenciadorConfiguracao<ConfiguracaoCadastroAmbientalRural>(new ConfiguracaoCadastroAmbientalRural());
+                return configSys.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeySicarSituacao);
+            }
+        } 
 
 		#endregion Cadastro Ambiental Rural - CAR
 

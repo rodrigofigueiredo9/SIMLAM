@@ -55,6 +55,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Municipios(ViewModelHelper.EstadoDefaultId()), _busLista.CadastroAmbientalRuralSolicitacaoSituacao, _busLista.CadastroAmbientalRuralSolicitacaoOrigem);
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            vm.SituacoesSicar = ViewModelHelper.CriarSelectList(_busLista.SicarSituacoes, true, true); 
 			return View(vm);
 		}
 

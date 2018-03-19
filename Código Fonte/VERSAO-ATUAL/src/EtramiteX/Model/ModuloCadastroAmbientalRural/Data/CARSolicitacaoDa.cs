@@ -890,6 +890,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 				comandtxt += comando.FiltroAnd("l.origem", "origem", filtros.Dados.Origem);
 
+                comandtxt += comando.FiltroAnd("l.situacao_envio_id", "situacao_envio", filtros.Dados.SituacaoSicar);
+
+                comandtxt += comando.FiltroAnd("l.codigo_imovel", "codigo_imovel", filtros.Dados.codigoImovelSicar); 
+
 				if (!String.IsNullOrWhiteSpace(filtros.Dados.Situacao))
 				{
 					comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
@@ -951,7 +955,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
                                    
                                    lses.id situacao_envio_id,
 								   lses.texto situacao_envio_texto,
-								   tsicar.url_recibo
+								   tsicar.url_recibo,
+                                   tsicar.codigo_imovel
                               from tab_car_solicitacao tcs, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco ee,
                                    lov_municipio lme, lov_car_solicitacao_situacao lcss, tab_controle_sicar tsicar,lov_situacao_envio_sicar lses
                              where not exists (select lst.solic_tit_id from lst_car_solic_tit lst where lst.tipo=1 and lst.solic_tit_id=tcs.id)
@@ -993,7 +998,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 									   1                            tipo,
 									   tcs.situacao_envio           situacao_envio_id,
 									   lses.texto                   situacao_envio_texto,
-									   tcs.url_recibo
+									   tcs.url_recibo,
+                                       tcs.codigo_imovel
 								  from lst_car_solic_tit        s,
 									   tab_controle_sicar       tcs,
 									   lov_situacao_envio_sicar lses
@@ -1028,7 +1034,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 									   2                            tipo,
 									   null                         situacao_envio_id,
 									   null                         situacao_envio_texto,
-									   null                         url_recibo
+									   null                         url_recibo,
+                                       null                         codigo_imovel
 								  from lst_car_solic_tit s
 								 where s.tipo = 2
 								union all
@@ -1058,7 +1065,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 									   1 tipo,
 									   tcs.situacao_envio situacao_envio_id,
 									   lses.texto situacao_envio_texto,
-									   tcs.url_recibo
+									   tcs.url_recibo,
+                                       tcs.codigo_imovel
 								  from lst_car_solicitacao_cred c,
 									   tab_controle_sicar       tcs,
 									   lov_situacao_envio_sicar lses,
@@ -1088,7 +1096,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					   l.situacao_envio_id,
 					   l.situacao_envio_texto,
 					   l.url_recibo,
-					   l.arquivo
+					   l.arquivo,
+                       l.codigo_imovel
 				  from (select tcs.id,
                                tcs.id solic_tit_id,
                                tcs.numero solicitacao_numero,
@@ -1124,7 +1133,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
                                lses.id situacao_envio_id,
                                lses.texto situacao_envio_texto,
                                tsicar.url_recibo,
-                               tsicar.arquivo
+                               tsicar.arquivo,
+                               tsicar.codigo_imovel
                               from tab_car_solicitacao tcs, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco ee,
                                    lov_municipio lme, lov_car_solicitacao_situacao lcss, tab_controle_sicar tsicar,lov_situacao_envio_sicar lses
                              where not exists (select lst.solic_tit_id from lst_car_solic_tit lst where lst.tipo=1 and lst.solic_tit_id=tcs.id)
@@ -1168,7 +1178,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 							   tcs.situacao_envio           situacao_envio_id,
 							   lses.texto                   situacao_envio_texto,
 							   tcs.url_recibo,
-							   tcs.arquivo
+							   tcs.arquivo,
+                               tcs.codigo_imovel
 						  from lst_car_solic_tit        s,
 							   tab_controle_sicar       tcs,
 							   lov_situacao_envio_sicar lses
@@ -1205,7 +1216,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 							   null                         situacao_envio_id,
 							   null                         situacao_envio_texto,
 							   null                         url_recibo,
-							   null                         arquivo
+							   null                         arquivo,
+                               null                         codigo_imovel
 						  from lst_car_solic_tit s
 						 where s.tipo = 2
 						union all
@@ -1237,7 +1249,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 							   tcs.situacao_envio situacao_envio_id,
 							   lses.texto situacao_envio_texto,
 							   tcs.url_recibo,
-							   tcs.arquivo
+							   tcs.arquivo,
+                               tcs.codigo_imovel
 						  from lst_car_solicitacao_cred c,
 							   tab_controle_sicar       tcs,
 							   lov_situacao_envio_sicar lses,

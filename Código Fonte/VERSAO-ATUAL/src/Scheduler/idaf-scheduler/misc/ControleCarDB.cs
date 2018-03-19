@@ -178,7 +178,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao_envio", situacaoEnvio));
 					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
-					cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
+                    cmd.Parameters.Add(new OracleParameter("pendencias", mensagensDeResposta));
                     if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 					    cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
