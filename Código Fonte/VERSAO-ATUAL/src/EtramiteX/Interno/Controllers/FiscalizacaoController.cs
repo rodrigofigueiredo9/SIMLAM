@@ -3150,10 +3150,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					else if (dataVencimento.DayOfWeek == DayOfWeek.Monday)
 						dataVencimento = dataVencimento.AddDays(1);
 
-					var parcelamento = cobranca.Parcelamentos?.FindLast(x => x.DataEmissao.IsValido) ?? new CobrancaParcelamento(fiscalizacao, dataVencimento);
+					var parcelamento = index.HasValue ? cobranca.Parcelamentos[index.Value] : cobranca.Parcelamentos?.FindLast(x => x.DataEmissao.IsValido) ?? new CobrancaParcelamento(fiscalizacao, dataVencimento);
 					maximoParcelas = _busCobranca.GetMaximoParcelas(cobranca, parcelamento);
 
-					if (cobranca.Parcelamentos.Count == 0 || cobranca.Parcelamentos?.FindLast(x => x.DataEmissao.IsValido)?.DUAS?.Count == 0)
+					if (cobranca.Parcelamentos.Count == 0 || parcelamento?.DUAS?.Count == 0)
 					{
 						if (parcela > 0)
 							parcelamento.QuantidadeParcelas = parcela.Value;
