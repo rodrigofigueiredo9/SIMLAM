@@ -649,12 +649,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 Comando comando = bancoDeDados.CriarComando(@"
-                                    select f.id hst_id,
+                                    select f.pdf_iuf,
+                                           f.id hst_id,
                                            f.pdf_auto_termo,
                                            f.pdf_laudo,
                                            f.situacao_data,
                                            f.pdf_croqui croqui,
-                                           f.pdf_iuf,
                                            fi.arquivo_id arq_auto_infracao,
                                            fob.arquivo arq_termo_emb_int,
                                            fm.arquivo_id arq_termo_apree_dep,
@@ -678,6 +678,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 IEnumerable<IDataReader> daReader = DaHelper.ObterLista(comando, bancoDeDados);
 
+                int i = 0;
+
                 foreach (var item in daReader)
                 {
                     var documento = new FiscalizacaoDocumento();
@@ -694,7 +696,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     documento.PdfTermoCompromisso.Id = item.GetValue<int>("arq_termo_comp");
                     documento.PdfGeradoIUF.Id = item.GetValue<int>("pdf_iuf");
 
+                    if (i > 0 && lst[i - 1].PdfGeradoIUF.Id == documento.PdfGeradoIUF.Id)
+                    {
+                        documento.PdfGeradoIUF.Id = 0;
+                    }
+
                     lst.Add(documento);
+
+                    i++;
                 }
             }
 

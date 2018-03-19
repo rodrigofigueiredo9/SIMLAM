@@ -372,9 +372,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				#region Material Apreendido
 
 				Comando comando = bancoDeDados.CriarComando(@" select t.id, t.fiscalizacao, f.situacao situacao_id, t.houve_material, t.tad_gerado, t.tad_numero, t.tad_data, 
-															t.serie, t.descricao, t.valor_produtos, t.depositario,  nvl(p.nome, p.razao_social) nome, 
+															t.serie, (select texto from lov_fiscalizacao_serie where id = t.serie) serie_texto, t.descricao, t.valor_produtos, t.depositario,  nvl(p.nome, p.razao_social) nome, 
 															nvl(p.cpf, p.cnpj) cpf, t.endereco_logradouro, t.endereco_bairro, t.endereco_distrito, 
-															t.endereco_estado, t.endereco_municipio, t.opiniao, t.arquivo, a.nome arquivo_nome, t.tid 
+															t.endereco_estado, t.endereco_municipio, t.opiniao, t.arquivo, a.nome arquivo_nome, t.tid, f.autos 
 															from tab_fisc_material_apreendido t, tab_pessoa p, tab_arquivo a, tab_fiscalizacao f where t.depositario = p.id(+) 
 															and t.arquivo = a.id(+) and t.fiscalizacao = :fiscalizacao and f.id = t.fiscalizacao", EsquemaBanco);
 
@@ -389,6 +389,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							FiscalizacaoId = reader.GetValue<int>("fiscalizacao"),
 							SerieId = reader.GetValue<int>("serie"),
+                            SerieTexto = reader.GetValue<string>("serie_texto"),
 							ValorProdutosReais = reader.GetValue<decimal?>("valor_produtos"),
 							Descricao = reader.GetValue<string>("descricao"),
 							Opiniao = reader.GetValue<string>("opiniao"),
@@ -405,8 +406,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 								Estado = reader.GetValue<int>("endereco_estado"),
 								Municipio = reader.GetValue<int>("endereco_municipio")
 							},
-                            IsDigital = false
+                            IsDigital = reader.GetValue<bool>("tad_gerado")
 						};
+
+                        materialApreendido.NumeroIUF = materialApreendido.IsDigital != true ? reader.GetValue<string>("tad_numero") : reader.GetValue<string>("autos");
+
+                        if (reader["tad_data"] != null && !Convert.IsDBNull(reader["tad_data"]))
+                        {
+                            materialApreendido.DataLavratura.Data = Convert.ToDateTime(reader["tad_data"]);
+                        }
+                        else
+                        {
+                            FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
+                            materialApreendido.DataLavratura = _fiscDA.ObterDataConclusao(materialApreendido.FiscalizacaoId);
+                        }
 
 						materialApreendido.Arquivo = new Arquivo
 						{
@@ -419,7 +432,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
-//                #region Materiais
+                #region Materiais
 
 //                comando = bancoDeDados.CriarComando(@" select tfmam.id, tfmam.material_apreendido, tfmam.tipo, lfmat.texto tipo_texto, tfmam.especificacao, tfmam.tid from tab_fisc_mater_apree_material
 //					tfmam, lov_fisc_mate_apreendido_tipo lfmat where tfmam.tipo = lfmat.id and tfmam.material_apreendido = :material_apreendido ", EsquemaBanco);
@@ -441,7 +454,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 //                    reader.Close();
 //                }
 
-//                #endregion
+                #endregion
 			}
 
 			return materialApreendido;

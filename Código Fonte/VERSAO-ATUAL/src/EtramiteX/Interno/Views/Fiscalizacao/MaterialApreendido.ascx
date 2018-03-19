@@ -234,7 +234,7 @@
 			    <label>
 				    Descrever ou opinar quanto a destinação do material apreendido: *
 			    </label>
-			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
+			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao" }))%>
 		    </div>
 	    </div>
     </fieldset>
