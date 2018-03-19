@@ -851,11 +851,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
              */
             #region [[  CONSULTAS  ]]
 
-            var q1 = @"select /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+            var q1 = @"select DISTINCT /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
                                             from hst_car_solicitacao_cred c    
                                                   INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
                                                   INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
                                                   INNER JOIN CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.INTERNO
+                                                   
+                                              where c.solicitacao_id=:id and c.tid=:tid";
+
+            // Mesma igual a q1 porém consultando na CRT do credenciado
+            var q4 = @"select DISTINCT /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+                                            from hst_car_solicitacao_cred c    
+                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.ID
                                                    
                                               where c.solicitacao_id=:id and c.tid=:tid";
 
@@ -877,7 +886,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid ";
 
             //-- EMPREENDIMENTOS NÃO IMPORTADOS AINDA (NÃO POSSUI CÓDIGO, NEM INTERNO) 
-            var q3 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+            var q3 = @" SELECT DISTINCT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
                               FROM idafcredenciadogeo.TMP_ATP GA 
                                       INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
                                       INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
@@ -921,6 +930,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
                                     requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
                                     dra.Close();
+                                }
+                                else
+                                {
+                                    using (var cmdrr = new OracleCommand(q4, conn))
+                                    {
+
+                                        cmdrr.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                                        cmdrr.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+                                        using (var draa = cmdrr.ExecuteReader())
+                                            if (draa.Read())
+                                            {
+                                                requisicao.caracterizacao_id = Convert.ToInt32(draa["caract_id"]);
+                                                requisicao.caracterizacao_tid = Convert.ToString(draa["caract_tid"]);
+                                                requisicao.projeto_geografico_id = Convert.ToInt32(draa["projeto_id"]);
+                                                requisicao.projeto_geografico_tid = Convert.ToString(draa["projeto_tid"]);
+                                                draa.Close();
+                                            }
+                                            
+                                    }
+                                    
                                 }
                             
                             return requisicao;
