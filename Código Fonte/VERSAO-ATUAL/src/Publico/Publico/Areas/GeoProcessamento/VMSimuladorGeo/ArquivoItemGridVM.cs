@@ -120,12 +120,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMSimula
 			switch (Situacao)
 			{
 				case 1:
+                case 2:
 				case 6:
 				case 11:
 					ConfigurarBotoes(cancelar: true);
 					break;
 
-				case 2:
+				//case 2:
 				case 7:
 				case 12:
 					ConfigurarBotoes();
