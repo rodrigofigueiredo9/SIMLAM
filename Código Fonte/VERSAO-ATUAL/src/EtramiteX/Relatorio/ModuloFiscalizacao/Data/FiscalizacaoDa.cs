@@ -1108,6 +1108,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.InfrMedia = reader.GetValue<string>("is_media");
                         fiscalizacao.InfrGrave = reader.GetValue<string>("is_grave");
                         fiscalizacao.InfrGravissima = reader.GetValue<string>("is_gravissima");
+
+						fiscalizacao.DescricaoInfracao = fiscalizacao.DescricaoInfracao.Replace("\n", " ");
                     }
 
                     reader.Close();
