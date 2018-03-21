@@ -1369,10 +1369,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     {
                         fiscalizacao.TemAdvertencia = null;
                         fiscalizacao.TemOutra01 = null;
-                        fiscalizacao.TemOutra02 = null;
-                        fiscalizacao.TemOutra03 = null;
-                        fiscalizacao.TemOutra04 = null;
-                    }
+						fiscalizacao.DescricaoOutra01 = null;
+						fiscalizacao.TemOutra02 = null;
+						fiscalizacao.DescricaoOutra02 = null;
+						fiscalizacao.TemOutra03 = null;
+						fiscalizacao.DescricaoOutra03 = null;
+						fiscalizacao.TemOutra04 = null;
+						fiscalizacao.DescricaoOutra04 = null;
+					}
 
                     reader.Close();
                 }
