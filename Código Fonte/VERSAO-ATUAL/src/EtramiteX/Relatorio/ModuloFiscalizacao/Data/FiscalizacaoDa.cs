@@ -1108,9 +1108,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.InfrMedia = reader.GetValue<string>("is_media");
                         fiscalizacao.InfrGrave = reader.GetValue<string>("is_grave");
                         fiscalizacao.InfrGravissima = reader.GetValue<string>("is_gravissima");
-
+						
+						fiscalizacao.DescricaoInfracao = fiscalizacao.DescricaoInfracao.Replace("\n\n", "");
 						fiscalizacao.DescricaoInfracao = fiscalizacao.DescricaoInfracao.Replace("\n", " ");
-                    }
+					}
 
                     reader.Close();
                 }
@@ -1292,7 +1293,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
                         fiscalizacao.ValorBemPorExtenso = fiscalizacao.ValorBemPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorBemPorExtenso.Substring(1);
-                    }
+						
+						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n\n", "");
+						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemApreensao = null;
@@ -1328,7 +1332,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.DescricaoTermoEmbargo = reader.GetValue<string>("desc_termo_embargo");
                         fiscalizacao.IsInterditado = reader.GetValue<string>("IsInterditado");
                         fiscalizacao.IsEmbargado = reader.GetValue<string>("IsEmbargado");
-                    }
+
+						fiscalizacao.DescricaoTermoEmbargo = fiscalizacao.DescricaoTermoEmbargo.Replace("\n\n", "");
+						fiscalizacao.DescricaoTermoEmbargo = fiscalizacao.DescricaoTermoEmbargo.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemInterdicao = null;
@@ -1354,8 +1361,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     if (reader.Read())
                     {
                         fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Count() <= 465 ? fiscalizacao.DescricaoOutrasPenalidades : fiscalizacao.DescricaoOutrasPenalidades.Substring(0, 465);
-                    }
+
+						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n\n", "");
+						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemAdvertencia = null;
