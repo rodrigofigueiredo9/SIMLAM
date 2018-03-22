@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
@@ -2772,6 +2773,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
 		}
 
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult ExcluirParametrizacaoDetalhe(ParametrizacaoDetalhe detalhe)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@Url = Url.Action("ConfigurarParametrizacao", "Fiscalizacao", new { Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
+
 		#endregion
 
 		#endregion
@@ -3073,7 +3086,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			vm.fiscalizacaoId = id;
 			vm.Notificacao = _busNotificacao.Obter(id);
-			vm.ArquivoVM.Anexos = vm.Notificacao.Anexos;
+			vm.ArquivoVM.Anexos = vm.Notificacao.Anexos ?? new List<Anexo>();
 			vm.IsVisualizar = visualizar;
 			vm.ArquivoVM.IsVisualizar = visualizar;
 			var cobranca = _busCobranca.Obter(vm.Notificacao.FiscalizacaoId);
@@ -3088,11 +3101,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Cobranca
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Cobranca(int? id, int? parcela, int? recalcular) => View(this.GetCobrancaVM(id, parcela, false, Convert.ToBoolean(recalcular)));
+		public ActionResult Cobranca(int? id) => View(this.GetCobrancaVM(id));
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult CobrancaVisualizar(int id, int? index) => View(this.GetCobrancaVM(id, 0, true, false, index));
+		public ActionResult CobrancaVisualizar(int id, int? index) => View(this.GetCobrancaVM(id, true, index));
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
@@ -3110,6 +3123,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		public ActionResult CobrancaRecalcular(Cobranca cobranca) =>
+			Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "CobrancaPartial", this.GetCobrancaVM(cobranca.NumeroFiscalizacao, false, null, cobranca)) }, JsonRequestBehavior.AllowGet);
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult CobrancaNovoParcelamento(Cobranca cobranca)
 		{
 			_busCobranca.NovoParcelamento(cobranca);
@@ -3122,9 +3140,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
-		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, int? parcela, bool visualizar, bool recalcular = false, int? index = null)
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.PessoaVisualizar })]
+		public ActionResult FiscalizacaoPessoaModal(Cobranca cobranca) => PartialView("FiscalizacaoPessoaModal", this.GetCobrancaVM(cobranca.NumeroFiscalizacao, true));
+
+		[Permite(RoleArray = new Object[] { ePermissao.ProcessoCriar, ePermissao.ProcessoEditar })]
+		public ActionResult ObterFiscalizacao(int fiscalizacaoId)
 		{
-			var cobranca = _busCobranca.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
+			_busCobranca.ValidarAssociar(fiscalizacaoId);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, Fiscalizacao = _bus.Obter(fiscalizacaoId), Notificacao = _busNotificacao.Obter(fiscalizacaoId) }, JsonRequestBehavior.AllowGet);
+		}
+
+		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, bool visualizar = false, int? index = null, Cobranca entidade = null)
+		{
+			var cobranca = entidade ?? _busCobranca.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
 			var maximoParcelas = 0;
 
 			if (fiscalizacaoId > 0)
@@ -3133,18 +3162,32 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				var notificacao = _busNotificacao.Obter(fiscalizacaoId.Value) ?? new Notificacao();
 				if (cobranca.Id == 0)
 				{
-					cobranca = new Cobranca(fiscalizacao, notificacao);
+					cobranca = entidade ?? new Cobranca(fiscalizacao, notificacao);
+					if((cobranca.Parcelamentos?.Count ?? 0) == 0)
+					{
+						cobranca.Parcelamentos = new List<CobrancaParcelamento>();
+						if (cobranca.UltimoParcelamento.ValorMulta == 0)
+							cobranca.UltimoParcelamento.ValorMulta = cobranca.UltimoParcelamento.ValorMultaAtualizado;
+						cobranca.Parcelamentos.Add(cobranca.UltimoParcelamento);
+					}
+
 					var parcelamento = cobranca.Parcelamentos[0];
 					maximoParcelas = _busCobranca.GetMaximoParcelas(cobranca, parcelamento);
-					if (parcela > 0 && parcela < maximoParcelas)
-						parcelamento.QuantidadeParcelas = parcela.Value;
-					else
-						parcelamento.QuantidadeParcelas = maximoParcelas;
+					if (parcelamento.QuantidadeParcelas == 0)
+						parcelamento.QuantidadeParcelas = maximoParcelas;					
 					parcelamento.DUAS = new List<CobrancaDUA>();
 				}
 				else
 				{
-					var dataVencimento = notificacao.DataIUF?.Data.Value.AddDays(30) ?? cobranca.DataIUF.Data.Value.AddDays(30);
+					if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
+					{
+						cobranca.Parcelamentos = new List<CobrancaParcelamento>();
+						if (cobranca.UltimoParcelamento.ValorMulta == 0)
+							cobranca.UltimoParcelamento.ValorMulta = cobranca.UltimoParcelamento.ValorMultaAtualizado;
+						cobranca.Parcelamentos.Add(cobranca.UltimoParcelamento);
+					}
+
+					var dataVencimento = notificacao?.DataIUF?.Data?.AddDays(30) ?? cobranca.DataIUF.Data.Value.AddDays(30);
 					if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)
 						dataVencimento = dataVencimento.AddDays(2);
 					else if (dataVencimento.DayOfWeek == DayOfWeek.Monday)
@@ -3155,11 +3198,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 					if (cobranca.Parcelamentos.Count == 0 || parcelamento?.DUAS?.Count == 0)
 					{
-						if (parcela > 0)
-							parcelamento.QuantidadeParcelas = parcela.Value;
-						else
-							parcelamento.QuantidadeParcelas = maximoParcelas;
-
+						parcelamento.QuantidadeParcelas = maximoParcelas;
 						parcelamento.DUAS = new List<CobrancaDUA>();
 						if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 						{
@@ -3175,7 +3214,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					ultimoParcelamento.DUAS = _busCobranca.GerarParcelas(cobranca, ultimoParcelamento);
 					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
 				}
-				else if(recalcular)
+				else if(entidade != null)
 					_busCobranca.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
 			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar, index);

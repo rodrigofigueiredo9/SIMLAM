@@ -70,9 +70,12 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 		{
 			Entidade = entidade;
 			IsVisualizar = isVisualizar;
-			Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
 			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
-			Parcelas = GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
+			if (entidade.Parcelamentos != null)
+			{
+				Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+				Parcelas = GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
+			}
 		}
 
 		private List<SelectListItem> GetListParcelas(int quantidadeParcelas, int parcelaSelected)

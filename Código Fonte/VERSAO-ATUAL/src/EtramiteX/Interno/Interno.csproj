@@ -689,7 +689,6 @@
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
     <Content Include="Scripts\Fiscalizacao\cobranca.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
-    <Content Include="Scripts\Fiscalizacao\parametrizacaoDetalhe.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
@@ -1742,6 +1741,7 @@
     <Content Include="Views\Fiscalizacao\Multa.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
+    <Content Include="Views\Fiscalizacao\FiscalizacaoPessoaModal.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />

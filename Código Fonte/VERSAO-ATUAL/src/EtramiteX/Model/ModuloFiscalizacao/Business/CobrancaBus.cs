@@ -231,7 +231,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return list;
 		}
 
-
 		#endregion
 
 		#region Cálculo
@@ -248,6 +247,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return prazoDesconto;
 		}
 
+		private decimal GetValorTotalAtualizadoEmReais(Cobranca cobranca, CobrancaParcelamento parcelamento, Parametrizacao parametrizacao, decimal valorMulta)
+		{
+			var multaVRTE = valorMulta * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
+			var jurosVRTE = new Decimal();
+			var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
+			if (diasJuros > 0)
+				jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
+
+			return valorMulta + multaVRTE + (valorMulta * jurosVRTE);
+		}
+
 		public bool CalcularParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
 			var retorno = false;
@@ -256,7 +266,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
 			if (parametrizacao == null || (vrte?.Id ?? 0) == 0) return retorno;
 
-			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
+			parcelamento.ValorMultaAtualizado = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao, parcelamento.ValorMulta);
+			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
 			var parcelas = parcelamento.DUAS;
 
 			if (parcelas.Count == 1 && cobranca.Parcelamentos?.Count <= 1)
@@ -279,13 +290,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 			else
 			{
-				var multaVRTE = valorAtualizadoVRTE * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
-				var jurosVRTE = new Decimal();
-				var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
-				if (diasJuros > 0)
-					jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
-				var valorTotalVRTE = valorAtualizadoVRTE + multaVRTE + (valorAtualizadoVRTE * jurosVRTE);
-
 				var parcelaAnterior = new CobrancaDUA();
 				var valorJuros = 1 + (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
 
@@ -296,7 +300,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						if (parcela.VRTE == 0)
 						{
 							if (parcela.Parcela[0] == '1')
-								parcela.VRTE = Math.Round(valorTotalVRTE / parcelamento.QuantidadeParcelas, 4);
+								parcela.VRTE = Math.Round(valorAtualizadoVRTE / parcelamento.QuantidadeParcelas, 4);
 							else
 								parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
 						}
@@ -330,7 +334,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					};
 
 					if (i == 1)
-						parcela.DataVencimento = parcelamento.Data1Vencimento;
+						parcela.DataVencimento = new DateTecno() { Data = parcelamento.Data1Vencimento.Data };
 					else
 					{
 						var dataVencimento = parcelaAnterior.DataVencimento.Data.Value.AddMonths(1);
@@ -361,7 +365,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
 			if ((vrte?.Id ?? 0) == 0) return 0;
 
-			var valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
+			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
 			var parcela = 0;
 
 			if (cobranca.AutuadoPessoa.IsFisica)
@@ -369,11 +373,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			else
 				parcela = Decimal.ToInt32(valorAtualizadoVRTE / parametrizacao.ValorMinimoPJ);
 
-			if (parcela > parametrizacao.MaximoParcelas)
-				return parametrizacao.MaximoParcelas;
+			var detalhe = parametrizacao.ParametrizacaoDetalhes.FindLast(x => x.ValorInicial < parcelamento.ValorMultaAtualizado && (x.ValorFinal == 0 || x.ValorFinal >= parcelamento.ValorMultaAtualizado));
+			if ((detalhe?.Id ?? 0) == 0) return 0;
+
+			if (parcela > detalhe.MaximoParcelas)
+				return detalhe.MaximoParcelas;
+
 			return parcela;
 		}
 
 		#endregion Cálculo
+
+		public bool ValidarAssociar(int fiscalizacaoId)
+		{
+			var cobranca = _da.Obter(fiscalizacaoId);
+			if (cobranca?.Id > 0)
+				Validacao.AddErro(new Exception("Já existe uma cobrança cadastrada para esta fiscalização."));
+
+			return Validacao.EhValido;
+		}
 	}
 }

@@ -191,9 +191,12 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MaximoParcelasObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_MaximoParcelas", Tipo = eTipoMensagem.Advertencia, Texto = "Nº máximo de parcelas é obrigatório." }; } }
 		public Mensagem ValorMinimoPFObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_ValorMinimoPF", Tipo = eTipoMensagem.Advertencia, Texto = "Valor mínimo para pessoa física é obrigatório." }; } }
 		public Mensagem ValorMinimoPJObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_ValorMinimoPJ", Tipo = eTipoMensagem.Advertencia, Texto = "Valor mínimo para pessoa jurídica é obrigatório." }; } }
+		public Mensagem ValorInicialObrigatorio { get { return new Mensagem() { Campo = "Parametrizacao_ValorInicial", Tipo = eTipoMensagem.Advertencia, Texto = "Valor inicial é obrigatório." }; } }
 		public Mensagem SalvarParametrizacao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Parametrização salva com sucesso." }; } }
 		public Mensagem ExcluirParametrizacao { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Parametrização excluída com sucesso." }; } }
 		public Mensagem ExcluirParametrizacaoMensagem(String strPergunta) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Tem certeza que deseja excluir a parametrização {0}?", strPergunta) }; }
+        public Mensagem ParametrizacaoDetalheObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Detalhe é obrigatório." }; } }
+        public Mensagem ParametrizacaoDetalheDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Existe(m) detalhe(s) de parametrização duplicado(s)." }; } }
         public Mensagem ParametrizacaoDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Já existe uma parametrização para este código de receita dentro deste período de vigência." }; } }
 		#endregion Parametrizacao
 

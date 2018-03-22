@@ -9,12 +9,22 @@ Cobranca = {
 			visualizar: '',
 			carregar: '',
 			cancelar: '',
-			novoParcelamento: ''
+			novoParcelamento: '',
+			recalcular: '',
+
+			editarAutuadoPessoa: '',
+			fiscalizacaoPessoaModal: '',
+			associarAutuado: '',
+			associarFiscalizacao: '',
+			obterFiscalizacao: '',
+			visualizarFiscalizacao: ''
 		},
+		containerModal: null,
 		mensagens: null
 	},
 
 	container: null,
+	pessoaModalInte: null,
 
 	load: function (container, options) {
 		if (options) { $.extend(Cobranca.settings, options); }
@@ -27,10 +37,18 @@ Cobranca = {
 		container.delegate('.btnNovoParcelamento', 'click', Cobranca.novoParcelamento);
 		container.delegate('.btnParcelamentoAnterior', 'click', Cobranca.parcelamentoAnterior);
 		container.delegate('.btnParcelamentoPosterior', 'click', Cobranca.parcelamentoPosterior);
+		container.delegate('.btnAssociarAutuado', 'click', Cobranca.abrirModalFiscalizacaoPessoa);
+		container.delegate('.btnVerificarPessoa', 'click', Cobranca.abrirModalPessoa);
+		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
-
+		
 		$('.txtProcessoNumero', container).focus();
+	},
+
+	abrirModalFiscalizacaoPessoa: function () {
+		var container = Cobranca.container;
+		Modal.abrir(Cobranca.settings.urls.fiscalizacaoPessoaModal, Cobranca.obter());
 	},
 
 	obter: function () {
@@ -49,15 +67,17 @@ Cobranca = {
 			DataJIAPI: { DataTexto: $('.txtDataJIAPI', container).val() },
 			DataCORE: { DataTexto: $('.txtDataCORE', container).val() },
 			CodigoReceitaId: $('.ddlCodigoReceita :selected', container).val(),
+			AutuadoPessoa: { NomeRazaoSocial: $('.txtAutuadoNome', container).val(), CPFCNPJ: $('.txtAutuadoCpfCnpj', container).val()  },
 			AutuadoPessoaId: $('.hdnAutuadoPessoaId', container).val(),
 			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val())
 		}
-		obj.UltimoParcelamento.ValorMulta = $('.txtValorMulta', container).val();
+		obj.UltimoParcelamento.ValorMulta = $('.hdnValorMulta', container).val();
+		obj.UltimoParcelamento.ValorMultaAtualizado = $('.txtValorMultaAtualizado', container).val();
 		obj.UltimoParcelamento.QuantidadeParcelas = $('.ddlParcelas :selected', container).val();
 		obj.UltimoParcelamento.Data1Vencimento = { DataTexto: $('.txtData1Vencimento', container).val() };
 		obj.UltimoParcelamento.DataEmissao = { DataTexto: $('.txtDataEmissao', container).val() };
 		obj.UltimoParcelamento.DUAS = Cobranca.obterListaParcelamento();
-
+		
 		return obj;
 	},
 
@@ -124,14 +144,32 @@ Cobranca = {
 	},
 
 	alterarParcelas: function () {
-		MasterPage.carregando(true);
+		if (confirm("Esta ação irá alterar o parcelamento e as ações não salvas serão perdidas. Deseja continuar?")) {
+			MasterPage.carregando(true);
+			$.ajax({
+				url: Cobranca.settings.urls.recalcular,
+				data: JSON.stringify(Cobranca.obter()),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: function (XMLHttpRequest, textStatus, erroThrown) {
+					Aux.error(XMLHttpRequest, textStatus, erroThrown, Cobranca.container);
+				},
+				success: function (response, textStatus, XMLHttpRequest) {
+					if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(Cobranca.container, response.Msg);
+					}
 
-		var container = Cobranca.container;
-		var id = $('.hdnCobrancaId', container).val();
-		var parcela = $('.ddlParcelas :selected', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.carregar + "?parcela=" + parcela);
-
-		MasterPage.carregando(false);
+					if (response.Html && response.Html.length > 0) {
+						$('.cobrancaPartial', Cobranca.container).html(response.Html);
+					}
+					MasterPage.redimensionar();
+				}
+			});
+			MasterPage.carregando(false);
+		}
 	},
 
 	editar: function () {
@@ -157,7 +195,28 @@ Cobranca = {
 	recalcular: function () {
 		if (confirm("Esta ação realizará o cálculo das parcelas que possuem o Valor (R$) zerado e as ações não salvas serão perdidas. Deseja continuar?")) {
 			MasterPage.carregando(true);
-			MasterPage.redireciona(Cobranca.settings.urls.carregar + "?recalcular=1");
+			$.ajax({
+				url: Cobranca.settings.urls.recalcular,
+				data: JSON.stringify(Cobranca.obter()),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: function (XMLHttpRequest, textStatus, erroThrown) {
+					Aux.error(XMLHttpRequest, textStatus, erroThrown, Cobranca.container);
+				},
+				success: function (response, textStatus, XMLHttpRequest) {
+					if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(Cobranca.container, response.Msg);
+					}
+					
+					if (response.Html && response.Html.length > 0) {
+						$('.cobrancaPartial', Cobranca.container).html(response.Html);
+					}
+					Mascara.load(Cobranca.container);
+				}
+			});
 			MasterPage.carregando(false);
 		}
 	},
@@ -234,7 +293,158 @@ Cobranca = {
 		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
 		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() + 1));
 		MasterPage.carregando(false);
-	}
+	},
+
+	abrirModalPessoa: function () {
+		Cobranca.pessoaModalInte = new PessoaAssociar();
+
+		//Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
+		//Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
+		var dataPessoa = {
+			cpfCnpj: null,
+			tipoPessoa: null,
+			tipoCadastro: '1'
+		};
+
+		Modal.abrir(Cobranca.settings.urls.associarAutuado, dataPessoa, function (container) {
+			Cobranca.pessoaModalInte.load(container, {
+				tituloCriar: 'Cadastrar Autuado',
+				tituloEditar: 'Editar Autuado',
+				tituloVisualizar: 'Visualizar Autuado',
+				onAssociarCallback: Cobranca.callBackEditarAutuado,
+				isFiscalizacao: true
+			});
+		});
+	},
+
+	abrirModalFiscalizacao: function () {
+		var container = Cobranca.container;
+		var params = { id: parseInt($('.txtFiscalizacao', container).val()), processoId: 0 };
+
+		Modal.abrir(Cobranca.settings.urls.associarFiscalizacao, null, function (container) {
+			FiscalizacaoListar.load(container, { associarFuncao: Cobranca.callBackAssociarFiscalizacao });
+			Modal.defaultButtons(container);
+		});
+	},
+
+	callBackAssociarFiscalizacao: function (Fiscalizacao) {
+		if ($('.txtFiscalizacao', Cobranca.container).val() == Fiscalizacao.Id) {
+			return true;
+		}
+		var params = { fiscalizacaoId: Fiscalizacao.Id };
+		var retorno = Cobranca.obterAjax(Cobranca.settings.urls.obterFiscalizacao, params, $('.divFiscalizacao', Cobranca.container));
+		
+		if (!retorno.EhValido) {
+			return retorno.Msg;
+		}
+
+		$('.txtProcessoNumero', Cobranca.container).val(retorno.Fiscalizacao.NumeroProcesso);
+		$('.txtProcessoNumero', Cobranca.container).addClass('disabled');
+		$('.txtProcessoNumero', Cobranca.container).attr('disabled', true);
+		$('.txtNumeroAutos', Cobranca.container).val(retorno.Fiscalizacao.NumeroAutos);
+		$('.txtNumeroAutos', Cobranca.container).addClass('disabled');
+		$('.txtNumeroAutos', Cobranca.container).attr('disabled', true);
+		$('.txtFiscalizacao', Cobranca.container).val(retorno.Fiscalizacao.Id);
+		$('.txtFiscalizacao', Cobranca.container).addClass('disabled');
+		$('.txtFiscalizacao', Cobranca.container).attr('disabled', true);
+		$('.txtNumeroIUF', Cobranca.container).val(retorno.Fiscalizacao.Multa.NumeroIUF);
+		$('.txtNumeroIUF', Cobranca.container).addClass('disabled');
+		$('.txtNumeroIUF', Cobranca.container).attr('disabled', true);
+		$('.txtSerie', Cobranca.container).val(retorno.Fiscalizacao.Multa.SerieTexto);
+		$('.txtSerie', Cobranca.container).addClass('disabled');
+		$('.txtSerie', Cobranca.container).attr('disabled', true);
+		$('.hdnSerieId', Cobranca.container).val(retorno.Fiscalizacao.Multa.SerieId);
+		$('.txtDataLavratura', Cobranca.container).val(retorno.Fiscalizacao.Multa.DataLavratura.DataTexto);
+		$('.txtDataLavratura', Cobranca.container).addClass('disabled');
+		$('.txtDataLavratura', Cobranca.container).attr('disabled', true);
+
+		if (retorno.Notificacao.Id > 0) {
+			$('.txtDataIUF', Cobranca.container).val(retorno.Notificacao.DataIUF.DataTexto);
+			$('.txtDataIUF', Cobranca.container).addClass('disabled');
+			$('.txtDataIUF', Cobranca.container).attr('disabled', true);
+			$('.txtDataJIAPI', Cobranca.container).val(retorno.Notificacao.DataJIAPI.DataTexto);
+			$('.txtDataJIAPI', Cobranca.container).addClass('disabled');
+			$('.txtDataJIAPI', Cobranca.container).attr('disabled', true);
+			$('.txtDataCORE', Cobranca.container).val(retorno.Notificacao.DataCORE.DataTexto);
+			$('.txtDataCORE', Cobranca.container).addClass('disabled');
+			$('.txtDataCORE', Cobranca.container).attr('disabled', true);
+		}
+		else {
+			$('.txtDataIUF', Cobranca.container).removeClass('disabled');
+			$('.txtDataIUF', Cobranca.container).removeAttr('disabled');
+			$('.txtDataJIAPI', Cobranca.container).removeClass('disabled');
+			$('.txtDataJIAPI', Cobranca.container).removeAttr('disabled');
+			$('.txtDataCORE', Cobranca.container).removeClass('disabled');
+			$('.txtDataCORE', Cobranca.container).removeAttr('disabled');
+		}
+
+		Cobranca.callBackEditarAutuado(retorno.Fiscalizacao.AutuadoPessoa);
+
+		return true;
+	},
+
+	callBackEditarAutuado: function (Pessoa) {
+		$('.spanVisualizarAutuado', Cobranca.container).removeClass('hide');
+		$('.hdnAutuadoPessoaId', Cobranca.container).val(Pessoa.Id);
+		$('.txtAutuadoNome', Cobranca.container).val(Pessoa.NomeRazaoSocial);
+		$('.txtAutuadoCpfCnpj', Cobranca.container).val(Pessoa.CPFCNPJ);
+		return true;
+	},
+
+	onClickEditarVisualizar: function () {
+		var id = $('.hdnAutuadoPessoaId', Cobranca.container).val();
+		var pessoaModalInte = new PessoaAssociar();
+
+		var params = { fiscalizacaoId: $('.txtFiscalizacao', Cobranca.container).val() };
+		var retorno = Cobranca.obterAjax(Cobranca.settings.urls.obterFiscalizacao, params, $('.divFiscalizacao', Cobranca.container));
+
+		if (retorno.Fiscalizacao.Id > 0) {
+			var params = { id: $('.txtFiscalizacao', Cobranca.container).val() };
+
+			Modal.abrir(Cobranca.settings.urls.visualizarFiscalizacao, params, function (container) {
+				Modal.defaultButtons(container);
+			}, Modal.tamanhoModalGrande);
+		}
+		else {
+			var url = Cobranca.settings.urls.editarAutuadoPessoa + "/?id=" + id;
+
+			Modal.abrir(url, null, function (container) {
+				pessoaModalInte.load(container, {
+					tituloCriar: 'Cadastrar Autuado',
+					tituloEditar: 'Editar Autuado',
+					tituloVisualizar: 'Visualizar Autuado',
+					onAssociarCallback: Cobranca.callBackEditarAutuado
+				});
+			});
+		}
+	},
+
+	obterAjax: function (url, params, container) {
+		MasterPage.carregando(true);
+		var retorno = null;
+
+		$.ajax({
+			url: url, data: params, cache: false, async: false,
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(Cobranca.settings.container));
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				Mensagem.limpar(MasterPage.getContent(Cobranca.settings.container));
+
+				if (response.EhValido || response.SetarHtml) {
+					$(container).empty();
+					$(container).append(response.Html);
+					Mascara.load(container);
+					MasterPage.botoes(container);
+					MasterPage.redimensionar();
+				}
+
+				retorno = $(response).removeData('Html');
+			}
+		});
+		MasterPage.carregando(false);
+		return retorno[0];
+	},
 }
 
 String.prototype.trim = function () {

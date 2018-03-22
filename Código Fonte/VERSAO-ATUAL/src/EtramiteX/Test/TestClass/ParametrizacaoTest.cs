@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.EtramiteX.Interno.Controllers;
@@ -26,10 +27,17 @@ namespace Test
 			var entity = new Parametrizacao()
 			{
 				CodigoReceitaId = _busConfiguracao.ObterCodigosReceita()[0].Id,
-				InicioVigencia = new DateTecno() { Data = DateTime.Now },
-				MaximoParcelas = 10,
+				InicioVigencia = new DateTecno() { Data = new DateTime(2000,1,1) },
 				ValorMinimoPF = 200,
-				ValorMinimoPJ = 400
+				ValorMinimoPJ = 400,
+				ParametrizacaoDetalhes = new List<ParametrizacaoDetalhe>()
+				{
+					new ParametrizacaoDetalhe()
+					{
+						MaximoParcelas = 10,
+						ValorInicial = 0.01M
+					}
+				}
 			};
 
 			Assert.IsTrue(_busConfiguracao.SalvarParametrizacao(entity));

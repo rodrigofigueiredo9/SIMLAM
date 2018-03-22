@@ -42,8 +42,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 					@InicioVigenciaObrigatorio = Mensagem.FiscalizacaoConfiguracao.InicioVigenciaObrigatorio,
 					@MaximoParcelasObrigatorio = Mensagem.FiscalizacaoConfiguracao.MaximoParcelasObrigatorio,
 					@ValorMinimoPFObrigatorio = Mensagem.FiscalizacaoConfiguracao.ValorMinimoPFObrigatorio,
-					@ValorMinimoPJObrigatorio = Mensagem.FiscalizacaoConfiguracao.ValorMinimoPJObrigatorio
-
+					@ValorMinimoPJObrigatorio = Mensagem.FiscalizacaoConfiguracao.ValorMinimoPJObrigatorio,
+					@ParametrizacaoDetalheDuplicada = Mensagem.FiscalizacaoConfiguracao.ParametrizacaoDetalheDuplicada,
+					@ValorInicialObrigatorio = Mensagem.FiscalizacaoConfiguracao.ValorInicialObrigatorio
 				});
 			}
 		}

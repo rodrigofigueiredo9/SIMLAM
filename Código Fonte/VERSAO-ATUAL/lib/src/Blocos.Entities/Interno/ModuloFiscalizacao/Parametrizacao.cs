@@ -14,11 +14,15 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 	public class Parametrizacao
 	{
 		#region Constructor
-		public Parametrizacao() { }
+		public Parametrizacao()
+		{
+			ParametrizacaoDetalhes = new List<ParametrizacaoDetalhe>();
+		}
 
 		public Parametrizacao(Fiscalizacao fiscalizacao)
 		{
 			CodigoReceitaId = fiscalizacao.Multa.CodigoReceitaId ?? 0;
+			ParametrizacaoDetalhes = new List<ParametrizacaoDetalhe>();
 		}
 		#endregion
 

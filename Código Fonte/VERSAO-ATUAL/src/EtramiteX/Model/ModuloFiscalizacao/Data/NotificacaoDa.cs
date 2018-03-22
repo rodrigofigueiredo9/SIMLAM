@@ -337,7 +337,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Anexos
 
-				comando = bancoDeDados.CriarComando(@"
+				if (notificacao?.Id > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
 				select a.id Id,
 					   a.ordem Ordem,
 					   a.descricao Descricao,
@@ -352,15 +354,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				   and a.notificacao = :notificacao
 				 order by a.ordem", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("notificacao", notificacao.Id, DbType.Int32);
 
-				notificacao.Anexos = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
-				{
-					item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
-					item.Arquivo.Caminho = reader.GetValue<string>("caminho");
-					item.Arquivo.Nome = reader.GetValue<string>("nome");
-					item.Arquivo.Extensao = reader.GetValue<string>("extensao");
-				});
+					notificacao.Anexos = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
+					{
+						item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
+						item.Arquivo.Caminho = reader.GetValue<string>("caminho");
+						item.Arquivo.Nome = reader.GetValue<string>("nome");
+						item.Arquivo.Extensao = reader.GetValue<string>("extensao");
+					});
+				}
 
 				#endregion
 			}

@@ -9,7 +9,8 @@
 		$(function () {
 			ConfigurarParametrizacao.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("ConfigurarParametrizacao", "Fiscalizacao") %>'
+					salvar: '<%= Url.Action("ConfigurarParametrizacao", "Fiscalizacao") %>',
+					excluirDetalhe: '<%= Url.Action("ExcluirParametrizacaoDetalhe", "Fiscalizacao") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

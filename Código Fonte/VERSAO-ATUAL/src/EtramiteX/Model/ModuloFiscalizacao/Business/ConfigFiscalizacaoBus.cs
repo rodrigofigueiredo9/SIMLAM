@@ -724,6 +724,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						bancoDeDados.IniciarTransacao();
 
 						int id = _da.SalvarParametrizacao(entidade, bancoDeDados);
+						foreach (var detalhe in entidade.ParametrizacaoDetalhes)
+							detalhe.ParametrizacaoId = id;
+						_da.SalvarParametrizacaoDetalhe(entidade.ParametrizacaoDetalhes, bancoDeDados);
 
 						Validacao.Add(Mensagem.FiscalizacaoConfiguracao.SalvarParametrizacao);
 

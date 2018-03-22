@@ -1169,7 +1169,7 @@ Modal = {
 
 			Aux.error(jqXHR, status, errorThrown);
 		};
-
+		
 		if (typeof data == 'object' && data != null) {
 			$.ajax({
 				type: 'POST',

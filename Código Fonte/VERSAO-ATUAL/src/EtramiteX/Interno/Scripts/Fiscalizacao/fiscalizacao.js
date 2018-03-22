@@ -1,4 +1,4 @@
-﻿
+
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Pessoa/inline.js" />
 /// <reference path="../Empreendimento/inline.js" />
@@ -54,22 +54,24 @@ Fiscalizacao = {
 
 		var abas = [];
 
-		var infracao = JSON.parse($('.hdnInfracoes', Fiscalizacao.container).val());
+		if ($('.hdnInfracoes', Fiscalizacao.container).val()) {
+			var infracao = JSON.parse($('.hdnInfracoes', Fiscalizacao.container).val());
 
-		if (infracao.PossuiAdvertencia == true) {
-		    abas.push('advertencia');
-		}
-		if (infracao.PossuiMulta == true) {
-		    abas.push('multa');
-		}
-		if (infracao.PossuiApreensao == true) {
-		    abas.push('apreensao');
-		}
-		if (infracao.PossuiInterdicaoEmbargo == true) {
-		    abas.push('interdicaoembargo');
-		}
+			if (infracao.PossuiAdvertencia == true) {
+				abas.push('advertencia');
+			}
+			if (infracao.PossuiMulta == true) {
+				abas.push('multa');
+			}
+			if (infracao.PossuiApreensao == true) {
+				abas.push('apreensao');
+			}
+			if (infracao.PossuiInterdicaoEmbargo == true) {
+				abas.push('interdicaoembargo');
+			}
 
-		Fiscalizacao.ocultarAbas(abas);
+			Fiscalizacao.ocultarAbas(abas);
+		}
 	},
 
 	gerenciarWizardAbas: function () {

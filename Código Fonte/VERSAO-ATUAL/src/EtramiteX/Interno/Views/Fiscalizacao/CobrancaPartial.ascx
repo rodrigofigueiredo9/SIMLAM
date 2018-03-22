@@ -9,45 +9,45 @@
     <div class="block">
         <div class="coluna15">
             <label>N° de Registro do Processo</label><br />
-            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(true, new { @class = "text txtProcessoNumero setarFoco" }))%>
+            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtProcessoNumero setarFoco" }))%>
         </div>
         <div class="coluna15">
             <label>N° Autuação (SEP)</label><br />
-            <%= Html.TextBox("Cobranca.NumeroAutos", Model.Entidade.NumeroAutos, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroAutos" }))%>
+            <%= Html.TextBox("Cobranca.NumeroAutos", Model.Entidade.NumeroAutos, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroAutos" }))%>
         </div>
         <div class="coluna15">
             <label>N° Fiscalização</label><br />
-            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(true, new { @class = "text txtFiscalizacao" }))%>
+            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtFiscalizacao" }))%>
         </div>
         <div class="coluna15">
             <label>N° AI / IUF</label><br />
-            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroIUF" }))%>
+            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroIUF" }))%>
         </div>
         <div class="coluna15">
             <label>Série</label><br />
-            <%= Html.TextBox("Cobranca.Serie", Model.Entidade.SerieTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtSerie" }))%>
+            <%= Html.TextBox("Cobranca.Serie", Model.Entidade.SerieTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtSerie" }))%>
 			<%= Html.Hidden("hdnSerieId", Model.Entidade.SerieId, new { @class = "hdnSerieId" })%>
         </div>
         <div class="coluna15">
             <label>Data Emissão AI / IUF</label><br />
-            <%= Html.TextBox("Cobranca.DataLavratura", Model.Entidade.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataLavratura maskData" }))%>
+            <%= Html.TextBox("Cobranca.DataLavratura", Model.Entidade.DataLavratura.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataLavratura maskData" }))%>
         </div>
         <div class="coluna31">
-            <label>Autuado</label><br />
+            <label>Autuado *</label><br />
             <%= Html.TextBox("Cobranca.AutuadoPessoa.NomeRazaoSocial", Model.Entidade.AutuadoPessoa != null ? Model.Entidade.AutuadoPessoa.NomeRazaoSocial : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoNome" }))%>
 			<%= Html.Hidden("hdnAutuadoPessoaId", Model.Entidade.AutuadoPessoaId, new { @class = "hdnAutuadoPessoaId" })%>
         </div>
-        <div class="coluna21">
-            <label>CPF autuado</label><br />
+        <div class="coluna15">
+            <label>CPF autuado *</label><br />
             <%= Html.TextBox("Cobranca.AutuadoPessoa.CPFCNPJ", Model.Entidade.AutuadoPessoa != null ? Model.Entidade.AutuadoPessoa.CPFCNPJ : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoCpfCnpj" }))%>
         </div>
         <div class="prepend2">
             <% if (!Model.IsVisualizar)
 				{ %>
-            <button type="button" title="Buscar" class="floatLeft inlineBotao botaoBuscar btnAssociarAutuado" disabled>Buscar</button>
+            <button type="button" title="Buscar" class="floatLeft inlineBotao botaoBuscar btnAssociarAutuado">Buscar</button>
             <% } %>
-            <span class="spanVisualizarAutuado <%= (Model.Entidade.AutuadoPessoa.Id > 0) ? "" : "hide" %>">
-                <button type="button" class="icone visualizar esquerda inlineBotao btnEditarAutuado" title="Visualizar autuado" disabled></button>
+            <span class="spanVisualizarAutuado <%= (Model.Entidade.AutuadoPessoaId > 0) ? "" : "hide" %>">
+                <button type="button" class="icone visualizar esquerda inlineBotao btnEditarAutuado" title="Visualizar autuado"></button>
             </span>
         </div>
     </div>
@@ -70,12 +70,13 @@
     <div class="block">
         <div class="coluna31">
             <label for="Cobranca_CodigoReceita">Código Receita *</label>
-            <%= Html.DropDownList("Cobranca.CodigoReceitaId", Model.CodigoReceita, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.CodigoReceitaId > 0, new { @class = "text ddlCodigoReceita", @style = "height:21px;" }))%>
+            <%= Html.DropDownList("Cobranca.CodigoReceita", Model.CodigoReceita, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.CodigoReceitaId > 0, new { @class = "text ddlCodigoReceita", @style = "height:21px;" }))%>
         </div>
 
         <div class="coluna15">
-            <label for="Cobranca_ValorMulta">Valor (R$) *</label>
-            <%= Html.TextBox("Cobranca.ValorMulta", String.Format("{0:N2}", Model.Parcelamento.ValorMulta), ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto2 txtValorMulta" }))%>
+            <label for="Cobranca_ValorMultaAtualizado">Valor (R$) *</label>
+			<%= Html.Hidden("Cobranca.ValorMulta", Model.Parcelamento.ValorMulta, new { @class = "hdnValorMulta" })%>
+			<%= Html.TextBox("Cobranca.ValorMultaAtualizado", String.Format("{0:N2}", Model.Parcelamento.ValorMultaAtualizado), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.ValorMultaAtualizado > 0, new { @class = "text maskDecimalPonto2 txtValorMultaAtualizado", @maxlength = "17"}))%> 
         </div>
 
         <div class="coluna15">
@@ -90,7 +91,7 @@
 
         <div class="coluna15">
             <label for="Cobranca_DataEmissao">Data Emissão</label><br />
-            <%= Html.TextBox("Cobranca.DataEmissao", Model.Parcelamento.DataEmissao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.Id > 0, new { @class = "text maskData txtDataEmissao", @maxlength = "100" }))%>
+            <%= Html.TextBox("Cobranca.DataEmissao", Model.Parcelamento.DataEmissao.IsValido ? Model.Parcelamento.DataEmissao.DataTexto : DateTime.Now.ToString("dd/MM/yyyy"), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.Id > 0, new { @class = "text maskData txtDataEmissao", @maxlength = "100" }))%>
         </div>
     </div>
 

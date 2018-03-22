@@ -15,6 +15,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 MaximoParcelas { get; set; }
 		public Decimal ValorInicial { get; set; }
 		public Decimal ValorFinal { get; set; }
+		public bool Excluir { get; set; }
+		public bool? Editado { get; set; }
 		#endregion
 	}
 }

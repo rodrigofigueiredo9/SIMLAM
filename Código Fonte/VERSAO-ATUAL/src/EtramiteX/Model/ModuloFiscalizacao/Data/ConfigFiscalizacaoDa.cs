@@ -1665,7 +1665,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											codigoreceita, iniciovigencia, fimvigencia, valorminimo_pf, valorminimo_pj, multa_perc, juros_perc,
 											desconto_perc, desconto_und, desconto_decor, tid)
 											values ({0}seq_fisc_parametrizacao.nextval,
-                                            :codigoreceita, :iniciovigencia, :fimvigencia, :maximoparcelas, :valorminimo_pf, :valorminimo_pj,
+                                            :codigoreceita, :iniciovigencia, :fimvigencia, :valorminimo_pf, :valorminimo_pj,
 											:multa_perc, :juros_perc, :desconto_perc, :desconto_und, :desconto_decor, :tid)
 														returning id into :id", EsquemaBanco);
 
@@ -1716,59 +1716,71 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			}
 		}
 
-		internal int SalvarParametrizacaoDetalhe(ParametrizacaoDetalhe entidade, BancoDeDados banco = null)
+		internal void SalvarParametrizacaoDetalhe(List<ParametrizacaoDetalhe> listaDetalhe, BancoDeDados banco = null)
 		{
-			if (entidade == null)
-				throw new Exception("Objeto Parametrizacao é nulo.");
+			if (listaDetalhe == null)
+			{
+				throw new Exception("Objeto Parametrização é nulo.");
+			}
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = null;
+				Comando comando;
 
 				bancoDeDados.IniciarTransacao();
 
-				eHistoricoAcao acao = eHistoricoAcao.criar;
-
-				if (entidade.Id <= 0)
+				foreach (var detalhe in listaDetalhe)
 				{
-					comando = bancoDeDados.CriarComando(@" insert into {0}tab_fisc_param_detalhe (id,
-											parametrizacao, maximoparcelas, valorinicial, valorfinal, tid)
-											values ({0}seq_fisc_parametrizacao.nextval,
-											:parametrizacao, :maximoparcelas, :valorinicial, :valorfinal, :tid)
-														returning id into :id", EsquemaBanco);
+					comando = null;
 
-					comando.AdicionarParametroSaida("id", DbType.Int32);
+					if (detalhe.Id == 0)    // novo, incluir  
+					{
+						comando = bancoDeDados.CriarComando(@"insert into tab_fisc_param_detalhe(id, parametrizacao, valorinicial, valorfinal, maximoparcelas, tid)  
+                                                              values(seq_fisc_param_detalhe.nextval, :parametrizacao, :valorinicial, :valorfinal, :maximoparcelas, :tid) 
+                                                              returning id into :id", EsquemaBanco);
+
+						comando.AdicionarParametroSaida("id", DbType.Int32);
+						comando.AdicionarParametroEntrada("parametrizacao", detalhe.ParametrizacaoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("valorinicial", detalhe.ValorInicial, DbType.Decimal);
+						comando.AdicionarParametroEntrada("valorfinal", detalhe.ValorFinal, DbType.Decimal);
+						comando.AdicionarParametroEntrada("maximoparcelas", detalhe.MaximoParcelas, DbType.Int32);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						detalhe.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+					}
+					else if (detalhe.Excluir == false && detalhe.Editado == true)  // existente, editar  
+					{
+						comando = bancoDeDados.CriarComando(@"update tab_fisc_param_detalhe 
+                                                              set parametrizacao = :parametrizacao,
+																  valorinicial = :valorinicial,
+																  valorfinal = :valorfinal,
+																  maximoparcelas = :maximoparcelas,
+                                                                  tid = :tid 
+                                                              where id = :id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("id", detalhe.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("parametrizacao", detalhe.ParametrizacaoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("valorinicial", detalhe.ValorInicial, DbType.Decimal);
+						comando.AdicionarParametroEntrada("valorfinal", detalhe.ValorFinal, DbType.Decimal);
+						comando.AdicionarParametroEntrada("maximoparcelas", detalhe.MaximoParcelas, DbType.Int32);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+					else if (detalhe.Excluir)  
+					{
+						comando = bancoDeDados.CriarComando(@"delete from tab_fisc_param_detalhe 
+                                                              where id = :id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("id", detalhe.Id, DbType.Int32);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
 				}
-				else
-				{
-					comando = bancoDeDados.CriarComando(@"update tab_fisc_param_detalhe p set
-														p.parametrizacao = :parametrizacao,
-														p.maximoparcelas = :maximoparcelas,
-														p.valorinicial = :valorinicial,
-														p.valorfinal = :valorfinal,
-														p.tid = :tid
-														where p.id = :id", EsquemaBanco);
-
-					comando.AdicionarParametroEntrada("id", entidade.Id, DbType.Int32);
-					acao = eHistoricoAcao.atualizar;
-				}
-
-				comando.AdicionarParametroEntrada("parametrizacao", entidade.ParametrizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("maximoparcelas", entidade.MaximoParcelas, DbType.Int32);
-				comando.AdicionarParametroEntrada("valorinicial", entidade.ValorInicial, DbType.Decimal);
-				comando.AdicionarParametroEntrada("valorfinal", entidade.ValorFinal, DbType.Decimal);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				if (entidade.Id <= 0)
-					entidade.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-
-				Historico.Gerar(Convert.ToInt32(entidade.Id), eHistoricoArtefato.parametrizacao, acao, bancoDeDados, null);
 
 				bancoDeDados.Commit();
-
-				return entidade.Id;
 			}
 		}
 
@@ -1794,6 +1806,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando = bancoDeDados.CriarComando(
                     "begin " +
+						"delete from {0}tab_fisc_param_detalhe p where p.parametrizacao = :id;" +
 						"delete from {0}tab_fisc_parametrizacao p where p.id = :id;" +
 					"end;", EsquemaBanco);
 
@@ -3028,9 +3041,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
 											p.parametrizacao,
-											p.maximoparcelas,
 											p.valorinicial,
 											p.valorfinal,
+											p.maximoparcelas,
 											p.tid
 										from {0}tab_fisc_param_detalhe p
 										where p.parametrizacao = :parametrizacao

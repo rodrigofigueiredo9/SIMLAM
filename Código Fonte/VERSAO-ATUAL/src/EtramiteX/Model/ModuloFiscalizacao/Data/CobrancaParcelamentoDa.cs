@@ -68,6 +68,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     insert into {0}tab_fisc_cob_parcelamento (id,
 											cobranca,
 											valor_multa,
+											valor_multa_atualizado,
 											qtdparcelas,
 											vencimento_data,
 											dataemissao,
@@ -75,6 +76,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     values ({0}seq_fisc_cob_parc.nextval,
 											:cobranca,
 											:valor_multa,
+											:valor_multa_atualizado,
 											:qtdparcelas,
 											:vencimento_data,
 											:dataemissao,
@@ -83,6 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando.AdicionarParametroEntrada("cobranca", cobrancaParcelamento.CobrancaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_multa", cobrancaParcelamento.ValorMulta, DbType.Decimal);
+				comando.AdicionarParametroEntrada("valor_multa_atualizado", cobrancaParcelamento.ValorMultaAtualizado, DbType.Decimal);
 				comando.AdicionarParametroEntrada("qtdparcelas", cobrancaParcelamento.QuantidadeParcelas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vencimento_data", cobrancaParcelamento.Data1Vencimento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("dataemissao", cobrancaParcelamento.DataEmissao.Data, DbType.DateTime);
@@ -113,6 +116,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     set 
 										t.cobranca = :cobranca,
 										t.valor_multa = :valor_multa,
+										t.valor_multa_atualizado = :valor_multa_atualizado,
 										t.qtdparcelas = :qtdparcelas,
 										t.vencimento_data = :vencimento_data,
 										t.dataemissao = :dataemissao,
@@ -122,6 +126,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("id", cobrancaParcelamento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("cobranca", cobrancaParcelamento.CobrancaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_multa", cobrancaParcelamento.ValorMulta, DbType.Decimal);
+				comando.AdicionarParametroEntrada("valor_multa_atualizado", cobrancaParcelamento.ValorMultaAtualizado, DbType.Decimal);
 				comando.AdicionarParametroEntrada("qtdparcelas", cobrancaParcelamento.QuantidadeParcelas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vencimento_data", cobrancaParcelamento.Data1Vencimento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("dataemissao", cobrancaParcelamento.DataEmissao.Data, DbType.DateTime);
@@ -188,6 +193,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
 											p.cobranca,
 											p.valor_multa,
+											p.valor_multa_atualizado,
 											p.qtdparcelas,
 											p.vencimento_data,
 											p.dataemissao,
@@ -206,6 +212,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							CobrancaId = reader.GetValue<int>("cobranca"),
 							ValorMulta = reader.GetValue<decimal>("valor_multa"),
+							ValorMultaAtualizado = reader.GetValue<decimal>("valor_multa_atualizado"),
 							QuantidadeParcelas = reader.GetValue<int>("qtdparcelas"),
 						};
 						cobrancaParcelamento.Data1Vencimento.Data = reader.GetValue<DateTime>("vencimento_data");

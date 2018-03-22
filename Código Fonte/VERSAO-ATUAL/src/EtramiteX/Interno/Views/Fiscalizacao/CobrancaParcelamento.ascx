@@ -58,9 +58,9 @@
                     </td>
                     <td>
 						<% if (Model.IsVisualizar) { %>
-							<span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto%>"><%:parcela.DataPagamento.DataTexto%></span>
+							<span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto ?? ""%>"><%:parcela.DataPagamento.DataTexto ?? ""%></span>
 						<%} else {%>
-							<input class="text dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto%>" style="width: 100%;" />
+							<input class="text dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto ?? ""%>" style="width: 100%;" />
 						<%} %>
                     </td>
                     <td>
