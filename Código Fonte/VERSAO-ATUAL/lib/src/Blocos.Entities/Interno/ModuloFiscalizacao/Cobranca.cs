@@ -5,6 +5,15 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 {
+	public enum eSituacaoCobranca
+	{
+		EmAberto = 1,
+		Atrasado = 2,
+		Pago = 3,
+		PagoParcial = 4,
+	    Cancelado = 5
+	}
+
 	public class Cobranca
 	{
 		#region Constructor

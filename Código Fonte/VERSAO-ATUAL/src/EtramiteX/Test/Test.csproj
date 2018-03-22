@@ -122,11 +122,11 @@
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interno\Interno.csproj">
-      <Project>{7F61F31E-9DC8-4B3E-B372-3A7D4AB889B2}</Project>
+      <Project>{7f61f31e-9dc8-4b3e-b372-3a7d4ab889b2}</Project>
       <Name>Interno</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
-      <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>
+      <Project>{1a2007a6-9c00-4169-930c-fc338a1aada5}</Project>
       <Name>Interno.Model</Name>
     </ProjectReference>
   </ItemGroup>

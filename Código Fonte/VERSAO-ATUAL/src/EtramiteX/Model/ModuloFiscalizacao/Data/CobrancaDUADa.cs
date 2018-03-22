@@ -209,20 +209,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 Comando comando = bancoDeDados.CriarComando(@"
-                                    select d.id
-											d.vencimento_data
-											d.dataemissao
-											d.parcela
-											d.numero_dua
-											d.valor_dua
-											d.valor_pago
-											d.vrte
-											d.pagamento_data
-											d.complemento
-											d.pai_dua
-											d.cob_parc
+                                    select d.id,
+											d.vencimento_data,
+											d.dataemissao,
+											d.parcela,
+											d.numero_dua,
+											d.valor_dua,
+											d.valor_pago,
+											d.vrte,
+											d.pagamento_data,
+											d.complemento,
+											d.pai_dua,
+											d.cob_parc,
 											d.tid
-										from tab_fisc_cob_dua d
+										from {0}tab_fisc_cob_dua d
 										where d.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", cobrancaDUAId, DbType.Int32);
@@ -241,8 +241,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							VRTE= reader.GetValue<decimal>("vrte"),
 							InformacoesComplementares= reader.GetValue<string>("complemento"),
 							ParcelaPaiId = reader.GetValue<int>("pai_dua"),
-							ParcelamentoId = reader.GetValue<int>("cob_parc"),
-							Tid = reader.GetValue<string>("autuado")
+							ParcelamentoId = reader.GetValue<int>("cob_parc")
+							//Tid = reader.GetValue<string>("autuado")
 						};
 
 						cobrancaDUA.DataVencimento.Data = reader.GetValue<DateTime>("vencimento_data");
