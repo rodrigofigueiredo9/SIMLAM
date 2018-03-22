@@ -295,30 +295,49 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar })]
 		public ActionResult VisualizarFiscalizacaoModal(int id)
 		{
-			FiscalizacaoVM vm = new FiscalizacaoVM();
 			Fiscalizacao fiscalizacao = _bus.Obter(id);
+			FiscalizacaoVM vm = new FiscalizacaoVM();
 
 			vm.Fiscalizacao = fiscalizacao;
-			vm.Id = fiscalizacao.Id;
+
+			List<PessoaLst> lstResponsaveis = new List<PessoaLst>();
+			Pessoa pessoa = new Pessoa();
 
 			if (fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
 			{
-				List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
-				vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busFuncionario.ObterSetoresFuncionario(), fiscalizacao.AutuadoPessoa, lstResponsaveis);
+				fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(fiscalizacao.Id);
+
+				fiscalizacao.AutuadoPessoa = fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault() > 0 ? _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.Value) : new Pessoa();
+				fiscalizacao.AutuadoEmpreendimento = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busEmpreendimento.Obter(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new Empreendimento();
+
+				lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
+				pessoa = _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
 			}
 			else
 			{
-				fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
-				fiscalizacao.AutuadoEmpreendimento = (fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault(0) > 0) ? _busEmpreendimento.ObterHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.EmpreendimentoTid) : new Empreendimento();
-				fiscalizacao.Autuante = _bus.ObterAutuanteHistorico(fiscalizacao.Id);
+				fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(fiscalizacao.Id);
 
-				List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
-				vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busFuncionario.ObterSetoresFuncionario(), _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid), lstResponsaveis);
+				fiscalizacao.Autuante = _bus.ObterAutuanteHistorico(fiscalizacao.Id);
+				fiscalizacao.AutuadoEmpreendimento = (fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault(0) > 0) ? _busEmpreendimento.ObterHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new Empreendimento();
+				fiscalizacao.AutuadoPessoa = (fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0) > 0) ? _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid) : new Pessoa();
+
+				lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
+				pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
 			}
 
+			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis);
 			vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
 			vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
+
 			vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+
+			List<Lista> penalidades = _busConfiguracao.ObterPenalidadesLista();
+			vm.InfracaoVM.Penalidades = penalidades;
+			vm.InfracaoVM.ListaPenalidades01 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[0].ToString());
+			vm.InfracaoVM.ListaPenalidades02 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[1].ToString());
+			vm.InfracaoVM.ListaPenalidades03 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[2].ToString());
+			vm.InfracaoVM.ListaPenalidades04 = ViewModelHelper.CriarSelectList(penalidades, true, selecionado: vm.InfracaoVM.Infracao.IdsOutrasPenalidades[3].ToString());
+
 			vm.InfracaoVM.Classificacoes = ViewModelHelper.CriarSelectList(_busLista.InfracaoClassificacao, true, selecionado: fiscalizacao.Infracao.ClassificacaoId.ToString());
 			vm.InfracaoVM.Tipos = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterTipos(fiscalizacao.Infracao.ClassificacaoId), true, selecionado: fiscalizacao.Infracao.TipoId.ToString());
 			vm.InfracaoVM.Itens = ViewModelHelper.CriarSelectList(_busConfiguracao.ObterItens(fiscalizacao.Infracao.ClassificacaoId, fiscalizacao.Infracao.TipoId), true, selecionado: fiscalizacao.Infracao.ItemId.ToString());
@@ -327,9 +346,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.InfracaoVM.CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: fiscalizacao.Infracao.CodigoReceitaId.GetValueOrDefault().ToString());
 			vm.InfracaoVM.Campos = fiscalizacao.Infracao.Campos;
 			vm.InfracaoVM.Perguntas = fiscalizacao.Infracao.Perguntas;
+
 			vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
 			vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
 			vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
+			vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(fiscalizacao.Id);
+			vm.MultaVM.Multa = fiscalizacao.Multa;
+			vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
+
 			vm.IsVisualizar = true;
 
 			return PartialView("FiscalizacaoModal", vm);

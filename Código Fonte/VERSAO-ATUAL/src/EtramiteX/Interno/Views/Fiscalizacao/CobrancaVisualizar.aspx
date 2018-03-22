@@ -5,13 +5,25 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/cobranca.js") %>" type="text/javascript"></script>
+	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
 	<script type="text/javascript">
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
 					visualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>',
 					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>'
+					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>',
+
+					editarAutuadoPessoa: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
+					fiscalizacaoPessoaModal: '<%= Url.Action("FiscalizacaoPessoaModal", "Fiscalizacao") %>',
+					associarAutuado: '<%= Url.Action("PessoaModal", "Pessoa") %>',
+					associarFiscalizacao: '<%= Url.Action("Associar", "Fiscalizacao") %>',
+					obterFiscalizacao: '<%= Url.Action("ObterFiscalizacao", "Fiscalizacao") %>',
+					visualizarFiscalizacao: '<%= Url.Action("VisualizarFiscalizacaoModal", "Fiscalizacao") %>',
+					recalcular: '<%= Url.Action("CobrancaRecalcular", "Fiscalizacao") %>'
 				}
 			});
 		});
