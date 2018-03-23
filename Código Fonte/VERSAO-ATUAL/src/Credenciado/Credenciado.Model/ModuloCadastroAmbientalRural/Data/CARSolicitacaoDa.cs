@@ -294,11 +294,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					comando.AdicionarParametroEntrada("solicitacao_car_tid", controleArquivoSICAR.SolicitacaoCarTid, DbType.String);
 					comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
 					comando.AdicionarParametroEntrada("solicitacao_car_esquema", (int)solicitacaoOrigem, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_anterior", retificado.Id, DbType.Int32);
-                    comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
-                    comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
+					if(retificado == null)
+					{
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior", null, DbType.Int32);
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", null, DbType.String);
+						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", null, DbType.Int32);
+					}
+					else
+					{
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior", retificado.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
+						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
+					}
+                    
                     comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
-
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroSaida("id", DbType.Int32);
 
