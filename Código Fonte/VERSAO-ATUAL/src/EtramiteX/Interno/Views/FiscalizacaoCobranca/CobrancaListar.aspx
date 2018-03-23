@@ -9,8 +9,8 @@
 		$(function () {
 			CobrancaListar.load($('#central'), {
 				urls: {
-					urlEditar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					urlVisualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>'
+					urlEditar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
+					urlVisualizar: '<%= Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca") %>'
 				}
 			});
 		});

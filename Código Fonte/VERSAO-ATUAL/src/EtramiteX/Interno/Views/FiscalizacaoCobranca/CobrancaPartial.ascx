@@ -1,5 +1,5 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CobrancaVM>" %>
 
 <input type="hidden" class="hdnCobrancaId" value="<%:Model.Entidade.Id %>" />

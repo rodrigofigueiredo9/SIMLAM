@@ -12,9 +12,9 @@
 		$(function () {
 			Notificacao.load($('#central'), {
 				urls: {
-					editar: '<%= Url.Action("Notificacao", "Fiscalizacao") %>',
-					cobranca: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					cobrancaVisualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>'
+					editar: '<%= Url.Action("Notificacao", "FiscalizacaoNotificacao") %>',
+					cobranca: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
+					cobrancaVisualizar: '<%= Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca") %>'
 				}
 			});
 
@@ -22,7 +22,7 @@
 		{%>
 			ContainerAcoes.load($(".containerAcoes"), {
 				urls: {
-					urlListar: '<%= Url.Action("Notificacao", "Fiscalizacao", new {id = Request.Params["fiscalizacaoId"].ToString() }) %>'
+					urlListar: '<%= Url.Action("Notificacao", "FiscalizacaoNotificacao", new {id = Request.Params["fiscalizacaoId"].ToString() }) %>'
 				}
 			});
 			<%}%>

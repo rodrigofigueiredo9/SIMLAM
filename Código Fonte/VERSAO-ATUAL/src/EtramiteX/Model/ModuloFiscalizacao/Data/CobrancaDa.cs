@@ -348,22 +348,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select d.id,
                                                                 case
 																when d.cancelamento_data is not null
-																then 'Cancelado'
+																	then 'Cancelado'
 																when d.pagamento_data is null 
 																	and d.vencimento_data >= sysdate
 																	or d.valor_dua is null
 																	or d.valor_dua = 0
-																then 'Em Aberto'
+																	then 'Em Aberto'
 																when d.pagamento_data is not null
 																	and d.valor_pago >= d.valor_dua
-																then 'Pago'
+																	or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id)
+																	then 'Pago'
 																when d.pagamento_data is not null
 																	and d.valor_pago < d.valor_dua
-																	and not exists (select 1 from tab_fisc_cob_dua dc where dc.id = d.pai_dua)
-																then 'Pago Parcial'
+																	then 'Pago Parcial'
 																when d.pagamento_data is null and d.vencimento_data < sysdate
-																then 'Atrasado'
-												    			end as situacao
+																	then 'Atrasado'
+																end as situacao
                                                                 from tab_fisc_cob_dua d
 															    left join tab_fisc_cob_parcelamento p
 															    on (d.cob_parc = p.id)
@@ -397,21 +397,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                             c.iuf_numero,
                                             c.autos,
 											case
-												when d.cancelamento_data is not null
+											when d.cancelamento_data is not null
 												then 'Cancelado'
-												when d.pagamento_data is null 
-													and d.vencimento_data >= sysdate
-													or d.valor_dua is null
-													or d.valor_dua = 0
+											when d.pagamento_data is null 
+												and d.vencimento_data >= sysdate
+												or d.valor_dua is null
+												or d.valor_dua = 0
 												then 'Em Aberto'
-												when d.pagamento_data is not null
-													and d.valor_pago >= d.valor_dua
+											when d.pagamento_data is not null
+												and d.valor_pago >= d.valor_dua
+												or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id)
 												then 'Pago'
-												when d.pagamento_data is not null
-													and d.valor_pago < d.valor_dua
-													and not exists (select 1 from tab_fisc_cob_dua dc where dc.id = d.pai_dua)
+											when d.pagamento_data is not null
+												and d.valor_pago < d.valor_dua
 												then 'Pago Parcial'
-												when d.pagamento_data is null and d.vencimento_data < sysdate
+											when d.pagamento_data is null and d.vencimento_data < sysdate
 												then 'Atrasado'
 											end as situacao
 										    from {0}tab_fisc_cob_dua d
@@ -459,8 +459,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							cobrancaDUA.DataPagamento = new DateTecno();
 						if (cobrancaDUA.DataCancelamento.Data.HasValue && cobrancaDUA.DataCancelamento.Data.Value.Year == 1)
 							cobrancaDUA.DataCancelamento = new DateTecno();
-						//if (cobrancaDUA.ParcelaPaiId > 0)
-						//cobrancaDUA.ParcelaPai = this.ObterDUA(cobrancaDUA.ParcelaPaiId.Value);
 
 						lista.Itens.Add(cobrancaDUA);
 					}

@@ -23,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		CobrancaParcelamentoDa _daParcelamento = new CobrancaParcelamentoDa();
 		CobrancaDUADa _daDUA = new CobrancaDUADa();
 		ConfigFiscalizacaoBus _busConfiguracao = new ConfigFiscalizacaoBus();
+		FiscalizacaoBus _busFiscalizacao = new FiscalizacaoBus();
 
 		private static EtramiteIdentity User
 		{
@@ -63,6 +64,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						_da.Salvar(entidade, bancoDeDados);
 						entidade.UltimoParcelamento.CobrancaId = entidade.Id;
 						this.Salvar(entidade.UltimoParcelamento, bancoDeDados);
+						this.AlterarSituacaoFiscalizacao(entidade, bancoDeDados);
 						bancoDeDados.Commit();
 					}
 				}
@@ -407,6 +409,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		}
 
 		#endregion Cálculo
+
+		public bool AlterarSituacaoFiscalizacao(Cobranca cobranca, BancoDeDados banco = null)
+		{
+			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao);
+			if (fiscalizacao == null) return false;
+
+			if((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
+
+			if (cobranca.UltimoParcelamento.DUAS.FindAll(x => !x.DataPagamento.IsValido && x.ValorPago == 0).Count == 0)
+				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.AIPago;
+			else if (cobranca.UltimoParcelamento.DUAS.Count > 1)
+			{
+				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.EmParcelamento;
+				if (cobranca.UltimoParcelamento.DUAS.FindAll(x => x.DataPagamento.IsValido && x.ValorPago > 0).Count > 0)
+					fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.ParceladopagamentoEmDia;
+				if (cobranca.UltimoParcelamento.DUAS.FindAll(x => x.Situacao == "Atrasado").Count > 0)
+					fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.ParceladoPagamentoAtrasado;
+			}
+
+			return _busFiscalizacao.AlterarSituacaoPelaCobranca(fiscalizacao);
+		}
 
 		public bool ValidarAssociar(int fiscalizacaoId)
 		{

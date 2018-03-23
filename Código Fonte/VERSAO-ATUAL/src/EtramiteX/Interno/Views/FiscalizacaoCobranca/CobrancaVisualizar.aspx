@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CobrancaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Cobrança</asp:Content>
@@ -13,17 +13,17 @@
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
-					visualizar: '<%= Url.Action("CobrancaVisualizar", "Fiscalizacao") %>',
-					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>',
+					visualizar: '<%= Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca") %>',
+					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
+					cancelar: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
 
 					editarAutuadoPessoa: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
-					fiscalizacaoPessoaModal: '<%= Url.Action("FiscalizacaoPessoaModal", "Fiscalizacao") %>',
 					associarAutuado: '<%= Url.Action("PessoaModal", "Pessoa") %>',
 					associarFiscalizacao: '<%= Url.Action("Associar", "Fiscalizacao") %>',
-					obterFiscalizacao: '<%= Url.Action("ObterFiscalizacao", "Fiscalizacao") %>',
 					visualizarFiscalizacao: '<%= Url.Action("VisualizarFiscalizacaoModal", "Fiscalizacao") %>',
-					recalcular: '<%= Url.Action("CobrancaRecalcular", "Fiscalizacao") %>'
+					fiscalizacaoPessoaModal: '<%= Url.Action("FiscalizacaoPessoaModal", "FiscalizacaoCobranca") %>',
+					obterFiscalizacao: '<%= Url.Action("ObterFiscalizacao", "FiscalizacaoCobranca") %>',
+					recalcular: '<%= Url.Action("CobrancaRecalcular", "FiscalizacaoCobranca") %>'
 				}
 			});
 		});

@@ -12,7 +12,7 @@
 		$(function () {
 			Notificacao.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("NotificacaoCriar", "Fiscalizacao") %>'
+					salvar: '<%= Url.Action("NotificacaoCriar", "FiscalizacaoNotificacao") %>'
 				}
 			});
 
@@ -20,7 +20,7 @@
 		{%>
 			ContainerAcoes.load($(".containerAcoes"), {
 				urls: {
-					urlListar: '<%= Url.Action("Notificacao", "Fiscalizacao", new {id = Request.Params["fiscalizacaoId"].ToString() }) %>'
+					urlListar: '<%= Url.Action("Notificacao", "FiscalizacaoNotificacao", new {id = Request.Params["fiscalizacaoId"].ToString() }) %>'
 				}
 			});
 			<%}%>

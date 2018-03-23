@@ -1,6 +1,6 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPessoa" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<CobrancaVM>" %>
 
 <h2 class="titTela"><%= "Verificar Fiscalização/Pessoa" %></h2>

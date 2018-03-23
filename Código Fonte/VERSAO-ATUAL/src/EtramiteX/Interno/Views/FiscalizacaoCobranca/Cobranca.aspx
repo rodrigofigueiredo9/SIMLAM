@@ -1,5 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes" %>
-
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CobrancaVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Salvar Cobrança</asp:Content>
@@ -14,18 +13,18 @@
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("CobrancaCriar", "Fiscalizacao") %>',
-					carregar: '<%= Url.Action("Cobranca", "Fiscalizacao") %>',
-					cancelar: '<%= Url.Action("NotificacaoVisualizar", "Fiscalizacao") %>',
-					novoParcelamento: '<%= Url.Action("CobrancaNovoParcelamento", "Fiscalizacao") %>',
+					salvar: '<%= Url.Action("CobrancaCriar", "FiscalizacaoCobranca") %>',
+					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
+					cancelar: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
+					novoParcelamento: '<%= Url.Action("CobrancaNovoParcelamento", "FiscalizacaoCobranca") %>',
 
 					editarAutuadoPessoa: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
-					fiscalizacaoPessoaModal: '<%= Url.Action("FiscalizacaoPessoaModal", "Fiscalizacao") %>',
 					associarAutuado: '<%= Url.Action("PessoaModal", "Pessoa") %>',
 					associarFiscalizacao: '<%= Url.Action("Associar", "Fiscalizacao") %>',
-					obterFiscalizacao: '<%= Url.Action("ObterFiscalizacao", "Fiscalizacao") %>',
 					visualizarFiscalizacao: '<%= Url.Action("VisualizarFiscalizacaoModal", "Fiscalizacao") %>',
-					recalcular: '<%= Url.Action("CobrancaRecalcular", "Fiscalizacao") %>'
+					fiscalizacaoPessoaModal: '<%= Url.Action("FiscalizacaoPessoaModal", "FiscalizacaoCobranca") %>',
+					obterFiscalizacao: '<%= Url.Action("ObterFiscalizacao", "FiscalizacaoCobranca") %>',
+					recalcular: '<%= Url.Action("CobrancaRecalcular", "FiscalizacaoCobranca") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

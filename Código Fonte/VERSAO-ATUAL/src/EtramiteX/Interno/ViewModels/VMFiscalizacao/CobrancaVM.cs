@@ -5,7 +5,7 @@ using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
-namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
+namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 {
 	public class CobrancaVM
 	{

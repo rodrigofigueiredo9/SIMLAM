@@ -41,7 +41,7 @@ Cobranca = {
 		container.delegate('.btnVerificarPessoa', 'click', Cobranca.abrirModalPessoa);
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
-		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
+		container.delegate('.linkCancelar', 'click', function () { window.history.go(-1); });
 		
 		$('.txtProcessoNumero', container).focus();
 	},
@@ -165,6 +165,7 @@ Cobranca = {
 					if (response.Html && response.Html.length > 0) {
 						$('.cobrancaPartial', Cobranca.container).html(response.Html);
 					}
+					MasterPage.load();
 					MasterPage.redimensionar();
 				}
 			});
@@ -214,6 +215,8 @@ Cobranca = {
 					if (response.Html && response.Html.length > 0) {
 						$('.cobrancaPartial', Cobranca.container).html(response.Html);
 					}
+					MasterPage.load();
+					MasterPage.redimensionar();
 					Mascara.load(Cobranca.container);
 				}
 			});
