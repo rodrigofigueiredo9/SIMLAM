@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
-using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes;
 
-namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
+namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 {
 	public class ListarCobrancasVM
 	{
@@ -55,7 +52,6 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 		}
 
 		public String UltimaBusca { get; set; }
-		public Boolean PodeExcluir { get; set; }
 		public Boolean PodeEditar { get; set; }
 		public Boolean PodeVisualizar { get; set; }
 		
@@ -77,7 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes
 		private List<SelectListItem> GetListSituacao()
 		{
 			var list = new List<SelectListItem>();
-			list.Add(new SelectListItem() { Text = "Todos", Value = "" });
+			list.Add(new SelectListItem() { Text = "Todos", Value = "0" });
 			list.Add(new SelectListItem() { Text = "Em Aberto", Value = ((int)eSituacaoCobranca.EmAberto).ToString() });
 			list.Add(new SelectListItem() { Text = "Atrasado", Value = ((int)eSituacaoCobranca.Atrasado).ToString() });
 			list.Add(new SelectListItem() { Text = "Pago", Value = ((int)eSituacaoCobranca.Pago).ToString() });

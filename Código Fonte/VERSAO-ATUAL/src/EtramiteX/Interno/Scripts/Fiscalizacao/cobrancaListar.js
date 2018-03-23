@@ -13,22 +13,12 @@ CobrancaListar = {
 	load: function (container, options) {
 		if (options) { $.extend(CobrancaListar.settings, options); }
 		CobrancaListar.container = MasterPage.getContent(container);
-		CobrancaListar.container.listarAjax({ onAfterFiltrar: CobrancaListar.gerenciarSituacao });
+		CobrancaListar.container.listarAjax();
 
-		//CobrancaListar.container.delegate('.btnExcluir', 'click', ConfigurarListarParametrizacao.excluir);
-		//CobrancaListar.container.delegate('.btnVisualizar', 'click', ConfigurarListarParametrizacao.visualizar);
-		//CobrancaListar.container.delegate('.btnEditar', 'click', ConfigurarListarParametrizacao.editar);
+		CobrancaListar.container.delegate('.btnVisualizar', 'click', CobrancaListar.visualizar);
+		CobrancaListar.container.delegate('.btnEditar', 'click', CobrancaListar.editar);
 
 		Aux.setarFoco(container);
-	},
-
-	excluir: function () {
-		Modal.excluir({
-			'urlConfirm': CobrancaListar.settings.urls.urlExcluirConfirm,
-			'urlAcao': CobrancaListar.settings.urls.urlExcluir,
-			'id': $(this).closest('tr').find('.itemId:first').val(),
-			'btnExcluir': this
-		});
 	},
 
 	visualizar: function () {

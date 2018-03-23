@@ -1,4 +1,4 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarCobrancasVM>" %>
 
 <h1 class="titTela">Controle de Cobrança</h1>
@@ -9,6 +9,12 @@
 <div class="filtroExpansivo">
     <span class="titFiltro">Filtros</span>
     <div class="filtroCorpo filtroSerializarAjax block">
+
+		<input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
+		<%= Html.Hidden("UrlFiltrar", Url.Action("Filtrar"), new { @class = "urlFiltrar" })%>
+		<%= Html.Hidden("UrlVisualizar", Url.Action("Visualizar"), new { @class = "urlVisualizar" })%>
+		<%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>
+		<%= Html.Hidden("Paginacao.OrdenarPor", "4", new { @class = "ordenarPor" })%>
 
         <div class="coluna98">
             <div class="block fixado">
@@ -55,7 +61,7 @@
                 </div>
 
                <div class="coluna13 append2">
-                    <label for="NumeroAIIUF">Data de Pagamento dê:</label>
+                    <label for="NumeroAIIUF">Data de Pagamento de:</label>
                     <%= Html.TextBox("Filtros.DataPagamentoDe", Model.Filtros.DataPagamentoDe, new { @class = "text txtNumeroConfig maskNum15 setarFoco" })%>
                 </div>
 
@@ -65,7 +71,7 @@
                 </div>
 
                 <div class="coluna13 append2">
-                    <label for="NumeroAIIUF">Data de Vencimento dê:</label>
+                    <label for="NumeroAIIUF">Data de Vencimento de:</label>
                     <%= Html.TextBox("Filtros.DataVencimentoDe", Model.Filtros.DataVencimentoDe, new { @class = "text txtNumeroConfig maskNum15 setarFoco" })%>
                 </div>
 
@@ -73,17 +79,9 @@
                     <label for="NumeroAIIUF">Data de Vencimento até:</label>
                     <%= Html.TextBox("Filtros.DataVencimentoAte", Model.Filtros.DataVencimentoAte, new { @class = "text txtNumeroConfig maskNum15 setarFoco" })%>
                 </div>
-
             </div>
 
             <div class="block hide">
-
-                
-
-            </div>
-
-            <div class="block hide">
-
                 <div class="coluna23 append2">
                     <label for="NumeroAIIUF">Nome/Razão social do autuado:</label>
                     <%= Html.TextBox("Filtros.DataVencimentoAte", Model.Filtros.DataVencimentoAte, new { @class = "text txtNumeroConfig maskNum15 setarFoco" })%>
@@ -94,7 +92,6 @@
                     <%= Html.TextBox("Filtros.DataVencimentoAte", Model.Filtros.DataVencimentoAte, new { @class = "text txtNumeroConfig maskNum15 setarFoco" })%>
                 </div>
             </div>
-
         </div>
 
     </div>

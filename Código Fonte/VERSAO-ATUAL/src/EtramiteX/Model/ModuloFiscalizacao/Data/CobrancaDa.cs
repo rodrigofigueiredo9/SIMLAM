@@ -331,6 +331,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#endregion
 
+				#region Ordenação
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "parcela", "numero_dua", "protoc_num", "iuf_numero", "dataemissao", "valor_dua", "valor_pago", "vrte", "pagamento_data", "situacao" };
+
+				if (filtros.OdenarPor > 0)
+				{
+					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+				}
+				else
+				{
+					ordenar.Add("iuf_numero");
+				}
+				#endregion Ordenação
+
 				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select d.id,
                                                                 case
 																when d.cancelamento_data is not null
@@ -405,7 +419,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											on (d.cob_parc = p.id)
                                             left join tab_fisc_cobranca c
 											on (p.cobranca = c.id)) cobanca
-                                            where 1=1 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+                                            where 1=1 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 

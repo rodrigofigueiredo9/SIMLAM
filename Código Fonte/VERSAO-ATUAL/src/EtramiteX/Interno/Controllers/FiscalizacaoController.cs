@@ -6,7 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Arquivo.Data;
-using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
@@ -3180,9 +3179,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CobrancaFiltrar(ListarCobrancasVM vm, string SituacaoFiscalizacao, Paginacao paginacao)
 		{
 			if (!String.IsNullOrEmpty(vm.UltimaBusca))
-			{
 				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ListarCobrancasVM>(vm.UltimaBusca).Filtros;
-			}
 			
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 
@@ -3194,14 +3191,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.SetListItens(_busLista.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
 			if (resultados == null)
-			{
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
-			}
 			
 			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
 			vm.Paginacao.EfetuarPaginacao();
 			vm.Resultados = resultados.Itens;
-			
+			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
+			vm.PodeVisualizar = User.IsInRole(ePermissao.FiscalizacaoVisualizar.ToString());
+
 			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "CobrancaListarResultados", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
