@@ -231,6 +231,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return list;
 		}
 
+
+		public Resultados<CobrancasResultado> CobrancaFiltrar(CobrancaListarFiltro filtrosListar, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<CobrancaListarFiltro> filtro = new Filtro<CobrancaListarFiltro>(filtrosListar, paginacao);
+				Resultados<CobrancasResultado> resultados = _da.CobrancaFiltrar(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+
 		#endregion
 
 		#region Cálculo

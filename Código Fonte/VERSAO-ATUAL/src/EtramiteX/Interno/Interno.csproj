@@ -48,6 +48,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interno.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -68,7 +72,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Credenciado\Credenciado\bin\System.Web.WebPages.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -89,9 +96,13 @@
     <Reference Include="Tecnomapas.Blocos.Autenticacao">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
@@ -282,6 +293,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CobrancaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
@@ -688,6 +700,7 @@
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
     <Content Include="Scripts\Fiscalizacao\cobranca.js" />
+    <Content Include="Scripts\Fiscalizacao\cobrancaListar.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
@@ -1716,6 +1729,9 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
     <Content Include="Views\Fiscalizacao\Cobranca.aspx" />
+    <Content Include="Views\Fiscalizacao\CobrancaListar.aspx" />
+    <Content Include="Views\Fiscalizacao\CobrancaListarFiltros.ascx" />
+    <Content Include="Views\Fiscalizacao\CobrancaListarResultados.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacao.aspx" />
     <Content Include="Views\Fiscalizacao\CobrancaPartial.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoPartial.ascx" />
@@ -2745,7 +2761,7 @@
       <Name>Interno.Model.Extensoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
-      <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>
+      <Project>{1a2007a6-9c00-4169-930c-fc338a1aada5}</Project>
       <Name>Interno.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorio\Interno.Model.RelatorioIndividual.csproj">

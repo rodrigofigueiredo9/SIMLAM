@@ -345,7 +345,8 @@
 				<siteMapNode url="~/Fiscalizacao/AcompanhamentoVisualizar"></siteMapNode>
 				<siteMapNode url="~/Fiscalizacao/AcompanhamentoAlterarSituacao"></siteMapNode>
 			</siteMapNode>
-			<siteMapNode url="~/Fiscalizacao/Criar" title="Cadastrar Fiscalização" description="linkMenu" roles="FiscalizacaoCriar" />
+      <siteMapNode url="~/Fiscalizacao/Criar" title="Cadastrar Fiscalização" description="linkMenu" roles="FiscalizacaoCriar" />
+			<siteMapNode url="~/Fiscalizacao/CobrancaListar" title="Controle de Cobrança" description="linkMenu" roles="FiscalizacaoCriar"/>			
 			<siteMapNode url="~/Fiscalizacao/Cobranca" title="Cadastrar Cobrança" description="linkMenu" roles="FiscalizacaoCriar" />
 		</siteMapNode>
 

@@ -9,7 +9,7 @@
     <div class="filtroCorpo filtroSerializarAjax block">
 
         <input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
-        <%= Html.Hidden("UrlFiltrar", Url.Action("ConfigurarParametrizacaoFiltrar"), new { @class = "urlFiltrar" })%>
+        <%= Html.Hidden("UrlFiltrar", Url.Action("CobrancaListar"), new { @class = "urlFiltrar" })%>
         <%= Html.Hidden("UrlVisualizar", Url.Action("Visualizar"), new { @class = "urlVisualizar" })%>
         <%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>
         <%= Html.Hidden("Paginacao.OrdenarPor", "1", new { @class = "ordenarPor" })%>

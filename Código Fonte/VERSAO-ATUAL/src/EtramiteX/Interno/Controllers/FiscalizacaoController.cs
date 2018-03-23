@@ -62,10 +62,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 		SetorLocalizacaoBus _busSetorLocalizacao = new SetorLocalizacaoBus(new SetorLocalizacaoValidar());
 		AcompanhamentoBus _busAcompanhamento = new AcompanhamentoBus();
+		
 
 		ConfigFiscalizacaoValidar _validarConfigFisc = new ConfigFiscalizacaoValidar();
 		AcompanhamentoValidar _validarAcompanhamento = new AcompanhamentoValidar();
-
+		CobrancaDUADa _cobrancaDUADa = new CobrancaDUADa();
 		NotificacaoBus _busNotificacao = new NotificacaoBus();
 		CobrancaBus _busCobranca = new CobrancaBus();
 
@@ -2735,6 +2736,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ConfigurarParametrizacaoListarResultados", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
+
 		#endregion
 
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
@@ -3245,6 +3247,45 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return vm;
 		}
+
+		#region Filtrar
+		
+		public ActionResult CobrancaListar()
+		{
+			ListarCobrancasVM vm = new ListarCobrancasVM(_busLista.QuantPaginacao, _busLista.InfracaoCodigoReceita, _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList());
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			return PartialView(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
+		public ActionResult CobrancaFiltrar(ListarCobrancasVM vm, string SituacaoFiscalizacao, Paginacao paginacao)
+		{
+			if (!String.IsNullOrEmpty(vm.UltimaBusca))
+				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ListarCobrancasVM>(vm.UltimaBusca).Filtros;
+			
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+
+			Resultados<CobrancasResultado> resultados = _busCobranca.CobrancaFiltrar(vm.Filtros, vm.Paginacao);
+
+			vm.Paginacao = paginacao;
+			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(_busLista.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			if (resultados == null)
+				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+			
+			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.Resultados = resultados.Itens;
+			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
+			vm.PodeVisualizar = User.IsInRole(ePermissao.FiscalizacaoVisualizar.ToString());
+
+			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "CobrancaListarResultados", vm) }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
 		#endregion Cobranca
 	}
 }

@@ -1176,7 +1176,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return lista;
 		}
-
+		
 		public Resultados<ParametrizacaoListarResultado> ParametrizacaoFiltrar(ParametrizacaoListarFiltro filtrosListar, Paginacao paginacao)
 		{
 			try

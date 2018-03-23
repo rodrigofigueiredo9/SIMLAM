@@ -228,7 +228,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											d.cob_parc,
 											d.cancelamento_data,
 											d.tid
-										from tab_fisc_cob_dua d
+										from {0}tab_fisc_cob_dua d
 										where d.id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", cobrancaDUAId, DbType.Int32);
