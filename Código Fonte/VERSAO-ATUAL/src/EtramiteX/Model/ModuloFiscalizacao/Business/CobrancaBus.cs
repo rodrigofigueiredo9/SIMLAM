@@ -179,6 +179,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						Data1Vencimento = new DateTecno() { Data = DateTime.Now.AddDays(15) },
 						DataEmissao = new DateTecno() { Data = DateTime.Now },
 						ValorMulta = valorRestante,
+						ValorMultaAtualizado = valorRestante,
 						DUAS = new List<CobrancaDUA>()
 					};
 
@@ -427,6 +428,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				if (cobranca.UltimoParcelamento.DUAS.FindAll(x => x.Situacao == "Atrasado").Count > 0)
 					fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.ParceladoPagamentoAtrasado;
 			}
+
+			if (fiscalizacao.SituacaoNovaTipo == 0) return false;
 
 			return _busFiscalizacao.AlterarSituacaoPelaCobranca(fiscalizacao);
 		}
