@@ -42,7 +42,7 @@
             <%= Html.TextBox("Cobranca.AutuadoPessoa.CPFCNPJ", Model.Entidade.AutuadoPessoa != null ? Model.Entidade.AutuadoPessoa.CPFCNPJ : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoCpfCnpj" }))%>
         </div>
         <div class="prepend2">
-            <% if (!Model.IsVisualizar)
+            <% if (!Model.IsVisualizar && Model.Entidade.NumeroFiscalizacao == 0)
 				{ %>
             <button type="button" title="Buscar" class="floatLeft inlineBotao botaoBuscar btnAssociarAutuado">Buscar</button>
             <% } %>

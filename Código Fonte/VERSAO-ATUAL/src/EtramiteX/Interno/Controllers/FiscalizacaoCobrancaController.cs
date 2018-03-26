@@ -29,7 +29,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Cobranca
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult Cobranca(int? id) => View(this.GetCobrancaVM(id));
@@ -190,7 +189,5 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
-
-		#endregion Cobranca
 	}
 }

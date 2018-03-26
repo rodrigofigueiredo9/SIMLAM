@@ -15,7 +15,8 @@
 				urls: {
 					salvar: '<%= Url.Action("CobrancaCriar", "FiscalizacaoCobranca") %>',
 					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
-					cancelar: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
+					lista: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
+					notificacao: '<%= Url.Action("NotificacaoVisualizar", "FiscalizacaoNotificacao") %>',
 					novoParcelamento: '<%= Url.Action("CobrancaNovoParcelamento", "FiscalizacaoCobranca") %>',
 
 					editarAutuadoPessoa: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
@@ -37,6 +38,7 @@
         <h1 class="titTela">Salvar Cobrança</h1>
         <br />
 
+		<input type="hidden" class="hdnOrigem" value="<%= Request.QueryString["origem"] %>" />
         <div class="cobrancaPartial">
             <% Html.RenderPartial("CobrancaPartial", Model); %>
         </div>

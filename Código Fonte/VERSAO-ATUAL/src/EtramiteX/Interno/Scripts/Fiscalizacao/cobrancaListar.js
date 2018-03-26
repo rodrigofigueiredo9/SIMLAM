@@ -18,6 +18,8 @@ CobrancaListar = {
 		CobrancaListar.container.delegate('.btnVisualizar', 'click', CobrancaListar.visualizar);
 		CobrancaListar.container.delegate('.btnEditar', 'click', CobrancaListar.editar);
 
+		CobrancaListar.container.delegate('.radioAutuadoCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
+		Aux.onChangeRadioCpfCnpjMask($('.radioAutuadoCpfCnpj', CobrancaListar.container));
 		Aux.setarFoco(container);
 	},
 

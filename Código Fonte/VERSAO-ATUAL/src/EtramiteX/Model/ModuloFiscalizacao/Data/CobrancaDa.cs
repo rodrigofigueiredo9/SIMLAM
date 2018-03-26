@@ -304,6 +304,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 
 				string comandtxt = string.Empty;
+				string whereSituacao = string.Empty;
 				Comando comando = bancoDeDados.CriarComando("");
 
 				#region Adicionando Filtros
@@ -324,10 +325,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comandtxt += comando.FiltroAnd("c.autos", "autos", filtros.Dados.NumeroAutuacao);
 
 				if (Convert.ToInt32(filtros.Dados.SituacaoFiscalizacao) != 0)
-					comandtxt += comando.FiltroAnd("c.fiscalizacao", "fiscalizacao", filtros.Dados.SituacaoFiscalizacao);
+					comandtxt += comando.FiltroAnd("f.situacao", "situacaofiscalizacao", filtros.Dados.SituacaoFiscalizacao);
+
+				if (filtros.Dados.NomeRazaoSocial != null)
+					comandtxt += comando.FiltroAndLike("a.nome", "nomeautuado", filtros.Dados.NomeRazaoSocial, true);
+
+				if (filtros.Dados.CPFCNPJ != null)
+					comandtxt += comando.FiltroAnd("a.cpf", "cpfautuado", filtros.Dados.CPFCNPJ);
+
+				if (Convert.ToBoolean(filtros.Dados.DataVencimentoDe?.IsValido))
+				{
+					comandtxt += " and d.vencimento_data >= :vencimentode ";
+					comando.AdicionarParametroEntrada("vencimentode", filtros.Dados.DataVencimentoDe.Data, DbType.Date);
+				}
+
+				if (Convert.ToBoolean(filtros.Dados.DataVencimentoAte?.IsValido))
+				{
+					comandtxt += " and d.vencimento_data <= :vencimentoate ";
+					comando.AdicionarParametroEntrada("vencimentoate", filtros.Dados.DataVencimentoAte.Data, DbType.Date);
+				}
+
+				if (Convert.ToBoolean(filtros.Dados.DataPagamentoDe?.IsValido))
+				{
+					comandtxt += " and d.pagamento_data >= :pagamentode ";
+					comando.AdicionarParametroEntrada("pagamentode", filtros.Dados.DataPagamentoDe.Data, DbType.Date);
+				}
+
+				if (Convert.ToBoolean(filtros.Dados.DataPagamentoAte?.IsValido))
+				{
+					comandtxt += " and d.pagamento_data <= :pagamentoate ";
+					comando.AdicionarParametroEntrada("pagamentoate", filtros.Dados.DataPagamentoAte.Data, DbType.Date);
+				}
 
 				if (Convert.ToInt32(filtros.Dados.SituacaoDUA) != 0)
-					comandtxt += comando.FiltroAnd("situacao", "situacao", GetEnumSituacaoDuo(Convert.ToInt32(filtros.Dados.SituacaoDUA)));
+					whereSituacao += comando.FiltroAnd("situacao", "situacao", GetEnumSituacaoDuo(Convert.ToInt32(filtros.Dados.SituacaoDUA)));
 
 				#endregion
 
@@ -368,8 +399,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															    left join tab_fisc_cob_parcelamento p
 															    on (d.cob_parc = p.id)
 															    left join tab_fisc_cobranca c
-																on (p.cobranca = c.id)) consulta 
-                                                                where 1=1" + comandtxt + ")", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+																on (p.cobranca = c.id)
+																left join tab_fiscalizacao f
+																on (c.fiscalizacao = f.id)
+																left join tab_pessoa a
+																on (c.autuado = a.id)
+																where 1=1" + comandtxt + @") consulta 
+																where 1=1" + whereSituacao + ")", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				lista.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -418,8 +454,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                             left join tab_fisc_cob_parcelamento p
 											on (d.cob_parc = p.id)
                                             left join tab_fisc_cobranca c
-											on (p.cobranca = c.id)) cobanca
-                                            where 1=1 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+											on (p.cobranca = c.id)
+											left join tab_fiscalizacao f
+											on (c.fiscalizacao = f.id)
+											left join tab_pessoa a
+											on (c.autuado = a.id) where 1=1 " + comandtxt + @") cobranca
+                                            where 1=1 " + whereSituacao + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 

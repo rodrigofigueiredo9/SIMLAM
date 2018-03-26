@@ -11,13 +11,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 	{
 		public Boolean IsVisualizar { get; set; }
 
+		public String Origem { get; set; }
+
 		private Cobranca _entidade = new Cobranca();
 		public Cobranca Entidade
 		{
 			get { return _entidade; }
 			set { _entidade = value; }
 		}
-
 
 		private CobrancaParcelamento _parcelamento = new CobrancaParcelamento();
 		public CobrancaParcelamento Parcelamento

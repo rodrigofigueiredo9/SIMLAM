@@ -419,7 +419,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
 
 			if (cobranca.UltimoParcelamento.DUAS.FindAll(x => !x.DataPagamento.IsValido && x.ValorPago == 0).Count == 0)
-				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.AIPago;
+				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.MultaPaga;
 			else if (cobranca.UltimoParcelamento.DUAS.Count > 1)
 			{
 				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.EmParcelamento;

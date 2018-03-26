@@ -4,18 +4,19 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Cobrança</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script src="<%= Url.Content("~/Scripts/Fiscalizacao/cobranca.js") %>" type="text/javascript"></script>
-	<script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/Fiscalizacao/cobranca.js") %>" type="text/javascript"></script>
+    <script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
 					visualizar: '<%= Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca") %>',
 					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
-					cancelar: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
+					lista: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',
+					notificacao: '<%= Url.Action("NotificacaoVisualizar", "FiscalizacaoNotificacao") %>',
 
 					editarAutuadoPessoa: '<%= Url.Action("PessoaModalVisualizar", "Pessoa") %>',
 					associarAutuado: '<%= Url.Action("PessoaModal", "Pessoa") %>',
@@ -27,7 +28,7 @@
 				}
 			});
 		});
-	</script>
+    </script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -35,6 +36,9 @@
         <h1 class="titTela">Visualizar Cobrança</h1>
         <br />
 
-        <% Html.RenderPartial("CobrancaPartial", Model); %>
+        <input type="hidden" class="hdnOrigem" value="<%= Request.QueryString["origem"] %>" />
+        <div class="cobrancaPartial">
+            <% Html.RenderPartial("CobrancaPartial", Model); %>
+        </div>
     </div>
 </asp:Content>

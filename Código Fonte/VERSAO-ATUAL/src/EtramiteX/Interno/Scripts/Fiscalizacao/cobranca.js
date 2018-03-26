@@ -8,7 +8,8 @@ Cobranca = {
 			salvar: '',
 			visualizar: '',
 			carregar: '',
-			cancelar: '',
+			lista: '',
+			notificacao: '',
 			novoParcelamento: '',
 			recalcular: '',
 
@@ -41,7 +42,7 @@ Cobranca = {
 		container.delegate('.btnVerificarPessoa', 'click', Cobranca.abrirModalPessoa);
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
-		container.delegate('.linkCancelar', 'click', function () { window.history.go(-1); });
+		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
 		
 		$('.txtProcessoNumero', container).focus();
 	},
@@ -186,9 +187,12 @@ Cobranca = {
 	cancelar: function () {
 		MasterPage.carregando(true);
 
-		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.cancelar + "/" + fiscalizacaoId);
+		if ($('.hdnOrigem', Cobranca.container).val() == 'notificacao') {
+			var fiscalizacaoId = $('.txtFiscalizacao', Cobranca.container).val();
+			MasterPage.redireciona(Cobranca.settings.urls.notificacao + "/" + fiscalizacaoId);
+		}
+		else 
+			MasterPage.redireciona(Cobranca.settings.urls.lista);
 
 		MasterPage.carregando(false);
 	},
@@ -334,54 +338,18 @@ Cobranca = {
 		if ($('.txtFiscalizacao', Cobranca.container).val() == Fiscalizacao.Id) {
 			return true;
 		}
+		MasterPage.carregando(true);
+
 		var params = { fiscalizacaoId: Fiscalizacao.Id };
 		var retorno = Cobranca.obterAjax(Cobranca.settings.urls.obterFiscalizacao, params, $('.divFiscalizacao', Cobranca.container));
 		
 		if (!retorno.EhValido) {
+			MasterPage.carregando(false);
 			return retorno.Msg;
 		}
 
-		$('.txtProcessoNumero', Cobranca.container).val(retorno.Fiscalizacao.NumeroProcesso);
-		$('.txtProcessoNumero', Cobranca.container).addClass('disabled');
-		$('.txtProcessoNumero', Cobranca.container).attr('disabled', true);
-		$('.txtNumeroAutos', Cobranca.container).val(retorno.Fiscalizacao.NumeroAutos);
-		$('.txtNumeroAutos', Cobranca.container).addClass('disabled');
-		$('.txtNumeroAutos', Cobranca.container).attr('disabled', true);
-		$('.txtFiscalizacao', Cobranca.container).val(retorno.Fiscalizacao.Id);
-		$('.txtFiscalizacao', Cobranca.container).addClass('disabled');
-		$('.txtFiscalizacao', Cobranca.container).attr('disabled', true);
-		$('.txtNumeroIUF', Cobranca.container).val(retorno.Fiscalizacao.Multa.NumeroIUF);
-		$('.txtNumeroIUF', Cobranca.container).addClass('disabled');
-		$('.txtNumeroIUF', Cobranca.container).attr('disabled', true);
-		$('.txtSerie', Cobranca.container).val(retorno.Fiscalizacao.Multa.SerieTexto);
-		$('.txtSerie', Cobranca.container).addClass('disabled');
-		$('.txtSerie', Cobranca.container).attr('disabled', true);
-		$('.hdnSerieId', Cobranca.container).val(retorno.Fiscalizacao.Multa.SerieId);
-		$('.txtDataLavratura', Cobranca.container).val(retorno.Fiscalizacao.Multa.DataLavratura.DataTexto);
-		$('.txtDataLavratura', Cobranca.container).addClass('disabled');
-		$('.txtDataLavratura', Cobranca.container).attr('disabled', true);
-
-		if (retorno.Notificacao.Id > 0) {
-			$('.txtDataIUF', Cobranca.container).val(retorno.Notificacao.DataIUF.DataTexto);
-			$('.txtDataIUF', Cobranca.container).addClass('disabled');
-			$('.txtDataIUF', Cobranca.container).attr('disabled', true);
-			$('.txtDataJIAPI', Cobranca.container).val(retorno.Notificacao.DataJIAPI.DataTexto);
-			$('.txtDataJIAPI', Cobranca.container).addClass('disabled');
-			$('.txtDataJIAPI', Cobranca.container).attr('disabled', true);
-			$('.txtDataCORE', Cobranca.container).val(retorno.Notificacao.DataCORE.DataTexto);
-			$('.txtDataCORE', Cobranca.container).addClass('disabled');
-			$('.txtDataCORE', Cobranca.container).attr('disabled', true);
-		}
-		else {
-			$('.txtDataIUF', Cobranca.container).removeClass('disabled');
-			$('.txtDataIUF', Cobranca.container).removeAttr('disabled');
-			$('.txtDataJIAPI', Cobranca.container).removeClass('disabled');
-			$('.txtDataJIAPI', Cobranca.container).removeAttr('disabled');
-			$('.txtDataCORE', Cobranca.container).removeClass('disabled');
-			$('.txtDataCORE', Cobranca.container).removeAttr('disabled');
-		}
-
-		Cobranca.callBackEditarAutuado(retorno.Fiscalizacao.AutuadoPessoa);
+		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + Fiscalizacao.Id);
+		MasterPage.carregando(false);
 
 		return true;
 	},

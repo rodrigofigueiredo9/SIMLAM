@@ -110,11 +110,11 @@ Notificacao = {
 
 	cobranca: function () {
 		var obj = Notificacao.obter();
-		MasterPage.redireciona(Notificacao.settings.urls.cobranca + "/" + obj.FiscalizacaoId);
+		MasterPage.redireciona(Notificacao.settings.urls.cobranca + "/" + obj.FiscalizacaoId + "?origem=notificacao");
 	},
 
 	cobrancaVisualizar: function () {
 		var obj = Notificacao.obter();
-		MasterPage.redireciona(Notificacao.settings.urls.cobrancaVisualizar + "/" + obj.FiscalizacaoId);
+		MasterPage.redireciona(Notificacao.settings.urls.cobrancaVisualizar + "/" + obj.FiscalizacaoId + "?origem=notificacao");
 	}
 }

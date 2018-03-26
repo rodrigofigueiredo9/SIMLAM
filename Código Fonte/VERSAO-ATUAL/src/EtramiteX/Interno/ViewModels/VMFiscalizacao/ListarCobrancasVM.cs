@@ -9,6 +9,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 {
 	public class ListarCobrancasVM
 	{
+		#region Properties
+
 		private Paginacao _paginacao = new Paginacao();
 		public Paginacao Paginacao
 		{
@@ -54,7 +56,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		public String UltimaBusca { get; set; }
 		public Boolean PodeEditar { get; set; }
 		public Boolean PodeVisualizar { get; set; }
-		
+
+		#endregion Properties
+
 		public ListarCobrancasVM() { }
 
 		public ListarCobrancasVM(List<QuantPaginacao> quantPaginacao, List<Lista> parametrizacaoLst, List<Lista> situacao)
@@ -65,10 +69,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			SituacaoDUA = GetListSituacao();
 		}
 
-		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
-		{
+		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5) =>
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
-		}
 
 		private List<SelectListItem> GetListSituacao()
 		{
@@ -78,6 +80,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			list.Add(new SelectListItem() { Text = "Atrasado", Value = ((int)eSituacaoCobranca.Atrasado).ToString() });
 			list.Add(new SelectListItem() { Text = "Pago", Value = ((int)eSituacaoCobranca.Pago).ToString() });
 			list.Add(new SelectListItem() { Text = "Pago Parcial", Value = ((int)eSituacaoCobranca.PagoParcial).ToString() });
+			list.Add(new SelectListItem() { Text = "Cancelado", Value = ((int)eSituacaoCobranca.Cancelado).ToString() });
 
 			return list;
 		}

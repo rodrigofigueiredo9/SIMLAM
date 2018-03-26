@@ -47,7 +47,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Notificacao
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
 		public ActionResult Notificacao(int id) => View(this.GetNotificacaoVM(id, false));
@@ -90,6 +89,5 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return vm;
 		}
-		#endregion Notificacao
 	}
 }
