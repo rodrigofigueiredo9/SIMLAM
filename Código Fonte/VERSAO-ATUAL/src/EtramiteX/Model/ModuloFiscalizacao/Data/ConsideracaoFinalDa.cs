@@ -437,7 +437,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_consid_final_iuf ra ", EsquemaBanco);
                 comando.DbCommand.CommandText += String.Format("where ra.consid_final = :consid_final{0}",
-                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.Anexos.Select(x => x.Id).ToList()));
+                    comando.AdicionarNotIn("and", "ra.id", DbType.Int32, consideracaoFinal.AnexosIUF.Select(x => x.Id).ToList()));
                 comando.AdicionarParametroEntrada("consid_final", consideracaoFinal.Id, DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);
@@ -503,6 +503,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(
 					"begin " +
 					  "delete {0}tab_fisc_consid_final_arq t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
+                      "delete {0}tab_fisc_consid_final_iuf t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final_test t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final_ass t where t.consid_final = (select id from {0}tab_fisc_consid_final where fiscalizacao = :fiscalizacao); " +
 					  "delete {0}tab_fisc_consid_final t where t.fiscalizacao = :fiscalizacao; " +

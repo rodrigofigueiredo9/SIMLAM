@@ -55,6 +55,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Municipios(ViewModelHelper.EstadoDefaultId()), _busLista.CadastroAmbientalRuralSolicitacaoSituacao, _busLista.CadastroAmbientalRuralSolicitacaoOrigem);
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            vm.SituacoesSicar = ViewModelHelper.CriarSelectList(_busLista.SicarSituacoes, true, true); 
 			return View(vm);
 		}
 
@@ -330,11 +331,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
 			{
-				_busCredenciado.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+                _busCredenciado.EnviarReenviarArquivoSICAR(solicitacao, isEnviar);
 			}
 			else
 			{
-				_bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+				_bus.EnviarReenviarArquivoSICAR(solicitacao, isEnviar);
 			}
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();
@@ -451,6 +452,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return Json(new { @UrlPdfReciboSICAR = url }, JsonRequestBehavior.AllowGet);
 		}
+
+        public ActionResult BaixarDemonstrativoCar(int id)
+        {
+            var schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+
+            var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao);
+
+            return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
+        } 
 
 		public ActionResult BaixarAquivoSICAR(int id)
 		{

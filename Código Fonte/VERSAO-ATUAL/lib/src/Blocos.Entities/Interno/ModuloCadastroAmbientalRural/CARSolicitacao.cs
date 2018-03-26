@@ -19,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public String Motivo { get; set; }
 		public Int32 ProjetoId { get; set; }
 		public String ProjetoTid { get; set; }
+        public int Esquema { get; set; }
 
 		/*Autor*/
 		public Int32 AutorId { get; set; }

@@ -63,6 +63,21 @@
 			</td>
 		</tr>
 		<% } %>
+        <% if (item.PdfGeradoIUF.Id.GetValueOrDefault() > 0) { %>
+        <tr>
+			<td>
+				<label title="Instrumento Único de Fiscalização">IUF</label>
+			</td>
+			<td>
+				<label title="<%=item.SituacaoData.DataTexto%>"><%=item.SituacaoData.DataTexto%></label>
+			</td>
+			<td class="tdAcoes">
+				<span class="btnPdfIUFCancelado icone pdf" title="PDF do IUF de fiscalização"></span>
+				<%= Html.Hidden("hdnHistoricoFisc", item.HistoricoId, new { @class = "hdnHistoricoId" })%>
+				<%= Html.Hidden("hdnArquivoId", item.PdfGeradoIUF.Id, new { @class = "hdnArquivoId" })%>
+			</td>
+		</tr>
+        <% } %>
 
 		<%if (item.PdfAutoInfracao.Id.GetValueOrDefault() > 0){%>
 		<tr>

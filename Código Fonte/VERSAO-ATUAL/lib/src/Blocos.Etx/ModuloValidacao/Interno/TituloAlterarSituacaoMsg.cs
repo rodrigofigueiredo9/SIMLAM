@@ -34,7 +34,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem DiasProrrogadosObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DiasProrrogados", Texto = "Dias prorrogados é obrigatório." }; } }
 		public Mensagem CondicionantesRemover { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Este título não possui mais condicionantes. Favor removê-las." }; } }
 
-		public Mensagem TituloNaoPossuiSolicitacaoDeInscricao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título não possui uma Solicitação de Inscrição do CAR com situação \"Válido\" e situação do Arquivo \"Arquivo Enviado\"." }; } }
+		public Mensagem TituloNaoPossuiSolicitacaoDeInscricao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título não possui uma Solicitação de Inscrição do CAR com situação \"Válido\" e situação do Arquivo \"Arquivo Entregue\"." }; } }
 
 		public Mensagem NumeroAnoEmissaoAno { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataEmissao", Texto = "O ano do número do título deve ser igual ao ano da emissão." }; } }
 

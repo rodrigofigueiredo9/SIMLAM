@@ -205,7 +205,9 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloGeoProcessamento.Business
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioPublicoGeo))
 				{
+					bancoDeDados.IniciarTransacao();
 					_da.AlterarSituacaoFila(arquivo, bancoDeDados);
+					bancoDeDados.Commit();
 				}
 
 				ObterSituacao(arquivo);

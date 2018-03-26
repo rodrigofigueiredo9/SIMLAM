@@ -73,6 +73,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					try
 					{
 						//Atualizar controle de envio do SICAR
+                        ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
 						var controleCar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 
@@ -94,10 +95,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						{
 							var arquivoManager = new ArquivoManager();
 							arquivoFinal = arquivoManager.Salvar(nextItem.Requisicao, stream, conn);
-						}
+                        }
 
+       
 
-						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
+                        if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
 							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
 								&& resultadoEnvio.mensagensResposta.Any( r=> r.Equals("Foi encontrada sobreposição de 100,00% com outro imóvel já inscrito no CAR que possui os mesmos documentos (CPF e/ou CNPJ).", StringComparison.CurrentCultureIgnoreCase))))
 						{
@@ -105,6 +107,17 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 						else
 						{
+                            //Retificação
+                            ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
+
+                            if(itemSicar != null)
+                            {
+                                if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
+                                {
+                                    ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
+                                    ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
+                                }
+                            }                            
 							//Atualiza a Solicitacao do CAR
 							var situacaoSolicitacao = (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso) ? ControleCarDB.SITUACAO_SOLICITACAO_VALIDO : ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE;
 							ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
@@ -158,7 +171,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                      cmd.ExecuteNonQuery();
                  }
                  using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Object reference%'", conn))
+                                                WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
+                 {
+                     cmd.ExecuteNonQuery();
+                 }
+                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE resultado like '%Houve um problema%'", conn))
                  {
                      cmd.ExecuteNonQuery();
                  }

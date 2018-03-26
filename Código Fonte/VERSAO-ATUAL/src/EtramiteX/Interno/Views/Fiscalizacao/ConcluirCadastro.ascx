@@ -7,6 +7,7 @@
 	FiscalizacaoFinalizar.settings.urls.download = '<%= Url.Action("Baixar", "Arquivo") %>';
     FiscalizacaoFinalizar.settings.urls.pdfAuto = '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>';
     FiscalizacaoFinalizar.settings.urls.pdfIUF = '<%= Url.Action("InstrumentoUnicoFiscalizacaoPdf", "Fiscalizacao") %>';
+    FiscalizacaoFinalizar.settings.urls.pdfIUFBloco = '<%= Url.Action("Baixar", "Arquivo") %>';
 	FiscalizacaoFinalizar.settings.urls.pdfLaudo = '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>';
 </script>
 
@@ -198,7 +199,7 @@
                         <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades01, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50" style="height:28px; align-self:center;">
-                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[0] != 0 ? Model.InfracaoVM.Penalidades[0].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[0] != 0 ? Model.InfracaoVM.Penalidades.FirstOrDefault(i => i.Id == Model.InfracaoVM.Infracao.IdsOutrasPenalidades[0].ToString()).Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
@@ -210,7 +211,7 @@
                         <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades02, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50" style="height:28px; align-self:center;">
-                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[1] != 0 ? Model.InfracaoVM.Penalidades[1].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[1] != 0 ? Model.InfracaoVM.Penalidades.FirstOrDefault(i => i.Id == Model.InfracaoVM.Infracao.IdsOutrasPenalidades[1].ToString()).Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
@@ -222,7 +223,7 @@
                         <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades03, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50" style="height:28px; align-self:center;">
-                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[2] != 0 ? Model.InfracaoVM.Penalidades[2].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[2] != 0 ? Model.InfracaoVM.Penalidades.FirstOrDefault(i => i.Id == Model.InfracaoVM.Infracao.IdsOutrasPenalidades[2].ToString()).Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
 
@@ -234,7 +235,7 @@
                         <%= Html.DropDownList("Penalidade.Tipo", Model.InfracaoVM.ListaPenalidades04, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTiposPenalidade ddlTiposPenalidadeOutras" }))%>
                     </div>
                     <div class="coluna50" style="height:28px; align-self:center;">
-                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[3] != 0 ? Model.InfracaoVM.Penalidades[3].Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
+                        <%= Html.TextBox("Penalidade.Descricao", (Model.InfracaoVM.Infracao.IdsOutrasPenalidades[3] != 0 ? Model.InfracaoVM.Penalidades.FirstOrDefault(i => i.Id == Model.InfracaoVM.Infracao.IdsOutrasPenalidades[3].ToString()).Codigo : string.Empty), ViewModelHelper.SetaDisabled(true, new { @class = "text txtDescricaoPenalidade txtDescricaoPenalidadeOutras" }))%>
                     </div>
                 </div>
             </div>

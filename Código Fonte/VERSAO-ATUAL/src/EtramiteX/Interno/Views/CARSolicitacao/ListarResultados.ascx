@@ -44,7 +44,10 @@
 						<% if (Model.PodeVisualizar && (item.SituacaoID == (int)eCARSolicitacaoSituacao.Pendente || item.SituacaoID == (int)eCARSolicitacaoSituacao.Suspenso || item.SituacaoID == (int)eCARSolicitacaoSituacao.Invalido) && item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoReprovado) 
 							{ %><input type="button" title="Relatório de pendencias" class="icone pdfGeo btnPdfPendencia" /><% } %>
 						<% if (Model.PodeVisualizar && item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoEntregue) 
-							{ %><input type="button" title="Recibo de Inscrição no SICAR" class="icone link btnPdfSicar" /><% } %>
+							{ %>
+                                <input type="button" title="Recibo de Inscrição no SICAR" class="icone link btnPdfSicar" />
+                                <input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" />
+                        <% } %>
 						<% if (Model.PodeVisualizar && !String.IsNullOrWhiteSpace(item.ArquivoSICAR)) { %> <input type="button" title="Baixar arquivo .CAR" class="icone download btnBaixarArquivoSicar" /><% } %>
 						<% if (/*!string.IsNullOrEmpty(item.SituacaoMotivo) && */item.SituacaoID == (int)eCARSolicitacaoSituacao.Suspenso) { %><input type="button" title="Notificação" class="icone pendencias btnNotificacao" /><% } %>
 					<% } %>
