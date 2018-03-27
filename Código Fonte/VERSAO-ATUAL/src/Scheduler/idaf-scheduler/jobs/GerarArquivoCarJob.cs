@@ -96,15 +96,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								connCredendicado.Open();
 								declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
 							}
-                        //ATRIBUI OBJETO CADASTRANTE AO CAR (antigo)
-						/*car.cadastrante = new Cadastrante()
-						{
-							cpf = declarante.cpf,
-							dataNascimento = declarante.dataNascimento,
-							nome = declarante.nome,
-							nomeMae = declarante.nomeMae
-						};*/
-
+                        
                         //ATRIBUI OBJETO CADASTRANTE AO CAR
                         if(requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
                             car.cadastrante = ObterDadosCadastrante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
