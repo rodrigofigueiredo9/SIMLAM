@@ -254,6 +254,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 
 					Validacao.Add(Mensagem.Titulo.Salvar);
+					Validacao.Add(Mensagem.Retificacao.msgInst4());
 				}
 			}
 			catch (Exception exc)
