@@ -1105,7 +1105,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					   l.situacao_envio_texto,
 					   l.url_recibo,
 					   l.arquivo,
-                       l.codigo_imovel
+                       l.codigo_imovel,
+					   l.empreendimento_codigo
 				  from (select tcs.id,
                                tcs.id solic_tit_id,
                                tcs.numero solicitacao_numero,
@@ -1286,6 +1287,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						item.Numero = reader.GetValue<string>("numero");
 						item.Ano = reader.GetValue<string>("ano");
 						item.EmpreendimentoDenominador = reader.GetValue<string>("empreendimento_denominador");
+						item.EmpreendimentoCodigo = reader.GetValue<Int64>("empreendimento_codigo");
 						item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
 						item.SituacaoID = reader.GetValue<int>("situacao_id");
 						item.SituacaoTexto = reader.GetValue<string>("situacao_texto");
