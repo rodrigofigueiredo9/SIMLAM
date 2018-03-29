@@ -176,7 +176,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public void AssociarProjetoDigital(ProjetoDigital projetoDigital, List<Lista> atividades)
 		{
-			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao)
+			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao ||
+				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoAnalise ||
+				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoProtocolo ||
+				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Deferido ||
+				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Importado)
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.SituacaoDeveSerAguardandoImportacao);
 			}
