@@ -171,6 +171,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					s.motivo,
 					tr.data_criacao requerimento_data_cadastro,
 					pg.id projeto_geo_id
+					
 				from tab_car_solicitacao         s,
 					lov_car_solicitacao_situacao l,
 					lov_car_solicitacao_situacao la,
@@ -228,6 +229,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nome_razao");
 						solicitacao.Motivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
+						solicitacao.AutorModuloTexto = "Institucional";
 					}
 
 					reader.Close();
@@ -235,7 +237,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 				#endregion
 			}
-
+			
 			return solicitacao;
 		}
 
