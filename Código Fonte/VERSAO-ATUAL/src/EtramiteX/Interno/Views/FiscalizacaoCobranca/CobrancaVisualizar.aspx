@@ -4,15 +4,16 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Cobrança</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-    <script src="<%= Url.Content("~/Scripts/Fiscalizacao/cobranca.js") %>" type="text/javascript"></script>
+    <script src="<%= Url.Content("~/Scripts/Fiscalizacao/cobranca.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Pessoa/associar.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
-    <script type="text/javascript">
+    <script>
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
+					confirm: '<%= Url.Action("Confirm", "FiscalizacaoCobranca") %>',
 					visualizar: '<%= Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca") %>',
 					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
 					lista: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',

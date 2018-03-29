@@ -1,4 +1,5 @@
-﻿using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
+﻿using System;
+using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
@@ -25,6 +26,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (notificacao.FormaCORE > 0 && !notificacao.DataCORE.IsValido)
 				Validacao.Add(Mensagem.NotificacaoMsg.DataCOREObrigatorio);
+
+			if(notificacao.DataIUF.Data > DateTime.Now)
+				Validacao.Add(Mensagem.NotificacaoMsg.DataIUFFutura);
+
+			if (notificacao.DataJIAPI.IsValido)
+			{
+				if (notificacao.DataJIAPI.Data > DateTime.Now)
+					Validacao.Add(Mensagem.NotificacaoMsg.DataJIAPIFutura);
+
+				if(notificacao.DataJIAPI.Data < notificacao.DataIUF.Data)
+					Validacao.Add(Mensagem.NotificacaoMsg.DataJIAPIAnteriorIUF);
+			}
+
+			if (notificacao.DataCORE.IsValido)
+			{
+				if (notificacao.DataCORE.Data > DateTime.Now)
+					Validacao.Add(Mensagem.NotificacaoMsg.DataCOREFutura);
+
+				if (notificacao.DataCORE.Data < notificacao.DataJIAPI.Data)
+					Validacao.Add(Mensagem.NotificacaoMsg.DataCOREAnteriorJIAPI);
+			}
 
 			if (notificacao.FormaIUF == (int)eFormaNotificacao.AR || notificacao.FormaJIAPI == (int)eFormaNotificacao.AR ||
 				notificacao.FormaCORE == (int)eFormaNotificacao.AR)

@@ -13,6 +13,7 @@
 		$(function () {
 			Cobranca.load($('#central'), {
 				urls: {
+					confirm: '<%= Url.Action("Confirm", "FiscalizacaoCobranca") %>',
 					salvar: '<%= Url.Action("CobrancaCriar", "FiscalizacaoCobranca") %>',
 					carregar: '<%= Url.Action("Cobranca", "FiscalizacaoCobranca") %>',
 					lista: '<%= Url.Action("CobrancaListar", "FiscalizacaoCobranca") %>',

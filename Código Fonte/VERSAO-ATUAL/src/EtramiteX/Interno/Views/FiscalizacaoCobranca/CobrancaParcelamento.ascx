@@ -10,9 +10,9 @@
                     <th width="10%">N° DUA</th>
                     <th width="9%">Vencimento</th>
                     <th width="10%">Valor (R$)</th>
-                    <th width="10%">Valor Pago (R$)</th>
+					<th width="10%" <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>Valor Pago (R$)</th>
                     <th width="8%">VRTE</th>
-                    <th width="8%">Pagamento</th>
+					<th width="9%" <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>Data Pagamento</th>
                     <th width="10%">Situação</th>
                     <th width="22%">Informações Complementares</th>
 					<% if (!Model.IsVisualizar) { %>
@@ -44,25 +44,25 @@
                     </td>
                     <td>
                         <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%: String.Format("{0:N}", parcela.ValorDUA) %></span>
-                    </td>
-                    <td>
+                    </td>					
+					<td <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>
 						<% if (Model.IsVisualizar) { %>
-							<span class="valorPago" title="<%:parcela.ValorPago%>"><%:parcela.ValorPago%></span>
+							<span class="valorPago" title="<%:parcela.ValorPago%>"><%: String.Format("{0:N}", parcela.ValorPago) %></span>
 						<%} else {%>
 							<% string valorPago = parcela.ValorPago.ToString("N2"); %>
 							<%= Html.TextBox("valorPago", valorPago, new { @class = "text maskDecimalPonto2 valorPago", @maxlength = "13", @width = "100%" })%> 
 						<%} %>
-                    </td>
+					</td>
                     <td>
                         <span class="vrte" title="<%:parcela.VRTE%>"><%: String.Format("{0:N4}", parcela.VRTE) %></span>
                     </td>
-                    <td>
+					<td <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>
 						<% if (Model.IsVisualizar) { %>
 							<span class="dataPagamento" title="<%:parcela.DataPagamento.DataTexto ?? ""%>"><%:parcela.DataPagamento.DataTexto ?? ""%></span>
 						<%} else {%>
 							<input class="text dataPagamento maskData" value="<%:parcela.DataPagamento.DataTexto ?? ""%>" style="width: 100%;" />
-						<%} %>
-                    </td>
+						<%}%>
+					</td>
                     <td>
                         <span class="situacao" title="<%:parcela.Situacao ?? ""%>"><%:parcela.Situacao ?? ""%></span>
                     </td>

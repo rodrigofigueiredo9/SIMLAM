@@ -41,6 +41,13 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _parcelas = value; }
 		}
 
+		private List<SelectListItem> _situacaoFiscalizacao = new List<SelectListItem>();
+		public List<SelectListItem> SituacaoFiscalizacao
+		{
+			get { return _situacaoFiscalizacao; }
+			set { _situacaoFiscalizacao = value; }
+		}
+
 		public String Mensagens
 		{
 			get
@@ -49,7 +56,6 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 				{
                     @Salvar = Mensagem.CobrancaMsg.Salvar,
 
-					@NumeroAutosObrigatorio = Mensagem.CobrancaMsg.NumeroAutosObrigatorio,
 					@NumeroFiscalizacaoObrigatorio = Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio,
 					@NumeroIUFObrigatorio = Mensagem.CobrancaMsg.NumeroIUFObrigatorio,
 					@VrteObrigatorio = Mensagem.CobrancaDUAMsg.VrteObrigatorio
@@ -82,7 +88,6 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		private List<SelectListItem> GetListParcelas(int quantidadeParcelas, int parcelaSelected)
 		{
 			var parcelas = new List<SelectListItem>();
-			parcelas.Add(new SelectListItem() { Text = "", Value = "0" });
 			for (int i = 1; i <= quantidadeParcelas; i++)
 			{
 				if(i == parcelaSelected)

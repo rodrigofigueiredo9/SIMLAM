@@ -26,12 +26,12 @@
  
     <fieldset class="box">
       <div class="block"> 
-        <div class="coluna5 append1"> 
+        <div class="coluna8 append1"> 
           <label for="Vrte_Ano">Ano</label> 
           <%= Html.TextBox("Ano", String.Empty, new { @class = "text txtAno", @maxlength = "4" } )%> 
         </div> 
  
-        <div class="coluna12 append2"> 
+        <div class="coluna15 append2"> 
           <label for="Vrte_VrteEmReais">VRTE</label> 
           <%= Html.TextBox("Vrte",String.Empty, new { @class = "text maskDecimalPonto4 txtVrte", @maxlength = "17"})%> 
         </div> 

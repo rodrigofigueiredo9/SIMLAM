@@ -89,8 +89,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                 comando.AdicionarParametroEntrada("fiscalizacao", notificacao.FiscalizacaoId, DbType.Int32);
                 comando.AdicionarParametroEntrada("forma_iuf", notificacao.FormaIUF, DbType.Int32);
-                comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaCORE, DbType.Int32);
-                comando.AdicionarParametroEntrada("forma_core", notificacao.FormaJIAPI, DbType.Int32);
+                comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaJIAPI, DbType.Int32);
+                comando.AdicionarParametroEntrada("forma_core", notificacao.FormaCORE, DbType.Int32);
 				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.Data, DbType.Date);
@@ -162,8 +162,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 comando.AdicionarParametroEntrada("id", notificacao.Id, DbType.Int32);
                 comando.AdicionarParametroEntrada("fiscalizacao", notificacao.FiscalizacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("forma_iuf", notificacao.FormaIUF, DbType.Int32);
-				comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaCORE, DbType.Int32);
-				comando.AdicionarParametroEntrada("forma_core", notificacao.FormaJIAPI, DbType.Int32);
+				comando.AdicionarParametroEntrada("forma_jiapi", notificacao.FormaJIAPI, DbType.Int32);
+				comando.AdicionarParametroEntrada("forma_core", notificacao.FormaCORE, DbType.Int32);
 				comando.AdicionarParametroEntrada("forma_iuf_data", notificacao.DataIUF.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("forma_jiapi_data", notificacao.DataJIAPI.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("forma_core_data", notificacao.DataCORE.Data, DbType.Date);
@@ -289,8 +289,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											tfn.forma_iuf_data,
 											tfn.forma_jiapi_data,
 											tfn.forma_core_data,
-											m.iuf_numero,
-											i.pessoa
+											coalesce(cast(m.iuf_numero as varchar2(10)), tfi.numero_auto_infracao_bloco, cast(f.autos as varchar2(10))) iuf_numero,
+											coalesce(i.pessoa, i.responsavel) pessoa
 										from tab_fiscalizacao f 
 										left join tab_fisc_notificacao tfn 
 											on (tfn.fiscalizacao = f.id )
@@ -298,6 +298,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											on (m.fiscalizacao = f.id )
 										left join tab_fisc_local_infracao i
 											on (i.fiscalizacao = f.id)
+										left join tab_fisc_infracao tfi
+											on (tfi.fiscalizacao = f.id)
 										where f.id = :fiscalizacao", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);

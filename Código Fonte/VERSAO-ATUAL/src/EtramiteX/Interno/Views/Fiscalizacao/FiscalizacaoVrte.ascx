@@ -2,7 +2,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="block dataGrid"> 
-  <div class="coluna25"> 
+  <div class="coluna45"> 
     <table class="dataGridTable tabVrte" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all"> 
       <thead> 
         <tr> 

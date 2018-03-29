@@ -12,12 +12,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			DUAS = new List<CobrancaDUA>();
 		}
 
-		public CobrancaParcelamento(Fiscalizacao fiscalizacao, DateTime dataVencimento)
+		public CobrancaParcelamento(Fiscalizacao fiscalizacao)
 		{
 			ValorMulta = fiscalizacao.Multa.ValorMulta;
 			ValorMultaAtualizado = fiscalizacao.Multa.ValorMulta;
 			DataEmissao = new DateTecno() { Data = DateTime.Now };
-			Data1Vencimento = new DateTecno() { Data = dataVencimento };
+			Data1Vencimento = new DateTecno() { Data = DateTime.Now.AddDays(15) };
 			DUAS = new List<CobrancaDUA>();
 		}
 		#endregion

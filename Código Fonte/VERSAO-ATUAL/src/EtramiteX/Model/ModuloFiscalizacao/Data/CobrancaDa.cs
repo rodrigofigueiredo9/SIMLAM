@@ -33,9 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 		{
 			EsquemaBanco = string.Empty;
 			if (!string.IsNullOrEmpty(strBancoDeDados))
-			{
 				EsquemaBanco = strBancoDeDados;
-			}
 		}
 
 		#region Ações de DML
@@ -43,18 +41,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 		public Cobranca Salvar(Cobranca Cobranca, BancoDeDados banco = null)
 		{
 			if (Cobranca == null)
-			{
 				throw new Exception("Cobranca é nulo.");
-			}
 
 			if (Cobranca.Id <= 0)
-			{
 				Cobranca = Criar(Cobranca, banco);
-			}
 			else
-			{
 				Cobranca = Editar(Cobranca, banco);
-			}
 
 			return Cobranca;
 		}
@@ -74,7 +66,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																	  iuf_numero,
 																	  iuf_data,
 																	  protoc_num,
-																	  autos,
+																	  numero_autuacao,
 																	  not_iuf_data,
 																	  not_jiapi_data,
 																	  not_core_data,
@@ -87,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											:iuf_numero,
 											:iuf_data,
 											:protoc_num,
-											:autos,
+											:numero_autuacao,
 											:not_iuf_data,
 											:not_jiapi_data,
 											:not_core_data,
@@ -99,9 +91,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
-				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataLavratura.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataConstatacao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
-				comando.AdicionarParametroEntrada("autos", cobranca.NumeroAutos, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_autuacao", cobranca.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_core_data", cobranca.DataCORE.Data, DbType.DateTime);
@@ -113,8 +105,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				cobranca.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.criar, bancoDeDados);
-
-				//Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -137,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 										t.iuf_numero = :iuf_numero,
 										t.iuf_data = :iuf_data,
 										t.protoc_num = :protoc_num,
-										t.autos = :autos,
+										t.numero_autuacao = :numero_autuacao,
 										t.not_iuf_data = :not_iuf_data,
 										t.not_jiapi_data = :not_jiapi_data,
 										t.not_core_data = :not_core_data,
@@ -150,9 +140,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId > 0 ? cobranca.SerieId : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
-				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataLavratura.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataConstatacao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
-				comando.AdicionarParametroEntrada("autos", cobranca.NumeroAutos, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_autuacao", cobranca.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_jiapi_data", cobranca.DataJIAPI.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("not_core_data", cobranca.DataCORE.Data, DbType.DateTime);
@@ -161,8 +151,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
-
-				//Consulta.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -219,7 +207,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"
                                     select c.id,
 											c.fiscalizacao,
-											c.autuado,
+											coalesce(i.pessoa, i.responsavel, c.autuado) autuado,
 											c.codigoreceita,
 											(select lfc.texto
 												from lov_fisc_infracao_codigo_rece lfc
@@ -228,12 +216,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											(select lfs.texto
 												from lov_fiscalizacao_serie lfs
 												where lfs.id = c.serie) serie_texto,
-											coalesce(m.iuf_numero, c.iuf_numero) iuf_numero,
-											coalesce(m.iuf_data, c.iuf_data) iuf_data,
+											coalesce(cast(m.iuf_numero as varchar2(10)), tfi.numero_auto_infracao_bloco, cast(f.autos as varchar2(10)), cast(c.iuf_numero as varchar2(10))) iuf_numero,
+											coalesce(tfi.data_constatacao, c.iuf_data) data_constatacao,
 											case when p.id > 0
 											  then concat(concat(cast(p.numero as VARCHAR2(30)), '/'), cast(p.ano as VARCHAR2(30)))
 											  else cast(c.protoc_num as VARCHAR2(30)) end protoc_num,
-											coalesce(f.autos, c.autos) autos,
+											coalesce(p.numero_autuacao, c.numero_autuacao) numero_autuacao,
 											coalesce(n.forma_iuf_data, c.not_iuf_data) not_iuf_data,
 											coalesce(n.forma_jiapi_data, c.not_jiapi_data) not_jiapi_data,
 											coalesce(n.forma_core_data, c.not_core_data) not_core_data
@@ -246,6 +234,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											on (n.fiscalizacao = c.fiscalizacao)
 										left join tab_fisc_multa m
 											on (m.fiscalizacao = c.fiscalizacao)
+										left join tab_fisc_local_infracao i
+											on (i.fiscalizacao = f.id)
+										left join tab_fisc_infracao tfi
+											on (tfi.fiscalizacao = f.id)
 										where c.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacao, DbType.Int32);
@@ -259,7 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							Id = reader.GetValue<int>("id"),
 							NumeroFiscalizacao = reader.GetValue<int>("fiscalizacao"),
 							ProcessoNumero = reader.GetValue<string>("protoc_num"),
-							NumeroAutos = reader.GetValue<int>("autos"),
+							NumeroAutuacao = reader.GetValue<string>("numero_autuacao"),
 							NumeroIUF = reader.GetValue<string>("iuf_numero"),
 							SerieId = reader.GetValue<int>("serie"),
 							SerieTexto = reader.GetValue<string>("serie_texto"),
@@ -268,12 +260,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							CodigoReceitaTexto = reader.GetValue<string>("codigoreceita_texto")
 						};
 
-						cobranca.DataLavratura.Data = reader.GetValue<DateTime>("iuf_data");
+						cobranca.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
 						cobranca.DataIUF.Data = reader.GetValue<DateTime>("not_iuf_data");
 						cobranca.DataJIAPI.Data = reader.GetValue<DateTime>("not_jiapi_data");
 						cobranca.DataCORE.Data = reader.GetValue<DateTime>("not_core_data");
-						if (cobranca.DataLavratura.Data.HasValue && cobranca.DataLavratura.Data.Value.Year == 1)
-							cobranca.DataLavratura = new DateTecno();
+						if (cobranca.DataConstatacao.Data.HasValue && cobranca.DataConstatacao.Data.Value.Year == 1)
+							cobranca.DataConstatacao = new DateTecno();
 						if (cobranca.DataIUF.Data.HasValue && cobranca.DataIUF.Data.Value.Year == 1)
 							cobranca.DataIUF = new DateTecno();
 						if (cobranca.DataJIAPI.Data.HasValue && cobranca.DataJIAPI.Data.Value.Year == 1)
@@ -285,9 +277,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						cobranca.Parcelamentos = cobrancaParcelamentoDa.Obter(cobranca.Id);
 					}
 					else
-					{
 						cobranca = null;
-					}
+
 					reader.Close();
 				}
 			}
@@ -297,7 +288,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		public Resultados<CobrancasResultado> CobrancaFiltrar(Filtro<CobrancaListarFiltro> filtros, BancoDeDados banco = null)
 		{
-
 			var lista = new Resultados<CobrancasResultado>();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -322,7 +312,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comandtxt += comando.FiltroAnd("c.iuf_numero", "iuf_numero", filtros.Dados.NumeroAIIUF);
 
 				if (filtros.Dados.NumeroAutuacao != null)
-					comandtxt += comando.FiltroAnd("c.autos", "autos", filtros.Dados.NumeroAutuacao);
+					comandtxt += comando.FiltroAnd("c.numero_autuacao", "numero_autuacao", filtros.Dados.NumeroAutuacao);
 
 				if (Convert.ToInt32(filtros.Dados.SituacaoFiscalizacao) != 0)
 					comandtxt += comando.FiltroAnd("f.situacao", "situacaofiscalizacao", filtros.Dados.SituacaoFiscalizacao);
@@ -367,13 +357,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				List<String> colunas = new List<String>() { "parcela", "numero_dua", "protoc_num", "iuf_numero", "dataemissao", "valor_dua", "valor_pago", "vrte", "pagamento_data", "situacao" };
 
 				if (filtros.OdenarPor > 0)
-				{
 					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
-				}
 				else
-				{
 					ordenar.Add("iuf_numero");
-				}
 				#endregion Ordenação
 
 				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select d.id,
@@ -431,7 +417,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                             c.fiscalizacao,
                                             c.protoc_num,
                                             c.iuf_numero,
-                                            c.autos,
+                                            c.numero_autuacao,
 											case
 											when d.cancelamento_data is not null
 												then 'Cancelado'
@@ -507,9 +493,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				}
 			}
 
-
 			return lista;
-
 		}
 
 		private string GetEnumSituacaoDuo(int v)

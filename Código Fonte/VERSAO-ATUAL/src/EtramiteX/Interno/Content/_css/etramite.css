@@ -699,6 +699,10 @@ input[type=button].icone.unlink.desativado, .icone.unlink.desativado { backgroun
 
 input[type=button].icone.adicionar, .icone.adicionar { background: url(../_img/add.png) no-repeat;	}
 
+input[type=button].icone.notificacao, .icone.notificacao { background-position: -1219px top; }
+input[type=button].icone.notificacao:hover, .icone.notificacao:hover { background-position: -1219px center; }
+input[type=button].icone.notificacao.desativado, .icone.notificacao.desativado { background-position: -1219px bottom; }
+
 .icone.desativado { cursor: default !important; }
 
 /* ICONES IN-LINE */

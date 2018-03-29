@@ -19,11 +19,11 @@
                 <%= Html.TextBox("Notificacao.NumeroIUF", Model.Notificacao.NumeroIUF, ViewModelHelper.SetaDisabled(true, new { @class = "text txtNumeroIUF setarFoco" }))%>
             </div>
             <div class="coluna35">
-                <label>Autuado</label><br />
+                <label>Nome / Razão Social autuado</label><br />
                 <%= Html.TextBox("Notificacao.AutuadoPessoa.NomeRazaoSocial", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.NomeRazaoSocial : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoNome setarFoco" }))%>
             </div>
             <div class="coluna25">
-                <label>CPF autuado</label><br />
+                <label>CPF/CNPJ autuado</label><br />
                 <%= Html.TextBox("Notificacao.AutuadoPessoa.CPFCNPJ", Model.Notificacao.AutuadoPessoa != null ? Model.Notificacao.AutuadoPessoa.CPFCNPJ : "", ViewModelHelper.SetaDisabled(true, new { @class = "text txtAutuadoCpfCnpj setarFoco" }))%>
             </div>
         </div>
@@ -76,16 +76,18 @@
             </div>
         </div>
 
+		<br />
         <fieldset class="block box fsArquivos">
             <legend style="color: #000000"><b>Cópia de Notificação</b></legend>
             <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
         </fieldset>
     </div>
 
-	<% if (Model.IsVisualizar){%>
-		<fieldset class="block box">
-			<legend><b>Cobrança</b></legend>
-			<% Html.RenderPartial("NotificacaoCobranca", Model); %>
-		</fieldset>
-	<%} %>
+    <% if (Model.IsVisualizar)
+		{%>
+    <fieldset class="block box">
+        <legend><b>Cobrança</b></legend>
+        <% Html.RenderPartial("NotificacaoCobranca", Model); %>
+    </fieldset>
+    <%} %>
 </div>

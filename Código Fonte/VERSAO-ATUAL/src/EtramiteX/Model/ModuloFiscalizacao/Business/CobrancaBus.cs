@@ -183,10 +183,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						DUAS = new List<CobrancaDUA>()
 					};
 
-					if(cobranca.AutuadoPessoa == null)
+					if (cobranca.AutuadoPessoa == null)
 						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
 					parcelamento.QuantidadeParcelas = this.GetMaximoParcelas(cobranca, parcelamento);
-					
+
 					this.Salvar(parcelamento);
 				}
 			}
@@ -234,7 +234,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return list;
 		}
 
-
 		public Resultados<CobrancasResultado> CobrancaFiltrar(CobrancaListarFiltro filtrosListar, Paginacao paginacao)
 		{
 			try
@@ -256,7 +255,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			return null;
 		}
-
 
 		#endregion
 
@@ -289,12 +287,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		{
 			var retorno = false;
 
-			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
-			if (parametrizacao == null || (vrte?.Id ?? 0) == 0) return retorno;
+			if (!_validar.Calcular(cobranca, parcelamento)) return retorno;
 
-			parcelamento.ValorMultaAtualizado = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao, parcelamento.ValorMulta);
+			var vrte =  _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
+			var vrte1Vencimento = _busConfiguracao.ObterVrte(parcelamento.Data1Vencimento.Data.Value.Year) ?? new Vrte();
+
+			if (!_validar.CalcularParametrizacao(parametrizacao, vrte, vrte1Vencimento)) return retorno;
+
+			var valorMultaAtualizadoEmReais = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao, parcelamento.ValorMulta);
+			parcelamento.ValorMultaAtualizado = (valorMultaAtualizadoEmReais / vrte.VrteEmReais) * vrte1Vencimento.VrteEmReais;
 			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
+			if ((parcelamento.DUAS?.Count ?? 0) == 0)
+			{
+				if (parcelamento.QuantidadeParcelas == 0)
+					parcelamento.QuantidadeParcelas = this.GetMaximoParcelas(cobranca, parcelamento);
+				parcelamento.DUAS = this.GerarParcelas(cobranca, parcelamento);
+			}
 			var parcelas = parcelamento.DUAS;
 
 			if (parcelas.Count == 1 && cobranca.Parcelamentos?.Count <= 1)
@@ -347,7 +356,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		public List<CobrancaDUA> GerarParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
 			var list = new List<CobrancaDUA>();
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
 			var parcelaAnterior = new CobrancaDUA();
 			if (parametrizacao != null)
 			{
@@ -384,9 +393,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public int GetMaximoParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
-			if (cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido)) return 0;
+			if (cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido) || !Convert.ToBoolean(cobranca.DataConstatacao?.IsValido)) return 0;
 
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataIUF.Data.Value);
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
 			if (parametrizacao == null) return 0;
 
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
@@ -416,7 +425,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao);
 			if (fiscalizacao == null) return false;
 
-			if((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
+			if ((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
 
 			if (cobranca.UltimoParcelamento.DUAS.FindAll(x => !x.DataPagamento.IsValido && x.ValorPago == 0).Count == 0)
 				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.MultaPaga;

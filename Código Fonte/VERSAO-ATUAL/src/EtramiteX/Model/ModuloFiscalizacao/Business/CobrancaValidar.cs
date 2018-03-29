@@ -7,9 +7,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 	{
 		public bool Salvar(Cobranca cobranca)
 		{
-			if (cobranca.NumeroAutos == 0)
-				Validacao.Add(Mensagem.CobrancaMsg.NumeroAutosObrigatorio);
-
 			if (cobranca.NumeroFiscalizacao == 0)
 				Validacao.Add(Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio);
 
@@ -27,6 +24,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (string.IsNullOrWhiteSpace(cobranca?.AutuadoPessoa?.CPFCNPJ))
 				Validacao.Add(Mensagem.CobrancaMsg.CpfCnpjObrigatorio);
+
+			return Validacao.EhValido;
+		}
+
+		public bool Calcular(Cobranca cobranca, CobrancaParcelamento parcelamento)
+		{
+			if (!cobranca.DataIUF.IsValido)
+				Validacao.Add(Mensagem.CobrancaMsg.DataIUFObrigatorio);
+
+			if (!parcelamento.Data1Vencimento.IsValido)
+				Validacao.Add(Mensagem.CobrancaMsg.DataVencimentoObrigatoria);
+
+			return Validacao.EhValido;
+		}
+
+		public bool CalcularParametrizacao(Parametrizacao parametrizacao, Vrte vrte, Vrte vrteVencimento)
+		{
+			if (parametrizacao == null)
+				Validacao.Add(Mensagem.CobrancaMsg.ParametrizacaoNaoEncontrada);
+
+			if ((vrte?.Id ?? 0) == 0)
+				Validacao.Add(Mensagem.CobrancaMsg.VrteNaoEncontrada);
+
+			if ((vrteVencimento?.Id ?? 0) == 0)
+				Validacao.Add(Mensagem.CobrancaMsg.VrteNaoEncontrada);
 
 			return Validacao.EhValido;
 		}
