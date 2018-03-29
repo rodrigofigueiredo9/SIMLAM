@@ -88,7 +88,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
                 from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
 					lov_municipio lmp, tab_empreendimento e, tab_empreendimento_endereco ee, lov_estado lee, lov_municipio lme, tab_empreendimento_coord ec, 
 					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct,
-					tab_prototocolo pt
+					tab_protocolo pt
 				where s.situacao = lss.id
 				and s.empreendimento = cd.empreendimento
 				and s.declarante = p.id 
