@@ -82,11 +82,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				ec.fuso_utm emp_fuso,
 				llc.texto emp_local_coleta,
 				lfc.texto emp_forma_coleta,
+				pt.requerimento
                 (select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) numero_sicar,
                 (select tcs.pendencias from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) pendencias_sicar
                 from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
 					lov_municipio lmp, tab_empreendimento e, tab_empreendimento_endereco ee, lov_estado lee, lov_municipio lme, tab_empreendimento_coord ec, 
-					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct 
+					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct,
+					tab_prototocolo pt
 				where s.situacao = lss.id
 				and s.empreendimento = cd.empreendimento
 				and s.declarante = p.id 
@@ -103,6 +105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				and ec.datum = lcd.id
 				and ec.local_coleta = llc.id
 				and ec.forma_coleta = lfc.id
+				and s.protocolo = pt.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -156,6 +159,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 
 						entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
 						entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento");
 					}
 
 					reader.Close();
@@ -221,6 +225,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   hec.fuso_utm emp_fuso,
 						   hec.local_coleta_texto emp_local_coleta,
 						   hec.forma_coleta_texto emp_forma_coleta,
+						   hcs.requerimento_id,
 						   (select sicar.codigo_imovel
 							  from tab_controle_sicar sicar
 							 where sicar.solicitacao_car = hcs.solicitacao_id
@@ -302,6 +307,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 
 						entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
 						entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
 					}
 
 					reader.Close();
