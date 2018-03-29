@@ -372,6 +372,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             string situacao = string.Empty;
             CARSolicitacao solicitacao = new CARSolicitacao();
 
+			//Verificar se existe solicitação para o requerimento
+			solicitacao = _da.ObterPorRequerimento(entidade);
+			if(solicitacao != null)
+			{
+				Validacao.Add(Mensagem.Retificacao.msgInst6(entidade.Requerimento.Id, solicitacao.Id));
+				return false;
+			}
+
             //Verificar se existe solicitação para o empreendimento
             solicitacao = _da.ObterPorEmpreendimentoCod(entidade.Empreendimento.Codigo ?? 0);
             if (solicitacao != null)

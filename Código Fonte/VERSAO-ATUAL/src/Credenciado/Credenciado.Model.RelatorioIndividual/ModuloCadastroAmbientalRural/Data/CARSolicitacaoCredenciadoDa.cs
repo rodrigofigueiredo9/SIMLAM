@@ -218,6 +218,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						hec.fuso_utm emp_fuso,
 						lfc.texto emp_local_coleta,
 						llc.texto emp_forma_coleta,
+						hcs.requerimento_id,
 						hcsicar.codigo_imovel numero_sicar,
 						hcsicar.pendencias pendencias_sicar
 					from hst_car_solicitacao            hcs,
@@ -308,6 +309,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
+
 					}
 
 					reader.Close();
