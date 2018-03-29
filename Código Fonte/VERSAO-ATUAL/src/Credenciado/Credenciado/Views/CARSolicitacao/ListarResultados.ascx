@@ -13,10 +13,11 @@
 		<thead>
 			<tr>
 				<th width="13%">Número</th>
+				<th width="11%">Código do Empreendimento</th>
 				<th>Nome/ Razão Social/ Denominação/ Imóvel</th>
-				<th width="21%">Município</th>
-				<th width="10%">Situação</th>
-                <th width="10%">Arquivo SICAR</th>
+				<th width="15%">Município</th>
+				<th width="12%">Situação</th>
+				<th width="10%">Arquivo SICAR</th>
 				<th class="semOrdenacao" width=" <%= (Model.PodeAssociar) ? "9%" : "20%" %>">Ações</th>
 			</tr>
 		</thead>
@@ -25,6 +26,7 @@
 		<% foreach (var item in Model.Resultados) { %>
 			<tr>
 				<td class="tdNumero" title="<%= Html.Encode(item.NumeroTexto)%>"><%= Html.Encode(item.NumeroTexto)%></td>
+				<td title="<%= Html.Encode(item.EmpreendimentoCodigo)%>"><%= Html.Encode(item.EmpreendimentoCodigo) %></td>
 				<td title="<%= Html.Encode(item.EmpreendimentoDenominador)%>"><%= Html.Encode(item.EmpreendimentoDenominador)%></td>
 				<td title="<%= Html.Encode(item.MunicipioTexto)%>"><%= Html.Encode(item.MunicipioTexto)%></td>
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>

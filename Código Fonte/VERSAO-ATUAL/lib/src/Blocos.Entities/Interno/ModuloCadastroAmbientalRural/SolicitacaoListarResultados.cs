@@ -9,6 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public String Ano { get; set; }
 		public Int32 EmpreendimentoID { get; set; }
 		public String EmpreendimentoDenominador { get; set; }
+		public Int64 EmpreendimentoCodigo { get; set; }
 		public String MunicipioTexto { get; set; }
 		public Int32 SituacaoID { get; set; }
 		public String SituacaoTexto { get; set; }

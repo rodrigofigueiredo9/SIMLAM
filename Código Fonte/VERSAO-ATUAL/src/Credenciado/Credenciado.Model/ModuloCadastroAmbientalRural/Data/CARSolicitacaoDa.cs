@@ -1109,7 +1109,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = @"select l.solic_tit_id, l.interno_id, nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, l.municipio_texto, 
-                    l.situacao_id, l.situacao_texto, l.situacao_motivo, l.credenciado, l.origem, l.tipo,  l.situacao_envio_id, l.situacao_envio_texto, l.url_recibo, l.arquivo from (
+                    l.situacao_id, l.situacao_texto, l.situacao_motivo, l.credenciado, l.origem, l.tipo,  l.situacao_envio_id, l.situacao_envio_texto, l.url_recibo, l.arquivo, l.empreendimento_codigo from (
                     /*Solicitacao Interno*/
                     select s.id, s.solic_tit_id interno_id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, null titulo_ano, 
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
@@ -1171,6 +1171,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						item.Numero = reader.GetValue<string>("numero");
 						item.Ano = reader.GetValue<string>("ano");
 						item.EmpreendimentoDenominador = reader.GetValue<string>("empreendimento_denominador");
+						item.EmpreendimentoCodigo = reader.GetValue<Int64>("empreendimento_codigo");
 						item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
 						item.SituacaoID = reader.GetValue<int>("situacao_id");
 						item.SituacaoTexto = reader.GetValue<string>("situacao_texto");

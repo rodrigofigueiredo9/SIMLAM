@@ -81,6 +81,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				ec.fuso_utm emp_fuso,
 				llc.texto emp_local_coleta,
 				lfc.texto emp_forma_coleta,
+				s.requerimento,
                 tcs.codigo_imovel numero_sicar,
                 tcs.pendencias pendencias_sicar
 				from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
@@ -156,6 +157,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento");
 					}
 
 					reader.Close();
@@ -211,7 +213,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 hec.easting_utm emp_easting,
                 hec.fuso_utm emp_fuso,
                 hec.local_coleta_texto emp_local_coleta,
-                hec.forma_coleta_texto emp_forma_coleta,        
+                hec.forma_coleta_texto emp_forma_coleta,
+				hcs.requerimento_id,
                 hcsicar.codigo_imovel numero_sicar,
                 hcsicar.pendencias pendencias_sicar        
                 from hst_car_solicitacao hcs, hst_pessoa hp, hst_pessoa_endereco hpe,lov_estado lem, hst_empreendimento he, 
@@ -280,6 +283,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
+
 					}
 
 					reader.Close();

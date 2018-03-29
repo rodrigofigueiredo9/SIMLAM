@@ -61,11 +61,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		#region Comandos DML
 
-		public bool Salvar(CARSolicitacao carSolicitacao)
+		public bool Salvar(CARSolicitacao carSolicitacao, int usuarioID)
 		{
 			try
 			{
-                if(_validar.RetificacaoValidar(carSolicitacao, 1))
+                if(_validar.RetificacaoValidar(carSolicitacao, 1, usuarioID))
                 {
                     if (_validar.Salvar(carSolicitacao))
                     {

@@ -29,7 +29,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		} 
 		public Mensagem SolicitacaoProtocoloObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Solicitacao_Protocolo_Numero", Texto = "Protocolo é obrigatório." }; } }
 		public Mensagem SolicitacaoRequerimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Solicitacao_RequerimentoLst", Texto = "Requerimento Padrão é obrigatório." }; } }
-		public Mensagem SituacaoDeveSerAguardandoImportacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O projeto digital tem que estar na situação \"Aguardando Importação\" para ser associado a uma solicitação de inscrição" }; } }
+		public Mensagem SituacaoDeveSerAguardandoImportacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O projeto digital tem que estar na situação \"Aguardando Importação\" ou \"Aguardando Protocolo\"  ou \"Aguardando Análise\" ou \"Deferido\" ou \"Importado\" para ser associado a uma solicitação de inscrição" }; } }
 
 		public Mensagem SolicitacaoRequerimentoDesassociadoProtocolo(String numero)
 		{
