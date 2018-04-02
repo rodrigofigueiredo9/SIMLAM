@@ -1200,6 +1200,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business
 
 		}
 
+		public int ObterCredenciadoUsuario (int idUsuario)
+		{
+			try
+			{
+				return _da.ObterCredenciadoUsuario(idUsuario);
+			}
+			catch (Exception ex)
+			{
+
+			}
+
+			return 0;
+		}
+
 		#endregion
 
 	}
