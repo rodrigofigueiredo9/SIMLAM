@@ -44,12 +44,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		NotificacaoBus _bus = new NotificacaoBus();
 		FiscalizacaoBus _busFiscalizacao = new FiscalizacaoBus();
 		CobrancaBus _busCobranca = new CobrancaBus();
+		ListaBus _busLista = new ListaBus();
 
 		#endregion
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Notificacao(int id) => View(this.GetNotificacaoVM(id, false));
+		public ActionResult Notificacao(int id)
+		{
+			if(!_bus.ValidarAcesso(_busFiscalizacao.Obter(id)))
+				return RedirectToAction("Index", "Fiscalizacao", Validacao.QueryParamSerializer());
+			
+			return View(this.GetNotificacaoVM(id, false));
+		}
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]

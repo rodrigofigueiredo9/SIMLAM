@@ -24,5 +24,6 @@
 		public Mensagem DataCOREFutura { get { return new Mensagem() { Campo = "Notificacao_DataCORE", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação CORE não pode ser futura." }; } }
 		public Mensagem DataJIAPIAnteriorIUF { get { return new Mensagem() { Campo = "Notificacao_DataJIAPI", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação JIAPI não pode ser anterior a IUF." }; } }
 		public Mensagem DataCOREAnteriorJIAPI { get { return new Mensagem() { Campo = "Notificacao_DataCORE", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação CORE não pode ser anterior a JIAPI." }; } }
+		public Mensagem AgenteFiscalInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ser o agente fiscal para editar/criar uma notificação para esta fiscalização." }; } }
 	}
 }

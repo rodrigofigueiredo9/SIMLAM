@@ -39,7 +39,7 @@
 						<% if (Model.IsVisualizar || parcela.DataVencimento.IsValido) { %>
 							<span class="dataVencimento" title="<%:parcela.DataVencimento.DataTexto%>"><%:parcela.DataVencimento.DataTexto%></span>
 						<%} else {%>
-							<input class="text dataVencimento maskData" value="<%:parcela.DataVencimento.DataTexto%>" style="width: 100%;" />
+							<input class="text dataVencimento maskData" value="<%:parcela.DataVencimento.DataTexto ?? "" %>" style="width: 100%;" />
 						<%} %>
                     </td>
                     <td>

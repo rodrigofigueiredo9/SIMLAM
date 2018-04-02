@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 {
@@ -17,7 +18,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		NotificacaoValidar _validar = null;
 		NotificacaoDa _da = new NotificacaoDa();
-
+		ProtocoloDa _protocoloDa = new ProtocoloDa();
 		private static EtramiteIdentity User
 		{
 			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
@@ -140,7 +141,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return entidade;
 		}
 
-
 		public int ObterId(int fiscalizacaoId, BancoDeDados banco = null)
 		{
 			var id = 0;
@@ -158,5 +158,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		}
 
 		#endregion
+
+		public bool ValidarAcesso(Fiscalizacao fiscalizacao)
+		{
+			if (fiscalizacao.Autuante.Id != FiscalizacaoBus.User.EtramiteIdentity.FuncionarioId)
+				Validacao.Add(Mensagem.NotificacaoMsg.AgenteFiscalInvalido);
+
+			if (!_protocoloDa.EmPosse(fiscalizacao.ProtocoloId))
+				Validacao.Add(Mensagem.Fiscalizacao.PosseProcessoNecessaria);
+
+			return Validacao.EhValido;
+		}
 	}
 }
