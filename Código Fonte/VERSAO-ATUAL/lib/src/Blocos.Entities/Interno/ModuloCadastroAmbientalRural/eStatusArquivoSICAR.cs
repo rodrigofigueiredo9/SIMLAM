@@ -9,6 +9,7 @@
         ArquivoReprovado = 4,
         Enviando = 5,
         ArquivoEntregue = 6,
-		Erro = 7
+		Erro = 7,
+		ArquivoRetificado = 8
     }
 }
