@@ -64,7 +64,7 @@ Cobranca = {
 			NumeroIUF: $('.txtNumeroIUF', container).val(),
 			SerieId: $('.hdnSerieId', container).val(),
 			SerieTexto: $('.txtSerie', container).val(),
-			DataConstatacao: { DataTexto: $('.txtDataLavratura', container).val() },
+			DataEmissaoIUF: { DataTexto: $('.txtDataEmissaoIUF', container).val() },
 			DataIUF: { DataTexto: $('.txtDataIUF', container).val() },
 			DataJIAPI: { DataTexto: $('.txtDataJIAPI', container).val() },
 			DataCORE: { DataTexto: $('.txtDataCORE', container).val() },

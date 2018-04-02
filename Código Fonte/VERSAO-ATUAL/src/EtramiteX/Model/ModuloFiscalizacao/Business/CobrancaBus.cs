@@ -290,7 +290,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if (!_validar.Calcular(cobranca, parcelamento)) return retorno;
 
 			var vrte =  _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
 			var vrte1Vencimento = _busConfiguracao.ObterVrte(parcelamento.Data1Vencimento.Data.Value.Year) ?? new Vrte();
 
 			if (!_validar.CalcularParametrizacao(parametrizacao, vrte, vrte1Vencimento)) return retorno;
@@ -359,7 +359,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		public List<CobrancaDUA> GerarParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
 			var list = new List<CobrancaDUA>();
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
 			var parcelaAnterior = new CobrancaDUA();
 			if (parametrizacao != null)
 			{
@@ -396,9 +396,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public int GetMaximoParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
-			if (cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido) || !Convert.ToBoolean(cobranca.DataConstatacao?.IsValido)) return 0;
+			if (cobranca == null || !Convert.ToBoolean(cobranca.DataIUF?.IsValido) || !Convert.ToBoolean(cobranca.DataEmissaoIUF?.IsValido)) return 0;
 
-			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataConstatacao.Data.Value);
+			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
 			if (parametrizacao == null) return 0;
 
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);

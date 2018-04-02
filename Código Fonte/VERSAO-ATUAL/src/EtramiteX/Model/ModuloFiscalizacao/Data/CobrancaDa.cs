@@ -91,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
-				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataConstatacao.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataEmissaoIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
 				comando.AdicionarParametroEntrada("numero_autuacao", cobranca.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
@@ -140,7 +140,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId > 0 ? cobranca.SerieId : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
-				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataConstatacao.Data, DbType.DateTime);
+				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataEmissaoIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);
 				comando.AdicionarParametroEntrada("numero_autuacao", cobranca.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("not_iuf_data", cobranca.DataIUF.Data, DbType.DateTime);
@@ -217,7 +217,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 												from lov_fiscalizacao_serie lfs
 												where lfs.id = c.serie) serie_texto,
 											coalesce(cast(m.iuf_numero as varchar2(10)), tfi.numero_auto_infracao_bloco, cast(f.autos as varchar2(10)), cast(c.iuf_numero as varchar2(10))) iuf_numero,
-											coalesce(tfi.data_constatacao, c.iuf_data) data_constatacao,
+											coalesce(m.iuf_data, tfi.data_lavratura_auto, c.iuf_data) iuf_data,
 											case when p.id > 0
 											  then concat(concat(cast(p.numero as VARCHAR2(30)), '/'), cast(p.ano as VARCHAR2(30)))
 											  else cast(c.protoc_num as VARCHAR2(30)) end protoc_num,
@@ -260,12 +260,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 							CodigoReceitaTexto = reader.GetValue<string>("codigoreceita_texto")
 						};
 
-						cobranca.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
+						cobranca.DataEmissaoIUF.Data = reader.GetValue<DateTime>("iuf_data");
 						cobranca.DataIUF.Data = reader.GetValue<DateTime>("not_iuf_data");
 						cobranca.DataJIAPI.Data = reader.GetValue<DateTime>("not_jiapi_data");
 						cobranca.DataCORE.Data = reader.GetValue<DateTime>("not_core_data");
-						if (cobranca.DataConstatacao.Data.HasValue && cobranca.DataConstatacao.Data.Value.Year == 1)
-							cobranca.DataConstatacao = new DateTecno();
+						if (cobranca.DataEmissaoIUF.Data.HasValue && cobranca.DataEmissaoIUF.Data.Value.Year == 1)
+							cobranca.DataEmissaoIUF = new DateTecno();
 						if (cobranca.DataIUF.Data.HasValue && cobranca.DataIUF.Data.Value.Year == 1)
 							cobranca.DataIUF = new DateTecno();
 						if (cobranca.DataJIAPI.Data.HasValue && cobranca.DataJIAPI.Data.Value.Year == 1)
@@ -275,6 +275,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
 						cobranca.Notificacao = cobranca.NumeroFiscalizacao > 0 ? new NotificacaoBus().Obter(cobranca.NumeroFiscalizacao) : new Notificacao();
 						cobranca.Parcelamentos = cobrancaParcelamentoDa.Obter(cobranca.Id);
+
+						if (cobranca.DataEmissaoIUF.Data.HasValue && cobranca.DataEmissaoIUF.Data.Value.Year == 1)
+						{
+							var _fiscDA = new FiscalizacaoDa();
+							cobranca.DataEmissaoIUF = _fiscDA.ObterDataConclusao(cobranca.NumeroFiscalizacao);
+						}
 					}
 					else
 						cobranca = null;

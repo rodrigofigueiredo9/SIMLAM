@@ -44,7 +44,7 @@ namespace Test.TestClass
 				cobranca = new Cobranca()
 				{
 					Id = 1,
-					DataConstatacao = new DateTecno() { Data = DateTime.Now.AddDays(-60) },
+					DataEmissaoIUF = new DateTecno() { Data = DateTime.Now.AddDays(-60) },
 					DataIUF = new DateTecno() { Data = DateTime.Now.AddDays(-60) },
 					CodigoReceitaId = codigoReceita,
 					AutuadoPessoa = _busPessoa.Obter(2525)

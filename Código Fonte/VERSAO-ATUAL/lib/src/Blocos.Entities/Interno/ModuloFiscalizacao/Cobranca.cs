@@ -26,7 +26,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			NumeroIUF = fiscalizacao.Multa.NumeroIUF ?? fiscalizacao.Infracao.NumeroAutoInfracaoBloco ?? fiscalizacao.NumeroAutos.ToString();
 			SerieId = fiscalizacao.Multa.SerieId;
 			SerieTexto = fiscalizacao.Multa.SerieTexto;
-			DataConstatacao = fiscalizacao.Infracao.DataConstatacao;
+			DataEmissaoIUF = fiscalizacao.Multa.DataLavratura;
 			AutuadoPessoa = fiscalizacao.AutuadoPessoa;
 			AutuadoPessoaId = fiscalizacao.AutuadoPessoa.Id;
 			CodigoReceitaId = fiscalizacao.Multa.CodigoReceitaId ?? 0;
@@ -59,11 +59,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32? SerieId { get; set; }
 		public String SerieTexto { get; set; }
 
-		private DateTecno _dataCostatacao = new DateTecno();
-		public DateTecno DataConstatacao
+		private DateTecno _dataEmissaoIUF = new DateTecno();
+		public DateTecno DataEmissaoIUF
 		{
-			get { return _dataCostatacao; }
-			set { _dataCostatacao = value; }
+			get { return _dataEmissaoIUF; }
+			set { _dataEmissaoIUF = value; }
 		}
 		public Int32 AutuadoPessoaId { get; set; }
 		public Pessoa AutuadoPessoa { get; set; }

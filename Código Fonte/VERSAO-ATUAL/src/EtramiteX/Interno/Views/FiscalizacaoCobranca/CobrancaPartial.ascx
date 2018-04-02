@@ -30,7 +30,7 @@
         </div>
         <div class="coluna15">
             <label>Data Emissão AI / IUF</label><br />
-            <%= Html.TextBox("Cobranca.DataLavratura", Model.Entidade.DataConstatacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataLavratura maskData" }))%>
+            <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
         </div>
         <div class="coluna31">
             <label>Nome / Razão Social autuado *</label><br />
