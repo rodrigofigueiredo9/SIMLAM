@@ -19,6 +19,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business
 {
@@ -34,6 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		CARSolicitacaoInternoDa _carSolicitacaoInternoDa = null;
 		RequerimentoCredenciadoValidar _requerimentoValidar = null;
         TituloCredenciadoBus _busTitulo = null;
+		CredenciadoBus _busCred = new CredenciadoBus();
 
 		public static EtramiteIdentity User
 		{
@@ -176,11 +178,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public void AssociarProjetoDigital(ProjetoDigital projetoDigital, List<Lista> atividades)
 		{
-			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoAnalise ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoProtocolo ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Deferido ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Importado)
+			if (projetoDigital.Situacao == (int)eProjetoDigitalSituacao.AguardandoCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.ComPendencia ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Finalizado ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Indeferido ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmElaboracao)
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.SituacaoDeveSerAguardandoImportacao);
 			}
@@ -445,7 +448,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				}
 				if (solicitacao.SituacaoId == 6)
 				{
-					if (solicitacao.AutorModuloTexto != "Institucional" && solicitacao.AutorId != usuarioID)
+					int idCredenciadoLogado =_busCred.ObterCredenciadoUsuario(usuarioID);
+
+					if (solicitacao.AutorModuloTexto != "Institucional" && solicitacao.AutorId != idCredenciadoLogado)
 					{
 						Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
 						return false;
