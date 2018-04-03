@@ -30,6 +30,12 @@
 		public Mensagem VrteNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado configuração de VRTE para a Data da Notificação IUF informada." }; } }
 		public Mensagem VrteVencimentoNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado configuração de VRTE para a Data 1º Vemcomento informada." }; } }
 
+		public Mensagem DataIUFFutura { get { return new Mensagem() { Campo = "Cobranca_DataIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação IUF não pode ser futura." }; } }
+		public Mensagem DataJIAPIFutura { get { return new Mensagem() { Campo = "Cobranca_DataJIAPI", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação JIAPI não pode ser futura." }; } }
+		public Mensagem DataCOREFutura { get { return new Mensagem() { Campo = "Cobranca_DataCORE", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação CORE não pode ser futura." }; } }
+		public Mensagem DataJIAPIAnteriorIUF { get { return new Mensagem() { Campo = "Cobranca_DataJIAPI", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação JIAPI não pode ser anterior a IUF." }; } }
+		public Mensagem DataCOREAnteriorJIAPI { get { return new Mensagem() { Campo = "Cobranca_DataCORE", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação CORE não pode ser anterior a JIAPI." }; } }
+
 		public Mensagem ConfirmModal(int tipo)
 		{
 			if(tipo == 1)

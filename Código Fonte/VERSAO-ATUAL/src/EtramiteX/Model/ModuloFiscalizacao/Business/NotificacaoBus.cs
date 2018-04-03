@@ -164,8 +164,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if (fiscalizacao.Autuante.Id != FiscalizacaoBus.User.EtramiteIdentity.FuncionarioId)
 				Validacao.Add(Mensagem.NotificacaoMsg.AgenteFiscalInvalido);
 
-			if (!_protocoloDa.EmPosse(fiscalizacao.ProtocoloId))
-				Validacao.Add(Mensagem.Fiscalizacao.PosseProcessoNecessaria);
+			if (fiscalizacao.ProtocoloId > 0)
+			{
+				if (!_protocoloDa.EmPosse(fiscalizacao.ProtocoloId))
+					Validacao.Add(Mensagem.Fiscalizacao.PosseProcessoNecessaria);
+			}
 
 			return Validacao.EhValido;
 		}
