@@ -1,4 +1,5 @@
-﻿using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
+﻿using System;
+using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
@@ -24,6 +25,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (string.IsNullOrWhiteSpace(cobranca?.AutuadoPessoa?.CPFCNPJ))
 				Validacao.Add(Mensagem.CobrancaMsg.CpfCnpjObrigatorio);
+
+			if (cobranca.DataIUF.Data > DateTime.Now)
+				Validacao.Add(Mensagem.CobrancaMsg.DataIUFFutura);
+
+			if (cobranca.DataJIAPI.IsValido)
+			{
+				if (cobranca.DataJIAPI.Data > DateTime.Now)
+					Validacao.Add(Mensagem.CobrancaMsg.DataJIAPIFutura);
+
+				if (cobranca.DataJIAPI.Data < cobranca.DataIUF.Data)
+					Validacao.Add(Mensagem.CobrancaMsg.DataJIAPIAnteriorIUF);
+			}
+
+			if (cobranca.DataCORE.IsValido)
+			{
+				if (cobranca.DataCORE.Data > DateTime.Now)
+					Validacao.Add(Mensagem.CobrancaMsg.DataCOREFutura);
+
+				if (cobranca.DataCORE.Data < cobranca.DataJIAPI.Data)
+					Validacao.Add(Mensagem.CobrancaMsg.DataCOREAnteriorJIAPI);
+			}
 
 			return Validacao.EhValido;
 		}
