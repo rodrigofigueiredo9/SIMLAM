@@ -120,7 +120,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				var parcelamento = cobranca.Parcelamentos[0];
 				maximoParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
 				if (parcelamento.QuantidadeParcelas == 0)
-					parcelamento.QuantidadeParcelas = maximoParcelas;
+					parcelamento.QuantidadeParcelas = 1;
 				parcelamento.DUAS = new List<CobrancaDUA>();
 			}
 			else
@@ -138,7 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				if (cobranca.Parcelamentos.Count == 0 || parcelamento?.DUAS?.Count == 0)
 				{
-					parcelamento.QuantidadeParcelas = maximoParcelas;
+					parcelamento.QuantidadeParcelas = 1;
 					parcelamento.DUAS = new List<CobrancaDUA>();
 					if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 					{
