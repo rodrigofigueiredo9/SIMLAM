@@ -52,6 +52,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool Calcular(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
+			if (cobranca.CodigoReceitaId == 0)
+				return false;
+
+			if (!cobranca.DataEmissaoIUF.IsValido)
+				return false;
+
 			if (!cobranca.DataIUF.IsValido)
 				Validacao.Add(Mensagem.CobrancaMsg.DataIUFObrigatorio);
 

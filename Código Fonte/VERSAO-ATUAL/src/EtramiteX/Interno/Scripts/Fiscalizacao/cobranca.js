@@ -44,6 +44,7 @@ Cobranca = {
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
+		container.delegate('.txtData1Vencimento', 'blur', Cobranca.alterarParcelas);
 		
 		$('.txtProcessoNumero', container).focus();
 	},
@@ -176,6 +177,7 @@ Cobranca = {
 						}
 						MasterPage.load();
 						MasterPage.redimensionar();
+						Mascara.load(Cobranca.container);
 					}
 				});
 				MasterPage.carregando(false);

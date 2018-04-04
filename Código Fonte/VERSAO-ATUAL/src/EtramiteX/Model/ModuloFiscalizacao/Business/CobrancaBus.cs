@@ -371,6 +371,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		public List<CobrancaDUA> GerarParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
 		{
 			var list = new List<CobrancaDUA>();
+			if (!_validar.Calcular(cobranca, parcelamento)) return list;
+
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
 			var parcelaAnterior = new CobrancaDUA();
 			if (parametrizacao != null)
