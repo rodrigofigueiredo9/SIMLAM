@@ -17,7 +17,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			ValorMulta = fiscalizacao.Multa.ValorMulta;
 			ValorMultaAtualizado = fiscalizacao.Multa.ValorMulta;
 			DataEmissao = new DateTecno() { Data = DateTime.Now };
-			Data1Vencimento = new DateTecno() { Data = DateTime.Now.AddDays(15) };
 			DUAS = new List<CobrancaDUA>();
 		}
 		#endregion

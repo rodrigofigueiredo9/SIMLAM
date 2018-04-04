@@ -139,6 +139,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#endregion
 
-		public Mensagem NaoExisteNotificacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível tramitar o processo/documento, pois não existe notificação IUF para a fiscalização do mesmo." }; } }
+		public Mensagem NaoExisteNotificacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível tramitar o processo/documento, pois não existe notificação do autuado para esta fiscalização." }; } }
 	}
 }
