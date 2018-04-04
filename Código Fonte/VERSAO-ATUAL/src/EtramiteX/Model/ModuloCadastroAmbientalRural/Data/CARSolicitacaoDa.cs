@@ -460,7 +460,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					ps.protocolo protocolo_selecionado,
 					ps.numero protocolo_selecionado_numero,
 					ps.ano protocolo_selecionado_ano,
-					s.requerimento,
+					p.requerimento,
 					s.atividade,
 					e.id empreendimento_id,
 					e.denominador empreendimento_nome,
@@ -659,28 +659,52 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			//CREDENCIADO
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
-				#region Solicitação
+				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.requerimento from tab_car_solicitacao c
+																where c.requerimento = :requerimento and rownum <= 1");
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c where c.protocolo = :requerimento ", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("requerimento", car.Protocolo.Id, DbType.Int32);
-
-				int solicitacaoId = 0;
+				comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+						solicitacao.Id = reader.GetValue<Int32>("id");
+						solicitacao.Requerimento.Id = reader.GetValue<Int32>("requerimento");
 					}
 					reader.Close();
 				}
+			}
 
-				solicitacao = solicitacaoId <= 0 ? null : Obter(solicitacaoId, banco: bancoDeDados);
+			if(solicitacao.Id < 1)
+			{
+				//INSTITUCIONAL
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
 
-				#endregion
+					Comando comando = bancoDeDados.CriarComando(@"select c.id, p.requerimento from tab_car_solicitacao c
+																inner join tab_protocolo p on c.protocolo = p.id
+															where p.requerimento = :requerimento ", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+						{
+							solicitacao.Id = reader.GetValue<Int32>("id");
+							solicitacao.Requerimento.Id = reader.GetValue<Int32>("requerimento");
+						}
+						reader.Close();
+					}
+				}
+			}
+
+			if(solicitacao.Id < 1)
+			{
+				return null;
 			}
 
 			return solicitacao;
@@ -712,7 +736,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				   ps.protocolo_id protocolo_selecionado_id,
 				   ps.numero protocolo_selecionado_numero,
 				   ps.ano protocolo_selecionado_ano,
-				   r.requerimento_id,
+				   ps.requerimento_id,
 				   r.data_criacao requerimento_data_criacao,
 				   a.id atividade_id,
 				   a.atividade atividade_texto,
