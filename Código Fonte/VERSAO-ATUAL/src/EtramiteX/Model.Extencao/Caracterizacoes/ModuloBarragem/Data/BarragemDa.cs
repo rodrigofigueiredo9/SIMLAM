@@ -512,12 +512,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				#region Apaga Barragem Item
 
 				comando = bancoDeDados.CriarComando(@"begin " +
-                    "delete from {0}crt_barragens_finalidades b where b.barragem = :barragemId;" +
-					"delete from {0}crt_barragem_brgns_dados b where b.barragens in (select id from {0}crt_barragem_barragens where barragem = :barragemId);" +
-					"delete from {0}crt_barragem_barragens b where b.barragem = :barragemId;" +
+					"delete from {0}crt_barragens_finalidades f where exists (select 1 from crt_barragem_brgns_dados d where d.id = f.id_barragem_dados and d.barragens = :barragemItemId);" +
+					"delete from {0}crt_barragem_brgns_dados d where d.barragens = :barragemItemId;" +
+					"delete from {0}crt_barragem_barragens b where b.id = :barragemItemId;" +
 				"end;", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("barragemId", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("barragemItemId", barragemItemId, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
