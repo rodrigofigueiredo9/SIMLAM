@@ -259,6 +259,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		#endregion
 
 		#region Cálculo
+
 		private int GetPrazoDesconto(int prazoDescontoDecorrencia)
 		{
 			var prazoDesconto = 0;
@@ -311,14 +312,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				var parcela = parcelas[0];
 				if (parcela.ValorDUA == 0)
 				{
-					var prazoDesconto = GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
+					var prazoDesconto = parametrizacao.PrazoDescontoUnidade * GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
+					var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
 
 					if (parcela.DataVencimento.Data <= cobranca.DataIUF.Data.Value.AddDays(prazoDesconto))
 					{
+						parcelamento.ValorMultaAtualizado = parcelamento.ValorMulta;
+						valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
 						parcela.VRTE = valorAtualizadoVRTE * (1 - (Convert.ToDecimal(parametrizacao.DescontoPercentual) / 100));
-						var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
 						if (vrteParcela.Id > 0)
+						{
 							parcela.ValorDUA = Math.Round(parcela.VRTE * vrteParcela.VrteEmReais, 2);
+							parcelamento.ValorMultaAtualizado = parcela.ValorDUA;
+						}
+					}
+					else
+					{
+						parcela.VRTE = valorAtualizadoVRTE;
+						if (vrteParcela.Id > 0)
+							parcela.ValorDUA = Math.Round(valorAtualizadoVRTE * vrteParcela.VrteEmReais, 2);
 					}
 				}
 
@@ -374,7 +386,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 					if (i == 1)
 						parcela.DataVencimento = new DateTecno() { Data = parcelamento.Data1Vencimento.Data };
-					else
+					else if(parcelaAnterior.DataVencimento.IsValido)
 					{
 						var dataVencimento = parcelaAnterior.DataVencimento.Data.Value.AddMonths(1);
 						if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)
