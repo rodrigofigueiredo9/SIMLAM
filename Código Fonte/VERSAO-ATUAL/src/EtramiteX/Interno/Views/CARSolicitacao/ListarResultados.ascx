@@ -26,7 +26,7 @@
 			<% foreach (var item in Model.Resultados) { %>
 			<tr>
 				<td title="<%= Html.Encode(item.NumeroTexto)%>"><%= Html.Encode(item.NumeroTexto) %></td>
-				<td title="<%= Html.Encode(item.EmpreendimentoCodigo)%>"><%= Html.Encode(item.EmpreendimentoCodigo) %></td>
+				<td title="<%= Html.Encode(item.EmpreendimentoCodigo)%>"><%= Html.Encode(item.EmpreendimentoCodigo == 0 ? "" : item.EmpreendimentoCodigo) %></td>
 				<td title="<%= Html.Encode(item.EmpreendimentoDenominador)%>"><%= Html.Encode(item.EmpreendimentoDenominador)%></td>
 				<td title="<%= Html.Encode(item.MunicipioTexto)%>"><%= Html.Encode(item.MunicipioTexto)%></td>
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
