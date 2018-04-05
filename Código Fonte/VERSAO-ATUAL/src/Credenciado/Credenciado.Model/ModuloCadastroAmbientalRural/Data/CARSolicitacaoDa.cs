@@ -70,8 +70,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 				comando.AdicionarParametroEntrada("id", solicitacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_emissao", DateTime.Now, DbType.Date);
-				//comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.Valido, DbType.Int32);
-                comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eCARSolicitacaoSituacao.EmCadastro, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao_data", DateTime.Now, DbType.Date);
 				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
 				comando.AdicionarParametroEntrada("requerimento", solicitacao.Requerimento.Id, DbType.Int32);
@@ -1057,67 +1056,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				#region Quantidade de registro do resultado
 
 				comando.DbCommand.CommandText = String.Format(@"select count(1) from (
-                    /*Solicitacao Interno*/
-                    select s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, null titulo_ano, 
-                    s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
-                    credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
-                    s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel 
-                    from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
-                    and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
-                    and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
-                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id
-                    from tab_requerimento r, tab_pessoa tp, tab_empreendimento_responsavel ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp 
-                    where r.autor = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
-                    union all 
-                    /*Solicitacao Titulo*/
-                    select s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
-                    s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
-                    s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
-                    s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo,
-                    null situacao_envio_id, null situacao_envio_texto, null url_recibo , null codigo_imovel
-                    from lst_car_solic_tit s where s.tipo = 2 
-                    and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
-                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id
-                    from tab_requerimento r, tab_pessoa tp, tab_empreendimento_responsavel ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp 
-                    where r.autor = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
-                    union all 
-                    /*Solicitacao Credenciado*/
-                    select c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
-                    null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
-                    c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
-                    c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo,
-                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.codigo_imovel
-                    from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses
-                    where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
-                    and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa tp, tab_requerimento_resp_cred trr
-                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id
-                    from tab_requerimento_cred r, tab_pessoa_cred tp, tab_empreendimento_resp_cred ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))) l where 1 = 1" + comandtxt, esquemaBanco);
-
-				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
-				comando.AdicionarParametroEntrada("cpfCnpj", DbType.String, 18, filtros.Dados.AutorCPFCNPJ);
-
-				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
-
-				comando.AdicionarParametroEntrada("menor", filtros.Menor);
-				comando.AdicionarParametroEntrada("maior", filtros.Maior);
-
-				comandtxt = @"select l.solic_tit_id, l.interno_id, nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, l.municipio_texto, 
-                    l.situacao_id, l.situacao_texto, l.situacao_motivo, l.credenciado, l.origem, l.tipo,  l.situacao_envio_id, l.situacao_envio_texto, l.url_recibo, l.arquivo, l.empreendimento_codigo from (
-                    /*Solicitacao Interno*/
                     select s.id, s.solic_tit_id interno_id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, null titulo_ano, 
                     s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
-                    credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
+                    credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, e.codigo empreendimento_codigo,
                     s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 1 tipo,
                     tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel 
-                    from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
-                    and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+)
+                    from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses, tab_empreendimento e where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
+                    and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) and e.id = s.empreendimento_id
                     and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
                     where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id
@@ -1142,16 +1087,71 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     /*Solicitacao Credenciado*/
                     select c.id, 0 interno_id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
                     null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
-                    c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
+                    c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, e.codigo empreendimento_codigo, 
                     c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.situacao_motivo, c.requerimento, 2 origem, 1 tipo,
                     tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel  
-                    from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses 
-                    where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) 
+                    from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses, idafcredenciado.tab_empreendimento e  
+                    where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) and c.empreendimento_id = e.id
                     and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
                     and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa tp, tab_requerimento_resp_cred trr
                     where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id
                     from tab_requerimento_cred r, tab_pessoa_cred tp, tab_empreendimento_resp_cred ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
-                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))) l where 1 = 1" + comandtxt;
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
+                    ) l where 1 = 1" + comandtxt, esquemaBanco);
+
+				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("cpfCnpj", DbType.String, 18, filtros.Dados.AutorCPFCNPJ);
+
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtros.Menor);
+				comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+				comandtxt = @"select l.solic_tit_id, l.interno_id, nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, l.municipio_texto, 
+                    l.situacao_id, l.situacao_texto, l.situacao_motivo, l.credenciado, l.origem, l.tipo,  l.situacao_envio_id, l.situacao_envio_texto, l.url_recibo, l.arquivo, l.empreendimento_codigo from (
+                    /*Solicitacao Interno*/
+                    select s.id, s.solic_tit_id interno_id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, null titulo_ano, 
+                    s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
+                    credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, e.codigo empreendimento_codigo,
+                    s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 1 tipo,
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel 
+                    from lst_car_solic_tit s, tab_controle_sicar tcs, lov_situacao_envio_sicar lses, tab_empreendimento e where s.tipo = 1 and nvl(tcs.solicitacao_car_esquema, 1) = 1 
+                    and s.solic_tit_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) and e.id = s.empreendimento_id
+                    and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
+                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id
+                    from tab_requerimento r, tab_pessoa tp, tab_empreendimento_responsavel ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp 
+                    where r.autor = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
+                    union all 
+                    /*Solicitacao Titulo*/
+                    select s.id, 0 interno_id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
+                    s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
+                    s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
+                    s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.situacao_motivo, s.requerimento, 1 origem, 2 tipo,
+                    null situacao_envio_id, null situacao_envio_texto, null url_recibo, null arquivo, null codigo_imovel
+                    from lst_car_solic_tit s where s.tipo = 2 
+                    and (s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp where r.interessado = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp, tab_requerimento_responsavel trr
+                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id
+                    from tab_requerimento r, tab_pessoa tp, tab_empreendimento_responsavel ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or s.requerimento in (select r.id from tab_requerimento r, tab_pessoa tp 
+                    where r.autor = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
+                    union all 
+                    /*Solicitacao Credenciado*/
+                    select c.id, 0 interno_id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
+                    null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
+                    c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, e.codigo empreendimento_codigo, 
+                    c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.situacao_motivo, c.requerimento, 2 origem, 1 tipo,
+                    tcs.situacao_envio situacao_envio_id, lses.texto situacao_envio_texto, tcs.url_recibo, tcs.arquivo, tcs.codigo_imovel  
+                    from lst_car_solicitacao_cred c, tab_controle_sicar tcs, lov_situacao_envio_sicar lses, idafcredenciado.tab_empreendimento e  
+                    where nvl(tcs.solicitacao_car_esquema, 2) = 2 and c.solicitacao_id = tcs.solicitacao_car(+) and tcs.situacao_envio = lses.id(+) and c.empreendimento_id = e.id
+                    and (c.credenciado = :credenciado or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa_cred tp where r.interessado = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id from tab_requerimento_cred r, tab_pessoa tp, tab_requerimento_resp_cred trr
+                    where r.id = trr.requerimento and trr.responsavel = tp.id and nvl(tp.cpf, tp.cnpj) = :cpfCnpj) or c.requerimento in (select r.id
+                    from tab_requerimento_cred r, tab_pessoa_cred tp, tab_empreendimento_resp_cred ter where r.empreendimento = ter.empreendimento and ter.responsavel = tp.id
+                    and nvl(tp.cpf, tp.cnpj) = :cpfCnpj))
+                    ) l where 1 = 1" + comandtxt;
 
 				comando.DbCommand.CommandText = String.Format(@"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor", esquemaBanco);
 
