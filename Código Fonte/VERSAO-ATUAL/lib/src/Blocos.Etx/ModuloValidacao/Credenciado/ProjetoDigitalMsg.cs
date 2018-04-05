@@ -93,6 +93,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Texto = String.Format("Essa ação irá alterar a situação do projeto digital para \"Em elaboração\", não permitindo a importação do projeto pelo funcionário do IDAF. Caso este projeto digital estiver associado a uma Solicitação de Inscrição no CAR ou a um Título Declaratório, ao confirmar o cancelamento, este cadastro será invalidado pelo sistema. Tem certeza que deseja cancelar o envio do projeto digital do requerimento Nº {0}?", numero) };
 		}
 
+		public Mensagem MensagemCancelarEnvioCAR()
+		{
+			return new Mensagem() { Texto = String.Format("O envio do projeto digital não pode ser cancelado, pois a Solicitação de inscrição no CAR já foi enviada para o SICAR. Se você deseja fazer uma retificação é necessário cadastrar um novo Projeto Digital e cadastrar/enviar uma nova Solicitação de inscrição no CAR") };
+		}
+
 		public Mensagem RequerimentoImportado(string numero)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = String.Format("Requerimento número {0} importado com sucesso.", numero) };
