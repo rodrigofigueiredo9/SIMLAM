@@ -78,8 +78,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
         public ActionResult Index()
         {
-            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList());
-            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
             return PartialView(vm);
         }
 
@@ -1711,7 +1711,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
         public ActionResult Associar()
         {
-            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList());
+            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
             vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
             return PartialView("ListarFiltros", vm);
         }

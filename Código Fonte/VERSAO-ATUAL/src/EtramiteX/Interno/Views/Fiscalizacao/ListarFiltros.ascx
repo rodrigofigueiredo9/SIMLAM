@@ -25,18 +25,18 @@
 				</div>
 
 				<div class="coluna15 append2">
-					<label for="Filtros_NumeroAIBloco">Nº do AI</label>
-					<%= Html.TextBox("Filtros.NumeroAIBloco", Model.Filtros.NumeroAIBloco, new { @class = "text txtNumeroAIBloco maskNum15" })%>
+					<label for="Filtros_NumeroAIIUFBloco">Nº do AI / IUF</label>
+					<%= Html.TextBox("Filtros.NumeroAIIUFBloco", Model.Filtros.NumeroAIIUFBloco, new { @class = "text txtNumeroAIIUFBloco maskNum15" })%>
 				</div>
 
 				<div class="coluna15 append2">
-					<label for="Filtros_NumeroTEIBloco">Nº do TEI</label>
-					<%= Html.TextBox("Filtros.NumeroTEIBloco", Model.Filtros.NumeroTEIBloco, new { @class = "text txtNumeroTEIBloco maskNum15" })%>
+					<label for="Filtros_NumeroTEITADBloco">Nº do TEI / TAD</label>
+					<%= Html.TextBox("Filtros.NumeroTEITADBloco", Model.Filtros.NumeroTEITADBloco, new { @class = "text txtNumeroTEITADBloco maskNum15" })%>
 				</div>
 
 				<div class="coluna16 append2">
-					<label for="Filtros_NumeroTADBloco">Nº do TAD</label>
-					<%= Html.TextBox("Filtros.NumeroTADBloco", Model.Filtros.NumeroTADBloco, new { @class = "text txtNumeroTADBloco maskNum15" })%>
+					<label for="Filtros_Serie">Série</label>
+					<%= Html.DropDownList("Filtros.Serie", Model.Series, new { @class = "text ddlSeries" })%>
 				</div>
 
 				<div class="coluna10">
@@ -88,12 +88,24 @@
 
 			<div class="block hide">
 				<div class="coluna39 append2">
+					<label for="Filtros_AreaFiscalizacao">Área da Fiscalização</label>
+					<%= Html.DropDownList("Filtros.AreaFiscalizacao", Model.AreasFiscalizacao, new { @class = "text ddlAreaFiscalizacao" })%>
+				</div>
+
+				<div class="coluna40">
+					<label for="Filtros_Classificacao">Classificação</label>
+					<%= Html.DropDownList("Filtros.Classificacao", Model.Classificacoes, new { @class = "text ddlClassificacao" })%>
+				</div>
+			</div>
+
+			<div class="block hide">
+				<div class="coluna39 append2">
 					<label for="Filtros_InfracaoTipo">Tipo infração</label>
 					<%= Html.DropDownList("Filtros.InfracaoTipo", Model.InfracaoTipo, new { @class = "text ddlInfracaoTipo" })%>
 				</div>
 
 				<div class="coluna40">
-					<label for="Filtros_ItemTipo">item</label>
+					<label for="Filtros_ItemTipo">Item</label>
 					<%= Html.DropDownList("Filtros.ItemTipo", Model.Itens, new { @class = "text ddlItens" })%>
 				</div>
 			</div>

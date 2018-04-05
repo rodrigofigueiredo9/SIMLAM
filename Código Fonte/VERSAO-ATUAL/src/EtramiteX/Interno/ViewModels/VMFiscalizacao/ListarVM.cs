@@ -51,6 +51,27 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _situacaoTipo = value; }
 		}
 
+		private List<SelectListItem> _series = new List<SelectListItem>();
+		public List<SelectListItem> Series
+		{
+			get { return _series; }
+			set { _series = value; }
+		}
+
+		private List<SelectListItem> _areasFiscalizacao = new List<SelectListItem>();
+		public List<SelectListItem> AreasFiscalizacao
+		{
+			get { return _areasFiscalizacao; }
+			set { _areasFiscalizacao = value; }
+		}
+
+		private List<SelectListItem> _classificacoes = new List<SelectListItem>();
+		public List<SelectListItem> Classificacoes
+		{
+			get { return _classificacoes; }
+			set { _classificacoes = value; }
+		}
+
 		private List<Fiscalizacao> _resultados = new List<Fiscalizacao>();
 		public List<Fiscalizacao> Resultados
 		{
@@ -69,13 +90,20 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 
 		public ListarVM() { }
 
-		public ListarVM(List<QuantPaginacao> quantPaginacao, List<Setor> setores, List<Lista> infracaoTipo, List<Lista> infracaoItem, List<Lista> situacao)
+		public ListarVM(List<QuantPaginacao> quantPaginacao, List<Setor> setores, List<Lista> infracaoTipo, List<Lista> infracaoItem, List<Lista> situacao, List<Lista> series, List<Lista> classificacao)
 		{
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false);
 			Setores = ViewModelHelper.CriarSelectList(setores, true, true);
 			InfracaoTipo = ViewModelHelper.CriarSelectList(infracaoTipo, true, true);
 			Itens = ViewModelHelper.CriarSelectList(infracaoItem, true, true);
 			SituacaoTipo = ViewModelHelper.CriarSelectList(situacao, true, true);
+			Series = ViewModelHelper.CriarSelectList(series, true, true);
+			Classificacoes = ViewModelHelper.CriarSelectList(classificacao, true, true);
+			AreasFiscalizacao = ViewModelHelper.CriarSelectList(new List<Lista>() {
+				new Lista() { Texto = "DDSIA", Id = "3", IsAtivo = true },
+				new Lista() { Texto = "DDSIV", Id = "1", IsAtivo = true },
+				new Lista() { Texto = "DRNRE", Id = "2", IsAtivo = true }
+			}, true, true);
 		}
 
 		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)

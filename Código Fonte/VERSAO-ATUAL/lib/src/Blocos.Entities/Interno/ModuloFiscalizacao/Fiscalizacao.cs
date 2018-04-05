@@ -31,6 +31,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public string DataFiscalizacao { get; set; }//Data de Vistoria
 		public string ProcessoAno { get; set; }
 		public string ProcessoNumero { get; set; }
+		public String NumeroIUFResultado { get; set; }
 
 		public string NumeroProcesso
 		{
