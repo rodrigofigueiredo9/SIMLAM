@@ -474,6 +474,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comandtxt += comando.FiltroAnd("e.numero_fiscalizacao", "numero_fiscalizacao", filtros.Dados.NumeroFiscalizacao);
 
 				if (!string.IsNullOrWhiteSpace(filtros.Dados.NumeroAIIUFBloco))
+				{
 					comandtxt += $" and ((select iuf_numero from tab_fisc_multa m where m.fiscalizacao = e.fiscalizacao_id and rownum = 1) = '{filtros.Dados.NumeroAIIUFBloco}'" +
 						$" or (select numero_auto_infracao_bloco from tab_fisc_infracao i where i.fiscalizacao = e.fiscalizacao_id and rownum = 1) = '{filtros.Dados.NumeroAIIUFBloco}'" +
 						$" or (select iuf_numero from tab_fisc_obj_infracao obj where obj.fiscalizacao = e.fiscalizacao_id and rownum = 1) = '{filtros.Dados.NumeroAIIUFBloco}'" +
@@ -481,6 +482,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						$" or (select tad_numero from tab_fisc_material_apreendido a where a.fiscalizacao = e.fiscalizacao_id and rownum = 1) = '{filtros.Dados.NumeroAIIUFBloco}'" +
 						$" or (select iuf_numero from tab_fisc_outras_penalidades p where p.fiscalizacao = e.fiscalizacao_id and rownum = 1) = '{filtros.Dados.NumeroAIIUFBloco}'" +
 						$" or e.numero_ai = {filtros.Dados.NumeroAIIUFBloco})";
+				}
 
 				comandtxt += comando.FiltroAndLike("e.autuado_nome_razao", "autuado_nome_razao", filtros.Dados.AutuadoNomeRazao, true);
 
@@ -516,15 +518,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comandtxt += $" and (e.numero_tei= {filtros.Dados.NumeroTEITADBloco} or e.numero_tad = {filtros.Dados.NumeroTEITADBloco})";
 
 				if (filtros.Dados.Serie > 0)
+				{
 					comandtxt += $" and ((select serie from tab_fisc_multa m where m.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie}" +
 						$" or (select serie from tab_fisc_infracao i where i.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie}" +
 						$" or (select coalesce(tei_gerado_pelo_sist_serie, serie) from tab_fisc_obj_infracao obj where obj.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie}" +
 						$" or (select serie from tab_fisc_apreensao a where a.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie}" +
 						$" or (select serie from tab_fisc_material_apreendido a where a.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie}" +
 						$" or (select serie from tab_fisc_outras_penalidades p where p.fiscalizacao = e.fiscalizacao_id and rownum = 1) = {filtros.Dados.Serie})";
+				}
 
 				if (!filtros.Dados.DataFiscalizacao.IsEmpty && filtros.Dados.DataFiscalizacao.IsValido)
-					comandtxt += comando.FiltroAnd("TO_DATE(e.data_fiscalizacao)", "data_fiscalizacao", filtros.Dados.DataFiscalizacao.DataTexto);
+					comandtxt += $" and (select TO_DATE(coalesce(data_constatacao, data_lavratura_auto)) from tab_fisc_infracao i where i.fiscalizacao = e.fiscalizacao_id  and rownum = 1) = '{filtros.Dados.DataFiscalizacao.DataTexto}'";
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero_fiscalizacao", "autuado_nome_razao", "(e.protoc_num||e.protoc_ano)", "data_fiscalizacao", "situacao_texto" };
@@ -538,7 +542,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Quantidade de registro do resultado
 
-				comando.DbCommand.CommandText = String.Format("select count(*) from {0}lst_fiscalizacao e where e.id > 0" + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				comando.DbCommand.CommandText = String.Format("select count(*) from {0}lst_fiscalizacao e where 1=1 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -546,7 +550,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"select e.numero_fiscalizacao, nvl(e.autuado_nome_razao, e.empreendimento_denominador) autuado_nome_razao, 
-										  e.data_fiscalizacao, e.situacao, e.situacao_texto, e.protoc_num, e.protoc_ano,
+										    (select TO_DATE(coalesce(data_constatacao, data_lavratura_auto)) from tab_fisc_infracao i where i.fiscalizacao = e.fiscalizacao_id  and rownum = 1) data_fiscalizacao, e.situacao, e.situacao_texto, e.protoc_num, e.protoc_ano,
 											coalesce(cast(e.numero_ai as VARCHAR2(10 BYTE)), (select cast(iuf_numero as VARCHAR2(10 BYTE))from tab_fisc_multa m where m.fiscalizacao = e.fiscalizacao_id and rownum = 1),
 											(select numero_auto_infracao_bloco from tab_fisc_infracao i where i.fiscalizacao = e.fiscalizacao_id and rownum = 1),
 											(select cast(iuf_numero as VARCHAR2(10 BYTE)) from tab_fisc_obj_infracao obj where obj.fiscalizacao = e.fiscalizacao_id and rownum = 1),
