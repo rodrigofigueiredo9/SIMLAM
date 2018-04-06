@@ -315,7 +315,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											end as situacao
 										from {0}tab_fisc_cob_dua d
 										where d.cob_parc = :parcelamentoId
-										order by d.parcela", EsquemaBanco);
+										order by cast(replace(substr(d.parcela, 0, instr(d.parcela, '/')), '/') as number)", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("parcelamentoId", parcelamentoId, DbType.Int32);
 

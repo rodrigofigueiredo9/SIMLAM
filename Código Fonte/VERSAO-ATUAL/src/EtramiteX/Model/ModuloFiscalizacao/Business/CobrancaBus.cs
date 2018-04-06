@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -305,7 +306,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					parcelamento.QuantidadeParcelas = this.GetMaximoParcelas(cobranca, parcelamento);
 				parcelamento.DUAS = this.GerarParcelas(cobranca, parcelamento);
 			}
-			var parcelas = parcelamento.DUAS;
+			var parcelas = parcelamento.DUAS.OrderBy(x => x.Parcela.Split('/')[0]).ToList();
 
 			if (parcelas.Count == 1 && cobranca.Parcelamentos?.Count <= 1)
 			{

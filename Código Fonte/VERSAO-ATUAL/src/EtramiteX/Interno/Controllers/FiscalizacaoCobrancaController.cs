@@ -149,13 +149,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			var ultimoParcelamento = cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
-			if (ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0)
+			if ((ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0) || entidade != null)
 			{
 				ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);
 				_bus.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
-			else if (entidade != null)
-				_bus.CalcularParcelas(cobranca, ultimoParcelamento);
 
 			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar, index);
 			if(fiscalizacao != null)
