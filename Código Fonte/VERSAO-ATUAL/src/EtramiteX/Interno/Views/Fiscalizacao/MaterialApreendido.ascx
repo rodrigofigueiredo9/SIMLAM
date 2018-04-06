@@ -56,7 +56,7 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Descrever a apreensão *</label>
-				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "300" }))%>
+				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "455" }))%>
 			</div>
 		</div>
 
@@ -234,7 +234,7 @@
 			    <label>
 				    Descrever ou opinar quanto a destinação do material apreendido: *
 			    </label>
-			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao", @maxlength = "250" }))%>
+			    <%= Html.TextArea("MaterialApreendido.Opiniao", Model.MaterialApreendido.Opiniao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media  txtOpiniao" }))%>
 		    </div>
 	    </div>
     </fieldset>

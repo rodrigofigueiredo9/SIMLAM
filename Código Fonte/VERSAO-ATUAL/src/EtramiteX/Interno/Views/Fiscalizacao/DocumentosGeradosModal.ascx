@@ -11,6 +11,7 @@
 				pdfAuto: '<%= Url.Action("AutoTermoFiscalizacaoPdf", "Fiscalizacao") %>',
 			    pdfLaudo: '<%= Url.Action("LaudoFiscalizacaoPdf", "Fiscalizacao") %>',
 			    pdfIUF: '<%= Url.Action("InstrumentoUnicoFiscalizacaoPdf", "Fiscalizacao") %>',
+			    pdfIUFBloco: '<%= Url.Action("Baixar", "Fiscalizacao") %>',
 				pdfAcompanhamento: '<%= Url.Action("LaudoAcompanhamentoFiscalizacaoPdf", "Fiscalizacao") %>'
 			},
 			situacao: <%=Model.Fiscalizacao.SituacaoId %>

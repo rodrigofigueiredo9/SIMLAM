@@ -1108,7 +1108,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.InfrMedia = reader.GetValue<string>("is_media");
                         fiscalizacao.InfrGrave = reader.GetValue<string>("is_grave");
                         fiscalizacao.InfrGravissima = reader.GetValue<string>("is_gravissima");
-                    }
+						
+						fiscalizacao.DescricaoInfracao = fiscalizacao.DescricaoInfracao.Replace("\n\n", "");
+						fiscalizacao.DescricaoInfracao = fiscalizacao.DescricaoInfracao.Replace("\n", " ");
+					}
 
                     reader.Close();
                 }
@@ -1186,28 +1189,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.TemOutra01 = "X";
                         fiscalizacao.Outra01 = reader.GetValue<string>("item");
                         fiscalizacao.DescricaoOutra01 = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutra01 = fiscalizacao.DescricaoOutra01.Count() <= 80 ? fiscalizacao.DescricaoOutra01 : fiscalizacao.DescricaoOutra01.Substring(0, 80);
+                        fiscalizacao.DescricaoOutra01 = (fiscalizacao.DescricaoOutra01.Count() + fiscalizacao.Outra01.Count()) <= 110 ? fiscalizacao.DescricaoOutra01 : fiscalizacao.DescricaoOutra01.Substring(0, 100 - (fiscalizacao.Outra01.Count())) + "(...)";
                     }
                     if (reader.Read())
                     {
                         fiscalizacao.TemOutra02 = "X";
                         fiscalizacao.Outra02 = reader.GetValue<string>("item");
                         fiscalizacao.DescricaoOutra02 = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutra02 = fiscalizacao.DescricaoOutra02.Count() <= 80 ? fiscalizacao.DescricaoOutra02 : fiscalizacao.DescricaoOutra02.Substring(0, 80);
+                        fiscalizacao.DescricaoOutra02 = (fiscalizacao.DescricaoOutra02.Count() + fiscalizacao.Outra02.Count()) <= 110 ? fiscalizacao.DescricaoOutra02 : fiscalizacao.DescricaoOutra02.Substring(0, 100 - (fiscalizacao.Outra02.Count())) + "(...)";
                     }
                     if (reader.Read())
                     {
                         fiscalizacao.TemOutra03 = "X";
                         fiscalizacao.Outra03 = reader.GetValue<string>("item");
                         fiscalizacao.DescricaoOutra03 = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutra03 = fiscalizacao.DescricaoOutra03.Count() <= 80 ? fiscalizacao.DescricaoOutra03 : fiscalizacao.DescricaoOutra03.Substring(0, 80);
+                        fiscalizacao.DescricaoOutra03 = (fiscalizacao.DescricaoOutra03.Count() + fiscalizacao.Outra03.Count()) <= 110 ? fiscalizacao.DescricaoOutra03 : fiscalizacao.DescricaoOutra03.Substring(0, 100 - (fiscalizacao.Outra03.Count())) + "(...)";
                     }
                     if (reader.Read())
                     {
                         fiscalizacao.TemOutra04 = "X";
                         fiscalizacao.Outra04 = reader.GetValue<string>("item");
                         fiscalizacao.DescricaoOutra04 = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutra04 = fiscalizacao.DescricaoOutra04.Count() <= 80 ? fiscalizacao.DescricaoOutra04 : fiscalizacao.DescricaoOutra04.Substring(0, 80);
+                        fiscalizacao.DescricaoOutra04 = (fiscalizacao.DescricaoOutra04.Count() + fiscalizacao.Outra04.Count()) <= 110 ? fiscalizacao.DescricaoOutra04 : fiscalizacao.DescricaoOutra04.Substring(0, 100 - (fiscalizacao.Outra04.Count())) + "(...)";
                     }
 
                     reader.Close();
@@ -1290,7 +1293,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
                         fiscalizacao.ValorBemPorExtenso = fiscalizacao.ValorBemPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorBemPorExtenso.Substring(1);
-                    }
+						
+						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n\n", "");
+						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemApreensao = null;
@@ -1326,7 +1332,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.DescricaoTermoEmbargo = reader.GetValue<string>("desc_termo_embargo");
                         fiscalizacao.IsInterditado = reader.GetValue<string>("IsInterditado");
                         fiscalizacao.IsEmbargado = reader.GetValue<string>("IsEmbargado");
-                    }
+
+						fiscalizacao.DescricaoTermoEmbargo = fiscalizacao.DescricaoTermoEmbargo.Replace("\n\n", "");
+						fiscalizacao.DescricaoTermoEmbargo = fiscalizacao.DescricaoTermoEmbargo.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemInterdicao = null;
@@ -1352,16 +1361,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     if (reader.Read())
                     {
                         fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
-                        fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Count() <= 465 ? fiscalizacao.DescricaoOutrasPenalidades : fiscalizacao.DescricaoOutrasPenalidades.Substring(0, 465);
-                    }
+
+						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n\n", "");
+						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n", " ");
+					}
                     else
                     {
                         fiscalizacao.TemAdvertencia = null;
                         fiscalizacao.TemOutra01 = null;
-                        fiscalizacao.TemOutra02 = null;
-                        fiscalizacao.TemOutra03 = null;
-                        fiscalizacao.TemOutra04 = null;
-                    }
+						fiscalizacao.DescricaoOutra01 = null;
+						fiscalizacao.TemOutra02 = null;
+						fiscalizacao.DescricaoOutra02 = null;
+						fiscalizacao.TemOutra03 = null;
+						fiscalizacao.DescricaoOutra03 = null;
+						fiscalizacao.TemOutra04 = null;
+						fiscalizacao.DescricaoOutra04 = null;
+					}
 
                     reader.Close();
                 }
