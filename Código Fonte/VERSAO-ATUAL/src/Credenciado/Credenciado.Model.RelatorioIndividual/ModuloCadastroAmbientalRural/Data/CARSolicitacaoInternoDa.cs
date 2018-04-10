@@ -83,7 +83,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				lfc.texto emp_forma_coleta,
 				pt.requerimento,
                 tcs.codigo_imovel numero_sicar,
-                tcs.pendencias pendencias_sicar
+                tcs.pendencias pendencias_sicar,
+				nvl(tcs.data_envio, tcs.data_gerado ) data_envio_sicar
 				from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
 					lov_municipio lmp, tab_empreendimento e, tab_empreendimento_endereco ee, lov_estado lee, lov_municipio lme, tab_empreendimento_coord ec, 
 					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct, tab_controle_sicar tcs,
@@ -159,6 +160,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento");
 					}
 
@@ -218,7 +220,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 hec.forma_coleta_texto emp_forma_coleta,
 				hcs.requerimento_id,
                 hcsicar.codigo_imovel numero_sicar,
-                hcsicar.pendencias pendencias_sicar        
+                hcsicar.pendencias pendencias_sicar,
+				nvl(hcsicar.data_envio, hcsicar.data_gerado ) data_envio_sicar
                 from hst_car_solicitacao hcs, hst_pessoa hp, hst_pessoa_endereco hpe,lov_estado lem, hst_empreendimento he, 
                   hst_empreendimento_endereco hee, lov_estado lee, hst_empreendimento_coord hec, TAB_controle_sicar hcsicar,
 				  hst_protocolo	hpt
@@ -287,6 +290,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
 
 					}
