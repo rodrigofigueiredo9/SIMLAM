@@ -223,10 +223,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 				comando.AdicionarParametroEntrada("id", agrotoxico.Id, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
+				#region Deletando dados
 
-                #region Ingredientes Ativos
+				//Ingrediente ativo
+				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_ing_ativo ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
+				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.IngredientesAtivos.Select(x => x.IdRelacionamento).ToList()));
+				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
 
-                agrotoxico.IngredientesAtivos.ForEach(ingrediente =>
+				//DELETE Classe de uso
+				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_classe_uso ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
+				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.ClassesUso.Select(x => x.IdRelacionamento).ToList()));
+				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				//DELETE Grupo Químico
+				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_grupo_quimico ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
+				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.GruposQuimicos.Select(x => x.IdRelacionamento).ToList()));
+				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				//DELETE Praga
+				comando = bancoDeDados.CriarComando(@"delete from {0}tab_agrotoxico_cultura_praga a where a.agrotoxico_cultura in 
+					(select t.id from {0}tab_agrotoxico_cultura t where t.agrotoxico = :agrotoxico)", EsquemaBanco);
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "a.id", DbType.Int32, agrotoxico.Culturas.SelectMany(x => x.Pragas).Select(y => y.IdRelacionamento).ToList());
+				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				//DELETE Modalidades de aplicação
+				comando = bancoDeDados.CriarComando(@"delete from {0}tab_agro_cult_moda_aplicacao a where a.agrotoxico_cultura in 
+					(select t.id from {0}tab_agrotoxico_cultura t where t.agrotoxico = :agrotoxico)", EsquemaBanco);
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "a.id", DbType.Int32, agrotoxico.Culturas.SelectMany(x => x.ModalidadesAplicacao).Select(y => y.IdRelacionamento).ToList());
+				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+				#endregion
+
+				#region Ingredientes Ativos
+
+				agrotoxico.IngredientesAtivos.ForEach(ingrediente =>
                 {
                     if (ingrediente.IdRelacionamento > 0)
                     {
@@ -250,11 +287,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
                     bancoDeDados.ExecutarNonQuery(comando);
                 });
 
-                #endregion
+				#endregion
 
-                #region Classes Uso
+				#region Classes Uso
 
-                agrotoxico.ClassesUso.ForEach(classe =>
+				agrotoxico.ClassesUso.ForEach(classe =>
                 {
                     if (classe.IdRelacionamento > 0)
                     {
@@ -275,11 +312,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
                     bancoDeDados.ExecutarNonQuery(comando);
                 });
 
-                #endregion
+				#endregion
 
-                #region Grupos Químicos
+				#region Grupos Químicos
 
-                agrotoxico.GruposQuimicos.ForEach(grupo =>
+				agrotoxico.GruposQuimicos.ForEach(grupo =>
                 {
                     if (grupo.IdRelacionamento > 0)
                     {
@@ -299,11 +336,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
                     bancoDeDados.ExecutarNonQuery(comando);
                 });
 
-                #endregion
+				#endregion
 
-                #region Culturas
+				#region Culturas
 
-                agrotoxico.Culturas.ForEach(cultura =>
+				agrotoxico.Culturas.ForEach(cultura =>
                 {
                     if (cultura.IdRelacionamento > 0)
                     {
@@ -328,9 +365,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 
                     cultura.IdRelacionamento = cultura.IdRelacionamento > 0 ? cultura.IdRelacionamento : comando.ObterValorParametro<int>("cultura_id");
 
-                    #region Praga
-
-                    Comando comandoAux = null;
+					#region Praga
+									
+					Comando comandoAux = null;
 
                     cultura.Pragas.ForEach(praga =>
                     {
@@ -354,11 +391,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
                         bancoDeDados.ExecutarNonQuery(comandoAux);
                     });
 
-                    #endregion
+					#endregion
 
-                    #region Modalidades de aplicação
+					#region Modalidades de aplicação
 
-                    cultura.ModalidadesAplicacao.ForEach(modalidade =>
+					cultura.ModalidadesAplicacao.ForEach(modalidade =>
                     {
                         if (modalidade.IdRelacionamento > 0)
                         {
@@ -386,21 +423,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 
 				#region Deletando dados
 
-				//Modalidades de aplicação
-				comando = bancoDeDados.CriarComando(@"delete from {0}tab_agro_cult_moda_aplicacao a where a.agrotoxico_cultura in 
-				(select t.id from {0}tab_agrotoxico_cultura t where t.agrotoxico = :agrotoxico)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "a.id", DbType.Int32, agrotoxico.Culturas.SelectMany(x => x.ModalidadesAplicacao).Select(y => y.IdRelacionamento).ToList());
-				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				//Praga
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}tab_agrotoxico_cultura_praga a where a.agrotoxico_cultura in 
-				(select t.id from {0}tab_agrotoxico_cultura t where t.agrotoxico = :agrotoxico)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "a.id", DbType.Int32, agrotoxico.Culturas.SelectMany(x => x.Pragas).Select(y => y.IdRelacionamento).ToList());
-				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
 				//Cultura
 				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_cultura ", EsquemaBanco);
 				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
@@ -408,30 +430,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloAgrotoxico.Data
 				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				//Grupo Químico
-				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_grupo_quimico ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
-				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.GruposQuimicos.Select(x => x.IdRelacionamento).ToList()));
-				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				//Classe de uso
-				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_classe_uso ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
-				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.ClassesUso.Select(x => x.IdRelacionamento).ToList()));
-				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				//Ingrediente ativo
-				comando = bancoDeDados.CriarComando(@"delete from tab_agrotoxico_ing_ativo ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where agrotoxico =:agrotoxico {0}",
-				comando.AdicionarNotIn("and", "id", DbType.Int32, agrotoxico.IngredientesAtivos.Select(x => x.IdRelacionamento).ToList()));
-				comando.AdicionarParametroEntrada("agrotoxico", agrotoxico.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
 				#endregion
-
-				
 
 				Historico.Gerar(agrotoxico.Id, eHistoricoArtefato.agrotoxico, eHistoricoAcao.atualizar, bancoDeDados);
 
