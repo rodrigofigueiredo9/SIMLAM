@@ -98,7 +98,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			_validar = validar;
 		}
-
+		public List<int> LstCadastroAmbientalRuralTituloCodigo
+		{
+			get { return _configTituloModelo.Obter<List<int>>(ConfiguracaoTituloModelo.KeyCadastroAmbientalRuralTituloCodigo); }
+		}
 		#region Ações de DML
 
 		public void Excluir(Titulo titulo)
@@ -254,7 +257,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 
 					Validacao.Add(Mensagem.Titulo.Salvar);
-					Validacao.Add(Mensagem.Retificacao.msgInst4());
+					if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
+					{
+						Validacao.Add(Mensagem.Retificacao.msgInst4());
+					}					
 				}
 			}
 			catch (Exception exc)
