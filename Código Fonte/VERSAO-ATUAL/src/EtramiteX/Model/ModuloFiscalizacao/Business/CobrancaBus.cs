@@ -162,16 +162,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validar.Salvar(cobranca))
 				{
-					var parcelas = cobranca.UltimoParcelamento.DUAS;
-					var valorRestante = 0M;
-					foreach (var parcela in parcelas)
+					foreach (var parcela in cobranca.UltimoParcelamento.DUAS)
 					{
 						if (!parcela.DataPagamento.IsValido && parcela.ValorPago == 0)
 							parcela.DataCancelamento = new DateTecno() { Data = DateTime.Now };
-						valorRestante += parcela.ValorDUA - parcela.ValorPago;
 					}
-
-					cobranca.UltimoParcelamento.DUAS = parcelas;
 					this.Salvar(cobranca.UltimoParcelamento);
 
 					var parcelamento = new CobrancaParcelamento()
@@ -179,10 +174,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						CobrancaId = cobranca.Id,
 						Data1Vencimento = new DateTecno() { Data = DateTime.Now.AddDays(15) },
 						DataEmissao = new DateTecno() { Data = DateTime.Now },
-						ValorMulta = valorRestante,
-						ValorMultaAtualizado = valorRestante,
+						ValorMulta = cobranca.UltimoParcelamento.ValorMulta,
 						DUAS = new List<CobrancaDUA>()
 					};
+					var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
+					parcelamento.ValorMultaAtualizado = Math.Round(this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao) - cobranca.UltimoParcelamento.DUAS.Sum(x => x.ValorPago), 2);
 
 					if (cobranca.AutuadoPessoa == null)
 						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
@@ -274,15 +270,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return prazoDesconto;
 		}
 
-		private decimal GetValorTotalAtualizadoEmReais(Cobranca cobranca, CobrancaParcelamento parcelamento, Parametrizacao parametrizacao, decimal valorMulta)
+		private decimal GetValorTotalAtualizadoEmReais(Cobranca cobranca, CobrancaParcelamento parcelamento, Parametrizacao parametrizacao)
 		{
-			var multaVRTE = valorMulta * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
+			var multaVRTE = parcelamento.ValorMulta * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
 			var jurosVRTE = new Decimal();
 			var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
 			if (diasJuros > 0)
 				jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
 
-			return valorMulta + multaVRTE + (valorMulta * jurosVRTE);
+			return parcelamento.ValorMulta + multaVRTE + (parcelamento.ValorMulta * jurosVRTE);
 		}
 
 		public bool CalcularParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)
@@ -291,13 +287,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (!_validar.Calcular(cobranca, parcelamento)) return retorno;
 
-			var vrte =  _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
+			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year) ?? new Vrte();
 			var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
 			var vrte1Vencimento = _busConfiguracao.ObterVrte(parcelamento.Data1Vencimento.Data.Value.Year) ?? new Vrte();
 
 			if (!_validar.CalcularParametrizacao(parametrizacao, vrte, vrte1Vencimento)) return retorno;
 
-			var valorMultaAtualizadoEmReais = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao, parcelamento.ValorMulta);
+			var valorMultaAtualizadoEmReais = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao);
 			parcelamento.ValorMultaAtualizado = (valorMultaAtualizadoEmReais / vrte.VrteEmReais) * vrte1Vencimento.VrteEmReais;
 			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
 			if ((parcelamento.DUAS?.Count ?? 0) == 0)
@@ -389,7 +385,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 					if (i == 1)
 						parcela.DataVencimento = new DateTecno() { Data = parcelamento.Data1Vencimento.Data };
-					else if(parcelaAnterior.DataVencimento.IsValido)
+					else if (parcelaAnterior.DataVencimento.IsValido)
 					{
 						var dataVencimento = parcelaAnterior.DataVencimento.Data.Value.AddMonths(1);
 						if (dataVencimento.DayOfWeek == DayOfWeek.Saturday)

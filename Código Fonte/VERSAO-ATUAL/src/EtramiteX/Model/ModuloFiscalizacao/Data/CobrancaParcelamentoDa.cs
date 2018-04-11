@@ -199,7 +199,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											p.dataemissao,
 											p.tid
 										from {0}tab_fisc_cob_parcelamento p
-										where p.cobranca = :cobranca", EsquemaBanco);
+										where p.cobranca = :cobranca
+										order by p.id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("cobranca", cobrancaId, DbType.Int32);
 
