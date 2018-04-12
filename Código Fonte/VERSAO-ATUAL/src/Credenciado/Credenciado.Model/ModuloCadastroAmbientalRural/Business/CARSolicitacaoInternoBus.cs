@@ -109,7 +109,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			}
 
 			//return UrlSICAR + resposta["dados"];  // PRODUCAO
-            return "http://homolog-car.mma.gov.br/" + resposta["dados"]; // HOMOLOG
+            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
 		}
 
         public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)

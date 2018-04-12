@@ -99,32 +99,33 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
        
 
-                        if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
+                        /*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
 							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
 								&& resultadoEnvio.mensagensResposta.Any( r=> r.Equals("Foi encontrada sobreposição de 100,00% com outro imóvel já inscrito no CAR que possui os mesmos documentos (CPF e/ou CNPJ).", StringComparison.CurrentCultureIgnoreCase))))
 						{
 							LocalDB.AdicionarItemFila(conn, "revisar-resposta-car", item.Id, nextItem.Requisicao.Substring(0, nextItem.Requisicao.Length - 4), requisicao.empreendimento);
 						}
 						else
-						{
-                            //Retificação
-                            ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
+						{*/
 
-                            if(itemSicar != null)
+						//Retificação
+                        ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
+
+                        if(itemSicar != null)
+                        {
+                            if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
                             {
-                                if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
-                                {
-                                    ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
-                                    ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
-                                }
-                            }                            
-							//Atualiza a Solicitacao do CAR
-							var situacaoSolicitacao = (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso) ? ControleCarDB.SITUACAO_SOLICITACAO_VALIDO : ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE;
-							ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
+                                ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
+                                ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
+                            }
+                        }                            
+						//Atualiza a Solicitacao do CAR
+						var situacaoSolicitacao = (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso) ? ControleCarDB.SITUACAO_SOLICITACAO_VALIDO : ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE;
+						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
 
-							//Atualizar controle de envio do SICAR
-							ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoFinal);
-						}
+						//Atualizar controle de envio do SICAR
+						ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoFinal);
+						//}
 
 						//Marcar como processado
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, true, resultado);

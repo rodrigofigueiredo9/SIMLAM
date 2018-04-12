@@ -72,16 +72,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                     {
                         GerenciadorTransacao.ObterIDAtual();
 
-                        //função não esta sendo usada, pois implementamos outra soluçao no scheduler; arquivo: gerarArquivoCarJob; função: obterDadosReservaLegal;
-                        //var verificar = _da.VerificaSolicitacaoCedente(entidade.Empreendimento.Id);
-                        var verificar = false;
                         using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                         {
                             bancoDeDados.IniciarTransacao();
 
                             entidade.AutorId = User.FuncionarioId;
 
-                            _da.Salvar(entidade, bancoDeDados, verificar);
+                            _da.Salvar(entidade, bancoDeDados);
 
                             bancoDeDados.Commit();
 

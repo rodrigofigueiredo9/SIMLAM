@@ -225,7 +225,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   hec.fuso_utm emp_fuso,
 						   hec.local_coleta_texto emp_local_coleta,
 						   hec.forma_coleta_texto emp_forma_coleta,
-						   hcs.requerimento_id,
+						   hpt.requerimento_id,
 						   (select sicar.codigo_imovel
 							  from tab_controle_sicar sicar
 							 where sicar.solicitacao_car = hcs.solicitacao_id
@@ -241,7 +241,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   hst_empreendimento          he,
 						   hst_empreendimento_endereco hee,
 						   lov_estado                  lee,
-						   hst_empreendimento_coord    hec
+						   hst_empreendimento_coord    hec,
+						   hst_protocolo			   hpt
 					 where hp.pessoa_id = hcs.declarante_id
 					   and hp.tid = hcs.declarante_tid
 					   and hp.id = hpe.id_hst(+)
@@ -252,6 +253,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 					   and hee.correspondencia = 0
 					   and lee.id = hee.estado_id
 					   and hec.id_hst = he.id
+					   and hcs.protocolo_id = hpt.id_protocolo
 					   and hcs.id = (select max(id)
 									   from hst_car_solicitacao hcs1
 									  where hcs1.solicitacao_id = hcs.solicitacao_id)
