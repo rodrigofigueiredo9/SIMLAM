@@ -48,6 +48,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="Interno.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
@@ -72,12 +76,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
+	 <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Credenciado\Credenciado\bin\System.Web.WebPages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions">
@@ -279,6 +283,8 @@
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Lib\Export\ExcelColumnDefinition.cs" />
+    <Compile Include="Lib\Export\ExcelFileResult.cs" />
     <Compile Include="Servicos\FormsAuthenticationService.cs" />
     <Compile Include="Interfaces\IFormsAuthenticationService.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />

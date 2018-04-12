@@ -21,6 +21,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 			get { return _dataEmissao; }
 			set { _dataEmissao = value; }
 		}
+		public string DataEmissaoTexto { get { return this.DataEmissao.DataTexto; } }
 
 		public Decimal ValorMulta { get; set; }
 		public Decimal ValorMultaAtualizado { get; set; }

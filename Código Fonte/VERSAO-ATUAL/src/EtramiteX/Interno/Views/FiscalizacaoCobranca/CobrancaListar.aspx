@@ -1,4 +1,5 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao" %>
+
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarCobrancasVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Controle de Cobrança</asp:Content>
@@ -22,4 +23,3 @@
         <%Html.RenderPartial("CobrancaListarFiltros", Model);%>
     </div>
 </asp:Content>
-

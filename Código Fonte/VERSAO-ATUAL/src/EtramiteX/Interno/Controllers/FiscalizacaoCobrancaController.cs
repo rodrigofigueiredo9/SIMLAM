@@ -199,5 +199,26 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult ExportToExcel(ListarCobrancasVM vm)
+		{
+			vm.Paginacao.PaginaAtual = 1;
+			vm.Paginacao.QuantPaginacao = 10000;
+			Resultados<CobrancasResultado> resultados = _bus.CobrancaFiltrar(vm.Filtros, vm.Paginacao);
+			var columns = new[]
+			 {
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ProcNumero, null, "N° Processo"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.NomeRazaoSocial, null, "Nome/Razão Social"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.NumeroIUF, null, "Nº AI/IUF"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.DataEmissaoTexto, null, "Data Emissão"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ValorMulta, null, "Valor Multa (R$)"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ValorMultaAtualizado, null, "Valor Atualizado (R$)"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ValorPago, null, "Valor Pago (R$)"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.Situacao, null,"Situação")
+			};
+
+			return new ExcelFileResult<CobrancasResultado>(resultados.Itens) { ColumnDefinitions = columns, FileDownloadName = string.Concat(Guid.NewGuid().ToString(), ".xlsx") };
+		}
+
 	}
 }

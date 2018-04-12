@@ -46,3 +46,13 @@
         </tbody>
     </table>
 </div>
+
+<br />
+<div id="bottom">
+    <%
+		string urlExcel = Url.Action("ExportToExcel", "FiscalizacaoCobranca");
+		ViewBag.ExportUrlExcel = urlExcel;
+    %>
+
+    <button class="inlineBotao ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" onclick="window.open('<%=ViewBag.ExportUrlExcel%>')">&nbsp Exportar Excel &nbsp</button>
+</div>
