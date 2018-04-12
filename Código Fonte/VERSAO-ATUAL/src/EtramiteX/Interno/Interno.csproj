@@ -96,9 +96,8 @@
     <Reference Include="Tecnomapas.Blocos.Autenticacao">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Data.dll</HintPath>
+    <Reference Include="Tecnomapas.Blocos.Data">
+      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
