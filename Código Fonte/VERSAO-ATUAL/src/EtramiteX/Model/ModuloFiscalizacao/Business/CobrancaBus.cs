@@ -295,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			var valorMultaAtualizadoEmReais = GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao);
 			parcelamento.ValorMultaAtualizado = (valorMultaAtualizadoEmReais / vrte.VrteEmReais) * vrte1Vencimento.VrteEmReais;
-			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
+			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte1Vencimento.VrteEmReais;
 			if ((parcelamento.DUAS?.Count ?? 0) == 0)
 			{
 				if (parcelamento.QuantidadeParcelas == 0)
