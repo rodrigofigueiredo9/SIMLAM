@@ -264,7 +264,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				if (empreendimento.InternoID > 0)
 				{
                     solicitacao = _daCarSolicitacao.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId ==2)
                         {
@@ -282,7 +282,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 					}
 
                     solicitacao = _carSolicitacaoInternoDa.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId == 2)
                         {
@@ -302,7 +302,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				else
 				{
                     solicitacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacaoProjetoDigital(empreendimento.Id);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId == 2)
                         {
@@ -450,7 +450,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				{
 					int idCredenciadoLogado =_busCred.ObterCredenciadoUsuario(usuarioID);
 
-					if (solicitacao.AutorModuloTexto != "Institucional" && solicitacao.AutorId != idCredenciadoLogado)
+					if (solicitacao.AutorModuloTexto == "Credenciado" && solicitacao.AutorId == idCredenciadoLogado)
 					{
 						Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
 						return false;

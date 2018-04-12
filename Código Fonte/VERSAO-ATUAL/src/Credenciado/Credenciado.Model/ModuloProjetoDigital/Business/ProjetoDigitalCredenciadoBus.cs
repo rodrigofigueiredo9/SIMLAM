@@ -167,13 +167,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 						bancoDeDados.IniciarTransacao();
 
 						int solicitacao = new RequerimentoCredenciadoDa().PossuiSolicitacaoCARValidaSuspensaPendente(projeto.RequerimentoId);
-						if (solicitacao > 0)
+						/*if (solicitacao > 0)
 						{
 							new CARSolicitacaoBus().AlterarSituacao(
 								new CARSolicitacao() { Id = solicitacao },
 								new CARSolicitacao() { SituacaoId = (int)eCARSolicitacaoSituacao.Invalido }, 
 								bancoDeDados);
-						}
+						}*/
 
 						TituloDeclaratorioBus tituloDeclaratorioBus = new TituloDeclaratorioBus();
 						tituloDeclaratorioBus.AcerrarTitulo(projeto.RequerimentoId);
@@ -587,6 +587,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 			try
 			{
 				return _da.PossuiAtividadeCAR(projetoDigitalID);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return false;
+		}
+
+		public bool PossuiSolicitacaoCAR(int projetoDigitalID)
+		{
+			try
+			{
+				return _da.PossuiSolicitacaoCAR(projetoDigitalID);
 			}
 			catch (Exception exc)
 			{

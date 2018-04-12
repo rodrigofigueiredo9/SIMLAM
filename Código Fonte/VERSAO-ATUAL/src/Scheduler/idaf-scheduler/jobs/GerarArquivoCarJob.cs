@@ -1057,18 +1057,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     }
                 }
             }
-            using (var cmd = new OracleCommand("SELECT DATA_EMISSAO FROM "+schema+".TAB_CAR_SOLICITACAO WHERE ID = :solicitacao", conn))
-            {
-                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
-
-                using (var dr = cmd.ExecuteReader())
-                {
-                    if (dr.Read())
-                    {
-                        car.origem.dataProtocolo = Convert.ToDateTime(dr["DATA_EMISSAO"]);
-                    }
-                }
-            }
 
             return car;
         }
