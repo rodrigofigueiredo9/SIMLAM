@@ -919,15 +919,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
         {
             CARSolicitacao solicitacao = new CARSolicitacao();
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
-                #region Solicitação não válida
-                //CREDENCIADO
-                Comando comando = bancoDeDados.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
-                                                                    inner join tab_empreendimento ec on ec.id = c.empreendimento 
-                                                                where c.situacao != 3 and ec.codigo = :codigo order by c.situacao desc");
+				#region Solicitação não válida
+				//CREDENCIADO
+				Comando comando = bancoDeDados.CriarComando(@"select * from	(  select * from	(
+																	select c.id solicitacao, c.SITUACAO, 1 esquema from tab_car_solicitacao c 
+																		  inner join tab_empreendimento ec on ec.id = c.empreendimento 
+																	  where c.situacao != 3 and ec.codigo = :codigo 
+																	  union all
+																	  select c.id solicitacao, c.SITUACAO, 2 esquema from {0}tab_car_solicitacao c 
+																		  inner join {0}tab_empreendimento ec on ec.id = c.empreendimento 
+																	  where c.situacao != 3 and ec.codigo = :codigo 
+																  ) order by situacao desc) where rownum = 1", UsuarioCredenciado);
 
-                comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+				comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
                 int solicitacaoId = 0;
 
@@ -936,25 +942,41 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     if (reader.Read())
                     {
                         solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-                    }
+						solicitacao.Esquema = reader.GetValue<Int32>("esquema");
+					}
                     reader.Close();
                 }
 
                 if (solicitacaoId > 0)
                 {
-                    solicitacao = Obter(solicitacaoId, banco: bancoDeDados);
-                    solicitacao.Esquema = 2;
-                    return solicitacao;
+					if(solicitacao.Esquema == 2)
+					{
+						BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
+
+						solicitacao = Obter(solicitacaoId, banco: bd);
+						return solicitacao;
+					}
+					else if (solicitacao.Esquema == 1)
+					{
+						CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+
+						solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
+						return solicitacao;
+					} 
+                    
                 }
 
                 //INSTITUCIONAL
-                using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
+                /*using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
                 {
-                    comando = bd.CriarComando(@"select c.id solicitacao from tab_car_solicitacao c 
+                    comando = bd.CriarComando(@"select * from (
+															select c.id solicitacao from tab_car_solicitacao c 
                                                                 inner join tab_empreendimento ei on ei.id = c.empreendimento 
-                                                            where c.situacao != 3 and ei.codigo = :codigo order by c.situacao desc");
+                                                            where c.situacao != 3 and ei.codigo = :codigo order by c.situacao desc
+													) where rownum = 1");
 
-                    comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+
+					comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
                     solicitacaoId = 0;
 
@@ -974,7 +996,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                         solicitacao.Esquema = 1;
                         return solicitacao;
                     }
-                }
+                }*/
                 #endregion
             }
 

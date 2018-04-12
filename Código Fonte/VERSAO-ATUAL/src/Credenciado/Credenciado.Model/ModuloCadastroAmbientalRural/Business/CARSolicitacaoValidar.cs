@@ -450,7 +450,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				{
 					int idCredenciadoLogado =_busCred.ObterCredenciadoUsuario(usuarioID);
 
-					if (solicitacao.AutorModuloTexto != "Institucional" && solicitacao.AutorId != idCredenciadoLogado)
+					if (solicitacao.AutorModuloTexto == "Credenciado" && solicitacao.AutorId == idCredenciadoLogado)
 					{
 						Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
 						return false;
