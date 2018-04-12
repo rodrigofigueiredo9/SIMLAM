@@ -9,7 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public string NumeroFiscalizacao { get; set; }
 		public string NumeroAIIUF { get; set; }
 		public string SituacaoFiscalizacao { get; set; }
-		public string SituacaoDUA { get; set; }
+		public string SituacaoCobranca { get; set; }
 		public string NumeroDUA { get; set; }
 		public string NomeRazaoSocial { get; set; }
 		public string CPFCNPJ { get; set; }

@@ -308,8 +308,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				if (filtros.Dados.NumeroRegistroProcesso != null)
 					comandtxt += comando.FiltroAnd("c.protoc_num", "protoc_num", filtros.Dados.NumeroRegistroProcesso);
 
-				if (filtros.Dados.NumeroDUA != null)
-					comandtxt += comando.FiltroAnd("d.numero_dua", "numero_dua", filtros.Dados.NumeroDUA);
+				if (!string.IsNullOrWhiteSpace(filtros.Dados.NumeroDUA))
+				{
+					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.numero_dua = :numero_dua) > 0 ";
+					comando.AdicionarParametroEntrada("numero_dua", filtros.Dados.NumeroDUA, DbType.String);
+				}
 
 				if (filtros.Dados.NumeroFiscalizacao != null)
 					comandtxt += comando.FiltroAnd("c.fiscalizacao", "fiscalizacao", filtros.Dados.NumeroFiscalizacao);
@@ -331,72 +334,85 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				if (Convert.ToBoolean(filtros.Dados.DataVencimentoDe?.IsValido))
 				{
-					comandtxt += " and d.vencimento_data >= :vencimentode ";
+					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.vencimento_data >= :vencimentode) > 0 ";
 					comando.AdicionarParametroEntrada("vencimentode", filtros.Dados.DataVencimentoDe.Data, DbType.Date);
 				}
-
+				
 				if (Convert.ToBoolean(filtros.Dados.DataVencimentoAte?.IsValido))
 				{
-					comandtxt += " and d.vencimento_data <= :vencimentoate ";
+					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.vencimento_data <= :vencimentoate) > 0 ";
 					comando.AdicionarParametroEntrada("vencimentoate", filtros.Dados.DataVencimentoAte.Data, DbType.Date);
 				}
 
 				if (Convert.ToBoolean(filtros.Dados.DataPagamentoDe?.IsValido))
 				{
-					comandtxt += " and d.pagamento_data >= :pagamentode ";
+					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.pagamento_data >= :pagamentode) > 0 ";
 					comando.AdicionarParametroEntrada("pagamentode", filtros.Dados.DataPagamentoDe.Data, DbType.Date);
 				}
 
 				if (Convert.ToBoolean(filtros.Dados.DataPagamentoAte?.IsValido))
 				{
-					comandtxt += " and d.pagamento_data <= :pagamentoate ";
+					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.pagamento_data <= :pagamentoate) > 0 ";
 					comando.AdicionarParametroEntrada("pagamentoate", filtros.Dados.DataPagamentoAte.Data, DbType.Date);
 				}
 
-				if (Convert.ToInt32(filtros.Dados.SituacaoDUA) != 0)
-					whereSituacao += comando.FiltroAnd("situacao", "situacao", GetEnumSituacaoDuo(Convert.ToInt32(filtros.Dados.SituacaoDUA)));
+				if (Convert.ToInt32(filtros.Dados.SituacaoCobranca) != 0)
+					whereSituacao += comando.FiltroAnd("situacao", "situacao", GetEnumSituacaoCobranca(Convert.ToInt32(filtros.Dados.SituacaoCobranca)));
 
 				#endregion
 
 				#region Ordenação
 				List<String> ordenar = new List<String>();
-				List<String> colunas = new List<String>() { "parcela", "numero_dua", "protoc_num", "iuf_numero", "dataemissao", "valor_dua", "valor_pago", "vrte", "pagamento_data", "situacao" };
+				List<String> colunas = new List<String>() { "protoc_num", "razao_social", "iuf_numero", "dataemissao", "valor_multa", "valor_multa_atualizado", "valor_pago", "situacao" };
 
 				if (filtros.OdenarPor > 0)
 					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
 				else
-					ordenar.Add("iuf_numero");
+					ordenar.Add("protoc_num");
 				#endregion Ordenação
 
-				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select d.id,
-                                                                case
-																when d.cancelamento_data is not null
-																	then 'Cancelado'
-																when d.pagamento_data is null 
-																	and d.vencimento_data >= sysdate
-																	or d.valor_dua is null
-																	or d.valor_dua = 0
-																	then 'Em Aberto'
-																when d.pagamento_data is not null
-																	and d.valor_pago >= d.valor_dua
-																	or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id)
-																	then 'Pago'
-																when d.pagamento_data is not null
-																	and d.valor_pago < d.valor_dua
-																	then 'Pago Parcial'
-																when d.pagamento_data is null and d.vencimento_data < sysdate
-																	then 'Atrasado'
-																end as situacao
-                                                                from tab_fisc_cob_dua d
-															    left join tab_fisc_cob_parcelamento p
-															    on (d.cob_parc = p.id)
-															    left join tab_fisc_cobranca c
-																on (p.cobranca = c.id)
-																left join tab_fiscalizacao f
-																on (c.fiscalizacao = f.id)
-																left join tab_pessoa a
-																on (c.autuado = a.id)
-																where 1=1" + comandtxt + @") consulta 
+				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select c.id,
+																	c.fiscalizacao,
+																	case when pt.id > 0
+																	  then concat(concat(cast(pt.numero as VARCHAR2(30)), '/'), cast(pt.ano as VARCHAR2(30)))
+																	  else cast(c.protoc_num as VARCHAR2(30)) end protoc_num,
+																	coalesce(a.nome, a.razao_social) razao_social,
+																	c.iuf_numero,
+																	p.dataemissao,
+																	p.valor_multa,
+																	p.valor_multa_atualizado,
+																	(select sum(valor_pago) from tab_fisc_cob_dua d
+																	where d.cob_parc = p.id) valor_pago,
+																	case
+																		when (select count(*) from tab_fisc_cob_dua d
+																			where d.pagamento_data is null and d.vencimento_data < sysdate
+																			and d.cob_parc = p.id) > 0 
+																		then 'Atrasado'
+																		when (select count(*) from tab_fisc_cob_dua d
+																			where d.pagamento_data is not null												
+																			and d.cob_parc = p.id) > 0 
+																		then 'Pago'
+																		when (select count(*) from tab_fisc_cob_dua d
+																			where d.pagamento_data is not null												
+																			and d.cob_parc = p.id) > 0 
+																			and (select count(*) from tab_fisc_cob_dua d
+																			where d.pagamento_data is null										
+																			and d.cob_parc = p.id) > 0 
+																		then 'Pago Parcial'
+																		else 'Em Aberto'
+																	end as situacao
+																	from tab_fisc_cobranca c
+																	left join tab_fisc_cob_parcelamento p
+																		on (c.id = p.cobranca)                      
+																	left join tab_fiscalizacao f
+																		on (c.fiscalizacao = f.id)
+																	left join tab_fisc_local_infracao i
+																		on (i.fiscalizacao = f.id)
+																	left join tab_protocolo pt
+																		on (pt.fiscalizacao = c.fiscalizacao)
+																	left join tab_pessoa a
+																		on (a.id = coalesce(i.pessoa, i.responsavel, c.autuado)) 
+																	where 1=1 " + comandtxt + @") consulta 
 																where 1=1" + whereSituacao + ")", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				lista.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
@@ -406,51 +422,53 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region QUERY
 
-				comandtxt = String.Format(@"select * from (select d.id,
-											d.vencimento_data,
-											d.dataemissao,
-											d.parcela,
-											d.numero_dua,
-											d.valor_dua,
-											d.valor_pago,
-											d.vrte,
-											d.pagamento_data,
-											d.complemento,
-											d.pai_dua,
-											d.cob_parc,
-											d.cancelamento_data,
-											d.tid,
-                                            c.fiscalizacao,
-                                            c.protoc_num,
-                                            c.iuf_numero,
-                                            c.numero_autuacao,
+				comandtxt = String.Format(@"select * from (select c.id,
+											c.fiscalizacao,
+											case when pt.id > 0
+												then concat(concat(cast(pt.numero as VARCHAR2(30)), '/'), cast(pt.ano as VARCHAR2(30)))
+												else cast(c.protoc_num as VARCHAR2(30))
+											end protoc_num,
+											coalesce(a.nome, a.razao_social) razao_social,
+											c.iuf_numero,
+											p.dataemissao,
+											p.valor_multa,
+											p.valor_multa_atualizado,
+											(select sum(valor_pago) from tab_fisc_cob_dua d
+											where d.cob_parc = p.id) valor_pago,
 											case
-											when d.cancelamento_data is not null
+												when (select count(*) from tab_fisc_cob_dua d
+													where d.cancelamento_data is not null
+													and d.cob_parc = p.id) > 0 
 												then 'Cancelado'
-											when d.pagamento_data is null 
-												and d.vencimento_data >= sysdate
-												or d.valor_dua is null
-												or d.valor_dua = 0
-												then 'Em Aberto'
-											when d.pagamento_data is not null
-												and d.valor_pago >= d.valor_dua
-												or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id)
-												then 'Pago'
-											when d.pagamento_data is not null
-												and d.valor_pago < d.valor_dua
-												then 'Pago Parcial'
-											when d.pagamento_data is null and d.vencimento_data < sysdate
+												when (select count(*) from tab_fisc_cob_dua d
+													where d.pagamento_data is null and d.vencimento_data < sysdate
+													and d.cob_parc = p.id) > 0 
 												then 'Atrasado'
+												when (select count(*) from tab_fisc_cob_dua d
+													where d.pagamento_data is not null												
+													and d.cob_parc = p.id) > 0 
+												then 'Pago'
+												when (select count(*) from tab_fisc_cob_dua d
+													where d.pagamento_data is not null												
+													and d.cob_parc = p.id) > 0 
+													and (select count(*) from tab_fisc_cob_dua d
+													where d.pagamento_data is null										
+													and d.cob_parc = p.id) > 0 
+												then 'Pago Parcial'
+												else 'Em Aberto'
 											end as situacao
-										    from {0}tab_fisc_cob_dua d
-                                            left join tab_fisc_cob_parcelamento p
-											on (d.cob_parc = p.id)
-                                            left join tab_fisc_cobranca c
-											on (p.cobranca = c.id)
+											from tab_fisc_cobranca c
+											left join tab_fisc_cob_parcelamento p
+												on (c.id = p.cobranca)                      
 											left join tab_fiscalizacao f
-											on (c.fiscalizacao = f.id)
+												on (c.fiscalizacao = f.id)
+											left join tab_fisc_local_infracao i
+												on (i.fiscalizacao = f.id)
+											left join tab_protocolo pt
+												on (pt.fiscalizacao = c.fiscalizacao)
 											left join tab_pessoa a
-											on (c.autuado = a.id) where 1=1 " + comandtxt + @") cobranca
+												on (a.id = coalesce(i.pessoa, i.responsavel, c.autuado)) 
+											where 1=1 " + comandtxt + @") cobranca
                                             where 1=1 " + whereSituacao + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
@@ -463,34 +481,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					{
 						var cobrancaDUA = new CobrancasResultado
 						{
-							Id = reader.GetValue<int>("id"),
-							Parcela = reader.GetValue<string>("parcela"),
-							NumeroDUA = reader.GetValue<int>("numero_dua"),
-							ValorDUA = reader.GetValue<decimal>("valor_dua"),
-							ValorPago = reader.GetValue<decimal>("valor_pago"),
-							VRTE = reader.GetValue<decimal>("vrte"),
-							InformacoesComplementares = reader.GetValue<string>("complemento"),
-							ParcelaPaiId = reader.GetValue<int>("pai_dua"),
-							ParcelamentoId = reader.GetValue<int>("cob_parc"),
-							Tid = reader.GetValue<string>("tid"),
 							Fiscalizacao = reader.GetValue<string>("fiscalizacao"),
 							ProcNumero = reader.GetValue<string>("protoc_num"),
+							NomeRazaoSocial = reader.GetValue<string>("razao_social"),
+							NumeroIUF = reader.GetValue<string>("iuf_numero"),
+							ValorMulta = reader.GetValue<decimal>("valor_multa"),
+							ValorMultaAtualizado = reader.GetValue<decimal>("valor_multa_atualizado"),
+							ValorPago = reader.GetValue<decimal>("valor_pago"),
 							Situacao = reader.GetValue<string>("situacao"),
-							iufNumero = reader.GetValue<string>("iuf_numero")
 						};
 
-						cobrancaDUA.DataVencimento.Data = reader.GetValue<DateTime>("vencimento_data");
 						cobrancaDUA.DataEmissao.Data = reader.GetValue<DateTime>("dataemissao");
-						cobrancaDUA.DataPagamento.Data = reader.GetValue<DateTime>("pagamento_data");
-						cobrancaDUA.DataCancelamento.Data = reader.GetValue<DateTime>("cancelamento_data");
-						if (cobrancaDUA.DataVencimento.Data.HasValue && cobrancaDUA.DataVencimento.Data.Value.Year == 1)
-							cobrancaDUA.DataVencimento = new DateTecno();
 						if (cobrancaDUA.DataEmissao.Data.HasValue && cobrancaDUA.DataEmissao.Data.Value.Year == 1)
 							cobrancaDUA.DataEmissao = new DateTecno();
-						if (cobrancaDUA.DataPagamento.Data.HasValue && cobrancaDUA.DataPagamento.Data.Value.Year == 1)
-							cobrancaDUA.DataPagamento = new DateTecno();
-						if (cobrancaDUA.DataCancelamento.Data.HasValue && cobrancaDUA.DataCancelamento.Data.Value.Year == 1)
-							cobrancaDUA.DataCancelamento = new DateTecno();
 
 						lista.Itens.Add(cobrancaDUA);
 					}
@@ -502,7 +505,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return lista;
 		}
 
-		private string GetEnumSituacaoDuo(int v)
+		private string GetEnumSituacaoCobranca(int v)
 		{
 			switch (v)
 			{
