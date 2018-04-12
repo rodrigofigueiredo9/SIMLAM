@@ -302,7 +302,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					parcelamento.QuantidadeParcelas = this.GetMaximoParcelas(cobranca, parcelamento);
 				parcelamento.DUAS = this.GerarParcelas(cobranca, parcelamento);
 			}
-			var parcelas = parcelamento.DUAS.OrderBy(x => x.Parcela.Split('/')[0]).ToList();
+			var parcelas = parcelamento.DUAS.OrderBy(x => Convert.ToInt32(x.Parcela.Split('/')[0])).ToList();
 
 			if (parcelas.Count == 1 && cobranca.Parcelamentos?.Count <= 1)
 			{
@@ -344,7 +344,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					{
 						if (parcela.VRTE == 0)
 						{
-							if (parcela.Parcela[0] == '1')
+							if ((parcela.Parcela.Split('/')[0]).Equals("1"))
 								parcela.VRTE = Math.Round(valorAtualizadoVRTE / parcelamento.QuantidadeParcelas, 4);
 							else
 								parcela.VRTE = Math.Round(parcelaAnterior.VRTE * valorJuros, 4);
