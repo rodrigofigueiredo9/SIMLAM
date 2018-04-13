@@ -142,8 +142,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
                     reader.Close();
                 }
-                //se a área for DDSIA, converte as coordenadas para Grau, Minuto e Segundo
-                if (area == 0)
+
+				//se a área for DDSIA, converte as coordenadas para Grau, Minuto e Segundo
+				if (area == 0)
                 {
                     comando = bancoDeDados.CriarComandoPlSql(@"
                                 begin
@@ -161,9 +162,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     objeto.CoordenadaEasting = comando.ObterValorParametro<string>("longitude");
                     objeto.CoordenadaNorthing = comando.ObterValorParametro<string>("latitude");
                     objeto.SistemaCoordenada = "GMS";
-                }
+					objeto.AreaFiscalizacao = "DDSIA";
+				}
+				else if(area == 1)
+					objeto.AreaFiscalizacao = "DDSIV";
+				else if(area == 2)
+					objeto.AreaFiscalizacao = "DRNRE";
 
-                if (objeto.EmpreendimentoId > 0)
+				if (objeto.EmpreendimentoId > 0)
                 {
                     objeto.EmpEndereco = ObterEmpEndereco(objeto.EmpreendimentoId, bancoDeDados);
 
