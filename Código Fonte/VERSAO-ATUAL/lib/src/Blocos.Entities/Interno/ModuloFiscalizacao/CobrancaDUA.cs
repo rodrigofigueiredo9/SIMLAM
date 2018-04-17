@@ -28,7 +28,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		}
 
 		public String Parcela { get; set; }
-		public Int32 NumeroDUA { get; set; }
+		public String NumeroDUA { get; set; }
 		public Decimal ValorDUA { get; set; }
 		public Decimal ValorPago { get; set; }
 		public Decimal VRTE { get; set; }

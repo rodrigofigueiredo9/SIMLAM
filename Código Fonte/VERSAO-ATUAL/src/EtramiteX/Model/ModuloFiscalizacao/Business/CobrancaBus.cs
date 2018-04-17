@@ -57,6 +57,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validar.Salvar(entidade))
 				{
+					if (_da.GetIdCobrancaByFiscalizacao(entidade.NumeroFiscalizacao, entidade.Id) > 0)
+					{
+						Validacao.Add(Mensagem.CobrancaMsg.CobrancaDuplicada);
+						return Validacao.EhValido;
+					}
+
+					if (_da.GetIdCobrancaByIUFSerie(entidade.NumeroIUF, entidade.SerieId, entidade.AutuadoPessoaId, entidade.Id) > 0)
+					{
+						Validacao.Add(Mensagem.CobrancaMsg.CobrancaDuplicadaIUF);
+						return Validacao.EhValido;
+					}
+
+					if (_da.GetIdCobrancaByNumeroAutuacao(entidade.NumeroAutuacao, entidade.Id) > 0)
+					{
+						Validacao.Add(Mensagem.CobrancaMsg.CobrancaDuplicadaNumeroAutuacao(entidade.NumeroAutuacao));
+						return Validacao.EhValido;
+					}
+
 					GerenciadorTransacao.ObterIDAtual();
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
@@ -113,6 +131,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validarDUA.Salvar(cobrancaDUA))
 				{
+					var idDua = _daDUA.GetIdDUAByNumero(cobrancaDUA.NumeroDUA, cobrancaDUA.Id);
+					if (idDua != cobrancaDUA.Id)
+					{
+						var dua = _daDUA.ObterDUA(idDua, banco);
+						Validacao.Add(Mensagem.CobrancaMsg.DuaDuplicado(dua.NumeroDUA, dua.Parcela, _da.GetIdFiscalizacaoByParcelamento(dua.ParcelamentoId, banco)));
+						return Validacao.EhValido;
+					}
+
 					GerenciadorTransacao.ObterIDAtual();
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -272,6 +298,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		private decimal GetValorTotalAtualizadoEmReais(Cobranca cobranca, CobrancaParcelamento parcelamento, Parametrizacao parametrizacao)
 		{
+			var prazoDesconto = parametrizacao.PrazoDescontoUnidade * GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
+			if (parcelamento.Data1Vencimento.Data.Value < cobranca.DataIUF.Data.Value.AddDays(prazoDesconto + 1).Date)
+				return parcelamento.ValorMulta;
+
 			var multaVRTE = parcelamento.ValorMulta * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
 			var jurosVRTE = new Decimal();
 			var diasJuros = Convert.ToDecimal(parcelamento.Data1Vencimento.Data.Value.Date.Subtract(cobranca.DataIUF.Data.Value.Date).TotalDays);
@@ -312,7 +342,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					var prazoDesconto = parametrizacao.PrazoDescontoUnidade * GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
 					var vrteParcela = _busConfiguracao.ObterVrte(parcela.DataVencimento.Data.Value.Year);
 
-					if (parcela.DataVencimento.Data <= cobranca.DataIUF.Data.Value.AddDays(prazoDesconto))
+					if (parcela.DataVencimento.Data < cobranca.DataIUF.Data.Value.AddDays(prazoDesconto + 1).Date)
 					{
 						parcelamento.ValorMultaAtualizado = parcelamento.ValorMulta;
 						valorAtualizadoVRTE = parcelamento.ValorMulta / vrte.VrteEmReais;
@@ -415,6 +445,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
 			if ((vrte?.Id ?? 0) == 0) return 0;
 
+			if (parcelamento.ValorMultaAtualizado == 0)
+				parcelamento.ValorMultaAtualizado = this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao);
+
 			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
 			var parcela = 0;
 
@@ -437,7 +470,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 		public bool AlterarSituacaoFiscalizacao(Cobranca cobranca, BancoDeDados banco = null)
 		{
 			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao);
-			if (fiscalizacao == null) return false;
+			if ((fiscalizacao?.Id ?? 0) == 0) return false;
 
 			if ((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
 

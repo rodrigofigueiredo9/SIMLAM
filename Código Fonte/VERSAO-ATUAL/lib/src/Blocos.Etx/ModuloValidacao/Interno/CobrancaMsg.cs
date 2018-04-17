@@ -29,6 +29,10 @@
 		public Mensagem ParametrizacaoNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado parametrização para este código de receita e ano de emissão AI/IUF." }; } }
 		public Mensagem VrteNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado configuração de VRTE para a Data da Notificação IUF informada." }; } }
 		public Mensagem VrteVencimentoNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado configuração de VRTE para a Data 1º Vemcomento informada." }; } }
+		public Mensagem CobrancaDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Já existe uma cobrança cadastrada para esta fiscalização." }; } }
+		public Mensagem CobrancaDuplicadaIUF { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Já existe uma cobrança cadastrada com este Número AI/IUF e Série para outro autuado." }; } }
+		public Mensagem CobrancaDuplicadaNumeroAutuacao(string autos) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = $"Já existe uma cobrança cadastrada com o N° Autuação (SEP): {autos}." }; }
+		public Mensagem DuaDuplicado(string numeroDua, string parcela, int fiscalizacao) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = $"N° de DUA {numeroDua} referente a parcela {parcela} da fiscalização {fiscalizacao}." }; }
 
 		public Mensagem DataIUFFutura { get { return new Mensagem() { Campo = "Cobranca_DataIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação IUF não pode ser futura." }; } }
 		public Mensagem DataJIAPIFutura { get { return new Mensagem() { Campo = "Cobranca_DataJIAPI", Tipo = eTipoMensagem.Advertencia, Texto = "Data da notificação JIAPI não pode ser futura." }; } }

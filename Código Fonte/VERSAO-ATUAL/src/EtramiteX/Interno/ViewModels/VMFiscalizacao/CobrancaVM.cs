@@ -48,6 +48,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _situacaoFiscalizacao = value; }
 		}
 
+		public List<SelectListItem> Series { get; set; }
+
 		public String Mensagens
 		{
 			get
@@ -81,8 +83,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			if (entidade.Parcelamentos != null)
 			{
 				Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
-				Parcelas = GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
+				Parcelas = this.GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
 			}
+			this.Series = new List<SelectListItem>();
 		}
 
 		private List<SelectListItem> GetListParcelas(int quantidadeParcelas, int parcelaSelected)
@@ -103,7 +106,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		{
 			var list = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
 			var item = list.Find(x => x.Value == idCodigoReceita.ToString());
-			item.Selected = true;
+			if(item != null)
+				item.Selected = true;
 
 			return list;
 		}

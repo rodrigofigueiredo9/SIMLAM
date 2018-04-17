@@ -30,9 +30,9 @@
                     </td>
                     <td>
 						<% if (Model.IsVisualizar) { %>
-							<span class="numeroDUA" title="<%:parcela.NumeroDUA%>"><%:parcela.NumeroDUA%></span>
+							<span class="numeroDUA" title="<%:parcela.NumeroDUA ?? ""%>"><%:parcela.NumeroDUA ?? ""%></span>
 						<%} else {%>
-							<input class="text numeroDUA maskNum10" value="<%:parcela.NumeroDUA%>" style="width: 100%;" />
+							<input class="text numeroDUA maskNum10" value="<%:parcela.NumeroDUA ?? ""%>" style="width: 100%;" />
 						<%} %>
                     </td>
                     <td>
@@ -42,10 +42,10 @@
 							<input class="text dataVencimento maskData" value="<%:parcela.DataVencimento.DataTexto ?? "" %>" style="width: 100%;" />
 						<%} %>
                     </td>
-                    <td>
+                    <td style="text-align: right;">
                         <span class="valorDUA" title="<%:parcela.ValorDUA%>"><%: String.Format("{0:N}", parcela.ValorDUA) %></span>
                     </td>					
-					<td <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>
+					<td <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %> style="text-align: right;">
 						<% if (Model.IsVisualizar) { %>
 							<span class="valorPago" title="<%:parcela.ValorPago%>"><%: String.Format("{0:N}", parcela.ValorPago) %></span>
 						<%} else {%>
@@ -53,7 +53,7 @@
 							<%= Html.TextBox("valorPago", valorPago, new { @class = "text maskDecimalPonto2 valorPago", @maxlength = "13", @width = "100%" })%> 
 						<%} %>
 					</td>
-                    <td>
+                    <td style="text-align: right;">
                         <span class="vrte" title="<%:parcela.VRTE%>"><%: String.Format("{0:N4}", parcela.VRTE) %></span>
                     </td>
 					<td <%= Request.QueryString["origem"] == "notificacao" ? "hidden" : "" %>>
@@ -70,7 +70,7 @@
 						<% if (Model.IsVisualizar) { %>
 							<span class="informacoesComplementares" title="<%:parcela.InformacoesComplementares ?? ""%>"><%:parcela.InformacoesComplementares ?? ""%></span>
 						<%} else {%>
-							<input class="text informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="100" />
+							<input class="text informacoesComplementares" value="<%:parcela.InformacoesComplementares ?? ""%>" style="width: 100%;" maxlength="256" />
 						<%} %>
                     </td>
 					<% if (!Model.IsVisualizar) { %>

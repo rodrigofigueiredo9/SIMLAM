@@ -35,6 +35,7 @@ Cobranca = {
 		container.delegate('.btnSalvar', 'click', Cobranca.salvar);
 		container.delegate('.btnEditar', 'click', Cobranca.editar);
 		container.delegate('.btnAddSubparcela', 'click', Cobranca.addSubparcela);
+		container.delegate('.btnAtualizar', 'click', Cobranca.atualizar);
 		container.delegate('.btnRecalcular', 'click', Cobranca.recalcular);
 		container.delegate('.btnNovoParcelamento', 'click', Cobranca.novoParcelamento);
 		container.delegate('.btnParcelamentoAnterior', 'click', Cobranca.parcelamentoAnterior);
@@ -44,7 +45,6 @@ Cobranca = {
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
-		container.delegate('.txtData1Vencimento', 'blur', Cobranca.alterarParcelas);
 		
 		$('.txtProcessoNumero', container).focus();
 	},
@@ -63,8 +63,7 @@ Cobranca = {
 			NumeroAutuacao: $('.txtNumeroAutuacao', container).val(),
 			NumeroFiscalizacao: $('.txtFiscalizacao', container).val(),
 			NumeroIUF: $('.txtNumeroIUF', container).val(),
-			SerieId: $('.hdnSerieId', container).val(),
-			SerieTexto: $('.txtSerie', container).val(),
+			SerieId: $('.ddlSeries :selected', container).val(),
 			DataEmissaoIUF: { DataTexto: $('.txtDataEmissaoIUF', container).val() },
 			DataIUF: { DataTexto: $('.txtDataIUF', container).val() },
 			DataJIAPI: { DataTexto: $('.txtDataJIAPI', container).val() },
@@ -247,6 +246,35 @@ Cobranca = {
 		});
 	},
 
+	atualizar: function () {
+		MasterPage.carregando(true);
+		$.ajax({
+			url: Cobranca.settings.urls.recalcular,
+			data: JSON.stringify(Cobranca.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, Cobranca.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Cobranca.container, response.Msg);
+				}
+
+				if (response.Html && response.Html.length > 0) {
+					$('.cobrancaPartial', Cobranca.container).html(response.Html);
+				}
+				MasterPage.load();
+				MasterPage.redimensionar();
+				Mascara.load(Cobranca.container);
+			}
+		});
+		MasterPage.carregando(false);
+	},
+
 	addSubparcela: function () {
 		var newRow = $(this.parentElement.parentElement).clone();
 		if (newRow[0].children[7].children[0].innerText == "Pago Parcial") {
@@ -345,8 +373,7 @@ Cobranca = {
 				tituloCriar: 'Cadastrar Autuado',
 				tituloEditar: 'Editar Autuado',
 				tituloVisualizar: 'Visualizar Autuado',
-				onAssociarCallback: Cobranca.callBackEditarAutuado,
-				isFiscalizacao: true
+				onAssociarCallback: Cobranca.callBackEditarAutuado
 			});
 		});
 	},

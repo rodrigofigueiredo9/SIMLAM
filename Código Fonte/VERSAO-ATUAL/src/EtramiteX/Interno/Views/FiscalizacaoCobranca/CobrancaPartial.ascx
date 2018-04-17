@@ -25,8 +25,7 @@
         </div>
         <div class="coluna15">
             <label>Série</label><br />
-            <%= Html.TextBox("Cobranca.Serie", Model.Entidade.SerieTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtSerie" }))%>
-            <%= Html.Hidden("hdnSerieId", Model.Entidade.SerieId, new { @class = "hdnSerieId" })%>
+			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0), new { @class = "text ddlSeries" }))%>
         </div>
         <div class="coluna15">
             <label>Data Emissão AI / IUF</label><br />
@@ -57,12 +56,12 @@
             <%= Html.DropDownList("Cobranca.CodigoReceita", Model.CodigoReceita, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.CodigoReceitaId > 0, new { @class = "text ddlCodigoReceita", @style = "height:21px;" }))%>
         </div>
 
-		 <div class="coluna15">
+        <div class="coluna15">
             <label for="Cobranca_ValorMulta">Valor Multa (R$) *</label>
             <%= Html.TextBox("Cobranca.ValorMulta", String.Format("{0:N2}",  Model.Parcelamento.ValorMulta), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.ValorMulta > 0, new { @class = "text maskDecimalPonto2 txtValorMulta", @maxlength = "17"}))%>
         </div>
 
-		<div class="coluna31">
+        <div class="coluna31">
             <label for="Cobranca_SituacaoFiscalizacao">Situação Fiscalização</label>
             <%= Html.DropDownList("Cobranca.SituacaoFiscalizacao", Model.SituacaoFiscalizacao, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlSituacaoFiscalizacao", @style = "height:21px;" }))%>
         </div>
@@ -91,8 +90,13 @@
         </div>
 
         <div class="coluna15">
-            <label for="Cobranca_Parcelas">Parcelas *</label>
-            <%= Html.DropDownList("Cobranca.Parcelas", Model.Parcelas, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.DUAS.FindAll(x => x.Id > 0).Count > 0, new { @class = "text ddlParcelas", @style = "height:21px;" }))%>
+            <label for="Cobranca_Parcelas">Parcelas *</label><br />
+            <div class="coluna20 append1" >
+                <input class="icone refresh btnAtualizar"  type="button" <%=  Model.IsVisualizar || Model.Parcelamento.DUAS.FindAll(x => x.Id > 0).Count > 0 ? "disabled" : ""%>/>
+            </div>
+            <div class="coluna77">
+                <%= Html.DropDownList("Cobranca.Parcelas", Model.Parcelas, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Parcelamento.DUAS.FindAll(x => x.Id > 0).Count > 0, new { @class = "text ddlParcelas", @style = "height:21px;" }))%>
+            </div>
         </div>
 
         <div class="coluna15">
