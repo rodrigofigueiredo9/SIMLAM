@@ -116,7 +116,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				    comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
 				comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutosExtenso, DbType.String);
                 comando.AdicionarParametroEntrada("valor_produtos_reais", materialApreendido.ValorProdutosReais, DbType.Decimal);
-				comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
+				comando.AdicionarParametroEntClob("opiniao", materialApreendido.Opiniao);
 				comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
 				comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);
@@ -234,7 +234,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     comando.AdicionarParametroEntrada("endereco_municipio", materialApreendido.Depositario.Municipio, DbType.Int32);
                 comando.AdicionarParametroEntrada("valor_produtos", materialApreendido.ValorProdutosExtenso, DbType.String);
                 comando.AdicionarParametroEntrada("valor_produtos_reais", materialApreendido.ValorProdutosReais, DbType.Decimal);
-                comando.AdicionarParametroEntrada("opiniao", materialApreendido.Opiniao, DbType.String);
+                comando.AdicionarParametroEntClob("opiniao", materialApreendido.Opiniao);
                 comando.AdicionarParametroEntrada("descricao", materialApreendido.Descricao, DbType.String);
                 comando.AdicionarParametroEntrada("endereco_logradouro", materialApreendido.Depositario.Logradouro, DbType.String);
                 comando.AdicionarParametroEntrada("endereco_bairro", materialApreendido.Depositario.Bairro, DbType.String);

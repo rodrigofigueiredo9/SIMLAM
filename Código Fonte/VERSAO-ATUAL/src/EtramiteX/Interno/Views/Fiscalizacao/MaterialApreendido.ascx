@@ -56,7 +56,7 @@
         <div class="block">
 			<div class="coluna75">
 				<label>Descrever a apreensão *</label>
-				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "300" }))%>
+				<%= Html.TextArea("MaterialApreendido.Descricao", Model.MaterialApreendido.Descricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricao", @maxlength = "455" }))%>
 			</div>
 		</div>
 
