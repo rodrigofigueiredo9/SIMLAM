@@ -210,6 +210,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			 {
 				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ProcNumero, null, "N° Processo"),
 				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.NomeRazaoSocial, null, "Nome/Razão Social"),
+				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.Fiscalizacao, null, "Nº Fiscalização"),
 				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.NumeroIUF, null, "Nº AI/IUF"),
 				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.DataEmissaoTexto, null, "Data Emissão"),
 				ExcelColumnDefinition.Create<CobrancasResultado>(x => x.ValorMulta, null, "Valor Multa (R$)"),
