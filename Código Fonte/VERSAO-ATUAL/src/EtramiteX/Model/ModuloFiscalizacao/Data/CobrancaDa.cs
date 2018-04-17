@@ -363,12 +363,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				#region Ordenação
 				List<String> ordenar = new List<String>();
-				List<String> colunas = new List<String>() { "protoc_num", "razao_social", "iuf_numero", "dataemissao", "valor_multa", "valor_multa_atualizado", "valor_pago", "situacao" };
+				List<String> colunas = new List<String>() { "protoc_num", "razao_social", "fiscalizacao", "iuf_numero", "dataemissao", "valor_multa", "valor_multa_atualizado", "valor_pago", "situacao" };
 
 				if (filtros.OdenarPor > 0)
 					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
 				else
-					ordenar.Add("protoc_num");
+					ordenar.Add("dataemissao");
 				#endregion Ordenação
 
 				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select * from (select c.id,
@@ -389,14 +389,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																			and d.cob_parc = p.id) > 0 
 																		then 'Atrasado'
 																		when (select count(*) from tab_fisc_cob_dua d
-																			where d.pagamento_data is not null												
-																			and d.cob_parc = p.id) > 0 
-																		then 'Pago'
-																		when (select count(*) from tab_fisc_cob_dua d
-																			where d.pagamento_data is not null												
+																			where ((d.pagamento_data is not null												
+																			and d.valor_pago >= d.valor_dua)
+																			or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id))
 																			and d.cob_parc = p.id) > 0 
 																			and (select count(*) from tab_fisc_cob_dua d
 																			where d.pagamento_data is null										
+																			and d.cob_parc = p.id) = 0 
+																		then 'Pago'
+																		when (select count(*) from tab_fisc_cob_dua d
+																			where d.pagamento_data is not null												
 																			and d.cob_parc = p.id) > 0 
 																		then 'Pago Parcial'
 																		else 'Em Aberto'
@@ -412,7 +414,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 																		on (pt.fiscalizacao = c.fiscalizacao)
 																	left join tab_pessoa a
 																		on (a.id = coalesce(i.pessoa, i.responsavel, c.autuado)) 
-																	where 1=1 " + comandtxt + @") consulta 
+																	where not exists (select 1 from tab_fisc_cob_dua d
+																	where d.cob_parc = p.id and d.cancelamento_data is not null) " + comandtxt + @") consulta 
 																where 1=1" + whereSituacao + ")", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				lista.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
@@ -437,22 +440,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											where d.cob_parc = p.id) valor_pago,
 											case
 												when (select count(*) from tab_fisc_cob_dua d
-													where d.cancelamento_data is not null
-													and d.cob_parc = p.id) > 0 
-												then 'Cancelado'
-												when (select count(*) from tab_fisc_cob_dua d
 													where d.pagamento_data is null and d.vencimento_data < sysdate
 													and d.cob_parc = p.id) > 0 
 												then 'Atrasado'
 												when (select count(*) from tab_fisc_cob_dua d
-													where d.pagamento_data is not null												
-													and d.cob_parc = p.id) > 0 
-												then 'Pago'
-												when (select count(*) from tab_fisc_cob_dua d
-													where d.pagamento_data is not null												
+													where ((d.pagamento_data is not null												
+													and d.valor_pago >= d.valor_dua)
+													or exists (select 1 from tab_fisc_cob_dua dc where dc.pai_dua = d.id))
 													and d.cob_parc = p.id) > 0 
 													and (select count(*) from tab_fisc_cob_dua d
 													where d.pagamento_data is null										
+													and d.cob_parc = p.id) = 0 
+												then 'Pago'
+												when (select count(*) from tab_fisc_cob_dua d
+													where d.pagamento_data is not null												
 													and d.cob_parc = p.id) > 0 
 												then 'Pago Parcial'
 												else 'Em Aberto'
@@ -468,8 +469,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 												on (pt.fiscalizacao = c.fiscalizacao)
 											left join tab_pessoa a
 												on (a.id = coalesce(i.pessoa, i.responsavel, c.autuado)) 
-											where 1=1 " + comandtxt + @") cobranca
-                                            where 1=1 " + whereSituacao + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+											where  not exists (select 1 from tab_fisc_cob_dua d
+											where d.cob_parc = p.id and d.cancelamento_data is not null) " + comandtxt + @") cobranca
+                                            where 1=1 " + whereSituacao + DaHelper.Ordenar(colunas, ordenar, filtros.OdenarPor == 0), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
@@ -504,6 +506,79 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 			return lista;
 		}
+
+		public int GetIdCobrancaByFiscalizacao(int fiscalizacao, int cobrancaid, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select c.id
+										from tab_fisc_cobranca c
+										where c.fiscalizacao = :fiscalizacao
+										and c.id <> :cobrancaid", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("cobrancaid", cobrancaid, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
+			}
+		}
+
+		public int GetIdCobrancaByIUFSerie(string numeroIUF, int? serie, int autuado, int cobrancaid, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select c.id
+										from tab_fisc_cobranca c
+										where c.iuf_numero = :iuf_numero
+										and c.serie = :serie
+										and c.autuado <> :autuado
+										and c.id <> :cobrancaid", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("iuf_numero", numeroIUF, DbType.String);
+				comando.AdicionarParametroEntrada("serie", serie, DbType.Int32);
+				comando.AdicionarParametroEntrada("autuado", autuado, DbType.Int32);
+				comando.AdicionarParametroEntrada("cobrancaid", cobrancaid, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
+			}
+		}
+
+		public int GetIdCobrancaByNumeroAutuacao(string numeroAutuacao, int cobrancaid, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select c.id
+										from tab_fisc_cobranca c
+										where c.numero_autuacao = :numero_autuacao
+										and c.id <> :cobrancaid", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("numero_autuacao", numeroAutuacao, DbType.String);
+				comando.AdicionarParametroEntrada("cobrancaid", cobrancaid, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
+			}
+		}
+
+		public int GetIdFiscalizacaoByParcelamento(int parcelamentoId, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select c.fiscalizacao
+										from tab_fisc_cobranca c
+										where exists (select 1 from tab_fisc_cob_parcelamento p
+										where p.cobranca = c.id
+										and p.id = :parcelamentoId)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("parcelamentoId", parcelamentoId, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
+			}
+		}
+
 
 		private string GetEnumSituacaoCobranca(int v)
 		{

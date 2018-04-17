@@ -14,7 +14,7 @@
         <%= Html.Hidden("UrlFiltrar", Url.Action("CobrancaFiltrar"), new { @class = "urlFiltrar" })%>
         <%= Html.Hidden("UrlVisualizar", Url.Action("CobrancaVisualizar"), new { @class = "urlVisualizar" })%>
         <%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>
-        <%= Html.Hidden("Paginacao.OrdenarPor", "4", new { @class = "ordenarPor" })%>
+        <%= Html.Hidden("Paginacao.OrdenarPor", "0", new { @class = "ordenarPor" })%>
 
         <div class="coluna98">
             <div class="block fixado">
@@ -56,8 +56,8 @@
                 </div>
 
                 <div class="coluna13 append1">
-                    <label for="Filtros_SituacaoDUA">Situacao da DUA</label>
-                    <%= Html.DropDownList("Filtros.SituacaoDUA", Model.SituacaoDUA, new { @class = "text ddlSituacaoDUA" })%>
+                    <label for="Filtros_SituacaoCobranca">Situacao Cobrança</label>
+                    <%= Html.DropDownList("Filtros.SituacaoCobranca", Model.SituacaoCobranca, new { @class = "text ddlSituacaoCobranca" })%>
                 </div>
 
                 <div class="coluna29">

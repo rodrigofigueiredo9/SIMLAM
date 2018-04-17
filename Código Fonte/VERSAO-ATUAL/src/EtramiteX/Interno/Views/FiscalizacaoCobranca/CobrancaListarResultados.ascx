@@ -11,14 +11,15 @@
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
-                <th width="7%">Nº Processo</th>
-                <th width="15%">Nome/Razão Social</th>
-                <th width="7%">Nº AI/IUF</th>
-                <th width="7%">Data Emissão</th>
-                <th width="8%">Valor Multa (R$)</th>
-                <th width="8%">Valor Atualizado (R$)</th>
-                <th width="8%">Valor Pago (R$)</th>
-                <th width="7%">Situação</th>
+                <th width="8%">Nº Processo</th>
+                <th width="17%">Nome/Razão Social</th>
+                <th width="8%">Nº Fiscalização</th>
+                <th width="8%">Nº AI / IUF</th>
+                <th width="8%">Data Emissão</th>
+                <th width="10%">Valor Multa (R$)</th>
+                <th width="11%">Valor Atualizado (R$)</th>
+                <th width="10%">Valor Pago (R$)</th>
+                <th width="10%">Situação</th>
                 <th class="semOrdenacao" width="7%">Ações</th>
 
             </tr>
@@ -29,6 +30,7 @@
             <tr>
                 <td title="<%= Html.Encode(item.ProcNumero)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.ProcNumero))%></td>
                 <td title="<%= Html.Encode(item.NomeRazaoSocial)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.NomeRazaoSocial))%></td>
+                <td title="<%= Html.Encode(item.Fiscalizacao)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.Fiscalizacao))%></td>
                 <td title="<%= Html.Encode(item.NumeroIUF)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.NumeroIUF))%></td>
                 <td title="<%= Html.Encode(item.DataEmissao.DataTexto)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.DataEmissao.DataTexto))%></td>
                 <td title="<%= Html.Encode(String.Format("{0:N2}", item.ValorMulta))%>" style="text-align: right;"><%= ViewModelHelper.CampoVazioListar(Html.Encode(String.Format("{0:N2}", item.ValorMulta)))%></td>

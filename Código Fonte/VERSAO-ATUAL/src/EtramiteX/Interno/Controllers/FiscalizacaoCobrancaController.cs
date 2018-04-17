@@ -158,6 +158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar, index);
 			if(fiscalizacao != null)
 				vm.SituacaoFiscalizacao = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSituacao.Where(x => x.Id == fiscalizacao.SituacaoId.ToString()).ToList(), null, false);
+			vm.Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: cobranca.SerieId?.ToString());
 
 			return vm;
 		}

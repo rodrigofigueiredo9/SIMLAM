@@ -92,7 +92,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("vencimento_data", cobrancaDUA.DataVencimento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("dataemissao", cobrancaDUA.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("parcela", cobrancaDUA.Parcela, DbType.String);
-				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.String);
 				comando.AdicionarParametroEntrada("valor_dua", cobrancaDUA.ValorDUA, DbType.Decimal);
 				comando.AdicionarParametroEntrada("valor_pago", cobrancaDUA.ValorPago, DbType.Decimal);
 				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Decimal);
@@ -145,7 +145,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("vencimento_data", cobrancaDUA.DataVencimento.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("dataemissao", cobrancaDUA.DataEmissao.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("parcela", cobrancaDUA.Parcela, DbType.String);
-				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_dua", cobrancaDUA.NumeroDUA, DbType.String);
 				comando.AdicionarParametroEntrada("valor_dua", cobrancaDUA.ValorDUA, DbType.Decimal);
 				comando.AdicionarParametroEntrada("valor_pago", cobrancaDUA.ValorPago, DbType.Decimal);
 				comando.AdicionarParametroEntrada("vrte", cobrancaDUA.VRTE, DbType.Decimal);
@@ -241,7 +241,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						{
 							Id = reader.GetValue<int>("id"),
 							Parcela = reader.GetValue<string>("parcela"),
-							NumeroDUA = reader.GetValue<int>("numero_dua"),
+							NumeroDUA = reader.GetValue<string>("numero_dua"),
 							ValorDUA = reader.GetValue<decimal>("valor_dua"),
 							ValorPago = reader.GetValue<decimal>("valor_pago"),
 							VRTE = reader.GetValue<decimal>("vrte"),
@@ -327,7 +327,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						{
 							Id = reader.GetValue<int>("id"),
 							Parcela = reader.GetValue<string>("parcela"),
-							NumeroDUA = reader.GetValue<int>("numero_dua"),
+							NumeroDUA = reader.GetValue<string>("numero_dua"),
 							ValorDUA = reader.GetValue<decimal>("valor_dua"),
 							ValorPago = reader.GetValue<decimal>("valor_pago"),
 							VRTE = reader.GetValue<decimal>("vrte"),
@@ -361,6 +361,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			}
 
 			return lista;
+		}
+
+		public int GetIdDUAByNumero(string numeroDua, int duaid, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+                                    select d.id
+										from tab_fisc_cob_dua d
+										where d.numero_dua = :numero_dua
+										and d.id <> :duaid", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("numero_dua", numeroDua, DbType.String);
+				comando.AdicionarParametroEntrada("duaid", duaid, DbType.String);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
+			}
 		}
 		#endregion
 	}
