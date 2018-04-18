@@ -105,7 +105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				and ec.datum = lcd.id
 				and ec.local_coleta = llc.id
 				and ec.forma_coleta = lfc.id
-				and s.protocolo = pt.id
+				and s.protocolo_selecionado = pt.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);

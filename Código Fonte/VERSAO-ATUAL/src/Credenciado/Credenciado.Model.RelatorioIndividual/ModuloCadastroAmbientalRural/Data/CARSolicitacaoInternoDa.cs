@@ -107,7 +107,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				and ec.forma_coleta = lfc.id
                 and s.id = tcs.solicitacao_car(+)
                 and nvl(tcs.solicitacao_car_esquema, 1) = 1
-				and s.protocolo = pt.id
+				and s.protocolo_selecionado = pt.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);

@@ -483,7 +483,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					hst_funcionario              f
 				where s.situacao = l.id
 				and s.situacao_anterior = la.id(+)
-				and s.protocolo = p.id
+				and s.protocolo_selecionado = p.id
 				and s.protocolo_selecionado = ps.id(+)
 				and s.empreendimento = e.id
 				and s.empreendimento = pg.empreendimento
@@ -589,9 +589,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
-                
-                #region Solicitação Não válida
 
+				#region Solicitação Não válida
+				
                 //CREDENCIADO
                 Comando comando = bancoDeDados.CriarComando(@"select * from	(  select * from	(
 																	select c.id solicitacao, c.SITUACAO, 1 esquema from tab_car_solicitacao c 
@@ -601,18 +601,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 																	  select c.id solicitacao, c.SITUACAO, 2 esquema from {0}tab_car_solicitacao c 
 																		  inner join {0}tab_empreendimento ec on ec.id = c.empreendimento 
 																	  where c.situacao != 3 and ec.codigo = :codigo 
-																  ) order by situacao desc) where rownum = 1", UsuarioCredenciado);
+																  ) order by 
+																	  case situacao 
+																	  when 1 then 7
+																	  else situacao end
+																	  desc) where rownum = 1", UsuarioCredenciado);
 
                 comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
                 int solicitacaoId = 0;
+				int esquema = 0;
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {
                     if (reader.Read())
                     {
-                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-						solicitacao.Esquema = solicitacao.ProjetoId = reader.GetValue<Int32>("esquema");
+                        solicitacaoId = reader.GetValue<Int32>("solicitacao");					
+						solicitacao.Esquema = esquema =  reader.GetValue<Int32>("esquema");
 					}
                     reader.Close();
                 }
@@ -624,11 +629,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
 						solicitacao = _daCred.Obter(solicitacaoId, banco: bd);
+						solicitacao.Esquema = esquema;
 						return solicitacao;
 					}
 					else if (solicitacao.Esquema == 1)
 					{
 						solicitacao = Obter(solicitacaoId, banco: bancoDeDados);
+						solicitacao.Esquema = esquema;
 						return solicitacao;
 					}
                 }
@@ -698,7 +705,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				{
 
 					Comando comando = bancoDeDados.CriarComando(@"select c.id, p.requerimento from tab_car_solicitacao c
-																inner join tab_protocolo p on c.protocolo = p.id
+																inner join tab_protocolo p on c.protocolo_selecionado = p.id
 															where p.requerimento = :requerimento ", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);

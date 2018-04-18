@@ -931,7 +931,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 																	  select c.id solicitacao, c.SITUACAO, 2 esquema from {0}tab_car_solicitacao c 
 																		  inner join {0}tab_empreendimento ec on ec.id = c.empreendimento 
 																	  where c.situacao != 3 and ec.codigo = :codigo 
-																  ) order by situacao desc) where rownum = 1", UsuarioCredenciado);
+																  ) order by 
+																	  case situacao 
+																	  when 1 then 7
+																	  else situacao end
+																	  desc) where rownum = 1", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
