@@ -585,6 +585,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
                     cmd.ExecuteNonQuery();
                 }
+				
+				
             }
             catch (Exception exception)
             {

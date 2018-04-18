@@ -181,7 +181,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                  {
                      cmd.ExecuteNonQuery();
                  }
+
+				conn.Close();
 			}
+
+		
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 		}
