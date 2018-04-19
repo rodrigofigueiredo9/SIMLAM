@@ -98,7 +98,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			var cobranca = entidade ?? _bus.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
 			if (entidade != null)
+			{
 				cobranca.Notificacao = _busNotificacao.Obter(fiscalizacaoId.GetValueOrDefault(0));
+				cobranca.Parcelamentos = _bus.ObterCobrancaParcelamento(cobranca.Id);
+			}
 			var maximoParcelas = 0;
 
 			var fiscalizacao = _busFiscalizacao.Obter(fiscalizacaoId.GetValueOrDefault(0));
@@ -133,12 +136,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					cobranca.Parcelamentos.Add(cobranca.UltimoParcelamento);
 				}
 
-				var parcelamento = index.HasValue ? cobranca.Parcelamentos[index.Value] : cobranca.Parcelamentos?.FindLast(x => x.DataEmissao.IsValido) ?? new CobrancaParcelamento(fiscalizacao);
+				var parcelamento = index.HasValue ? cobranca.Parcelamentos[index.Value] : cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido) ?? new CobrancaParcelamento(fiscalizacao);
 				maximoParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
 
 				if (cobranca.Parcelamentos.Count == 0 || parcelamento?.DUAS?.Count == 0)
 				{
-					parcelamento.QuantidadeParcelas = 1;
+					if(parcelamento.QuantidadeParcelas == 0)
+						parcelamento.QuantidadeParcelas = 1;
 					parcelamento.DUAS = new List<CobrancaDUA>();
 					if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 					{
@@ -148,7 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				}
 			}
 
-			var ultimoParcelamento = cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+			var ultimoParcelamento = cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
 			if ((ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0) || entidade != null)
 			{
 				ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);

@@ -131,12 +131,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validarDUA.Salvar(cobrancaDUA))
 				{
-					var idDua = _daDUA.GetIdDUAByNumero(cobrancaDUA.NumeroDUA, cobrancaDUA.Id);
-					if (idDua != cobrancaDUA.Id)
+					if (!string.IsNullOrWhiteSpace(cobrancaDUA.NumeroDUA) && cobrancaDUA.NumeroDUA != "0")
 					{
-						var dua = _daDUA.ObterDUA(idDua, banco);
-						Validacao.Add(Mensagem.CobrancaMsg.DuaDuplicado(dua.NumeroDUA, dua.Parcela, _da.GetIdFiscalizacaoByParcelamento(dua.ParcelamentoId, banco)));
-						return Validacao.EhValido;
+						var idDua = _daDUA.GetIdDUAByNumero(cobrancaDUA.NumeroDUA, cobrancaDUA.Id);
+						if (idDua != cobrancaDUA.Id)
+						{
+							var dua = _daDUA.ObterDUA(idDua, banco);
+							Validacao.Add(Mensagem.CobrancaMsg.DuaDuplicado(dua.NumeroDUA, dua.Parcela, _da.GetIdFiscalizacaoByParcelamento(dua.ParcelamentoId, banco)));
+							return Validacao.EhValido;
+						}
 					}
 
 					GerenciadorTransacao.ObterIDAtual();
@@ -204,7 +207,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						DUAS = new List<CobrancaDUA>()
 					};
 					var parametrizacao = _busConfiguracao.ObterParametrizacao(cobranca.CodigoReceitaId, cobranca.DataEmissaoIUF.Data.Value);
-					parcelamento.ValorMultaAtualizado = Math.Round(this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao) - cobranca.UltimoParcelamento.DUAS.Sum(x => x.ValorPago), 2);
+					parcelamento.ValorMultaAtualizado = Math.Round(this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao));
 
 					if (cobranca.AutuadoPessoa == null)
 						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
@@ -239,6 +242,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 
 			return entidade;
+		}
+
+		public List<CobrancaParcelamento> ObterCobrancaParcelamento(int cobrancaId, BancoDeDados banco = null)
+		{
+			List<CobrancaParcelamento> list = new List<CobrancaParcelamento>();
+
+			try
+			{
+				list = _daParcelamento.Obter(cobrancaId, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return list;
 		}
 
 		public List<CobrancaDUA> ObterCobrancaDUA(int parcelamentoId, BancoDeDados banco = null)
@@ -298,9 +317,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		private decimal GetValorTotalAtualizadoEmReais(Cobranca cobranca, CobrancaParcelamento parcelamento, Parametrizacao parametrizacao)
 		{
+			var valorPagoAnteriores = new Decimal();
+			var parcelamentos = (new CobrancaParcelamentoDa()).Obter(cobranca.Id);
+			if (parcelamentos != null)
+			{
+				var parcelamentosAnteriores = parcelamentos.Where(x => x.Id != parcelamento.Id);
+				foreach (var parcelamentoAnterior in parcelamentosAnteriores)
+					valorPagoAnteriores += parcelamentoAnterior.DUAS.Sum(x => x.ValorPago);
+			}
+
 			var prazoDesconto = parametrizacao.PrazoDescontoUnidade * GetPrazoDesconto(parametrizacao.PrazoDescontoDecorrencia);
 			if (parcelamento.Data1Vencimento.Data.Value < cobranca.DataIUF.Data.Value.AddDays(prazoDesconto + 1).Date)
-				return parcelamento.ValorMulta;
+				return parcelamento.ValorMulta - valorPagoAnteriores;
 
 			var multaVRTE = parcelamento.ValorMulta * (Convert.ToDecimal(parametrizacao.MultaPercentual) / 100);
 			var jurosVRTE = new Decimal();
@@ -308,7 +336,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			if (diasJuros > 0)
 				jurosVRTE = (diasJuros / 30) * (Convert.ToDecimal(parametrizacao.JurosPercentual) / 100);
 
-			return parcelamento.ValorMulta + multaVRTE + (parcelamento.ValorMulta * jurosVRTE);
+			return parcelamento.ValorMulta + multaVRTE + (parcelamento.ValorMulta * jurosVRTE) - valorPagoAnteriores;
 		}
 
 		public bool CalcularParcelas(Cobranca cobranca, CobrancaParcelamento parcelamento)

@@ -100,7 +100,7 @@
         </div>
 
         <div class="coluna15">
-            <label for="Cobranca_ValorMultaAtualizado"><%= Model.Parcelamento.ValorMultaAtualizado >= Model.Parcelamento.ValorMulta ? "Valor Multa Atualizado (R$)" : "Valor Multa Com Desconto (R$)" %></label>
+            <label for="Cobranca_ValorMultaAtualizado"><%= Model.Parcelamento.ValorMultaAtualizado < Model.Parcelamento.ValorMulta && Model.Entidade.Parcelamentos.Count == 1 ? "Valor Multa Com Desconto (R$)" : "Valor Multa Atualizado (R$)"%></label>
             <%= Html.TextBox("Cobranca.ValorMultaAtualizado", String.Format("{0:N2}", Model.Parcelamento.ValorMultaAtualizado), ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto2 txtValorMultaAtualizado", @maxlength = "17"}))%>
         </div>
 
