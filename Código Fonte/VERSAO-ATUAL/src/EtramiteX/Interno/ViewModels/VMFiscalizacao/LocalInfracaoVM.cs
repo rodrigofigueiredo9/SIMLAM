@@ -70,6 +70,13 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _responsavel = value; }
 		}
 
+		private List<SelectListItem> _assinante = new List<SelectListItem>();
+		public List<SelectListItem> Assinante
+		{
+			get { return _assinante; }
+			set { _assinante = value; }
+		}
+
 		public LocalInfracao LocalInfracao { get; set; }
 		public Pessoa Pessoa { get; set; }
 
@@ -112,6 +119,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			if (this.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0)
 			{
 				Responsavel = lstResponsaveis.Count == 1 ? ViewModelHelper.CriarSelectList(lstResponsaveis, true, false) : ViewModelHelper.CriarSelectList(lstResponsaveis);
+				Assinante = lstResponsaveis.Count == 1 ? ViewModelHelper.CriarSelectList(lstResponsaveis.FindAll(x => !string.IsNullOrWhiteSpace(x.CPFCNPJ)), true, false) : ViewModelHelper.CriarSelectList(lstResponsaveis.FindAll(x => !string.IsNullOrWhiteSpace(x.CPFCNPJ)));
 			}
 		}
 	}

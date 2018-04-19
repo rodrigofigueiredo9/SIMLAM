@@ -247,7 +247,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			List<PessoaLst> lstResponsaveis = _busLocalInfracao.ObterResponsaveis(empreendimentoId);
 			List<object> lstResponsaveisSelect = lstResponsaveis.Select(x => new { Id = x.Id, Texto = x.Texto }).ToList<object>();
-			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Responsaveis = lstResponsaveisSelect });
+			List<object> lstAssinantesSelect = lstResponsaveis.Where(x => !string.IsNullOrWhiteSpace(x.CPFCNPJ)).Select(x => new { Id = x.Id, Texto = x.Texto }).ToList<object>();
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Responsaveis = lstResponsaveisSelect, @Assinates = lstAssinantesSelect });
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar })]
