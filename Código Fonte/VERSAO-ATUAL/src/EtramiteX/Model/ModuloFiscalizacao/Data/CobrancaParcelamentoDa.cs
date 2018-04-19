@@ -183,12 +183,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#region Obter / Filtrar
 
-		public List<CobrancaParcelamento> Obter(int cobrancaId)
+		public List<CobrancaParcelamento> Obter(int cobrancaId, BancoDeDados banco = null)
 		{
 			var lista = new List<CobrancaParcelamento>();
 			var cobrancaDUADa = new CobrancaDUADa();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select  p.id,
 											p.cobranca,
