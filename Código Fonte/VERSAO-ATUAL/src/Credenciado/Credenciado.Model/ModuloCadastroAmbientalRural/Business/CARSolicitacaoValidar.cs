@@ -416,7 +416,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             }
 
             //Verificar se existe solicitação para o empreendimento
-            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0);
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, true);
 			if (solicitacao != null)
 			{
 				if (solicitacao.SituacaoId == 2)
@@ -455,6 +455,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 						Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
 						return false;
 					}
+
+					List<int> responsaveis = _busRequerimento.ObterResponsavelTecnico(solicitacao.Requerimento.Id);
+
+					if(responsaveis != null)
+					{
+						foreach (int r in responsaveis)
+						{
+							if (r == idCredenciadoLogado)
+							{
+								Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
+								return false;
+							}
+						}
+					}					
 				}
 				if (solicitacao.SituacaoId == 1)
 				{

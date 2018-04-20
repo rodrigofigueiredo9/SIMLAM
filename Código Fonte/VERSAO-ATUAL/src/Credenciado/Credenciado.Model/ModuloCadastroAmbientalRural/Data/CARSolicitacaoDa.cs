@@ -224,7 +224,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			controleArquivoSICAR.SolicitacaoCarId = solicitacao.Id;
             CARSolicitacao retificado = new CARSolicitacao();
 
-            retificado = ObterPorEmpreendimento(solicitacao.Empreendimento.Codigo ?? 0);
+            retificado = ObterPorEmpreendimento(solicitacao.Empreendimento.Codigo ?? 0, false);
             String codigoRetificacao = String.Empty;
 
             if (retificado != null)
@@ -915,15 +915,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             return solicitacao;
         }
 
-        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, BancoDeDados banco = null)
+        internal CARSolicitacao ObterPorEmpreendimento(Int64 empreendimentoCod, bool comPendente, BancoDeDados banco = null)
         {
             CARSolicitacao solicitacao = new CARSolicitacao();
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
 				#region Solicitação não válida
-				//CREDENCIADO
-				Comando comando = bancoDeDados.CriarComando(@"select * from	(  select * from	(
+				if (comPendente)
+				{
+					//CREDENCIADO
+					Comando comando = bancoDeDados.CriarComando(@"select * from	(  select * from	(
 																	select c.id solicitacao, c.SITUACAO, 1 esquema from tab_car_solicitacao c 
 																		  inner join tab_empreendimento ec on ec.id = c.empreendimento 
 																	  where c.situacao != 3 and ec.codigo = :codigo 
@@ -937,70 +939,90 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 																	  else situacao end
 																	  desc) where rownum = 1", UsuarioCredenciado);
 
-				comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
-                int solicitacaoId = 0;
+					int solicitacaoId = 0;
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-						solicitacao.Esquema = reader.GetValue<Int32>("esquema");
-					}
-                    reader.Close();
-                }
-
-                if (solicitacaoId > 0)
-                {
-					if(solicitacao.Esquema == 2)
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
-						BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
-
-						solicitacao = Obter(solicitacaoId, banco: bd);
-						return solicitacao;
+						if (reader.Read())
+						{
+							solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+							solicitacao.Esquema = reader.GetValue<Int32>("esquema");
+						}
+						reader.Close();
 					}
-					else if (solicitacao.Esquema == 1)
+
+					if (solicitacaoId > 0)
 					{
-						CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+						if (solicitacao.Esquema == 2)
+						{
+							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-						solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
-						return solicitacao;
-					} 
-                    
-                }
+							solicitacao = Obter(solicitacaoId, banco: bd);
+							return solicitacao;
+						}
+						else if (solicitacao.Esquema == 1)
+						{
+							CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
 
-                //INSTITUCIONAL
-                /*using (BancoDeDados bd = BancoDeDados.ObterInstancia(banco))
-                {
-                    comando = bd.CriarComando(@"select * from (
-															select c.id solicitacao from tab_car_solicitacao c 
-                                                                inner join tab_empreendimento ei on ei.id = c.empreendimento 
-                                                            where c.situacao != 3 and ei.codigo = :codigo order by c.situacao desc
-													) where rownum = 1");
+							solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
+							return solicitacao;
+						}
 
+					}
+				}
+				else
+				{
+					//CREDENCIADO
+					Comando comando = bancoDeDados.CriarComando(@"select * from	(
+																	select c.id solicitacao, c.SITUACAO, 1 esquema from tab_car_solicitacao c 
+																		  inner join tab_empreendimento ec on ec.id = c.empreendimento 
+																	  where c.situacao not in (1, 3, 6) and ec.codigo = :codigo 
+																	  union all
+																	  select c.id solicitacao, c.SITUACAO, 2 esquema from {0}tab_car_solicitacao c 
+																		  inner join {0}tab_empreendimento ec on ec.id = c.empreendimento 
+																	  where c.situacao not in (1, 3, 6) and ec.codigo = :codigo 
+																  )  where rownum = 1", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("codigo", empreendimentoCod, DbType.Int32);
 
-                    solicitacaoId = 0;
+					int solicitacaoId = 0;
+					int esquema = 0;
 
-                    using (IDataReader reader = bd.ExecutarReader(comando))
-                    {
-                        if (reader.Read())
-                        {
-                            solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
-                        }
-                        reader.Close();
-                    }
-                    CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+						{
+							solicitacaoId = solicitacao.ProjetoId = reader.GetValue<Int32>("solicitacao");
+							solicitacao.Esquema = esquema = reader.GetValue<Int32>("esquema");
+						}
+						reader.Close();
+					}
 
-                    if (solicitacaoId > 0)
-                    {
-                        solicitacao = _da.Obter(solicitacaoId, banco: bd);
-                        solicitacao.Esquema = 1;
-                        return solicitacao;
-                    }
-                }*/
+					if (solicitacaoId > 0)
+					{
+						if (solicitacao.Esquema == 2)
+						{
+							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
+
+							solicitacao = Obter(solicitacaoId, banco: bd);
+							solicitacao.Esquema = esquema;
+							return solicitacao;
+						}
+						else if (solicitacao.Esquema == 1)
+						{
+							CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
+
+							solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
+							solicitacao.Esquema = esquema;
+							return solicitacao;
+						}
+
+					}
+				}
+				
+                
                 #endregion
             }
 
