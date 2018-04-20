@@ -51,10 +51,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
 			dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
 
-			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.png");
+			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpeg");
 			dataSource.LogoNovo = File.ReadAllBytes(pathImgLogo);
 
-			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 2);
+			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 4.2f);
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
@@ -111,10 +111,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             dataSource.Logomarca = AsposeImage.RedimensionarImagem(dataSource.Logomarca, 2);
 
-			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.png");
+			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpeg");
 			dataSource.LogoNovo = File.ReadAllBytes(pathImgLogo);
 
-			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 2);
+			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 4.2f);
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
