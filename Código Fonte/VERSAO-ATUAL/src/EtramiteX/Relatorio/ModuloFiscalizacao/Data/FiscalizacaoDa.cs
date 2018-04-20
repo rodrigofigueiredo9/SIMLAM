@@ -365,7 +365,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 						   tab_pessoa              tp,
 						   tab_fiscalizacao        tf,
 						   tab_funcionario         tu
-					 where tp.id = nvl(tfli.responsavel, tfli.pessoa)
+					 where tp.id = tfli.assinante
 					   and tf.autuante = tu.id
 					   and tfli.fiscalizacao = tf.id
 					   and tf.id = :id", EsquemaBanco);
@@ -745,8 +745,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 					   {0}hst_pessoa              tp,
 					   {0}hst_fiscalizacao        tf,
 					   {0}hst_funcionario         tu
-				   where tp.pessoa_id = nvl(tfli.resp_propriedade_id, tfli.pessoa_id)
-					 and tp.tid = nvl(tfli.resp_propriedade_tid, tfli.pessoa_tid)					 
+				   where tp.pessoa_id = tfli.assinante_id
+					 and tp.tid = tfli.assinante_tid
 					 and tf.autuante_id = tu.funcionario_id
 					 and tf.autuante_tid = tu.tid					 
 					 and tfli.id_hst = tf.id
@@ -1393,7 +1393,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 						   tab_pessoa              tp,
 						   tab_fiscalizacao        tf,
 						   tab_funcionario         tu
-					 where tp.id = nvl(tfli.responsavel, tfli.pessoa)
+					 where tp.id = tfli.assinante
 					   and tf.autuante = tu.id
 					   and tfli.fiscalizacao = tf.id
 					   and tf.id = :id", EsquemaBanco);
