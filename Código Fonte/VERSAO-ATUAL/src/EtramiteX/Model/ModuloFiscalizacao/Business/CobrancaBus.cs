@@ -134,7 +134,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 					if (!string.IsNullOrWhiteSpace(cobrancaDUA.NumeroDUA) && cobrancaDUA.NumeroDUA != "0")
 					{
 						var idDua = _daDUA.GetIdDUAByNumero(cobrancaDUA.NumeroDUA, cobrancaDUA.Id);
-						if (idDua != cobrancaDUA.Id)
+						if (idDua > 0)
 						{
 							var dua = _daDUA.ObterDUA(idDua, banco);
 							Validacao.Add(Mensagem.CobrancaMsg.DuaDuplicado(dua.NumeroDUA, dua.Parcela, _da.GetIdFiscalizacaoByParcelamento(dua.ParcelamentoId, banco)));
