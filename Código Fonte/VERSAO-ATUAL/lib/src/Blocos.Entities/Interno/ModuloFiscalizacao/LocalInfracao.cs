@@ -30,6 +30,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public string EmpreendimentoTid { get; set; }
 		public int? ResponsavelId { get; set; }
 		public int? ResponsavelPropriedadeId { get; set; }
+		public int? AssinantePropriedadeId { get; set; }
 		public string Tid { get; set; }
 
 		public LocalInfracao()
