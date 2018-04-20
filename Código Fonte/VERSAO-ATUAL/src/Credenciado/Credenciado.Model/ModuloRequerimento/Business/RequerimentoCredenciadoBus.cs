@@ -751,6 +751,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			return null;
 		}
 
+		public List<int> ObterResponsavelTecnico (int requerimento =0)
+		{
+			try
+			{
+				return _da.ObterResponsavelTecnico(requerimento);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
 		#endregion
 
 		#region Validações
