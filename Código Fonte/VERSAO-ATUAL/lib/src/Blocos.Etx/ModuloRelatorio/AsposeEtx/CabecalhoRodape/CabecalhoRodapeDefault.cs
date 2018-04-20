@@ -48,9 +48,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 			{
 				LogoOrgao = File.ReadAllBytes(pathImg);
 				LogoOrgao = AsposeImage.RedimensionarImagem(LogoOrgao, 1.8f);
-				pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpeg");
-				LogoNovo = File.ReadAllBytes(pathImg);
-				LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 4.2f);
 			}
 
 			if (isCredenciado)
@@ -68,6 +65,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logoestado.png");
 			LogoEstado = File.ReadAllBytes(pathImg);
+
+			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpeg");
+			LogoNovo = File.ReadAllBytes(pathImg);
+			LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 4.2f);
 
 			CabecalhoRodapeBus bus = new CabecalhoRodapeBus();
 			bus.ObterNomes(this);
