@@ -128,6 +128,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
             return Validacao.EhValido;
         }
 
+		public bool ValidarLocalizarFiscalizacaoCodigo(ListarEmpreendimentoFiltro filtros)
+		{
+			if ((filtros.Codigo ?? 0) == 0)
+			{
+				Validacao.Add(Msg.CodigoObrigatorio);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		public bool EmPosse(int empreendimento)
 		{
 			return _da.EmPosse(empreendimento);

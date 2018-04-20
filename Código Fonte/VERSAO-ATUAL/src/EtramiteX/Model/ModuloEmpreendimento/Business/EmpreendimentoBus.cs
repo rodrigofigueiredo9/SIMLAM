@@ -388,6 +388,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
             return null;
         }
 
+		public Empreendimento ObterPorCodigo(long codigo)
+		{
+			try
+			{
+				Empreendimento emp = _da.ObterPorCodigo(codigo);
+
+				if (emp.Id == 0)
+				{
+					Validacao.Add(Mensagem.Empreendimento.Inexistente);
+				}
+
+				return emp;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public Empreendimento Obter(int id)
 		{
 			try
@@ -640,6 +661,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
                 Validacao.AddErro(exc);
             }
         }
+
+		public void ValidarLocalizarFiscalizacaoCodigo(ListarEmpreendimentoFiltro filtros)
+		{
+			try
+			{
+				_validar.ValidarLocalizarFiscalizacaoCodigo(filtros);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
 
 		public bool ValidarEmPosse(int id)
 		{
