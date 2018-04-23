@@ -8,5 +8,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCadastroA
     {
         public String NumeroSICAR { get; set; }
         public String Pendencias { get; set; }
-    }
+		public String DataEnvio { get; set; }
+		}
 }

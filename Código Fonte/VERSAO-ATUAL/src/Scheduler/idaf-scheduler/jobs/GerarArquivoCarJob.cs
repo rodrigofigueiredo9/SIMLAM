@@ -96,15 +96,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								connCredendicado.Open();
 								declarante = ObterDadosDeclarante(connCredendicado, CarUtils.GetEsquemaCredenciado(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
 							}
-                        //ATRIBUI OBJETO CADASTRANTE AO CAR (antigo)
-						/*car.cadastrante = new Cadastrante()
-						{
-							cpf = declarante.cpf,
-							dataNascimento = declarante.dataNascimento,
-							nome = declarante.nome,
-							nomeMae = declarante.nomeMae
-						};*/
-
+                        
                         //ATRIBUI OBJETO CADASTRANTE AO CAR
                         if(requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
                             car.cadastrante = ObterDadosCadastrante(conn, CarUtils.GetEsquemaInstitucional(), requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.solicitacao_car, requisicao.solicitacao_car_tid);
@@ -135,7 +127,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
-						var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid);
+                        ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, "", "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
@@ -571,7 +564,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                 enderecoCorrespondencia = eCorrespondencia				
 			};
 
-            ObterDadosRetificacao(conn, schema, car, requisicao.solicitacao_car);
+            car = ObterDadosRetificacao(conn, schema, car, requisicao);
 
 			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 			car.proprietariosPosseirosConcessionarios = proprietarios;
@@ -850,11 +843,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
              */
             #region [[  CONSULTAS  ]]
 
-            var q1 = @"select /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+            var q1 = @"select DISTINCT /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
                                             from hst_car_solicitacao_cred c    
                                                   INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
                                                   INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
                                                   INNER JOIN CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.INTERNO
+                                                   
+                                              where c.solicitacao_id=:id and c.tid=:tid";
+
+            // Mesma igual a q1 porém consultando na CRT do credenciado
+            var q4 = @"select DISTINCT /*c.dominialidade_id*/ DM.ID caract_id, /*c.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid     
+                                            from hst_car_solicitacao_cred c    
+                                                  INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E   ON c.EMPREENDIMENTO_ID = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO PG     ON PG.EMPREENDIMENTO = E.ID   
+                                                  INNER JOIN IDAFCREDENCIADO.CRT_DOMINIALIDADE DM                   ON DM.EMPREENDIMENTO = E.ID
                                                    
                                               where c.solicitacao_id=:id and c.tid=:tid";
 
@@ -876,7 +878,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     WHERE CS.SOLICITACAO_ID = :solic_id AND CS.TID = :solic_tid ";
 
             //-- EMPREENDIMENTOS NÃO IMPORTADOS AINDA (NÃO POSSUI CÓDIGO, NEM INTERNO) 
-            var q3 = @" SELECT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
+            var q3 = @" SELECT DISTINCT /*CS.dominialidade_id*/ DM.ID caract_id, /*CS.dominialidade_tid*/ DM.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid      
                               FROM idafcredenciadogeo.TMP_ATP GA 
                                       INNER JOIN IDAFCREDENCIADO.CRT_PROJETO_GEO      PG  ON  PG.ID = GA.PROJETO
                                       INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO   EM  ON  EM.ID = PG.EMPREENDIMENTO
@@ -920,6 +922,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
                                     requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
                                     dra.Close();
+                                }
+                                else
+                                {
+                                    using (var cmdrr = new OracleCommand(q4, conn))
+                                    {
+
+                                        cmdrr.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+                                        cmdrr.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+                                        using (var draa = cmdrr.ExecuteReader())
+                                            if (draa.Read())
+                                            {
+                                                requisicao.caracterizacao_id = Convert.ToInt32(draa["caract_id"]);
+                                                requisicao.caracterizacao_tid = Convert.ToString(draa["caract_tid"]);
+                                                requisicao.projeto_geografico_id = Convert.ToInt32(draa["projeto_id"]);
+                                                requisicao.projeto_geografico_tid = Convert.ToString(draa["projeto_tid"]);
+                                                draa.Close();
+                                            }
+                                            
+                                    }
+                                    
                                 }
                             
                             return requisicao;
@@ -1007,25 +1030,35 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
         }
 
-        private static void ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, int solicitacaoCAR)
+        private static CAR ObterDadosRetificacao(OracleConnection conn, string schema, CAR car, RequisicaoJobCar requisicao)
         {
-            using (var cmd = new OracleCommand("SELECT CODIGO_IMOVEL FROM IDAF.HST_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
+            
+            using (var cmd = new OracleCommand(@"SELECT CODIGO_IMOVEL FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
             {
-                cmd.Parameters.Add(new OracleParameter("solicitacao", solicitacaoCAR));
-
+                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
                 using (var dr = cmd.ExecuteReader())
                 {
-                    while (dr.Read())
+                    if (dr.Read())
                     {
-                        if (!String.IsNullOrWhiteSpace(Convert.ToString(dr["CODIGO_IMOVEL"])))
-                        {
-                            car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
-                            break;
-                        }                        
+                        car.imovel.idPai = Convert.ToString(dr["CODIGO_IMOVEL"]);
                     }
                 }
             }
-            car.origem.dataProtocolo = DateTime.Now;
+
+            using (var cmd = new OracleCommand("SELECT DATA_EMISSAO FROM "+schema+".TAB_CAR_SOLICITACAO WHERE ID = :solicitacao", conn))
+            {
+                cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
+
+                using (var dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        car.origem.dataProtocolo = Convert.ToDateTime(dr["DATA_EMISSAO"]);
+                    }
+                }
+            }
+
+            return car;
         }
 
 		/// <summary>

@@ -444,8 +444,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                     @Empty = true,  //Variavel para abrir o modal
                     @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "Confirmar", mv)
                 }, JsonRequestBehavior.AllowGet);
-            }*/
-
+            }
+            ConfirmarVM mv = new ConfirmarVM();
+            
+            mv.Id = caracterizacao.EmpreendimentoId;
+            mv.Mensagem = Mensagem.Retificacao.msgCred1(123, 666);
+            mv.Titulo = "Confirmação da Retificação";
+            //return PartialView("Confirmar", mv);
+            return Json(new
+            {
+                @EhValido = Validacao.EhValido,
+                @Empty = true,  //Variavel para abrir o modal
+                @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "Confirmar", mv)
+            }, JsonRequestBehavior.AllowGet);
+            */
             return Json(new
             {
                 @EhValido = Validacao.EhValido,
@@ -453,7 +465,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 @Empty = false,
                 @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "DominialidadeARLPartial", vm)
             }, JsonRequestBehavior.AllowGet);
-
         }
 
 		[Permite(RoleArray = new Object[] { ePermissao.DominialidadeCriar, ePermissao.DominialidadeEditar })]

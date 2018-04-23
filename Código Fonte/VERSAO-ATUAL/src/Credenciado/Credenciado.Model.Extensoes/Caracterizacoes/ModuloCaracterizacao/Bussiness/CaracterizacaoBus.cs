@@ -242,6 +242,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return null;
 		}
 
+        public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod)
+        {
+            try
+            {
+                return _da.ObterCaracterizacoesCAR(empreendimentoCod);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
+
 		public EmpreendimentoCaracterizacao ObterEmpreendimentoSimplificado(int id)
 		{
 			try
@@ -446,6 +460,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return caracterizacoes;
 		}
+
+        public bool ExisteCaracterizacao(int projetoDigitalID, Int64 empreendimentoCod, BancoDeDados banco = null)
+        {
+            List<Caracterizacao> caracterizacoes = null;
+
+            try
+            {
+                caracterizacoes = ObterCaracterizacoesAssociadasProjetoDigital(projetoDigitalID);
+
+                foreach (var carac in caracterizacoes)
+                {
+                    if (carac.Tipo == eCaracterizacao.CadastroAmbientalRural) 
+                    {
+                        return true;
+                    }
+                }
+
+                caracterizacoes = ObterCaracterizacoesCAR(empreendimentoCod);
+
+                foreach (var carac in caracterizacoes)
+                {
+                    if (carac.Tipo == eCaracterizacao.CadastroAmbientalRural)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return false;
+        }
 
 		public List<Caracterizacao> ObterCaracterizacoesAtuais(int empreendimentoID, List<Caracterizacao> caracterizacoes)
 		{

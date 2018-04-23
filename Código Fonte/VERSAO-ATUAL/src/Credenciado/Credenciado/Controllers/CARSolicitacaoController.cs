@@ -24,6 +24,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadastroA
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMCARSolicitacao;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -38,6 +39,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		RequerimentoCredenciadoBus _busRequerimentoCredenciado = new RequerimentoCredenciadoBus();
 		CARSolicitacaoValidar _validar = new CARSolicitacaoValidar();
 
+		public static EtramitePrincipal Usuario
+		{
+			get { return (System.Web.HttpContext.Current.User as EtramitePrincipal); }
+		}
 		#endregion
 
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoListar })]
@@ -46,6 +51,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			ListarVM vm = new ListarVM(ListaCredenciadoBus.QuantPaginacao, ListaCredenciadoBus.Municipios(ViewModelHelper.EstadoDefaultId()));
 
 			vm.Situacoes = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.CARSolicitacaoSituacoes, true, true);
+            vm.SituacoesSicar = ViewModelHelper.CriarSelectList(ListaCredenciadoBus.SicarSituacoes, true, true);
 
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return View(vm);
@@ -96,7 +102,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoCriar })]
 		public ActionResult Criar(CARSolicitacao car)
 		{
-			_bus.Salvar(car);
+			_bus.Salvar(car, Usuario.EtramiteIdentity.UsuarioId);
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @urlRetorno = urlRetorno }, JsonRequestBehavior.AllowGet);
@@ -301,7 +307,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
             if (origem == (int)eCARSolicitacaoOrigem.Credenciado)
             {
-                _bus.EnviarReenviarArquivoSICAR(solicitacaoId, isEnviar);
+                _bus.EnviarReenviarArquivoSICAR(carSolicitacao, isEnviar);
             }
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam();
@@ -328,5 +334,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			return ViewModelHelper.BaixarArquivoInterno(id);
 		}
+
+        public ActionResult BaixarDemonstrativoCar(int id)
+        {
+            var schemaSolicitacao = _busInterno.ExisteCredenciado(id) ? 2 : 1;
+
+            var url = _busInterno.ObterUrlDemonstrativo(id, schemaSolicitacao);
+
+            return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
+        }
 	}
 }

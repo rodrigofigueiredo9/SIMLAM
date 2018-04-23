@@ -288,10 +288,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			ProjetoDigital projetoDigital = _bus.Obter(id);
 			ConfirmarVM vm = new ConfirmarVM();
 
-			vm.Id = id;
-			vm.Mensagem = Mensagem.ProjetoDigital.MensagemCancelarEnvio(projetoDigital.RequerimentoId.ToString());
-			vm.Titulo = "Confirmação do cancelamento";
-			return PartialView("Confirmar", vm);
+			if (_bus.PossuiAtividadeCAR(projetoDigital.Id) && _bus.PossuiSolicitacaoCAR(projetoDigital.Id))
+			{
+				vm.Id = id;
+				vm.Mensagem = Mensagem.ProjetoDigital.MensagemCancelarEnvioCAR();
+				vm.Titulo = "Confirmação do cancelamento";
+				return PartialView("Confirmar", vm);
+			}
+			else
+			{
+				vm.Id = id;
+				vm.Mensagem = Mensagem.ProjetoDigital.MensagemCancelarEnvio(projetoDigital.RequerimentoId.ToString());
+				vm.Titulo = "Confirmação do cancelamento";
+				return PartialView("Confirmar", vm);
+			}
 		}
 
 		[HttpPost]

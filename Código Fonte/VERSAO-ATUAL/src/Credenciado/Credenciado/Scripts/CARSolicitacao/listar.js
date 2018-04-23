@@ -8,6 +8,7 @@ CARSolicitacaoListar = {
 	urlPDFPendencia: null,
 	urlEnviarReenviarArquivoSICAR: null,
 	urlMensagemErroEnviarArquivoSICAR: null,
+    urlBaixarDemonstrativoCAR: null,
 	idsTela: null,
 	mensagens: null,
 	container: null,
@@ -32,7 +33,7 @@ CARSolicitacaoListar = {
 		container.delegate('.btnPdfPendencia', 'click', CARSolicitacaoListar.gerarPDFPendencia);
 		container.delegate('.btnPdfSicar', 'click', CARSolicitacaoListar.redirecionarLinkPdfSICAR);
 		container.delegate('.btnBaixarArquivoSicar', 'click', CARSolicitacaoListar.baixarArquivoSicar);
-		
+		container.delegate('.btnDemonstrativoCar', 'click', CARSolicitacaoListar.baixarDemonstrativoCar);
 
 		container.delegate('.radioDeclaranteCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioDeclaranteCpfCnpj', container));
@@ -123,6 +124,40 @@ CARSolicitacaoListar = {
 		var objeto = CARSolicitacaoListar.obter(this);
 
 		MasterPage.redireciona(CARSolicitacaoListar.urlBaixarAquivoSICAR + '/' + objeto.ArquivoSICAR);
+	},
+
+	baixarDemonstrativoCar: function () {
+	    var objeto = CARSolicitacaoListar.obter(this);
+	    var data = { solicitacaoId: objeto.Id };
+
+	    MasterPage.carregando(true);
+	    $.ajax({
+	        url: CARSolicitacaoListar.urlBaixarDemonstrativoCAR + '/' + objeto.Id,
+	        cache: false,
+	        //data: data,
+	        async: false,
+	        type: 'POST',
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (XMLHttpRequest, textStatus, erroThrown) {
+	            Aux.error(XMLHttpRequest, textStatus, erroThrown, CARSolicitacaoListar.container);
+	            MasterPage.carregando(false);
+	        },
+	        success: function (response, textStatus, XMLHttpRequest) {
+	            MasterPage.carregando(false);
+	            if (response.UrlPdfDemonstrativo) {
+	                window.open(response.UrlPdfDemonstrativo);
+	            }
+	            else {
+	                Mensagem.limpar(CARSolicitacaoListar.container);
+	                Mensagem.gerar(CARSolicitacaoListar.container, [CARSolicitacaoListar.mensagens.GerarPdfSICARUrlNaoEncontrada]);
+	            }
+
+
+	            CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
+	        }
+	    });
+	    MasterPage.carregando(false);
 	},
 
 	gerarPDFPendencia: function () {

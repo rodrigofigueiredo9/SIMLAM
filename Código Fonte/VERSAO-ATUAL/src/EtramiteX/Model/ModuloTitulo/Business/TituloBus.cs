@@ -98,7 +98,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			_validar = validar;
 		}
-
+		public List<int> LstCadastroAmbientalRuralTituloCodigo
+		{
+			get { return _configTituloModelo.Obter<List<int>>(ConfiguracaoTituloModelo.KeyCadastroAmbientalRuralTituloCodigo); }
+		}
 		#region Ações de DML
 
 		public void Excluir(Titulo titulo)
@@ -254,6 +257,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 
 					Validacao.Add(Mensagem.Titulo.Salvar);
+					if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
+					{
+						Validacao.Add(Mensagem.Retificacao.msgInst4());
+					}					
 				}
 			}
 			catch (Exception exc)
@@ -788,6 +795,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			return null;
 		}
+        
+        public bool ExistePorEmpreendimento(int empreendimentoId)
+        {
+            try
+            {
+                Resultados<Titulo> titulos = ObterPorEmpreendimento(empreendimentoId);
+                if (titulos == null)
+                    return false;
+                if (titulos.Itens.Count() > 0)
+                    return true;
+                else
+                    return false;
+
+
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return false;
+        }
+        public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
+        {
+            try
+            {
+                Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
+
+                return resultados;
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
+
+            return null;
+        }
 
 		public List<Titulo> Obter(TituloFiltro filtrosListar)
 		{

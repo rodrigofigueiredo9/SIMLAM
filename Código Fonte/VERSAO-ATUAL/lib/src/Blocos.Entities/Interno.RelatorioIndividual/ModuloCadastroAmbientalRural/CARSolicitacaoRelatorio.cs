@@ -14,8 +14,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCadastroA
 		public String Tid { get; set; }
 		public Int32 Numero { get; set; }
 		public String DataEmissao { get; set; }
+		public String DataEnvio { get; set; }
 		public Int32 DominialidadeId { get; set; }
 		public String DominialidadeTid { get; set; }
+		public Int32 RequerimentoNumero { get; set; }
 
 		public String SituacaoTexto { get; set; }
 		private DateTime _situacaoData = new DateTime();

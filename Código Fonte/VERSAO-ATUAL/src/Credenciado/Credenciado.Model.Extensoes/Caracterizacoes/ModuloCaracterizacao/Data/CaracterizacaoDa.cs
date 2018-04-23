@@ -371,6 +371,51 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return lista;
 		}
 
+        public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod, BancoDeDados banco = null)
+        {
+            List<Caracterizacao> lista = new List<Caracterizacao>();
+			String select = String.Empty;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+						SELECT 22 tipo, 'Cadastro Ambiental Rural' tipo_texto, CR.ID caracterizacao_id, CR.TID caracterizacao_tid  
+                            FROM TAB_EMPREENDIMENTO E
+                                INNER JOIN CRT_CAD_AMBIENTAL_RURAL CR ON CR.EMPREENDIMENTO = E.ID 
+                            WHERE E.CODIGO = :empreendimento");
+
+					comando.AdicionarParametroEntrada("empreendimento", empreendimentoCod, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						Caracterizacao caracterizacao = null;
+
+						while (reader.Read())
+						{
+							caracterizacao = new Caracterizacao();
+
+							if (reader["tipo"] != null && !Convert.IsDBNull(reader["tipo"]))
+							{
+								caracterizacao.Tipo = (eCaracterizacao)Convert.ToInt32(reader["tipo"]);
+								caracterizacao.Nome = reader["tipo_texto"].ToString();
+							}
+
+							if (reader["caracterizacao_id"] != null && !Convert.IsDBNull(reader["caracterizacao_id"]))
+							{
+								caracterizacao.Id = Convert.ToInt32(reader["caracterizacao_id"]);
+								caracterizacao.Tid = reader["caracterizacao_tid"].ToString();
+							}
+
+							lista.Add(caracterizacao);
+						}
+
+						reader.Close();
+					}
+			}
+
+			return lista;
+        }
+
 		public List<Dependencia> ObterDependenciasAtual(int empreendimentoId, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo tipo, BancoDeDados banco = null)
 		{
 			List<Dependencia> lista = new List<Dependencia>();

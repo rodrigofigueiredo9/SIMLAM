@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 						CARSolicitacaoBus carSolicitacaoBus = new CARSolicitacaoBus();
 						CARSolicitacao carSolicitacao = new CARSolicitacao();
 						carSolicitacao.Empreendimento.Id = empreendimento.Id;
-						carSolicitacaoBus.AlterarSituacao(carSolicitacao, new CARSolicitacao() { SituacaoId = (int)eCARSolicitacaoSituacao.Invalido }, bancoDeDados);
+						//carSolicitacaoBus.AlterarSituacao(carSolicitacao, new CARSolicitacao() { SituacaoId = (int)eCARSolicitacaoSituacao.Invalido }, bancoDeDados);
 
 						#endregion
 
