@@ -479,6 +479,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return null;
 		}
 
+		public List<Pessoa> ObterResponsaveis(string cnpj)
+		{
+			try
+			{
+				return _da.ObterResponsaveis(cnpj);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public List<PessoaLst> ObterResponsaveisComTipo(int id)
 		{
 			try

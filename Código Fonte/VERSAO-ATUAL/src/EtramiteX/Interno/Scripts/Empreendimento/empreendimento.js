@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -28,7 +28,8 @@ Empreendimento = {
 			obterMunicipioPorCoordenada: '',
 			obterEstadosMunicipiosPorCodIbge: '',
 			obterEnderecoResponsavel: '',
-			obterListaPessoasAssociada: ''
+			obterListaPessoasAssociada: '',
+			obterListaResponsaveisCnpj: ''
 		},
 		msgs: {},
 		idsTela: null,
@@ -685,7 +686,7 @@ EmpreendimentoSalvar = {
 	onResponsavelAssociar: function (pessoaObj, item, extra) {
 		var divItens = $('.asmItens', Empreendimento.settings.container);
 		var erroMsg = new Array();
-
+		
 		if (EmpreendimentoSalvar.existeAssociado(pessoaObj.Id.toString(), divItens, 'hdnResponsavelId')) {
 			erroMsg.push(Empreendimento.settings.msgs.ResponsavelExistente);
 			return erroMsg;
@@ -1093,10 +1094,39 @@ EmpreendimentoSalvar = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				var arrayMensagem = new Array();
 				arrayMensagem.push(response.Msg);
+				EmpreendimentoSalvar.carregarResposaveis(cnpj);
 				Mensagem.gerar(MasterPage.getContent(Empreendimento.settings.container), arrayMensagem);
 			}
 		});
 		MasterPage.carregando(false);
+	},
+
+	carregarResposaveis: function (cnpj) {
+		var container = Empreendimento.settings.container;
+		
+		$.ajax({
+			url: Empreendimento.settings.urls.obterListaResponsaveisCnpj,
+			data: JSON.stringify({ cnpj: cnpj }),
+			cache: false,
+			type: 'POST',
+			typeData: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown, container) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					response.Responsaveis.forEach(function (responsavel) {
+						EmpreendimentoLocalizar.onResponsavelAssociarClick(responsavel);
+					});
+				}				
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(response.Msg);
+				}
+
+			}
+		});
 	},
 
 	loadEditar: function (container) {

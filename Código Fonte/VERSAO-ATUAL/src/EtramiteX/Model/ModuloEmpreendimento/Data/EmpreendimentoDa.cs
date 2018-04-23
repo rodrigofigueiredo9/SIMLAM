@@ -1679,6 +1679,46 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			return responsaveis;
 		}
 
+		public List<Pessoa> ObterResponsaveis(string cnpj, BancoDeDados banco = null)
+		{
+			List<Pessoa> responsaveis = new List<Pessoa>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select 
+				p.id, nvl(p.nome, p.razao_social) nome_razao_social, nvl(p.cpf, p.cnpj) cpfCnpj
+				from tab_pessoa p
+				where p.cnpj = :cnpj
+				or exists
+				(select 1
+					  from tab_pessoa_representante pr, tab_pessoa psb, tab_pessoa_conjuge pc, tab_pessoa c
+					  where pr.representante = psb.id and pr.pessoa = p.id
+					  and psb.cnpj = :cnpj
+					  and psb.id = pc.pessoa (+) and pc.conjuge = c.id (+))", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("cnpj", cnpj, DbType.String);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					Pessoa pessoa = null;
+
+					while (reader.Read())
+					{
+						pessoa = new Pessoa();
+						pessoa.Id = Convert.ToInt32(reader["id"]);
+						pessoa.NomeRazaoSocial = reader["nome_razao_social"].ToString();
+						pessoa.CPFCNPJ = reader["cpfCnpj"].ToString();
+						responsaveis.Add(pessoa);
+					}
+
+					reader.Close();
+				}
+
+			}
+
+			return responsaveis;
+		}
+
+
 		public List<PessoaLst> ObterResponsaveisComTipo(int id, BancoDeDados banco = null)
 		{
 			List<PessoaLst> responsaveis = new List<PessoaLst>();
