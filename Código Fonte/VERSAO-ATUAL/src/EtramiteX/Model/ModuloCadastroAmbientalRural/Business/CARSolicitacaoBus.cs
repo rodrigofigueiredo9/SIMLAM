@@ -522,8 +522,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return string.Empty;
             }
 
-            //return UrlSICAR + resposta["dados"];  // PRODUCAO 
-            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+            return UrlSICAR + resposta["dados"];  // PRODUCAO 
+            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
         } 
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)
