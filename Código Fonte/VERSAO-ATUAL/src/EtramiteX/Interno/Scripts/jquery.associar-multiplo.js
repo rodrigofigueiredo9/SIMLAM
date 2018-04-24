@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3.js"/>
+/// <reference path="Lib/JQuery/jquery-1.4.3.js"/>
 
 /**
 * Plugin jQuery para associar múltiplos itens.
@@ -223,7 +223,7 @@
 			};
 
 			/****************** ADICIONAR ******************/
-			_container.delegate('.btnAsmAdicionar', 'click', function () {
+			_container.delegate('.btnAsmAdicionar', 'click', function () {				
 				if (_isFunction(settings.onAdicionarClick)) {
 					var onAdicionarExtra = {
 						numItens: $('.asmItens .asmItemContainer', _container).size(),

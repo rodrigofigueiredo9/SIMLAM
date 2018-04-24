@@ -321,14 +321,16 @@ Empreendimento = {
 		return $('.hdnEmpId', Empreendimento.settings.container).val();
 	},
 
-	onLimparResponsavel: function () {
-		$('.hdnResponsavelId', Empreendimento.settings.container).val(0);
-		$('.txtNomeResponsavel', Empreendimento.settings.container).val('');
-		$('.txtCnpjResponsavel', Empreendimento.settings.container).val('');
+	onLimparResponsavel: function (container) {
+		if (!container)
+			container = Empreendimento.settings.container; 
+		$('.hdnResponsavelId', container).val(0);
+		$('.txtNomeResponsavel', container).val('');
+		$('.txtCnpjResponsavel', container).val('');
 
 
-		$('.divBtnLimparResponsavel', Empreendimento.settings.container).addClass('hide');
-		$('.divBtnBuscarResponsavel', Empreendimento.settings.container).removeClass('hide');
+		$('.divBtnLimparResponsavel', container).addClass('hide');
+		$('.divBtnBuscarResponsavel', container).removeClass('hide');
 	},
 
 	setarEventos: function () {
@@ -677,6 +679,7 @@ EmpreendimentoSalvar = {
 	},
 
 	onResponsavelCarregar: function (container) {
+		Empreendimento.onLimparResponsavel(container);
 		Mascara.load(container);
 		$('.ddlTipoResponsavel', container).change(EmpreendimentoSalvar.onTipoResponsavelChange);
 		$('.btnAsmEditar', container).hide();
@@ -1094,8 +1097,10 @@ EmpreendimentoSalvar = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				var arrayMensagem = new Array();
 				arrayMensagem.push(response.Msg);
-				EmpreendimentoSalvar.carregarResposaveis(cnpj);
 				Mensagem.gerar(MasterPage.getContent(Empreendimento.settings.container), arrayMensagem);
+				
+				if (arrayMensagem[0].Tipo == 0)
+					EmpreendimentoSalvar.carregarResposaveis(cnpj);
 			}
 		});
 		MasterPage.carregando(false);
@@ -1103,7 +1108,7 @@ EmpreendimentoSalvar = {
 
 	carregarResposaveis: function (cnpj) {
 		var container = Empreendimento.settings.container;
-		
+
 		$.ajax({
 			url: Empreendimento.settings.urls.obterListaResponsaveisCnpj,
 			data: JSON.stringify({ cnpj: cnpj }),
@@ -1117,7 +1122,27 @@ EmpreendimentoSalvar = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					response.Responsaveis.forEach(function (responsavel) {
-						EmpreendimentoLocalizar.onResponsavelAssociarClick(responsavel);
+						var novoItem = $('.asmItemTemplateContainer', container).clone();
+						novoItem.removeClass('hide asmItemTemplateContainer');
+
+						EmpreendimentoSalvar.onResponsavelAssociar(responsavel, novoItem);
+
+						if ($('.txtCnpjResponsavel', novoItem).val() != '') {
+							$('.btnAsmEditar', novoItem).hide();
+							$('.btnAsmAssociar', novoItem).show();
+							$('.asmConteudoInterno', novoItem).hide();
+							novoItem.addClass('hide').appendTo($('.asmItens', container)).fadeIn(200, function () {
+								var newNumItens = $('.asmItens .asmItemContainer', container).size();
+
+								novoItem.addClass('asmExpansivel');
+
+								if (Empreendimento.settings.mostrarConteudoInterno) {
+									$('.asmConteudoLink', novoItem).removeClass('hide');
+								} else {
+									$('.asmConteudoLink', novoItem).addClass('hide');
+								}
+							});
+						}
 					});
 				}				
 

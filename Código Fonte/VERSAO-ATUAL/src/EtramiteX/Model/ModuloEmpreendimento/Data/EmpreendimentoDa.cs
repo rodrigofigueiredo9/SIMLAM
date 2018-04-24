@@ -1689,11 +1689,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 				from tab_pessoa p
 				where p.cnpj = :cnpj
 				or exists
-				(select 1
-					  from tab_pessoa_representante pr, tab_pessoa psb, tab_pessoa_conjuge pc, tab_pessoa c
-					  where pr.representante = psb.id and pr.pessoa = p.id
-					  and psb.cnpj = :cnpj
-					  and psb.id = pc.pessoa (+) and pc.conjuge = c.id (+))", EsquemaBanco);
+				(select 1 from tab_pessoa_representante pr, tab_pessoa pc
+				  where pr.pessoa = pc.id
+				  and pc.cnpj = :cnpj
+				  and pr.representante = p.id)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("cnpj", cnpj, DbType.String);
 
