@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -28,7 +28,8 @@ Empreendimento = {
 			obterMunicipioPorCoordenada: '',
 			obterEstadosMunicipiosPorCodIbge: '',
 			obterEnderecoResponsavel: '',
-			obterListaPessoasAssociada: ''
+			obterListaPessoasAssociada: '',
+			obterListaResponsaveisCnpj: ''
 		},
 		msgs: {},
 		idsTela: null,
@@ -320,14 +321,16 @@ Empreendimento = {
 		return $('.hdnEmpId', Empreendimento.settings.container).val();
 	},
 
-	onLimparResponsavel: function () {
-		$('.hdnResponsavelId', Empreendimento.settings.container).val(0);
-		$('.txtNomeResponsavel', Empreendimento.settings.container).val('');
-		$('.txtCnpjResponsavel', Empreendimento.settings.container).val('');
+	onLimparResponsavel: function (container) {
+		if (!container)
+			container = Empreendimento.settings.container; 
+		$('.hdnResponsavelId', container).val(0);
+		$('.txtNomeResponsavel', container).val('');
+		$('.txtCnpjResponsavel', container).val('');
 
 
-		$('.divBtnLimparResponsavel', Empreendimento.settings.container).addClass('hide');
-		$('.divBtnBuscarResponsavel', Empreendimento.settings.container).removeClass('hide');
+		$('.divBtnLimparResponsavel', container).addClass('hide');
+		$('.divBtnBuscarResponsavel', container).removeClass('hide');
 	},
 
 	setarEventos: function () {
@@ -676,6 +679,7 @@ EmpreendimentoSalvar = {
 	},
 
 	onResponsavelCarregar: function (container) {
+		Empreendimento.onLimparResponsavel(container);
 		Mascara.load(container);
 		$('.ddlTipoResponsavel', container).change(EmpreendimentoSalvar.onTipoResponsavelChange);
 		$('.btnAsmEditar', container).hide();
@@ -685,7 +689,7 @@ EmpreendimentoSalvar = {
 	onResponsavelAssociar: function (pessoaObj, item, extra) {
 		var divItens = $('.asmItens', Empreendimento.settings.container);
 		var erroMsg = new Array();
-
+		
 		if (EmpreendimentoSalvar.existeAssociado(pessoaObj.Id.toString(), divItens, 'hdnResponsavelId')) {
 			erroMsg.push(Empreendimento.settings.msgs.ResponsavelExistente);
 			return erroMsg;
@@ -1094,9 +1098,60 @@ EmpreendimentoSalvar = {
 				var arrayMensagem = new Array();
 				arrayMensagem.push(response.Msg);
 				Mensagem.gerar(MasterPage.getContent(Empreendimento.settings.container), arrayMensagem);
+				
+				if (arrayMensagem[0].Tipo == 0)
+					EmpreendimentoSalvar.carregarResposaveis(cnpj);
 			}
 		});
 		MasterPage.carregando(false);
+	},
+
+	carregarResposaveis: function (cnpj) {
+		var container = Empreendimento.settings.container;
+
+		$.ajax({
+			url: Empreendimento.settings.urls.obterListaResponsaveisCnpj,
+			data: JSON.stringify({ cnpj: cnpj }),
+			cache: false,
+			type: 'POST',
+			typeData: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown, container) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					response.Responsaveis.forEach(function (responsavel) {
+						var novoItem = $('.asmItemTemplateContainer', container).clone();
+						novoItem.removeClass('hide asmItemTemplateContainer');
+
+						EmpreendimentoSalvar.onResponsavelAssociar(responsavel, novoItem);
+
+						if ($('.txtCnpjResponsavel', novoItem).val() != '') {
+							$('.btnAsmEditar', novoItem).hide();
+							$('.btnAsmAssociar', novoItem).show();
+							$('.asmConteudoInterno', novoItem).hide();
+							novoItem.addClass('hide').appendTo($('.asmItens', container)).fadeIn(200, function () {
+								var newNumItens = $('.asmItens .asmItemContainer', container).size();
+
+								novoItem.addClass('asmExpansivel');
+
+								if (Empreendimento.settings.mostrarConteudoInterno) {
+									$('.asmConteudoLink', novoItem).removeClass('hide');
+								} else {
+									$('.asmConteudoLink', novoItem).addClass('hide');
+								}
+							});
+						}
+					});
+				}				
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(response.Msg);
+				}
+
+			}
+		});
 	},
 
 	loadEditar: function (container) {

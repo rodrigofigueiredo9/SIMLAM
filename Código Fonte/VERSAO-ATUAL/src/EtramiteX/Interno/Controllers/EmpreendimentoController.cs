@@ -847,6 +847,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar, ePermissao.EmpreendimentoEditar })]
+		public ActionResult ObterListaResponsaveisCnpj(string cnpj)
+		{
+			var listResponsaveis = _bus.ObterResponsaveis(cnpj);
+
+			return Json(new
+			{
+				Msg = Validacao.Erros,
+				EhValido = Validacao.EhValido,
+				@Responsaveis = listResponsaveis
+			}, JsonRequestBehavior.AllowGet);
+		}
+
 		#endregion
 	}
 }
