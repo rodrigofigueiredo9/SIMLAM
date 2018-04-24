@@ -219,21 +219,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 
 			List<Pessoa> representantes = pessoa.Juridica.Representantes;
 
-			if (representantes == null || representantes.Count <= 0)
-			{
-				Validacao.Add(Msg.RepresentanteObrigatorio);
-			}
-
 			List<Mensagem> mensagens = new List<Mensagem>(Validacao.Erros);
 			Validacao.Erros.Clear();
 
-			representantes.ForEach(representante =>
+			if (representantes != null && representantes.Count > 0)
 			{
-				if (representante.IsCopiado && !Salvar(representante))
+				representantes.ForEach(representante =>
 				{
-					mensagens.Add(Mensagem.Pessoa.DadosRepresentanteIncompleto(representante.NomeRazaoSocial));
-				}
-			});
+					if (representante.IsCopiado && !Salvar(representante))
+					{
+						mensagens.Add(Mensagem.Pessoa.DadosRepresentanteIncompleto(representante.NomeRazaoSocial));
+					}
+				});
+			}
 
 			Validacao.Erros = mensagens;
 

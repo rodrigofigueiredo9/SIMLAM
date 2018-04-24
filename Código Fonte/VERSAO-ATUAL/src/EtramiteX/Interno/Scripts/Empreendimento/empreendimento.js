@@ -1122,26 +1122,32 @@ EmpreendimentoSalvar = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					response.Responsaveis.forEach(function (responsavel) {
-						var novoItem = $('.asmItemTemplateContainer', container).clone();
-						novoItem.removeClass('hide asmItemTemplateContainer');
+						if ($($('.txtNomeResponsavel', container)[$('.asmItens .asmItemContainer', container).length - 1]).val() == '') {
+							var item = $('.asmItens .asmItemContainer', container)[$('.asmItens .asmItemContainer', container).length - 1];
+							EmpreendimentoSalvar.onResponsavelAssociar(responsavel, item);
+						}
+						else {
+							var novoItem = $('.asmItemTemplateContainer', container).clone();
+							novoItem.removeClass('hide asmItemTemplateContainer');
 
-						EmpreendimentoSalvar.onResponsavelAssociar(responsavel, novoItem);
+							EmpreendimentoSalvar.onResponsavelAssociar(responsavel, novoItem);
 
-						if ($('.txtCnpjResponsavel', novoItem).val() != '') {
-							$('.btnAsmEditar', novoItem).hide();
-							$('.btnAsmAssociar', novoItem).show();
-							$('.asmConteudoInterno', novoItem).hide();
-							novoItem.addClass('hide').appendTo($('.asmItens', container)).fadeIn(200, function () {
-								var newNumItens = $('.asmItens .asmItemContainer', container).size();
+							if ($('.txtCnpjResponsavel', novoItem).val() != '') {
+								$('.btnAsmEditar', novoItem).hide();
+								$('.btnAsmAssociar', novoItem).show();
+								$('.asmConteudoInterno', novoItem).hide();
+								novoItem.addClass('hide').appendTo($('.asmItens', container)).fadeIn(200, function () {
+									var newNumItens = $('.asmItens .asmItemContainer', container).size();
 
-								novoItem.addClass('asmExpansivel');
+									novoItem.addClass('asmExpansivel');
 
-								if (Empreendimento.settings.mostrarConteudoInterno) {
-									$('.asmConteudoLink', novoItem).removeClass('hide');
-								} else {
-									$('.asmConteudoLink', novoItem).addClass('hide');
-								}
-							});
+									if (Empreendimento.settings.mostrarConteudoInterno) {
+										$('.asmConteudoLink', novoItem).removeClass('hide');
+									} else {
+										$('.asmConteudoLink', novoItem).addClass('hide');
+									}
+								});
+							}
 						}
 					});
 				}				

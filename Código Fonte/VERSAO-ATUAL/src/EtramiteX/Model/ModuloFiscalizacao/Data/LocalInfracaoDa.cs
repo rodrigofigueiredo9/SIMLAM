@@ -85,7 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("responsavel", localInfracao.ResponsavelId, DbType.Int32);
 				comando.AdicionarParametroEntrada("resp_propriedade", localInfracao.ResponsavelPropriedadeId, DbType.Int32);
                 comando.AdicionarParametroEntrada("area_fiscalizacao", localInfracao.AreaFiscalizacao, DbType.Int32);
-				comando.AdicionarParametroEntrada("assinante", localInfracao.AssinantePropriedadeId, DbType.Int32);
+				comando.AdicionarParametroEntrada("assinante", (localInfracao.AssinantePropriedadeId == 0 ? null : localInfracao.AssinantePropriedadeId), DbType.Int32);
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
