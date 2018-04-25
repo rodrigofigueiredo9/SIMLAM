@@ -362,13 +362,13 @@ Cobranca = {
 
 		//Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
 		//Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
-		var dataPessoa = {
-			cpfCnpj: null,
-			tipoPessoa: null,
-			tipoCadastro: '1'
-		};
+		//var dataPessoa = {
+		//	cpfCnpj: null,
+		//	tipoPessoa: null,
+		//	tipoCadastro: '1'
+		//};
 
-		Modal.abrir(Cobranca.settings.urls.associarAutuado, dataPessoa, function (container) {
+		Modal.abrir(Cobranca.settings.urls.associarAutuado, null, function (container) {
 			Cobranca.pessoaModalInte.load(container, {
 				tituloCriar: 'Cadastrar Autuado',
 				tituloEditar: 'Editar Autuado',
