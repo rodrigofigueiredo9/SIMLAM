@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
 var Documento = function () {
@@ -164,13 +164,16 @@ var Documento = function () {
 			$('.containerChecagemPendencia', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiChecagemPendencia && !configuracao.ChecagemPendenciaObrigatorio)));
 			$('.containerChecagemRoteiro', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiChecagemRoteiro && !configuracao.ChecagemRoteiroObrigatorio)));
 			$('.containerRequerimento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiRequerimento && !configuracao.RequerimentoObrigatorio)));
-			$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressado && !configuracao.InteressadoObrigatorio )));
+			$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressado && !configuracao.InteressadoObrigatorio)));
+			$('.containerInteressadoLivre', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressadoLivre)));
 		    //$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || configuracao.RequerimentoObrigatorio || (configuracao.PossuiFiscalizacao || configuracao.FiscalizacaoObrigatorio) ));
 			$('.containerFiscalizacao', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiFiscalizacao && !configuracao.FiscalizacaoObrigatorio)));
 
 			$('.labelInteressado', _objRef.settings.container).text(configuracao.LabelInteressado);
 			$('.btnAssociarInteressado', _objRef.settings.container).toggleClass('hide', (configuracao.PossuiFiscalizacao || configuracao.FiscalizacaoObrigatorio));
 
+			$('.qtdFolhas', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressadoLivre)));
+			$('.qtdDocumento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiInteressadoLivre)));
 
 			var isCnfProcesso = (configuracao != null && (configuracao.PossuiProcesso || configuracao.ProcessoObrigatorio));
 			var isCnfDocumento = (configuracao != null && (configuracao.PossuiDocumento || configuracao.DocumentoObrigatorio));

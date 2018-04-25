@@ -37,12 +37,19 @@
 				<label>Tipo *</label>
 				<%= Html.DropDownList("Documento.Tipo.Id", Model.DocumentoTipos, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text ddlDocumentoTipos" }))%>
 			</div>
+
+			
 		</div>
 
 		<div class="block">
-			<div class="coluna18">
+			<div class="qtdFolhas coluna15  <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
+				<label>Qtd. de Folhas</label>
+				<%= Html.TextBox("Model.Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
+			</div>
+
+			<div class="qtdDocumento coluna18  <%= Model.Tipo.PossuiInteressadoLivre  ? "hide" : "" %>">
 				<label>Qtd. de documento *</label>
-				<%= Html.TextBox("Documento.Volume", Model.Documento.Volume, new { @class = "text maskNumInt txtQuantidadeDocumento", @maxlength = 2 })%>
+				<%= Html.TextBox("Model.Documento.Volume", Model.Documento.Volume, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text maskNumInt txtQuantidadeDocumento", @maxlength = 2 }))%>
 			</div>
 
 			<div class="block ultima prepend2">
@@ -65,8 +72,8 @@
 
 		<div class="block">
 			<div class="coluna86">
-				<label>Nome *</label>
-				<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 80 })%>
+				<label>Nome do documento*</label>
+				<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 100 })%>
 			</div>
 		</div>
 	</div>
@@ -90,6 +97,24 @@
 				<button type="button" class="icone visualizar inlineBotao btnVisualizarProtocolo" title="Visualizar Protocolo"></button>
 			</span>
 		</div>
+	</fieldset>
+
+	<!-- ------------------------------- -->
+	<fieldset class="containerInteressadoLivre block box  <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
+		<legend>Interessado</legend>
+			<div class="block">
+				<!--div class="floatRight" style="border:0px;"-->
+					<div class="coluna70">
+						<label>Nome/Razão Social</label>
+						<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 100 })%>
+					</div>
+					<div class="coluna20 prepend2">
+						<label>Telefone</label>
+						<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 13 })%>
+					</div>
+					
+				<!--/div-->
+			</div>
 	</fieldset>
 
 	<fieldset class="containerChecagemPendencia block box <%= (Model.Tipo.PossuiChecagemPendencia || Model.Tipo.ChecagemPendenciaObrigatorio) ? "" : "hide" %>">
