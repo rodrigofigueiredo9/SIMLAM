@@ -473,7 +473,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
 			if ((vrte?.Id ?? 0) == 0) return 0;
 
-			if (parcelamento.ValorMultaAtualizado == 0)
+			if (parcelamento.ValorMultaAtualizado == 0 && Convert.ToBoolean(parcelamento.Data1Vencimento?.IsValido))
 				parcelamento.ValorMultaAtualizado = this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao);
 
 			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
