@@ -1607,8 +1607,53 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					where cc.empreendimento=ce.id and ce.codigo=e.codigo and cc.id=ss.solicitacao_car and ss.solicitacao_car_esquema=2 and cc.situacao=2
 					and ss.situacao_envio=6 and e.id=:empreendimento)";
 
-			//TODO:Validacao Sem considerar Situacao de Arquivo .car
-            sql = @"select sum(valor)
+			//TODO:Validacao Verifica se há solicitação CAR em cadastro
+			sql = @"select sum(valor) resultado
+			  from (select count(c.id) valor
+					  from  tab_car_solicitacao     c,
+                            tab_empreendimento      e,
+                            tab_controle_sicar      cs  
+					 where c.empreendimento = :empreendimento
+                        and cs.solicitacao_car = c.id
+                        and c.situacao = 1 /*Em Cadastro*/
+					union all
+					select count(cc.id) valor
+					  from tab_car_solicitacao_cred cc,
+						   cre_empreendimento       ce,
+						   tab_empreendimento       e,
+                           tab_controle_sicar       cs
+					             where cc.empreendimento = ce.id
+					                and ce.codigo = e.codigo
+					                and e.id = :empreendimento
+                                    and cs.solicitacao_car = cc.id
+             
+                                    and cc.situacao = 1 /*Em Cadastro*/)";
+
+			int existeEmCadastro = 0;
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(sql);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
+
+				//bancoDeDados.ExecutarScalar<int>(comando) > 0;
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						existeEmCadastro = reader.GetValue<int>("resultado");
+
+					}
+				}
+			}
+
+			if (existeEmCadastro > 0)
+			{
+				return false;
+			}
+
+			//TODO:Validacao Verifica se há solicitação CAR válida e arquivo entregue
+			sql = @"select sum(valor)
 			  from (select count(c.id) valor
 					  from  tab_car_solicitacao     c,
                             tab_empreendimento      e,

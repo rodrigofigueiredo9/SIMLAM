@@ -499,12 +499,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 		internal static void AtualizarSolicitacaoCar(OracleConnection conn, RequisicaoJobCar requisicao,int situacao, string tid)
 		{
-			var controleCAR = ObterItemControleCar(conn, requisicao);
+			//var controleCAR = ObterItemControleCar(conn, requisicao);
 
-			if (situacao == ControleCarDB.SITUACAO_SOLICITACAO_VALIDO && controleCAR.solicitacao_passivo > 0)
-			{
-				situacao = controleCAR.solicitacao_situacao_aprovado;
-			}	
+			//if (situacao == ControleCarDB.SITUACAO_SOLICITACAO_VALIDO && controleCAR.solicitacao_passivo > 0)
+			//{
+			//	situacao = controleCAR.solicitacao_situacao_aprovado;
+			//}	
 
 			AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, situacao, tid);
 		}
