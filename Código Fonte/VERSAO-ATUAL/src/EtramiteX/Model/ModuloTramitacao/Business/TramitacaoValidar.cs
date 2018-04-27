@@ -108,6 +108,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				Validacao.Add(Msg.ObjetivoObrigratorio);
 			}
 
+			if (enviarCampos.ObjetivoId == 19)//Juntada Processo SEP
+			{
+				if (string.IsNullOrWhiteSpace(enviarCampos.NumeroAutuacao))
+					Validacao.Add(Msg.NumeroAutuacaoObrigatorio);
+			}
+
 			if (enviarCampos.DestinatarioSetor.Id <= 0)
 			{
 				Validacao.Add(Msg.SetorDestinatarioObrigratorio);
@@ -116,6 +122,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 			if (enviarCampos.Remetente.Id == enviarCampos.Destinatario.Id && enviarCampos.RemetenteSetor.Id == enviarCampos.DestinatarioSetor.Id)
 			{
 				Validacao.Add(Msg.RemetenteDestinatarioIguais);
+			}
+
+			if(enviarCampos.DestinatarioSetor.Id == 259)//Outros
+			{
+				if(string.IsNullOrWhiteSpace(enviarCampos.DestinoExterno))
+					Validacao.Add(Msg.DestinoExternoObrigatorio);
+
+				if((enviarCampos.FormaEnvio ?? 0) == 0)
+					Validacao.Add(Msg.FormaEnvioObrigatorio);
+
+				if((enviarCampos.FormaEnvio == 1 || enviarCampos.FormaEnvio == 2) && string.IsNullOrWhiteSpace(enviarCampos.CodigoRastreio))
+					Validacao.Add(Msg.CodigoRastreioObrigatorio);
 			}
 
 			return Validacao.EhValido;

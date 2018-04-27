@@ -42,6 +42,7 @@
 					<input type="hidden" class="hdnProtocoloId" value="<%= Html.Encode(tramitacao.Protocolo.Id) %>" />
 					<input type="hidden" class="hdnProtocoloNumero" value="<%= Html.Encode(tramitacao.Protocolo.Numero) %>" />
 					<input type="hidden" class="hdnIsProcesso" value="<%= Html.Encode(tramitacao.Protocolo.IsProcesso) %>" />
+					<input type="hidden" class="hdnProtocoloTipo" value="<%= Html.Encode(tramitacao.Protocolo.Tipo.Texto) %>" />
 					<input title="Visualizar" type="button" class="icone visualizar btnVisualizar" />
 					<% if(tramitacao.HistoricoId > 0) { %>
 						<input title="Histórico" type="button" class="icone historico btnHistorico"/>
