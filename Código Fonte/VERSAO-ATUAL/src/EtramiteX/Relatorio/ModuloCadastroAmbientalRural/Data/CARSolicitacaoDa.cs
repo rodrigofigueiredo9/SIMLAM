@@ -82,7 +82,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				ec.fuso_utm emp_fuso,
 				llc.texto emp_local_coleta,
 				lfc.texto emp_forma_coleta,
-				pt.requerimento
+				pt.requerimento,
                 (select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) numero_sicar,
                 (select tcs.pendencias from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) pendencias_sicar
                 from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
