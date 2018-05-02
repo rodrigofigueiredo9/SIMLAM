@@ -519,6 +519,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
 			{
 				var busCARSolicitacao = new CARSolicitacaoBus();
+				if (!busCARSolicitacao.VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(titulo.EmpreendimentoId.GetValueOrDefault()))
+				{
+					Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiSolicitacaoEmCadastro);
+				}
 				if (!busCARSolicitacao.VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(titulo.EmpreendimentoId.GetValueOrDefault()))
 				{
 					Validacao.Add(Mensagem.TituloAlterarSituacao.TituloNaoPossuiSolicitacaoDeInscricao);

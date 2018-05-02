@@ -530,11 +530,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		{
 			throw new NotImplementedException();
 		}
+		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(int empreendimentoID)
+		{
+			return _da.VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(empreendimentoID);
 
+		}
 		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
 		{
 			return _da.VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(empreendimentoID);
 
 		}
+
 	}
 }

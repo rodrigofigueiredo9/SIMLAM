@@ -1596,25 +1596,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
                 return bancoDeDados.ExecutarScalar<String>(comando);
             }
-        } 
+        }
 
-		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
+		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(int empreendimentoID)
 		{
-			//TODO:Validacao de Solicitacao de Inscricao para Salvar Titulo CAR
-			var sql = @"select sum(valor) from (select count(c.id) valor from tab_car_solicitacao c, tab_controle_sicar s
-					where c.id=s.solicitacao_car and s.solicitacao_car_esquema=1 and c.situacao=2 and s.situacao_envio=6 and c.empreendimento=:empreendimento
-					union all select count(cc.id) valor from tab_car_solicitacao_cred cc, tab_controle_sicar ss, cre_empreendimento ce, tab_empreendimento e
-					where cc.empreendimento=ce.id and ce.codigo=e.codigo and cc.id=ss.solicitacao_car and ss.solicitacao_car_esquema=2 and cc.situacao=2
-					and ss.situacao_envio=6 and e.id=:empreendimento)";
-
 			//TODO:Validacao Verifica se há solicitação CAR em cadastro
-			sql = @"select sum(valor) resultado
+			var sql = @"select sum(valor) resultado
 			  from (select count(c.id) valor
 					  from  tab_car_solicitacao     c,
                             tab_empreendimento      e,
                             tab_controle_sicar      cs  
 					 where c.empreendimento = :empreendimento
                         and cs.solicitacao_car = c.id
+
                         and c.situacao = 1 /*Em Cadastro*/
 					union all
 					select count(cc.id) valor
@@ -1629,28 +1623,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
              
                                     and cc.situacao = 1 /*Em Cadastro*/)";
 
-			int existeEmCadastro = 0;
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(sql);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 
-				//bancoDeDados.ExecutarScalar<int>(comando) > 0;
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				try
 				{
-					if (reader.Read())
-					{
-						existeEmCadastro = reader.GetValue<int>("resultado");
-
-					}
+					return !Convert.ToBoolean(bancoDeDados.ExecutarScalar<int>(comando));
+				}
+				catch
+				{
+					return false;
 				}
 			}
+		}
 
-			if (existeEmCadastro > 0)
-			{
-				return false;
-			}
+		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
+		{
+			//TODO:Validacao de Solicitacao de Inscricao para Salvar Titulo CAR
+			var sql = @"select sum(valor) from (select count(c.id) valor from tab_car_solicitacao c, tab_controle_sicar s
+					where c.id=s.solicitacao_car and s.solicitacao_car_esquema=1 and c.situacao=2 and s.situacao_envio=6 and c.empreendimento=:empreendimento
+					union all select count(cc.id) valor from tab_car_solicitacao_cred cc, tab_controle_sicar ss, cre_empreendimento ce, tab_empreendimento e
+					where cc.empreendimento=ce.id and ce.codigo=e.codigo and cc.id=ss.solicitacao_car and ss.solicitacao_car_esquema=2 and cc.situacao=2
+					and ss.situacao_envio=6 and e.id=:empreendimento)";
 
 			//TODO:Validacao Verifica se há solicitação CAR válida e arquivo entregue
 			sql = @"select sum(valor)
@@ -1682,7 +1679,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+				try
+				{
+					return Convert.ToBoolean(bancoDeDados.ExecutarScalar<int>(comando));
+				}
+				catch {
+					return false;
+				}
 			}
 		}
 
