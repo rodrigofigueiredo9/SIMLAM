@@ -66,9 +66,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logoestado.png");
 			LogoEstado = File.ReadAllBytes(pathImg);
 
-			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpeg");
+			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpg");
 			LogoNovo = File.ReadAllBytes(pathImg);
-			LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 4.2f);
+			LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 1.8f);
 
 			CabecalhoRodapeBus bus = new CabecalhoRodapeBus();
 			bus.ObterNomes(this);

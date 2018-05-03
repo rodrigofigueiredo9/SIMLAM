@@ -424,7 +424,8 @@ FiscalizacaoLocalInfracao = {
 			editarEmpreendimento: '',
 			novoEmpreendimento: '',
 			salvarCadastrar: '',
-			obterResponsaveis: ''
+			obterResponsaveis: '',
+			obterAssinantes: ''
 		},
 		modo: 1
 	},
@@ -586,6 +587,10 @@ FiscalizacaoLocalInfracao = {
 				}
 				
 				if (response.Msg && response.Msg.length > 0) {
+					$('.fsLocalInfracaoCodEmp', FiscalizacaoLocalInfracao.container).hide();
+					$('.txtFiltroCodigoEmp', FiscalizacaoLocalInfracao.container).val('');
+					$('.trCorpo', FiscalizacaoLocalInfracao.container).empty();
+					$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).show();
 					Mensagem.gerar(Fiscalizacao.container, response.Msg);
 				}
 			}
@@ -801,10 +806,46 @@ FiscalizacaoLocalInfracao = {
         //Dentro de empreendimento == não
 		else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).removeClass("hide");
-		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
+			$('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).show();
+			FiscalizacaoLocalInfracao.preencherAssinantesForaEmpreendimento();
 		}
 
 		return true;
+	},
+
+	preencherAssinantesForaEmpreendimento: function () {
+
+		$.ajax({
+			url: FiscalizacaoLocalInfracao.settings.urls.obterAssinantes,
+			data: $.toJSON({ pessoaId: $('.hdnAutuadoPessoaId', FiscalizacaoLocalInfracao.container).val() }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, Fiscalizacao.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+
+				if (response.EhValido) {
+					Mensagem.limpar(Fiscalizacao.container);
+
+					var assinantes = [];
+					$.each(response.Assinates, function (i, item) { assinantes.push(item); });
+
+					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(assinantes);
+					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeClass('disabled');
+					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeAttr('disabled');
+					$('.assinanteForaEmpreendimento', FiscalizacaoLocalInfracao.container).show();
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Fiscalizacao.container, response.Msg);
+				}
+			}
+		});
+
 	},
 
 	toggleBotoes: function (seletor, fnCancelar) {
