@@ -255,6 +255,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			return lst;
 		}
 
+		internal List<PessoaLst> ObterAssinantes(int pessoaId)
+		{
+			List<PessoaLst> lst = new List<PessoaLst>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				#region Responsaveis do Empreendimento
+
+				Comando comando = bancoDeDados.CriarComando(@"select p.id, nvl(p.nome, p.razao_social) nome_razao, p.cpf  from tab_pessoa p,
+				tab_pessoa_representante r where r.pessoa = p.id and r.representante = :pessoa_id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("pessoa_id", pessoaId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					PessoaLst item;
+
+					while (reader.Read())
+					{
+						item = new PessoaLst();
+						item.Id = Convert.ToInt32(reader["id"]);
+						item.Texto = reader["nome_razao"].ToString();
+						item.CPFCNPJ = reader["cpf"].ToString();
+						item.IsAtivo = true;
+						lst.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return lst;
+		}
+
 		internal List<PessoaLst> ObterResponsaveisHistorico(int empreendimentoId, string empreendimentoTid)
 		{
 			List<PessoaLst> lst = new List<PessoaLst>();

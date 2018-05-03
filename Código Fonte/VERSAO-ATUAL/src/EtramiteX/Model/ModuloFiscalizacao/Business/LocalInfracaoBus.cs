@@ -62,6 +62,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return _da.ObterResponsaveis(empreendimentoId);
 		}
 
+		public List<PessoaLst> ObterAssinantes(int pessoaId)
+		{
+			return _da.ObterAssinantes(pessoaId);
+		}
+
 		public List<PessoaLst> ObterResponsaveisHistorico(int empreendimentoId, string empreendimentoTid)
 		{
 			return _da.ObterResponsaveisHistorico(empreendimentoId, empreendimentoTid);

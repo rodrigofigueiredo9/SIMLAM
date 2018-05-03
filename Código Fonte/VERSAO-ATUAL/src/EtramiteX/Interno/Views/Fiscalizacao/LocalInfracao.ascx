@@ -19,6 +19,7 @@
 	FiscalizacaoLocalInfracao.settings.urls.novoEmpreendimento = '<%= Url.Action("Salvar", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.salvarCadastrar = '<%= Url.Action("SalvarCadastrar", "Empreendimento") %>';
 	FiscalizacaoLocalInfracao.settings.urls.obterResponsaveis = '<%= Url.Action("ObterResponsaveis", "Fiscalizacao") %>';
+	FiscalizacaoLocalInfracao.settings.urls.obterAssinantes = '<%= Url.Action("ObterAssinantes", "Fiscalizacao") %>';
 
 </script>
 
@@ -83,6 +84,11 @@
 				<button type="button" class="floatLeft inlineBotao btnBuscarPessoa" title="Buscar autuado">Buscar</button>
 				<% } %>
 				<span class="spanVisualizarAutuado <%= (Model.LocalInfracao.PessoaId > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarVisualizarPessoa" title="Visualizar autuado"></button></span>
+			</div>
+			<br />
+			<div class="coluna50 assinanteForaEmpreendimento <%= (!String.IsNullOrWhiteSpace(Model.LocalInfracao.LonEasting)) ? "" : "hide" %>">
+				<label for="LocalInfracao_AssinantePropriedadeId">Assinante</label>
+				<%= Html.DropDownList("LocalInfracao.AssinantePropriedadeId", Model.Assinante, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlAssinantesPropriedade " }))%>
 			</div>
 		</div>
 	</fieldset>

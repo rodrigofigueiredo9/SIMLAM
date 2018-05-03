@@ -1412,6 +1412,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                     reader.Close();
                 }
 
+				if (string.IsNullOrWhiteSpace(fiscalizacao.NomeUsuarioCadastro))
+				{
+					comando = bancoDeDados.CriarComando(@"
+					select tu.nome autuante
+					  from tab_fisc_local_infracao tfli,
+						   tab_pessoa              tp,
+						   tab_fiscalizacao        tf,
+						   tab_funcionario         tu
+					 where tp.id = nvl(tfli.responsavel, tfli.pessoa)
+					   and tf.autuante = tu.id
+					   and tfli.fiscalizacao = tf.id
+					   and tf.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+							fiscalizacao.NomeUsuarioCadastro = reader.GetValue<string>("autuante");
+
+						reader.Close();
+					}
+				}
+
                 #endregion
 
                 #region Testemunhas
