@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
 var Documento = function () {
@@ -164,13 +164,16 @@ var Documento = function () {
 			$('.containerChecagemPendencia', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiChecagemPendencia && !configuracao.ChecagemPendenciaObrigatorio)));
 			$('.containerChecagemRoteiro', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiChecagemRoteiro && !configuracao.ChecagemRoteiroObrigatorio)));
 			$('.containerRequerimento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiRequerimento && !configuracao.RequerimentoObrigatorio)));
-			$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressado && !configuracao.InteressadoObrigatorio )));
+			$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressado && !configuracao.InteressadoObrigatorio)));
+			$('.containerInteressadoLivre', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressadoLivre)));
 		    //$('.containerInteressado', _objRef.settings.container).toggleClass('hide', (configuracao == null || configuracao.RequerimentoObrigatorio || (configuracao.PossuiFiscalizacao || configuracao.FiscalizacaoObrigatorio) ));
 			$('.containerFiscalizacao', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiFiscalizacao && !configuracao.FiscalizacaoObrigatorio)));
 
 			$('.labelInteressado', _objRef.settings.container).text(configuracao.LabelInteressado);
 			$('.btnAssociarInteressado', _objRef.settings.container).toggleClass('hide', (configuracao.PossuiFiscalizacao || configuracao.FiscalizacaoObrigatorio));
 
+			$('.qtdFolhas', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressadoLivre)));
+			$('.qtdDocumento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiInteressadoLivre)));
 
 			var isCnfProcesso = (configuracao != null && (configuracao.PossuiProcesso || configuracao.ProcessoObrigatorio));
 			var isCnfDocumento = (configuracao != null && (configuracao.PossuiDocumento || configuracao.DocumentoObrigatorio));
@@ -740,7 +743,11 @@ var Documento = function () {
 				Interessado: { Id: 0 },
 				Fiscalizacao: { Id: 0, SituacaoId: 0 },
 				Empreendimento: { Id: 0 },
+				Folhas: 0,
+				InteressadoLivre: '',
+				InteressadoLivreTelefone: '',
 				Atividades: [],
+
 				Responsaveis: []
 			};
 
@@ -762,6 +769,10 @@ var Documento = function () {
 			objetoDocumento.ChecagemPendencia.Id = $('.txtChecagemPendenciaId', _objRef.settings.container).val();
 			objetoDocumento.Requerimento.Id = $('.txtNumeroReq', _objRef.settings.container).val();
 			objetoDocumento.Requerimento.SituacaoId = $('.hdnRequerimentoSituacao', _objRef.settings.container).val();
+
+			objetoDocumento.InteressadoLivre = $('.txtInteressadoLivre', _objRef.settings.container).val();
+			objetoDocumento.InteressadoLivreTelefone = $('.txtInteressadoLivreTelefone', _objRef.settings.container).val();
+			objetoDocumento.Folhas = $('.txtQuantidadeFolhas', _objRef.settings.container).val();
 
 			if (objetoDocumento.Requerimento.Id != '') {
 				objetoDocumento.Empreendimento.Id = $('.hdnEmpreendimentoId', _objRef.settings.container).val();

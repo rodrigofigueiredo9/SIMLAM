@@ -32,7 +32,12 @@
 		</div>
 		
 		<div class="block">
-			<div class="coluna18">
+			<div class="qtdFolhas coluna18 <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
+				<label>Qtd. de Folhas</label>
+				<%= Html.TextBox("Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(true, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
+			</div>
+
+			<div class="qtdDocumento coluna18 <%= Model.Tipo.PossuiInteressadoLivre  ? "hide" : "" %>">
 				<label>Qtd. de documento *</label>
 				<%= Html.TextBox("Documento.Volume", Model.Documento.Volume, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
@@ -56,6 +61,24 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- ------------------------------- -->
+	<fieldset class="containerInteressadoLivre block box <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
+		<legend>Interessado</legend>
+			<div class="block">
+				<!--div class="floatRight" style="border:0px;"-->
+					<div class="coluna70">
+						<label>Nome/Razão Social</label>
+						<%= Html.TextBox("Documento.InteressadoLivre", Model.Documento.InteressadoLivre, new { @class = "text txtInteressadoLivre disabled", @maxlength = 100, @disabled = "disabled" })%>
+					</div>
+					<div class="coluna20 prepend2">
+						<label>Telefone</label>
+						<%= Html.TextBox("Documento.InteressadoLivreTelefone", Model.Documento.InteressadoLivreTelefone, new { @class = "text txtInteressadoLivreTelefone maskFone disabled", @maxlength = 13, @disabled = "disabled" })%>
+					</div>
+					
+				<!--/div-->
+			</div>
+	</fieldset>
 	
 	<% if (Model.Documento.ProtocoloAssociado.Id.GetValueOrDefault() > 0)
 	{ %>
@@ -151,7 +174,7 @@
     <% } %>
 
 	<% if(Model.RequerimentoVM.Id <= 0) { %>
-	<fieldset class="block box">
+	<fieldset class="containerInteressado block box <%= ((Model.Tipo.InteressadoObrigatorio || Model.Tipo.PossuiInteressado) && !Model.Tipo.RequerimentoObrigatorio && Model.RequerimentoVM.Id <= 0 && Model.Tipo.Id > 0) ? "" : "hide" %>">
 		<legend>Interessado</legend>
 
 		<input type="hidden" class="hdnInteressadoId" value="<%= Html.Encode(Model.RequerimentoVM.Interessado.Id) %>" />
