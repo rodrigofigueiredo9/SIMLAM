@@ -72,10 +72,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				#region Protocolo
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo e (id, numero, ano, numero_autuacao, data_autuacao, nome, tipo, protocolo, data_criacao, volume, situacao, interessado, requerimento, 
-				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid) 
+				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas) 
 				values ({0}seq_protocolo.nextval, (select nvl(max(p.numero) + 1, 1) from {0}tab_protocolo p where p.ano = :ano),
 				:ano, :numero_autuacao, :data_autuacao, :nome, :tipo, :protocolo, :data_criacao, :volume, 1, :interessado, :requerimento, :empreendimento, :checagem, :checagem_pendencia, :setor, :setor_criacao, 
-				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid) returning e.id, e.numero into :id, :numero", EsquemaBanco);
+				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas) returning e.id, e.numero into :id, :numero", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tipo", protocolo.Tipo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
@@ -94,6 +94,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("setor", protocolo.SetorId, DbType.Int32);
 				comando.AdicionarParametroEntrada("setor_criacao", protocolo.SetorId, DbType.Int32);
+
+				comando.AdicionarParametroEntrada("interessadoLivre", protocolo.InteressadoLivre, DbType.String);
+				comando.AdicionarParametroEntrada("interessadoLivreTel", protocolo.InteressadoLivreTelefone, DbType.String);
+				comando.AdicionarParametroEntrada("folhas", protocolo.Folhas, DbType.Int32);
 
 				//Apenas documento
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
@@ -172,7 +176,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				Documento doc = (protocolo.IsProcesso) ? new Documento() : protocolo as Documento;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo p set p.nome = :nome, p.volume = :volume, p.numero_autuacao = :numero_autuacao, p.data_autuacao = :data_autuacao, p.checagem = :checagem, p.requerimento = :requerimento, 
-				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado, p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid where p.id = :id", EsquemaBanco);
+				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado, p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid,
+				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas where p.id = :id", EsquemaBanco);
+
 
 				comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
@@ -186,6 +192,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("empreendimento", (protocolo.Empreendimento.Id == 0) ? (object)DBNull.Value : protocolo.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("arquivo", protocolo.Arquivo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				comando.AdicionarParametroEntrada("interessadoLivre", protocolo.InteressadoLivre, DbType.String);
+				comando.AdicionarParametroEntrada("interessadoLivreTel", protocolo.InteressadoLivreTelefone, DbType.String);
+				comando.AdicionarParametroEntrada("folhas", protocolo.Folhas, DbType.Int32);
 				//Apenas documento
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);

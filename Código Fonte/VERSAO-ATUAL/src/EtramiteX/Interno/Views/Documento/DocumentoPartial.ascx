@@ -44,12 +44,12 @@
 		<div class="block">
 			<div class="qtdFolhas coluna15  <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
 				<label>Qtd. de Folhas</label>
-				<%= Html.TextBox("Model.Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
+				<%= Html.TextBox("Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
 			</div>
 
 			<div class="qtdDocumento coluna18  <%= Model.Tipo.PossuiInteressadoLivre  ? "hide" : "" %>">
 				<label>Qtd. de documento *</label>
-				<%= Html.TextBox("Model.Documento.Volume", Model.Documento.Volume, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text maskNumInt txtQuantidadeDocumento", @maxlength = 2 }))%>
+				<%= Html.TextBox("Documento.Volume", Model.Documento.Volume, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text maskNumInt txtQuantidadeDocumento", @maxlength = 2 }))%>
 			</div>
 
 			<div class="block ultima prepend2">
@@ -106,11 +106,11 @@
 				<!--div class="floatRight" style="border:0px;"-->
 					<div class="coluna70">
 						<label>Nome/Razão Social</label>
-						<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 100 })%>
+						<%= Html.TextBox("Documento.InteressadoLivre", Model.Documento.InteressadoLivre, new { @class = "text txtInteressadoLivre", @maxlength = 100 })%>
 					</div>
 					<div class="coluna20 prepend2">
 						<label>Telefone</label>
-						<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 13 })%>
+						<%= Html.TextBox("Documento.InteressadoLivreTelefone", Model.Documento.InteressadoLivreTelefone, new { @class = "text txtInteressadoLivreTelefone maskFone", @maxlength = 13 })%>
 					</div>
 					
 				<!--/div-->

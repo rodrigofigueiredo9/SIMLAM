@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 				Validacao.Add(Mensagem.Documento.DocumentoTipoObrigatorio);
 			}
 
-			if (documento.Volume.GetValueOrDefault() <= 0)
+			if (documento.Volume.GetValueOrDefault() <= 0 && documento.Tipo.Id != 13) //Documento Avulso
 			{
 				Validacao.Add(Mensagem.Documento.QuantidadeDocumentoObrigatoria);
 			}

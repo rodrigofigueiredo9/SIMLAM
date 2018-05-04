@@ -743,7 +743,11 @@ var Documento = function () {
 				Interessado: { Id: 0 },
 				Fiscalizacao: { Id: 0, SituacaoId: 0 },
 				Empreendimento: { Id: 0 },
+				Folhas: 0,
+				InteressadoLivre: '',
+				InteressadoLivreTelefone: '',
 				Atividades: [],
+
 				Responsaveis: []
 			};
 
@@ -765,6 +769,10 @@ var Documento = function () {
 			objetoDocumento.ChecagemPendencia.Id = $('.txtChecagemPendenciaId', _objRef.settings.container).val();
 			objetoDocumento.Requerimento.Id = $('.txtNumeroReq', _objRef.settings.container).val();
 			objetoDocumento.Requerimento.SituacaoId = $('.hdnRequerimentoSituacao', _objRef.settings.container).val();
+
+			objetoDocumento.InteressadoLivre = $('.txtInteressadoLivre', _objRef.settings.container).val();
+			objetoDocumento.InteressadoLivreTelefone = $('.txtInteressadoLivreTelefone', _objRef.settings.container).val();
+			objetoDocumento.Folhas = $('.txtQuantidadeFolhas', _objRef.settings.container).val();
 
 			if (objetoDocumento.Requerimento.Id != '') {
 				objetoDocumento.Empreendimento.Id = $('.hdnEmpreendimentoId', _objRef.settings.container).val();
