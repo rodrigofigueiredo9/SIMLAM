@@ -311,6 +311,40 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProcesso
 			set { _documentos = value; }
 		}
 
+		public string InteressadoLivre
+		{
+			get
+			{
+				return _protocolo.InteressadoLivre;
+			}
+			set
+			{
+				_protocolo.InteressadoLivre = value;
+			}
+		}
+		public string InteressadoLivreTelefone
+		{
+			get
+			{
+				return _protocolo.InteressadoLivreTelefone;
+			}
+			set
+			{
+				_protocolo.InteressadoLivreTelefone = value;
+			}
+		}
+		public int Folhas
+		{
+			get
+			{
+				return _protocolo.Folhas;
+			}
+			set
+			{
+				_protocolo.Folhas = value;
+			}
+		}
+
 		public Processo(Protocolo protocolo)
 		{
 			_protocolo = protocolo;

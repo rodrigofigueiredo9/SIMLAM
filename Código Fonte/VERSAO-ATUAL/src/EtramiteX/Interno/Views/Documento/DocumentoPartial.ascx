@@ -42,7 +42,7 @@
 		</div>
 
 		<div class="block">
-			<div class="qtdFolhas coluna15  <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
+			<div class="qtdFolhas coluna18  <%= Model.Tipo.PossuiInteressadoLivre  ? "" : "hide" %>">
 				<label>Qtd. de Folhas</label>
 				<%= Html.TextBox("Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
 			</div>

@@ -83,7 +83,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("numero_autuacao", (String.IsNullOrWhiteSpace(protocolo.NumeroAutuacao)) ? (object)DBNull.Value : protocolo.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("data_autuacao", (protocolo.DataAutuacao == null || String.IsNullOrWhiteSpace(protocolo.DataAutuacao.DataTexto)) ? (object)DBNull.Value : protocolo.DataAutuacao.DataTexto, DbType.DateTime);
 				comando.AdicionarParametroEntrada("data_criacao", protocolo.DataCadastro.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("volume", protocolo.Volume, DbType.Int32);
+				comando.AdicionarParametroEntrada("volume", protocolo.Volume ?? 0, DbType.Int32);
 				comando.AdicionarParametroEntrada("checagem", protocolo.ChecagemRoteiro.Id == 0 ? (object)DBNull.Value : protocolo.ChecagemRoteiro.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("interessado", protocolo.Interessado.Id == 0 ? (object)DBNull.Value : protocolo.Interessado.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("requerimento", protocolo.Requerimento.Id == 0 ? (object)DBNull.Value : protocolo.Requerimento.Id, DbType.Int32);
@@ -182,7 +182,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
-				comando.AdicionarParametroEntrada("volume", protocolo.Volume, DbType.Int32);
+				comando.AdicionarParametroEntrada("volume", protocolo.Volume ?? 0, DbType.Int32);
 				comando.AdicionarParametroEntrada("numero_autuacao", (String.IsNullOrWhiteSpace(protocolo.NumeroAutuacao)) ? (object)DBNull.Value : protocolo.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("data_autuacao", (protocolo.DataAutuacao == null || String.IsNullOrWhiteSpace(protocolo.DataAutuacao.DataTexto)) ? (object)DBNull.Value : protocolo.DataAutuacao.DataTexto, DbType.DateTime);
 				comando.AdicionarParametroEntrada("checagem", protocolo.ChecagemRoteiro.Id == 0 ? (object)DBNull.Value : protocolo.ChecagemRoteiro.Id, DbType.Int32);
@@ -757,7 +757,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						   r.tid,
 						   r.setor,
 						   r.setor_criacao, 
-						   lfs.texto fiscalizacao_sit_texto
+						   lfs.texto fiscalizacao_sit_texto,
+						   r.interessado_livre,
+						   r.interessado_livre_telefone,
+						   r.folhas
 					  from {0}tab_protocolo          r,
 						   {0}tab_pessoa             p,
 						   {0}tab_fiscalizacao       f,
@@ -863,6 +866,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 								protocolo.Interessado.Juridica.CNPJ = reader["interessado_cpf_cnpj"].ToString();
 							}
 						}
+
+						if (reader["interessado_livre"] != null && !Convert.IsDBNull(reader["interessado_livre"]))
+							protocolo.InteressadoLivre = reader["interessado_livre"].ToString();
+						if (reader["interessado_livre_telefone"] != null && !Convert.IsDBNull(reader["interessado_livre_telefone"]))
+							protocolo.InteressadoLivreTelefone = reader["interessado_livre_telefone"].ToString();
+						if (reader["folhas"] != null && !Convert.IsDBNull(reader["folhas"]))
+							protocolo.Folhas = Convert.ToInt32(reader["folhas"]);
 
 						if (reader["empreendimento"] != null && !Convert.IsDBNull(reader["empreendimento"]))
 						{
