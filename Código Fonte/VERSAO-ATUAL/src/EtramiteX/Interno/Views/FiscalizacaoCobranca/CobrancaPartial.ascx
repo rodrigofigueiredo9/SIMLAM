@@ -120,12 +120,12 @@
     <div class="block">
         <% var indexParcelamento = Model.Entidade.Parcelamentos.IndexOf(Model.Parcelamento); %>
         <div class="coluna2">
-            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" <%= indexParcelamento == 0 ? "disabled" : "" %> />
+            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" <%= indexParcelamento <= 0 ? "disabled" : "" %> />
         </div>
         <div class="coluna9">
             Parcelamento <%= indexParcelamento + 1 %>/<%= Model.Entidade.Parcelamentos.Count%>
         </div>
-        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento == (Model.Entidade.Parcelamentos.Count - 1) ? "disabled" : "" %> />
+        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento <= (Model.Entidade.Parcelamentos.Count - 1) ? "disabled" : "" %> />
         <input type="hidden" class="hdnIndexParcelamento" value="<%= indexParcelamento %>" />
     </div>
     <%} %>
