@@ -694,7 +694,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido)
 					{
 						//Interno
-						List<int> situacoes = new List<int>() { (int)eCARSolicitacaoSituacao.EmCadastro, (int)eCARSolicitacaoSituacao.Pendente, (int)eCARSolicitacaoSituacao.Valido, (int)eCARSolicitacaoSituacao.Suspenso };
+						List<int> situacoes = new List<int>() { (int)eCARSolicitacaoSituacao.Valido };
 						CARSolicitacao solicitacao = _busCARSolicitacao.ObterPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0), situacoes, false, bancoDeDados) ?? new CARSolicitacao();
 
 						if (solicitacao != null && solicitacao.Id > 0)
