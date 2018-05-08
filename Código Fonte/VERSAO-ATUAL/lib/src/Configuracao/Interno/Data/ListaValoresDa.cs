@@ -883,7 +883,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<ProtocoloTipo> ObterTiposDocumento()
 		{
 			List<ProtocoloTipo> lst = new List<ProtocoloTipo>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto, c.processo, c.documento, c.checagem_pendencia, c.checagem_roteiro, c.requerimento, fiscalizacao, interessado from lov_protocolo_tipo c where c.tipo = 2 order by c.texto");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto, c.processo, c.documento, c.checagem_pendencia, c.checagem_roteiro, c.requerimento, fiscalizacao, interessado, interessado_livre from lov_protocolo_tipo c where c.tipo = 2 order by c.texto");
 			foreach (var item in daReader)
 			{
 				lst.Add(new ProtocoloTipo()
@@ -899,6 +899,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 					PossuiRequerimento = item["requerimento"].ToString() == "2",
 					PossuiFiscalizacao = item["fiscalizacao"].ToString() == "2",
 					PossuiInteressado = item["interessado"].ToString() == "2",
+					PossuiInteressadoLivre = item["interessado_livre"].ToString() == "2",
 
 					DocumentoObrigatorio = item["documento"].ToString() == "1",
 					ProcessoObrigatorio = item["processo"].ToString() == "1",

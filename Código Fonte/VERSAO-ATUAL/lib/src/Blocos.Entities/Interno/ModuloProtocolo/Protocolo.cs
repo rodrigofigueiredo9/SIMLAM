@@ -28,6 +28,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public Boolean IsProcesso { get; set; }
 		public Int32 SetorId { get; set; }
 		public Int32 SetorCriacaoId { get; set; }
+		public String InteressadoLivre { get; set; }
+		public String InteressadoLivreTelefone { get; set; }
+		public Int32 Folhas { get; set; }
 
 		//Número completo
 		public String Numero

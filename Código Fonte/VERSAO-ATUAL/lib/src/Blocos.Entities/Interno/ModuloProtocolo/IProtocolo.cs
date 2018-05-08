@@ -40,5 +40,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		List<ResponsavelTecnico> Responsaveis { get; set; }
 		Arquivo.Arquivo Arquivo { get; set; }
 		Funcionario Emposse { get; set; }
+		String InteressadoLivre { get; set; }
+		String InteressadoLivreTelefone { get; set; }
+		Int32 Folhas { get; set; }
 	}
 }

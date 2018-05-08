@@ -148,6 +148,24 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 			set { _protocolo.Emposse = value; }
 		}
 
+		public String InteressadoLivre
+		{
+			get { return _protocolo.InteressadoLivre; }
+			set { _protocolo.InteressadoLivre = value; }
+		}
+
+		public String InteressadoLivreTelefone
+		{
+			get { return _protocolo.InteressadoLivreTelefone; }
+			set { _protocolo.InteressadoLivreTelefone = value; }
+		}
+
+		public Int32 Folhas
+		{
+			get { return _protocolo.Folhas; }
+			set { _protocolo.Folhas = value; }
+		}
+
 		#region Apenas Documento
 
 		private ChecagemPendencia _checagemPendencia = new ChecagemPendencia();
