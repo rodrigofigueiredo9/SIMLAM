@@ -125,7 +125,7 @@
         <div class="coluna9">
             Parcelamento <%= indexParcelamento + 1 %>/<%= Model.Entidade.Parcelamentos.Count%>
         </div>
-        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento <= (Model.Entidade.Parcelamentos.Count - 1) ? "disabled" : "" %> />
+        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento == (Model.Entidade.Parcelamentos.Count - 1) || indexParcelamento < 0 ? "disabled" : "" %> />
         <input type="hidden" class="hdnIndexParcelamento" value="<%= indexParcelamento %>" />
     </div>
     <%} %>
