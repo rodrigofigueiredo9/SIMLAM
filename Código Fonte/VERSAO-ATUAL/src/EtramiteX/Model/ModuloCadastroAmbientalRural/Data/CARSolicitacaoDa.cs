@@ -989,7 +989,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				}
 
 				List<String> ordenar = new List<String>();
-				List<String> colunas = new List<String>() { "solicitacao_numero", "empreendimento_denominador", "municipio_texto", "situacao_texto", "situacao_envio_texto" };
+				List<String> colunas = new List<String>() { "solicitacao_numero", "empreendimento_codigo", "empreendimento_denominador", "municipio_texto", "situacao_texto", "situacao_envio_texto" };
 
 				if (filtros.OdenarPor > 0)
 				{
