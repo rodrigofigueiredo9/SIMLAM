@@ -345,7 +345,7 @@ Cobranca = {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
 		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() - 1));
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) - 1));
 		MasterPage.carregando(false);
 	},
 
@@ -353,7 +353,7 @@ Cobranca = {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
 		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() + 1));
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) + 1));
 		MasterPage.carregando(false);
 	},
 

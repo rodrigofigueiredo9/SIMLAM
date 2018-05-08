@@ -56,7 +56,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				return false;
 
 			if (!cobranca.DataEmissaoIUF.IsValido)
-				return false;
+				Validacao.Add(Mensagem.CobrancaMsg.DataEmissaoIUFObrigatorio);
 
 			if (!cobranca.DataIUF.IsValido)
 				Validacao.Add(Mensagem.CobrancaMsg.DataIUFObrigatorio);
