@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -31,8 +31,10 @@ Enviar = {
 
 		Enviar.settings.container = MasterPage.getContent(content);
 
+		$('.ddlObjetivos', content).change(Enviar.motivoChange);
 		$('.ddlSetoresRemetente', content).change(Enviar.remetenteSetorChange);
 		$('.ddlSetoresDestinatario', content).change(Enviar.destinatarioSetorChange);
+		$('.ddlFormaEnvio', content).change(Enviar.formaEnvioChange);
 		$('.rdbOpcaoBuscaProcesso', content).click(Enviar.opcaoBuscarTramitacoes);
 		$('.btnAddProcDoc', content).click(Enviar.addTramitacaoPorNumeroProtocolo);
 
@@ -111,12 +113,27 @@ Enviar = {
 		}
 	},
 
+	motivoChange: function () {
+		var ddlA = $(this, Enviar.settings.container);
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '19');
+		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '19'));
+	},
+
 	destinatarioSetorChange: function () {
 		var ddlB = $('.ddlDestinatarios', Enviar.settings.container);
 		var ddlA = $(this, Enviar.settings.container);
 		var url = Enviar.settings.urls.funcionariosDestinatario;
 
 		ddlA.ddlCascate(ddlB, { url: url, disabled: false });
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '259');
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '259');
+		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '259'));
+		$(".pnlOutros", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '259'));
+	},
+
+	formaEnvioChange: function () {
+		var ddlA = $(this, Enviar.settings.container);
+		$(".rastreio", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '1' || ddlA.val() == '2'));
 	},
 
 	opcaoBuscarTramitacoes: function () {
@@ -332,7 +349,11 @@ Enviar = {
 				Remetente: { Id: $('.hdnRemetenteId', content).val() },
 				Destinatario: { Id: $('.ddlDestinatarios', content).val() },
 				TramitacaoTipo: $('.hdnEnviarTramitacaoTipo', content).val(),
-				SituacaoId: $('.hdnEnviarSituacaoId', content).val()
+				SituacaoId: $('.hdnEnviarSituacaoId', content).val(),
+				DestinoExterno: $('.txtDestinoExterno', content).val(),
+				CodigoRastreio: $('.txtCodigoRastreio', content).val(),
+				FormaEnvio: $('.ddlFormaEnvio :selected', content).val(),
+				NumeroAutuacao: $('.txtNumeroAutuacao', content).val()
 			}
 		};
 		return contentJson;
