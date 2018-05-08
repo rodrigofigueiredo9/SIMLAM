@@ -745,7 +745,9 @@ FiscalizacaoLocalInfracao = {
 		if ($(this).val().toString() == "0") {  //"não"
 		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).hide();
 		} else {    //"sim"
-		    $('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).show();
+			$('.divAreaAbrangencia', FiscalizacaoLocalInfracao.container).show();
+			$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlClear();
+			$('.assinanteForaEmpreendimento', FiscalizacaoLocalInfracao.container).hide();
 		}
 	},
 
