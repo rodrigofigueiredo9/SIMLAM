@@ -1,0 +1,257 @@
+---------------------------------------------------------
+	-- Protocolo
+	---------------------------------------------------------
+	procedure protocolo(p_id               number,
+						p_acao             number,
+						p_executor_id      number,
+						p_executor_nome    varchar2,
+						p_executor_login   varchar2,
+						p_executor_tipo_id number,
+						p_executor_tid     varchar2) is
+		v_sucesso boolean := false;
+		v_id      number;
+	begin
+	
+		----------------------------------------------------------------------------------------------------------------
+	
+		----------------------------------------------------------------------------------------------------------------
+		-- Protocolo
+		----------------------------------------------------------------------------------------------------------------
+		for i in (select p.id,
+						 p.tid,
+						 p.numero,
+						 p.ano,
+						 p.numero_autuacao,
+						 p.data_autuacao,
+						 p.data_criacao,
+						 p.protocolo           protocolo_id,
+						 lo.texto              protocolo_texto,
+						 p.tipo                tipo_id,
+						 lp.texto              tipo_texto,
+						 p.volume,
+						 p.situacao            situacao_id,
+						 ls.texto              situacao_texto,
+						 p.interessado         interessado_id,
+						 i.tid                 interessado_tid,
+						 p.requerimento        requerimento_id,
+						 r.tid                 requerimento_tid,
+						 p.empreendimento      empreendimento_id,
+						 e.tid                 empreendimento_tid,
+						 p.checagem            checagem_id,
+						 c.tid                 checagem_tid,
+						 p.checagem_pendencia  checagem_pendencia_id,
+						 cp.tid                checagem_pendencia_tid,
+						 p.protocolo_associado protocolo_associado_id,
+						 pro.tid               protocolo_associado_tid,
+						 p.arquivo             arquivo_id,
+						 ta.tid                arquivo_tid,
+						 p.emposse             emposse_id,
+						 f.tid                 emposse_tid,
+						 ts.id                 setor_id,
+						 ts.tid                setor_tid,
+						 tsc.id                setor_criacao_id,
+						 tsc.tid               setor_criacao_tid,
+						 fis.id                fiscalizacao_id,
+						 fis.tid               fiscalizacao_tid,
+             p.interessado_livre,
+             p.interessado_livre_telefone,
+             p.folhas
+					from tab_protocolo          p,
+						 tab_protocolo          pro,
+						 tab_arquivo            ta,
+						 tab_setor              ts,
+						 tab_setor              tsc,
+						 lov_protocolo_tipo     lp,
+						 lov_protocolo          lo,
+						 lov_protocolo_situacao ls,
+						 tab_checagem           c,
+						 tab_checagem_pend      cp,
+						 tab_requerimento       r,
+						 tab_pessoa             i,
+						 tab_funcionario        f,
+						 tab_empreendimento     e,
+						 tab_fiscalizacao       fis
+				   where p.protocolo_associado = pro.id(+)
+					 and p.arquivo = ta.id(+)
+					 and p.setor = ts.id(+)
+					 and p.setor_criacao = tsc.id(+)
+					 and p.tipo = lp.id
+					 and p.checagem = c.id(+)
+					 and p.checagem_pendencia = cp.id(+)
+					 and p.requerimento = r.id(+)
+					 and p.interessado = i.id(+)
+					 and p.emposse = f.id(+)
+					 and p.empreendimento = e.id(+)
+					 and p.fiscalizacao = fis.id(+)
+					 and p.protocolo = lo.id
+					 and p.situacao = ls.id
+					 and p.id = p_id) loop
+		
+			-- Inserindo na histórico
+			insert into hst_protocolo p
+				(id,
+				 id_protocolo,
+				 tid,
+				 numero,
+				 ano,
+				 numero_autuacao,
+				 data_autuacao,
+				 data_criacao,
+				 protocolo_id,
+				 protocolo_texto,
+				 tipo_id,
+				 tipo_texto,
+				 volume,
+				 situacao_id,
+				 situacao_texto,
+				 interessado_id,
+				 interessado_tid,
+				 requerimento_id,
+				 requerimento_tid,
+				 empreendimento_id,
+				 empreendimento_tid,
+				 checagem_id,
+				 checagem_tid,
+				 checagem_pendencia_id,
+				 checagem_pendencia_tid,
+				 setor_id,
+				 setor_tid,
+				 setor_criacao_id,
+				 setor_criacao_tid,
+				 protocolo_associado_id,
+				 protocolo_associado_tid,
+				 arquivo_id,
+				 arquivo_tid,
+				 emposse_id,
+				 emposse_tid,
+				 fiscalizacao_id,
+				 fiscalizacao_tid,
+         interessado_livre,
+         interessado_livre_telefone,
+         folhas,
+				 executor_id,
+				 executor_tid,
+				 executor_nome,
+				 executor_login,
+				 executor_tipo_id,
+				 executor_tipo_texto,
+				 acao_executada,
+				 data_execucao)
+			
+			values
+				(seq_hst_protocolo.nextval,
+				 i.id,
+				 i.tid,
+				 i.numero,
+				 i.ano,
+				 i.numero_autuacao,
+				 i.data_autuacao,
+				 i.data_criacao,
+				 i.protocolo_id,
+				 i.protocolo_texto,
+				 i.tipo_id,
+				 i.tipo_texto,
+				 i.volume,
+				 i.situacao_id,
+				 i.situacao_texto,
+				 i.interessado_id,
+				 i.interessado_tid,
+				 i.requerimento_id,
+				 i.requerimento_tid,
+				 i.empreendimento_id,
+				 i.empreendimento_tid,
+				 i.checagem_id,
+				 i.checagem_tid,
+				 i.checagem_pendencia_id,
+				 i.checagem_pendencia_tid,
+				 i.setor_id,
+				 i.setor_tid,
+				 i.setor_criacao_id,
+				 i.setor_criacao_tid,
+				 i.protocolo_associado_id,
+				 i.protocolo_associado_tid,
+				 i.arquivo_id,
+				 i.arquivo_tid,
+				 i.emposse_id,
+				 i.emposse_tid,
+				 i.fiscalizacao_id,
+				 i.fiscalizacao_tid,
+         i.interessado_livre,
+         i.interessado_livre_telefone,
+         i.folhas,
+				 p_executor_id,
+				 p_executor_tid,
+				 p_executor_nome,
+				 p_executor_login,
+				 p_executor_tipo_id,
+				 (select ltf.texto
+					from lov_executor_tipo ltf
+				   where ltf.id = p_executor_tipo_id),
+				 (select la.id
+					from lov_historico_artefatos_acoes la
+				   where la.acao = p_acao
+					 and la.artefato = 10),
+				 systimestamp)
+			returning p.id into v_id;
+		
+			----------------------------------------------------------------------------------------------------------------
+			-- protocolo/Responsaveis
+			----------------------------------------------------------------------------------------------------------------
+			for j in (select tr.id,
+							 pp.id         responsavel_id,
+							 pp.tid        responsavel_tid,
+							 tr.funcao     funcao_id,
+							 f.texto       funcao_texto,
+							 tr.numero_art,
+							 tr.tid
+						from tab_protocolo_responsavel tr,
+							 tab_pessoa                pp,
+							 lov_protocolo_resp_funcao f
+					   where pp.id = tr.responsavel
+						 and tr.funcao = f.id
+						 and tr.protocolo = i.id) loop
+				insert into hst_protocolo_responsavel
+					(id,
+					 id_hst,
+					 tid,
+					 protocolo_resp_id,
+					 protocolo_id,
+					 protocolo_tid,
+					 responsavel_id,
+					 responsavel_tid,
+					 funcao_id,
+					 funcao_texto,
+					 numero_art)
+				values
+					(seq_hst_protocolo_resp.nextval,
+					 v_id,
+					 i.tid,
+					 j.id,
+					 i.id,
+					 i.tid,
+					 j.responsavel_id,
+					 j.responsavel_tid,
+					 j.funcao_id,
+					 j.funcao_texto,
+					 j.numero_art);
+			end loop;
+		
+		end loop;
+		----------------------------------------------------------------------------------------------------------------
+		v_sucesso := true;
+	
+		if (not v_sucesso) then
+			Raise_application_error(-20000,
+									'Erro ao gerar o Histórico de Protocolo. Mensagem: ' ||
+									dbms_utility.format_error_stack ||
+									dbms_utility.format_call_stack);
+		end if;
+		--Tratamento de exceção
+	exception
+		when others then
+			Raise_application_error(-20000,
+									'Erro ao gerar o Histórico de Protocolo. Mensagem: ' ||
+									dbms_utility.format_error_stack ||
+									dbms_utility.format_call_stack);
+	end;
+	---------------------------------------------------------

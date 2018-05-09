@@ -1,0 +1,104 @@
+----------------------------------------------------------------------------------------------------------------
+      -- protocolo
+      ----------------------------------------------------------------------------------------------------------------
+     
+    for i in (select r.id, r.numero, r.ano, r.nome, r.numero_autuacao, r.data_autuacao, r.data_criacao, 
+         r.tipo tipo_id, lt.texto tipo_texto, r.interessado interessado_id, 
+         coalesce(p.nome, p.razao_social, r.interessado_livre) interessado_nome_razao, nvl(p.cpf, p.cnpj) interessado_cpf_cnpj, 
+         p.tipo interessado_tipo, nvl(p.rg, p.ie) interessado_rg_ie, e.id empreendimento_id, 
+         e.denominador empreendimento_denominador, e.cnpj empreendimento_cnpj, e.codigo empreendimento_codigo, 
+         r.situacao situacao_id, ls.texto situacao_texto, r.emposse emposse_id, f.nome emposse_nome, 
+         f.cpf emposse_cpf, r.protocolo_associado, tp.numero protocolo_associado_numero, 
+         r.setor setor_id, r.setor_criacao setor_criacao_id, r.protocolo, r.tramitacao, r.requerimento
+         from tab_protocolo r, tab_protocolo tp, tab_pessoa p, tab_empreendimento e, 
+         lov_protocolo_situacao ls, lov_protocolo_tipo lt, tab_funcionario f 
+         where r.protocolo_associado = tp.id(+) and r.interessado = p.id(+) 
+         and r.empreendimento = e.id(+) and r.situacao = ls.id and r.tipo = lt.id
+         and r.emposse = f.id(+) and r.id = p_id) loop   
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_protocolo e where e.protocolo_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_protocolo(id, protocolo_id, protocolo, tipo_id, tipo_texto, numero_completo, 
+            numero, ano, nome, numero_autuacao, data_autuacao, data_criacao, interessado_id, 
+            interessado_tipo, interessado_nome_razao, interessado_cpf_cnpj, interessado_rg_ie, 
+            empreendimento_id, empreendimento_denominador, empreendimento_cnpj, empreendimento_codigo, 
+            situacao_id, situacao_texto, emposse_id, emposse_nome, emposse_cpf, protocolo_associado_id, 
+            protocolo_associado_numero, setor_id, setor_criacao_id, tramitacao, requerimento_id)            
+            values
+            (seq_lst_protocolo.nextval, i.id, i.protocolo, i.tipo_id, i.tipo_texto, i.numero||'/'||i.ano, 
+            i.numero, i.ano, i.nome, i.numero_autuacao, i.data_autuacao, i.data_criacao, i.interessado_id, 
+            i.interessado_tipo, i.interessado_nome_razao, i.interessado_cpf_cnpj, i.interessado_rg_ie, 
+            i.empreendimento_id, i.empreendimento_denominador, i.empreendimento_cnpj, i.empreendimento_codigo, 
+            i.situacao_id, i.situacao_texto, i.emposse_id, i.emposse_nome, i.emposse_cpf, i.protocolo_associado, 
+            i.protocolo_associado_numero, i.setor_id, i.setor_criacao_id, i.tramitacao, i.requerimento);
+         else
+            --atualiza na listagem
+            update lst_protocolo e set 
+            e.protocolo = i.protocolo, 
+            e.numero_completo = i.numero||'/'||i.ano, 
+            e.numero = i.numero, 
+            e.ano = i.ano, 
+            e.nome = i.nome, 
+            e.numero_autuacao = i.numero_autuacao, 
+            e.data_autuacao = i.data_autuacao, 
+            e.data_criacao = i.data_criacao, 
+            e.interessado_id = i.interessado_id, 
+            e.interessado_tipo = i.interessado_tipo, 
+            e.interessado_nome_razao = i.interessado_nome_razao, 
+            e.interessado_cpf_cnpj = i.interessado_cpf_cnpj, 
+            e.interessado_rg_ie = i.interessado_rg_ie, 
+            e.empreendimento_id = i.empreendimento_id, 
+            e.empreendimento_codigo = i.empreendimento_codigo,
+            e.empreendimento_cnpj = i.empreendimento_cnpj,
+            e.empreendimento_denominador = i.empreendimento_denominador,
+            e.situacao_id = i.situacao_id, 
+            e.situacao_texto = i.situacao_texto, 
+            e.emposse_id = i.emposse_id, 
+            e.emposse_nome = i.emposse_nome, 
+            e.emposse_cpf = i.emposse_cpf, 
+            e.protocolo_associado_id = i.protocolo_associado, 
+            e.protocolo_associado_numero = i.protocolo_associado_numero, 
+            e.setor_id = i.setor_id, 
+            e.setor_criacao_id = i.setor_criacao_id, 
+            e.tramitacao = i.tramitacao,
+            e.tipo_texto = i.tipo_texto, 
+            e.tipo_id = i.tipo_id,
+            e.requerimento_id = i.requerimento
+            where e.protocolo_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de protocolo
+   ---------------------------------------------------------
+   procedure protocoloDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- protocolo
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_protocolo e where e.protocolo_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o protocolo da lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------   
