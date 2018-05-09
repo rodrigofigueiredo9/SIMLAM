@@ -262,8 +262,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				#region Responsaveis do Empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select p.id, nvl(p.nome, p.razao_social) nome_razao, p.cpf  from tab_pessoa p,
-				tab_pessoa_representante r where r.pessoa = p.id and r.representante = :pessoa_id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select p.id, nvl(p.nome, p.razao_social) nome_razao, p.cpf
+					  from tab_pessoa_representante pr, tab_pessoa p, tab_pessoa_conjuge pc, tab_pessoa c
+					  where pr.representante = p.id and pr.pessoa = :pessoa_id
+					  and p.id = pc.pessoa (+) and pc.conjuge = c.id (+) order by p.nome", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("pessoa_id", pessoaId, DbType.Int32);
 

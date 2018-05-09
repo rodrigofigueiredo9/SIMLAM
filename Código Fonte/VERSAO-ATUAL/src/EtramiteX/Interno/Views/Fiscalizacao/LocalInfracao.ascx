@@ -86,7 +86,7 @@
 				<span class="spanVisualizarAutuado <%= (Model.LocalInfracao.PessoaId > 0) ? "" : "hide" %>"><button type="button" class="icone visualizar esquerda inlineBotao btnEditarVisualizarPessoa" title="Visualizar autuado"></button></span>
 			</div>
 			<br />
-			<div class="coluna50 assinanteForaEmpreendimento <%= (!String.IsNullOrWhiteSpace(Model.LocalInfracao.LonEasting)) ? "" : "hide" %>">
+			<div class="coluna50 assinanteForaEmpreendimento <%= (Model.LocalInfracao.EmpreendimentoId == 0 || Model.LocalInfracao.EmpreendimentoId == null) && Model.LocalInfracao.PessoaId > 0 ? "" : "hide" %>">
 				<label for="LocalInfracao_AssinantePropriedadeId">Assinante</label>
 				<%= Html.DropDownList("LocalInfracao.AssinantePropriedadeId", Model.Assinante, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlAssinantesPropriedade " }))%>
 			</div>
