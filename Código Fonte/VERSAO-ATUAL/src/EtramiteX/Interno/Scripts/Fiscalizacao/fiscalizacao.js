@@ -368,6 +368,7 @@ Fiscalizacao = {
 		$(".divEditar", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnEditar == 'undefined');
 		$(".divIntNovo", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnIntAssNovo == 'undefined');
 		$(".divEmpAvancar", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnEmpAvancar == 'undefined');
+		$(".btnEmpBuscaEmp", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnEmpBuscaEmp == 'undefined');
 		$(".divEmpNovo", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnEmpAssNovo == 'undefined');
 		$(".divFinalizar", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnFinalizar == 'undefined');
 		$(".divVoltar", Fiscalizacao.container).toggleClass('hide', typeof botoes.btnVoltar == 'undefined');
@@ -804,6 +805,7 @@ FiscalizacaoLocalInfracao = {
 		    $('.btnVerificarEmp', FiscalizacaoLocalInfracao.container).hide();
 
 		    $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).hide();
+		    $('.divDdlResponsavel', FiscalizacaoLocalInfracao.container).hide();
 		}
         //Dentro de empreendimento == não
 		else if ($('.rblAutuado:checked', FiscalizacaoLocalInfracao.container).val().toString() == "0") {
@@ -836,7 +838,8 @@ FiscalizacaoLocalInfracao = {
 					var assinantes = [];
 					$.each(response.Assinates, function (i, item) { assinantes.push(item); });
 
-					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(assinantes);
+					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlClear();
+                    $('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(assinantes);
 					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeClass('disabled');
 					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeAttr('disabled');
 					$('.assinanteForaEmpreendimento', FiscalizacaoLocalInfracao.container).show();
@@ -888,9 +891,9 @@ FiscalizacaoLocalInfracao = {
 					FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpNovo, .fdsEmpreendimento');
 
 					$('.spanEmpBuscaLocal', FiscalizacaoLocalInfracao.container).hide();
-					$('.spanEmpBuscaEmp', FiscalizacaoLocalInfracao.container).hide();
 					$('.spanEmpAssNovoPessoa', FiscalizacaoLocalInfracao.container).hide();
 
+					$('.spanEmpBuscaEmp', FiscalizacaoLocalInfracao.container).show();
 					$('.spanEmpNovo', FiscalizacaoLocalInfracao.container).show();
 					$('.spanEmpAssNovo', FiscalizacaoLocalInfracao.container).show();
 
@@ -1020,6 +1023,7 @@ FiscalizacaoLocalInfracao = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Fiscalizacao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
+				debugger;
 				$('.empreendimentoPartial', FiscalizacaoLocalInfracao.container).html(response);
 				$('.divResultados', FiscalizacaoLocalInfracao.container).addClass('hide');
 				FiscalizacaoLocalInfracao.toggleBotoes('.spanEmpAssociar, .spanEmpAssNovo');
@@ -1052,10 +1056,11 @@ FiscalizacaoLocalInfracao = {
 
 					var assinantes = [];
 					$.each(response.Assinates, function (i, item) { assinantes.push(item); });
-
+					
 					$('.ddlResponsaveis', FiscalizacaoLocalInfracao.container).ddlLoad(response.Responsaveis);
 					$('.ddlResponsaveisPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(itens);
-					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(assinantes);
+					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlClear();
+                    $('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).ddlLoad(assinantes);
 					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeClass('disabled');
 					$('.ddlAssinantesPropriedade', FiscalizacaoLocalInfracao.container).removeAttr('disabled');
 
@@ -1256,9 +1261,11 @@ FiscalizacaoLocalInfracao = {
 	onClickAtivarBuscaEmpreendimento: function () {
 		MasterPage.carregando(true);
 
+		$('.txtFiltroCodigoEmp', FiscalizacaoLocalInfracao.container).val('');
+        $('.fsLocalInfracao', FiscalizacaoLocalInfracao.container).hide();
 		$('.fsEmpreendimentoBuscar', FiscalizacaoLocalInfracao.container).hide();
 		$('.fsLocalInfracaoCodEmp', FiscalizacaoLocalInfracao.container).show();
-
+		
 		MasterPage.carregando(false);
 	},
 
