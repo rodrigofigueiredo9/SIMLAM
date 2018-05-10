@@ -1101,8 +1101,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 {
                     if (reader.Read())
                     {
-                        fiscalizacao.DescricaoInfracao = reader.GetValue<string>("descricao_infracao");
-                        fiscalizacao.DataInfracao = reader.GetValue<string>("data_constatacao");
+						if(reader.GetValue<string>("descricao_infracao")?.Count() > 1100)
+							fiscalizacao.DescricaoInfracao = reader.GetValue<string>("descricao_infracao").Substring(0, 1100);
+						else
+							fiscalizacao.DescricaoInfracao = reader.GetValue<string>("descricao_infracao");
+						fiscalizacao.DataInfracao = reader.GetValue<string>("data_constatacao");
                         fiscalizacao.HoraInfracao = reader.GetValue<string>("hora_constatacao");
                         fiscalizacao.InfrLeve = reader.GetValue<string>("is_leve");
                         fiscalizacao.InfrMedia = reader.GetValue<string>("is_media");
@@ -1292,7 +1295,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                         fiscalizacao.ApreensaoLacres = reader.GetValue<string>("lacres");
 
                         fiscalizacao.ValorBemPorExtenso = Escrita.PorExtenso(Convert.ToDecimal(fiscalizacao.ValorBemProdutoArbitrado), ModoEscrita.Monetario);
-                        fiscalizacao.ValorBemPorExtenso = fiscalizacao.ValorBemPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorBemPorExtenso.Substring(1);
+						if(!string.IsNullOrWhiteSpace(fiscalizacao.ValorBemPorExtenso))
+							fiscalizacao.ValorBemPorExtenso = fiscalizacao.ValorBemPorExtenso.First().ToString().ToUpper() + fiscalizacao.ValorBemPorExtenso.Substring(1);
 						
 						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n\n", "");
 						fiscalizacao.DescreverApreensao = fiscalizacao.DescreverApreensao.Replace("\n", " ");
@@ -1360,7 +1364,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 {
                     if (reader.Read())
                     {
-                        fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
+						if(reader.GetValue<string>("descricao")?.Count() > 940)
+							fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao").Substring(0, 940);
+						else
+							fiscalizacao.DescricaoOutrasPenalidades = reader.GetValue<string>("descricao");
 
 						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n\n", "");
 						fiscalizacao.DescricaoOutrasPenalidades = fiscalizacao.DescricaoOutrasPenalidades.Replace("\n", " ");

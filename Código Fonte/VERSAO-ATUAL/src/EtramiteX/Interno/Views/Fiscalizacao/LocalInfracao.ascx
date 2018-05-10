@@ -207,6 +207,12 @@
 						    <span class="spanBotoes spanEmpSalvar hide">
 							    <input class="floatLeft btnEmpSalvar" type="button" value="Editar" />
 						    </span>
+						    <span class="spanBotoes spanEmpSalvarCadastrar hide">
+							    <input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
+						    </span>
+						    <span class="spanBotoes spanEmpSalvarEditar hide">
+							    <input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
+						    </span>
 						    <span class="spanBotoes spanEmpNovo hide">
 							    <input class="floatLeft btnEmpNovo" type="button" value="Novo" />
 						    </span>
@@ -215,12 +221,6 @@
 						    </span>
 							<span class="spanBotoes spanEmpBuscaEmp hide">
 							    <input class="floatLeft btnEmpBuscaEmp" type="button" value="Buscar por Cód. Empreendimento" />
-						    </span>
-						    <span class="spanBotoes spanEmpSalvarCadastrar hide">
-							    <input class="floatLeft btnEmpSalvarCadastrar" type="button" value="Salvar" />
-						    </span>
-						    <span class="spanBotoes spanEmpSalvarEditar hide">
-							    <input class="floatLeft btnEmpSalvarEditar" type="button" value="Salvar" />
 						    </span>
 						    <span class="spanBotoes spanEmpAssNovoPessoa hide">
 							    <input class="floatLeft btnEmpAssNovoPessoa" type="button" value="Buscar Novo" />
