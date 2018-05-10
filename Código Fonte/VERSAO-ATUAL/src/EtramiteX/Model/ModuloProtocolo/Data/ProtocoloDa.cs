@@ -72,10 +72,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				#region Protocolo
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo e (id, numero, ano, numero_autuacao, data_autuacao, nome, tipo, protocolo, data_criacao, volume, situacao, interessado, requerimento, 
-				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas) 
+				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas, assunto, descricao) 
 				values ({0}seq_protocolo.nextval, (select nvl(max(p.numero) + 1, 1) from {0}tab_protocolo p where p.ano = :ano),
 				:ano, :numero_autuacao, :data_autuacao, :nome, :tipo, :protocolo, :data_criacao, :volume, 1, :interessado, :requerimento, :empreendimento, :checagem, :checagem_pendencia, :setor, :setor_criacao, 
-				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas) returning e.id, e.numero into :id, :numero", EsquemaBanco);
+				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas, :assunto, :descricao) returning e.id, e.numero into :id, :numero", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tipo", protocolo.Tipo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
@@ -101,6 +101,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				//Apenas documento
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
+				comando.AdicionarParametroEntrada("assunto", DbType.String, 150, doc.Assunto);
+				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
 				comando.AdicionarParametroEntrada("checagem_pendencia", doc.ChecagemPendencia.Id == 0 ? (object)DBNull.Value : doc.ChecagemPendencia.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
 
@@ -177,7 +179,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo p set p.nome = :nome, p.volume = :volume, p.numero_autuacao = :numero_autuacao, p.data_autuacao = :data_autuacao, p.checagem = :checagem, p.requerimento = :requerimento, 
 				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado, p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid,
-				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas where p.id = :id", EsquemaBanco);
+				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas, p.assunto = :assunto, p.descricao = :descricao where p.id = :id", EsquemaBanco);
 
 
 				comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
@@ -199,7 +201,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				//Apenas documento
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
-
+				comando.AdicionarParametroEntrada("assunto", DbType.String, 150, doc.Assunto);
+				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
 
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -760,7 +763,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						   lfs.texto fiscalizacao_sit_texto,
 						   r.interessado_livre,
 						   r.interessado_livre_telefone,
-						   r.folhas
+						   r.folhas, r.assunto, r.descricao
 					  from {0}tab_protocolo          r,
 						   {0}tab_pessoa             p,
 						   {0}tab_fiscalizacao       f,
@@ -908,6 +911,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						{
 							documento = new Documento(protocolo);
 							documento.Nome = reader["nome"].ToString();
+							documento.Assunto = reader["assunto"].ToString();
+							documento.Descricao = reader["descricao"].ToString();
 
 							if (reader["protocolo_associado"] != null && !Convert.IsDBNull(reader["protocolo_associado"]))
 							{

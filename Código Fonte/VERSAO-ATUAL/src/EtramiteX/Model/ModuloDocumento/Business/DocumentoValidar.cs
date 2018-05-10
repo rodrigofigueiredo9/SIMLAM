@@ -68,14 +68,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 				Validacao.Add(Mensagem.Documento.DocumentoTipoObrigatorio);
 			}
 
-			if (documento.Volume.GetValueOrDefault() <= 0 && documento.Tipo.Id != 13) //Documento Avulso
+			if (documento.Volume.GetValueOrDefault() <= 0 && documento.Tipo.QuantidadeDocumentoObrigatorio) //Documento Avulso
 			{
 				Validacao.Add(Mensagem.Documento.QuantidadeDocumentoObrigatoria);
 			}
 
-			if (string.IsNullOrEmpty(documento.Nome))
+			if (string.IsNullOrEmpty(documento.Nome) && documento.Tipo.NomeObrigatorio)
 			{
 				Validacao.Add(Mensagem.Documento.NomeObrigatorio);
+			}
+
+			if (string.IsNullOrEmpty(documento.Assunto) && documento.Tipo.AssuntoObrigatorio)
+			{
+				Validacao.Add(Mensagem.Documento.AssuntoObrigatorio);
+			}
+
+			if (string.IsNullOrEmpty(documento.Descricao) && documento.Tipo.DescricaoObrigatoria)
+			{
+				Validacao.Add(Mensagem.Documento.DescricaoObrigatoria);
 			}
 
 			if (documento.Tipo.Id == (int)eProtocoloTipo.FiscalizacaoSemAI_TEI_TAD)

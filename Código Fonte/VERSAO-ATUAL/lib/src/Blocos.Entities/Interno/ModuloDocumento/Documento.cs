@@ -183,6 +183,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		}
 
 		public String Nome { get; set; }
+		public String Assunto { get; set; }
+		public String Descricao { get; set; }
 
 		#endregion
 	

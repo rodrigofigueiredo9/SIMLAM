@@ -47,7 +47,7 @@
 				<%= Html.TextBox("Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
 			</div>
 
-			<div class="qtdDocumento coluna18  <%= Model.Tipo.PossuiInteressadoLivre  ? "hide" : "" %>">
+			<div class="qtdDocumento coluna18  <%= Model.Tipo.PossuiQuantidadeDocumento  ? "" : "hide" %>">
 				<label>Qtd. de documento *</label>
 				<%= Html.TextBox("Documento.Volume", Model.Documento.Volume, ViewModelHelper.SetaDisabled(Model.IsEditar, new { @class = "text maskNumInt txtQuantidadeDocumento", @maxlength = 2 }))%>
 			</div>
@@ -71,9 +71,17 @@
 		</div>
 
 		<div class="block">
-			<div class="coluna86">
-				<label>Nome do documento*</label>
+			<div class="coluna86 <%= Model.Tipo.PossuiNome  ? "" : "hide" %>">
+				<label>Nome do documento *</label>
 				<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text txtNomeDocumento", @maxlength = 100 })%>
+			</div>
+			<div class="coluna86 <%= Model.Tipo.PossuiAssunto ? "" : "hide" %>">
+				<label>Assunto *</label>
+				<%= Html.TextBox("Documento.Assunto", Model.Documento.Assunto, new { @class = "text txtAssunto", @maxlength = 150 })%>
+			</div>
+			<div class="coluna86 <%= Model.Tipo.PossuiDescricao ? "" : "hide" %>">
+				<label>Descrição da Comunicação Interna *</label>
+				<%= Html.TextBox("Documento.Descricao", Model.Documento.Descricao, new { @class = "text txtDescricao", @maxlength = 150 })%>
 			</div>
 		</div>
 	</div>
