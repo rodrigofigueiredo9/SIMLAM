@@ -186,9 +186,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 
 			foreach (Tramitacao item in tramitacoes)
 			{
-				if (string.IsNullOrWhiteSpace(item.Despacho))
-					Validacao.Add(Msg.DespachoObrigatorio);
-
+				if (item.Protocolo?.Tipo?.Texto == "Documento Avulso")
+				{
+					if (string.IsNullOrWhiteSpace(item.Despacho))
+						Validacao.Add(Msg.DespachoObrigatorio);
+				}
 				RegraSetor(item.RemetenteSetor.Id, true);
 				SetorOrigem(item);
 				if (item.Protocolo.Id > 0)

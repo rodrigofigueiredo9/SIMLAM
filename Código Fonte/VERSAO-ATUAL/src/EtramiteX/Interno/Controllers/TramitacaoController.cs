@@ -331,6 +331,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				tramitacao.CodigoRastreio = vm.Enviar.CodigoRastreio;
 				tramitacao.FormaEnvio = vm.Enviar.FormaEnvio;
 				tramitacao.NumeroAutuacao = vm.Enviar.NumeroAutuacao;
+				if (tramitacao.Protocolo?.Id > 0)
+				{
+					var protocolo = _busProtocolo.Obter(tramitacao.Protocolo.Id.GetValueOrDefault(0));
+					if (protocolo != null)
+						tramitacao.Protocolo.Tipo = protocolo.Tipo;
+				}
 			}
 		}
 

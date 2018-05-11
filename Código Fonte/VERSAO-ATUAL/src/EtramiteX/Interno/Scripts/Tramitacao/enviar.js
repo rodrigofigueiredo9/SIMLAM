@@ -143,7 +143,6 @@ Enviar = {
 		var outros = $('.ddlSetoresDestinatario :selected', Enviar.settings.container)[0].label == 'Outros';
 		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
 		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
-		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !outros);
 		$(".pnlOutros", Enviar.settings.container).toggleClass('hide', !outros);
 	},
 
