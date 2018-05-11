@@ -116,7 +116,21 @@ Enviar = {
 	motivoChange: function () {
 		var ddlA = $(this, Enviar.settings.container);
 		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '19');
-		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '19'));
+        $(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '19'));
+        var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => x.value = 'Documento Avulso' && x.parentElement.parentElement.children[0].children[0].checked);
+		if(!doc)
+			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), false);
+		else
+            Enviar.asterisco($('.lblDespacho', Enviar.settings.container), doc.value);
+	},
+
+	asterisco: function (control, exibir) {
+
+		control.text(control.text().replace(' *', ''));
+
+		if (exibir) {
+			control.text(control.text() + ' *');
+		}
 	},
 
 	destinatarioSetorChange: function () {
@@ -124,11 +138,12 @@ Enviar = {
 		var ddlA = $(this, Enviar.settings.container);
 		var url = Enviar.settings.urls.funcionariosDestinatario;
 
-		ddlA.ddlCascate(ddlB, { url: url, disabled: false });
-		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '259');
-		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '259');
-		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '259'));
-		$(".pnlOutros", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '259'));
+        ddlA.ddlCascate(ddlB, { url: url, disabled: false });
+
+		var outros = $('.ddlSetoresDestinatario :selected', Enviar.settings.container)[0].label == 'Outros';
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
+		$(".pnlOutros", Enviar.settings.container).toggleClass('hide', !outros);
 	},
 
 	formaEnvioChange: function () {

@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="block">
-                <label for="Enviar_Despacho">Despacho</label>
+                <label for="Enviar_Despacho" class="lblDespacho">Despacho</label>
                 <%= Html.TextArea("Enviar.Despacho", Model.Enviar.Despacho, new { @class = "textarea txtDespacho" })%>
             </div>
         </fieldset>

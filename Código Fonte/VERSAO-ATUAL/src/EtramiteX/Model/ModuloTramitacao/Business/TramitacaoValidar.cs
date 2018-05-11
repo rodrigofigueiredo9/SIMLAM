@@ -124,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				Validacao.Add(Msg.RemetenteDestinatarioIguais);
 			}
 
-			if(enviarCampos.DestinatarioSetor.Id == 259)//Outros
+			if(enviarCampos.DestinatarioSetor.Id == 258)//Outros
 			{
 				if(string.IsNullOrWhiteSpace(enviarCampos.DestinoExterno))
 					Validacao.Add(Msg.DestinoExternoObrigatorio);
@@ -185,6 +185,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 
 			foreach (Tramitacao item in tramitacoes)
 			{
+				if (item.Protocolo?.Tipo?.Texto == "Documento Avulso")
+				{
+					if (string.IsNullOrWhiteSpace(item.Despacho))
+						Validacao.Add(Msg.DespachoObrigatorio);
+				}
 				RegraSetor(item.RemetenteSetor.Id, true);
 				SetorOrigem(item);
 			}
