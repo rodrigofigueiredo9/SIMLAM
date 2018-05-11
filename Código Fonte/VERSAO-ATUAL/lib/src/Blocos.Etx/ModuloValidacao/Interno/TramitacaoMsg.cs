@@ -115,6 +115,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem NumeroAutuacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Destinatario_NumeroAutuacao", Texto = "O Nº de Autuação (SEP) é obrigatório." }; } }
 
+		public Mensagem DespachoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Despacho", Texto = "O Despacho é obrigatório." }; } }
+
 		public Mensagem ArquivoEditarSetorNaoEhPossivelPorPossuirProtocolo(eTipoMensagem tipoMensagem)
 		{
 			return new Mensagem() { Tipo = tipoMensagem, Texto = "Não é possível editar o setor do arquivo com processo(s) e(ou) documento(s)." };
