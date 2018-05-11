@@ -51,7 +51,7 @@
         <div class="block">
 			<div style="margin-top:7px" class="coluna75">
 				<label for="ObjetoInfracao_DescricaoTermoEmbargo">Descrição da interdição/embargo *</label>
-				<%= Html.TextArea("ObjetoInfracao.DescricaoTermoEmbargo", Model.Entidade.DescricaoTermoEmbargo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtDescricaoTermoEmbargo", @maxlength = "570" }))%>
+				<%= Html.TextArea("ObjetoInfracao.DescricaoTermoEmbargo", Model.Entidade.DescricaoTermoEmbargo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtDescricaoTermoEmbargo", @maxlength = "2000" }))%>
 			</div>
 		</div>
         
