@@ -166,5 +166,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao
 		{
 			RemetenteFuncionarios = ViewModelHelper.CriarSelectList(setoresDestinario, true);
 		}
+
+		public string Asterisco(bool exibir)
+		{
+			return exibir ? " *" : string.Empty;
+		}
 	}
 }
