@@ -104,7 +104,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 			ProjetoDigital projetoDigital = _busProjetoDigital.Obter(carSolicitacao.ProjetoId);
 
-			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao)
+			if (projetoDigital.Situacao == (int)eProjetoDigitalSituacao.AguardandoCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.ComPendencia ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Finalizado ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Indeferido ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmElaboracao)
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.SituacaoDeveSerAguardandoImportacao);
 			}
