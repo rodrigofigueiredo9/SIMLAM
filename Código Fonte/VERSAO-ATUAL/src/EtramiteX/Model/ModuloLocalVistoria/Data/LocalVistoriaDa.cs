@@ -137,7 +137,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                 comando.AdicionarParametroEntrada("dia_semana", local.DiaSemanaId, DbType.String);
                 comando.AdicionarParametroEntrada("hora_inicio", local.HoraInicio, DbType.String);
                 comando.AdicionarParametroEntrada("hora_fim", local.HoraFim, DbType.String);
-                comando.AdicionarParametroEntrada("situacao", local.Situacao, DbType.String);
+                comando.AdicionarParametroEntrada("situacao", 1 /*local.Situacao*/, DbType.String);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -160,7 +160,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                 comando.AdicionarParametroEntrada("dia_semana", local.DiaSemanaId, DbType.String);
                 comando.AdicionarParametroEntrada("hora_inicio", local.HoraInicio, DbType.String);
                 comando.AdicionarParametroEntrada("hora_fim", local.HoraFim, DbType.String);
-                comando.AdicionarParametroEntrada("situacao", local.Situacao, DbType.String);
+                comando.AdicionarParametroEntrada("situacao", 1 /*local.Situacao*/, DbType.String);
                 comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroEntrada("id", local.Id, DbType.Int32);
 
