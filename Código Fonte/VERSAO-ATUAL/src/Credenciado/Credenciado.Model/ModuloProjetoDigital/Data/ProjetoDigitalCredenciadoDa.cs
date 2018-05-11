@@ -723,6 +723,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Data
 			}
 		}
 
+		internal bool PossuiSolicitacaoCAR(int projetoDigitalID)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select id from tab_car_solicitacao where projeto_digital = :projeto_digital", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("projeto_digital", projetoDigitalID, DbType.Int32);
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
 		#endregion
 
 		internal List<Blocos.Entities.Interno.ModuloAtividade.Atividade> ObterAtividades(int projetoDigitalId)

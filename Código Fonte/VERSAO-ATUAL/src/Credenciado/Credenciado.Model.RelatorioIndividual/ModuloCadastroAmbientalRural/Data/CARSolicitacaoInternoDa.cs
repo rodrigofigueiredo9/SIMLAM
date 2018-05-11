@@ -81,12 +81,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				ec.fuso_utm emp_fuso,
 				llc.texto emp_local_coleta,
 				lfc.texto emp_forma_coleta,
-				s.requerimento,
+				pt.requerimento,
                 tcs.codigo_imovel numero_sicar,
-                tcs.pendencias pendencias_sicar
+                tcs.pendencias pendencias_sicar,
+				nvl(tcs.data_envio, tcs.data_gerado ) data_envio_sicar
 				from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
 					lov_municipio lmp, tab_empreendimento e, tab_empreendimento_endereco ee, lov_estado lee, lov_municipio lme, tab_empreendimento_coord ec, 
-					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct, tab_controle_sicar tcs 
+					lov_empreendimento_forma_colet lfc, lov_empreendimento_local_colet llc, lov_coordenada_datum lcd, lov_coordenada_tipo lct, tab_controle_sicar tcs,
+					tab_protocolo pt
 				where s.situacao = lss.id
 				and s.empreendimento = cd.empreendimento
 				and s.declarante = p.id 
@@ -105,6 +107,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				and ec.forma_coleta = lfc.id
                 and s.id = tcs.solicitacao_car(+)
                 and nvl(tcs.solicitacao_car_esquema, 1) = 1
+				and s.protocolo_selecionado = pt.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -157,6 +160,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento");
 					}
 
@@ -216,9 +220,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 hec.forma_coleta_texto emp_forma_coleta,
 				hcs.requerimento_id,
                 hcsicar.codigo_imovel numero_sicar,
-                hcsicar.pendencias pendencias_sicar        
+                hcsicar.pendencias pendencias_sicar,
+				nvl(hcsicar.data_envio, hcsicar.data_gerado ) data_envio_sicar
                 from hst_car_solicitacao hcs, hst_pessoa hp, hst_pessoa_endereco hpe,lov_estado lem, hst_empreendimento he, 
-                  hst_empreendimento_endereco hee, lov_estado lee, hst_empreendimento_coord hec, TAB_controle_sicar hcsicar          
+                  hst_empreendimento_endereco hee, lov_estado lee, hst_empreendimento_coord hec, TAB_controle_sicar hcsicar,
+				  hst_protocolo	hpt
                 where hp.pessoa_id = hcs.declarante_id and hp.tid = hcs.declarante_tid 
                 and hp.id = hpe.id_hst
                 and lem.id = hpe.estado_id
@@ -227,6 +233,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 and hee.correspondencia = 0
                 and lee.id = hee.estado_id
                 and hec.id_hst = he.id
+				and hcs.protocolo_id = hpt.id_protocolo
                 and hcs.solicitacao_id = :id
                 and hcs.id = (select max(id) from hst_car_solicitacao hcs1 where hcs1.solicitacao_id = hcs.solicitacao_id)        
                 and hcs.solicitacao_id = hcsicar.solicitacao_car(+)
@@ -283,6 +290,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
                         entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
+						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
 
 					}

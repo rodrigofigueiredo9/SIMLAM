@@ -82,7 +82,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				ec.fuso_utm emp_fuso,
 				llc.texto emp_local_coleta,
 				lfc.texto emp_forma_coleta,
-				pt.requerimento
+				pt.requerimento,
                 (select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) numero_sicar,
                 (select tcs.pendencias from tab_controle_sicar tcs where tcs.solicitacao_car = s.id and tcs.solicitacao_car_esquema=1) pendencias_sicar
                 from tab_car_solicitacao s, lov_car_solicitacao_situacao lss, crt_dominialidade cd, tab_pessoa p, tab_pessoa_endereco pe, lov_estado lep, 
@@ -105,7 +105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				and ec.datum = lcd.id
 				and ec.local_coleta = llc.id
 				and ec.forma_coleta = lfc.id
-				and s.protocolo = pt.id
+				and s.protocolo_selecionado = pt.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -225,7 +225,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   hec.fuso_utm emp_fuso,
 						   hec.local_coleta_texto emp_local_coleta,
 						   hec.forma_coleta_texto emp_forma_coleta,
-						   hcs.requerimento_id,
+						   hpt.requerimento_id,
 						   (select sicar.codigo_imovel
 							  from tab_controle_sicar sicar
 							 where sicar.solicitacao_car = hcs.solicitacao_id
@@ -241,7 +241,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   hst_empreendimento          he,
 						   hst_empreendimento_endereco hee,
 						   lov_estado                  lee,
-						   hst_empreendimento_coord    hec
+						   hst_empreendimento_coord    hec,
+						   hst_protocolo			   hpt
 					 where hp.pessoa_id = hcs.declarante_id
 					   and hp.tid = hcs.declarante_tid
 					   and hp.id = hpe.id_hst(+)
@@ -252,6 +253,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 					   and hee.correspondencia = 0
 					   and lee.id = hee.estado_id
 					   and hec.id_hst = he.id
+					   and hcs.protocolo_id = hpt.id_protocolo
 					   and hcs.id = (select max(id)
 									   from hst_car_solicitacao hcs1
 									  where hcs1.solicitacao_id = hcs.solicitacao_id)

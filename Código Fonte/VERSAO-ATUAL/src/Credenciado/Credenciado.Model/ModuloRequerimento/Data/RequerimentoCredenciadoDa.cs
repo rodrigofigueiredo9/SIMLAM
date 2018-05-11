@@ -1026,6 +1026,63 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 			return retorno;
 		}
 
+		public List<int> ObterResponsavelTecnico (int requerimento)
+		{
+			List<int> responsaveis = new List<int>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				/*Comando comando = bancoDeDados.CriarComando(@"SELECT P.CREDENCIADO FROM TAB_REQUERIMENTO_RESPONSAVEL R
+																	INNER JOIN TAB_PESSOA P ON R.RESPONSAVEL = P.ID
+																WHERE R.REQUERIMENTO = :requerimento", UsuarioCredenciado);
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						responsaveis.Add(reader.GetValue<int>("CREDENCIADO"));
+					}
+
+					reader.Close();
+				}*/
+
+				Comando comando = bancoDeDados.CriarComando(@"SELECT * FROM TAB_CREDENCIADO C
+														INNER JOIN TAB_PESSOA P ON P.ID = C.PESSOA 
+													WHERE P.CPF IN (
+														SELECT P.CPF FROM TAB_REQUERIMENTO_RESPONSAVEL R INNER JOIN TAB_PESSOA P ON R.RESPONSAVEL = P.ID
+															WHERE R.REQUERIMENTO = :requerimento )", UsuarioCredenciado);
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						responsaveis.Add(reader.GetValue<int>("CREDENCIADO"));
+					}
+
+					reader.Close();
+				}
+
+				comando = bancoDeDados.CriarComando(@"SELECT * FROM TAB_CREDENCIADO C
+														INNER JOIN TAB_PESSOA P ON P.ID = C.PESSOA 
+													WHERE P.CNPJ IN (
+														SELECT P.CPF FROM TAB_REQUERIMENTO_RESPONSAVEL R INNER JOIN TAB_PESSOA P ON R.RESPONSAVEL = P.ID
+															WHERE R.REQUERIMENTO = :requerimento )", UsuarioCredenciado);
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						responsaveis.Add(reader.GetValue<int>("CREDENCIADO"));
+					}
+
+					reader.Close();
+				}
+
+				return responsaveis;
+			}
+		}
 		public List<String> ObterAtividadesEmpreendimentoObrigatorio(int requerimentoId)
 		{
 			List<String> atividades = new List<String>();

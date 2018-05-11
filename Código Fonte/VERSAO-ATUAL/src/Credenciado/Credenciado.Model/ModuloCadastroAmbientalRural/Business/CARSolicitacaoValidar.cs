@@ -19,6 +19,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business
 {
@@ -34,6 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 		CARSolicitacaoInternoDa _carSolicitacaoInternoDa = null;
 		RequerimentoCredenciadoValidar _requerimentoValidar = null;
         TituloCredenciadoBus _busTitulo = null;
+		CredenciadoBus _busCred = new CredenciadoBus();
 
 		public static EtramiteIdentity User
 		{
@@ -102,7 +104,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 			ProjetoDigital projetoDigital = _busProjetoDigital.Obter(carSolicitacao.ProjetoId);
 
-			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao)
+			if (projetoDigital.Situacao == (int)eProjetoDigitalSituacao.AguardandoCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.ComPendencia ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Finalizado ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Indeferido ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmElaboracao)
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.SituacaoDeveSerAguardandoImportacao);
 			}
@@ -176,11 +183,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public void AssociarProjetoDigital(ProjetoDigital projetoDigital, List<Lista> atividades)
 		{
-			if (projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoImportacao ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoAnalise ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.AguardandoProtocolo ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Deferido ||
-				projetoDigital.Situacao != (int)eProjetoDigitalSituacao.Importado)
+			if (projetoDigital.Situacao == (int)eProjetoDigitalSituacao.AguardandoCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.ComPendencia ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmCorrecao ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Finalizado ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.Indeferido ||
+				projetoDigital.Situacao == (int)eProjetoDigitalSituacao.EmElaboracao)
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.SituacaoDeveSerAguardandoImportacao);
 			}
@@ -261,7 +269,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				if (empreendimento.InternoID > 0)
 				{
                     solicitacao = _daCarSolicitacao.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId ==2)
                         {
@@ -279,7 +287,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 					}
 
                     solicitacao = _carSolicitacaoInternoDa.EmpreendimentoPossuiSolicitacaoProjetoDigital(empreendimento.InternoID);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId == 2)
                         {
@@ -299,7 +307,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				else
 				{
                     solicitacao = _daCarSolicitacao.EmpreendimentoCredenciadoPossuiSolicitacaoProjetoDigital(empreendimento.Id);
-                    if (solicitacao.SituacaoId != null && solicitacao.SituacaoId != 0)
+                    if (solicitacao.SituacaoId > 0)
 					{
                         if (solicitacao.SituacaoId == 2)
                         {
@@ -413,7 +421,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
             }
 
             //Verificar se existe solicitação para o empreendimento
-            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0);
+            solicitacao = _daCarSolicitacao.ObterPorEmpreendimento(entidade.Empreendimento.Codigo ?? 0, true);
 			if (solicitacao != null)
 			{
 				if (solicitacao.SituacaoId == 2)
@@ -445,11 +453,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 				}
 				if (solicitacao.SituacaoId == 6)
 				{
-					if (solicitacao.AutorModuloTexto != "Institucional" && solicitacao.AutorId != usuarioID)
+					int idCredenciadoLogado =_busCred.ObterCredenciadoUsuario(usuarioID);
+
+					if (solicitacao.AutorModuloTexto == "Credenciado" && solicitacao.AutorId == idCredenciadoLogado)
 					{
 						Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
 						return false;
 					}
+
+					List<int> responsaveis = _busRequerimento.ObterResponsavelTecnico(solicitacao.Requerimento.Id);
+
+					if(responsaveis != null)
+					{
+						foreach (int r in responsaveis)
+						{
+							if (r == idCredenciadoLogado)
+							{
+								Validacao.Add(Mensagem.Retificacao.msgCred2(solicitacao.Requerimento.Id, solicitacao.Id));
+								return false;
+							}
+						}
+					}					
 				}
 				if (solicitacao.SituacaoId == 1)
 				{

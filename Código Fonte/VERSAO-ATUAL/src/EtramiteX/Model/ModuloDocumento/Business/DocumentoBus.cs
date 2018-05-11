@@ -386,8 +386,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 						{
 							bancoDeDadosCredenciado.IniciarTransacao();
 
-							CARSolicitacaoBus carSolicitacaoCredenciadoBus = new CARSolicitacaoBus();
-							carSolicitacaoCredenciadoBus.DesassociarProtocolo(new CARSolicitacao() { Requerimento = doc.Requerimento });
+							//CARSolicitacaoBus carSolicitacaoCredenciadoBus = new CARSolicitacaoBus();
+							//carSolicitacaoCredenciadoBus.DesassociarProtocolo(new CARSolicitacao() { Requerimento = doc.Requerimento });
 
 							_busProjetoDigital.AlterarSituacao(doc.Requerimento.Id, eProjetoDigitalSituacao.AguardandoProtocolo, bancoDeDadosCredenciado);
 

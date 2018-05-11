@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -531,6 +532,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Data
 				}
 
 				return Obter(id, banco: bancoDeDados);
+			}
+		}
+
+		public int ObterCredenciadoUsuario (int idUsuario)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select c.id from tab_credenciado c where c.usuario = :usuario");
+				comando.AdicionarParametroEntrada("usuario", idUsuario, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
 			}
 		}
 

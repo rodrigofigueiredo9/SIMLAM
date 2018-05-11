@@ -72,16 +72,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                     {
                         GerenciadorTransacao.ObterIDAtual();
 
-                        //função não esta sendo usada, pois implementamos outra soluçao no scheduler; arquivo: gerarArquivoCarJob; função: obterDadosReservaLegal;
-                        //var verificar = _da.VerificaSolicitacaoCedente(entidade.Empreendimento.Id);
-                        var verificar = false;
                         using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
                         {
                             bancoDeDados.IniciarTransacao();
 
                             entidade.AutorId = User.FuncionarioId;
 
-                            _da.Salvar(entidade, bancoDeDados, verificar);
+                            _da.Salvar(entidade, bancoDeDados);
 
                             bancoDeDados.Commit();
 
@@ -503,8 +500,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			{
 				return string.Empty;
 			}            
-			//return UrlSICAR + resposta["dados"]; //PRODUCAO
-            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
+			return UrlSICAR + resposta["dados"]; //PRODUCAO
+            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
         }
 
         public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)
@@ -513,8 +510,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
             RequestJson requestJson = new RequestJson();
 
-            //urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
-            urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+            urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
+            //urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
 
             var strResposta = requestJson.Executar(urlGerar);
 
@@ -525,19 +522,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return string.Empty;
             }
 
-            //return UrlSICAR + resposta["dados"];  // PRODUCAO 
-            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+            return UrlSICAR + resposta["dados"];  // PRODUCAO 
+            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
         } 
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)
 		{
 			throw new NotImplementedException();
 		}
+		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(int empreendimentoID)
+		{
+			return _da.VerificarSeEmpreendimentoPossuiSolicitacaoEmCadastro(empreendimentoID);
 
+		}
 		internal bool VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(int empreendimentoID)
 		{
 			return _da.VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(empreendimentoID);
 
 		}
+
 	}
 }
