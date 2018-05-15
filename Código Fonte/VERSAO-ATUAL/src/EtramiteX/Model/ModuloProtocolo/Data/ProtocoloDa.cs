@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProcesso;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTramitacao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
@@ -72,10 +73,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				#region Protocolo
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo e (id, numero, ano, numero_autuacao, data_autuacao, nome, tipo, protocolo, data_criacao, volume, situacao, interessado, requerimento, 
-				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas) 
+				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas, assunto, descricao, destinatario, destinatario_setor) 
 				values ({0}seq_protocolo.nextval, (select nvl(max(p.numero) + 1, 1) from {0}tab_protocolo p where p.ano = :ano),
 				:ano, :numero_autuacao, :data_autuacao, :nome, :tipo, :protocolo, :data_criacao, :volume, 1, :interessado, :requerimento, :empreendimento, :checagem, :checagem_pendencia, :setor, :setor_criacao, 
-				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas) returning e.id, e.numero into :id, :numero", EsquemaBanco);
+				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas, :assunto, :descricao, :destinatario, :destinatario_setor) returning e.id, e.numero into :id, :numero", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tipo", protocolo.Tipo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
@@ -100,7 +101,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("folhas", protocolo.Folhas, DbType.Int32);
 
 				//Apenas documento
+				comando.AdicionarParametroEntrada("destinatario", doc.Destinatario.Id > 0 ? (int?)doc.Destinatario.Id : null, DbType.Int32);
+				comando.AdicionarParametroEntrada("destinatario_setor", doc.DestinatarioSetor.Id > 0 ? (int?)doc.DestinatarioSetor.Id : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
+				comando.AdicionarParametroEntrada("assunto", DbType.String, 150, doc.Assunto);
+				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
 				comando.AdicionarParametroEntrada("checagem_pendencia", doc.ChecagemPendencia.Id == 0 ? (object)DBNull.Value : doc.ChecagemPendencia.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
 
@@ -152,6 +157,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				#endregion
 
+				#region Assinantes
+
+				if (protocolo.Assinantes != null && protocolo.Assinantes.Count > 0)
+				{
+					foreach (TituloAssinante item in protocolo.Assinantes)
+					{
+						comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo_assinantes s (id, protocolo, funcionario, cargo, tid)
+						values ({0}seq_protocolo_assinantes.nextval, :protocolo, :funcionario, :cargo, :tid)", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("protocolo", protocolo.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("funcionario", item.FuncionarioId, DbType.Int32);
+						comando.AdicionarParametroEntrada("cargo", item.FuncionarioCargoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+				}
+
+				#endregion
+
 				#region Histórico/Consulta/Posse
 
 				Historico.Gerar(protocolo.Id.Value, eHistoricoArtefato.protocolo, eHistoricoAcao.criar, bancoDeDados);
@@ -177,7 +202,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo p set p.nome = :nome, p.volume = :volume, p.numero_autuacao = :numero_autuacao, p.data_autuacao = :data_autuacao, p.checagem = :checagem, p.requerimento = :requerimento, 
 				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado, p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid,
-				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas where p.id = :id", EsquemaBanco);
+				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas, p.assunto = :assunto, p.descricao = :descricao, p.destinatario = :destinatario, p.destinatario_setor = :destinatario_setor where p.id = :id", EsquemaBanco);
 
 
 				comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
@@ -197,9 +222,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("interessadoLivreTel", protocolo.InteressadoLivreTelefone, DbType.String);
 				comando.AdicionarParametroEntrada("folhas", protocolo.Folhas, DbType.Int32);
 				//Apenas documento
+				comando.AdicionarParametroEntrada("destinatario", doc.Destinatario.Id > 0 ? (int?)doc.Destinatario.Id : null, DbType.Int32);
+				comando.AdicionarParametroEntrada("destinatario_setor", doc.DestinatarioSetor.Id > 0 ? (int?)doc.DestinatarioSetor.Id : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, doc.Nome);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
-
+				comando.AdicionarParametroEntrada("assunto", DbType.String, 150, doc.Assunto);
+				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
 
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -305,6 +333,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					comando = bancoDeDados.CriarComando(@"delete {0}tab_protocolo_responsavel p where p.protocolo = :id", EsquemaBanco);
 					comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
 					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
+				#region Assinantes
+
+				if (protocolo.Assinantes != null && protocolo.Assinantes.Count > 0)
+				{
+					foreach (TituloAssinante item in protocolo.Assinantes)
+					{						
+						if (item.Id > 0)
+						{
+							comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo_assinantes e set e.protocolo = :protocolo, e.funcionario = :funcionario, e.cargo = :cargo,
+							e.tid = :tid where e.id = :id", EsquemaBanco);
+							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+						}
+						else
+						{
+							comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo_assinantes s (id, protocolo, funcionario, cargo, tid)
+							values ({0}seq_protocolo_assinantes.nextval, :protocolo, :funcionario, :cargo, :tid)", EsquemaBanco);
+						}
+
+						comando.AdicionarParametroEntrada("protocolo", protocolo.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("funcionario", item.FuncionarioId, DbType.Int32);
+						comando.AdicionarParametroEntrada("cargo", item.FuncionarioCargoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
 				}
 
 				#endregion
@@ -760,7 +817,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						   lfs.texto fiscalizacao_sit_texto,
 						   r.interessado_livre,
 						   r.interessado_livre_telefone,
-						   r.folhas
+						   r.folhas, r.assunto, r.descricao, r.destinatario, r.destinatario_setor, d.id destinatario_id, 
+						   d.tid destinatario_tid, d.nome destinatario_nome, s.id destinatario_setor_id, s.sigla destinatario_setor_sigla, s.nome destinatario_setor_nome
 					  from {0}tab_protocolo          r,
 						   {0}tab_pessoa             p,
 						   {0}tab_fiscalizacao       f,
@@ -768,7 +826,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						   {0}lov_protocolo_situacao ls,
 						   {0}lov_protocolo_tipo     lpt,
 						   {0}tab_requerimento       tr,
-						   {0}lov_fiscalizacao_situacao lfs
+						   {0}lov_fiscalizacao_situacao lfs,
+						   {0}tab_setor				 s,
+						   {0}tab_funcionario		 d
 					 where r.interessado = p.id(+)
 					   and r.empreendimento = e.id(+)
 					   and r.situacao = ls.id
@@ -776,6 +836,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					   and r.requerimento = tr.id(+)
 					   and r.fiscalizacao = f.id(+)
 					   and f.situacao = lfs.id(+)
+					   and r.destinatario_setor = s.id(+)
+					   and r.destinatario = d.id(+)
 					   and r.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -908,6 +970,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						{
 							documento = new Documento(protocolo);
 							documento.Nome = reader["nome"].ToString();
+							documento.Assunto = reader["assunto"].ToString();
+							documento.Descricao = reader["descricao"].ToString();
+							if (reader["destinatario_id"] != null && !Convert.IsDBNull(reader["destinatario_id"]))
+							{
+								documento.Destinatario.Id = Convert.ToInt32(reader["destinatario_id"]);
+							}
+							documento.Destinatario.Nome = reader["destinatario_nome"].ToString();
+
+							if (reader["destinatario_setor_id"] != null && !Convert.IsDBNull(reader["destinatario_setor_id"]))
+							{
+								documento.DestinatarioSetor.Id = Convert.ToInt32(reader["destinatario_setor_id"]);
+							}
+							documento.DestinatarioSetor.Nome = reader["destinatario_setor_nome"].ToString();
 
 							if (reader["protocolo_associado"] != null && !Convert.IsDBNull(reader["protocolo_associado"]))
 							{
@@ -1067,6 +1142,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					reader.Close();
 				}
 
+				#endregion
+
+				#region Assinantes
+				comando = bancoDeDados.CriarComando(@"select ta.id, ta.protocolo, f.id func_id, f.nome func_nome, ta.cargo, c.nome cargo_nome, ta.tid from tab_protocolo_assinantes ta, tab_funcionario f, tab_cargo c where 
+					ta.funcionario = f.id and ta.cargo = c.id and ta.protocolo = :protocolo", EsquemaBanco);
+				comando.AdicionarParametroEntrada("protocolo", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						TituloAssinante item = new TituloAssinante();
+						item.Id = Convert.ToInt32(reader["id"]);
+						item.Tid = reader["tid"].ToString();
+						item.FuncionarioId = Convert.ToInt32(reader["func_id"]);
+						item.FuncionarioNome = reader["func_nome"].ToString();
+						item.FuncionarioCargoId = Convert.ToInt32(reader["cargo"]);
+						item.FuncionarioCargoNome = reader["cargo_nome"].ToString();
+						item.Selecionado = true;
+
+						if (reader["cargo"] != null && !Convert.IsDBNull(reader["cargo"]))
+						{
+							item.FuncionarioCargoId = Convert.ToInt32(reader["cargo"]);
+						}
+
+						documento.Assinantes.Add(item);
+					}
+					reader.Close();
+				}
 				#endregion
 			}
 
@@ -1249,6 +1353,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						comandtxt += comando.FiltroAndLike("l.empreendimento_cnpj", "empreendimento_cnpj", filtros.Dados.EmpreendimentoCnpj);
 					}
 				}
+
+				comandtxt += $" and (exists (select 1 from tab_funcionario_setor s where s.funcionario = {User.FuncionarioId} and (s.setor = l.setor_criacao_id or s.setor = l.setor_id) and l.tipo_id = 14) or l.tipo_id <> 14)";
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero,ano", "interessado_nome_razao", "empreendimento_denominador" };
@@ -1842,6 +1948,70 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				#endregion
 			}
 			return atividades;
+		}
+
+		internal List<ListaValor> ObterAssinanteFuncionarios(int setorId, int cargoId, BancoDeDados banco = null)
+		{
+			List<ListaValor> lst = new List<ListaValor>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@" select distinct t.* from ( select tf.id, tf.nome from {0}tab_funcionario tf, {0}tab_setor ts, {0}tab_funcionario_cargo tfc, 
+					{0}tab_titulo_modelo_assinantes ttma where ts.responsavel = tf.id and tf.id = tfc.funcionario and ttma.setor = ts.id and ttma.tipo_assinante = 1 and ts.id 
+					= :setorId and tfc.cargo = :cargoId union all select tf.id, tf.nome from {0}tab_funcionario tf, {0}tab_funcionario_setor ts, {0}tab_funcionario_cargo tfc, {0}tab_titulo_modelo_assinantes ttma
+					where ts.funcionario = tf.id and tf.id = tfc.funcionario and ttma.setor = ts.setor and ttma.tipo_assinante = 2 and ts.setor = :setorId and tfc.cargo = 
+					:cargoId ) t order by t.nome ", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("setorId", setorId, DbType.Int32);
+				comando.AdicionarParametroEntrada("cargoId", cargoId, DbType.Int32);
+
+				IEnumerable<IDataReader> daReader = DaHelper.ObterLista(comando, bancoDeDados);
+
+				foreach (var item in daReader)
+				{
+					lst.Add(new ListaValor()
+					{
+						Id = Convert.ToInt32(item["id"]),
+						Texto = item["nome"].ToString(),
+						IsAtivo = true
+					});
+				}
+			}
+
+			return lst;
+		}
+
+		internal List<ListaValor> ObterAssinanteCargos(int setorId, BancoDeDados banco = null)
+		{
+			List<ListaValor> lst = new List<ListaValor>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@" select distinct t.* from ( select  tc.id, tc.nome from {0}tab_funcionario tf, {0}tab_setor ts, {0}tab_funcionario_setor tse, 
+															{0}tab_funcionario_cargo tfc, {0}tab_cargo tc, {0}tab_titulo_modelo_assinantes ttma 
+															where ts.responsavel = tf.id and tf.id = tfc.funcionario and ttma.setor = ts.id and tfc.cargo = tc.id
+															and ttma.tipo_assinante = 1 and ts.id = :setorId 
+															union all           
+															select tc.id, tc.nome from {0}tab_funcionario tf, {0}tab_funcionario_setor ts, 
+															{0}tab_funcionario_cargo tfc, {0}tab_cargo tc, {0}tab_titulo_modelo_assinantes ttma 
+															where ts.funcionario = tf.id and tf.id = tfc.funcionario and ttma.setor = ts.setor and tfc.cargo = 
+															tc.id and ttma.tipo_assinante = 2
+															and ts.setor = :setorId ) t order by t.nome ", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("setorId", setorId, DbType.Int32);
+
+				IEnumerable<IDataReader> daReader = DaHelper.ObterLista(comando, bancoDeDados);
+
+				foreach (var item in daReader)
+				{
+					lst.Add(new ListaValor()
+					{
+						Id = Convert.ToInt32(item["id"]),
+						Texto = item["nome"].ToString(),
+						IsAtivo = true
+					});
+				}
+			}
+
+			return lst;
 		}
 
 		#endregion

@@ -76,6 +76,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem DataCriacaoMaiorAtual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_DataCadastro_DataTexto", Texto = "Data de registro deve ser menor ou igual a data atual." }; } }
 		public Mensagem QuantidadeDocumentoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Volume", Texto = "Quantidade de documento é obrigatório." }; } }
 		public Mensagem NomeObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Nome", Texto = "Nome é obrigatório." }; } }
+		public Mensagem AssuntoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Assunto", Texto = "Assunto é obrigatório." }; } }
+		public Mensagem DescricaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Documento_Descricao", Texto = "Descrição da Comunicação Interna é obrigatório." }; } }
 
 		public Mensagem RoteirosCheckDifRequerimento { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "Existem diferentes roteiros na checagem de itens e no requerimento padrão." }; } }
 

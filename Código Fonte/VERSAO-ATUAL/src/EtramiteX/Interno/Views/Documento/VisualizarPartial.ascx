@@ -37,13 +37,13 @@
 				<%= Html.TextBox("Documento.Folhas", Model.Documento.Folhas, ViewModelHelper.SetaDisabled(true, new { @class = "text  maskNumInt txtQuantidadeFolhas", @maxlength = 2 }))%>
 			</div>
 
-			<div class="qtdDocumento coluna18 <%= Model.Tipo.PossuiInteressadoLivre  ? "hide" : "" %>">
+			<div class="qtdDocumento coluna18 <%= Model.Tipo.PossuiQuantidadeDocumento || Model.Tipo.QuantidadeDocumentoObrigatorio ? "" : "hide" %>">
 				<label>Qtd. de documento *</label>
 				<%= Html.TextBox("Documento.Volume", Model.Documento.Volume, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="block ultima prepend2">
-				<span class="floatLeft inputFileDiv coluna82">
+				<span class="floatLeft inputFileDiv coluna82 <%= Model.Tipo.PossuiAssunto ||  Model.Tipo.AssuntoObrigatorio ? "hide" : "" %>">
 					<label for="ArquivoTexto">Arquivo complementar</label>
 					<% if(Model.Documento.Arquivo.Id.GetValueOrDefault() > 0) { %>
 						<%= Html.ActionLink(ViewModelHelper.StringFit(Model.Documento.Arquivo.Nome, 43), "Baixar", "Documento", new { @id = Model.Documento.Arquivo.Id }, new { @Style = "display: block", @title = Model.Documento.Arquivo.Nome })%>
@@ -55,10 +55,18 @@
 		</div>
 
 		<div class="block">
-			<div class="coluna86">
+			<div class="nomeDocumento coluna86 <%= Model.Tipo.PossuiNome || Model.Tipo.NomeObrigatorio ? "" : "hide" %>">
 				<label>Nome *</label>
 				<%= Html.TextBox("Documento.Nome", Model.Documento.Nome, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
+			  <div class="assunto coluna86 <%= Model.Tipo.PossuiAssunto || Model.Tipo.AssuntoObrigatorio ? "" : "hide" %>">
+                <label class="lblAssunto">Assunto <%: Model.Asterisco(Model.Tipo.AssuntoObrigatorio) %></label>
+                <%= Html.TextBox("Documento.Assunto", Model.Documento.Assunto, new { @class = "text txtAssunto disabled", @maxlength = 150 })%>
+            </div>
+            <div class="descricao coluna86 <%= Model.Tipo.PossuiDescricao || Model.Tipo.DescricaoObrigatoria ? "" : "hide" %>">
+                <label class="lblDescricao">Descrição da Comunicação Interna <%: Model.Asterisco(Model.Tipo.DescricaoObrigatoria) %></label>
+                <%= Html.TextArea("Documento.Descricao", Model.Documento.Descricao, new { @class = "text txtDescricao disabled" })%>
+            </div>
 		</div>
 	</div>
 
@@ -193,4 +201,22 @@
 		</div>
 	</fieldset>
 	<% } %>
+
+	  <fieldset class="destinatario block box <%= Model.Tipo.PossuiAssunto || Model.Tipo.AssuntoObrigatorio ? "" : "hide" %>">
+        <legend>Destinatário</legend>
+        <div class="block divDropDown">
+            <div class="coluna48">
+                <label for="Enviar_Destinatario_SetorId">Setor de destino *</label>
+                <%= Html.DropDownList("Documento.DestinatarioSetor.Id", Model.SetoresDestinatario, new { @class = "text ddlSetoresDestinatario disabled" })%>
+            </div>
+            <div class="coluna45 prepend2 ddlFuncionario">
+                <label for="Enviar_Destinatario_Id">Funcionário</label>
+                <%= Html.DropDownList("Documento.Destinatario.Id", Model.DestinatarioFuncionarios, new { @class = "text ddlDestinatarios disabled", @disabled = "disabled" })%>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="assinantes <%= Model.Tipo.PossuiAssunto || Model.Tipo.AssuntoObrigatorio ? "" : "hide" %>">
+        <% Html.RenderPartial("Assinantes", Model.AssinantesVM); %>
+    </div>
 </div>

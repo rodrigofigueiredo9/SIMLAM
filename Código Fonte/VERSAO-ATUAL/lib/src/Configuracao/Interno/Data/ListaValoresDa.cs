@@ -814,7 +814,8 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		{
 			List<ProtocoloTipo> lst = new List<ProtocoloTipo>();
 			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto, c.processo, c.documento, c.checagem_pendencia, 
-																	c.checagem_roteiro, c.requerimento, c.fiscalizacao, interessado
+																	c.checagem_roteiro, c.requerimento, c.fiscalizacao, interessado, c.interessado_livre,
+																	c.nome, c.qtd_documento, c.assunto, c.descricao
 																	from lov_protocolo_tipo c where c.tipo = 1 order by c.texto");
 			foreach (var item in daReader)
 			{
@@ -831,6 +832,11 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 					PossuiRequerimento = item["requerimento"].ToString() == "2",
 					PossuiFiscalizacao = item["fiscalizacao"].ToString() == "2",
 					PossuiInteressado = item["interessado"].ToString() == "2",
+					PossuiInteressadoLivre = item["interessado_livre"].ToString() == "2",
+					PossuiNome = item["nome"].ToString() == "2",
+					PossuiQuantidadeDocumento = item["qtd_documento"].ToString() == "2",
+					PossuiAssunto = item["assunto"].ToString() == "2",
+					PossuiDescricao = item["descricao"].ToString() == "2",
 
 					DocumentoObrigatorio = item["documento"].ToString() == "1",
 					ProcessoObrigatorio = item["processo"].ToString() == "1",
@@ -839,6 +845,10 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 					RequerimentoObrigatorio = item["requerimento"].ToString() == "1",
 					FiscalizacaoObrigatorio = item["fiscalizacao"].ToString() == "1",
 					InteressadoObrigatorio = item["interessado"].ToString() == "1",
+					NomeObrigatorio = item["nome"].ToString() == "1",
+					QuantidadeDocumentoObrigatorio = item["qtd_documento"].ToString() == "1",
+					AssuntoObrigatorio = item["assunto"].ToString() == "1",
+					DescricaoObrigatoria = item["descricao"].ToString() == "1",
 					LabelInteressado = (Convert.ToInt32(item["id"]) != 2) ? "Interessado" : "Autuado"
 				});
 			}
@@ -883,7 +893,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<ProtocoloTipo> ObterTiposDocumento()
 		{
 			List<ProtocoloTipo> lst = new List<ProtocoloTipo>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto, c.processo, c.documento, c.checagem_pendencia, c.checagem_roteiro, c.requerimento, fiscalizacao, interessado, interessado_livre from lov_protocolo_tipo c where c.tipo = 2 order by c.texto");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto, c.processo, c.documento, c.checagem_pendencia, c.checagem_roteiro, c.requerimento, fiscalizacao, interessado, interessado_livre, c.nome, c.qtd_documento, c.assunto, c.descricao from lov_protocolo_tipo c where c.tipo = 2 order by c.texto");
 			foreach (var item in daReader)
 			{
 				lst.Add(new ProtocoloTipo()
@@ -900,6 +910,10 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 					PossuiFiscalizacao = item["fiscalizacao"].ToString() == "2",
 					PossuiInteressado = item["interessado"].ToString() == "2",
 					PossuiInteressadoLivre = item["interessado_livre"].ToString() == "2",
+					PossuiNome = item["nome"].ToString() == "2",
+					PossuiQuantidadeDocumento = item["qtd_documento"].ToString() == "2",
+					PossuiAssunto = item["assunto"].ToString() == "2",
+					PossuiDescricao = item["descricao"].ToString() == "2",
 
 					DocumentoObrigatorio = item["documento"].ToString() == "1",
 					ProcessoObrigatorio = item["processo"].ToString() == "1",
@@ -908,6 +922,10 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 					RequerimentoObrigatorio = item["requerimento"].ToString() == "1",
 					FiscalizacaoObrigatorio = item["fiscalizacao"].ToString() == "1",
 					InteressadoObrigatorio = item["interessado"].ToString() == "1",
+					NomeObrigatorio = item["nome"].ToString() == "1",
+					QuantidadeDocumentoObrigatorio = item["qtd_documento"].ToString() == "1",
+					AssuntoObrigatorio = item["assunto"].ToString() == "1",
+					DescricaoObrigatoria = item["descricao"].ToString() == "1",
 					LabelInteressado = (Convert.ToInt32(item["id"]) != 12) ? "Interessado" : "Autuado"
 				});
 			}

@@ -18,6 +18,10 @@ namespace Tecnomapas.Blocos.Entities.Configuracao.Interno
 		public bool PossuiFiscalizacao { get; set; }
 		public bool PossuiInteressado { get; set; }
 		public bool PossuiInteressadoLivre { get; set; }
+		public bool PossuiNome { get; set; }
+		public bool PossuiQuantidadeDocumento { get; set; }
+		public bool PossuiAssunto { get; set; }
+		public bool PossuiDescricao { get; set; }
 
 		public bool ProcessoObrigatorio { get; set; }
 		public bool DocumentoObrigatorio { get; set; }
@@ -26,6 +30,10 @@ namespace Tecnomapas.Blocos.Entities.Configuracao.Interno
 		public bool RequerimentoObrigatorio { get; set; }
 		public bool FiscalizacaoObrigatorio { get; set; }
 		public bool InteressadoObrigatorio { get; set; }
+		public bool NomeObrigatorio { get; set; }
+		public bool QuantidadeDocumentoObrigatorio { get; set; }
+		public bool AssuntoObrigatorio { get; set; }
+		public bool DescricaoObrigatoria { get; set; }
 
 		public String LabelInteressado { get; set; }
 	}

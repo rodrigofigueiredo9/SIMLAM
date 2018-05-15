@@ -13,7 +13,7 @@
 		<thead>
 			<tr>
 				<th width="12%">Nº de registro</th>
-				<th width="25%">Nome/Razão Social interessado</th>
+				<th width="25%">Nome/Razão Social interessado/Assunto</th>
 				<th width="33%">Razão social/Denominação/Nome propriedade/Imóvel do documento </th>
 				<th class="semOrdenacao" width=" <%= (Model.PodeAssociar) ? "9%" : "18%" %>">Ações</th>
 			</tr>

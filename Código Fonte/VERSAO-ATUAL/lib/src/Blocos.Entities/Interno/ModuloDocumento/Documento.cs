@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -10,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFuncionario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 {
@@ -166,6 +168,20 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 			set { _protocolo.Folhas = value; }
 		}
 
+		private Setor _destinatarioSetor = new Setor();
+		public Setor DestinatarioSetor
+		{
+			get { return _destinatarioSetor; }
+			set { _destinatarioSetor = value; }
+		}
+
+		private Funcionario _destinatario = new Funcionario();
+		public Funcionario Destinatario
+		{
+			get { return _destinatario; }
+			set { _destinatario = value; }
+		}
+
 		#region Apenas Documento
 
 		private ChecagemPendencia _checagemPendencia = new ChecagemPendencia();
@@ -183,9 +199,14 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		}
 
 		public String Nome { get; set; }
+		public String Assunto { get; set; }
+		public String Descricao { get; set; }
+
+		private List<TituloAssinante> _assinantes = new List<TituloAssinante>();
+		public List<TituloAssinante> Assinantes { get { return _assinantes; } set { _assinantes = value; } }
 
 		#endregion
-	
+
 		public Documento(Protocolo protocolo)
 		{
 			_protocolo = protocolo;
