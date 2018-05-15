@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
+using System.Collections.Generic;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -124,7 +125,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
 
 						//Atualizar controle de envio do SICAR
-						ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoFinal);
+						ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoCar: arquivoFinal);
 						//}
 
 						//Marcar como processado
@@ -140,7 +141,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.StackTrace, resultado } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));

@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return novoId;
 		}
 
-		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "")
+		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "", bool catchEnviar = false)
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -162,7 +162,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao_envio", situacaoEnvio));
 					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
-                    cmd.Parameters.Add(new OracleParameter("pendencias", mensagensDeResposta));
+                    if (catchEnviar)
+						cmd.Parameters.Add(new OracleParameter("pendencias", "Falha na integração, comunique o administrador do sistema"));
+					else
+						cmd.Parameters.Add(new OracleParameter("pendencias", mensagensDeResposta));
+						
                     if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 					    cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
@@ -173,7 +177,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
                     cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
                     
                     cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-                    //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));                    
                     cmd.Parameters.Add(new OracleParameter("id", item.id));
 
 					cmd.ExecuteNonQuery();
