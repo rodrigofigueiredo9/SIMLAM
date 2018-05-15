@@ -268,7 +268,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 						}
 					}
 					if ((vm.Tramitacoes?.Count(x => x.Protocolo?.Tipo?.Texto == "Ofício") ?? 0) == 0)
-						vm.SetoresDestinatario.Remove(vm.SetoresDestinatario.Find(x => x.Value == "259"));
+						vm.SetoresDestinatario.Remove(vm.SetoresDestinatario.Find(x => x.Value == "258"));
 				}
 			}
 

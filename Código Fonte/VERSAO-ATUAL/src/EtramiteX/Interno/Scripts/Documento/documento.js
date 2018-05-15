@@ -2,7 +2,7 @@
 /// <reference path="../jquery.json-2.2.min.js" />
 
 var Documento = function () {
-
+	var primeiraVez = true;
 	var _objRef = null;
 
 	return {
@@ -34,6 +34,9 @@ var Documento = function () {
 				validarChecagemPendencia: '',
 				validarChecagemTemTituloPendencia: '',
 				obterProtocolo: '',
+				funcionariosDestinatario: '',
+				obterAssinanteCargos: '',
+				obterAssinanteFuncionarios: '',
 				salvar: ''
 			},
 			Mensagens: null,
@@ -84,6 +87,110 @@ var Documento = function () {
 			container.delegate('.btnBuscarFiscalizacao', 'click', _objRef.onAssociarFiscalizacao);
 			container.delegate('.btnLimparFiscalizacao', 'click', _objRef.onLimparFiscalizacao);
 			container.delegate('.btnVisualizarFiscalizacao', 'click', _objRef.onAbrirVisualizarFiscalizacao);
+			container.delegate('.ddlSetoresDestinatario', 'click', _objRef.destinatarioSetorChange);
+
+
+			container.delegate('.ddlAssinanteSetores', 'change', _objRef.onSelecionarSetor);
+			container.delegate('.ddlAssinanteCargos', 'change', _objRef.onSelecionarCargo);
+
+			container.delegate('.btnAdicionarAssinante', 'click', _objRef.onAdicionarAssinante);
+			container.delegate('.btnExcluirAssinante', 'click', _objRef.onExcluirAssinante);
+		},
+
+		//Selecionar Assinante 
+		onSelecionarSetor: function () {
+
+			var ddlA = $(".ddlAssinanteSetores", _objRef.settings.container);
+			var ddlB = $('.ddlAssinanteCargos', _objRef.settings.container);
+			var ddlC = $('.ddlAssinanteFuncionarios', _objRef.settings.container);
+
+			var setorId = $('.ddlAssinanteSetores', _objRef.settings.container).val();
+
+			ddlA.ddlCascate(ddlB, { url: _objRef.settings.urls.obterAssinanteCargos });
+			ddlB.ddlCascate(ddlC, { url: _objRef.settings.urls.obterAssinanteFuncionarios, data: { setorId: setorId } });
+
+		},
+
+		onSelecionarCargo: function () {
+			var ddlA = $(".ddlAssinanteCargos", _objRef.settings.container);
+			var ddlB = $('.ddlAssinanteFuncionarios', _objRef.settings.container);
+
+			var setorId = $('.ddlAssinanteSetores', _objRef.settings.container).val();
+
+			ddlA.ddlCascate(ddlB, { url: _objRef.settings.urls.obterAssinanteFuncionarios, data: { setorId: setorId } });
+		},
+
+		onAdicionarAssinante: function () {
+
+			var mensagens = new Array();
+			Mensagem.limpar(_objRef.settings.container);
+			var container = $('.fdsAssinante', _objRef.settings.container);
+
+			var item = {
+				SetorId: $('.ddlAssinanteSetores :selected', _objRef.settings.container).val(),
+				FuncionarioNome: $('.ddlAssinanteFuncionarios :selected', _objRef.settings.container).text(),
+				FuncionarioId: $('.ddlAssinanteFuncionarios :selected', _objRef.settings.container).val(),
+				FuncionarioCargoNome: $('.ddlAssinanteCargos :selected', _objRef.settings.container).text(),
+				FuncionarioCargoId: $('.ddlAssinanteCargos :selected', _objRef.settings.container).val()
+			};
+
+			if (jQuery.trim(item.SetorId) == '0') {
+				mensagens.push(jQuery.extend(true, {}, _objRef.settings.Mensagens.AssinanteSetorObrigatorio));
+			}
+
+			if (jQuery.trim(item.FuncionarioCargoId) == '0') {
+				mensagens.push(jQuery.extend(true, {}, _objRef.settings.Mensagens.AssinanteCargoObrigatorio));
+			}
+
+			if (jQuery.trim(item.FuncionarioId) == '0') {
+				mensagens.push(jQuery.extend(true, {}, _objRef.settings.Mensagens.AssinanteFuncionarioObrigatorio));
+			}
+
+			$('.hdnItemJSon', container).each(function () {
+				var obj = String($(this).val());
+				if (obj != '') {
+					var itemAdd = (JSON.parse(obj));
+					if (item.FuncionarioId == itemAdd.FuncionarioId && item.FuncionarioCargoId == itemAdd.FuncionarioCargoId) {
+						mensagens.push(jQuery.extend(true, {}, _objRef.settings.Mensagens.AssinanteJaAdicionado));
+					}
+				}
+			});
+
+			if (mensagens.length > 0) {
+				Mensagem.gerar(_objRef.settings.container, mensagens);
+				return;
+			}
+
+			var linha = $('.trTemplateRow', _objRef.settings.container).clone().removeClass('trTemplateRow hide');
+			linha.find('.hdnItemJSon').val(JSON.stringify(item));
+			linha.find('.Funcionario').html(item.FuncionarioNome).attr('title', item.FuncionarioNome);
+			linha.find('.Cargo').html(item.FuncionarioCargoNome).attr('title', item.FuncionarioCargoNome);
+
+			$('.dataGridTable tbody:last', _objRef.settings.container).append(linha);
+			Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+
+			$('.ddlAssinanteSetores', _objRef.settings.container).ddlFirst();
+			_objRef.onSelecionarSetor();
+
+		},
+
+		onExcluirAssinante: function () {
+			var container = $('.fdsAssinante');
+			var linha = $(this).closest('tr');
+			linha.remove();
+			Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+		},
+
+		destinatarioSetorChange: function () {
+            if (primeiraVez) {
+                primeiraVez = false;
+                return;
+            }		
+			var ddlB = $('.ddlDestinatarios', _objRef.settings.container);
+			var ddlA = $(this, _objRef.settings.container);
+            var url = _objRef.settings.urls.funcionariosDestinatario;
+
+			ddlA.ddlCascate(ddlB, { url: url, disabled: false });
 		},
 
 		configurarAssociarMultiplo: function () {
@@ -173,7 +280,14 @@ var Documento = function () {
 			$('.btnAssociarInteressado', _objRef.settings.container).toggleClass('hide', (configuracao.PossuiFiscalizacao || configuracao.FiscalizacaoObrigatorio));
 
 			$('.qtdFolhas', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiInteressadoLivre)));
-			$('.qtdDocumento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiInteressadoLivre)));
+			$('.qtdDocumento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiQuantidadeDocumento && !configuracao.QuantidadeDocumentoObrigatorio)));
+			$('.nomeDocumento', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiNome && !configuracao.NomeObrigatorio)));
+			$('.assunto', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio)));
+			$('.descricao', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiDescricao && !configuracao.DescricaoObrigatoria)));
+			$('.inputFileDiv', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiAssunto || configuracao.AssuntoObrigatorio)));
+			$('.spanBotoes', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiAssunto || configuracao.AssuntoObrigatorio)));
+			$('.destinatario', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio)));
+			$('.assinantes', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio)));
 
 			var isCnfProcesso = (configuracao != null && (configuracao.PossuiProcesso || configuracao.ProcessoObrigatorio));
 			var isCnfDocumento = (configuracao != null && (configuracao.PossuiDocumento || configuracao.DocumentoObrigatorio));
@@ -199,6 +313,10 @@ var Documento = function () {
 			_objRef.asterisco($('.lblFiscalizacaoNum', _objRef.settings.container), configuracao.FiscalizacaoObrigatorio);
 			_objRef.asterisco($('.lblInteressadoNomeRazao', _objRef.settings.container), configuracao.InteressadoObrigatorio);
 			_objRef.asterisco($('.lblInteressadoCpfCnpj', _objRef.settings.container), configuracao.InteressadoObrigatorio);
+			_objRef.asterisco($('.lblQtdDocumento', _objRef.settings.container),  configuracao.QuantidadeDocumentoObrigatorio);
+			_objRef.asterisco($('.lblNome', _objRef.settings.container), configuracao.NomeObrigatorio);
+			_objRef.asterisco($('.lblAssunto', _objRef.settings.container), configuracao.AssuntoObrigatorio);
+			_objRef.asterisco($('.lblDescricao', _objRef.settings.container), configuracao.DescricaoObrigatoria);
 		},
 
 		asterisco: function (control, exibir) {
@@ -746,8 +864,10 @@ var Documento = function () {
 				Folhas: 0,
 				InteressadoLivre: '',
 				InteressadoLivreTelefone: '',
-				Atividades: [],
-
+				DestinatarioSetor: { Id: 0 },
+				Destinatario: { Id: 0 },
+                Assinantes: [],
+                Atividades: [],
 				Responsaveis: []
 			};
 
@@ -763,6 +883,16 @@ var Documento = function () {
 			objetoDocumento.ChecagemRoteiro.Id = $('.txtCheckListId', _objRef.settings.container).val();
 			objetoDocumento.SetorId = $('.ddlSetor', _objRef.settings.container).val();
 			objetoDocumento.Interessado.Id = $('.hdnInteressadoId', $('.hdnInteressadoId', _objRef.settings.container).closest('fieldset:visible')).val();
+
+            objetoDocumento.DestinatarioSetor.Id = $('.ddlSetoresDestinatario', _objRef.settings.container).val();
+            objetoDocumento.Destinatario.Id = $('.ddlDestinatarios', _objRef.settings.container).val();
+			var assinantesContainer = _objRef.settings.container.find('.fdsAssinante');
+			$('.hdnItemJSon', assinantesContainer).each(function () {
+                var objAssinante = String($(this).val());
+				if (objAssinante != '' && objAssinante != '0') {
+                    objetoDocumento.Assinantes.push(JSON.parse(objAssinante));
+                }
+            });
 
 			objetoDocumento.Fiscalizacao.Id = $('.txtNumeroFiscalizacao', _objRef.settings.container).val();
 			objetoDocumento.Fiscalizacao.SituacaoId = $('.hdnFiscalizacaoSituacao', _objRef.settings.container).val();

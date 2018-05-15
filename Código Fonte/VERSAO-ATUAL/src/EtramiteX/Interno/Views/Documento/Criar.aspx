@@ -77,6 +77,9 @@
 				validarChecagemPendencia: '<%= Url.Action("ValidarAssociacaoChecagemPendencia", "Documento") %>',
 				validarChecagemTemTituloPendencia: '<%= Url.Action("ValidarChecagemTemTituloPendencia", "Documento") %>',
 				obterProcesso: '<%= Url.Action("ObterProcesso", "Processo") %>',
+				funcionariosDestinatario: '<%= Url.Action("ObterFuncionariosDoSetor", "Tramitacao") %>',
+				obterAssinanteCargos: '<%= Url.Action("ObterAssinanteCargos", "Documento") %>',
+				obterAssinanteFuncionarios: '<%= Url.Action("ObterAssinanteFuncionarios", "Documento") %>',
 				salvar: '<%= Url.Action("Criar", "Documento") %>'
 			},
 			Mensagens: <%= Model.Mensagens %>,

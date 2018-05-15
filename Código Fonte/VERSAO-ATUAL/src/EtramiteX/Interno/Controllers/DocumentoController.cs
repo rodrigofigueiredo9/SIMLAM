@@ -19,6 +19,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloAnalise.Pdf;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloTitulo.Data;
@@ -44,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		JuntarApensarValidar _validarJuntarApensar = new JuntarApensarValidar();
 		AtividadeBus _busAtividade = new AtividadeBus();
 		FiscalizacaoBus _busFiscalizacao = new FiscalizacaoBus();
+		TituloBus _busTitulo = new TituloBus(new TituloValidar());
 
 		#endregion
 
@@ -118,8 +120,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.DocumentoCriar })]
 		public ActionResult Criar()
 		{
-			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento);
+			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, _busLista.SetoresAtuais);
 			vm.CarregarSetores(_busFuncionario.ObterSetoresFuncionario(DocumentoBus.User.FuncionarioId));
+
+			#region Assinantes
+
+			vm.AssinantesVM.Setores = ViewModelHelper.CriarSelectList(_busLista.SetoresAtuais);
+			vm.AssinantesVM.Cargos = ViewModelHelper.CriarSelectList(new List<ListaValor>());
+			vm.AssinantesVM.Funcionarios = ViewModelHelper.CriarSelectList(new List<ListaValor>());
+
+			#endregion
 
 			//Força a seleção do item no Dropdowm
 			if (!vm.MostrarSetor)
@@ -171,7 +181,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Index", Validacao.QueryParamSerializer());
 			}
 
-			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, documento.Tipo.Id);
+			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, _busLista.SetoresAtuais, documento.Tipo.Id);
+			if (documento != null)
+			{
+				vm.AssinantesVM.MergeAssinantesCargos(documento.Assinantes);
+				vm.Tipo = _busLista.TiposDocumento.First(x => x.Id == documento.Tipo.Id);
+				if (documento.DestinatarioSetor.Id > 0)
+				{
+					var setor = vm.SetoresDestinatario.First(x => x.Value == documento.DestinatarioSetor.Id.ToString());
+					if (setor != null)
+						setor.Selected = true;
+				}
+
+				if (documento.DestinatarioSetor.Id > 0)
+					vm.DestinatarioFuncionarios = ViewModelHelper.CriarSelectList(_busTramitacao.ObterFuncionariosSetor(documento.DestinatarioSetor.Id), true, selecionado: documento.Destinatario.Id.ToString());
+			}
+
+			if (vm.AssinantesVM.Assinantes != null && vm.AssinantesVM.Assinantes.Count > 0)
+				vm.AssinantesVM.Assinantes = _busTitulo.ObterAssinantesCargos(vm.AssinantesVM.Assinantes).Where(x => x.Selecionado).ToList();
+
 			vm.SetDocumento(documento, _busLista.ResponsavelFuncoes);
 
 			vm.IsEditar = true;
@@ -220,7 +248,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Index", Validacao.QueryParamSerializer());
 			}
 
-			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, documento.Tipo.Id);
+			SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, _busLista.SetoresAtuais, documento.Tipo.Id);
+			if (documento != null)
+			{
+				vm.AssinantesVM.MergeAssinantesCargos(documento.Assinantes);
+				vm.Tipo = _busLista.TiposDocumento.First(x => x.Id == documento.Tipo.Id);
+				if (documento.DestinatarioSetor.Id > 0)
+				{
+					var setor = vm.SetoresDestinatario.First(x => x.Value == documento.DestinatarioSetor.Id.ToString());
+					if (setor != null)
+						setor.Selected = true;
+				}
+
+				if (documento.DestinatarioSetor.Id > 0)
+					vm.DestinatarioFuncionarios = ViewModelHelper.CriarSelectList(_busTramitacao.ObterFuncionariosSetor(documento.DestinatarioSetor.Id), true, selecionado: documento.Destinatario.Id.ToString());
+			}
+
+			if (vm.AssinantesVM.Assinantes != null && vm.AssinantesVM.Assinantes.Count > 0)
+				vm.AssinantesVM.Assinantes = _busTitulo.ObterAssinantesCargos(vm.AssinantesVM.Assinantes).Where(x => x.Selecionado).ToList();
+			vm.AssinantesVM.IsVisualizar = true;
 			vm.SetDocumento(documento, _busLista.ResponsavelFuncoes);
 			vm.RequerimentoVM.IsVisualizar = true;
 			vm.RequerimentoVM.IsRequerimentoDocumento = true;
@@ -321,6 +367,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#endregion
 
 		#region Métodos Auxiliares
+
+		[Permite(RoleArray = new Object[] { ePermissao.DocumentoCriar, ePermissao.DocumentoEditar })]
+		public ActionResult ObterAssinanteCargos(int id)
+		{
+			var lista = _bus.ObterAssinanteCargos(id);
+
+			return Json(lista, JsonRequestBehavior.AllowGet);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.DocumentoCriar, ePermissao.DocumentoEditar })]
+		public ActionResult ObterAssinanteFuncionarios(int id, int setorId)
+		{
+			var lista = _bus.ObterAssinanteFuncionarios(setorId, id);
+
+			return Json(lista, JsonRequestBehavior.AllowGet);
+		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.AtividadeEncerrar, ePermissao.ProcessoVisualizar })]
 		public ActionResult AtividadesSolicitadas(int id, bool isProcesso)
@@ -483,7 +545,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				Documento documento = _bus.Obter(id);
 
-				SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, documento.Tipo.Id);
+				SalvarVM vm = new SalvarVM(_busLista.TiposDocumento, _busLista.SetoresAtuais, documento.Tipo.Id);
+				if (vm.AssinantesVM.Assinantes != null && vm.AssinantesVM.Assinantes.Count > 0)
+					vm.AssinantesVM.Assinantes = _busTitulo.ObterAssinantesCargos(vm.AssinantesVM.Assinantes).Where(x => x.Selecionado).ToList();
+
 				vm.SetDocumento(documento, _busLista.ResponsavelFuncoes);
 				vm.RequerimentoVM.IsVisualizar = true;
 				vm.RequerimentoVM.IsRequerimentoDocumento = true;
