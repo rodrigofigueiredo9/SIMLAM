@@ -1,0 +1,1036 @@
+create or replace PACKAGE BODY consulta is
+
+   ---------------------------------------------------------
+   -- Atualiza as dependencias da consulta
+   ---------------------------------------------------------
+   procedure gerenciar(p_id number, p_tipo number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------      
+      case p_tipo
+         --Funcionário
+         when 1 then
+           
+            --Atualiza os protocolos do funcionário
+            for i in (select p.id from tab_protocolo p where p.emposse = p_id ) loop      
+               protocolo(i.id);
+            end loop;   
+            ----------------------------------------------------------------------------------------------------------------
+            --Atualiza os titulos do funcionário
+            for i in (select p.id, p.situacao from tab_titulo p where p.autor = p_id ) loop
+              if(i.situacao = 1) then
+              	titulo(i.id);
+              end if;
+            end loop;   
+
+         --Pessoa                        
+         when 4 then         
+            --Atualiza as pessoas do empreendimento
+            for i in (select p.id from tab_empreendimento_responsavel p where p.responsavel = p_id) loop      
+               empreendimento(i.id);
+            end loop;      
+            ----------------------------------------------------------------------------------------------------------------      
+            --Atualiza as pessoas do requerimento
+            for i in (select rr.requerimento id from tab_requerimento_responsavel rr where rr.responsavel = p_id
+            union select r.id from tab_requerimento r where r.interessado = p_id) loop      
+               requerimento(i.id);
+            end loop;
+            ----------------------------------------------------------------------------------------------------------------      
+            --Atualiza as pessoas do protocolo
+            for i in (select pp.protocolo id from tab_protocolo_responsavel pp where pp.responsavel = p_id
+            union select p.id from tab_protocolo p where p.interessado = p_id) loop      
+               protocolo(i.id);
+            end loop;
+                        
+         --Empreendimento                        
+         when 8 then         
+            ----------------------------------------------------------------------------------------------------------------      
+            --Atualiza os requerimentos do empreendimento
+            for i in (select re.id from tab_requerimento re where re.empreendimento = p_id) loop      
+               requerimento(i.id);
+            end loop;
+            ----------------------------------------------------------------------------------------------------------------      
+          
+           --Atualiza os protocolos do empreendimento
+            for i in (select pp.id from tab_protocolo pp where pp.empreendimento = p_id) loop      
+               protocolo(i.id);
+            end loop;    
+            
+           --Atualiza os titulos do empreendimento
+            for i in (select t.id, t.situacao from tab_titulo t where t.empreendimento = p_id) loop
+              if(i.situacao = 1) then
+              	titulo(i.id);
+              end if;
+            end loop;    
+            
+            --Nao faz nada
+            else
+               null;        
+
+      end case;
+      
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao gerenciar consulta. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------    
+
+   ---------------------------------------------------------
+   -- Listagem de pessoas
+   ---------------------------------------------------------
+   procedure pessoa(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Pessoas
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select p.id, nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, nvl(p.rg, p.ie) rg_ie, p.tipo, p.nome_fantasia
+         from tab_pessoa p where p.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_pessoa e where e.pessoa_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_pessoa
+            (id, pessoa_id, nome_razao_social, cpf_cnpj, rg_ie, tipo) values
+            (seq_lst_pessoa.nextval, i.id, i.nome_razao, i.cpf_cnpj, i.rg_ie, i.tipo);
+         else
+            --atualiza na listagem
+            update lst_pessoa e set e.nome_razao_social = i.nome_razao, e.cpf_cnpj = i.cpf_cnpj, e.rg_ie = i.rg_ie, e.tipo = i.tipo 
+            where e.pessoa_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de pessoa. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de pessoa. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   --------------------------------------------------------- 
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de pessoa
+   ---------------------------------------------------------
+   procedure pessoaDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Pessoa
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_pessoa e where e.pessoa_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o pessoa da lista de pessoas. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------             
+
+   ---------------------------------------------------------
+   -- Listagem de empreendimentos
+   ---------------------------------------------------------
+   procedure empreendimento(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+           
+      ----------------------------------------------------------------------------------------------------------------
+      -- Empreendimento
+      ----------------------------------------------------------------------------------------------------------------
+       for i in (select e.id empreendimento_id, e.codigo, e.denominador, e.cnpj,
+         (select stragg(nvl(tp.nome, tp.razao_social)) from tab_empreendimento_responsavel tc, tab_pessoa tp where tc.empreendimento = e.id and tc.responsavel = tp.id ) responsavel_nome_razao,
+         (select stragg(nvl(tp.cpf, tp.cnpj)) from tab_empreendimento_responsavel tc, tab_pessoa tp where tc.empreendimento = e.id and tc.responsavel = tp.id) responsavel_cpf_cnpj,         
+         s.id segmento_id, s.texto segmento_texto,
+         (select ee.estado from tab_empreendimento_endereco ee where ee.correspondencia = 0 and ee.empreendimento = e.id) estado_id,
+         (select le.texto from tab_empreendimento_endereco ee, lov_estado le where ee.correspondencia = 0 and ee.empreendimento = e.id and ee.estado = le.id) estado_texto,         
+         (select ee.municipio from tab_empreendimento_endereco ee where ee.correspondencia = 0 and ee.empreendimento = e.id) municipio_id,         
+         (select lm.texto from tab_empreendimento_endereco ee, lov_municipio lm where ee.correspondencia = 0 and ee.empreendimento = e.id and ee.municipio = lm.id) municipio_texto,         
+         a.id atividade_id, a.atividade atividade_texto 
+         from tab_empreendimento e, tab_empreendimento_atividade a, lov_empreendimento_segmento s
+         where s.id = e.segmento and a.id(+) = e.atividade and e.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_empreendimento e where e.empreendimento_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_empreendimento
+            (id, empreendimento_id, codigo, denominador, cnpj, 
+            responsavel_nome_razao, responsavel_cpf_cnpj, segmento_id, segmento_texto, estado_id, 
+            estado_texto, municipio_id, municipio_texto, atividade_id, atividade_texto) 
+            values
+            (seq_lst_empreendimento.nextval, i.empreendimento_id, i.codigo, i.denominador, i.cnpj, 
+            i.responsavel_nome_razao, i.responsavel_cpf_cnpj, i.segmento_id, i.segmento_texto, i.estado_id, 
+            i.estado_texto, i.municipio_id, i.municipio_texto, i.atividade_id, i.atividade_texto);
+         else
+            --atualiza na listagem
+            update lst_empreendimento e set            
+            e.cnpj = i.cnpj, 
+            e.denominador = i.denominador,
+            e.responsavel_nome_razao = i.responsavel_nome_razao, 
+            e.responsavel_cpf_cnpj = i.responsavel_cpf_cnpj,
+            e.segmento_id = i.segmento_id, 
+            e.segmento_texto = i.segmento_texto, 
+            e.estado_id = i.estado_id, 
+            e.estado_texto = i.estado_texto, 
+            e.municipio_id = i.municipio_id, 
+            e.municipio_texto = i.municipio_texto, 
+            e.atividade_id = i.atividade_id, 
+            e.atividade_texto = i.atividade_texto 
+            where e.empreendimento_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de empreendimento. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de empreendimento. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de Empreendimento
+   ---------------------------------------------------------
+   procedure empreendimentoDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Empreendimento
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_empreendimento e where e.empreendimento_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o empreendimento da lista de empreendimentos. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------    
+   
+   
+   ---------------------------------------------------------
+   -- Listagem de requerimento
+   ---------------------------------------------------------
+   procedure requerimento(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+   
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Requerimento
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select r.id, r.numero, r.data_criacao, r.interessado interessado_id, r.autor autor_id, nvl(p.nome, p.razao_social) interessado_nome_razao, 
+        nvl(p.cpf, p.cnpj) interessado_cpf_cnpj, p.tipo interessado_tipo, nvl(p.rg, p.ie) interessado_rg_ie, e.id empreendimento_id, 
+        e.denominador empreendimento_denominador, e.cnpj empreendimento_cnpj, r.situacao situacao_id, ls.texto situacao_texto 
+        from tab_requerimento r, tab_pessoa p, tab_empreendimento e, lov_requerimento_situacao ls where r.interessado = p.id(+) 
+        and r.empreendimento = e.id(+) and r.situacao = ls.id and r.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_requerimento e where e.requerimento_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_requerimento(id, requerimento_id, numero, data_criacao, interessado_id, interessado_tipo, interessado_nome_razao, 
+            interessado_cpf_cnpj, interessado_rg_ie, empreendimento_id, empreendimento_denominador, empreendimento_cnpj, situacao_id, situacao_texto, autor_id)            
+            values
+            (seq_lst_requerimento.nextval, i.id, i.numero, i.data_criacao, i.interessado_id, i.interessado_tipo, i.interessado_nome_razao, 
+            i.interessado_cpf_cnpj, i.interessado_rg_ie, i.empreendimento_id, i.empreendimento_denominador, i.empreendimento_cnpj, i.situacao_id, i.situacao_texto, i.autor_id);
+         else
+            --atualiza na listagem
+            update lst_requerimento e set e.numero = i.numero, e.data_criacao = i.data_criacao, e.interessado_id = i.interessado_id, e.interessado_tipo = i.interessado_tipo,
+            e.interessado_nome_razao = i.interessado_nome_razao,  e.interessado_cpf_cnpj = i.interessado_cpf_cnpj, e.interessado_rg_ie = i.interessado_rg_ie, 
+            e.empreendimento_id = i.empreendimento_id, e.empreendimento_denominador = i.empreendimento_denominador, 
+            e.empreendimento_cnpj = i.empreendimento_cnpj, e.situacao_id = i.situacao_id, e.situacao_texto = i.situacao_texto, e.autor_id = i.autor_id 
+            where e.requerimento_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de requerimento. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de requerimento. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de Requerimento
+   ---------------------------------------------------------
+   procedure requerimentoDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Requerimento
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_requerimento e where e.requerimento_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o requerimento da lista de requerimento. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------      
+   
+   ---------------------------------------------------------
+   -- Listagem de Protocolo
+   ---------------------------------------------------------
+   procedure protocolo(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+   
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- protocolo
+      ----------------------------------------------------------------------------------------------------------------
+     
+    for i in (select r.id, r.numero, r.ano, r.nome, r.numero_autuacao, r.data_autuacao, r.data_criacao, 
+         r.tipo tipo_id, lt.texto tipo_texto, r.interessado interessado_id, 
+         coalesce(p.nome, p.razao_social, r.interessado_livre, r.assunto) interessado_nome_razao, nvl(p.cpf, p.cnpj) interessado_cpf_cnpj, 
+         p.tipo interessado_tipo, nvl(p.rg, p.ie) interessado_rg_ie, e.id empreendimento_id, 
+         e.denominador empreendimento_denominador, e.cnpj empreendimento_cnpj, e.codigo empreendimento_codigo, 
+         r.situacao situacao_id, ls.texto situacao_texto, r.emposse emposse_id, f.nome emposse_nome, 
+         f.cpf emposse_cpf, r.protocolo_associado, tp.numero protocolo_associado_numero, 
+         r.setor setor_id, r.setor_criacao setor_criacao_id, r.protocolo, r.tramitacao, r.requerimento
+         from tab_protocolo r, tab_protocolo tp, tab_pessoa p, tab_empreendimento e, 
+         lov_protocolo_situacao ls, lov_protocolo_tipo lt, tab_funcionario f 
+         where r.protocolo_associado = tp.id(+) and r.interessado = p.id(+) 
+         and r.empreendimento = e.id(+) and r.situacao = ls.id and r.tipo = lt.id
+         and r.emposse = f.id(+) and r.id = p_id) loop   
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_protocolo e where e.protocolo_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_protocolo(id, protocolo_id, protocolo, tipo_id, tipo_texto, numero_completo, 
+            numero, ano, nome, numero_autuacao, data_autuacao, data_criacao, interessado_id, 
+            interessado_tipo, interessado_nome_razao, interessado_cpf_cnpj, interessado_rg_ie, 
+            empreendimento_id, empreendimento_denominador, empreendimento_cnpj, empreendimento_codigo, 
+            situacao_id, situacao_texto, emposse_id, emposse_nome, emposse_cpf, protocolo_associado_id, 
+            protocolo_associado_numero, setor_id, setor_criacao_id, tramitacao, requerimento_id)            
+            values
+            (seq_lst_protocolo.nextval, i.id, i.protocolo, i.tipo_id, i.tipo_texto, i.numero||'/'||i.ano, 
+            i.numero, i.ano, i.nome, i.numero_autuacao, i.data_autuacao, i.data_criacao, i.interessado_id, 
+            i.interessado_tipo, i.interessado_nome_razao, i.interessado_cpf_cnpj, i.interessado_rg_ie, 
+            i.empreendimento_id, i.empreendimento_denominador, i.empreendimento_cnpj, i.empreendimento_codigo, 
+            i.situacao_id, i.situacao_texto, i.emposse_id, i.emposse_nome, i.emposse_cpf, i.protocolo_associado, 
+            i.protocolo_associado_numero, i.setor_id, i.setor_criacao_id, i.tramitacao, i.requerimento);
+         else
+            --atualiza na listagem
+            update lst_protocolo e set 
+            e.protocolo = i.protocolo, 
+            e.numero_completo = i.numero||'/'||i.ano, 
+            e.numero = i.numero, 
+            e.ano = i.ano, 
+            e.nome = i.nome, 
+            e.numero_autuacao = i.numero_autuacao, 
+            e.data_autuacao = i.data_autuacao, 
+            e.data_criacao = i.data_criacao, 
+            e.interessado_id = i.interessado_id, 
+            e.interessado_tipo = i.interessado_tipo, 
+            e.interessado_nome_razao = i.interessado_nome_razao, 
+            e.interessado_cpf_cnpj = i.interessado_cpf_cnpj, 
+            e.interessado_rg_ie = i.interessado_rg_ie, 
+            e.empreendimento_id = i.empreendimento_id, 
+            e.empreendimento_codigo = i.empreendimento_codigo,
+            e.empreendimento_cnpj = i.empreendimento_cnpj,
+            e.empreendimento_denominador = i.empreendimento_denominador,
+            e.situacao_id = i.situacao_id, 
+            e.situacao_texto = i.situacao_texto, 
+            e.emposse_id = i.emposse_id, 
+            e.emposse_nome = i.emposse_nome, 
+            e.emposse_cpf = i.emposse_cpf, 
+            e.protocolo_associado_id = i.protocolo_associado, 
+            e.protocolo_associado_numero = i.protocolo_associado_numero, 
+            e.setor_id = i.setor_id, 
+            e.setor_criacao_id = i.setor_criacao_id, 
+            e.tramitacao = i.tramitacao,
+            e.tipo_texto = i.tipo_texto, 
+            e.tipo_id = i.tipo_id,
+            e.requerimento_id = i.requerimento
+            where e.protocolo_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de protocolo
+   ---------------------------------------------------------
+   procedure protocoloDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- protocolo
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_protocolo e where e.protocolo_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o protocolo da lista de protocolo. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------   
+   
+   ---------------------------------------------------------
+   -- Listagem de título
+   ---------------------------------------------------------
+   procedure titulo(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+   
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Título
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select ti.id titulo_id, ti.tid, n.numero||case when n.ano is not null then '/'||n.ano else null end numero_completo, 
+         n.numero, n.ano, ls.id situacao_id, ls.texto situacao_texto, m.id modelo_id, 
+         m.codigo modelo_codigo, m.nome modelo_nome, lm.id modelo_tipo_id, lm.texto modelo_tipo_texto, 
+         m.sigla modelo_sigla, ti.data_criacao, ti.data_vencimento, ti.autor autor_id,
+         (case when ti.credenciado is null then f.nome else 
+         (select nvl(pc.nome, pc.razao_social) from tab_credenciado c, tab_pessoa_cred pc where pc.id = c.pessoa and c.id = ti.autor) end) autor_nome, 
+         (case when ti.credenciado is null then f.cpf else 
+         (select nvl(pc.cpf, pc.cnpj) from tab_credenciado c, tab_pessoa_cred pc where pc.id = c.pessoa and c.id = ti.autor) end) autor_cpf, 
+         tp.id protocolo_id, tp.protocolo, tp.numero||'/'|| tp.ano protocolo_numero, 
+         tp.tipo protocolo_tipo_id, lpt.texto protocolo_tipo_texto, ti.empreendimento empreendimento_id,         
+         (case when ti.credenciado is null then e.denominador else 
+         (select ec.denominador from tab_empreendimento_cred ec where ec.id = ti.empreendimento) end) empreendimento_denominador, 
+         (case when ti.credenciado is null then e.cnpj else 
+         (select ec.cnpj from tab_empreendimento_cred ec where ec.id = ti.empreendimento) end) empreendimento_cnpj, 
+         (case when ti.credenciado is null then e.codigo else 
+         (select ec.codigo from tab_empreendimento_cred ec where ec.id = ti.empreendimento) end) empreendimento_codigo,          
+         ti.setor, ts.nome setor_nome, ti.requerimento, ti.data_emissao, ti.credenciado,        
+         (case when ti.requerimento is not null then 
+            (case when ti.credenciado is null then 
+               (select nvl(p.cpf, p.cnpj) from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = ti.requerimento)
+            else 
+               (select nvl(p.cpf, p.cnpj) from tab_requerimento_cred r, tab_pessoa_cred p where p.id = r.interessado and r.id = ti.requerimento)
+            end)
+         else null end) interessado_cpf_cnpj, 
+         (case when ti.requerimento is not null then 
+            (case when ti.credenciado is null then 
+               (select nvl(p.nome, p.razao_social) from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = ti.requerimento)
+            else 
+               (select nvl(p.nome, p.razao_social) from tab_requerimento_cred r, tab_pessoa_cred p where p.id = r.interessado and r.id = ti.requerimento)
+            end)
+         else  null end) interessado_nome_razao         
+         from tab_titulo ti, tab_titulo_numero n, lov_titulo_situacao ls, tab_titulo_modelo m, 
+         lov_titulo_modelo_tipo lm, tab_funcionario f, tab_empreendimento e, tab_protocolo tp, 
+         tab_setor ts, lov_protocolo_tipo lpt
+         where ti.setor = ts.id(+) and ti.empreendimento = e.id(+) and ti.id = n.titulo(+) 
+         and ti.situacao = ls.id and ti.modelo = m.id and m.tipo = lm.id and ti.autor = f.id(+) 
+         and ti.protocolo = tp.id(+) and tp.tipo = lpt.id(+) and ti.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_titulo e where e.titulo_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_titulo (id, titulo_id, titulo_tid, numero_completo, numero, ano, situacao_id, 
+            situacao_texto, modelo_id, modelo_codigo, modelo_sigla, modelo_nome, modelo_tipo_id, 
+            modelo_tipo_texto, setor_id, setor_nome, data_criacao, autor_id, autor_nome, autor_cpf, 
+            protocolo, protocolo_id, protocolo_numero, protocolo_tipo_id, protocolo_tipo_texto, 
+            empreendimento_id, empreendimento_denominador, empreendimento_cnpj, empreendimento_codigo,
+            requerimento, data_emissao, interessado_cpf_cnpj, interessado_nome_razao, credenciado)
+            values
+            (seq_lst_titulo.nextval, i.titulo_id, i.tid, i.numero_completo, i.numero, i.ano, i.situacao_id, 
+            i.situacao_texto, i.modelo_id, i.modelo_codigo, i.modelo_sigla, i.modelo_nome, i.modelo_tipo_id, 
+            i.modelo_tipo_texto, i.setor, i.setor_nome, i.data_criacao, i.autor_id, i.autor_nome, i.autor_cpf, 
+            i.protocolo, i.protocolo_id, i.protocolo_numero, i.protocolo_tipo_id, i.protocolo_tipo_texto, 
+            i.empreendimento_id, i.empreendimento_denominador, i.empreendimento_cnpj, i.empreendimento_codigo,
+            i.requerimento, i.data_emissao, i.interessado_cpf_cnpj, i.interessado_nome_razao, i.credenciado);
+         else
+            --atualiza na listagem
+            update lst_titulo t set 
+            t.titulo_tid = i.tid, 
+            t.numero_completo = i.numero_completo, 
+            t.numero = i.numero, 
+            t.ano = i.ano, 
+            t.situacao_id = i.situacao_id, 
+            t.situacao_texto = i.situacao_texto, 
+            t.modelo_id = i.modelo_id, 
+            t.modelo_codigo = i.modelo_codigo, 
+            t.modelo_sigla = i.modelo_sigla, 
+            t.modelo_nome = i.modelo_nome, 
+            t.modelo_tipo_id = i.modelo_tipo_id, 
+            t.modelo_tipo_texto = i.modelo_tipo_texto, 
+            t.setor_id = i.setor, 
+            t.setor_nome = i.setor_nome, 
+            t.data_vencimento = i.data_vencimento, 
+            t.data_criacao = i.data_criacao, 
+            t.autor_id = i.autor_id, 
+            t.autor_nome = i.autor_nome, 
+            t.autor_cpf = i.autor_cpf, 
+            t.protocolo_id = i.protocolo_id, 
+            t.protocolo_numero = i.protocolo_numero, 
+            t.protocolo_tipo_id = i.protocolo_tipo_id, 
+            t.protocolo = i.protocolo, 
+            t.protocolo_tipo_texto = i.protocolo_tipo_texto, 
+            t.empreendimento_id = i.empreendimento_id,
+            t.empreendimento_codigo = i.empreendimento_codigo,
+            t.empreendimento_cnpj = i.empreendimento_cnpj,
+            t.empreendimento_denominador = i.empreendimento_denominador,
+            t.requerimento = i.requerimento, 
+            t.data_emissao = i.data_emissao, 
+            t.interessado_cpf_cnpj = i.interessado_cpf_cnpj, 
+            t.interessado_nome_razao = i.interessado_nome_razao, 
+            t.credenciado = i.credenciado
+            where t.titulo_id = p_id;
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de título. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de título. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de título
+   ---------------------------------------------------------
+   procedure tituloDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- lista
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_titulo e where e.titulo_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o título da lista de título. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------   
+   
+   ---------------------------------------------------------
+   -- Listagem do histórico de tramitação
+   ---------------------------------------------------------
+   procedure tramitacao(p_id number) is
+      v_sucesso boolean := false;
+   begin
+   
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Histórico de Tramitação
+      ----------------------------------------------------------------------------------------------------------------
+     
+    for i in (select t.id historico_id, t.tid, t.tipo_id,
+        t.tramitacao_id, p.id protocolo_id, p.tid protocolo_tid, p.protocolo, p.numero, p.ano, p.numero||'/'||p.ano protocolo_numero, p.numero_autuacao,
+        p.tipo protocolo_tipo_id, (select lp.texto from tab_protocolo p, lov_protocolo_tipo lp where p.tipo = lp.id and t.protocolo_id = p.id) protocolo_tipo_texto, 
+        t.remetente_id, t.remetente_tid,
+         case when t.remetente_id is not null then (select f.nome from tab_funcionario f where f.id = t.remetente_id) else 
+         nvl((select ta.nome from hst_tramitacao_arquivar tar, hst_tramitacao_arquivo ta where tar.arquivo_tid = ta.tid and tar.id_hst = t.id),
+         (select f.funcionario from hst_tramitacao_externo f where f.id_hst = t.id)) end  remetente_nome, 
+         t.destinatario_id, t.destinatario_tid,
+         case when t.destinatario_id is not null then (select f.nome from tab_funcionario f where f.id = t.destinatario_id) else 
+         nvl((select ta.nome from hst_tramitacao_arquivar tar, hst_tramitacao_arquivo ta where tar.arquivo_tid = ta.tid and tar.id_hst = t.id),
+         (select f.funcionario from hst_tramitacao_externo f where f.id_hst = t.id)) end  destinatario_nome, t.remetente_setor_id,
+        (case when t.remetente_setor_id is not null then (select s.sigla from tab_setor s where s.id = t.remetente_setor_id) else 
+        (select tod.nome from hst_tramitacao_externo te, hst_tramitacao_orgao tod where te.orgao_tid = tod.tid and te.id_hst(+) = t.id) end) remetente_setor_sigla,
+        (case when t.remetente_setor_id is not null then (select s.nome from tab_setor s where s.id = t.remetente_setor_id) else
+        (select tod.nome from hst_tramitacao_externo te, hst_tramitacao_orgao tod where te.orgao_tid = tod.tid and te.id_hst(+) = t.id) end) remetente_setor_nome,
+        t.destinatario_setor_id,
+        (case when t.destinatario_setor_id is not null then (select s.sigla from tab_setor s where s.id = t.destinatario_setor_id) else 
+        (select tod.nome from hst_tramitacao_externo te, hst_tramitacao_orgao tod where te.orgao_tid = tod.tid and te.id_hst(+) = t.id) end) destinatario_setor_sigla,
+        (case when t.destinatario_setor_id is not null then (select s.nome from tab_setor s where s.id = t.destinatario_setor_id) else
+        (select tod.nome from hst_tramitacao_externo te, hst_tramitacao_orgao tod where te.orgao_tid = tod.tid and te.id_hst(+) = t.id) end) destinatario_setor_nome,
+        t.despacho, t.data_envio, t.data_execucao, t.objetivo_id, t.objetivo_texto, t.situacao_id, t.situacao_texto, t.acao_executada ,
+        (select a.nome from tab_tramitacao_arquivar ta, tab_tramitacao_arquivo a where ta.arquivo = a.id and ta.tramitacao = t.tramitacao_id) arquivo_nome,
+        (select tap.nome from tab_tramitacao_arquivar ta, tab_tramitacao_arq_estante tap where ta.estante = tap.id and ta.tramitacao = t.tramitacao_id) estante_nome,        
+        (select tap.identificacao from tab_tramitacao_arquivar ta, tab_tramitacao_arq_prateleira tap where ta.prateleira = tap.id and ta.tramitacao = t.tramitacao_id) prateleira_nome,        
+        (select m.texto from tab_setor_endereco e, lov_municipio m where m.id = e.municipio and e.setor = t.remetente_setor_id) remetente_municipio_nome,
+        (select uf.sigla from tab_setor_endereco e, lov_estado uf where uf.id = e.estado and e.setor = t.remetente_setor_id) remetente_estado_sigla,
+        (select m.texto from tab_setor_endereco e, lov_municipio m where m.id = e.municipio and e.setor = t.destinatario_setor_id) destinatario_municipio_nome,
+        (select uf.sigla from tab_setor_endereco e, lov_estado uf where uf.id = e.estado and e.setor = t.destinatario_setor_id) destinatario_estado_sigla,
+        (select f.id from tab_tramitacao_orgao f, tab_tramitacao_externo te where f.id = te.orgao and te.tramitacao = t.tramitacao_id) orgao_externo_id,
+        (select f.nome from tab_tramitacao_orgao f, tab_tramitacao_externo te where f.id = te.orgao and te.tramitacao = t.tramitacao_id) orgao_externo_nome,
+        (select aa.texto from lov_historico_artefatos_acoes a, lov_historico_acao aa where a.acao = aa.id and a.id = t.acao_executada) acao_executada_texto
+        from tab_protocolo p, hst_tramitacao t 
+        where p.id = t.protocolo_id(+) and t.id = p_id) loop   
+                
+      --Insere na listagem
+      insert into lst_hst_tramitacao(id, tramitacao_hst_id, tramitacao_id, protocolo, protocolo_id, protocolo_tid, protocolo_numero, protocolo_ano, protocolo_numero_completo, 
+      protocolo_numero_autuacao, protocolo_tipo_id, protocolo_tipo_texto, remetente_id, remetente_tid, remetente_nome, remetente_setor_id, remetente_setor_sigla, 
+      remetente_setor_nome, remetente_municipio_nome, remetente_estado_sigla, destinatario_id, destinatario_tid, destinatario_nome, destinatario_setor_id, destinatario_setor_sigla, destinatario_setor_nome, 
+      destinatario_municipio_nome, destinatario_estado_sigla, objetivo_id, objetivo_texto, situacao_id, situacao_texto, acao_executada, data_envio, data_execucao, tipo_id, orgao_externo_id, orgao_externo_nome, arquivo_nome, estante_nome, prateleira_nome, despacho, acao_executada_texto, tid)            
+      values (seq_lst_hst_tramitacao.nextval, i.historico_id, i.tramitacao_id, i.protocolo, i.protocolo_id, i.protocolo_tid, i.numero, i.ano, i.protocolo_numero, i.numero_autuacao,
+      i.protocolo_tipo_id, i.protocolo_tipo_texto, i.remetente_id, i.remetente_tid, i.remetente_nome, i.remetente_setor_id, i.remetente_setor_sigla, i.remetente_setor_nome,
+      i.remetente_municipio_nome, i.remetente_estado_sigla, i.destinatario_id, i.destinatario_tid, i.destinatario_nome, i.destinatario_setor_id, i.destinatario_setor_sigla, i.destinatario_setor_nome, 
+      i.destinatario_municipio_nome, i.destinatario_estado_sigla, i.objetivo_id, i.objetivo_texto, i.situacao_id, i.situacao_texto, i.acao_executada, i.data_envio, i.data_execucao, i.tipo_id, i.orgao_externo_id, i.orgao_externo_nome, i.arquivo_nome, 
+      i.estante_nome, i.prateleira_nome, i.despacho, i.acao_executada_texto, i.tid);
+        
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de histórico de tramitação. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de histórico de tramitação. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------    
+   
+   ---------------------------------------------------------
+   -- Listagem de fiscalizacao
+   ---------------------------------------------------------
+   procedure fiscalizacao(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+      v_situacao_ant_id int :=0;
+   begin
+             
+      ----------------------------------------------------------------------------------------------------------------
+      -- Fiscalizacao
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select f.id fiscalizacao_id, f.id numero_fiscalizacao, case i.gerado_sistema when 0 then to_number(i.numero_auto_infracao_bloco)
+       when 1 then f.autos end numero_ai, case o.tei_gerado_pelo_sist when 0 then o.num_tei_bloco when 1 then f.autos end numero_tei,
+       case m.tad_gerado when 0 then to_number(m.tad_numero) when 1 then f.autos end numero_tad, nvl(l.responsavel, l.pessoa) autuado_id,
+       nvl(p.razao_social, p.nome) autuado_nome_razao, nvl(p.cpf, p.cnpj) autuado_cpf_cnpj, l.empreendimento empreendimento_id, 
+       nvl(e.denominador, e.nome_fantasia) empreendimento_denominador, e.cnpj empreendimento_cnpj, l.data, i.tipo infracao_tipo,
+       i.item, f.autuante agente_fiscal, func.nome agente_fiscal_texto, f.situacao, ls.texto situacao_texto,l.setor, protoc.numero 
+       protoc_num, protoc.ano protoc_ano, protoc.numero_autuacao numero_sep from tab_fiscalizacao f,tab_fisc_compl_dados_aut c, 
+       tab_fisc_obj_infracao o, tab_fisc_infracao i, tab_fisc_local_infracao l,tab_fisc_material_apreendido m, tab_pessoa p, 
+       tab_empreendimento e,tab_funcionario func, lov_fiscalizacao_situacao ls,tab_protocolo protoc where c.fiscalizacao(+) = f.id 
+       and c.fiscalizacao(+) = f.id and o.fiscalizacao(+) = f.id and i.fiscalizacao(+) = f.id and l.fiscalizacao(+) = f.id 
+       and m.fiscalizacao(+) = f.id and protoc.fiscalizacao(+) = f.id and ls.id = f.situacao and (p.id = l.responsavel or p.id = l.pessoa) 
+       and e.id(+) = l.empreendimento and func.id(+) = f.autuante and f.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_fiscalizacao e where e.fiscalizacao_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_fiscalizacao (id, fiscalizacao_id, numero_fiscalizacao, numero_ai, numero_tei, numero_tad,
+            autuado_id, autuado_nome_razao, autuado_cpf_cnpj, empreendimento_id, empreendimento_denominador, empreendimento_cnpj,
+            data_fiscalizacao, infracao_tipo, item_tipo, agente_fiscal, agente_fiscal_texto, situacao, situacao_texto, setor, 
+            protoc_num, protoc_ano, numero_sep) values(seq_lst_fiscalizacao.nextval, i.fiscalizacao_id, i.numero_fiscalizacao, 
+            i.numero_ai, i.numero_tei, i.numero_tad, i.autuado_id, i.autuado_nome_razao, i.autuado_cpf_cnpj, i.empreendimento_id, 
+            i.empreendimento_denominador, i.empreendimento_cnpj, i.data, i.infracao_tipo, i.item, i.agente_fiscal, i.agente_fiscal_texto, 
+            i.situacao, i.situacao_texto, i.setor, i.protoc_num, i.protoc_ano, i.numero_sep);
+         else            
+            select e.situacao into v_situacao_ant_id from lst_fiscalizacao e where e.fiscalizacao_id = p_id;
+            --atualiza na listagem
+            if(v_situacao_ant_id = 1)then
+              update lst_fiscalizacao e set e.numero_fiscalizacao = i.numero_fiscalizacao, e.numero_ai = i.numero_ai,
+              e.numero_tei = i.numero_tei, e.numero_tad = i.numero_tad, e.autuado_id = i.autuado_id, e.autuado_nome_razao = 
+              i.autuado_nome_razao, e.autuado_cpf_cnpj = i.autuado_cpf_cnpj, e.empreendimento_id = i.empreendimento_id, 
+              e.empreendimento_denominador = i.empreendimento_denominador, e.empreendimento_cnpj = i.empreendimento_cnpj, 
+              e.data_fiscalizacao = i.data, e.infracao_tipo = i.infracao_tipo, e.item_tipo = i.item, e.agente_fiscal = 
+              i.agente_fiscal, e.agente_fiscal_texto = i.agente_fiscal_texto, e.situacao = i.situacao, e.situacao_texto = 
+              i.situacao_texto, e.setor = i.setor, e.protoc_num = i.protoc_num, e.protoc_ano = i.protoc_ano, e.numero_sep = 
+              i.numero_sep where e.fiscalizacao_id = p_id;
+            else
+              update lst_fiscalizacao e set e.situacao = i.situacao, e.situacao_texto = i.situacao_texto, e.protoc_num = i.protoc_num, 
+              e.protoc_ano = i.protoc_ano, e.numero_sep = i.numero_sep where e.fiscalizacao_id = p_id;            
+            end if;
+         end if;
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+            if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de fiscalizacao
+   ---------------------------------------------------------
+   procedure fiscalizacaoDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- fiscalizacao
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_fiscalizacao e where e.fiscalizacao_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o fiscalizacao da lista de fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------  
+   
+   ---------------------------------------------------------
+   -- Listagem de configuração de infração da fiscalizacao
+   ---------------------------------------------------------
+   procedure configFiscalizacao(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;      
+   begin
+             
+      ----------------------------------------------------------------------------------------------------------------
+      -- Configuração
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select t.id            configuracao_id,
+                       t.id            numero_configuracao,
+                       t.classificacao classificacao_id,
+                       l.texto         classificacao_texto,
+                       t.tipo          tipo_id,
+                       ct.texto        tipo_texto,
+                       t.item          item_id,
+                       ci.texto        item_texto
+                  from cnf_fisc_infracao             t,
+                       lov_cnf_fisc_infracao_classif l,
+                       cnf_fisc_infracao_tipo        ct,
+                       cnf_fisc_infracao_item        ci
+                 where t.classificacao = l.id(+)
+                   and t.tipo = ct.id(+)
+                   and t.item = ci.id(+)     
+                   and t.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_configuracao_fisc e where e.configuracao_id = p_id;
+
+         if v_count = 0 then         
+            --Insere na listagem
+            insert into lst_configuracao_fisc
+              (id,
+               configuracao_id,
+               numero_configuracao,
+               classificacao_id,
+               classificacao_texto,
+               tipo_id,
+               tipo_texto,
+               item_id,
+               item_texto)
+            values
+              (seq_lst_configuracaofisc.nextval,
+               i.configuracao_id,
+               i.numero_configuracao,
+               i.classificacao_id,
+               i.classificacao_texto,
+               i.tipo_id,
+               i.tipo_texto,
+               i.item_id,
+               i.item_texto);
+         else
+            --atualiza na listagem           
+            update lst_configuracao_fisc t
+               set t.numero_configuracao = i.numero_configuracao,
+                   t.classificacao_id    = i.classificacao_id,
+                   t.classificacao_texto = i.classificacao_texto,
+                   t.tipo_id             = i.tipo_id,
+                   t.tipo_texto          = i.tipo_texto,
+                   t.item_id             = i.item_id,
+                   t.item_texto          = i.item_texto
+             where t.configuracao_id = p_id;             
+         end if;
+
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------
+      
+      
+      v_sucesso := true;
+            if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de configuração de infração da fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de configuração de infração da fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   ---------------------------------------------------------     
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de configuração de infração da fiscalizacao
+   ---------------------------------------------------------
+   procedure configFiscalizacaoDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- fiscalizacao
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_configuracao_fisc e where e.configuracao_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o fiscalizacao da lista de configuração de infração da fiscalizacao. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------                      
+   
+   ---------------------------------------------------------
+   -- Listagem de Solicitação de CAR
+   ---------------------------------------------------------
+   procedure carSolicitacao(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;     
+      v_situacao_ant_id int :=0; 
+   begin
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Solicitação
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select t.id, t.numero, t.protocolo, pt.numero protocolo_numero, pt.ano protocolo_ano, 
+         pt.numero|| '/' ||pt.ano protocolo_numero_completo, t.declarante, nvl(pe.nome, pe.razao_social) 
+         declarante_nome_razao, nvl(pe.cpf, pe.cnpj) declarante_cpf_cnpj, t.empreendimento, e.codigo 
+         empreendimento_codigo, e.denominador empreendimento_denominador, ee.municipio, 
+         lm.texto municipio_texto, t.situacao, ls.texto situacao_texto, t.requerimento,
+         (select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car_esquema = 1 and tcs.solicitacao_car = t.id) codigo_imovel_sicar
+         from tab_car_solicitacao t, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, 
+         tab_empreendimento_endereco ee, lov_municipio lm, lov_car_solicitacao_situacao ls 
+         where t.protocolo = pt.id and t.declarante = pe.id and t.empreendimento = e.id 
+         and e.id = ee.empreendimento and ee.correspondencia = 0 and ee.municipio = lm.id 
+         and t.situacao = ls.id and t.id = p_id) loop
+
+         -- valida se existe o valor na lista
+         select count(*) into v_count from lst_car_solicitacao e where e.solicitacao_id = p_id;
+
+         if(v_count =0)then         
+            --Insere na listagem
+            insert into lst_car_solicitacao
+              (id,
+               solicitacao_id,
+               numero,
+               protocolo_id,
+               protocolo_numero,
+               protocolo_ano,
+               protocolo_numero_completo,
+               declarante_id,
+               declarante_nome_razao,
+               declarante_cpf_cnpj,
+               empreendimento_id,
+               empreendimento_codigo,
+               empreendimento_denominador,
+               municipio_id,
+               municipio_texto,
+               situacao_id,
+               situacao_texto,
+               requerimento,
+               codigo_imovel_sicar)
+            values
+              (seq_lst_car_solicitacao.nextval,
+               i.id,
+               i.numero,
+               i.protocolo,
+               i.protocolo_numero,
+               i.protocolo_ano,
+               i.protocolo_numero_completo,
+               i.declarante,
+               i.declarante_nome_razao,
+               i.declarante_cpf_cnpj,
+               i.empreendimento,
+               i.empreendimento_codigo,
+               i.empreendimento_denominador,
+               i.municipio,
+               i.municipio_texto,
+               i.situacao,
+               i.situacao_texto,
+               i.requerimento,
+               i.codigo_imovel_sicar);
+         else
+           select e.situacao_id into v_situacao_ant_id from lst_car_solicitacao e where e.solicitacao_id = p_id;
+           select count(*) into v_count from lst_car_solicitacao e where e.solicitacao_id = p_id and e.situacao_id != 1;--Em Cadastro
+           
+           if(v_situacao_ant_id = 1 or v_count = 0)then
+           --atualiza na listagem
+               update lst_car_solicitacao l
+                 set l.protocolo_id               = i.protocolo,
+                     l.protocolo_numero           = i.protocolo_numero,
+                     l.protocolo_ano              = i.protocolo_ano,
+                     l.protocolo_numero_completo  = i.protocolo_numero_completo,
+                     l.declarante_id              = i.declarante,
+                     l.declarante_nome_razao      = i.declarante_nome_razao,
+                     l.declarante_cpf_cnpj        = i.declarante_cpf_cnpj,
+                     l.empreendimento_id          = i.empreendimento,
+                     l.empreendimento_codigo      = i.empreendimento_codigo,
+                     l.empreendimento_denominador = i.empreendimento_denominador,
+                     l.municipio_id               = i.municipio,
+                     l.municipio_texto            = i.municipio_texto,
+                     l.situacao_id                = i.situacao,
+                     l.situacao_texto             = i.situacao_texto,
+                     l.requerimento               = i.requerimento,
+                     l.codigo_imovel_sicar      = i.codigo_imovel_sicar
+               where l.solicitacao_id = p_id;
+           else
+                update lst_car_solicitacao l
+                   set l.situacao_id               = i.situacao,
+                       l.situacao_texto            = i.situacao_texto,
+                       l.codigo_imovel_sicar     = i.codigo_imovel_sicar
+                 where l.solicitacao_id = p_id;
+           end if;
+         end if;
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de Solicitações de CAR. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de Solicitações de CAR. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   --------------------------------------------------------- 
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de Solicitação de CAR
+   ---------------------------------------------------------
+   procedure carSolicitacaoDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Solicitação
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_car_solicitacao e where e.solicitacao_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o Solicitação de CAR da lista de Solicitações de CAR. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------
+                      
+   ---------------------------------------------------------
+   -- Listagem de Solicitação/ Título de CAR
+   ---------------------------------------------------------
+   procedure carSolicitacaoTitulo(p_id number) is
+      v_sucesso boolean := false;
+      v_count int := 0;
+      v_situacao_ant_id int :=0;     
+   begin
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Solicitação/ Título
+      ----------------------------------------------------------------------------------------------------------------
+      for i in (select t.id, t.numero solicitacao_numero, null titulo_numero, null titulo_ano, t.protocolo, pt.numero protocolo_numero, 
+       pt.ano protocolo_ano, pt.numero || '/' || pt.ano protocolo_numero_completo, t.declarante, nvl(pe.nome, pe.razao_social) declarante_nome_razao,
+       nvl(pe.cpf, pe.cnpj) declarante_cpf_cnpj, t.empreendimento, e.codigo empreendimento_codigo, e.denominador empreendimento_denominador,
+       ee.municipio, lm.texto municipio_texto, t.situacao, ls.texto situacao_texto, t.motivo situacao_motivo, t.requerimento, 1 tipo 
+       from tab_car_solicitacao t, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco  ee, lov_municipio lm,
+       lov_car_solicitacao_situacao ls where t.protocolo = pt.id and t.declarante = pe.id and t.empreendimento = e.id
+       and e.id = ee.empreendimento and ee.correspondencia = 0 and ee.municipio = lm.id and t.situacao = ls.id and t.id = p_id
+       union all select t.id, null solicitacao_numero, tn.numero titulo_numero, tn.ano titulo_ano, t.protocolo, pt.numero protocolo_numero, 
+       pt.ano protocolo_ano, pt.numero || '/' || pt.ano protocolo_numero_completo, null declarante, null declarante_nome_razao, 
+       null declarante_cpf_cnpj, t.empreendimento, e.codigo empreendimento_codigo, e.denominador empreendimento_denominador, ee.municipio, 
+       lm.texto municipio_texto, t.situacao, ls.texto situacao_texto, null situacao_motivo, pt.requerimento, 2 tipo from tab_titulo t,tab_titulo_numero tn, 
+       tab_protocolo pt, tab_empreendimento e, tab_empreendimento_endereco ee, lov_municipio lm, lov_titulo_situacao ls 
+       where t.protocolo = pt.id and t.empreendimento = e.id and e.id = ee.empreendimento and ee.correspondencia = 0 
+       and ee.municipio = lm.id and t.situacao = ls.id and tn.titulo = t.id and t.modelo = (select id from tab_titulo_modelo where codigo = 49) 
+       and t.situacao = 3 and t.id = p_id) loop
+         
+          -- valida se existe o valor na lista
+         select count(*) into v_count from lst_car_solic_tit e where e.solic_tit_id = p_id;
+
+         if(v_count =0)then
+            --Insere na listagem
+            insert into lst_car_solic_tit (id, solic_tit_id, solicitacao_numero, titulo_numero, titulo_ano, protocolo_id, protocolo_numero,
+            protocolo_ano, protocolo_numero_completo, declarante_id, declarante_nome_razao, declarante_cpf_cnpj,
+            empreendimento_id, empreendimento_codigo, empreendimento_denominador, municipio_id, municipio_texto,
+            situacao_id, situacao_texto, situacao_motivo, requerimento, tipo) values (seq_lst_car_solic_tit.nextval, i.id,
+            i.solicitacao_numero, i.titulo_numero, i.titulo_ano, i.protocolo, i.protocolo_numero, i.protocolo_ano, i.protocolo_numero_completo, i.declarante,
+            i.declarante_nome_razao, i.declarante_cpf_cnpj, i.empreendimento, i.empreendimento_codigo, i.empreendimento_denominador,
+            i.municipio, i.municipio_texto, i.situacao, i.situacao_texto, i.situacao_motivo, i.requerimento, i.tipo);
+         else
+            
+           select e.situacao_id into v_situacao_ant_id from lst_car_solic_tit e where e.solic_tit_id = p_id;
+           select count(*) into v_count from lst_car_solicitacao e where e.solicitacao_id = p_id and e.situacao_id != 1;--Em Cadastro
+           
+           if(v_situacao_ant_id = 1 or v_count = 0 or i.tipo = 2)then
+             --atualiza na listagem
+              update lst_car_solic_tit l set l.solicitacao_numero = i.solicitacao_numero, l.titulo_numero = i.titulo_numero, l.titulo_ano = i.titulo_ano, 
+              l.protocolo_id = i.protocolo, l.protocolo_numero = i.protocolo_numero, l.protocolo_ano = i.protocolo_ano, 
+              l.protocolo_numero_completo = i.protocolo_numero_completo, l.declarante_id = i.declarante, l.declarante_nome_razao = i.declarante_nome_razao, 
+              l.declarante_cpf_cnpj = i.declarante_cpf_cnpj, l.empreendimento_id = i.empreendimento, l.empreendimento_codigo = i.empreendimento_codigo, 
+              l.empreendimento_denominador = i.empreendimento_denominador, l.municipio_id = i.municipio, l.municipio_texto = i.municipio_texto, 
+              l.situacao_id = i.situacao, l.situacao_texto = i.situacao_texto, l.situacao_motivo = i.situacao_motivo, l.requerimento = i.requerimento, 
+              l.tipo = i.tipo where l.solic_tit_id = p_id;
+           else             
+             update lst_car_solic_tit l set l.situacao_id = i.situacao,
+             l.situacao_texto = i.situacao_texto where l.solic_tit_id = p_id;
+           end if;                           
+         end if;
+      end loop;
+      ----------------------------------------------------------------------------------------------------------------           
+      v_sucesso := true;
+      
+      if (not v_sucesso) then
+         Raise_application_error(-20000, 'Erro ao gerar a lista de Solicitação/Título de CAR. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);        
+      end if;
+      --Tratamento de exceção   
+      exception
+         when others then Raise_application_error(-20000, 'Erro ao gerar a lista de Solicitação/Título de CAR. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+         
+   end;
+   --------------------------------------------------------- 
+   
+   ---------------------------------------------------------
+   -- Deletar Listagem de Solicitação de CAR
+   ---------------------------------------------------------
+   procedure carSolicitacaoTituloDeletar(p_id number) is
+   begin
+      ----------------------------------------------------------------------------------------------------------------
+      
+      ----------------------------------------------------------------------------------------------------------------
+      -- Solicitação
+      ----------------------------------------------------------------------------------------------------------------
+      delete from lst_car_solic_tit e where e.solic_tit_id = p_id;
+      ----------------------------------------------------------------------------------------------------------------               
+   
+      exception
+      when others then Raise_application_error(-20000, 'Erro ao deletar o Solicitação/Título de CAR da lista. Mensagem: '||dbms_utility.format_error_stack || dbms_utility.format_call_stack);
+   
+   end;
+   ---------------------------------------------------------   
+end;
