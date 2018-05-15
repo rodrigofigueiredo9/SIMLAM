@@ -123,7 +123,7 @@
         <div class="block divDescricaoInfracao">
 		    <div class="coluna76">
 			    <label>Descrição da infração/fiscalização *</label>
-			    <%= Html.TextArea("Infracao.DescricaoInfracao", Model.Infracao.DescricaoInfracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricaoInfracao", @maxlength = "1100" }))%>
+			    <%= Html.TextArea("Infracao.DescricaoInfracao", Model.Infracao.DescricaoInfracao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtDescricaoInfracao", @maxlength = "940" }))%>
 		    </div>
 	    </div>
 

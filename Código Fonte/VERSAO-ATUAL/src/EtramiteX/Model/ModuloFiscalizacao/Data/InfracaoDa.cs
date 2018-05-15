@@ -183,7 +183,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advertência%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advert%'),
                                         :tid)", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
