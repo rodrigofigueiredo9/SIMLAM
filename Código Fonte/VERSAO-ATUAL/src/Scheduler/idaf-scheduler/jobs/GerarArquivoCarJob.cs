@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
-                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, "", "gerar-car");
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, tipo: "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
@@ -138,7 +138,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, "", "gerar-car");
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, tipo: "gerar-car");
 					}
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");

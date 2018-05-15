@@ -188,7 +188,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
 
 				//Atualizar controle de envio do SICAR
-				ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoFinal);
+				ControleCarDB.AtualizarControleSICAR(conn, resultadoEnvio, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, tid, arquivoCar: arquivoFinal);
 
 				//Marcar como processado
 				LocalDB.MarcarItemFilaTerminado(conn, itemFila.Id, true, resultado);
