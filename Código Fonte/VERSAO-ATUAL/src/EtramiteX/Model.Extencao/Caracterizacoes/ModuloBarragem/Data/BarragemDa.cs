@@ -458,7 +458,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 				comando = bancoDeDados.CriarComando(@"begin " +
 					"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
-                    "delete from {0}crt_barragens_finalidades b where b.barragem in (select id from {0}crt_barragem_barragens where barragem = :caracterizacao);" +
+					"delete from {0}crt_barragens_finalidades b where b.barragem = :caracterizacao;" +
 					"delete from {0}crt_barragem_brgns_dados b where b.barragens in (select id from {0}crt_barragem_barragens where barragem = :caracterizacao);" +
 					"delete from {0}crt_barragem_barragens b where b.barragem = :caracterizacao;" +
 					"delete from {0}crt_barragem r where r.id = :caracterizacao;" +
@@ -512,10 +512,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				#region Apaga Barragem Item
 
 				comando = bancoDeDados.CriarComando(@"begin " +
-                    "delete from {0}crt_barragens_finalidades b where b.barragem = :barragemItemId;" +
-					"delete from {0}crt_barragem_brgns_dados b where b.barragens in (select id from {0}crt_barragem_barragens where id = :barragemItemId);" +
+					"delete from {0}crt_barragens_finalidades f where exists (select 1 from crt_barragem_brgns_dados d where d.id = f.id_barragem_dados and d.barragens = :barragemItemId);" +
+					"delete from {0}crt_barragem_brgns_dados d where d.barragens = :barragemItemId;" +
 					"delete from {0}crt_barragem_barragens b where b.id = :barragemItemId;" +
-                    "delete from {0}crt_barragens_finalidades f where f.barragem = :barragemItemId;" +           
 				"end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("barragemItemId", barragemItemId, DbType.Int32);
