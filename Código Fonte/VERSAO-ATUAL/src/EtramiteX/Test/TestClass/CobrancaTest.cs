@@ -60,8 +60,6 @@ namespace Test.TestClass
 					CobrancaId = 1
 				};
 
-				parcelamento.QuantidadeParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
-				parcelamento.DUAS = _bus.GerarParcelas(cobranca, parcelamento);
 				cobranca.Parcelamentos = new List<CobrancaParcelamento>() { parcelamento };
 			}
 
@@ -71,7 +69,28 @@ namespace Test.TestClass
 		#endregion Methods Private
 
 		[TestMethod]
-		public void CalculoDuaComParametrizacaoExistenteTest()
+		public void ResultadoMaximoDeParcelasDeveSerIgual2Test()
+		{
+			var cobranca = this.GetCobranca(3);
+			var parcelamento = cobranca.Parcelamentos[0];
+			var maximoParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
+
+			Assert.AreEqual(maximoParcelas, 2);
+		}
+
+		[TestMethod]
+		public void DeveRetornarTrueAoGerarMaisDeUmaParcelaTest()
+		{
+			var cobranca = this.GetCobranca(3);
+			var parcelamento = cobranca.Parcelamentos[0];
+			parcelamento.QuantidadeParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
+			parcelamento.DUAS = _bus.GerarParcelas(cobranca, parcelamento);
+
+			Assert.IsTrue(parcelamento.DUAS.Count > 1);
+		}
+
+		[TestMethod]
+		public void DeveRetornarTrueAoCalcularDuaComParametrizacaoExistenteTest()
 		{
 			var cobranca = this.GetCobranca(3);
 			var parcelamento = cobranca.Parcelamentos[0];
@@ -79,7 +98,7 @@ namespace Test.TestClass
 		}
 
 		[TestMethod]
-		public void CalculoDuaComParametrizacaoNaoExistenteTest()
+		public void DeveRetornarFalseAoCalcularDuaComParametrizacaoNaoExistenteTest()
 		{
 			var cobranca = this.GetCobranca(23);
 			var parcelamento = cobranca.Parcelamentos[0];
