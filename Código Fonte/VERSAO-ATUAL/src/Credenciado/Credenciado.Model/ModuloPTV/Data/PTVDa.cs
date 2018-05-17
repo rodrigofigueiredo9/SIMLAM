@@ -1862,7 +1862,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-		internal List<ListaValor> DiasHorasVistoria(int setorId)
+		internal List<ListaValor> DiasHorasVistoria(int setorId, DateTime? dataVistoria = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
@@ -1879,21 +1879,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                 {
                     comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
                                                                 FROM (
-                                                                      SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                      SELECT TRUNC(:dataVistoria, 'mm') + LEVEL - 1 workday
                                                                       FROM DUAL
-                                                                      CONNECT BY TRUNC(SYSDATE, 'yy') + LEVEL - 1 <= LAST_DAY(SYSDATE)),
+                                                                      CONNECT BY TRUNC(:dataVistoria, 'yy') + LEVEL - 1 <= LAST_DAY(:dataVistoria)),
                                                                       cnf_local_vistoria lv,
                                                                       lov_dia_semana d,
-                                                                (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(sysdate,'DD/MM/YY')
+                                                                (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(:dataVistoria,'DD/MM/YY')
                                                                 ) bloq
                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                               AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
+                                                               AND to_date(workday,'DD/MM/YY') >= to_date(:dataVistoria,'DD/MM/YY')
                                                                AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
                                                                AND to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))
                                                                OR 
                                                                (
                                                                   TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                                  AND  to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY') 
+                                                                  AND  to_date(workday,'DD/MM/YY') >= to_date(:dataVistoria,'DD/MM/YY') 
                                                                   AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') < to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
                                                                   )  )");
 
@@ -1903,17 +1903,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                 else
                 {
                     comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (    SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
+                                                                FROM (    SELECT TRUNC(:dataVistoria, 'mm') + LEVEL - 1 workday
                                                                             FROM DUAL
-                                                                        CONNECT BY TRUNC(SYSDATE, 'yy') + LEVEL - 1 <= LAST_DAY(SYSDATE)) ,
+                                                                        CONNECT BY TRUNC(:dataVistoria, 'yy') + LEVEL - 1 <= LAST_DAY(:dataVistoria)) ,
                                                                         cnf_local_vistoria lv,
                                                                         lov_dia_semana d
                                                                 WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
-                                                                and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(sysdate,'DD/MM/YY HH24:MI')");
+                                                                and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(:dataVistoria,'DD/MM/YY HH24:MI')");
                 }
 
 
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
+				comando.AdicionarParametroEntrada("dataVistoria", dataVistoria ?? DateTime.Now, DbType.DateTime);
 
 				List<ListaValor> retorno = null;
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
