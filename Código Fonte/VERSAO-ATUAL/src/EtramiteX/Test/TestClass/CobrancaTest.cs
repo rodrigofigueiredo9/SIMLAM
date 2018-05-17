@@ -33,7 +33,7 @@ namespace Test.TestClass
 
 		#endregion Properties
 
-		#region Methods Private
+		#region Private Methods
 
 		private Cobranca GetCobranca(int codigoReceita)
 		{
@@ -66,7 +66,7 @@ namespace Test.TestClass
 			return cobranca;
 		}
 
-		#endregion Methods Private
+		#endregion Private Methods
 
 		[TestMethod]
 		public void ResultadoMaximoDeParcelasDeveSerIgual2Test()

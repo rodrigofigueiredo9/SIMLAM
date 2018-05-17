@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
@@ -164,6 +165,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if(fiscalizacao != null)
 				vm.SituacaoFiscalizacao = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSituacao.Where(x => x.Id == fiscalizacao.SituacaoId.ToString()).ToList(), null, false);
 			vm.Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: cobranca.SerieId?.ToString());
+			vm.ArquivoVM.Anexos = cobranca.Anexos ?? new List<Anexo>();
+			vm.ArquivoVM.IsVisualizar = visualizar;
 
 			return vm;
 		}

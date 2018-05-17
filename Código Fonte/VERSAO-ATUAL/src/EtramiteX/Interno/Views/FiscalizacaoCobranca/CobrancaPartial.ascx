@@ -20,7 +20,7 @@
             <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtFiscalizacao" }))%>
         </div>
         <div class="coluna15">
-            <label>N° AI / IUF</label><br />
+            <label>N° AI / IUF *</label><br />
             <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroIUF" }))%>
         </div>
         <div class="coluna15">
@@ -28,7 +28,7 @@
 			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0), new { @class = "text ddlSeries" }))%>
         </div>
         <div class="coluna15">
-            <label>Data Emissão AI / IUF</label><br />
+            <label>Data Emissão AI / IUF *</label><br />
             <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
         </div>
         <div class="coluna31">
@@ -129,6 +129,11 @@
         <input type="hidden" class="hdnIndexParcelamento" value="<%= indexParcelamento %>" />
     </div>
     <%} %>
+</fieldset>
+
+<fieldset class="block box fsArquivos">
+    <legend style="color: #000000"><b>Cópia de Notificação</b></legend>
+    <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
 </fieldset>
 
 <div class="block box">

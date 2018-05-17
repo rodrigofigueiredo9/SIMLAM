@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
@@ -96,6 +97,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 
 		public CobrancaParcelamento UltimoParcelamento { get; set; }
 		public List<CobrancaParcelamento> Parcelamentos { get; set; }
+		public List<Anexo> Anexos { get; set; }
 		#endregion
 	}
 }

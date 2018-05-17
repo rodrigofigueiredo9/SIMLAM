@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
@@ -104,6 +105,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				cobranca.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
+				#region Anexos
+
+				foreach (var item in (cobranca.Anexos ?? new List<Anexo>()))
+				{
+					comando = bancoDeDados.CriarComando(@"
+					 insert into {0}tab_fisc_cobranca_arq a
+					   (id, 
+						cobranca, 
+						arquivo, 
+						ordem, 
+						descricao, 
+						tid)
+					 values
+					   ({0}seq_tab_fisc_cobranca_arq.nextval,
+						:cobranca,
+						:arquivo,
+						:ordem,
+						:descricao,
+						:tid)", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("cobranca", cobranca.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+					comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
 				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -150,6 +182,59 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				#region Anexos
+
+				comando = bancoDeDados.CriarComando("delete from {0}tab_fisc_cobranca_arq ra ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where ra.cobranca = :cobranca{0}",
+					comando.AdicionarNotIn("and", "ra.id", DbType.Int32, cobranca.Anexos?.Select(x => x.Id).ToList()));
+				comando.AdicionarParametroEntrada("cobranca", cobranca.Id, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				foreach (var item in (cobranca.Anexos ?? new List<Anexo>()))
+				{
+					if (item.Id > 0)
+					{
+						comando = bancoDeDados.CriarComando(@"
+							update {0}tab_fisc_cobranca_arq t
+							   set t.arquivo   = :arquivo,
+								   t.ordem     = :ordem,
+								   t.descricao = :descricao,
+								   t.tid       = :tid
+							 where t.id = :id", EsquemaBanco);
+						comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+					}
+					else
+					{
+						comando = bancoDeDados.CriarComando(@"
+							insert into {0}tab_fisc_cobranca_arq a
+							  (id, 
+							   cobranca, 
+							   arquivo, 
+							   ordem, 
+							   descricao, 
+							   tid)
+							values
+							  ({0}seq_tab_fisc_cobranca_arq.nextval,
+							   :cobranca,
+							   :arquivo,
+							   :ordem,
+							   :descricao,
+							   :tid)", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("cobranca", cobranca.Id, DbType.Int32);
+					}
+
+					comando.AdicionarParametroEntrada("arquivo", item.Arquivo.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("ordem", item.Ordem, DbType.Int32);
+					comando.AdicionarParametroEntrada("descricao", DbType.String, 100, item.Descricao);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
 				Historico.Gerar(cobranca.Id, eHistoricoArtefato.cobranca, eHistoricoAcao.atualizar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -175,6 +260,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando = bancoDeDados.CriarComando(
 					"begin " +
+						"delete {0}tab_fisc_cobranca_arq a where a.cobranca = :id; " +
 						"delete {0}tab_fisc_cobranca t where t.id = :id; " +
 					"end;", EsquemaBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -240,7 +326,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											on (tfi.fiscalizacao = f.id)
 										where " + (cobrancaId > 0 ? "c.id = :cobranca" : "c.fiscalizacao = :fiscalizacao"), EsquemaBanco);
 
-				if(cobrancaId > 0)
+				if (cobrancaId > 0)
 					comando.AdicionarParametroEntrada("cobranca", cobrancaId, DbType.Int32);
 				else
 					comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
@@ -290,6 +376,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 					reader.Close();
 				}
+
+				#region Anexos
+
+				if (cobranca?.Id > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"select a.id Id,
+																	   a.ordem Ordem,
+																	   a.descricao Descricao,
+																	   b.nome,
+																	   b.extensao,
+																	   b.id arquivo_id,
+																	   b.caminho,
+																	   a.tid Tid
+																  from {0}tab_fisc_cobranca_arq a, 
+																	   {0}tab_arquivo b
+																 where a.arquivo = b.id
+																   and a.cobranca = :cobranca
+																 order by a.ordem", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("cobranca", cobranca.Id, DbType.Int32);
+
+					cobranca.Anexos = bancoDeDados.ObterEntityList<Anexo>(comando, (IDataReader reader, Anexo item) =>
+					{
+						item.Arquivo.Id = reader.GetValue<int>("arquivo_id");
+						item.Arquivo.Caminho = reader.GetValue<string>("caminho");
+						item.Arquivo.Nome = reader.GetValue<string>("nome");
+						item.Arquivo.Extensao = reader.GetValue<string>("extensao");
+					});
+				}
+
+				#endregion
 			}
 
 			return cobranca;
@@ -340,7 +457,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.vencimento_data >= :vencimentode) > 0 ";
 					comando.AdicionarParametroEntrada("vencimentode", filtros.Dados.DataVencimentoDe.Data, DbType.Date);
 				}
-				
+
 				if (Convert.ToBoolean(filtros.Dados.DataVencimentoAte?.IsValido))
 				{
 					comandtxt += " and (select count(*) from tab_fisc_cob_dua d where d.vencimento_data <= :vencimentoate) > 0 ";
@@ -582,7 +699,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
 			}
 		}
-
 
 		private string GetEnumSituacaoCobranca(int v)
 		{

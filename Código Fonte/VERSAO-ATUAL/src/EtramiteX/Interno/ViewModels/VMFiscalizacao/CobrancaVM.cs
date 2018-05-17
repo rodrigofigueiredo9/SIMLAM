@@ -9,6 +9,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 {
 	public class CobrancaVM
 	{
+		#region Properties
+
 		public Boolean IsVisualizar { get; set; }
 
 		public String Origem { get; set; }
@@ -56,7 +58,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			{
 				return ViewModelHelper.Json(new
 				{
-                    @Salvar = Mensagem.CobrancaMsg.Salvar,
+					@Salvar = Mensagem.CobrancaMsg.Salvar,
 
 					@NumeroIUFObrigatorio = Mensagem.CobrancaMsg.NumeroIUFObrigatorio,
 					@VrteObrigatorio = Mensagem.CobrancaDUAMsg.VrteObrigatorio
@@ -74,25 +76,20 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			}
 		}
 
-		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, int? maximoParcelas = null, bool isVisualizar = false, int? index = null)
-		{
-			Entidade = entidade;
-			IsVisualizar = isVisualizar;
-			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
-			if (entidade.Parcelamentos != null)
-			{
-				Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.UltimoParcelamento ?? entidade.Parcelamentos.FindLast(x => Convert.ToBoolean(x?.DataEmissao?.IsValido)) ?? new CobrancaParcelamento();
-				Parcelas = this.GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
-			}
-			this.Series = new List<SelectListItem>();
-		}
+		public ArquivoVM ArquivoVM { get; set; }
+		public String ArquivoJSon { get; set; }
+		public String GetJson(object obj) => ViewModelHelper.Json(obj);
+
+		#endregion Properties
+
+		#region Private Methods
 
 		private List<SelectListItem> GetListParcelas(int quantidadeParcelas, int parcelaSelected)
 		{
 			var parcelas = new List<SelectListItem>();
 			for (int i = 1; i <= quantidadeParcelas; i++)
 			{
-				if(i == parcelaSelected)
+				if (i == parcelaSelected)
 					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString(), Selected = true });
 				else
 					parcelas.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString() });
@@ -105,10 +102,30 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 		{
 			var list = ViewModelHelper.CriarSelectList(codigoReceita, true, true);
 			var item = list.Find(x => x.Value == idCodigoReceita.ToString());
-			if(item != null)
+			if (item != null)
 				item.Selected = true;
 
 			return list;
 		}
+
+		#endregion Private Methods
+
+		#region Constructor
+
+		public CobrancaVM(Cobranca entidade, List<Lista> codigoReceita, int? maximoParcelas = null, bool isVisualizar = false, int? index = null)
+		{
+			Entidade = entidade;
+			IsVisualizar = isVisualizar;
+			CodigoReceita = GetListCodigoReceita(codigoReceita, entidade.CodigoReceitaId);
+			if (entidade.Parcelamentos != null)
+			{
+				Parcelamento = index.HasValue ? entidade.Parcelamentos[index.Value] : entidade.UltimoParcelamento ?? entidade.Parcelamentos.FindLast(x => Convert.ToBoolean(x?.DataEmissao?.IsValido)) ?? new CobrancaParcelamento();
+				Parcelas = this.GetListParcelas(maximoParcelas ?? Parcelamento.QuantidadeParcelas, Parcelamento.QuantidadeParcelas);
+			}
+			this.Series = new List<SelectListItem>();
+			this.ArquivoVM = new ArquivoVM();
+		}
+
+		#endregion Constructor
 	}
 }
