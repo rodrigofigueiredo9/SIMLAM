@@ -52,7 +52,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		#region Properties
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
-		public Int32 NumeroFiscalizacao { get; set; }
+		public Int32? NumeroFiscalizacao { get; set; }
 		public String ProcessoNumero { get; set; }
 		public String NumeroAutuacao { get; set; }
 		public String NumeroIUF { get; set; }

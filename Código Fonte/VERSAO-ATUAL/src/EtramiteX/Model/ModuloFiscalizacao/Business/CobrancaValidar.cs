@@ -8,9 +8,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 	{
 		public bool Salvar(Cobranca cobranca)
 		{
-			if (cobranca.NumeroFiscalizacao == 0)
-				Validacao.Add(Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio);
-
 			if (string.IsNullOrWhiteSpace(cobranca.NumeroIUF))
 				Validacao.Add(Mensagem.CobrancaMsg.NumeroIUFObrigatorio);
 

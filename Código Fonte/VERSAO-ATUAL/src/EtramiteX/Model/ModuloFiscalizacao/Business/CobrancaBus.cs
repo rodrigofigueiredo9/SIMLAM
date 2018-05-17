@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validar.Salvar(entidade))
 				{
-					if (_da.GetIdCobrancaByFiscalizacao(entidade.NumeroFiscalizacao, entidade.Id) > 0)
+					if (_da.GetIdCobrancaByFiscalizacao(entidade.NumeroFiscalizacao.GetValueOrDefault(0), entidade.Id) > 0)
 					{
 						Validacao.Add(Mensagem.CobrancaMsg.CobrancaDuplicada);
 						return Validacao.EhValido;
@@ -228,13 +228,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#region Obter
 
-		public Cobranca Obter(int fiscalizacao, BancoDeDados banco = null)
+		public Cobranca Obter(int cobrancaId, BancoDeDados banco = null)
 		{
 			Cobranca entidade = new Cobranca();
 
 			try
 			{
-				entidade = _da.Obter(fiscalizacao, banco);
+				entidade = _da.Obter(cobrancaId, 0, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return entidade;
+		}
+
+		public Cobranca ObterByFiscalizacao(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			Cobranca entidade = new Cobranca();
+
+			try
+			{
+				entidade = _da.Obter(0, fiscalizacaoId, banco);
 			}
 			catch (Exception exc)
 			{
@@ -497,7 +513,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool AlterarSituacaoFiscalizacao(Cobranca cobranca, BancoDeDados banco = null)
 		{
-			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao);
+			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0));
 			if ((fiscalizacao?.Id ?? 0) == 0) return false;
 
 			if ((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
@@ -520,9 +536,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool ValidarAssociar(int fiscalizacaoId)
 		{
-			var cobranca = _da.Obter(fiscalizacaoId);
-			if (cobranca?.Id > 0)
-				Validacao.AddErro(new Exception("Já existe uma cobrança cadastrada para esta fiscalização."));
+			if (fiscalizacaoId > 0)
+			{
+				var cobranca = _da.Obter(0, fiscalizacaoId);
+				if (cobranca?.Id > 0)
+					Validacao.AddErro(new Exception("Já existe uma cobrança cadastrada para esta fiscalização."));
+			}
 
 			return Validacao.EhValido;
 		}

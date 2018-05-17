@@ -21,7 +21,7 @@
           <% foreach (var parcela in Model.UltimoParcelamento.DUAS){ %>
             <tr> 
               <td> 
-                <span class="numeroDua" title="<%:parcela.NumeroDUA%>"><%:parcela.NumeroDUA%></span> 
+                <span class="numeroDua" title="<%:parcela.NumeroDUA ?? ""%>"><%:parcela.NumeroDUA ?? ""%></span> 
               </td> 
               <td> 
                 <span class="parcela" title="<%:parcela.Parcela%>"><%:parcela.Parcela%></span> 

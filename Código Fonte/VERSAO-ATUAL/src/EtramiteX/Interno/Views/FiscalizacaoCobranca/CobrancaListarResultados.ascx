@@ -38,7 +38,7 @@
                 <td title="<%= Html.Encode(String.Format("{0:N2}", item.ValorPago))%>" style="text-align: right;"><%= ViewModelHelper.CampoVazioListar(Html.Encode(String.Format("{0:N2}", item.ValorPago)))%></td>
                 <td title="<%= Html.Encode(item.Situacao)%>"><%= ViewModelHelper.CampoVazioListar(Html.Encode(item.Situacao))%></td>
                 <td>
-					<input type="hidden" value="<%= item.Fiscalizacao %>" class="itemId" />
+					<input type="hidden" value="<%= item.Id %>" class="itemId" />
 
 					<%if (Model.PodeVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
 					<%if (Model.PodeEditar) {%><button type="button"title="Editar" class="icone editar btnEditar"></button><% } %>

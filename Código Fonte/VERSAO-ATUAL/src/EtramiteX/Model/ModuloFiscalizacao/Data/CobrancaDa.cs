@@ -86,7 +86,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                             :tid)
                                     returning id into :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao > 0 ? cobranca.NumeroFiscalizacao : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", cobranca.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao > 0 ? cobranca.NumeroFiscalizacao : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("serie", cobranca.SerieId > 0 ? cobranca.SerieId : null, DbType.Int32);
@@ -197,7 +197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 		#region Obter / Filtrar
 
-		public Cobranca Obter(int fiscalizacao, BancoDeDados banco = null)
+		public Cobranca Obter(int cobrancaId, int fiscalizacaoId, BancoDeDados banco = null)
 		{
 			var cobranca = new Cobranca();
 			var cobrancaParcelamentoDa = new CobrancaParcelamentoDa();
@@ -238,9 +238,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 											on (i.fiscalizacao = f.id)
 										left join tab_fisc_infracao tfi
 											on (tfi.fiscalizacao = f.id)
-										where c.fiscalizacao = :fiscalizacao", EsquemaBanco);
+										where " + (cobrancaId > 0 ? "c.id = :cobranca" : "c.fiscalizacao = :fiscalizacao"), EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacao, DbType.Int32);
+				if(cobrancaId > 0)
+					comando.AdicionarParametroEntrada("cobranca", cobrancaId, DbType.Int32);
+				else
+					comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -273,13 +276,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						if (cobranca.DataCORE.Data.HasValue && cobranca.DataCORE.Data.Value.Year == 1)
 							cobranca.DataCORE = new DateTecno();
 						cobranca.AutuadoPessoa = cobranca.AutuadoPessoaId > 0 ? new PessoaBus().Obter(cobranca.AutuadoPessoaId) : new Pessoa();
-						cobranca.Notificacao = cobranca.NumeroFiscalizacao > 0 ? new NotificacaoBus().Obter(cobranca.NumeroFiscalizacao) : new Notificacao();
+						cobranca.Notificacao = cobranca.NumeroFiscalizacao > 0 ? new NotificacaoBus().Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0)) : new Notificacao();
 						cobranca.Parcelamentos = cobrancaParcelamentoDa.Obter(cobranca.Id);
 
 						if (cobranca.DataEmissaoIUF.Data.HasValue && cobranca.DataEmissaoIUF.Data.Value.Year == 1)
 						{
 							var _fiscDA = new FiscalizacaoDa();
-							cobranca.DataEmissaoIUF = _fiscDA.ObterDataConclusao(cobranca.NumeroFiscalizacao);
+							cobranca.DataEmissaoIUF = _fiscDA.ObterDataConclusao(cobranca.NumeroFiscalizacao.GetValueOrDefault(0));
 						}
 					}
 					else
@@ -483,6 +486,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					{
 						var cobrancaDUA = new CobrancasResultado
 						{
+							Id = reader.GetValue<int>("id"),
 							Fiscalizacao = reader.GetValue<string>("fiscalizacao"),
 							ProcNumero = reader.GetValue<string>("protoc_num"),
 							NomeRazaoSocial = reader.GetValue<string>("razao_social"),

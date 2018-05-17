@@ -188,8 +188,8 @@ Cobranca = {
 		MasterPage.carregando(true);
 
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + fiscalizacaoId);
+		var cobrancaId = $('.hdnCobrancaId', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + cobrancaId);
 
 		MasterPage.carregando(false);
 	},
@@ -198,8 +198,8 @@ Cobranca = {
 		MasterPage.carregando(true);
 
 		if ($('.hdnOrigem', Cobranca.container).val() == 'notificacao') {
-			var fiscalizacaoId = $('.txtFiscalizacao', Cobranca.container).val();
-			MasterPage.redireciona(Cobranca.settings.urls.notificacao + "/" + fiscalizacaoId);
+            var fiscalizacaoId = $('.txtFiscalizacao', Cobranca.container).val();
+            MasterPage.redireciona(Cobranca.settings.urls.notificacao + "/" + fiscalizacaoId);
 		}
 		else 
 			MasterPage.redireciona(Cobranca.settings.urls.lista);
@@ -344,7 +344,6 @@ Cobranca = {
 	parcelamentoAnterior: function () {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
 		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) - 1));
 		MasterPage.carregando(false);
 	},
@@ -352,7 +351,6 @@ Cobranca = {
 	parcelamentoPosterior: function () {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
 		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) + 1));
 		MasterPage.carregando(false);
 	},
@@ -402,7 +400,8 @@ Cobranca = {
 			return retorno.Msg;
 		}
 
-		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + Fiscalizacao.Id);
+		$('.txtFiscalizacao', Cobranca.container).val(Fiscalizacao.Id);
+		Cobranca.recalcular();
 		MasterPage.carregando(false);
 
 		return true;

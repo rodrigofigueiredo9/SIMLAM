@@ -58,7 +58,6 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 				{
                     @Salvar = Mensagem.CobrancaMsg.Salvar,
 
-					@NumeroFiscalizacaoObrigatorio = Mensagem.CobrancaMsg.NumeroFiscalizacaoObrigatorio,
 					@NumeroIUFObrigatorio = Mensagem.CobrancaMsg.NumeroIUFObrigatorio,
 					@VrteObrigatorio = Mensagem.CobrancaDUAMsg.VrteObrigatorio
 				});
