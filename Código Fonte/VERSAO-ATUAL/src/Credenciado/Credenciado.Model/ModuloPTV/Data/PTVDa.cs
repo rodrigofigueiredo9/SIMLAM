@@ -1907,7 +1907,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                 WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
                                                                 and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(:dataVistoria,'DD/MM/YY HH24:MI')");
                 }
-				if (dataVistoria == null || dataVistoria < DateTime.Now) dataVistoria = DateTime.Now;
+				if (dataVistoria == null || dataVistoria > DateTime.Now) dataVistoria = DateTime.Now;
 
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dataVistoria", dataVistoria, DbType.DateTime);
