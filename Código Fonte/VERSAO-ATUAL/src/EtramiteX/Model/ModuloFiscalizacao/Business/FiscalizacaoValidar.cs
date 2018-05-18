@@ -51,8 +51,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.Fiscalizacao.SetorNaoPertenceFuncionario);
 			}
 
-            bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
-            lstCadastroVazio.Remove("Projeto Geográfico");
+            bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geogr"));
+			if(!contemProjGeo)
+				lstCadastroVazio.Remove(lstCadastroVazio.First(x => x.Contains("Projeto Geogr")));
+
 			if (lstCadastroVazio.Count > 0)
 			{
 				Validacao.Add(Mensagem.Fiscalizacao.CadastroObrigatorio(Mensagem.Concatenar(lstCadastroVazio)));
