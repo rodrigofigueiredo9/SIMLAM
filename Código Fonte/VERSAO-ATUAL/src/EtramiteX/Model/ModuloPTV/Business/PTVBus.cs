@@ -743,11 +743,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor)
+		public List<ListaValor> DiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor);
+				return _da.DiasHorasVistoria(setor, dataVistoria);
 			}
 			catch (Exception exc)
 			{
