@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
@@ -75,11 +77,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						return Validacao.EhValido;
 					}
 
+					this.CopiarArquivosParaDiretorioPadrao(entidade);
+
 					GerenciadorTransacao.ObterIDAtual();
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
+						this.SalvarArquivos(entidade, bancoDeDados);
 						_da.Salvar(entidade, bancoDeDados);
 						entidade.UltimoParcelamento.CobrancaId = entidade.Id;
 						this.Salvar(entidade.UltimoParcelamento, bancoDeDados);
@@ -222,6 +227,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 
 			return Validacao.EhValido;
+		}
+
+		private void CopiarArquivosParaDiretorioPadrao(Cobranca entidade)
+		{
+			if (entidade?.Anexos == null) return;
+
+			var _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
+			foreach (var anexo in entidade.Anexos)
+			{
+				if (anexo.Arquivo.Id == 0)
+					anexo.Arquivo = _busArquivo.Copiar(anexo.Arquivo);
+			}
+		}
+
+		private void SalvarArquivos(Cobranca entidade, BancoDeDados bancoDeDados)
+		{
+			if (entidade?.Anexos == null) return;
+
+			var _arquivoDa = new ArquivoDa();
+			foreach (var anexo in entidade.Anexos)
+			{
+				if (anexo.Arquivo.Id == 0)
+					_arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+			}
 		}
 
 		#endregion

@@ -45,7 +45,8 @@ Cobranca = {
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
-		
+		$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
+
 		$('.txtProcessoNumero', container).focus();
 	},
 
@@ -71,7 +72,8 @@ Cobranca = {
 			CodigoReceitaId: $('.ddlCodigoReceita :selected', container).val(),
 			AutuadoPessoa: { NomeRazaoSocial: $('.txtAutuadoNome', container).val(), CPFCNPJ: $('.txtAutuadoCpfCnpj', container).val()  },
 			AutuadoPessoaId: $('.hdnAutuadoPessoaId', container).val(),
-			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val())
+			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val()),
+			Anexos: $('.fsArquivos', container).arquivo('obterObjeto')
 		}
 		obj.UltimoParcelamento.ValorMulta = $('.txtValorMulta', container).val();
 		obj.UltimoParcelamento.ValorMultaAtualizado = $('.txtValorMultaAtualizado', container).val();
