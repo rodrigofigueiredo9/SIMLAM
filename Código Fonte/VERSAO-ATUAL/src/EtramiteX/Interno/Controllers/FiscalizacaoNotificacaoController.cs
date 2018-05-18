@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.ArquivoVM.Anexos = vm.Notificacao.Anexos ?? new List<Anexo>();
 			vm.IsVisualizar = visualizar;
 			vm.ArquivoVM.IsVisualizar = visualizar;
-			var cobranca = _busCobranca.Obter(vm.Notificacao.FiscalizacaoId);
+			var cobranca = _busCobranca.ObterByFiscalizacao(vm.Notificacao.FiscalizacaoId);
 			vm.UltimoParcelamento = cobranca?.Parcelamentos?.FindLast(x => x.Id > 0) ?? new CobrancaParcelamento();
 			vm.PodeCriar = User.IsInRole(ePermissao.FiscalizacaoCriar.ToString());
 			vm.PodeEditar = User.IsInRole(ePermissao.FiscalizacaoEditar.ToString());
