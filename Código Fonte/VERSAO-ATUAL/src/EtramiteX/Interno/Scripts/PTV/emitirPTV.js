@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/jquery.json-2.2.min.js" />
+/// <reference path="../Lib/jquery.json-2.2.min.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -33,6 +33,8 @@ PTVEmitir = {
 		dataAtual: null,
 		onChangeProcDocEmp: new Array()
 	},
+
+	executandoSalvar: null,
 
 	container: null,
 
@@ -216,7 +218,6 @@ PTVEmitir = {
 	        error: Aux.error,
 	        success: function (response, textStatus, XMLHttpRequest) {
 	            if (!response.Valido) {
-	                MasterPage.carregando(false);
 	                Mensagem.gerar(PTVEmitir.container, response.Msg);
 	                return;
 	            }
@@ -228,6 +229,7 @@ PTVEmitir = {
 					setTimeout(function () {
 					    PTVEmitir.onChecarRetornoDUA();
 					}, 5000);
+	            MasterPage.carregando(false);
 	        }
 	    });
 	},
@@ -244,7 +246,6 @@ PTVEmitir = {
 	        error: Aux.error,
 	        success: function (response, textStatus, XMLHttpRequest) {
 	            if (!response.Valido) {
-	                MasterPage.carregando(false);
 	                Mensagem.gerar(PTVEmitir.container, response.Msg);
 	                return;
 	            }
@@ -427,9 +428,9 @@ PTVEmitir = {
 				if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 					PTVEmitir.onChangeCultura();
 				}
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onChangeCultura: function () {
@@ -455,9 +456,9 @@ PTVEmitir = {
 				$('.ddlProdutoCultivar', PTVEmitir.container).ddlLoad(response.Cultivar);
 				$('.txtProdutoQuantidade', PTVEmitir.container).focus();
 				PTVEmitir.onObterUnidadeMedida();
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	chageCultivar: function () {
@@ -537,9 +538,9 @@ PTVEmitir = {
 				error: Aux.error,
 				success: function (response, textStatus, XMLHttpRequest) {
 					$('.ddlProdutoCultivar', PTVEmitir.container).ddlLoad(response.Cultivar);
+					MasterPage.carregando(false);
 				}
 			});
-			MasterPage.carregando(false);
 		}
 		return true;
 	},
@@ -644,25 +645,16 @@ PTVEmitir = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-
-
-
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
-
 			 
-			   
-
 			    var possuiTon = false;
 
-			  
-			 
 			    for (var i = 0 ; i < response.UnidadeMedida.length; i++) {
 
 			        if (response.UnidadeMedida[i].Texto == "T")
 			            possuiTon = true;
 			    }
 			    
-
 			    if (possuiTon) {
 			        $('.ddlProdutoUnidadeMedida').append($('<option>', {
 			            value: 2,
@@ -671,13 +663,12 @@ PTVEmitir = {
 
 			        $('.ddlProdutoUnidadeMedida').removeAttr('disabled');
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
-			    }
-			   
+			    }			   
 
+				MasterPage.carregando(false);
 			}
 		});
 
-		MasterPage.carregando(false);
 	},
 
 	habilitarCampos: function (habilita) {
@@ -792,9 +783,9 @@ PTVEmitir = {
 					$('.novoDestinatario', container).removeClass('hide');
 				}
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	obterDestinatario: function (destinatarioID) {
@@ -826,9 +817,9 @@ PTVEmitir = {
 				}
 
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onLimparDestinatario: function () {
@@ -912,9 +903,9 @@ PTVEmitir = {
 					$('.rbPossuiLaudoSim', PTVEmitir.container).removeAttr('checked');
 					$('.rbPossuiLaudoNao', PTVEmitir.container).attr('checked', 'checked');
 				}
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onTratamentoFitossanitário: function () {
@@ -954,9 +945,9 @@ PTVEmitir = {
 					$('tbody', tabela).append(linha);
 				});
 				Listar.atualizarEstiloTable(tabela);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onChangeRotaTransitoDefinida: function () {
@@ -1000,8 +991,12 @@ PTVEmitir = {
 	},
 
 	onSalvar: function () {
-		Mensagem.limpar(PTVEmitir.container);
+		if (PTVEmitir.executandoSalvar)
+			return;
+
+		PTVEmitir.executandoSalvar = true;
 		MasterPage.carregando(true);
+		Mensagem.limpar(PTVEmitir.container);
 
 		var objeto = PTVEmitir.obter();
 		$.ajax({
@@ -1013,17 +1008,23 @@ PTVEmitir = {
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
+			failure: function () {
+				PTVEmitir.executandoSalvar = false;
+			},
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					MasterPage.redireciona(response.Url);
 				}
-
+				else {
+					PTVEmitir.executandoSalvar = false;
+				}
+			
 				if (response.Erros && response.Erros.length > 0) {
 					Mensagem.gerar(PTVEmitir.container, response.Erros);
+					MasterPage.carregando(false);
 				}
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	obter: function () {
