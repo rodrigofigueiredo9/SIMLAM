@@ -162,9 +162,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao_envio", situacaoEnvio));
 					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
-                    if (catchEnviar)
-						cmd.Parameters.Add(new OracleParameter("pendencias", "Falha na integração, comunique o administrador do sistema"));
-					else
+					if (catchEnviar)
+					{
+						string pendencia = "Falha na integração, comunique o administrador do sistema";
+						cmd.Parameters.Add(new OracleParameter("pendencias", pendencia));
+					}else
 						cmd.Parameters.Add(new OracleParameter("pendencias", mensagensDeResposta));
 						
                     if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
@@ -340,7 +342,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				string teste = string.Empty;
+
+				if (item == null) { teste = "ITEM NULO!!!!"; }
+				else teste = "ITEM NÃO NULO";
+
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
 			}
 		}
 		internal static string ObterDataSolicitacao(OracleConnection conn, int solicitacaoCar, string origem)
