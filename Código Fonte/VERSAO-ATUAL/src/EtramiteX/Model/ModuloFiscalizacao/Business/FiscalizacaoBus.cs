@@ -245,7 +245,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						_da.ConcluirCadastro(fiscalizacao, gerarAutosTermo, bancoDeDados);
 
 						List<string> lstCadastroVazio = _da.TemCadastroVazio(fiscalizacaoId);
-						bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
+						bool contemProjGeo = (lstCadastroVazio.Contains("Projeto Geografico"));
 
 						if (contemProjGeo)
 						{
