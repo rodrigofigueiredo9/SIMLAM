@@ -780,9 +780,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tab.cadastro from (
 						   select  (select count(1) from {0}TAB_FISC_LOCAL_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Local de Infração' cadastro from dual union all
-						   select  (select count(1) from {0}TMP_PROJETO_GEO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Projeto Geográfico' cadastro from dual union all
+						   select  (select count(1) from {0}TMP_PROJETO_GEO t, TAB_FISCALIZACAO f where t.fiscalizacao(+) = f.id and f.id = :fiscalizacaoId and (t.id > 0 or f.POSSUI_PROJETO_GEO = 0)) qtd, 'Projeto Geográfico' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Infração' cadastro from dual union all
-						   select  (select count(1) from {0}TAB_FISC_CONSID_FINAL t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Considerações finais' cadastro from dual)        
+						   select  (select count(1) from {0}TAB_FISC_CONSID_FINAL t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Considerações finais' cadastro from dual union all
+						   select  (select count(1) from TAB_FISC_OUTRAS_PENALIDADES t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Outras Penalidades' cadastro from dual)        
 					tab where tab.qtd = 0", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
