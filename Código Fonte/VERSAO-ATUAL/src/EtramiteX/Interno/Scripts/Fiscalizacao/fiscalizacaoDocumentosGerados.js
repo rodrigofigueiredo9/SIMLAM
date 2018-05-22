@@ -9,6 +9,7 @@ FiscalizacaoDocumentosGerados = {
 			pdfAuto: '',
 			pdfLaudo: '',
 			pdfIUF: '',
+            pdfIUFBloco: '',
 			pdfAcompanhamento: ''
 		},
 		situacao: 0
@@ -25,6 +26,7 @@ FiscalizacaoDocumentosGerados = {
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfAuto', 'click', FiscalizacaoDocumentosGerados.obterPdfAuto);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfLaudo', 'click', FiscalizacaoDocumentosGerados.obterPdfLaudo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUF', 'click', FiscalizacaoDocumentosGerados.onGerarPdfIUF);
+		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUFBloco', 'click', FiscalizacaoDocumentosGerados.onGerarPdfIUFBloco);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCroqui', 'click', FiscalizacaoDocumentosGerados.obterAnexo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAcompanhamento', 'click', FiscalizacaoDocumentosGerados.obterAcompanhamento);
 
@@ -49,6 +51,10 @@ FiscalizacaoDocumentosGerados = {
 
 	onGerarPdfIUF: function () {
 	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUF + "/" + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val());
+	},
+
+	onGerarPdfIUFBloco: function () {
+	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUFBloco + "/" + $(this).closest('td').find('.hdnArquivoIUFBlocoId').val());
 	},
 
 	obterAcompanhamento: function () {

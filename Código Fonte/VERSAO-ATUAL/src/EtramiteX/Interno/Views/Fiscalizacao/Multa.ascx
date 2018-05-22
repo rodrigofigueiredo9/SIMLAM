@@ -66,7 +66,7 @@
         <div class="block">
 			<div class="coluna85">
 				<label>Justificar o valor da penalidade pecuniária atribuída, levando-se em consideração os parâmetros legais *</label>
-				<%= Html.TextArea("Multa.Justificativa", Model.Multa.Justificativa, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtJustificativa", @maxlength = "1000" }))%>
+				<%= Html.TextArea("Multa.Justificativa", Model.Multa.Justificativa, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtJustificativa", @maxlength = "2000" }))%>
 			</div>
 		</div>
 
