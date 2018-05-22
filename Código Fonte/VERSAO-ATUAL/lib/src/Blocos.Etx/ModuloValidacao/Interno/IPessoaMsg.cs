@@ -32,7 +32,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		Mensagem ObrigatorioRazaoSocial { get; }
 		Mensagem ExcluirNaoPermitidoPoisRepresenta(string pessoaCnpj);
 		Mensagem RepresentanteExistente { get; }
-		Mensagem RepresentanteObrigatorio { get; }
 		Mensagem Salvar { get; }
 		Mensagem CpfExistente { get; }
 		Mensagem CnpjExistente { get; }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
 
 	<siteMapNode url="~/" title="Raiz"  description="">
@@ -306,21 +306,21 @@
 				<siteMapNode url="~/Credenciado/VisualizarHabilitarEmissaoCFOCFOC" roles="HabilitarEmissaoCFOCFOCVisualizar" />
 			</siteMapNode>
 			<siteMapNode url="~/Credenciado/CriarHabilitarEmissaoCFOCFOC" title="Habilitar Emissão de CFO e CFOC" description="linkMenu" roles="HabilitarEmissaoCFOCFOCCriar" />
-			
+
 			<siteMapNode url="~/LiberacaoCFOCFOC" title="Liberações de Números de CFO e CFOC" description="linkMenu" roles="LiberacaoNumeroCFOCFOCListar" >
 				<siteMapNode url="~/LiberacaoCFOCFOC/Visualizar" roles="LiberacaoNumeroCFOCFOCListar" />
 			</siteMapNode>
-			
+
 			<siteMapNode url="~/LiberacaoCFOCFOC/LiberarNumeroCFOCFOC" title="Liberar Número de CFO e CFOC" description="linkMenu" roles="LiberacaoNumeroCFOCFOCCriar" />
 			<siteMapNode url="~/LiberacaoCFOCFOC/ConsultarNumeroCFOCFOCLiberado" title="Consultar número de CFO e CFOC liberado" description="linkMenu" roles="NumeroCFOCFOCConsultar" />
-			
+
 			<siteMapNode url="~/HabilitacaoEmissaoPTV" title="Habilitações para emissão de PTV" description="linkMenu" roles="HabilitacaoEmissaoPTVListar" >
 				<siteMapNode url="~/HabilitacaoEmissaoPTV/Visualizar" roles="LiberacaoNumeroCFOCFOCListar" />
 				<siteMapNode url="~/HabilitacaoEmissaoPTV/Editar" roles="LiberacaoNumeroCFOCFOCEditar" />
 			</siteMapNode>
 			<siteMapNode url="~/HabilitacaoEmissaoPTV/Criar" title="Habilitar Emissão de PTV" description="linkMenu" roles="HabilitacaoEmissaoPTVCriar" />
 
-	</siteMapNode>
+		</siteMapNode>
 
 		<siteMapNode url="~/Motosserra" title="Motosserra" description="linkMenu motosserra" roles="MotosserraCriar,MotosserraListar,MotosserraEditar,MotosserraVisualizar,MotosserraExcluir">
 			<siteMapNode url="~/Motosserra/Index" title="Motosserras" description="linkMenu" roles="MotosserraListar,MotosserraEditar,MotosserraVisualizar,MotosserraExcluir">
@@ -345,8 +345,9 @@
 				<siteMapNode url="~/Fiscalizacao/AcompanhamentoVisualizar"></siteMapNode>
 				<siteMapNode url="~/Fiscalizacao/AcompanhamentoAlterarSituacao"></siteMapNode>
 			</siteMapNode>
-			<siteMapNode url="~/Fiscalizacao/Criar" title="Cadastrar Fiscalização" description="linkMenu" roles="FiscalizacaoCriar">
-			</siteMapNode>
+      <siteMapNode url="~/Fiscalizacao/Criar" title="Cadastrar Fiscalização" description="linkMenu" roles="FiscalizacaoCriar" />
+			<siteMapNode url="~/FiscalizacaoCobranca/CobrancaListar" title="Controle de Cobrança" description="linkMenu" roles="FiscalizacaoCriar"/>			
+			<siteMapNode url="~/FiscalizacaoCobranca/Cobranca" title="Cadastrar Cobrança" description="linkMenu" roles="FiscalizacaoCriar" />
 		</siteMapNode>
 
 		<siteMapNode url="~/Fiscalizacao/ConfiguracaoIndex" title="Config. da Fiscalização" description="linkMenu confFiscalizacao" roles="ConfigurarFiscCriar,ConfigurarFiscEditar,ConfigurarFiscVisualizar,ConfigurarFiscListar,ConfigurarFiscExcluir">
@@ -363,9 +364,14 @@
 				<siteMapNode url="~/Fiscalizacao/ConfigurarPerguntaVisualizar"></siteMapNode>
 			</siteMapNode>
 			<siteMapNode url="~/Fiscalizacao/ConfigurarPergunta" title="Cadastrar Pergunta" description="linkMenu" roles="ConfigurarPergunta"></siteMapNode>
-      <siteMapNode url="~/Fiscalizacao/ConfigurarProdutosDestinacao" title="Produtos Apreendidos/Destinação" description="linkMenu" roles="ConfigurarProdutosDestinacao"></siteMapNode>
-      <siteMapNode url="~/Fiscalizacao/ConfigurarCodigosReceita" title="Códigos da Receita" description="linkMenu" roles="ConfigurarCodigoReceita"></siteMapNode>
-      <siteMapNode url="~/Fiscalizacao/ConfigurarPenalidade" title="Penalidades" description="linkMenu" roles="ConfigurarPenalidade"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarProdutosDestinacao" title="Produtos Apreendidos/Destinação" description="linkMenu" roles="ConfigurarProdutosDestinacao"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarCodigosReceita" title="Códigos da Receita" description="linkMenu" roles="ConfigurarCodigoReceita"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarPenalidade" title="Penalidades" description="linkMenu" roles="ConfigurarPenalidade"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarVrte" title="VRTE" description="linkMenu" roles="ConfigurarPenalidade"></siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarParametrizacaoListar" title="Parametrizações Financeiras" description="linkMenu" roles="ConfigurarPergunta">
+				<siteMapNode url="~/Fiscalizacao/ConfigurarParametrizacaoVisualizar"></siteMapNode>
+			</siteMapNode>
+			<siteMapNode url="~/Fiscalizacao/ConfigurarParametrizacao" title="Cadastrar Parametrização Financeira" description="linkMenu" roles="ConfigurarPergunta"></siteMapNode>
 		</siteMapNode>
 
 		<siteMapNode url="~/Relatorios/Personalizado" title="Relatório" description="linkMenu relatorios" roles="RelatorioPersonalizadoListar,RelatorioPersonalizadoEditar,RelatorioPersonalizadoExcluir,RelatorioPersonalizadoExecutar,RelatorioPersonalizadoCriar,RelatorioPersonalizadoExportar,RelatorioPersonalizadoImportar,RelatorioMapa">
@@ -405,8 +411,8 @@
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarPericulosidadeAmbiental" title="Periculosidade Ambiental" description="linkMenu" roles="PericulosidadeAmbiental" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarClasseUso" title="Classe de Uso" description="linkMenu" roles="ClasseUso" />
 			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarGrupoQuimico" title="Grupo Químico" description="linkMenu" roles="GrupoQuimico" />
-      <siteMapNode url="~/ConfiguracaoVegetal/CadastrarDeclaracaoAdicional" title="Cadastrar Declaração Adicional" description="linkMenu" roles="DeclaracaoAdicional" />
-      <siteMapNode url="~/ConfiguracaoVegetal/Declaracoes" title="Declarações" description="linkMenu" roles="DeclaracaoAdicional" />
+			<siteMapNode url="~/ConfiguracaoVegetal/CadastrarDeclaracaoAdicional" title="Cadastrar Declaração Adicional" description="linkMenu" roles="DeclaracaoAdicional" />
+			<siteMapNode url="~/ConfiguracaoVegetal/Declaracoes" title="Declarações" description="linkMenu" roles="DeclaracaoAdicional" />
 
 			<siteMapNode url="~/ConfiguracaoVegetal/Culturas" title="Culturas" description="linkMenu" roles="Cultura">
 				<siteMapNode url="~/ConfiguracaoVegetal/EditarCultura" roles="Cultura" />
@@ -435,10 +441,10 @@
 		</siteMapNode>
 
 		<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario" title="Numeração CFO/CFOC/PTV"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario">
-      <siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Index" title="Numeração CFO/CFOC/PTV " description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Index" title="Numeração CFO/CFOC/PTV " description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar" title="Configurar Numeração CFO/CFOC/PTV" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 		</siteMapNode>
-		
+
 		<siteMapNode url="~/PTV/" title="PTV"  description="linkMenu ptv" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar,DestinatarioPTVListar,DestinatarioPTVEditar,DestinatarioPTVExcluir,DestinatarioPTVVisualizar">
 			<siteMapNode url="~/PTV/Index" title="PTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
 				<siteMapNode url="~/PTV" description="linkMenu" roles="PTVListar" />

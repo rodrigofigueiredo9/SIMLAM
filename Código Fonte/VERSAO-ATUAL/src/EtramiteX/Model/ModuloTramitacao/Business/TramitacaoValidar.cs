@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTramitacao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
@@ -169,6 +170,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 			{
 				RegraSetor(item.RemetenteSetor.Id, true);
 				SetorOrigem(item);
+				if (item.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(item.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
+				}
 			}
 
 			return Validacao.EhValido;
@@ -184,6 +190,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 			foreach (Tramitacao item in tramitacoes)
 			{
 				SetorOrigem(item);
+				if (item.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(item.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
+				}
 			}
 
 			return Validacao.EhValido;
@@ -204,6 +215,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				if (!existe)
 				{
 					Validacao.Add(Mensagem.Tramitacao.ProtocoloJaTramitado(tramitacao.Protocolo.IsProcesso ? "processo" : "documento", tramitacao.Protocolo.Numero, "recebido"));
+				}
+
+				if (tramitacao.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(tramitacao.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
 				}
 			}
 
@@ -232,6 +249,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				{
 					Validacao.Add(Mensagem.Tramitacao.ProtocoloJaTramitado(tramitacao.Protocolo.IsProcesso ? "processo" : "documento", tramitacao.Protocolo.Numero, "recebido"));
 				}
+
+				if (tramitacao.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(tramitacao.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
+				}
 			}
 
 			foreach (Tramitacao tramitacao in enviadosParaSetor)
@@ -241,6 +264,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				if (!existe)
 				{
 					Validacao.Add(Mensagem.Tramitacao.ProtocoloJaTramitado(tramitacao.Protocolo.IsProcesso ? "processo" : "documento", tramitacao.Protocolo.Numero, "recebido"));
+				}
+
+				if (tramitacao.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(tramitacao.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
 				}
 			}
 
@@ -274,6 +303,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 				if (!existe)
 				{
 					Validacao.Add(Mensagem.Tramitacao.ProtocoloJaRetiradoExterno(tramitacao.Protocolo.IsProcesso ? "processo" : "documento", tramitacao.Protocolo.Numero));
+				}
+
+				if (tramitacao.Protocolo.Id > 0)
+				{
+					if (!_da.NotificacaoIsValida(tramitacao.Protocolo.Id.Value))
+						Validacao.Add(Msg.NaoExisteNotificacao);
 				}
 			}
 

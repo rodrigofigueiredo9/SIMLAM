@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			ProtocoloDa protocoloDA = new ProtocoloDa();
 			if (situacaoAtual == eFiscalizacaoSituacao.Protocolado ||
-				situacaoAtual == eFiscalizacaoSituacao.AIPago ||
+				situacaoAtual == eFiscalizacaoSituacao.MultaPaga ||
 				situacaoAtual == eFiscalizacaoSituacao.ComDecisaoManutencaoMulta ||
 				situacaoAtual == eFiscalizacaoSituacao.ComDecisaoMultaCancelada ||
 				situacaoAtual == eFiscalizacaoSituacao.DefesaApresentada ||

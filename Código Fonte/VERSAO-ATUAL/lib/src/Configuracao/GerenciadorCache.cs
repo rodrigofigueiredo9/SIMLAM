@@ -8,7 +8,7 @@ namespace Tecnomapas.EtramiteX.Configuracao
 	{
 		internal static Cache Cache
 		{
-			get { return HttpContext.Current.Cache; }
+			get { return HttpContext.Current?.Cache; }
 		}
 
 		public static Object PapeisFuncionario

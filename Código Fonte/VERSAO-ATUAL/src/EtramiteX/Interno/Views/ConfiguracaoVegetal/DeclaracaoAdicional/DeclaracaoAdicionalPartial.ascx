@@ -7,7 +7,7 @@
         <input type="hidden" value="<%=Model.DeclaracaoAdicional.Id %>" class="hdnId" />
         <div class="coluna98">
             <label>Texto*</label>
-            <%=Html.TextArea("DeclaracaoAdicional.Texto", Model.DeclaracaoAdicional.Texto, new { @class="txtTexto text limpar", @maxlength="200" }) %>
+            <%=Html.TextArea("DeclaracaoAdicional.Texto", Model.DeclaracaoAdicional.Texto, new { @class="txtTexto text limpar", @maxlength="500" }) %>
         </div>
         <div class="coluna98">
 		    <label for="OutroEstado">Outro Estado?* </label><br />

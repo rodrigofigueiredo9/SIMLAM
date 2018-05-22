@@ -183,7 +183,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advertência%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advert%'),
                                         :tid)", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -219,7 +219,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Apreensão%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Apreens%'),
                                         :tid)", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -237,7 +237,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Interdição%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Interdi%'),
                                         :tid)", EsquemaBanco);
 
                     comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -439,7 +439,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advertência%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Advert%'),
                                         :tid)", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -495,7 +495,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Apreensão%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Apreens%'),
                                         :tid)", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -542,13 +542,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                     if (infracao.PossuiInterdicaoEmbargo == true)
                     {
                         comando = bancoDeDados.CriarComando(@"
-                                insert into {0}tab_fisc_penalidades_infr (id,
+
+								insert into {0}tab_fisc_penalidades_infr (id,
                                                                           infracao,
                                                                           penalidade,
                                                                           tid)
                                 values ({0}seq_fisc_penalidades_infr.nextval,
                                         :id_infracao,
-                                        (select id from lov_fisc_penalidades_fixas where texto like '%Interdição%'),
+                                        (select id from lov_fisc_penalidades_fixas where texto like '%Interdi%'),
                                         :tid)", EsquemaBanco);
 
                         comando.AdicionarParametroEntrada("id_infracao", infracao.Id, DbType.Int32);
@@ -887,10 +888,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 infracao.PossuiAdvertencia = infracao.PossuiMulta = infracao.PossuiApreensao = infracao.PossuiInterdicaoEmbargo = false;
 
                 comando = bancoDeDados.CriarComando(@"
-                            select (case when lfpf.texto like '%Advertência%' then 1 else 0 end) advertencia,
+                            select (case when lfpf.texto like '%Advert%' then 1 else 0 end) advertencia,
                                    (case when lfpf.texto like '%Multa%' then 1 else 0 end) multa,
-                                   (case when lfpf.texto like '%Apreensão%' then 1 else 0 end) apreensao,
-                                   (case when lfpf.texto like '%Interdição%' then 1 else 0 end) interdicao
+                                   (case when lfpf.texto like '%Apreens%' then 1 else 0 end) apreensao,
+                                   (case when lfpf.texto like '%Interdi%' then 1 else 0 end) interdicao
                             from tab_fisc_penalidades_infr tfpi,
                                  lov_fisc_penalidades_fixas lfpf
                             where tfpi.penalidade = lfpf.id
@@ -1264,10 +1265,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 infracao.PossuiAdvertencia = infracao.PossuiMulta = infracao.PossuiApreensao = infracao.PossuiInterdicaoEmbargo = false;
 
                 comando = bancoDeDados.CriarComando(@"
-                            select (case when lfpf.texto like '%Advertência%' then 1 else 0 end) advertencia,
+                            select (case when lfpf.texto like '%Advert%' then 1 else 0 end) advertencia,
                                    (case when lfpf.texto like '%Multa%' then 1 else 0 end) multa,
-                                   (case when lfpf.texto like '%Apreensão%' then 1 else 0 end) apreensao,
-                                   (case when lfpf.texto like '%Interdição%' then 1 else 0 end) interdicao
+                                   (case when lfpf.texto like '%Apreens%' then 1 else 0 end) apreensao,
+                                   (case when lfpf.texto like '%Interdi%' then 1 else 0 end) interdicao
                             from tab_fisc_penalidades_infr tfpi,
                                  lov_fisc_penalidades_fixas lfpf
                             where tfpi.penalidade = lfpf.id
@@ -1499,7 +1500,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                                     from tab_fisc_apreensao tfa 
                                     where tfa.iuf_digital = 0 and tfa.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        int existe = reader.GetValue<int>("valor");
+
+                        retorno = existe > 0;
+                    }
+
+                    reader.Close();
+                }
+
+                if (retorno == true)
+                {
+                    return retorno;
+                }
+
+                comando = bancoDeDados.CriarComando(@"
+                                    select count(1) valor
+                                    from tab_fisc_multa tfm
+                                    where tfm.iuf_digital = 0 and tfm.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
                 using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
                 {

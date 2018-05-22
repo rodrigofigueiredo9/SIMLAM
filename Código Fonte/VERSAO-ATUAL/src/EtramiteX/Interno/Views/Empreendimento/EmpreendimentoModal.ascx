@@ -20,7 +20,8 @@
 			obterEnderecoResponsavel: '<%= Url.Action("ObterEnderecoResponsavel", "Empreendimento") %>',
 			obterListaResponsaveis: '<%= Url.Action("ObterListaResponsaveis", "Empreendimento") %>',
 			obterListaPessoasAssociada: '<%= Url.Action("ObterListaPessoasAssociada", "Empreendimento") %>',
-			verificarLocalizaoEmpreendimento: '<%= Url.Action("VerificarLocalizacaoEmpreendimento", "Empreendimento") %>'
+			verificarLocalizaoEmpreendimento: '<%= Url.Action("VerificarLocalizacaoEmpreendimento", "Empreendimento") %>',
+			obterListaResponsaveisCnpj: '<%= Url.Action("ObterListaResponsaveisCnpj", "Empreendimento") %>'
 		},
 		visualizando: <%= (Model.SalvarVM != null && Model.SalvarVM.Empreendimento.Id > 0).ToString().ToLower() %>,
 		msgs: <%= Model.Mensagens %>,
