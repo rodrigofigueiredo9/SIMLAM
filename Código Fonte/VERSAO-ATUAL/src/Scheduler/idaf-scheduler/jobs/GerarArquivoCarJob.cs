@@ -204,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                 //CASO ELE SEJA UM RECEPTOR E SEM O NUMERO CAR DO CEDENTE, ELE NÃO GERARÁ O .CAR
                                 //OU SE A RESPOSTA FOR NÃO MAS ELE NÃO TIVER UM CEDENTE, QUER DIZER QUE ELE NÃO ENTRA NA VALIDAÇÃO
                                 */
-                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) )//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
+                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) && dadosReserva.cedentePossuiCodEmpreendimento == "Sim")//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
                                     mensagens.AppendLine("O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;");
                             //}
 							
@@ -1712,12 +1712,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
 						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
                          */
-                        
-                        @"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao
+
+						@"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
                           FROM CRT_DOMINIALIDADE_RESERVA t
                               INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
                               INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ",conn))
+                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ", conn))
                 {
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
@@ -1737,24 +1737,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 							var dados = new DadosReserva()
 							{
-                                numero = dr.GetValue<string>("averbacao_numero"),//numero = dr.GetValue<string>("numero_termo"),
+								numero = dr.GetValue<string>("averbacao_numero"),
 								data = new DateTime(1900, 01, 01),
-                                //reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
-                                reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
+								//reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
+								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não"),//"Não" : "Sim") compensada = 0 - cedente
+								cedentePossuiCodEmpreendimento = (Convert.ToInt32(dr["cedente_possui_emp"] == DBNull.Value ? 0 : dr["cedente_possui_emp"]) > 0 ? "Sim" : "Não")
 							};
 							if (string.IsNullOrEmpty(dados.numero))
 							{
 								dados.numero = "Não informado";
 							}
 
-                            var area = Convert.ToDouble(dr["ARL_DOCUMENTO"]);//var area = dr.GetValue<double>("ARL_DOCUMENTO");
+                            var area = Convert.ToDouble(dr["ARL_DOCUMENTO"]);
 							dados.area = area > 0 ? Convert.ToString(Math.Round(area / 10000, 2), CultureInfo.InvariantCulture) : "0";
                             
 							var empreendimentoCedente = dr["emp_compensacao"];
                             if (dados.reservaDentroImovel == "Não" && !Convert.IsDBNull(empreendimentoCedente) && empreendimentoCedente != null) // && (dr.GetValue<double>("arl_croqui") > 0))
 							{
 								
-								//dados.numeroCAR = "ES-0000001-00000000000000000000000000000001";
                                 dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
                                                                                                                          
                                 dadosReceptor = dados;

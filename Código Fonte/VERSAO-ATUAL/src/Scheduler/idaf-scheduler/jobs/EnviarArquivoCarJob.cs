@@ -88,7 +88,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
 							if(String.IsNullOrWhiteSpace(resultado))
 							{
-								throw new System.ArgumentException("Resultado do SICAR is null", "resultado");
+								throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
 							}
 							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 						}
