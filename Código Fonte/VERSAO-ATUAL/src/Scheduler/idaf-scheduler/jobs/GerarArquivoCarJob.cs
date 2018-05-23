@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
-                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, tipo: "gerar-car");
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, codigoProtocolo: car.origem.codigoProtocolo, tipo: "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
@@ -204,7 +204,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                 //CASO ELE SEJA UM RECEPTOR E SEM O NUMERO CAR DO CEDENTE, ELE NÃO GERARÁ O .CAR
                                 //OU SE A RESPOSTA FOR NÃO MAS ELE NÃO TIVER UM CEDENTE, QUER DIZER QUE ELE NÃO ENTRA NA VALIDAÇÃO
                                 */
-                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) && dadosReserva.cedentePossuiCodEmpreendimento == "Sim")//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
+                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) && dadosReserva.getCedentePossuiCodEmpreendimento() == "Sim")//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
                                     mensagens.AppendLine("O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;");
                             //}
 							
@@ -1740,9 +1740,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 								numero = dr.GetValue<string>("averbacao_numero"),
 								data = new DateTime(1900, 01, 01),
 								//reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
-								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não"),//"Não" : "Sim") compensada = 0 - cedente
-								cedentePossuiCodEmpreendimento = (Convert.ToInt32(dr["cedente_possui_emp"] == DBNull.Value ? 0 : dr["cedente_possui_emp"]) > 0 ? "Sim" : "Não")
+								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não")//"Não" : "Sim") compensada = 0 - cedente								
 							};
+							dados.setCedentePossuiCodEmpreendimento((Convert.ToInt32(dr["cedente_possui_emp"] == DBNull.Value ? 0 : dr["cedente_possui_emp"]) > 0 ? "Sim" : "Não"));
+
 							if (string.IsNullOrEmpty(dados.numero))
 							{
 								dados.numero = "Não informado";

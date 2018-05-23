@@ -23,6 +23,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 		public string numeroCAR { get; set; }
 
 		[DefaultValue("")]
-		public string cedentePossuiCodEmpreendimento { get; set; }
+		private string cedentePossuiCodEmpreendimento { get; set; }
+
+		public void setCedentePossuiCodEmpreendimento(string cedente)
+		{
+			cedentePossuiCodEmpreendimento = cedente;
+		}
+
+		public string getCedentePossuiCodEmpreendimento() => cedentePossuiCodEmpreendimento;
 	}
 }

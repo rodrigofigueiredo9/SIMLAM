@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return novoId;
 		}
 
-		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "", bool catchEnviar = false)
+		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "", bool catchEnviar = false, string codigoProtocolo = "")
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -149,6 +149,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
+			sqlBuilder.Append("chave_protocolo_enviado = :chave_protocolo_enviado,");
 
             sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
             sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
@@ -174,6 +175,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
+					cmd.Parameters.Add(new OracleParameter("chave_protocolo_enviado", codigoProtocolo));
 					
                     cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
                     cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
@@ -350,6 +352,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
 			}
 		}
+
 		internal static string ObterDataSolicitacao(OracleConnection conn, int solicitacaoCar, string origem)
 		{
 			var tabela = (origem == RequisicaoJobCar.INSTITUCIONAL)
@@ -503,7 +506,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, situacao, tid);
 		}
 
-
 		public static void AtualizarSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId, int situacao, string tid)
 		{
 			var tabela = (origem == RequisicaoJobCar.INSTITUCIONAL)
@@ -608,6 +610,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
             //Inserir no Histórico
             InserirHistoricoSolicitacaoCar(conn, schema, solicitacaoId);
         }
+
 		private static void InserirHistoricoSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId)
 		{
 			var pacote = (origem == RequisicaoJobCar.INSTITUCIONAL) ? "HISTORICO" : "HISTORICO_CRED";
