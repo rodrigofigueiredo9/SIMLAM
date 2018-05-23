@@ -46,7 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 								p.fiscalizacao fiscalizacao_numero,
 								to_char(p.data_criacao, 'DD/MM/yyyy') data_criacao,
 								a.tipo interessado_tipo,
-								nvl(a.nome, a.razao_social) interessado_nomerazaosocial,
+								coalesce(a.nome, a.razao_social, p.interessado_livre) interessado_nomerazaosocial,
 								nvl(a.cpf, a.cnpj) interessado_cpfcnpj,
 								e.denominador empreendimento_nome,
 								e.cnpj empreendimento_cnpj,

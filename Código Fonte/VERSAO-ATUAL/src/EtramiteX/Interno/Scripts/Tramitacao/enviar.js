@@ -120,11 +120,13 @@ Enviar = {
 		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', juntadaProcessoSEP);
 		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
         var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => x.value == 'Documento Avulso' && x.parentElement.parentElement.children[0].children[0].checked);
+		var ddlSetorDestinatario = $('.ddlSetoresDestinatario', Enviar.settings.container);
+		ddlSetorDestinatario.toggleClass('disabled', false);
+		ddlSetorDestinatario.removeAttr('disabled');
 		if (doc || juntadaProcessoSEP) {
 			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), true);
 
 			if (juntadaProcessoSEP) {
-				var ddlSetorDestinatario = $('.ddlSetoresDestinatario', Enviar.settings.container);
 				ddlSetorDestinatario.val(Array.from(ddlSetorDestinatario[0].options).filter(x => x.label == "Processo SEP")[0].value);
 				ddlSetorDestinatario.toggleClass('disabled', true);
 				ddlSetorDestinatario.attr('disabled', 'disabled');
