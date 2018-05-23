@@ -303,7 +303,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
             vm.LocalInfracaoVM.IsVisualizar = true;
