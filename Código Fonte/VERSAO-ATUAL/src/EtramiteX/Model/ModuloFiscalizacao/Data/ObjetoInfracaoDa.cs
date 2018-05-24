@@ -272,7 +272,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                         //fiscalizações antigas
                         if (objetoInfracao.FiscalizacaoSituacaoId != 1 && objetoInfracao.IsDigital == null)
                         {
-                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist");
+                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist") ?? false;
                             objetoInfracao.SerieId = reader.GetValue<int?>("tei_gerado_pelo_sist_serie");
                             objetoInfracao.NumeroIUF = objetoInfracao.IsDigital != true ? reader.GetValue<string>("num_tei_bloco") : reader.GetValue<string>("autos");
 
@@ -282,8 +282,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             }
                             else
                             {
-                                FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
-                                objetoInfracao.DataLavraturaTermo = _fiscDA.ObterDataConclusao(objetoInfracao.FiscalizacaoId);
+								if (reader.GetValue<bool?>("tei_gerado_pelo_sist") != null)
+								{
+									FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
+									objetoInfracao.DataLavraturaTermo = _fiscDA.ObterDataConclusao(objetoInfracao.FiscalizacaoId);
+								}
+								else
+								{
+									objetoInfracao.DataLavraturaTermo.Data = null;
+								}
                             }
 
                             comando = bancoDeDados.CriarComando(@"select texto from {0}lov_fisc_obj_infra_serie where id = :idserie", EsquemaBanco);
