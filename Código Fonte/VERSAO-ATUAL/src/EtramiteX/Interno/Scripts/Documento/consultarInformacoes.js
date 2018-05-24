@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -8,7 +8,8 @@ ConsultarInformacoes = {
 	urlPdfHistoricoTramitacao: '',
 	urlPdfAnalise: '',
 	urlPdfArquivamento: '',
-	urlGerarEntregaPdf: '',
+    urlGerarEntregaPdf: '',
+    urlGerarCIPdf: '',
 	urlAbrirMapa: '',
 	container: null,
 
@@ -22,6 +23,7 @@ ConsultarInformacoes = {
 		container.delegate('.btnPdfArquivamento ', 'click', ConsultarInformacoes.abrirPdfArquivamentoClick);
 		container.delegate('.btnPdfEntrega ', 'click', ConsultarInformacoes.onAbrirEntrega);
 		container.delegate('.btnPdfRecebimento ', 'click', ConsultarInformacoes.onAbrirRecebimento);
+		container.delegate('.btnPdfCI ', 'click', ConsultarInformacoes.onAbrirCI);
 		
 		container.delegate('.btnMapa ', 'click', ConsultarInformacoes.onAbrirMapaClick);
 		Listar.atualizarEstiloTable($('.tabInformacoes', container));
@@ -35,7 +37,12 @@ ConsultarInformacoes = {
 	onAbrirRecebimento: function () {
 		var id = $(this).closest('tr').find('.hdnId').val();
 		MasterPage.redireciona(ConsultarInformacoes.urlGerarRecebimentoPdf + '/' + id);
-	},
+    },
+
+    onAbrirCI: function() {
+        var id = $(this).closest('tr').find('.hdnId').val();
+        MasterPage.redireciona(ConsultarInformacoes.urlGerarCIPdf + '/' + id);
+    },
 
 	abrirPdfArquivamentoClick: function () {
 		var id = parseInt($('.hdnDocumentoId', ConsultarInformacoes.container).val());
