@@ -1307,6 +1307,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 
 		internal bool NotificacaoIsValida(int protocolo)
 		{
+			return true;
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_protocolo p
