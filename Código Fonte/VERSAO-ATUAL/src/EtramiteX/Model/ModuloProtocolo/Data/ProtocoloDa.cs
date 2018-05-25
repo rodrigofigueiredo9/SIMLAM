@@ -72,11 +72,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				#region Protocolo
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo e (id, numero, ano, numero_autuacao, data_autuacao, nome, tipo, protocolo, data_criacao, volume, situacao, interessado, requerimento, 
-				empreendimento, checagem, checagem_pendencia, setor, setor_criacao, protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas, assunto, descricao, destinatario, destinatario_setor) 
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_protocolo e (id, numero, ano, numero_autuacao, data_autuacao, nome, tipo,
+				protocolo, data_criacao, volume, situacao, interessado, requerimento, empreendimento, checagem, checagem_pendencia, setor, setor_criacao,
+				protocolo_associado, emposse, arquivo, fiscalizacao, tid, interessado_livre, interessado_livre_telefone, folhas, assunto, descricao,
+				destinatario, destinatario_setor, orgao_destino, cargo_destinatario, nome_destinatario, endereco_destinatario) 
 				values ({0}seq_protocolo.nextval, (select nvl(max(p.numero) + 1, 1) from {0}tab_protocolo p where p.ano = :ano),
-				:ano, :numero_autuacao, :data_autuacao, :nome, :tipo, :protocolo, :data_criacao, :volume, 1, :interessado, :requerimento, :empreendimento, :checagem, :checagem_pendencia, :setor, :setor_criacao, 
-				:protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre, :interessadoLivreTel, :folhas, :assunto, :descricao, :destinatario, :destinatario_setor) returning e.id, e.numero into :id, :numero", EsquemaBanco);
+				:ano, :numero_autuacao, :data_autuacao, :nome, :tipo, :protocolo, :data_criacao, :volume, 1, :interessado, :requerimento, :empreendimento,
+				:checagem, :checagem_pendencia, :setor, :setor_criacao, :protocolo_associado, :emposse, :arquivo, :fiscalizacao, :tid, :interessadoLivre,
+				:interessadoLivreTel, :folhas, :assunto, :descricao, :destinatario, :destinatario_setor, :orgao_destino, :cargo_destinatario, :nome_destinatario,
+				:endereco_destinatario) returning e.id, e.numero into :id, :numero", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tipo", protocolo.Tipo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", (protocolo.IsProcesso) ? 1 : 2, DbType.Int32);
@@ -108,6 +112,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
 				comando.AdicionarParametroEntrada("checagem_pendencia", doc.ChecagemPendencia.Id == 0 ? (object)DBNull.Value : doc.ChecagemPendencia.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("orgao_destino", DbType.String, 100, doc.OrgaoDestino);
+				comando.AdicionarParametroEntrada("cargo_destinatario", DbType.String, 100, doc.CargoFuncaoDestinatario);
+				comando.AdicionarParametroEntrada("nome_destinatario", DbType.String, 100, doc.NomeDestinatario);
+				comando.AdicionarParametroEntrada("endereco_destinatario", DbType.String, 100, doc.EnderecoDestinatario);
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 				comando.AdicionarParametroSaida("numero", DbType.Int32);
@@ -200,9 +208,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				Documento doc = (protocolo.IsProcesso) ? new Documento() : protocolo as Documento;
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo p set p.nome = :nome, p.volume = :volume, p.numero_autuacao = :numero_autuacao, p.data_autuacao = :data_autuacao, p.checagem = :checagem, p.requerimento = :requerimento, 
-				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado, p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid,
-				p.interessado_livre = :interessadoLivre, p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas, p.assunto = :assunto, p.descricao = :descricao, p.destinatario = :destinatario, p.destinatario_setor = :destinatario_setor where p.id = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_protocolo p set p.nome = :nome, p.volume = :volume, p.numero_autuacao =
+				:numero_autuacao, p.data_autuacao = :data_autuacao, p.checagem = :checagem, p.requerimento = :requerimento, 
+				p.interessado = :interessado, p.empreendimento = :empreendimento, p.protocolo = :protocolo, p.protocolo_associado = :protocolo_associado,
+				p.arquivo = :arquivo, p.fiscalizacao = :fiscalizacao,  p.tid = :tid, p.interessado_livre = :interessadoLivre,
+				p.interessado_livre_telefone = :interessadoLivreTel, p.folhas = :folhas, p.assunto = :assunto, p.descricao = :descricao,
+				p.destinatario = :destinatario, p.destinatario_setor = :destinatario_setor, p.orgao_destino = :orgao_destino,
+				p.cargo_destinatario = :cargo_destinatario, p.nome_destinatario = :nome_destinatario, p.endereco_destinatario = :endereco_destinatario
+				where p.id = :id", EsquemaBanco);
 
 
 				comando.AdicionarParametroEntrada("id", protocolo.Id, DbType.Int32);
@@ -228,7 +241,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("protocolo_associado", doc.ProtocoloAssociado.Id.GetValueOrDefault() == 0 ? (object)DBNull.Value : doc.ProtocoloAssociado.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("assunto", DbType.String, 150, doc.Assunto);
 				comando.AdicionarParametroEntrada("descricao", DbType.String, 4000, doc.Descricao);
-
+				comando.AdicionarParametroEntrada("orgao_destino", DbType.String, 100, doc.OrgaoDestino);
+				comando.AdicionarParametroEntrada("cargo_destinatario", DbType.String, 100, doc.CargoFuncaoDestinatario);
+				comando.AdicionarParametroEntrada("nome_destinatario", DbType.String, 100, doc.NomeDestinatario);
+				comando.AdicionarParametroEntrada("endereco_destinatario", DbType.String, 100, doc.EnderecoDestinatario);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -817,7 +833,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 						   lfs.texto fiscalizacao_sit_texto,
 						   r.interessado_livre,
 						   r.interessado_livre_telefone,
-						   r.folhas, r.assunto, r.descricao, r.destinatario, r.destinatario_setor, d.id destinatario_id, 
+						   r.folhas, r.assunto, r.descricao, r.destinatario, r.destinatario_setor, r.orgao_destino, r.cargo_destinatario,
+						   r.nome_destinatario, r.endereco_destinatario, d.id destinatario_id, 
 						   d.tid destinatario_tid, d.nome destinatario_nome, s.id destinatario_setor_id, s.sigla destinatario_setor_sigla, s.nome destinatario_setor_nome
 					  from {0}tab_protocolo          r,
 						   {0}tab_pessoa             p,
@@ -972,6 +989,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 							documento.Nome = reader["nome"].ToString();
 							documento.Assunto = reader["assunto"].ToString();
 							documento.Descricao = reader["descricao"].ToString();
+							documento.OrgaoDestino = reader["orgao_destino"].ToString();
+							documento.CargoFuncaoDestinatario = reader["cargo_destinatario"].ToString();
+							documento.NomeDestinatario = reader["nome_destinatario"].ToString();
+							documento.EnderecoDestinatario = reader["endereco_destinatario"].ToString();
+
 							if (reader["destinatario_id"] != null && !Convert.IsDBNull(reader["destinatario_id"]))
 							{
 								documento.Destinatario.Id = Convert.ToInt32(reader["destinatario_id"]);
@@ -1354,7 +1376,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					}
 				}
 
-				comandtxt += $" and (exists (select 1 from tab_funcionario_setor s where s.funcionario = {User.FuncionarioId} and (s.setor = l.setor_criacao_id or s.setor = l.setor_id) and l.tipo_id = 14) or l.tipo_id <> 14)";
+				comandtxt += $" and exists (select 1 from tab_funcionario_setor s where s.funcionario = {User.FuncionarioId} and (s.setor = l.setor_criacao_id or s.setor = l.setor_id) and l.tipo_id in (14, 15) or l.tipo_id not in (14, 15))";
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero,ano", "interessado_nome_razao", "empreendimento_denominador" };
