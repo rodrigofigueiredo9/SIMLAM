@@ -1489,133 +1489,113 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             return infracao;
         }
 
-        public bool PossuiIUFBloco(int fiscalizacaoId, BancoDeDados banco = null)
-        {
-            bool retorno = false;
+		public bool PossuiIUFBloco(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			bool retorno = false;
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                Comando comando = bancoDeDados.CriarComando(@"
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
                                     select count(1) valor
                                     from tab_fisc_apreensao tfa 
                                     where tfa.iuf_digital = 0 and tfa.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        int existe = reader.GetValue<int>("valor");
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-                        retorno = existe > 0;
-                    }
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						int existe = reader.GetValue<int>("valor");
 
-                    reader.Close();
-                }
+						retorno = existe > 0;
+					}
 
-                if (retorno == true)
-                {
-                    return retorno;
-                }
+					reader.Close();
+				}
 
-                comando = bancoDeDados.CriarComando(@"
-                                    select count(1) valor
-                                    from tab_fisc_multa tfm
-                                    where tfm.iuf_digital = 0 and tfm.fiscalizacao = :fiscalizacao", EsquemaBanco);
+				if (retorno == true)
+				{
+					return retorno;
+				}
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        int existe = reader.GetValue<int>("valor");
-
-                        retorno = existe > 0;
-                    }
-
-                    reader.Close();
-                }
-
-                if (retorno == true)
-                {
-                    return retorno;
-                }
-
-                comando = bancoDeDados.CriarComando(@" 
+				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
                                     from tab_fisc_multa tfm 
                                     where tfm.iuf_digital = 0 and tfm.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        int existe = reader.GetValue<int>("valor");
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						int existe = reader.GetValue<int>("valor");
 
-                        retorno = existe > 0;
-                    }
+						retorno = existe > 0;
+					}
 
-                    reader.Close();
-                }
+					reader.Close();
+				}
 
-                if (retorno == true)
-                {
-                    return retorno;
-                }
+				if (retorno == true)
+				{
+					return retorno;
+				}
 
-                comando = bancoDeDados.CriarComando(@" 
+				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
                                     from tab_fisc_obj_infracao tfoi 
                                     where tfoi.iuf_digital = 0 and tfoi.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        int existe = reader.GetValue<int>("valor");
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						int existe = reader.GetValue<int>("valor");
 
-                        retorno = existe > 0;
-                    }
+						retorno = existe > 0;
+					}
 
-                    reader.Close();
-                }
+					reader.Close();
+				}
 
-                if (retorno == true)
-                {
-                    return retorno;
-                }
+				if (retorno == true)
+				{
+					return retorno;
+				}
 
-                comando = bancoDeDados.CriarComando(@" 
+				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
                                     from tab_fisc_outras_penalidades tfop 
                                     where tfop.iuf_digital = 0 and tfop.fiscalizacao = :fiscalizacao", EsquemaBanco);
 
-                comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        int existe = reader.GetValue<int>("valor");
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						int existe = reader.GetValue<int>("valor");
 
-                        retorno = existe > 0;
-                    }
+						retorno = existe > 0;
+					}
 
-                    reader.Close();
-                }
+					reader.Close();
+				}
 
-                if (retorno == true)
-                {
-                    return retorno;
-                }
-            }
+				if (retorno == true)
+				{
+					return retorno;
+				}
+			}
 
-            return retorno;
-        }
+			return retorno;
+		}
 
-        internal int ObterID(int fiscalizacao, BancoDeDados banco = null)
+		internal int ObterID(int fiscalizacao, BancoDeDados banco = null)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {

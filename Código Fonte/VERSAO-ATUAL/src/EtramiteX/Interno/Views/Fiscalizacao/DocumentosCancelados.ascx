@@ -66,7 +66,11 @@
         <% if (item.PdfGeradoIUF.Id.GetValueOrDefault() > 0) { %>
         <tr>
 			<td>
-				<label title="Instrumento Único de Fiscalização">IUF</label>
+				<%if (!string.IsNullOrWhiteSpace(item.NomeArquivo)) { %>
+					<label title="<%=item.NomeArquivo %>"><%=item.NomeArquivo %></label>
+				<%} else { %>
+					<label title="Instrumento Único de Fiscalização">IUF</label>
+				<%} %>
 			</td>
 			<td>
 				<label title="<%=item.SituacaoData.DataTexto%>"><%=item.SituacaoData.DataTexto%></label>
