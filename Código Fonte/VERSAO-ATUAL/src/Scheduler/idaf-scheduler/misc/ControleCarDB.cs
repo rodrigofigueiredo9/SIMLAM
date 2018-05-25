@@ -193,7 +193,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					cmd.ExecuteNonQuery();
 				}
-				if(String.IsNullOrWhiteSpace(mensagemErro))
+				if(!String.IsNullOrWhiteSpace(mensagemErro))
 					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
 			catch (Exception exception)
@@ -734,8 +734,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 		private static void AtualizaInformacoesCAR(OracleConnection conn, string codigo, int solicitacaoNumero, string origem, RequisicaoJobCar requisicao, string tid)
 		{
 			var retorno = new MensagemRetorno();
+			retorno.mensagensResposta = new List<string>();
+			retorno.codigoImovelComMascara = codigo;
+			retorno.codigoResposta = 200;
 			var resultado = "Imóvel inserido com sucesso no banco de dados do Sicar - Sistema Nacional de Cadastro Ambiental Rural;";
 			retorno.mensagensResposta.Add(resultado);
+			var schema = (origem == RequisicaoJobCar.INSTITUCIONAL) ? "IDAF" : "IDAFCREDENCIADO";
 
 			try
 			{
@@ -745,14 +749,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 	 												WHERE SOLICITACAO_CAR = :solicitacao_car", conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("codigo_imovel", codigo));
-					cmd.Parameters.Add(new OracleParameter("solicitacao_car", solicitacaoNumero));
 					cmd.Parameters.Add(new OracleParameter("mensagem", resultado));
+					cmd.Parameters.Add(new OracleParameter("solicitacao_car", solicitacaoNumero));
 
 					cmd.ExecuteNonQuery();
 				}
 
 				// ATUALIZA TAB_CAR_SOLICITACAO
-				using (var cmd = new OracleCommand("UPDATE "+ origem + @".TAB_CAR_SOLICITACAO SET SITUACAO_ANTERIOR = SITUACAO,
+				using (var cmd = new OracleCommand("UPDATE "+ schema + @".TAB_CAR_SOLICITACAO SET SITUACAO_ANTERIOR = SITUACAO,
 													SITUACAO_ANTERIOR_DATA = SITUACAO_DATA, SITUACAO = 2, SITUACAO_DATA = SYSDATE
 													WHERE ID = :solicitacao_car", conn))
 				{
@@ -777,7 +781,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 				// ATUALIZA O HISTORICO
 				InserirHistoricoSolicitacaoCar(conn, origem, solicitacaoNumero);
-				//InserirHistoricoControleCar(conn, requisicao, tid, retorno);
+				InserirHistoricoControleCar(conn, requisicao, tid, retorno);
 			}
 			catch (Exception exception)
 			{
