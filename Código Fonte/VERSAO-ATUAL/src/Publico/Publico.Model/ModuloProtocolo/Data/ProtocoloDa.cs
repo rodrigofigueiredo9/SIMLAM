@@ -93,7 +93,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloProtocolo.Data
 					}
 				}
 
-				comandtxt += " and e.tipo_id <> 14 ";
+				comandtxt += " and e.tipo_id not in (14, 15) ";
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero,ano", "interessado_nome_razao", "empreendimento_denominador" };

@@ -286,8 +286,11 @@ var Documento = function () {
 			$('.descricao', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiDescricao && !configuracao.DescricaoObrigatoria)));
 			$('.inputFileDiv', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiAssunto || configuracao.AssuntoObrigatorio)));
 			$('.spanBotoes', _objRef.settings.container).toggleClass('hide', (configuracao == null || (configuracao.PossuiAssunto || configuracao.AssuntoObrigatorio)));
-			$('.destinatario', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio)));
+			$('.destinatario', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio || (configuracao.PossuiDestinatarioLivre || configuracao.DestinatarioLivreObrigatorio))));
 			$('.assinantes', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiAssunto && !configuracao.AssuntoObrigatorio)));
+
+			$('.destinatarioLivre', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiDestinatarioLivre && !configuracao.DestinatarioLivreObrigatorio)));
+			$('.destinatarioLivreFieldSet', _objRef.settings.container).toggleClass('hide', (configuracao == null || (!configuracao.PossuiDestinatarioLivre && !configuracao.DestinatarioLivreObrigatorio)));
 
 			var isCnfProcesso = (configuracao != null && (configuracao.PossuiProcesso || configuracao.ProcessoObrigatorio));
 			var isCnfDocumento = (configuracao != null && (configuracao.PossuiDocumento || configuracao.DocumentoObrigatorio));
@@ -317,6 +320,7 @@ var Documento = function () {
 			_objRef.asterisco($('.lblNome', _objRef.settings.container), configuracao.NomeObrigatorio);
 			_objRef.asterisco($('.lblAssunto', _objRef.settings.container), configuracao.AssuntoObrigatorio);
 			_objRef.asterisco($('.lblDescricao', _objRef.settings.container), configuracao.DescricaoObrigatoria);
+			_objRef.asterisco($('.lblDestinatarioLivre', _objRef.settings.container), configuracao.DestinatarioLivreObrigatorio);
 		},
 
 		asterisco: function (control, exibir) {
@@ -868,7 +872,11 @@ var Documento = function () {
 				Destinatario: { Id: 0 },
                 Assinantes: [],
                 Atividades: [],
-				Responsaveis: []
+				Responsaveis: [],
+				OrgaoDestino: '',
+				CargoFuncaoDestinatario: '',
+				NomeDestinatario: '',
+				EnderecoDestinatario: ''
 			};
 
 			objetoDocumento.Id = $('.hdnDocumentoId', _objRef.settings.container).val();
@@ -892,7 +900,14 @@ var Documento = function () {
 				if (objAssinante != '' && objAssinante != '0') {
                     objetoDocumento.Assinantes.push(JSON.parse(objAssinante));
                 }
-            });
+			});
+
+			objetoDocumento.OrgaoDestino = $('.txtOrgaoDestino', _objRef.settings.container).val();
+			objetoDocumento.CargoFuncaoDestinatario = $('.txtCargoFuncaoDestinatario', _objRef.settings.container).val();
+			objetoDocumento.NomeDestinatario = $('.txtNomeDestinatario', _objRef.settings.container).val();
+			objetoDocumento.EnderecoDestinatario = $('.txtEnderecoDestinatario', _objRef.settings.container).val();
+			if(objetoDocumento.Tipo.Id == 15)
+                objetoDocumento.Descricao = $('.txtDestinatarioLivre', _objRef.settings.container).val();
 
 			objetoDocumento.Fiscalizacao.Id = $('.txtNumeroFiscalizacao', _objRef.settings.container).val();
 			objetoDocumento.Fiscalizacao.SituacaoId = $('.hdnFiscalizacaoSituacao', _objRef.settings.container).val();
