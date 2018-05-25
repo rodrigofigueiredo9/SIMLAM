@@ -780,7 +780,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tab.cadastro from (
 						   select  (select count(1) from {0}TAB_FISC_LOCAL_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Local de Infração' cadastro from dual union all
-						   select  (select count(1) from {0}TMP_PROJETO_GEO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Projeto Geográfico' cadastro from dual union all
+						   select  (select count(1) from {0}TMP_PROJETO_GEO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Projeto Geografico' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_INFRACAO t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Infração' cadastro from dual union all
 						   select  (select count(1) from {0}TAB_FISC_CONSID_FINAL t where t.fiscalizacao = :fiscalizacaoId) qtd, 'Considerações finais' cadastro from dual union all
 						   select (select case when
@@ -803,6 +803,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				lstCadastroVazio = bancoDeDados.ObterEntityList<string>(comando);
 			}
 			return lstCadastroVazio;
+		}
+
+		public bool PossuiProjetoGeo(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			bool possui = false;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select tf.possui_projeto_geo
+					from {0}tab_fiscalizacao tf
+					where tf.id = :fiscalizacaoId", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("fiscalizacaoId", fiscalizacaoId, DbType.Int32);
+
+				possui = bancoDeDados.ExecutarScalar<int>(comando) > 0 ? true : false;
+			}
+
+			return possui;
 		}
 
 		public bool ExisteTituloCertidaoDebido(int fiscalizacaoId, BancoDeDados banco = null)
