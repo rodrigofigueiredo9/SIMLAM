@@ -86,6 +86,10 @@
                 <label class="lblDescricao">Descrição da Comunicação Interna <%: Model.Asterisco(Model.Tipo.DescricaoObrigatoria) %></label>
                 <%= Html.TextArea("Documento.Descricao", Model.Documento.Descricao, new { @class = "text txtDescricao" })%>
             </div>
+            <div class="destinatarioLivre coluna86 <%= Model.Tipo.PossuiDestinatarioLivre || Model.Tipo.DestinatarioLivreObrigatorio ? "" : "hide" %>">
+                <label class="lblDestinatarioLivre">Conteúdo do Ofício <%: Model.Asterisco(Model.Tipo.DestinatarioLivreObrigatorio) %></label>
+                <%= Html.TextArea("Documento.Descricao", Model.Documento.Descricao, new { @class = "text txtDestinatarioLivre" })%>
+            </div>
         </div>
     </div>
 
@@ -241,7 +245,7 @@
         </div>
     </fieldset>
 
-    <fieldset class="destinatario block box <%= Model.Tipo.PossuiAssunto || Model.Tipo.AssuntoObrigatorio ? "" : "hide" %>">
+    <fieldset class="destinatario block box <%= (Model.Tipo.PossuiAssunto || Model.Tipo.AssuntoObrigatorio) && !(Model.Tipo.PossuiDestinatarioLivre || Model.Tipo.DestinatarioLivreObrigatorio)  ? "" : "hide" %>">
         <legend>Destinatário</legend>
         <div class="block divDropDown">
             <div class="coluna48">
@@ -251,6 +255,28 @@
             <div class="coluna45 prepend2 ddlFuncionario">
                 <label for="Enviar_Destinatario_Id">Funcionário</label>
                 <%= Html.DropDownList("Documento.Destinatario.Id", Model.DestinatarioFuncionarios, ViewModelHelper.SetaDisabled(Model.Documento.Destinatario.Id == 0, new { @class = "text ddlDestinatarios" }))%>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="destinatarioLivreFieldSet block box <%= Model.Tipo.PossuiDestinatarioLivre || Model.Tipo.DestinatarioLivreObrigatorio ? "" : "hide" %>">
+        <legend>Destinatário</legend>
+        <div class="block divDropDown">
+            <div class="coluna50">
+                <label for="Enviar_OrgaoDestino">Órgão / Empresa Destino *</label>
+                <%= Html.TextBox("Documento.OrgaoDestino", Model.Documento.OrgaoDestino, new { @class = "text txtOrgaoDestino", @maxlength = 100 })%>
+            </div>
+			<div class="coluna33 prepend2">
+                <label for="Enviar_CargoFuncaoDestinatario">Cargo / Função Destinatário *</label>
+                <%= Html.TextBox("Documento.CargoFuncaoDestinatario", Model.Documento.CargoFuncaoDestinatario, new { @class = "text txtCargoFuncaoDestinatario", @maxlength = 100 })%>
+            </div>
+			<div class="coluna70">
+                <label for="Enviar_NomeDestinatario">Nome Destinatário *</label>
+                <%= Html.TextBox("Documento.NomeDestinatario", Model.Documento.NomeDestinatario, new { @class = "text txtNomeDestinatario", @maxlength = 100 })%>
+            </div>
+			<div class="coluna70">
+                <label for="Enviar_EnderecoDestinatario">Endereço Destinatário *</label>
+                <%= Html.TextBox("Documento.EnderecoDestinatario", Model.Documento.EnderecoDestinatario, new { @class = "text txtEnderecoDestinatario", @maxlength = 100 })%>
             </div>
         </div>
     </fieldset>

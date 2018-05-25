@@ -332,6 +332,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				vm.MostrarInformacao(4, true, id);
 
 				Documento doc = _bus.ObterSimplificado(id);
+				vm.MostrarInformacao(5, doc.Tipo.Texto.Contains("CI - Comunic"), id);
+
 				vm.DocumentoNumero = doc.Numero;
 				vm.DocumentoTipo = doc.Tipo.Texto;
 

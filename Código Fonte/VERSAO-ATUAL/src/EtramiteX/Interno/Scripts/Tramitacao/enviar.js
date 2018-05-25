@@ -48,7 +48,8 @@ Enviar = {
 		content.delegate('.btnVisualizar', 'click', Enviar.onVisualizarProtocolo);
 
 		$('.ddlSetoresRemetente', content).focus();
-		Enviar.marcarTodos();
+        Enviar.marcarTodos();
+        Enviar.motivoChange();
 	},
 
 	onVisualizarProtocolo: function(){
@@ -113,16 +114,27 @@ Enviar = {
 		}
 	},
 
-	motivoChange: function () {
-		var ddlA = $(this, Enviar.settings.container);
-		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', ddlA.val() == '19');
-        $(".numAutuacao", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '19'));
-        var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => x.value = 'Documento Avulso' && x.parentElement.parentElement.children[0].children[0].checked);
-		if(!doc)
+    motivoChange: function() {
+		var ddlA = $('.ddlObjetivos', Enviar.settings.container);
+		var juntadaProcessoSEP = $('.ddlObjetivos :selected', Enviar.settings.container)[0].label == "Juntada Processo SEP";
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', juntadaProcessoSEP);
+		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
+        var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => x.value == 'Documento Avulso' && x.parentElement.parentElement.children[0].children[0].checked);
+		var ddlSetorDestinatario = $('.ddlSetoresDestinatario', Enviar.settings.container);
+		ddlSetorDestinatario.toggleClass('disabled', false);
+		ddlSetorDestinatario.removeAttr('disabled');
+		if (doc || juntadaProcessoSEP) {
+			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), true);
+
+			if (juntadaProcessoSEP) {
+				ddlSetorDestinatario.val(Array.from(ddlSetorDestinatario[0].options).filter(x => x.label == "Processo SEP")[0].value);
+				ddlSetorDestinatario.toggleClass('disabled', true);
+				ddlSetorDestinatario.attr('disabled', 'disabled');
+			}
+		}
+        else
 			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), false);
-		else
-            Enviar.asterisco($('.lblDespacho', Enviar.settings.container), doc.value);
-	},
+    },
 
 	asterisco: function (control, exibir) {
 
@@ -140,10 +152,11 @@ Enviar = {
 
         ddlA.ddlCascate(ddlB, { url: url, disabled: false });
 
-		var outros = $('.ddlSetoresDestinatario :selected', Enviar.settings.container)[0].label == 'Outros';
-		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
-		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros);
-		$(".pnlOutros", Enviar.settings.container).toggleClass('hide', !outros);
+		var outros = $('.ddlSetoresDestinatario :selected', Enviar.settings.container)[0].label == 'Outros'
+		var juntadaProcessoSEP = $('.ddlObjetivos :selected', Enviar.settings.container)[0].label == "Juntada Processo SEP";
+        $(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros || juntadaProcessoSEP);
+        $(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
+        $(".pnlOutros", Enviar.settings.container).toggleClass('hide', !outros);
 	},
 
 	formaEnvioChange: function () {

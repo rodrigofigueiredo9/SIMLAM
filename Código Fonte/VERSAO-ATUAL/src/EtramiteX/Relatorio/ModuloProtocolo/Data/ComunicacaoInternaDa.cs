@@ -9,7 +9,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo.Data
 {
-	public class RelatorioRecebimentoDa
+	public class ComunicacaoInternaDa
 	{
 		#region Propriedades
 
@@ -17,7 +17,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 
 		#endregion
 
-		public RelatorioRecebimentoDa(string strBancoDeDados = null)
+		public ComunicacaoInternaDa(string strBancoDeDados = null)
 		{
 			EsquemaBanco = string.Empty;
 			if (!string.IsNullOrEmpty(strBancoDeDados))
@@ -55,7 +55,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 								nvl(p.setor, (select a.setor from {0}tab_protocolo_associado pa, {0}tab_protocolo a where pa.protocolo = a.id and pa.associado = :id)) setor,
 								nvl(p.emposse, (select a.emposse from {0}tab_protocolo_associado pa, {0}tab_protocolo a where pa.protocolo = a.id and pa.associado = :id)) emposse,
 								pro_ass.numero numero_associado,
-								pro_ass.tipo tipo_associado
+								pro_ass.tipo tipo_associado,
+								p.assunto, (select fd.nome from tab_funcionario fd where fd.id = p.destinatario) destinatario, (select s.nome from tab_setor s where s.id = p.destinatario_setor) destinatario_setor, p.descricao
 							from {0}tab_protocolo p,
 								(select pa.id, pa.numero || '/' || pa.ano numero, ta.texto tipo from {0}tab_protocolo pa, {0}lov_protocolo ta where pa.protocolo = ta.id) pro_ass,
 								{0}lov_protocolo_tipo t,
@@ -77,9 +78,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 						{0}lov_estado le
 					where f.id = d.emposse
 					and s.id = d.setor
-					and se.setor = s.id
-					and se.municipio = lm.id
-					and se.estado = le.id", EsquemaBanco);
+					and se.setor(+) = s.id
+					and se.municipio = lm.id(+)
+					and se.estado = le.id(+)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -123,6 +124,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 						protocolo.UsuarioCargo = reader.GetValue<String>("funcionario_cargo");
 						protocolo.ProtocoloAssociadoNumero = reader.GetValue<String>("numero_associado");
 						protocolo.ProtocoloAssociadoTipo = reader.GetValue<String>("tipo_associado");
+						protocolo.Destinatario = reader.GetValue<String>("destinatario");
+						protocolo.SetorDestinatario = reader.GetValue<String>("destinatario_setor");
+						protocolo.Assunto = reader.GetValue<String>("assunto");
+						protocolo.Descricao = reader.GetValue<String>("descricao");
 						protocolo.Interessado = interessado;
 						protocolo.Empreendimento = empreendimento;
 
@@ -134,42 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 				#endregion
 			}
 
-			protocolo.AtividadeFinalidadesTitulos = String.Join("; ", ObterAtividadesFinalidadesTitulos(id).ToArray());
-
 			return protocolo;
-		}
-
-		internal List<String> ObterAtividadesFinalidadesTitulos(int id, BancoDeDados banco = null)
-		{
-			List<string> atividadesFinalidadesTitulos = new List<string>();
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select a.atividade atividade, lf.texto finalidade, tm.nome titulo_modelo
-															from tab_protocolo p, tab_protocolo_atividades pa, tab_atividade a, tab_protocolo_ativ_finalida pf,
-															lov_titulo_finalidade lf, tab_titulo_modelo tm where pa.protocolo = p.id
-															and a.id = pa.atividade and pf.protocolo_ativ = pa.id and lf.id = pf.finalidade
-															and tm.id = pf.modelo and p.id = :id");
-
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-					while (reader.Read())
-					{
-
-						string atividade = reader["atividade"].ToString();
-						string finalidade = reader["finalidade"].ToString();
-						string titulo = reader["titulo_modelo"].ToString();
-
-						atividadesFinalidadesTitulos.Add(atividade + " - " + finalidade + " - " + titulo);
-					}
-
-					reader.Close();
-				}
-			}
-
-			return atividadesFinalidadesTitulos;
 		}
 	}
 }

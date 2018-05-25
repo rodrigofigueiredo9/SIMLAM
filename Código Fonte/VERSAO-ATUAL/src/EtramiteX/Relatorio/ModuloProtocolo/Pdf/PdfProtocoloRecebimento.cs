@@ -44,6 +44,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
 							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
@@ -56,6 +57,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 					}
 
@@ -73,6 +75,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Oficio:
@@ -84,6 +87,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.OficioUsucapiao:
@@ -93,6 +97,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Condicionante:
@@ -103,6 +108,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Declaracao:
@@ -111,6 +117,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.FiscalizacaoSem_AI_TEI_TAD:
@@ -119,10 +126,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
 							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							break;
+
+						case eProtocoloTipoRelatorio.DocumentoAvulso:
+							itensRemover.Add(doc.Last<Row>("Objetivo:"));
+							itensRemover.Add(doc.Last<Row>("Autuado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
+							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
+							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+
 							break;
 
 						default:

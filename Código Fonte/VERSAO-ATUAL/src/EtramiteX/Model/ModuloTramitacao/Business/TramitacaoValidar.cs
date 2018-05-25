@@ -111,6 +111,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 
 			if (enviarCampos.ObjetivoId == 19)//Juntada Processo SEP
 			{
+				if (string.IsNullOrWhiteSpace(enviarCampos.Despacho))
+					Validacao.Add(Msg.DespachoObrigatorio);
+
 				if (string.IsNullOrWhiteSpace(enviarCampos.NumeroAutuacao))
 					Validacao.Add(Msg.NumeroAutuacaoObrigatorio);
 			}

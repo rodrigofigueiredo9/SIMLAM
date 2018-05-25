@@ -202,6 +202,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public String Assunto { get; set; }
 		public String Descricao { get; set; }
 
+		public String OrgaoDestino { get; set; }
+		public String CargoFuncaoDestinatario { get; set; }
+		public String NomeDestinatario { get; set; }
+		public String EnderecoDestinatario { get; set; }
+
 		private List<TituloAssinante> _assinantes = new List<TituloAssinante>();
 		public List<TituloAssinante> Assinantes { get { return _assinantes; } set { _assinantes = value; } }
 
