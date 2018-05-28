@@ -81,6 +81,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
 						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						if (String.IsNullOrWhiteSpace(resultado))
+						{
+							throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
+						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
 						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)

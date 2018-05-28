@@ -661,7 +661,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 				if (listaCodigos.Count() == 1)
 				{
-					if(!VerificarCodigo(conn, listaCodigos[0]))
+					if(!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
 					{
 						AtualizaInformacoesCAR(conn, listaCodigos[0], solicitacaoNumero, origem, requisicao, tid);
 						InserirTabelaTransacional(conn, listaCodigos[0], solicitacaoNumero, empreendimento, 1, origem);
@@ -676,7 +676,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					foreach (var codigo in listaCodigos)
 					{
-						if (!VerificarCodigo(conn, listaCodigos[0]))
+						if (!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
 						{
 							naoExisteNoSimlam.Add(codigo);
 						}
@@ -694,13 +694,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						InserirTabelaTransacional(conn, naoExisteNoSimlam[0], solicitacaoNumero, empreendimento, 1, origem);
 					}
 				}
-			} catch (Exception ex)
+			} catch (Exception exception)
 			{
-
+				Log.Error("Erro ao conectar ao Banco de dados  / VerificarListaCodigoImovel:  /" + exception.Message, exception);
 			}
 		}
 
-		private static bool VerificarCodigo(OracleConnection conn, string codigo)
+		private static bool VerificarCodigo(OracleConnection conn, string codigo, int solicitacao)
 		{
 			try
 			{
@@ -715,9 +715,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					}
 					else
 					{
-						using (var cd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo", conn))
+						using (var cd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo AND SOLICITACAO_CAR != :solicitacao", conn))
 						{
 							cd.Parameters.Add(new OracleParameter("codigo", codigo));
+							cd.Parameters.Add(new OracleParameter("solicitacao", solicitacao));
 
 							return (Convert.ToBoolean(cd.ExecuteScalar()));
 						}
@@ -785,7 +786,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				Log.Error("Erro ao conectar ao Banco de dados - UPDATES:" + exception.Message, exception);
 			}
 		}
 
@@ -807,12 +808,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("integrado_atualizado", integrado_atualizado));
 
 					cmd.ExecuteNonQuery();
-
 				}
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				Log.Error("Erro ao conectar ao Banco de dados - INSERIR:" + exception.Message, exception);
 			}
 		}
 	}

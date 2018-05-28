@@ -759,9 +759,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             using (
                 var cmd =
                     new OracleCommand(
-                        "SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
+                        "SELECT correspondencia,zona,cep,logradouro,bairro,municipio,numero,caixa_postal,distrito,corrego,complemento FROM " +
                         schema +
-                        ".HST_EMPREENDIMENTO_ENDERECO t WHERE t.tid = :tid AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
+                        ".TAB_EMPREENDIMENTO_ENDERECO t WHERE t.tid = :tid AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
                         conn))
             {
                 cmd.Parameters.Add(new OracleParameter("tid", empreendimentoTid));
@@ -777,7 +777,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             cep = dr.GetValue<string>("cep") ?? string.Empty,
                             logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
                             bairro = dr.GetValue<string>("bairro") ?? string.Empty,
-                            municipio = dr.GetValue<Int32>("municipio_id"),                            
+                            municipio = dr.GetValue<Int32>("municipio"),                            
                             numero = dr.GetValue<string>("numero") ?? string.Empty,
                             caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
                             distrito = dr.GetValue<string>("distrito") ?? string.Empty,
