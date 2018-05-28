@@ -119,7 +119,7 @@ Enviar = {
 		var juntadaProcessoSEP = $('.ddlObjetivos :selected', Enviar.settings.container)[0].label == "Juntada Processo SEP";
 		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', juntadaProcessoSEP);
 		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
-        var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => x.value == 'Documento Avulso' && x.parentElement.parentElement.children[0].children[0].checked);
+		var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => (x.value == 'Documento Avulso' || x.value == 'Ofício (Administrativo)') && x.parentElement.parentElement.children[0].children[0].checked);
 		var ddlSetorDestinatario = $('.ddlSetoresDestinatario', Enviar.settings.container);
 		ddlSetorDestinatario.toggleClass('disabled', false);
 		ddlSetorDestinatario.removeAttr('disabled');

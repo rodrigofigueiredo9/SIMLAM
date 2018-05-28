@@ -188,7 +188,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 
 			foreach (Tramitacao item in tramitacoes)
 			{
-				if (item.Protocolo?.Tipo?.Texto == "Documento Avulso")
+				if (item.Protocolo?.Tipo?.Texto == "Documento Avulso" || item.Protocolo?.Tipo?.Texto == "Ofício (Administrativo)")
 				{
 					if (string.IsNullOrWhiteSpace(item.Despacho))
 						Validacao.Add(Msg.DespachoObrigatorio);
