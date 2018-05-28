@@ -683,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.requerimento from tab_car_solicitacao c
-																where c.requerimento = :requerimento and rownum <= 1");
+																where c.requerimento = :requerimento and c.situacao != 3 and rownum <= 1");
 
 				comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);
 
