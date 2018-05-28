@@ -159,7 +159,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis, lstAssinantes);
 			vm.LocalInfracaoVM.IsVisualizar = true;
 			vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
@@ -196,7 +200,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busFuncionario.ObterSetoresFuncionario(), _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis, lstAssinantes);
 
 			if (Request.IsAjaxRequest())
@@ -233,7 +241,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
 			vm.LocalInfracaoVM.IsVisualizar = fiscalizacao.LocalInfracao.Id > 0;
@@ -361,7 +373,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
 			vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
@@ -1651,6 +1667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Finalizar(int? id)
 		{
 			Fiscalizacao fiscalizacao = id.GetValueOrDefault() > 0 ? _bus.Obter(id.Value) : new Fiscalizacao();
+
 			FiscalizacaoVM vm = new FiscalizacaoVM();
 
 			vm.Fiscalizacao = fiscalizacao;
@@ -1682,7 +1699,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
+			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+
+				lstAssinantes?.RemoveAll(x => x.Id == 0);
+			}
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
             vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
             vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
