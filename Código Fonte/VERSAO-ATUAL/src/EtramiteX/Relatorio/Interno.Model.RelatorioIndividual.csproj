@@ -117,9 +117,11 @@
     <Compile Include="ModuloIndicador\Bus\RelatorioIndicadorBus.cs" />
     <Compile Include="ModuloIndicador\Data\RelatorioIndicadorDa.cs" />
     <Compile Include="ModuloLista\Business\ListaBus.cs" />
+    <Compile Include="ModuloProtocolo\Data\OficioAdministrativoDa.cs" />
     <Compile Include="ModuloProtocolo\Data\ProtocoloDa.cs" />
     <Compile Include="ModuloProtocolo\Data\ComunicacaoInternaDa.cs" />
     <Compile Include="ModuloProtocolo\Data\RelatorioRecebimentoDa.cs" />
+    <Compile Include="ModuloProtocolo\Pdf\PdfOficioAdministrativo.cs" />
     <Compile Include="ModuloProtocolo\Pdf\PdfProtocoloAssociado.cs" />
     <Compile Include="ModuloChecagemRoteiro\Data\ChecagemRoteiroDa.cs" />
     <Compile Include="ModuloProtocolo\Pdf\PdfComunicacaoInterna.cs" />

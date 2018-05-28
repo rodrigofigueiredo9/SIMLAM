@@ -10,6 +10,7 @@ ConsultarInformacoes = {
 	urlPdfArquivamento: '',
     urlGerarEntregaPdf: '',
     urlGerarCIPdf: '',
+	urlGerarOficioPdf: '',
 	urlAbrirMapa: '',
 	container: null,
 
@@ -24,6 +25,7 @@ ConsultarInformacoes = {
 		container.delegate('.btnPdfEntrega ', 'click', ConsultarInformacoes.onAbrirEntrega);
 		container.delegate('.btnPdfRecebimento ', 'click', ConsultarInformacoes.onAbrirRecebimento);
 		container.delegate('.btnPdfCI ', 'click', ConsultarInformacoes.onAbrirCI);
+		container.delegate('.btnPdfOficio ', 'click', ConsultarInformacoes.onAbrirOficio);
 		
 		container.delegate('.btnMapa ', 'click', ConsultarInformacoes.onAbrirMapaClick);
 		Listar.atualizarEstiloTable($('.tabInformacoes', container));
@@ -42,6 +44,11 @@ ConsultarInformacoes = {
     onAbrirCI: function() {
         var id = $(this).closest('tr').find('.hdnId').val();
         MasterPage.redireciona(ConsultarInformacoes.urlGerarCIPdf + '/' + id);
+    },
+
+	onAbrirOficio: function() {
+        var id = $(this).closest('tr').find('.hdnId').val();
+        MasterPage.redireciona(ConsultarInformacoes.urlGerarOficioPdf + '/' + id);
     },
 
 	abrirPdfArquivamentoClick: function () {
