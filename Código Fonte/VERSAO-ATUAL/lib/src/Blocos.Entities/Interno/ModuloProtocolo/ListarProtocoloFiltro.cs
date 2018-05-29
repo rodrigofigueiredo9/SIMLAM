@@ -24,8 +24,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public bool InteressadoIsCnpj { get; set; }
 		public int Municipio { get; set; }
 		public int AutorId { get; set; }
-
 		public int CredenciadoPessoaId { get; set; }
+		public string Assunto { get; set; }
 
 		private DateTecno _dataRegistro = new DateTecno();
 		public DateTecno DataRegistro
