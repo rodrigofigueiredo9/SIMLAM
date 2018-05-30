@@ -119,7 +119,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"select id, protocolo_id, numero, ano, tipo_id, tipo_texto, data_criacao, interessado_id, interessado_tipo, 
-					interessado_nome_razao, interessado_cpf_cnpj, interessado_rg_ie, empreendimento_id, 
+					interessado_nome_razao, interessado_cpf_cnpj, interessado_rg_ie, empreendimento_id, numero_autuacao,
 					empreendimento_denominador, empreendimento_cnpj, situacao_id, situacao_texto from {0}lst_protocolo e where e.id > 0"
 				+ comandtxt + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
@@ -139,6 +139,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloProtocolo.Data
 						item.Id = Convert.ToInt32(reader["protocolo_id"]);
 						item.DataCadastro.Data = Convert.ToDateTime(reader["data_criacao"]);
 						item.Tipo.Id = Convert.ToInt32(reader["tipo_id"]);
+						item.NumeroAutuacao = reader["numero_autuacao"].ToString();
 
 						if (reader["numero"] != null && !Convert.IsDBNull(reader["numero"]))
 						{
