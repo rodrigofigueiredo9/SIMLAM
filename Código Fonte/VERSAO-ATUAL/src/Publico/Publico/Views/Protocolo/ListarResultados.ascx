@@ -28,10 +28,12 @@
 					<input type="hidden" value="<%= item.Numero %>" class="itemNumeroId" />
 					<input type="hidden" value="<%= item.SituacaoId %>" class="itemSituacaoId" />
 					<input type="hidden" value="<%= item.IsProcesso %>" class="itemIsProcesso" />
+					<input type="hidden" value="<%= item.NumeroAutuacao %>" class="itemNumeroAutuacao" />
 
 					<%--<button type="button" class="icone visualizar btnVisualizar" title="Visualizar"></button>--%>
 					<button type="button" class="icone ativSolicitadas btnAtividadesSolicitadas" title="Atividades solicitadas" ></button>
 					<button type="button" class="icone informacoes btnHistoricoTramitacao" title="Consultar informação" ></button>
+					<button type="button" class="icone sep btnSep" title="Consultar SEP"  <%= string.IsNullOrEmpty(item.NumeroAutuacao) ? "style='visibility: hidden;'" : "" %>></button>
 
 				</td>
 			</tr>
