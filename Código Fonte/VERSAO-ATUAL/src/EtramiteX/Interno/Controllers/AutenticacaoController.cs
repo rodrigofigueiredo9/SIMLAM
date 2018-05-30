@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -105,6 +105,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				if (cookie != null) {
 					cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
+
+
+				HttpCookie aCookie = new HttpCookie("eptv");
+				aCookie.Value = DateTime.Now.ToString();
+				aCookie.Expires = DateTime.Now.AddDays(1);
+				Response.Cookies.Add(aCookie);
+
 
 				GerenciarAutenticacao.CarregarUser(login);
 

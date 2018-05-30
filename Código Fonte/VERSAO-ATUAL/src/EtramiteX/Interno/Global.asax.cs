@@ -46,6 +46,20 @@ namespace Interno
 			string sessionId = ticket.UserData;
 
 			GerenciarAutenticacao.CarregarUser(login, sessionId);
+
+			HttpCookie teste = Request.Cookies["eptv"];
+			if (teste != null)
+			{
+				if (Convert.ToDateTime(teste.Value).AddMinutes(1) <= DateTime.Now)
+				{
+					//se já tiver se passado 1 minuto ou mais desde que o valor do cookie foi atualizado
+					//substitui o cookie por um novo, com a data atual, e faz a validação
+					HttpCookie aCookie = new HttpCookie("eptv");
+					aCookie.Value = DateTime.Now.ToString();
+					aCookie.Expires = DateTime.Now.AddDays(1);
+					Response.Cookies.Add(aCookie);
+				}
+			}
 		}
 	}
 }
