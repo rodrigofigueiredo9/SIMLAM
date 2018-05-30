@@ -1376,6 +1376,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					}
 				}
 
+				comandtxt += comando.FiltroAndLike("l.assunto", "assunto", filtros.Dados.Assunto, true);
+
 				comandtxt += $" and exists (select 1 from tab_funcionario_setor s where s.funcionario = {User.FuncionarioId} and (s.setor = l.setor_criacao_id or s.setor = l.setor_id) and l.tipo_id in (14, 15) or l.tipo_id not in (14, 15))";
 
 				List<String> ordenar = new List<String>();
@@ -1401,7 +1403,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 				comando.AdicionarParametroEntrada("menor", filtros.Menor);
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-				comandtxt = String.Format(@"select id, protocolo_id, numero, ano, nome, tipo_id, tipo_texto, data_criacao, interessado_id, interessado_tipo, interessado_nome_razao, 
+				comandtxt = String.Format(@"select id, protocolo_id, numero, ano, nome, tipo_id, tipo_texto, data_criacao, interessado_id, interessado_tipo, coalesce(interessado_nome_razao, assunto) interessado_nome_razao, 
 				interessado_cpf_cnpj, interessado_rg_ie, empreendimento_id, empreendimento_codigo, empreendimento_denominador, empreendimento_cnpj, situacao_id, situacao_texto 
 				from {0}lst_protocolo l where l.id > 0" + comandtxt + DaHelper.Ordenar(colunas, ordenar), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 

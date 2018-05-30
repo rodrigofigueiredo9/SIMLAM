@@ -59,5 +59,5 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 
 			return PartialView("HistoricoPartial", vm);
 		}
-    }
+	}
 }
