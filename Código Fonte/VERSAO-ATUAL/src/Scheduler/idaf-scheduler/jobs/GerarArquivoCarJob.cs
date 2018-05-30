@@ -60,6 +60,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			    while (nextItem != null)
 				{
+					Log.Error($"BEGIN GerarCar {DateTime.Now.ToString("r")}");
 					//Update item as Started
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
@@ -142,10 +143,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					}
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+					Log.Error($"ENDING GerarCar {DateTime.Now.ToString("r")}");
 				}
-                
-                //UPDATE NA COLUNA DATA_CRIACAO DA TAB_SCHEDULER_FILA quando der erro no receptor, para gera-los de novo                
-                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+
+				//UPDATE NA COLUNA DATA_CRIACAO DA TAB_SCHEDULER_FILA quando der erro no receptor, para gera-los de novo                
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE soundex(resultado) = soundex('O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;
                                                 ')", conn))
                         {

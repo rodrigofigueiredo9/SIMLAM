@@ -193,6 +193,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					cmd.ExecuteNonQuery();
 				}
+				//Inserir no Histórico
+				InserirHistoricoControleCar(conn, requisicao, tid, resultado);
+
 				if(!String.IsNullOrWhiteSpace(mensagemErro))
 					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
@@ -201,8 +204,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
 
-			//Inserir no Histórico
-			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
 			if (item == null)
 			{
 				return 0;
@@ -359,8 +360,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				if (item == null) { teste = "ITEM NULO!!!!"; }
 				else teste = "ITEM NÃO NULO";
 
+				Log.Error("Requisicao: " + (requisicao != null ? JsonConvert.SerializeObject(requisicao) : " IS NULL"));
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
-				Log.Error("Requisicao: " + JsonConvert.SerializeObject(requisicao));
 			}
 		}
 

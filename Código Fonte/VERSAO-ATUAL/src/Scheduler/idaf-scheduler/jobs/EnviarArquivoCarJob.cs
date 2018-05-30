@@ -56,6 +56,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 				while (nextItem != null)
 				{
+					Log.Error($"BEGIN EnviarCar {DateTime.Now.ToString("r")}");
+
 					//Update item as Started
 					//LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
 
@@ -164,9 +166,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//	File.Delete(pathArquivoTemporario + nextItem.Requisicao);
 					//}
 					//catch (Exception) { /*ignored*/ }
+					Log.Error($"ENDING EnviarCar {DateTime.Now.ToString("r")}");
 				}
 
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
                     {
                         cmd.ExecuteNonQuery();                            
