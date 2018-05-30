@@ -360,6 +360,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				else teste = "ITEM NÃO NULO";
 
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
+				Log.Error("Requisicao: " + JsonConvert.SerializeObject(requisicao));
 			}
 		}
 
