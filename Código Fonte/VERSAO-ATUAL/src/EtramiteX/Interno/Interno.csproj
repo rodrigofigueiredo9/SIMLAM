@@ -48,6 +48,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Interno.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -68,9 +76,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Credenciado\Credenciado\bin\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions">
@@ -89,9 +100,12 @@
     <Reference Include="Tecnomapas.Blocos.Autenticacao">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
@@ -251,6 +265,8 @@
     <Compile Include="Controllers\AgrotoxicoController.cs" />
     <Compile Include="Controllers\CFOCController.cs" />
     <Compile Include="Controllers\CFOController.cs" />
+    <Compile Include="Controllers\FiscalizacaoCobrancaController.cs" />
+    <Compile Include="Controllers\FiscalizacaoNotificacaoController.cs" />
     <Compile Include="Controllers\HabilitacaoEmissaoPTVController.cs" />
     <Compile Include="Controllers\CARSolicitacaoController.cs" />
     <Compile Include="Controllers\ConfiguracaoDocumentoFitossanitarioController.cs" />
@@ -267,6 +283,8 @@
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Lib\Export\ExcelColumnDefinition.cs" />
+    <Compile Include="Lib\Export\ExcelFileResult.cs" />
     <Compile Include="Servicos\FormsAuthenticationService.cs" />
     <Compile Include="Interfaces\IFormsAuthenticationService.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />
@@ -278,8 +296,14 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
@@ -661,6 +685,7 @@
     <Content Include="Content\_imgLogo\logomarca_simlam_credenciado_pb.png" />
     <Content Include="Content\_imgLogo\logomarca_simlam_idaf.jpg" />
     <Content Include="Content\_imgLogo\logomarca_simlam_idaf.png" />
+    <Content Include="Content\_imgLogo\logo_novo.jpg" />
     <Content Include="Content\_img\alerta.png" />
     <Content Include="Content\_img\bt-fechar-large.png" />
     <Content Include="Content\_img\document-text.png" />
@@ -682,8 +707,13 @@
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
+    <Content Include="Scripts\Fiscalizacao\cobranca.js" />
+    <Content Include="Scripts\Fiscalizacao\cobrancaListar.js" />
+    <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
+    <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
+    <Content Include="Scripts\Fiscalizacao\notificacao.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\habilitacaoEmissaoPTV.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\listar.js" />
     <Content Include="Scripts\Agrotoxico\listar.js" />
@@ -1706,6 +1736,26 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\Cobranca.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListar.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListarFiltros.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListarResultados.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacao.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaPartial.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoPartial.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarFiltros.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarResultados.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaVisualizar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoVisualizar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarVrte.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaParcelamento.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoDetalhe.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoVisualizar.aspx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoCobranca.ascx" />
+    <Content Include="Views\Fiscalizacao\FiscalizacaoVrte.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoPartial.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\Notificacao.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarPenalidade.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarProdutosDestinacao.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
@@ -1715,6 +1765,7 @@
     <Content Include="Views\Fiscalizacao\Multa.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\FiscalizacaoPessoaModal.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
@@ -2127,6 +2178,8 @@
     <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <Content Include="Content\_pdfAspose\Laudo_de_Fiscalizacao_Novo.docx" />
     <Content Include="Content\_pdfAspose\Instrumento_Unico_Fiscalizacao.docx" />
+    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
+    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />
@@ -2718,7 +2771,7 @@
       <Name>Interno.Model.Extensoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
-      <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>
+      <Project>{1a2007a6-9c00-4169-930c-fc338a1aada5}</Project>
       <Name>Interno.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorio\Interno.Model.RelatorioIndividual.csproj">
