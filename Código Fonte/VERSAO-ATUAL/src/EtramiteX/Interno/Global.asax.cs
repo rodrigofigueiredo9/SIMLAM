@@ -47,10 +47,10 @@ namespace Interno
 
 			GerenciarAutenticacao.CarregarUser(login, sessionId);
 
-			HttpCookie teste = Request.Cookies["eptv"];
-			if (teste != null)
+			HttpCookie cookieEPTV = Request.Cookies["eptv"];
+			if (cookieEPTV != null)
 			{
-				if (Convert.ToDateTime(teste.Value).AddMinutes(1) <= DateTime.Now)
+				if (Convert.ToDateTime(cookieEPTV.Value).AddMinutes(1) <= DateTime.Now)
 				{
 					//se já tiver se passado 1 minuto ou mais desde que o valor do cookie foi atualizado
 					//substitui o cookie por um novo, com a data atual, e faz a validação

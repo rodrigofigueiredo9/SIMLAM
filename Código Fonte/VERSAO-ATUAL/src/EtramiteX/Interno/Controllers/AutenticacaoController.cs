@@ -23,6 +23,23 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			this.formsAuthenticationService = formsAuthenticationService;
 		}
 
+		public bool InsereCookieEPTV()
+		{
+			bool inseriu = false;
+
+			HttpCookie cookieEPTV = new HttpCookie("eptv");
+			cookieEPTV.Value = DateTime.Now.ToString();
+			cookieEPTV.Expires = DateTime.Now.AddDays(1);
+			Response.Cookies.Add(cookieEPTV);
+
+			if (Request.Cookies["eptv"] != null)
+			{
+				inseriu = true;
+			}
+
+			return inseriu;
+		}
+
 		public String getAlterarSenhaMsg(String login)
 		{
 			FuncionarioBus credenciadoBus = new FuncionarioBus(new FuncionarioValidar());
@@ -106,12 +123,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
 
+				//Cria o cookie que é usado para a verificação periódica de E-PTVs aguardando análise.
+				#region Insere cookie EPTV
 
-				HttpCookie aCookie = new HttpCookie("eptv");
-				aCookie.Value = DateTime.Now.ToString();
-				aCookie.Expires = DateTime.Now.AddDays(1);
-				Response.Cookies.Add(aCookie);
+				InsereCookieEPTV();
 
+				#endregion Insere cookie EPTV
 
 				GerenciarAutenticacao.CarregarUser(login);
 
