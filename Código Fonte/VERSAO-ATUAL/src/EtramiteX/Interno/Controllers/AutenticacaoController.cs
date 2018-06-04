@@ -9,6 +9,7 @@ using Tecnomapas.EtramiteX.Interno.Interfaces;
 using Tecnomapas.EtramiteX.Interno.Servicos;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -133,6 +134,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				GerenciarAutenticacao.CarregarUser(login);
 
 				BusMenu.Menu = null;
+
+				//Gera a mensagem de alerta de E-PTV (se houver)
+				#region Alerta de E-PTV
+
+				PTVBus _busPTV = new PTVBus();
+				_busPTV.VerificaAlertaEPTV();
+
+				#endregion Alerta de E-PTV
 
 				if (Request.IsAjaxRequest())
 				{
