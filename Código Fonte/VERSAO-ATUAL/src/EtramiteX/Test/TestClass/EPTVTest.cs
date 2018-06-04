@@ -18,8 +18,8 @@ namespace Test.TestClass
 
 		public EPTVTest()
 		{
-			//simula o login
-			ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
+			////simula o login
+			//ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
 		}
 
 		#endregion
@@ -77,17 +77,11 @@ namespace Test.TestClass
 		#endregion Testes de cookies
 
 		[TestMethod]
-		public void RetornaTrueCasoUsuarioComHabilitacaoAtivaEmissaoPTVTest()
-		{
-			PTVValidar _validar = new PTVValidar();
-			bool habilitado = _validar.FuncionarioHabilitadoValido();
-
-			Assert.IsTrue(habilitado);
-		}
-
-		[TestMethod]
 		public void RetornaIdFuncionarioLogadoTest()
 		{
+			//simula o login
+			ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
+
 			//O funcionário logado é Jessica Lorena Natalli Rossi. Seu id é 733.
 			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
 
@@ -95,33 +89,101 @@ namespace Test.TestClass
 		}
 
 		[TestMethod]
+		public void RetornaTrueCasoUsuarioComHabilitacaoAtivaEmissaoPTVTest()
+		{
+			//simula o login
+			ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
+
+			PTVValidar _validar = new PTVValidar();
+
+			//A funcionária Jessica Rossi possui habilitação ativa para PTV ativa
+			bool habilitado = _validar.FuncionarioHabilitadoValido();
+
+			Assert.IsTrue(habilitado);
+		}
+
+		[TestMethod]
 		public void RetornaFalseCasoUsuarioComHabilitacaoInativaEmissaoPTVTest()
 		{
-			HabilitacaoEmissaoPTVBus _bus = new HabilitacaoEmissaoPTVBus();
-			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
+			//simula o login
+			ControllerContextMock.SetupNormalContext(testController, "leonardo.costa");
 
-			Assert.Fail();
+			PTVValidar _validar = new PTVValidar();
+
+			//o funcionário Leonardo Costa possui habilitação inativa para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido();
+
+			Assert.IsFalse(habilitado);
 		}
 
 		[TestMethod]
 		public void RetornaFalseCasoUsuarioSemHabilitacaoEmissaoPTVTest()
 		{
+			//simula o login
+			ControllerContextMock.SetupNormalContext(testController, "jose.osmar");
 
-			Assert.Fail();
+			PTVValidar _validar = new PTVValidar();
+
+			//o funcionário José Osmar não possui habilitação para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido();
+
+			Assert.IsFalse(habilitado);
 		}
 
 		[TestMethod]
 		public void RetornaZeroCasoNaoHajaEPTVAguardandoAnaliseSetorTest()
 		{
+			//simula o login
+			//foi verificado que não existem EPTVs aguardando análise no setor desse usuário
+			ControllerContextMock.SetupNormalContext(testController, "stefania.sgulmaro");
+			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
 
-			Assert.Fail();
+			PTVBus _bus = new PTVBus();
+			int quantidade = _bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+
+			Assert.AreEqual(0, quantidade);
 		}
 
 		[TestMethod]
 		public void RetornaMaiorQueZeroCasoHajaEPTVAguardandoAnaliseSetorTest()
 		{
+			//simula o login
+			//foi verificado que existem EPTVs aguardando análise no setor desse usuário
+			ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
+			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
 
-			Assert.Fail();
+			PTVBus _bus = new PTVBus();
+			int quantidade = _bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+
+			Assert.IsTrue(quantidade > 0);
+		}
+
+		[TestMethod]
+		public void RetornaTrueCasoDevaSerExibidoAlertaEPTVTest()
+		{
+			//simula o login
+			//foi verificado que existem alertas para esse usuário
+			ControllerContextMock.SetupNormalContext(testController, "jessica.rossi");
+			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
+
+			PTVBus _bus = new PTVBus();
+			bool existeAlerta = _bus.VerificaAlertaEPTV();
+
+			Assert.IsTrue(existeAlerta);
+		}
+
+		[TestMethod]
+		public void RetornaFalseCasoNaoDevaSerExibidoAlertaEPTVTest()
+		{
+			//simula o login
+			//foi verificado que não existem alertas para esse usuário
+			ControllerContextMock.SetupNormalContext(testController, "stefania.sgulmaro");
+			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
+
+			PTVBus _bus = new PTVBus();
+			bool existeAlerta = _bus.VerificaAlertaEPTV();
+
+			Assert.IsFalse(existeAlerta);
 		}
 	}
 }

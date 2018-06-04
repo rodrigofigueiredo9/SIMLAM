@@ -20,10 +20,12 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
+using System.Web;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
-	public class PTVBus
+	public class PTVBus : HttpApplication
 	{
 		#region Propriedades
 
@@ -57,7 +59,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
-                        ptv.PossuiLaudoLaboratorial = 0;
+						ptv.PossuiLaudoLaboratorial = 0;
 
 						_da.Salvar(ptv, bancoDeDados);
 
@@ -336,12 +338,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							{
 								return Validacao.EhValido;
 							}
-							
+
 							if (eptvBanco.Anexos.Any())
 							{
 								var arquivoBusCred = new ArquivoBus(eExecutorTipo.Credenciado);
 								var arquivoBusInst = new ArquivoBus(eExecutorTipo.Interno);
-								foreach (var anexo in  eptvBanco.Anexos)
+								foreach (var anexo in eptvBanco.Anexos)
 								{
 									anexo.Arquivo = arquivoBusInst.Salvar(arquivoBusCred.Obter(anexo.Arquivo.Id.Value));
 								}
@@ -353,12 +355,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							}
 							catch (Exception exc)
 							{
-								if(exc.Message.Contains("UK_TAB_PTV_EPTV"))
+								if (exc.Message.Contains("UK_TAB_PTV_EPTV"))
 								{
 									Validacao.Add(new Mensagem { Texto = "O EPTV já foi importado para o institucional.", Tipo = eTipoMensagem.Advertencia });
 									return Validacao.EhValido;
 								}
-								
+
 								throw exc;
 							}
 						}
@@ -385,7 +387,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						#region [ Enviar E-mail ]
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
-                            eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
 						{
 							PTVComunicador comunicador = new PTVComunicador();
 							comunicador.Id = _da.ObterIDComunicador(eptv.Id);
@@ -398,10 +400,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							comunicador.Conversas.Add(conversa);
 
 							SalvarConversa(comunicador, bancoDeDadosInterno, bancoDeDadosCredenciado);
-                        }
-                        else
-                        {
-                            var emailKeys = new Dictionary<string, string>
+						}
+						else
+						{
+							var emailKeys = new Dictionary<string, string>
 							{
 								{ "[data situacao]", DateTime.Today.ToShortDateString() },
 								{ "[hora situacao]", DateTime.Now.ToShortTimeString() },
@@ -410,27 +412,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								{ "[hora vistoria]", eptv.DataHoraVistoriaTexto }
 							};
 
-                            foreach (var item in emailKeys)
-                            {
-                                textoEmail = textoEmail.Replace(item.Key, item.Value);
-                            }
+							foreach (var item in emailKeys)
+							{
+								textoEmail = textoEmail.Replace(item.Key, item.Value);
+							}
 
-                            var email = new Email();
-                            email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
-                            email.Texto = textoEmail;
-                            email.Tipo = eEmailTipo.AnaliseEPTV;
-                            email.Codigo = eptv.Id;
+							var email = new Email();
+							email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
+							email.Texto = textoEmail;
+							email.Tipo = eEmailTipo.AnaliseEPTV;
+							email.Codigo = eptv.Id;
 
-                            List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
+							List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
 
-                            if (lstEmail != null && lstEmail.Count > 0)
-                            {
-                                email.Destinatario = String.Join(", ", lstEmail.ToArray());
+							if (lstEmail != null && lstEmail.Count > 0)
+							{
+								email.Destinatario = String.Join(", ", lstEmail.ToArray());
 
-                                EmailBus emailBus = new EmailBus();
-                                emailBus.Enviar(email, bancoDeDadosInterno);
-                            }
-                        }
+								EmailBus emailBus = new EmailBus();
+								emailBus.Enviar(email, bancoDeDadosInterno);
+							}
+						}
 
 						#endregion
 
@@ -757,6 +759,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			int quantidade = -1;
+
+			try
+			{
+				quantidade = _da.QuantidadeEPTVAguardandoAnaliseFuncionario(idFuncionario, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return quantidade;
+		}
+
 		#endregion
 
 		#region Comunicador
@@ -949,5 +967,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		}
 
 		#endregion
+
+		#region Alerta de E-PTV
+
+		public bool VerificaAlertaEPTV()
+		{
+			bool houveAlerta = false;
+
+			//verifica se o usuário está habilitado para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido();
+
+			if (habilitado)
+			{
+				int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
+
+				//Verifica quantas PTVs estão aguardando análise
+				int quantidade = QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+
+				if (quantidade > 0)
+				{
+					Validacao.Add(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
+					houveAlerta = true;
+				}
+			}
+			return houveAlerta;
+		}
+
+		#endregion Alerta de E-PTV
 	}
 }

@@ -178,5 +178,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
+
+		#region Alerta de E-PTV
+
+		public Mensagem ExistemEPTVsAguardandoAnalise(int qtd)
+		{
+			return new Mensagem() {
+				Texto = String.Format("Existem {0} E-PTVs aguardando análise.", qtd), Tipo = eTipoMensagem.Informacao };
+		}
+
+		#endregion Alerta de E-PTV
 	}
 }

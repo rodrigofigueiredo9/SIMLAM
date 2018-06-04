@@ -2502,6 +2502,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		#endregion
 
+		#region Alerta EPTV
+
+		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select count(1) qtd
+													  from {0}Tab_Ptv pt
+													  where Pt.Local_Vistoria in ( select S.Setor
+													                               from {1}Tab_Funcionario_Setor s
+													                               where S.Funcionario = :idFuncionario )
+													  and pt.situacao = 2", UsuarioCredenciado, EsquemaBanco);
+				comando.AdicionarParametroEntrada("idFuncionario", idFuncionario, DbType.Int32);
+
+				int quantidade = bancoDeDados.ExecutarScalar<int>(comando);
+
+				return quantidade;
+			}
+		}
+
+		#endregion Alerta EPTV
+
 		internal bool ExisteAssinaturaDigital(int funcionarioId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
