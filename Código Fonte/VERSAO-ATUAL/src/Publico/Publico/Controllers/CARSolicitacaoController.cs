@@ -186,6 +186,15 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 			return RedirectToAction("Index", Validacao.QueryParamSerializer());
 		}
 
+		public ActionResult BaixarDemonstrativoCar(int id)
+		{
+			var schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+
+			var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao);
+
+			return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
+		}
+
 		#endregion
 	}
 }
