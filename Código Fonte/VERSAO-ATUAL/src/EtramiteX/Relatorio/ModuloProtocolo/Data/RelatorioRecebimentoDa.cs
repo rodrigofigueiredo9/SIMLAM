@@ -55,7 +55,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 								nvl(p.setor, (select a.setor from {0}tab_protocolo_associado pa, {0}tab_protocolo a where pa.protocolo = a.id and pa.associado = :id)) setor,
 								nvl(p.emposse, (select a.emposse from {0}tab_protocolo_associado pa, {0}tab_protocolo a where pa.protocolo = a.id and pa.associado = :id)) emposse,
 								pro_ass.numero numero_associado,
-								pro_ass.tipo tipo_associado
+								pro_ass.tipo tipo_associado, p.assunto,
+								coalesce(p.nome_destinatario, (select fd.nome from tab_funcionario fd where fd.id = p.destinatario)) nome_destinatario
 							from {0}tab_protocolo p,
 								(select pa.id, pa.numero || '/' || pa.ano numero, ta.texto tipo from {0}tab_protocolo pa, {0}lov_protocolo ta where pa.protocolo = ta.id) pro_ass,
 								{0}lov_protocolo_tipo t,
@@ -125,6 +126,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 						protocolo.ProtocoloAssociadoTipo = reader.GetValue<String>("tipo_associado");
 						protocolo.Interessado = interessado;
 						protocolo.Empreendimento = empreendimento;
+						protocolo.Assunto = reader.GetValue<String>("assunto");
+						protocolo.Destinatario = reader.GetValue<String>("nome_destinatario");
 
 					}
 
