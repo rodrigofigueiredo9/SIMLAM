@@ -15,6 +15,7 @@
 		DefesaAdministrativa,
 		FiscalizacaoSem_AI_TEI_TAD,
 		DocumentoAvulso = 13,
-		ComunicacaoInterna = 14
+		ComunicacaoInterna = 14,
+		OficioAdministrativo = 15
 	}
 }
