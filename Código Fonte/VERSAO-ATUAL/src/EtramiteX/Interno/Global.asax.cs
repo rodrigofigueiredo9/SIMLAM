@@ -55,9 +55,9 @@ namespace Interno
 			HttpCookie cookieEPTV = Request.Cookies["eptv"];
 			if (cookieEPTV != null)
 			{
-				if (Convert.ToDateTime(cookieEPTV.Value).AddMinutes(1) <= DateTime.Now)
+				if (Convert.ToDateTime(cookieEPTV.Value).AddHours(1) <= DateTime.Now)
 				{
-					//se já tiver se passado 1 minuto ou mais desde que o valor do cookie foi atualizado
+					//se já tiver se passado 1 hora ou mais desde que o valor do cookie foi atualizado
 					//substitui o cookie por um novo, com a data atual, e faz a verificação de alerta de EPTV
 					HttpCookie aCookie = new HttpCookie("eptv");
 					aCookie.Value = DateTime.Now.ToString();
