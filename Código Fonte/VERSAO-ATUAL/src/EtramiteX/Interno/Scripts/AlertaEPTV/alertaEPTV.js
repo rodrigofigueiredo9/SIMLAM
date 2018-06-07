@@ -76,15 +76,14 @@ AlertaEPTV = {
 				</div>\
 				<div class=\"redirecinamento block containerAcoesAlertaEPTV\">\
 					<h5> O que deseja fazer agora ?</h5>\
-					<p class=\"hide\">#DESCRICAO</p>\
 					<div class=\"coluna100 margem0 divAcoesAlertaEPTV\">\
-						<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+						<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcaoAlertaEPTV hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
 						<div class=\"containerBotoesAlertaEPTV\"></div>\
 					</div>\
 				</div>\
 			</div>';
 
-		$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+		$('.mensagemSistemaHolder').append(mensagem);
 	},
 
 	onAcaoClick: function () {
@@ -94,8 +93,8 @@ AlertaEPTV = {
 	},
 
 	clone: function () {
-		var ctr = $('.btnTemplateAcao').parent().clone();
-		ctr.find('button').removeClass('btnTemplateAcao');
+		var ctr = $('.btnTemplateAcaoAlertaEPTV').parent().clone();
+		ctr.find('button').removeClass('btnTemplateAcaoAlertaEPTV');
 		return ctr;
 	},
 

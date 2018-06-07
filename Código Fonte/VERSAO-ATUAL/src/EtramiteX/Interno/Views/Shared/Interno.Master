@@ -62,26 +62,27 @@
 	  
    <script> 
     $(function () { 
-      <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
+      <%--<% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
       { 
         Validacao.QueryParamDeserializer(Request.Params["msg"]); 
       } 
-      %> 
+      %> --%>
  
-      <% if (Validacao.Erros.Any(x => x.Campo == "AlertaEPTV")){%>
-		AlertaEPTV.exibirMensagemValidacao("Existem X E-PTVs aguardando análise");
+    <% if (Validacao.MensagensAlertaEPTV.Count() > 0){%>
+		AlertaEPTV.exibirMensagemValidacao('<%=Validacao.MensagensAlertaEPTV.First(x => x.Campo == "AlertaEPTV").Texto%>');
         AlertaEPTV.load($(".containerAcoesAlertaEPTV"), { 
           urls: { 
             urlEPTVAguardandoAnalise: '<%= Url.Action("EPTVListar", "PTV") %>' 
           } 
-        }); 
-      <%}%> 
+		});
+		<%Validacao.MensagensAlertaEPTV = new List<Mensagem>();%>
+      <%}%>
  
-      <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
+     <%-- <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
       { 
         Validacao.QueryParamSerializer(Request.Params["msg"]); 
       } 
-      %> 
+      %> --%>
     }); 
   </script> 
 

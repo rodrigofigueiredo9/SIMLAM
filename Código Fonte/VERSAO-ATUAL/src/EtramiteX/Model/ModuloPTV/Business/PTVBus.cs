@@ -986,7 +986,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 				if (quantidade > 0)
 				{
-					Validacao.Add(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
+					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
+					var temp = Validacao.MensagensAlertaEPTV.Count;
 					houveAlerta = true;
 				}
 			}
