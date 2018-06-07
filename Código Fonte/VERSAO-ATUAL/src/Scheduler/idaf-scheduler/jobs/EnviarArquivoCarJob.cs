@@ -81,11 +81,19 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
 						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						if (String.IsNullOrWhiteSpace(resultado))
+						{
+							throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
+						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
 						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
 						{
 							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+							if(String.IsNullOrWhiteSpace(resultado))
+							{
+								throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
+							}
 							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 						}
                         //resultadoEnvio.codigoResposta = 200;
@@ -141,7 +149,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.StackTrace, resultado } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
+						Log.Error("CATCH:" + ex.Message, ex);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
@@ -237,10 +246,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     }
                     catch (Exception ex) 
                     {
-                        var x = ex.Message;
-
-                        return null;
-                    }
+						Log.Error("EnviarArquivoCAR: " + ex.Message, ex);
+                        return ex.Message;
+					}
 				}
 			}
 		}

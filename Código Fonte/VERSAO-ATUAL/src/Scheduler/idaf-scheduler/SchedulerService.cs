@@ -82,7 +82,8 @@ namespace Tecnomapas.EtramiteX.Scheduler
         
         private static void ScheduleJobIntegrar()
         {
-            _scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 15 Segundos"));
+            //_scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 15 Segundos"));
+            _scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 10 Minutos"));
         }
 
 		private static ITrigger CreateTrigger(string key)

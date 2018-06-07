@@ -20,10 +20,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 		public const int SITUACAO_ENVIO_ENVIANDO = 5;
 		public const int SITUACAO_ENVIO_ARQUIVO_ENTREGUE = 6;
 		public const int SITUACAO_ENVIO_ERRO = 7;
-        public const int SITUACAO_ENVIO_ARQUIVO_RETIFICADO = 8;
+		public const int SITUACAO_ENVIO_ARQUIVO_RETIFICADO = 8;
 
 		public const int SITUACAO_SOLICITACAO_VALIDO = 2;
-        public const int SITUACAO_SOLICITACAO_INVALIDO = 3;
+		public const int SITUACAO_SOLICITACAO_INVALIDO = 3;
 		public const int SITUACAO_SOLICITACAO_SUBSTITUIDO_TITULO_CAR = 5;
 		public const int SITUACAO_SOLICITACAO_PENDENTE = 6;
 
@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return novoId;
 		}
 
-		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "", bool catchEnviar = false)
+		public static int AtualizarControleSICAR(OracleConnection conn, MensagemRetorno resultado, RequisicaoJobCar requisicao, int situacaoEnvio, string tid, string arquivoCar = "", string tipo = "", bool catchEnviar = false, string codigoProtocolo = "")
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -87,7 +87,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			var pendencias = "";
 			var condicao = "Aguardando Análise";
-            var mensagensDeResposta = String.Empty;
+			var mensagensDeResposta = String.Empty;
+			var mensagemErro = "";
 
 			if (resultado == null)
 			{
@@ -95,55 +96,43 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			else
 			{
-				if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
+				if (resultado.mensagensResposta == null)
 				{
-                    if (resultado.mensagensResposta.Count > 1 || 
-                        (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
-                         resultado.codigoResposta == 400 ||
-                         resultado.codigoResposta == 500)
-					{
-						pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
-						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
-					}
-					else
-					{
-						situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
-					}
-					//pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
+					mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
+					situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
 				}
-                if (resultado.mensagensResposta == null) 
-                {
-                    mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
-                    situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
-                }
-                else
-                {
-                    if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
-                    {
-                        if (resultado.mensagensResposta.Count > 1 ||
-                            (tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
-                             resultado.codigoResposta == 400 ||
-                             resultado.codigoResposta == 500)
-                        {
-                            pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
-                            situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
-                        }
-                        else
-                        {
-                            situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
-                        }
-                        //pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
-                    }
+				else
+				{
+					if (resultado.codigoResposta != MensagemRetorno.CodigoRespostaSucesso)
+					{
+						if (resultado.mensagensResposta.Count > 1 ||
+							(tipo.Equals("gerar-car") && resultado.mensagensResposta.Count >= 1) ||
+							 resultado.codigoResposta == 400 ||
+							 resultado.codigoResposta == 500)
+						{
+							pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
+							situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+						}
+						else
+						{
+							situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_ENTREGUE;
+						}
+						//pendencias = pendencias.Replace("O arquivo especificado contém informações inválidas.;", "");
+					}
+					foreach (var men in resultado.mensagensResposta)
+					{
+						mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+						mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
 
-                    foreach (var men in resultado.mensagensResposta)
-                    {
-                        mensagensDeResposta = String.Concat(mensagensDeResposta, men);
-                        mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
-                    }
-                }				
+						if (men.Contains("sobreposição"))
+						{
+							mensagemErro = men;
+						}
+					}
+				}
 			}
-            
-            
+
+
 
 			var sqlBuilder = new StringBuilder();
 			sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
@@ -151,24 +140,26 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("situacao_envio = :situacao_envio,");
 			sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
 
-            if (tipo.Equals("gerar-car"))
-                sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
+			if (tipo.Equals("gerar-car"))
+				sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
 			//if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
-            else
+			else
 				sqlBuilder.Append("data_envio = CURRENT_TIMESTAMP,");
 			if (arquivoCar != "")
 				sqlBuilder.Append("arquivo = '" + arquivoCar + "',");
 
 			sqlBuilder.Append("pendencias = :pendencias,");
-            if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
-                sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
+			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
 			sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
+			if(!String.IsNullOrWhiteSpace(codigoProtocolo))
+				sqlBuilder.Append("chave_protocolo_enviado = :chave_protocolo_enviado,");
 
-            sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
-            sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
-            sqlBuilder.Append("MENSAGEM_RESPOSTA = :mensagem_resposta ");
+			sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
+			sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
+			sqlBuilder.Append("MENSAGEM_RESPOSTA = :mensagem_resposta ");
 			sqlBuilder.Append(" WHERE id = :id");
 
 			try
@@ -178,22 +169,102 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao_envio", situacaoEnvio));
 					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
-                    if (catchEnviar)
-						cmd.Parameters.Add(new OracleParameter("pendencias", "Falha na integração, comunique o administrador do sistema"));
+					if (catchEnviar)
+					{
+						string pendencia = "Falha na integração, comunique o administrador do sistema";
+						cmd.Parameters.Add(new OracleParameter("pendencias", pendencia));
+					}
 					else
 						cmd.Parameters.Add(new OracleParameter("pendencias", mensagensDeResposta));
-						
-                    if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
-					    cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
+
+					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
 					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
-					
-                    cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
-                    cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
-                    
-                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-                    cmd.Parameters.Add(new OracleParameter("id", item.id));
+					if (!String.IsNullOrWhiteSpace(codigoProtocolo))
+						cmd.Parameters.Add(new OracleParameter("chave_protocolo_enviado", codigoProtocolo));
+
+					cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
+					cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
+
+					cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
+					cmd.Parameters.Add(new OracleParameter("id", item.id));
+
+					cmd.ExecuteNonQuery();
+				}
+				if(!String.IsNullOrWhiteSpace(mensagemErro))
+					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+
+			//Inserir no Histórico
+			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
+			if (item == null)
+			{
+				return 0;
+			}
+			return item.id;
+		}
+
+		public static int AtualizarControleSICarRetificacao(OracleConnection conn, MensagemRetorno resultado, ItemControleCar item, int situacaoEnvio, int solicitacaoRetificadora, string tid, string arquivoCar = "", string tipo = "")
+		{
+			var schema = CarUtils.GetEsquemaInstitucional();
+
+			var pendencias = " Solicitação retificada pela solicitação : " + solicitacaoRetificadora;
+			var condicao = "Aguardando Análise";
+			var mensagensDeResposta = pendencias;
+
+
+			var sqlBuilder = new StringBuilder();
+			sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
+			//sqlBuilder.Append("tid = :tid,");
+			sqlBuilder.Append("situacao_envio = :situacao_envio,");
+			sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
+
+			if (tipo.Equals("gerar-car"))
+				sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
+			//if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
+			else
+				sqlBuilder.Append("data_envio = CURRENT_TIMESTAMP,");
+			if (arquivoCar != "")
+				sqlBuilder.Append("arquivo = '" + arquivoCar + "',");
+
+			sqlBuilder.Append("pendencias = :pendencias,");
+			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
+			sqlBuilder.Append("url_recibo = :url_recibo,");
+			sqlBuilder.Append("status_sicar = :status_sicar,");
+			sqlBuilder.Append("condicao = :condicao,");
+
+			sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
+			sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
+			sqlBuilder.Append("MENSAGEM_RESPOSTA = :mensagem_resposta ");
+			sqlBuilder.Append(" WHERE solicitacao_car = :id");
+
+			try
+			{
+				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+				{
+					//cmd.Parameters.Add(new OracleParameter("tid", item.solicitacao_car_anterior_tid));
+					cmd.Parameters.Add(new OracleParameter("situacao_envio", SITUACAO_ENVIO_ARQUIVO_RETIFICADO));
+					cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
+					cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
+					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
+						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
+					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
+					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
+					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
+
+					cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
+					cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
+
+					cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
+					//cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));                    
+					cmd.Parameters.Add(new OracleParameter("solicitacao_car", item.solicitacao_car_anterior));
 
 					cmd.ExecuteNonQuery();
 				}
@@ -203,128 +274,55 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
 
+			RequisicaoJobCar requisicao = new RequisicaoJobCar();
+			requisicao.empreendimento = item.empreendimento;
+			requisicao.empreendimento_tid = item.empreendimento_tid;
+			requisicao.solicitacao_car = item.solicitacao_car_anterior;
+			requisicao.solicitacao_car_tid = item.solicitacao_car_anterior_tid;
+
 			//Inserir no Histórico
 			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
-            if(item == null)
-            {
-                return 0;
-            }
+			if (item == null)
+			{
+				return 0;
+			}
 			return item.id;
+
 		}
 
-        public static int AtualizarControleSICarRetificacao(OracleConnection conn, MensagemRetorno resultado, ItemControleCar item, int situacaoEnvio, int solicitacaoRetificadora, string tid, string arquivoCar = "", string tipo = "")
-        {
-            var schema = CarUtils.GetEsquemaInstitucional();
-
-            var pendencias = " Solicitação retificada pela solicitação : " + solicitacaoRetificadora;
-            var condicao = "Aguardando Análise";
-            var mensagensDeResposta = pendencias;
-
-
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
-            //sqlBuilder.Append("tid = :tid,");
-            sqlBuilder.Append("situacao_envio = :situacao_envio,");
-            sqlBuilder.Append("chave_protocolo = :chave_protocolo,");
-
-            if (tipo.Equals("gerar-car"))
-                sqlBuilder.Append("data_gerado = CURRENT_TIMESTAMP,");
-            //if (situacaoEnvio == SITUACAO_ENVIO_ARQUIVO_ENTREGUE)
-            else
-                sqlBuilder.Append("data_envio = CURRENT_TIMESTAMP,");
-            if (arquivoCar != "")
-                sqlBuilder.Append("arquivo = '" + arquivoCar + "',");
-
-            sqlBuilder.Append("pendencias = :pendencias,");
-            if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
-                sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
-            sqlBuilder.Append("url_recibo = :url_recibo,");
-            sqlBuilder.Append("status_sicar = :status_sicar,");
-            sqlBuilder.Append("condicao = :condicao,");
-
-            sqlBuilder.Append("CODIGO_RESPOSTA = :codigo_resposta, ");
-            sqlBuilder.Append("CODIGO_IMOVEL_MASC = :codigo_imovel_masc, ");
-            sqlBuilder.Append("MENSAGEM_RESPOSTA = :mensagem_resposta ");
-            sqlBuilder.Append(" WHERE solicitacao_car = :id");
-
-            try
-            {
-                using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
-                {
-                    //cmd.Parameters.Add(new OracleParameter("tid", item.solicitacao_car_anterior_tid));
-                    cmd.Parameters.Add(new OracleParameter("situacao_envio", SITUACAO_ENVIO_ARQUIVO_RETIFICADO));
-                    cmd.Parameters.Add(new OracleParameter("chave_protocolo", resultado.protocoloImovel));
-                    cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
-                    if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
-                        cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
-                    cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
-                    cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
-                    cmd.Parameters.Add(new OracleParameter("condicao", condicao));
-
-                    cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
-                    cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
-
-                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-                    //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));                    
-                    cmd.Parameters.Add(new OracleParameter("solicitacao_car", item.solicitacao_car_anterior));
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
-            }
-
-            RequisicaoJobCar requisicao = new RequisicaoJobCar();
-            requisicao.empreendimento = item.empreendimento;
-            requisicao.empreendimento_tid = item.empreendimento_tid;
-            requisicao.solicitacao_car = item.solicitacao_car_anterior;
-            requisicao.solicitacao_car_tid = item.solicitacao_car_anterior_tid;
-
-            //Inserir no Histórico
-            InserirHistoricoControleCar(conn, requisicao, tid, resultado);
-            if (item == null)
-            {
-                return 0;
-            }
-            return item.id;
-            
-        }
-
-        private static void InserirHistoricoControleCar(OracleConnection conn, RequisicaoJobCar requisicao, string tid, MensagemRetorno resultado)
+		private static void InserirHistoricoControleCar(OracleConnection conn, RequisicaoJobCar requisicao, string tid, MensagemRetorno resultado)
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
 			var item = ObterItemControleCar(conn, requisicao);
-			
+
 			var sqlBuilder = new StringBuilder();
 			sqlBuilder.Append("INSERT INTO " + schema + ".HST_CONTROLE_SICAR ");
 			sqlBuilder.Append("(id,tid,empreendimento,empreendimento_tid,solicitacao_car,solicitacao_car_tid,situacao_envio,");
 			sqlBuilder.Append("chave_protocolo,data_gerado,data_envio,arquivo,pendencias,codigo_imovel,");
 			sqlBuilder.Append("url_recibo,status_sicar,condicao,solicitacao_car_esquema,data_execucao,");
-            sqlBuilder.Append("CODIGO_RESPOSTA, CODIGO_IMOVEL_MASC, MENSAGEM_RESPOSTA)");
+			sqlBuilder.Append("CODIGO_RESPOSTA, CODIGO_IMOVEL_MASC, MENSAGEM_RESPOSTA)");
 			sqlBuilder.Append(" values ");
 			sqlBuilder.Append("(" + schema + ".SEQ_HST_CONTROLE_SICAR.nextval,:tid,:empreendimento,:empreendimento_tid,");
 			sqlBuilder.Append(":solicitacao_car,:solicitacao_car_tid,:situacao_envio,:chave_protocolo,");
 			sqlBuilder.Append(":data_gerado,:data_envio,:arquivo,:pendencias,:codigo_imovel,");
 			sqlBuilder.Append(":url_recibo,:status_sicar,:condicao,:solicitacao_car_esquema,CURRENT_TIMESTAMP, :CODIGO_RESPOSTA, :CODIGO_IMOVEL_MASC, :MENSAGEM_RESPOSTA)");
 
-            var mensagensDeResposta = String.Empty;
+			var mensagensDeResposta = String.Empty;
 
-            if (resultado.mensagensResposta == null)
-            {
-                mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
-                //situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
-            }
-            else
-            {
-                foreach (var men in resultado.mensagensResposta)
-                {
-                    mensagensDeResposta = String.Concat(mensagensDeResposta, men);
-                    mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
-                }
-            }
+			if (resultado.mensagensResposta == null)
+			{
+				mensagensDeResposta = "Erro de conexão com o SICAR, será feita uma nova tentativa ; ";
+				//situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
+			}
+			else
+			{
+				foreach (var men in resultado.mensagensResposta)
+				{
+					mensagensDeResposta = String.Concat(mensagensDeResposta, men);
+					mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
+				}
+			}
 			try
 			{
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
@@ -346,19 +344,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("condicao", item.condicao));
 					cmd.Parameters.Add(new OracleParameter("solicitacao_car_esquema", item.solicitacao_car_esquema));
 
-                    cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
-                    cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
-                    cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-                     //cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
+					cmd.Parameters.Add(new OracleParameter("codigo_resposta", resultado.codigoResposta));
+					cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
+					cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
+					//cmd.Parameters.Add(new OracleParameter("mensagem_resposta", resultado.mensagensResposta));
 
 					cmd.ExecuteNonQuery();
 				}
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				string teste = string.Empty;
+
+				if (item == null) { teste = "ITEM NULO!!!!"; }
+				else teste = "ITEM NÃO NULO";
+
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
 			}
 		}
+
 		internal static string ObterDataSolicitacao(OracleConnection conn, int solicitacaoCar, string origem)
 		{
 			var tabela = (origem == RequisicaoJobCar.INSTITUCIONAL)
@@ -375,7 +379,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("solicitacao_car", solicitacaoCar));
-					
+
 					using (var dr = cmd.ExecuteReader())
 					{
 						if (dr.Read())
@@ -451,56 +455,56 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return item;
 		}
 
-        public static ItemControleCar ObterItemControleCarRetificacao(OracleConnection conn, RequisicaoJobCar requisicao)
-        {
-            var item = new ItemControleCar();
-            var sqlBuilder = new StringBuilder();
-           
-            try
-            {
-                using (var cmd = new OracleCommand(@"SELECT ID, TID, EMPREENDIMENTO, EMPREENDIMENTO_TID, SOLICITACAO_CAR, SOLICITACAO_CAR_TID, 
+		public static ItemControleCar ObterItemControleCarRetificacao(OracleConnection conn, RequisicaoJobCar requisicao)
+		{
+			var item = new ItemControleCar();
+			var sqlBuilder = new StringBuilder();
+
+			try
+			{
+				using (var cmd = new OracleCommand(@"SELECT ID, TID, EMPREENDIMENTO, EMPREENDIMENTO_TID, SOLICITACAO_CAR, SOLICITACAO_CAR_TID, 
                                                     SOLICITACAO_CAR_ANTERIOR, SITUACAO_ENVIO, CHAVE_PROTOCOLO, DATA_GERADO, DATA_ENVIO, PENDENCIAS, 
                                                     CODIGO_IMOVEL, SOLICITACAO_CAR_ESQUEMA, SOLICITACAO_CAR_ANT_ESQUEMA, SOLICITACAO_CAR_ANTERIOR_TID 
                                                     FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :solicitacao", conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
+				{
+					cmd.Parameters.Add(new OracleParameter("solicitacao", requisicao.solicitacao_car));
 
-                    using (var dr = cmd.ExecuteReader())
-                    {
-                        if (!dr.Read())
-                            return null;
+					using (var dr = cmd.ExecuteReader())
+					{
+						if (!dr.Read())
+							return null;
 
-                        item = new ItemControleCar()
-                        {
-                            id = dr.GetValue<Int32>("id"),
-                            tid = dr.GetValue<string>("tid"),
-                            empreendimento = dr.GetValue<Int32>("empreendimento"),
-                            empreendimento_tid = dr.GetValue<string>("empreendimento_tid"),
-                            solicitacao_car = dr.GetValue<Int32>("solicitacao_car"),
-                            solicitacao_car_tid = dr.GetValue<string>("solicitacao_car_tid"),
-                            solicitacao_car_anterior = dr.GetValue<Int32>("solicitacao_car_anterior"),
-                            situacao_envio = dr.GetValue<int>("situacao_envio"),
-                            chave_protocolo = dr.GetValue<string>("chave_protocolo"),
-                            data_gerado = dr.GetValue<DateTime>("data_gerado"),
-                            data_envio = dr.GetValue<DateTime>("data_envio"),
-                            pendencias = dr.GetValue<string>("pendencias"),
-                            codigo_imovel = dr.GetValue<string>("codigo_imovel"),
-                            solicitacao_car_esquema = dr.GetValue<int>("solicitacao_car_esquema"),
-                            solicitacao_car_anterior_esquema = dr.GetValue<Int32>("solicitacao_car_ant_esquema"),
-                            solicitacao_car_anterior_tid = dr.GetValue<string>("solicitacao_car_anterior_tid"),
-                        };
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
-            }
+						item = new ItemControleCar()
+						{
+							id = dr.GetValue<Int32>("id"),
+							tid = dr.GetValue<string>("tid"),
+							empreendimento = dr.GetValue<Int32>("empreendimento"),
+							empreendimento_tid = dr.GetValue<string>("empreendimento_tid"),
+							solicitacao_car = dr.GetValue<Int32>("solicitacao_car"),
+							solicitacao_car_tid = dr.GetValue<string>("solicitacao_car_tid"),
+							solicitacao_car_anterior = dr.GetValue<Int32>("solicitacao_car_anterior"),
+							situacao_envio = dr.GetValue<int>("situacao_envio"),
+							chave_protocolo = dr.GetValue<string>("chave_protocolo"),
+							data_gerado = dr.GetValue<DateTime>("data_gerado"),
+							data_envio = dr.GetValue<DateTime>("data_envio"),
+							pendencias = dr.GetValue<string>("pendencias"),
+							codigo_imovel = dr.GetValue<string>("codigo_imovel"),
+							solicitacao_car_esquema = dr.GetValue<int>("solicitacao_car_esquema"),
+							solicitacao_car_anterior_esquema = dr.GetValue<Int32>("solicitacao_car_ant_esquema"),
+							solicitacao_car_anterior_tid = dr.GetValue<string>("solicitacao_car_anterior_tid"),
+						};
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
 
-            return item;
-        }
+			return item;
+		}
 
-		internal static void AtualizarSolicitacaoCar(OracleConnection conn, RequisicaoJobCar requisicao,int situacao, string tid)
+		internal static void AtualizarSolicitacaoCar(OracleConnection conn, RequisicaoJobCar requisicao, int situacao, string tid)
 		{
 			//var controleCAR = ObterItemControleCar(conn, requisicao);
 
@@ -511,7 +515,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, situacao, tid);
 		}
-
 
 		public static void AtualizarSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId, int situacao, string tid)
 		{
@@ -535,8 +538,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao", situacao));
-                    if (situacao == 2 || situacao == 1) cmd.Parameters.Add(new OracleParameter("motivo", " "));
-                    if (situacao == 6 ||situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
+					if (situacao == 2 || situacao == 1) cmd.Parameters.Add(new OracleParameter("motivo", " "));
+					if (situacao == 6 || situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
 					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
 					cmd.ExecuteNonQuery();
@@ -564,59 +567,60 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			InserirHistoricoSolicitacaoCar(conn, origem, solicitacaoId);
 		}
 
-        public static void AtualizarSolicitacaoCarRetificacao(OracleConnection conn, int origem, int solicitacaoId, string tid)
-        {
-            var tabela = (origem == 1)
-                ? "TAB_CAR_SOLICITACAO"
-                : "TAB_CAR_SOLICITACAO_CRED";
+		public static void AtualizarSolicitacaoCarRetificacao(OracleConnection conn, int origem, int solicitacaoId, string tid)
+		{
+			var tabela = (origem == 1)
+				? "TAB_CAR_SOLICITACAO"
+				: "TAB_CAR_SOLICITACAO_CRED";
 
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("UPDATE " + tabela + " SET ");
-            sqlBuilder.Append("tid = :tid,");
-            sqlBuilder.Append("situacao = :situacao,");
-            sqlBuilder.Append("situacao_data = SYSDATE,");
-            sqlBuilder.Append("situacao_anterior = situacao,");
-            sqlBuilder.Append("situacao_anterior_data = situacao_data,");
-            sqlBuilder.Append("motivo = :motivo");
-            sqlBuilder.Append(" WHERE id = :id");
+			var sqlBuilder = new StringBuilder();
+			sqlBuilder.Append("UPDATE " + tabela + " SET ");
+			sqlBuilder.Append("tid = :tid,");
+			sqlBuilder.Append("situacao = :situacao,");
+			sqlBuilder.Append("situacao_data = SYSDATE,");
+			sqlBuilder.Append("situacao_anterior = situacao,");
+			sqlBuilder.Append("situacao_anterior_data = situacao_data,");
+			sqlBuilder.Append("motivo = :motivo");
+			sqlBuilder.Append(" WHERE id = :id");
 
-            try
-            {
-                using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("tid", tid));
-                    cmd.Parameters.Add(new OracleParameter("situacao", ControleCarDB.SITUACAO_SOLICITACAO_INVALIDO));
-                    cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Retificado"));
-                    cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
+			try
+			{
+				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("tid", tid));
+					cmd.Parameters.Add(new OracleParameter("situacao", ControleCarDB.SITUACAO_SOLICITACAO_INVALIDO));
+					cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Retificado"));
+					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
-                    cmd.ExecuteNonQuery();
-                }
+					cmd.ExecuteNonQuery();
+				}
 
-                var strQuery = string.Empty;
-                if (origem == 1)
-                    strQuery = "begin LST_CONSULTA.carSolicitacaoTitulo(:id); end;";
-                else
-                    strQuery = "begin LST_CONSULTA_CRED.carSolicitacao(:id); end;";
+				var strQuery = string.Empty;
+				if (origem == 1)
+					strQuery = "begin LST_CONSULTA.carSolicitacaoTitulo(:id); end;";
+				else
+					strQuery = "begin LST_CONSULTA_CRED.carSolicitacao(:id); end;";
 
-                using (var cmd = new OracleCommand(strQuery, conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
+				using (var cmd = new OracleCommand(strQuery, conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
-                    cmd.ExecuteNonQuery();
-                }
-				
-				
-            }
-            catch (Exception exception)
-            {
-                Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
-            }
-            var schema = (origem == 1)
-                ? "institucional"
-                : "credenciado";
-            //Inserir no Histórico
-            InserirHistoricoSolicitacaoCar(conn, schema, solicitacaoId);
-        }
+					cmd.ExecuteNonQuery();
+				}
+
+
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+			var schema = (origem == 1)
+				? "institucional"
+				: "credenciado";
+			//Inserir no Histórico
+			InserirHistoricoSolicitacaoCar(conn, schema, solicitacaoId);
+		}
+
 		private static void InserirHistoricoSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId)
 		{
 			var pacote = (origem == RequisicaoJobCar.INSTITUCIONAL) ? "HISTORICO" : "HISTORICO_CRED";
@@ -646,6 +650,169 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			catch (Exception exception)
 			{
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+		}
+
+		private static void VerificarListaCodigoImovel(OracleConnection conn, string schema, string codigoImovelString, int solicitacaoNumero, Int32 empreendimento, string origem, RequisicaoJobCar requisicao, string tid)
+		{
+			try
+			{
+				var listaCodigos = codigoImovelString.Split('\n', ':', ',', '.')?.Where(x => x.Length == 43)?.Select(x => x.Replace(",", "")).Select(x => x.Replace(".", ""))?.ToList();
+
+				if (listaCodigos.Count() == 1)
+				{
+					if(!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
+					{
+						AtualizaInformacoesCAR(conn, listaCodigos[0], solicitacaoNumero, origem, requisicao, tid);
+						InserirTabelaTransacional(conn, listaCodigos[0], solicitacaoNumero, empreendimento, 1, origem);
+					}else
+					{
+						InserirTabelaTransacional(conn, listaCodigos[0], solicitacaoNumero, empreendimento, 0, origem);
+					}
+				}
+				else
+				{
+					var naoExisteNoSimlam = new List<string>();
+
+					foreach (var codigo in listaCodigos)
+					{
+						if (!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
+						{
+							naoExisteNoSimlam.Add(codigo);
+						}
+					}
+
+					if(naoExisteNoSimlam.Count() > 1)
+					{
+						foreach(var codigo in naoExisteNoSimlam)
+						{
+							InserirTabelaTransacional(conn, codigo, solicitacaoNumero, empreendimento, 0, origem);
+						}
+					} else if (naoExisteNoSimlam.Count() == 1)
+					{
+						AtualizaInformacoesCAR(conn, naoExisteNoSimlam[0], solicitacaoNumero, origem, requisicao, tid);
+						InserirTabelaTransacional(conn, naoExisteNoSimlam[0], solicitacaoNumero, empreendimento, 1, origem);
+					}
+				}
+			} catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados  / VerificarListaCodigoImovel:  /" + exception.Message, exception);
+			}
+		}
+
+		private static bool VerificarCodigo(OracleConnection conn, string codigo, int solicitacao)
+		{
+			try
+			{
+				//using (var cmd = new OracleCommand("SELECT COUNT(ID) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL LIKE '%:codigo%'", conn))
+				using (var cmd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR_ANTERIOR IN " +
+					"(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL LIKE '%:codigo%')", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("codigo", codigo));
+					if (Convert.ToBoolean(cmd.ExecuteScalar()))
+					{
+						return false;
+					}
+					else
+					{
+						using (var cd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo AND SOLICITACAO_CAR != :solicitacao", conn))
+						{
+							cd.Parameters.Add(new OracleParameter("codigo", codigo));
+							cd.Parameters.Add(new OracleParameter("solicitacao", solicitacao));
+
+							return (Convert.ToBoolean(cd.ExecuteScalar()));
+						}
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				return false;
+			}
+		}
+
+		private static void AtualizaInformacoesCAR(OracleConnection conn, string codigo, int solicitacaoNumero, string origem, RequisicaoJobCar requisicao, string tid)
+		{
+			var retorno = new MensagemRetorno();
+			retorno.mensagensResposta = new List<string>();
+			retorno.codigoImovelComMascara = codigo;
+			retorno.codigoResposta = 200;
+			var resultado = "Imóvel inserido com sucesso no banco de dados do Sicar - Sistema Nacional de Cadastro Ambiental Rural;";
+			retorno.mensagensResposta.Add(resultado);
+			var schema = (origem == RequisicaoJobCar.INSTITUCIONAL) ? "IDAF" : "IDAFCREDENCIADO";
+
+			try
+			{
+				// ATUALIZA TAB_CONTROLE_SICAR
+				using (var cmd = new OracleCommand(@"UPDATE TAB_CONTROLE_SICAR SET CODIGO_IMOVEL = :codigo_imovel, 
+													SITUACAO_ENVIO = 6, CODIGO_RESPOSTA = 200, PENDENCIAS = NULL, MENSAGEM_RESPOSTA = :mensagem 
+	 												WHERE SOLICITACAO_CAR = :solicitacao_car", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("codigo_imovel", codigo));
+					cmd.Parameters.Add(new OracleParameter("mensagem", resultado));
+					cmd.Parameters.Add(new OracleParameter("solicitacao_car", solicitacaoNumero));
+
+					cmd.ExecuteNonQuery();
+				}
+
+				// ATUALIZA TAB_CAR_SOLICITACAO
+				using (var cmd = new OracleCommand("UPDATE "+ schema + @".TAB_CAR_SOLICITACAO SET SITUACAO_ANTERIOR = SITUACAO,
+													SITUACAO_ANTERIOR_DATA = SITUACAO_DATA, SITUACAO = 2, SITUACAO_DATA = SYSDATE
+													WHERE ID = :solicitacao_car", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("solicitacao_car", solicitacaoNumero));
+
+					cmd.ExecuteNonQuery();
+				}
+
+				// ATUALIZA O IDAF_CONSULTA
+				var strQuery = String.Empty;
+				if (origem == RequisicaoJobCar.INSTITUCIONAL)
+					strQuery = "begin LST_CONSULTA.carSolicitacaoTitulo(:id); end;";
+				else
+					strQuery = "begin LST_CONSULTA_CRED.carSolicitacao(:id); end;";
+
+				using (var cmd = new OracleCommand(strQuery, conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", solicitacaoNumero));
+
+					cmd.ExecuteNonQuery();
+				}
+
+				// ATUALIZA O HISTORICO
+				InserirHistoricoSolicitacaoCar(conn, origem, solicitacaoNumero);
+				InserirHistoricoControleCar(conn, requisicao, tid, retorno);
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados - UPDATES:" + exception.Message, exception);
+			}
+		}
+
+		private static void InserirTabelaTransacional(OracleConnection conn, string codigo, int solicitacaoNumero, Int32 empreendimento, int integrado_atualizado, string origem)
+		{		
+			try
+			{
+				var esquema = origem == RequisicaoJobCar.INSTITUCIONAL ? 1 : 2;
+
+				using (var cmd = new OracleCommand(@"INSERT INTO TAB_CONTROLE_COD_IMOVEL (ID, EMPREENDIMENTO, SOLICITACAO_CAR, CODIGO_IMOVEL,
+													SOLICITACAO_CAR_ESQUEMA, INTEGRADO_ATUALIZADO)
+													VALUES (SEQ_CONTROLE_COD_IMOVEL.nextval, :empreendimento, :solicitacao, :codigo,
+													:esquema, :integrado_atualizado)", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimento));
+					cmd.Parameters.Add(new OracleParameter("solicitacao", solicitacaoNumero));
+					cmd.Parameters.Add(new OracleParameter("codigo", codigo));
+					cmd.Parameters.Add(new OracleParameter("esquema", esquema));
+					cmd.Parameters.Add(new OracleParameter("integrado_atualizado", integrado_atualizado));
+
+					cmd.ExecuteNonQuery();
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados - INSERIR:" + exception.Message, exception);
 			}
 		}
 	}
