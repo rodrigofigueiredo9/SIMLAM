@@ -974,13 +974,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			bool houveAlerta = false;
 
+			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
 			//verifica se o usuário está habilitado para emissão de PTV
-			bool habilitado = _validar.FuncionarioHabilitadoValido();
+			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
 
 			if (habilitado)
 			{
-				int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
-
 				//Verifica quantas PTVs estão aguardando análise
 				int quantidade = QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
 

@@ -1,6 +1,6 @@
-﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
-
+<%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
@@ -56,6 +56,34 @@
 	<script language="javascript" src="<%= Url.Content("~/Scripts/jquery.associar-multiplo.js") %>" ></script>
 	<script language="javascript" src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
 	<script language="javascript" src="<%= Url.Content("~/Scripts/jquery.tablesorter.js") %>"></script>
+
+	<script language="javascript" src="<%= Url.Content("~/Scripts/AlertaEPTV/alertaEPTV.js") %>"></script>
+
+	  
+   <script> 
+    $(function () { 
+      <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
+      { 
+        Validacao.QueryParamDeserializer(Request.Params["msg"]); 
+      } 
+      %> 
+ 
+      <% if (Validacao.Erros.Any(x => x.Campo == "AlertaEPTV")){%>
+		AlertaEPTV.exibirMensagemValidacao("Existem X E-PTVs aguardando análise");
+        AlertaEPTV.load($(".containerAcoesAlertaEPTV"), { 
+          urls: { 
+            urlEPTVAguardandoAnalise: '<%= Url.Action("EPTVListar", "PTV") %>' 
+          } 
+        }); 
+      <%}%> 
+ 
+      <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 
+      { 
+        Validacao.QueryParamSerializer(Request.Params["msg"]); 
+      } 
+      %> 
+    }); 
+  </script> 
 
 	<% if (true == false) { %>
 		<script language="javascript" src="../../Scripts/Lib/JQuery/jquery-1.4.1-vsdoc.js" ></script>
