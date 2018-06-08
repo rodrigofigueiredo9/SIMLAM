@@ -64,6 +64,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
                     var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
+					if (controleSicar == null) continue;
 
 					ObterDadosRequisicao(conn, requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
