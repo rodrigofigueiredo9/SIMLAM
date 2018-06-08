@@ -922,6 +922,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarObjetoInfracao(ObjetoInfracao entidade)
 		{
 			_busObjetoInfracao.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1488,6 +1490,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)
 		{
 			_busMaterialApreendido.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1573,6 +1577,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMulta(Multa entidade)
 		{
 			_busMulta.Salvar(entidade);
+			if(Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1655,6 +1661,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
 		{
 			_busOutrasPenalidades.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
