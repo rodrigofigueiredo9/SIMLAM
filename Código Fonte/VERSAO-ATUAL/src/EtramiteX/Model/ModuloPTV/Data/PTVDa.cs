@@ -567,10 +567,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 					foreach (Anexo item in PTV.Anexos)
 					{
-						comando.SetarValorParametro("arquivo", item.Arquivo.Id);
-						comando.SetarValorParametro("ordem", item.Ordem);
-						comando.SetarValorParametro("descricao", item.Descricao);
-						bancoDeDados.ExecutarNonQuery(comando);
+						if (item.Arquivo.Id > 0)
+						{
+							comando.SetarValorParametro("arquivo", item.Arquivo.Id);
+							comando.SetarValorParametro("ordem", item.Ordem);
+							comando.SetarValorParametro("descricao", item.Descricao);
+							bancoDeDados.ExecutarNonQuery(comando);
+						}
 					}
 				}
 
