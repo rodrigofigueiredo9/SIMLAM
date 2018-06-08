@@ -726,11 +726,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
             }
         }
 
-        #endregion
+		public void ExcluirIUFBloco(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
 
-        #region Obter / Filtrar
+				Comando comando = bancoDeDados.CriarComando("begin "
+															+ "delete from {0}tab_fisc_consid_final_iuf ra where exists(select 1 from tab_fisc_consid_final cf where ra.consid_final = cf.id and cf.fiscalizacao = :fiscalizacao);"
+														+ "end;", EsquemaBanco);
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-        public Infracao Obter(int fiscalizacaoId, BancoDeDados banco = null)
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+			}
+		}
+
+		#endregion
+
+		#region Obter / Filtrar
+
+		public Infracao Obter(int fiscalizacaoId, BancoDeDados banco = null)
         {
             Infracao infracao = new Infracao();
             InfracaoPergunta questionario = new InfracaoPergunta();
@@ -1520,10 +1537,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					reader.Close();
 				}
 
-				if (retorno == true)
-				{
-					return retorno;
-				}
+				if (retorno) return retorno;
 
 				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
@@ -1544,10 +1558,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					reader.Close();
 				}
 
-				if (retorno == true)
-				{
-					return retorno;
-				}
+				if (retorno) return retorno;
 
 				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
@@ -1568,10 +1579,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					reader.Close();
 				}
 
-				if (retorno == true)
-				{
-					return retorno;
-				}
+				if (retorno) return retorno;
 
 				comando = bancoDeDados.CriarComando(@" 
                                     select count(1) valor 
@@ -1592,10 +1600,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 					reader.Close();
 				}
 
-				if (retorno == true)
-				{
-					return retorno;
-				}
+				if (retorno) return retorno;
 			}
 
 			return retorno;
