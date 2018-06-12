@@ -99,6 +99,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			var cobranca = entidade ?? (fiscalizacaoId > 0 ? _bus.ObterByFiscalizacao(fiscalizacaoId.GetValueOrDefault(0)) :
 				_bus.Obter(cobrancaId.GetValueOrDefault(0))) ?? new Cobranca();
+
 			if (entidade != null)
 			{
 				cobranca.Notificacao = _busNotificacao.Obter(entidade.NumeroFiscalizacao.GetValueOrDefault(0));
@@ -113,7 +114,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				var notificacao = _busNotificacao.Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0)) ?? new Notificacao();
 				var protocolo = fiscalizacao.ProtocoloId > 0 ? _busProtocolo.Obter(fiscalizacao.ProtocoloId) : new Protocolo();
 				cobranca = entidade ?? new Cobranca(fiscalizacao, protocolo, notificacao);
-				cobranca.NumeroAutuacao = protocolo.NumeroAutuacao;
+				if (entidade != null && entidade.ObterFiscalizacao)
+					cobranca = new Cobranca(fiscalizacao, protocolo, notificacao);
+				cobranca.NumeroAutuacao = protocolo?.NumeroAutuacao;
 				if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 				{
 					cobranca.Parcelamentos = new List<CobrancaParcelamento>();

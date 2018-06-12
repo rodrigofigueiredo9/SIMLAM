@@ -55,8 +55,10 @@ Cobranca = {
 		Modal.abrir(Cobranca.settings.urls.fiscalizacaoPessoaModal, Cobranca.obter());
 	},
 
-	obter: function () {
+	obter: function (obterFiscalizacao) {
 		var container = Cobranca.container;
+
+		if (!obterFiscalizacao) obterFiscalizacao = false;
 
 		var obj = {
 			Id: $('.hdnCobrancaId', container).val(),
@@ -73,7 +75,8 @@ Cobranca = {
 			AutuadoPessoa: { NomeRazaoSocial: $('.txtAutuadoNome', container).val(), CPFCNPJ: $('.txtAutuadoCpfCnpj', container).val()  },
 			AutuadoPessoaId: $('.hdnAutuadoPessoaId', container).val(),
 			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val()),
-			Anexos: $('.fsArquivos', container).arquivo('obterObjeto')
+			Anexos: $('.fsArquivos', container).arquivo('obterObjeto'),
+			ObterFiscalizacao: obterFiscalizacao
 		}
 		obj.UltimoParcelamento.ValorMulta = $('.txtValorMulta', container).val();
 		obj.UltimoParcelamento.ValorMultaAtualizado = $('.txtValorMultaAtualizado', container).val();
@@ -240,6 +243,7 @@ Cobranca = {
 						}
 						MasterPage.load();
 						MasterPage.redimensionar();
+						Cobranca.load(Cobranca.container);
 						Mascara.load(Cobranca.container);
 					}
 				});
@@ -248,11 +252,11 @@ Cobranca = {
 		});
 	},
 
-	atualizar: function () {
+	atualizar: function (obterFiscalizacao) {
 		MasterPage.carregando(true);
 		$.ajax({
 			url: Cobranca.settings.urls.recalcular,
-			data: JSON.stringify(Cobranca.obter()),
+			data: JSON.stringify(Cobranca.obter(obterFiscalizacao)),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -271,6 +275,7 @@ Cobranca = {
 				}
 				MasterPage.load();
 				MasterPage.redimensionar();
+				Cobranca.load(Cobranca.container);
 				Mascara.load(Cobranca.container);
 			}
 		});
@@ -403,7 +408,7 @@ Cobranca = {
 		}
 
 		$('.txtFiscalizacao', Cobranca.container).val(Fiscalizacao.Id);
-		Cobranca.recalcular();
+		Cobranca.atualizar(true);
 		MasterPage.carregando(false);
 
 		return true;
