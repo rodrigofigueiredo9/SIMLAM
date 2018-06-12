@@ -60,26 +60,27 @@
                     <%= Html.DropDownList("Filtros.SituacaoCobranca", Model.SituacaoCobranca, new { @class = "text ddlSituacaoCobranca" })%>
                 </div>
 
-                <div class="coluna29">
-                    <label for="Filtros_DataPagamentoDe_DataTexto">Data de Pagamento (de-até)</label>
-                    <div class="coluna45 append6">
-                        <%= Html.TextBox("Filtros.DataPagamentoDe.DataTexto", Model.Filtros.DataPagamentoDe.DataTexto, new { @class = "text txtDataPagamentoDe maskData setarFoco" })%>
-                    </div>
-                    <div class="coluna45">
-                        <%= Html.TextBox("Filtros.DataPagamentoAte.DataTexto", Model.Filtros.DataPagamentoAte.DataTexto, new { @class = "text txtDataPagamentoAte maskData setarFoco" })%>
-                    </div>
+                <div class="coluna28 append1">
+					<label for="Filtros_DataPagamentoDe_DataTexto">Data de Pagamento (de-até)</label>
+                </div>
+                <div class="coluna23 append1">
+					<label for="Filtros_DataVencimentoDe_DataTexto">Data de Vencimento (de-ate)</label>
+                </div><br />
+                <div class="coluna13 append1">
+                    <%= Html.TextBox("Filtros.DataPagamentoDe.DataTexto", Model.Filtros.DataPagamentoDe.DataTexto, new { @class = "text txtDataPagamentoDe maskData setarFoco" })%>
                 </div>
 
-                <div class="coluna29 append1">
-                    <label for="Filtros_DataVencimentoDe_DataTexto">Data de Vencimento (de-ate)</label>
-                    <div class="coluna45 append6">
-                        <%= Html.TextBox("Filtros.DataVencimentoDe.DataTexto", Model.Filtros.DataVencimentoDe.DataTexto, new { @class = "text txtDataVencimentoDe maskData setarFoco" })%>
-                    </div>
-                    <div class="coluna45">
-                        <%= Html.TextBox("Filtros.DataVencimentoAte.DataTexto", Model.Filtros.DataVencimentoAte.DataTexto, new { @class = "text txtDataVencimentoAte maskData setarFoco" })%>
-                    </div>
+                <div class="coluna13 append1">
+                    <%= Html.TextBox("Filtros.DataPagamentoAte.DataTexto", Model.Filtros.DataPagamentoAte.DataTexto, new { @class = "text txtDataPagamentoAte maskData setarFoco" })%>
                 </div>
 
+                <div class="coluna13 append1">
+                    <%= Html.TextBox("Filtros.DataVencimentoDe.DataTexto", Model.Filtros.DataVencimentoDe.DataTexto, new { @class = "text txtDataVencimentoDe maskData setarFoco" })%>
+                </div>
+
+                <div class="coluna13 append1">
+                    <%= Html.TextBox("Filtros.DataVencimentoAte.DataTexto", Model.Filtros.DataVencimentoAte.DataTexto, new { @class = "text txtDataVencimentoAte maskData setarFoco" })%>
+                </div>
             </div>
 
             <div class="block hide">
