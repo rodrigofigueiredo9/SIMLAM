@@ -98,6 +98,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public CobrancaParcelamento UltimoParcelamento { get; set; }
 		public List<CobrancaParcelamento> Parcelamentos { get; set; }
 		public List<Anexo> Anexos { get; set; }
+
+		public bool ObterFiscalizacao { get; set; } = false;
 		#endregion
 	}
 }
