@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Tecnomapas.Blocos.Entities.WebService
+﻿namespace Tecnomapas.Blocos.Entities.WebService
 {
+	public enum eTipoPessoa
+	{
+		Fisica = 1,
+		Juridica = 2
+	}
 	public class DUA
 	{
 		public string OrgaoCNPJ { get; set; }
