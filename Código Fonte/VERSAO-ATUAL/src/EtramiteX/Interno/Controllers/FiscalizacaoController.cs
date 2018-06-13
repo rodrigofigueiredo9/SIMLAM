@@ -1302,6 +1302,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_busInfracao.Salvar(entidade);
 
+			if (!entidade.ComInfracao.Value)
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
+
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
 
