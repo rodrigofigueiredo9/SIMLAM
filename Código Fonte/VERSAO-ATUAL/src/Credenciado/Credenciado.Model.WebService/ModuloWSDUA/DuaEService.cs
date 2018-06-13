@@ -58,9 +58,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			xmlBuilder.Append("<tpAmb>1</tpAmb>");
 			xmlBuilder.Append($"<nDua>{numeroDua}</nDua>");
 			if (tipoPessoa == eTipoPessoa.Fisica)
-				xmlBuilder.Append("<cpf>" + cpfCnpj + "</cpf>");
+				xmlBuilder.Append($"<cpf>{cpfCnpj}</cpf>");
 			else
-				xmlBuilder.Append("<cnpj>" + cpfCnpj + "</cnpj>");
+				xmlBuilder.Append($"<cnpj>{cpfCnpj}</cnpj>");
 			xmlBuilder.Append("</consDua>");
 			xmlBuilder.Append("</duaDadosMsg>");
 			xmlBuilder.Append("</duaConsulta>");

@@ -1,7 +1,5 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Web;
 using System.Xml.Serialization;
 using Tecnomapas.Blocos.Entities.WebService;
@@ -12,7 +10,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 {
 	public class WSDUA
 	{
-		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
 		public DUA ObterDUA(string numeroDUA, string cpfCnpj, eTipoPessoa tipoPessoa = 0)
@@ -48,6 +46,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 				retorno.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
 				retorno.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
 				retorno.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
+				retorno.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot);
+				retorno.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
 
 				return retorno;
 			}

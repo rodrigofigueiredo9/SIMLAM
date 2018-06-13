@@ -116,7 +116,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				var dua = wSDUA.ObterDUA(numero, cpfCnpj);
 				cpfCnpj = cpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
 
-				_validar.ValidarDadosWebServiceDuaCFO(dua, numero, cpfCnpj, liberacao);
+				if(Validacao.EhValido)
+					_validar.ValidarDadosWebServiceDuaCFO(dua, numero, cpfCnpj, liberacao);
             }
             catch (Exception exc)
             {

@@ -783,7 +783,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				var wSDUA = new WSDUA();
 				var dua = wSDUA.ObterDUA(numero, cpfCnpj, tipo == "1" ? eTipoPessoa.Fisica : eTipoPessoa.Juridica);
 
-				_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
+				if(Validacao.EhValido)
+					_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
 			}
 			catch (Exception exc)
 			{
