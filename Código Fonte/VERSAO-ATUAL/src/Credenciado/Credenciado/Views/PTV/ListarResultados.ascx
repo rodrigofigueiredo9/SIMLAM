@@ -46,6 +46,8 @@
 		{ %><input type="button" title="Historico" class="icone historico btnHistorico" /><% } %>
 					<% if (Model.PodeSolicitarDesbloqueio)
 		{ %><input type="button" title="Solicitar Desbloqueio" class="icone comparar btnSolicitarDesbloqueio" /><% } %>
+					<% if (Model.PodeExcluir)
+		{ %><input type="button" title="Comunicador" class="icone comunicador btnComunicador" /><% } %>
 				</td>
 			</tr>
 			<% } %>
