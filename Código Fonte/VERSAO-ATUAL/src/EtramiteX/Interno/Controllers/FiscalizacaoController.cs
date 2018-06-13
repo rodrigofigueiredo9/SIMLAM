@@ -1300,8 +1300,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         {
             _busInfracao.Salvar(entidade);
 
-            return Json(new { id = entidade.Id, Msg = Validacao.Erros });
-        }
+			if (!entidade.ComInfracao.Value)
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
+
+			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
+		}
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
