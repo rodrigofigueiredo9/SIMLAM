@@ -742,8 +742,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                 Comando comando = bancoDeDados.CriarComando(@"select tfi.id, tfi.classificacao, lc.texto classificacao_texto, tfi.tipo, f.situacao situacao_id,
 															lt.texto tipo_texto, tfi.item, cfi.texto item_texto, tfi.subitem, cfs.texto subitem_texto, tfi.infracao_autuada,
 															tfi.gerado_sistema, tfi.valor_multa, tfi.codigo_receita, tfi.numero_auto_infracao_bloco, tfi.descricao_infracao,
-															tfi.data_lavratura_auto, tfi.serie, tfi.configuracao, tfi.configuracao_tid,
-                                                            tfi.possui_infracao, tfi.data_constatacao, tfi.hora_constatacao, tfi.classificacao_infracao
+															tfi.data_lavratura_auto, tfi.serie, tfi.configuracao, tfi.configuracao_tid, tfi.possui_infracao, tfi.data_constatacao,
+															tfi.hora_constatacao, tfi.classificacao_infracao, tfi.arquivo, a.nome arquivo_nome
 															from {0}tab_fisc_infracao tfi, {0}tab_fiscalizacao f, {0}tab_arquivo a, {0}lov_cnf_fisc_infracao_classif lc,
 															{0}cnf_fisc_infracao_tipo lt, {0}cnf_fisc_infracao_item cfi, {0}cnf_fisc_infracao_subitem cfs where 
 															tfi.arquivo = a.id(+) and tfi.classificacao = lc.id(+) and tfi.tipo = lt.id(+) and tfi.item = cfi.id(+)
@@ -781,7 +781,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             ClassificacaoInfracao = reader.GetValue<int>("classificacao_infracao")
                         };
 
-                        infracao.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
+						infracao.Arquivo = new Arquivo
+						{
+							Id = reader.GetValue<int>("arquivo"),
+							Nome = reader.GetValue<string>("arquivo_nome")
+						};
+
+						infracao.DataConstatacao.Data = reader.GetValue<DateTime>("data_constatacao");
 
                         if (!string.IsNullOrWhiteSpace(reader.GetValue<string>("data_lavratura_auto")))
                         {

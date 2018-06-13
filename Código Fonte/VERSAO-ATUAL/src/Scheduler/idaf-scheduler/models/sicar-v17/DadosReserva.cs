@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
@@ -21,5 +21,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.models
 
 		[DefaultValue("")]
 		public string numeroCAR { get; set; }
+
+		[DefaultValue("")]
+		private string cedentePossuiCodEmpreendimento { get; set; }
+
+		public void setCedentePossuiCodEmpreendimento(string cedente)
+		{
+			cedentePossuiCodEmpreendimento = cedente;
+		}
+
+		public string getCedentePossuiCodEmpreendimento() => cedentePossuiCodEmpreendimento;
 	}
 }
