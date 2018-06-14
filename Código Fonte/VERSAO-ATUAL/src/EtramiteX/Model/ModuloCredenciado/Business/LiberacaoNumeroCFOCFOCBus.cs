@@ -108,56 +108,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 			}
 		}
 
-        public void VerificarDUA(int filaID, string numero, string cpfCnpj, LiberaracaoNumeroCFOCFOC liberacao = null)
+        public void VerificarDUA(string numero, string cpfCnpj, LiberaracaoNumeroCFOCFOC liberacao = null)
         {
             try
             {
-                DUA dua = new DUA();
+				var wSDUA = new WSDUA();
+				var dua = wSDUA.ObterDUA(numero, cpfCnpj);
+				cpfCnpj = cpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
 
-                var duaRequisicao = _da.BuscarRespostaConsultaDUA(filaID);
-
-                if (duaRequisicao == null)
-                    return;
-
-                if (!duaRequisicao.Sucesso)
-                {
-                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-                    return;
-                }
-
-                var xser = new XmlSerializer(typeof(RespostaConsultaDua));
-
-                RespostaConsultaDua xml = null;
-
-                try
-                {
-                    xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
-                }
-                catch
-                {
-                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-                    return;
-                }
-
-                if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
-                {
-                    Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
-                    return;
-                }
-
-                dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
-                dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
-
-                dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
-                dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
-                dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
-
-                dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
-                dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
-                dua.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot);
-                dua.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
-
-                _validar.ValidarDadosWebServiceDuaCFO(dua, numero, cpfCnpj, liberacao);
+				if(Validacao.EhValido)
+					_validar.ValidarDadosWebServiceDuaCFO(dua, numero, cpfCnpj, liberacao);
             }
             catch (Exception exc)
             {

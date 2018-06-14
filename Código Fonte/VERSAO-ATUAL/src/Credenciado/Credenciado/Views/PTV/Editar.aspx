@@ -25,7 +25,6 @@
 				    urlAssociarCultura: '<%= Url.Action("Caracterizacoes", "ConfiguracaoVegetal/AssociarCultura") %>',
 					urlVerificarNumeroPTV: '<%= Url.Action("VerificarNumeroPTV", "PTV") %>',
 					urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
-					urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',
 					urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>',
 					urlAssociarEmpreendimento: '<%= Url.Action("Associar","Empreendimento") %>',
 					urlAssociarDestinatario: '<%= Url.Action("DestinatarioModal","PTV") %>',
