@@ -88,10 +88,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
+    <Compile Include="TestClass\WSDUATest.cs" />
     <Compile Include="TestClass\CobrancaTest.cs" />
-    <Compile Include="TestClass\VrteTest.cs" />
-    <Compile Include="TestClass\ParametrizacaoTest.cs" />
-    <Compile Include="TestClass\NotificacaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ControllerContextMock.cs" />
   </ItemGroup>
@@ -120,6 +118,10 @@
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
       <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
       <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Credenciado\Credenciado.Model.WebService\Credenciado.Model.WebService.csproj">
+      <Project>{D285E05C-D1CA-4CA0-B9EE-C79E9B80B53B}</Project>
+      <Name>Credenciado.Model.WebService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interno\Interno.csproj">
       <Project>{7f61f31e-9dc8-4b3e-b372-3a7d4ab889b2}</Project>

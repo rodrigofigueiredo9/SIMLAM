@@ -10,8 +10,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 {
 	public class WSDUA
 	{
+		private string _arquivoCertificado { get; set; } = HttpContext.Current.Server.MapPath(@"~/Content/_chave/Chaves Pública e Privada.pfx");
 		private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
+
+		public WSDUA(string arquivoCertificado = "")
+		{
+			if (!string.IsNullOrWhiteSpace(arquivoCertificado))
+				this._arquivoCertificado = arquivoCertificado;
+		}
 
 		public DUA ObterDUA(string numeroDUA, string cpfCnpj, eTipoPessoa tipoPessoa = 0)
 		{
@@ -19,8 +26,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			{
 				string duaSenhaCertificado = _configSys.Obter<String>(ConfiguracaoSistema.KeyDUASenhaCertificado);
 
-				//var duaService = new DuaEService(HttpContext.Current.Server.MapPath(@"~/Content/_chave/Chaves Pública e Privada.pfx"), duaSenhaCertificado,"http://localhost:8888");
-				var duaService = new DuaEService(HttpContext.Current.Server.MapPath(@"~/Content/_chave/Chaves Pública e Privada.pfx"), duaSenhaCertificado);
+				var duaService = new DuaEService(_arquivoCertificado, duaSenhaCertificado);
 
 				if(tipoPessoa == 0)
 					tipoPessoa = cpfCnpj.Contains("/") ? eTipoPessoa.Juridica : eTipoPessoa.Fisica;
@@ -54,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			catch (Exception exc)
 			{
 				Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-				Log.Error("Erro na chamada do método ObterDUA: ", exc);
+				Log.Error("CATCH: ", exc);
 			}
 
 			return null;
