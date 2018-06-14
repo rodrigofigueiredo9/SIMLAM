@@ -1376,7 +1376,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 					}
 				}
 
-				comandtxt += comando.FiltroAndLike("l.assunto", "assunto", filtros.Dados.Assunto, true);
+				comandtxt += comando.FiltroAndLike("l.assunto", "assunto", filtros.Dados.Assunto, true, true);
 
 				comandtxt += $" and exists (select 1 from tab_funcionario_setor s where s.funcionario = {User.FuncionarioId} and (s.setor = l.setor_criacao_id or s.setor = l.setor_id) and l.tipo_id in (14, 15) or l.tipo_id not in (14, 15))";
 
