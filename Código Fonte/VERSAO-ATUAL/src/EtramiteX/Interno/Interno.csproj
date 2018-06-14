@@ -2178,6 +2178,9 @@
     <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <Content Include="Content\_pdfAspose\Laudo_de_Fiscalizacao_Novo.docx" />
     <Content Include="Content\_pdfAspose\Instrumento_Unico_Fiscalizacao.docx" />
+    <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />
