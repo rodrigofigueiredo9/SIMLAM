@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 				retorno.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
 				retorno.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
 				retorno.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
-				retorno.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot);
+				retorno.ValorTotal = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot;
 				retorno.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
 
 				return retorno;
