@@ -27,6 +27,7 @@ Cobranca = {
 
 	container: null,
 	pessoaModalInte: null,
+	flagObterFiscalizacao: false,
 
 	load: function (container, options) {
 		if (options) { $.extend(Cobranca.settings, options); }
@@ -55,10 +56,10 @@ Cobranca = {
 		Modal.abrir(Cobranca.settings.urls.fiscalizacaoPessoaModal, Cobranca.obter());
 	},
 
-	obter: function (obterFiscalizacao) {
+	obter: function () {
 		var container = Cobranca.container;
 
-		if (!obterFiscalizacao) obterFiscalizacao = false;
+		if (!Cobranca.flagObterFiscalizacao) Cobranca.flagObterFiscalizacao = false;
 
 		var obj = {
 			Id: $('.hdnCobrancaId', container).val(),
@@ -76,7 +77,7 @@ Cobranca = {
 			AutuadoPessoaId: $('.hdnAutuadoPessoaId', container).val(),
 			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val()),
 			Anexos: $('.fsArquivos', container).arquivo('obterObjeto'),
-			ObterFiscalizacao: obterFiscalizacao
+			ObterFiscalizacao: Cobranca.flagObterFiscalizacao
 		}
 		obj.UltimoParcelamento.ValorMulta = $('.txtValorMulta', container).val();
 		obj.UltimoParcelamento.ValorMultaAtualizado = $('.txtValorMultaAtualizado', container).val();
@@ -221,6 +222,7 @@ Cobranca = {
 			btnOkCallback: function (modalContent) {
 				Modal.fechar(modalContent);
 
+				Cobranca.flagObterFiscalizacao = false;
 				MasterPage.carregando(true);
 				$.ajax({
 					url: Cobranca.settings.urls.recalcular,
@@ -252,11 +254,11 @@ Cobranca = {
 		});
 	},
 
-	atualizar: function (obterFiscalizacao) {
-		MasterPage.carregando(true);
+	atualizar: function () {
+		MasterPage.carregando(true);		
 		$.ajax({
 			url: Cobranca.settings.urls.recalcular,
-			data: JSON.stringify(Cobranca.obter(obterFiscalizacao)),
+			data: JSON.stringify(Cobranca.obter()),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -408,7 +410,9 @@ Cobranca = {
 		}
 
 		$('.txtFiscalizacao', Cobranca.container).val(Fiscalizacao.Id);
-		Cobranca.atualizar(true);
+		
+		Cobranca.flagObterFiscalizacao = true;
+		Cobranca.atualizar();
 		MasterPage.carregando(false);
 
 		return true;

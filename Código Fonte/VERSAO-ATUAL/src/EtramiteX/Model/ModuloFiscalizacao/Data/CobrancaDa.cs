@@ -292,7 +292,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
                                     select c.id,
-											c.fiscalizacao,
+											c.fiscalizacao, f.id fiscalizacao_id,
 											coalesce(i.pessoa, i.responsavel, c.autuado) autuado,
 											c.codigoreceita,
 											(select lfc.texto
@@ -338,6 +338,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						cobranca = new Cobranca
 						{
 							Id = reader.GetValue<int>("id"),
+							FiscalizacaoId = reader.GetValue<int>("fiscalizacao_id"),
 							NumeroFiscalizacao = reader.GetValue<int>("fiscalizacao"),
 							ProcessoNumero = reader.GetValue<string>("protoc_num"),
 							NumeroAutuacao = reader.GetValue<string>("numero_autuacao"),

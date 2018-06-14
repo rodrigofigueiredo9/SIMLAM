@@ -9,27 +9,27 @@
     <div class="block">
         <div class="coluna15">
             <label>N° de Registro do Processo</label><br />
-            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtProcessoNumero setarFoco" }))%>
+            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtProcessoNumero setarFoco" }))%>
         </div>
         <div class="coluna15">
             <label>N° Autuação (SEP)</label><br />
-            <%= Html.TextBox("Cobranca.NumeroAutuacao", Model.Entidade.NumeroAutuacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroAutuacao" }))%>
+            <%= Html.TextBox("Cobranca.NumeroAutuacao", Model.Entidade.NumeroAutuacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtNumeroAutuacao" }))%>
         </div>
         <div class="coluna15">
             <label>N° Fiscalização</label><br />
-            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtFiscalizacao" }))%>
+            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtFiscalizacao" }))%>
         </div>
         <div class="coluna15">
             <label>N° AI / IUF *</label><br />
-            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroIUF" }))%>
+            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtNumeroIUF" }))%>
         </div>
         <div class="coluna15">
             <label>Série</label><br />
-			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0), new { @class = "text ddlSeries" }))%>
+			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0), new { @class = "text ddlSeries" }))%>
         </div>
         <div class="coluna15">
             <label>Data Emissão AI / IUF *</label><br />
-            <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
+            <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
         </div>
         <div class="coluna31">
             <label>Nome / Razão Social autuado *</label><br />
