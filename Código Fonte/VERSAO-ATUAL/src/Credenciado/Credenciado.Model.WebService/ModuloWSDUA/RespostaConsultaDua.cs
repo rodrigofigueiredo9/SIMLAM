@@ -85,7 +85,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 		public string VCred { get; set; }
 
 		[XmlElement(ElementName="vTot", Namespace="http://www.sefaz.es.gov.br/duae")]
-		public string VTot { get; set; }
+		public float VTot { get; set; }
 	}
 
 	[XmlRoot(ElementName="pgto", Namespace="http://www.sefaz.es.gov.br/duae")]
