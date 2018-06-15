@@ -16,7 +16,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public string Destinatario { get; set; }
 		public Int32 Situacao { get; set; }
 		public string CulturaCultivar { get; set; }
-
 		public int FuncionarioId { get; set; }
+		public int TipoDocumento { get; set; }
+		public string NumeroDocumento { get; set; }
+		public string Produtor { get; set; }
 	}
 }

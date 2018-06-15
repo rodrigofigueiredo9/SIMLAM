@@ -19,5 +19,8 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno
 
 		public const string KeyPTVSolicitacaoSituacao = "PTVSolicitacaoSituacao";
 		public List<Lista> PTVSolicitacaoSituacao { get { return _daLista.ObterPTVSolicitacaoSituacao(); } }
+
+		public const string KeyPTVTipoDocumentoOrigem = "PTVTipoDocumentoOrigem";
+		public List<Lista> PTVTipoDocumentoOrigem { get { return _daLista.ObterPTVTipoDocumentoOrigem(); } }
 	}
 }

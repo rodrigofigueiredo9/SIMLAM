@@ -21,11 +21,21 @@
 					<label for="Filtros_Numero">Número PTV</label>
 					<%= Html.TextBox("Filtros.Numero", string.Empty, new { @class = "text setarFoco maskNumInt", @maxlength="10" })%>
 				</div>
+				<div class="coluna20">
+						<label>Situação</label>
+						<%=Html.DropDownList("Filtros.Situacao", Model.Situacoes, new { @class="text" }) %>
+					</div>
 				<div class="coluna10">
 					<button class="inlineBotao btnBuscar">Buscar</button>
 				</div>
 			</div>
 			<div class="block hide">
+				<div class="block">
+					<div class="coluna60">
+						<label for="Filtros_Nome">Produtor</label>
+						<%= Html.TextBox("Filtros.Produtor", string.Empty, new { @class = "text", @maxlength="100" })%>
+					</div>					
+				</div>
 				<div class="block">
 					<div class="coluna60">
 						<label for="Filtros_Numero">Número DUA</label>
@@ -44,10 +54,7 @@
 						<label for="Filtros_Nome">Empreendimento</label>
 						<%= Html.TextBox("Filtros.Empreendimento", string.Empty, new { @class = "text", @maxlength="100" })%>
 					</div>
-					<div class="coluna20">
-						<label>Situação</label>
-						<%=Html.DropDownList("Filtros.Situacao", Model.Situacoes, new { @class="text" }) %>
-					</div>
+					
 				</div>
 				<div class="block">
 					<div class="coluna60">
@@ -57,6 +64,16 @@
 					<div class="coluna20">
 						<label>Cultura/Cultivar</label>
 						<%=Html.TextBox("Filtros.CulturaCultivar", string.Empty, new { @class="text ", @maxlength="100"})%>
+					</div>
+				</div>
+				<div class="block">
+					<div class="coluna60">
+						<label>Tipo do documento de origem</label>
+						<%=Html.DropDownList("Filtros.TipoDocumento", Model.TiposDocumentoOrigem, new { @class="text" }) %>
+					</div>
+					<div class="coluna20">
+						<label>N° do documento de origem</label>
+						<%=Html.TextBox("Filtros.NumeroDocumento", string.Empty, new { @class="text ", @maxlength="100"})%>
 					</div>
 				</div>
 			</div>
