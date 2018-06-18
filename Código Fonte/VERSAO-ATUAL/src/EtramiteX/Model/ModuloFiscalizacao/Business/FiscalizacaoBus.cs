@@ -459,8 +459,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				}
 
 				entidade.LocalInfracao = _daLocalInfracao.Obter(id, bancoDeDados);
-				//entidade.ComplementacaoDados = _daComplementacaoDados.Obter(id, bancoDeDados);
-				//entidade.Enquadramento = _daEnquadramento.Obter(id, bancoDeDados);
 				//entidade.Infracao = _daInfracao.ObterHistoricoPorFiscalizacao(id, bancoDeDados);
 				entidade.Infracao = _daInfracao.Obter(id, bancoDeDados);
 				entidade.ObjetoInfracao = _daObjetoInfracao.Obter(id, bancoDeDados);

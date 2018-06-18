@@ -334,7 +334,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             //apenas para carregar a aba
             if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;
-            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null) vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;   //fiscalizações antigas
+            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.FiscalizacaoId > 0) vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;   //fiscalizações antigas
 
             return View("Visualizar", vm);
         }
@@ -922,6 +922,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarObjetoInfracao(ObjetoInfracao entidade)
 		{
 			_busObjetoInfracao.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1300,6 +1302,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_busInfracao.Salvar(entidade);
 
+			if (!entidade.ComInfracao.Value)
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
+
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
 
@@ -1488,6 +1493,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)
 		{
 			_busMaterialApreendido.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1511,7 +1518,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Multa = multa,
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
 				//CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
-				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
 			};
 
 			vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
@@ -1546,7 +1553,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Multa = multa,
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
 				//CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
-				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(multa.CodigoReceitaId), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
 			};
 
 			vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
@@ -1573,6 +1580,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMulta(Multa entidade)
 		{
 			_busMulta.Salvar(entidade);
+			if(Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1655,6 +1664,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
 		{
 			_busOutrasPenalidades.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1732,6 +1743,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.InfracaoVM.CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: fiscalizacao.Infracao.CodigoReceitaId.GetValueOrDefault().ToString());
 			vm.InfracaoVM.Campos = fiscalizacao.Infracao.Campos;
 			vm.InfracaoVM.Perguntas = fiscalizacao.Infracao.Perguntas;
+
+			if (fiscalizacao.SituacaoAtualData.Data.Value.Year < 2018)
+			{
+				bool? falso = false;
+
+				fiscalizacao.ObjetoInfracao.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.ObjetoInfracao.NumeroIUF) ? null : falso;
+				fiscalizacao.MaterialApreendido.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.MaterialApreendido.NumeroIUF) ? null : falso;
+				fiscalizacao.Multa.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.Multa.NumeroIUF) ? null : falso;
+				fiscalizacao.OutrasPenalidades.IsDigital = null;
+			}
 
 			vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
 			vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
