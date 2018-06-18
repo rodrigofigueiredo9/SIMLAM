@@ -85,7 +85,7 @@ Cobranca = {
 		obj.UltimoParcelamento.Data1Vencimento = { DataTexto: $('.txtData1Vencimento', container).val() };
 		obj.UltimoParcelamento.DataEmissao = { DataTexto: $('.txtDataEmissao', container).val() };
 		obj.UltimoParcelamento.DUAS = Cobranca.obterListaParcelamento();
-		
+
 		return obj;
 	},
 
@@ -413,6 +413,7 @@ Cobranca = {
 		
 		Cobranca.flagObterFiscalizacao = true;
 		Cobranca.atualizar();
+		Cobranca.flagObterFiscalizacao = false;
 		MasterPage.carregando(false);
 
 		return true;
