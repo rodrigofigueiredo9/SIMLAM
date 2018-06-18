@@ -1,4 +1,6 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Publico.ViewModels.VMCARSolicitacao" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Publico.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Publico.ViewModels.VMCARSolicitacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
 
 <input type="hidden" class="paginaAtual" value="" />
@@ -26,6 +28,7 @@
 				<td title="<%= Html.Encode(item.MunicipioTexto)%>"><%= Html.Encode(item.MunicipioTexto)%></td>
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td>
+					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, InternoId = item.InternoId, SituacaoSolicitacaoId = item.SituacaoID, SituacaoSolicitacaoTexto = item.SituacaoTexto, SituacaoArquivoCarId = item.SituacaoArquivoCarID, SituacaoArquivoCarTexto = item.SituacaoArquivoCarTexto, UrlPdfReciboSICAR = item.UrlPdfReciboSICAR, Origem = item.Origem, ArquivoSICAR=item.ArquivoSICAR }) %>" />
 					<input type="hidden" class="itemId" value="<%= item.Id%>" />
 					<input type="hidden" class="isCredenciado" value="<%= item.IsCredenciado%>" />
 					<%if(item.IsTitulo){ %>
@@ -33,6 +36,10 @@
 					<%} else {%>
 						<input type="button" title="PDF da Solicitação" class="icone pdf btnPDF" />
 					<%} %>
+					<% if (item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoEntregue) 
+						{ %>
+                            <input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" />
+                    <% } %>
 				</td>
 			</tr>
 		<% } %>

@@ -341,21 +341,30 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				#region Quantidade de registro do resultado
 
 				comando.DbCommand.CommandText = String.Format(@"
-				select count(1) from (select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, null titulo_ano, 
-				s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
-				credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
-				s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo 
-				from lst_car_solic_tit s where s.tipo = 1 union all select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
-				s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
-				s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
-				s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo from lst_car_solic_tit s, hst_titulo ht, 
-				hst_empreendimento he, hst_empreendimento_responsavel her, hst_pessoa hp where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ 
-				and he.empreendimento_id = ht.empreendimento_id and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id 
-				and hp.tid = her.responsavel_tid and s.tipo = 2 union all select '' responsavel, c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, 
-				null titulo_numero, null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
-				c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
-				c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo 
-				from lst_car_solicitacao_cred c) l where 1 = 1" + comandtxt, esquemaBanco);
+				select count(1) from (
+				select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, 
+						null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
+						credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
+						s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo, tcs.situacao_envio 
+						from lst_car_solic_tit s, idaf.tab_controle_sicar tcs 
+				where s.tipo = 1 and s.solic_tit_id = tcs.solicitacao_car(+)        
+				union all         
+				select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
+						s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
+						s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
+						s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo, tcs.situacao_envio 
+				from lst_car_solic_tit s, hst_titulo ht, hst_empreendimento he, hst_empreendimento_responsavel her, hst_pessoa hp, idaf.tab_controle_sicar tcs 
+				where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ and he.empreendimento_id = ht.empreendimento_id 
+						and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid and s.tipo = 2  
+				and s.solic_tit_id = tcs.solicitacao_car(+)		
+        		union all
+				select '' responsavel, c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
+						null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
+						c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
+						c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo, tcs.situacao_envio 
+						from lst_car_solicitacao_cred c, idaf.tab_controle_sicar tcs
+				where c.solicitacao_id = tcs.solicitacao_car(+)
+							) l where 1 = 1" + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -363,21 +372,29 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = @"select l.solic_tit_id, l.responsavel ,nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, 
-				l.municipio_texto, l.situacao_texto, l.credenciado, l.origem, l.tipo from (select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, 
-				null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
-				credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
-				s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo 
-				from lst_car_solic_tit s where s.tipo = 1 union all select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
-				s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
-				s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
-				s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo from lst_car_solic_tit s, hst_titulo ht, hst_empreendimento he, 
-				hst_empreendimento_responsavel her, hst_pessoa hp where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ and he.empreendimento_id = ht.empreendimento_id 
-				and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid and s.tipo = 2 
-				union all select '' responsavel, c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
-				null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
-				c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
-				c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo 
-				from lst_car_solicitacao_cred c) l where 1 = 1" + comandtxt + DaHelper.Ordenar(colunas, ordenar);
+				l.municipio_texto, l.situacao_texto, l.credenciado, l.origem, l.tipo, l.situacao_envio from        
+				(select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, 
+						null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
+						credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
+						s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo, tcs.situacao_envio 
+						from lst_car_solic_tit s, idaf.tab_controle_sicar tcs 
+				where s.tipo = 1 and s.solic_tit_id = tcs.solicitacao_car(+)        
+				union all         
+				select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
+						s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
+						s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
+						s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo, tcs.situacao_envio 
+				from lst_car_solic_tit s, hst_titulo ht, hst_empreendimento he, hst_empreendimento_responsavel her, hst_pessoa hp, idaf.tab_controle_sicar tcs 
+				where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ and he.empreendimento_id = ht.empreendimento_id 
+						and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid and s.tipo = 2  
+				and s.solic_tit_id = tcs.solicitacao_car(+)		
+        		union all
+				select '' responsavel, c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
+						null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
+						c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
+						c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo, tcs.situacao_envio 
+						from lst_car_solicitacao_cred c, idaf.tab_controle_sicar tcs
+				where c.solicitacao_id = tcs.solicitacao_car(+)) l where 1 = 1" + comandtxt + DaHelper.Ordenar(colunas, ordenar);
 
 				comando.DbCommand.CommandText = String.Format(@"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor", esquemaBanco);
 
@@ -401,6 +418,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 						item.IsTitulo = reader.GetValue<int>("tipo") == 2;
 						item.CredenciadoId = reader.GetValue<int>("credenciado");
 						item.Origem = (eCARSolicitacaoOrigem)(reader.GetValue<int>("origem"));
+						item.SituacaoArquivoCarID = reader.GetValue<int>("situacao_envio");
 						retorno.Itens.Add(item);
 					}
 
@@ -411,6 +429,19 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 			}
 
 			return retorno;
+		}
+
+		internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+
+				comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<String>(comando);
+			}
 		}
 
 		#endregion
