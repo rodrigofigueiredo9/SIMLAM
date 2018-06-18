@@ -205,7 +205,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.responsavel		ResponsavelId,
 						   t.resp_propriedade	ResponsavelPropriedadeId,
 						   t.assinante			AssinantePropriedadeId,
-                           t.area_fiscalizacao  AreaFiscalizacao          
+                           t.area_fiscalizacao  AreaFiscalizacao,
+						   case when t.empreendimento is null then 0
+						   else 1 end DentroEmpreendimento
 					  from {0}tab_fisc_local_infracao t, 
 						   {0}lov_municipio l
 					 where t.municipio = l.id(+)
