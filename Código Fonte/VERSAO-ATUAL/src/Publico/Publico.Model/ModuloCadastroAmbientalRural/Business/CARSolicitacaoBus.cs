@@ -128,8 +128,8 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 
 			RequestJson requestJson = new RequestJson();
 
-			urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
-			//urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+			//urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+			urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
 
 			var strResposta = requestJson.Executar(urlGerar);
 
@@ -140,8 +140,8 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 				return string.Empty;
 			}
 
-			return UrlSICAR + resposta["dados"];  // PRODUCAO 
-			//return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+			//return UrlSICAR + resposta["dados"];  // PRODUCAO 
+			return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
 		}
 
 		#endregion
