@@ -1471,8 +1471,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						and i.origem_tipo = :origem_tipo
 						and i.origem = :origem
 						and i.cultivar = :cultivar
-						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_criacao) = :anoEmissao), 0)
+						and i.unidade_medida = :unidade_medida), 0)
 						+
 						/*EPTV*/
 						nvl((select sum(i.quantidade) quantidade
@@ -1482,7 +1481,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3
 						and t.id != :ptv), 0)
 						+
@@ -1494,7 +1492,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3), 0)) saldo_utilizado from dual";
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
@@ -1545,7 +1542,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					case eDocumentoFitossanitarioTipo.CFOC:
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando.AdicionarParametroEntrada("origem", origemID, DbType.Int32);
-						comando.AdicionarParametroEntrada("anoEmissao", anoEmissao, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						comando.AdicionarParametroEntrada("origem_numero", origemNumero, DbType.String);

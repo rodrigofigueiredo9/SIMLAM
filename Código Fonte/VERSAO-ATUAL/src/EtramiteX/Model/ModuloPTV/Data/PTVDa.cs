@@ -1277,8 +1277,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.origem_tipo = :origem_tipo
 						and i.origem = :origem
 						and i.cultivar = :cultivar
-						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_criacao) = :anoEmissao), 0)
+						and i.unidade_medida = :unidade_medida), 0)
 						+
 						/*EPTV*/
 						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
@@ -1288,7 +1287,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
@@ -1299,7 +1297,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3
 						and t.id != :ptv), 0)) saldo_utilizado from dual";
 						break;
@@ -1351,7 +1348,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					case eDocumentoFitossanitarioTipo.CFOC:
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando.AdicionarParametroEntrada("origem", origemID, DbType.Int32);
-						comando.AdicionarParametroEntrada("anoEmissao", anoEmissao, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						comando.AdicionarParametroEntrada("origem_numero", origemNumero, DbType.String);
@@ -2051,7 +2047,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                                 string cmdSql = string.Format(@"select distinct ld.Texto as DeclaracaoAdicionalTexto 
                                                                 from tab_cultivar_configuracao t, lov_cultivar_declara_adicional ld, tab_ptv_outrouf_declaracao ot, tab_cfoc_praga cfpraga
                                                                 where t.cultivar = {1} and ld.id = ot.declaracao_adicional and ot.ptv = {0} and cfpraga.praga = ot.praga and t.tipo_producao = {2}
-                                                                and cfpraga.cfoc = {3} ", kv.Value, cultivarID, tipoProducaoID, origem);
+                                                                and cfpraga.cfoc = {3} and t.praga = ot.praga", kv.Value, cultivarID, tipoProducaoID, origem);
 
                                 comandoCred = bancoDeDadosCred.CriarComando(cmdSql, UsuarioCredenciado);
 

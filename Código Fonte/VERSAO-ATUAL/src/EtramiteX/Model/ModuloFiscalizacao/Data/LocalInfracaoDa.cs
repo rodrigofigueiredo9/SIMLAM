@@ -63,10 +63,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				insert into {0}tab_fisc_local_infracao (id, fiscalizacao, setor, sis_coord, datum, area_abrang, lat_northing, lon_easting, hemisferio, 
-				municipio, pessoa, empreendimento, tid, local, responsavel, resp_propriedade, area_fiscalizacao)
+				municipio, pessoa, empreendimento, tid, local, responsavel, resp_propriedade, area_fiscalizacao, assinante)
 				values
 				({0}seq_tab_fisc_local_infracao.nextval, :fiscalizacao, :setor, :sis_coord, :datum, :area_abrang, :lat_northing, :lon_easting, :hemisferio, 
-				:municipio, :pessoa, :empreendimento, :tid, :local, :responsavel, :resp_propriedade, :area_fiscalizacao) returning id into :id", EsquemaBanco);
+				:municipio, :pessoa, :empreendimento, :tid, :local, :responsavel, :resp_propriedade, :area_fiscalizacao, :assinante) returning id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("fiscalizacao", localInfracao.FiscalizacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("setor", localInfracao.SetorId, DbType.Int32);
@@ -85,6 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("responsavel", localInfracao.ResponsavelId, DbType.Int32);
 				comando.AdicionarParametroEntrada("resp_propriedade", localInfracao.ResponsavelPropriedadeId, DbType.Int32);
                 comando.AdicionarParametroEntrada("area_fiscalizacao", localInfracao.AreaFiscalizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("assinante", (localInfracao.AssinantePropriedadeId == 0 ? null : localInfracao.AssinantePropriedadeId), DbType.Int32);
 
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -125,7 +126,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.local             = :local,
 						   t.responsavel       = :responsavel,
 						   t.resp_propriedade  = :resp_propriedade,
-                           t.area_fiscalizacao = :area_fiscalizacao
+                           t.area_fiscalizacao = :area_fiscalizacao,
+						   t.assinante         = :assinante
 					 where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("setor", localInfracao.SetorId, DbType.Int32);
@@ -144,6 +146,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("responsavel", localInfracao.ResponsavelId, DbType.Int32);
 				comando.AdicionarParametroEntrada("resp_propriedade", localInfracao.ResponsavelPropriedadeId, DbType.Int32);
                 comando.AdicionarParametroEntrada("area_fiscalizacao", localInfracao.AreaFiscalizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("assinante", localInfracao.AssinantePropriedadeId == 0 ? null : localInfracao.AssinantePropriedadeId, DbType.Int32);
 
 				comando.AdicionarParametroEntrada("id", localInfracao.Id, DbType.Int32);
 
@@ -201,6 +204,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						   t.local				Local,
 						   t.responsavel		ResponsavelId,
 						   t.resp_propriedade	ResponsavelPropriedadeId,
+						   t.assinante			AssinantePropriedadeId,
                            t.area_fiscalizacao  AreaFiscalizacao          
 					  from {0}tab_fisc_local_infracao t, 
 						   {0}lov_municipio l
@@ -222,7 +226,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				#region Responsaveis do Empreendimento
 
 				Comando comando = bancoDeDados.CriarComando(@"select tp.id, (case when lv.id != 9/*Outro*/ then lv.texto else ter.especificar end) 
-															|| ' - ' || nvl(tp.nome, tp.razao_social) nome_razao from tab_empreendimento_responsavel ter,
+															|| ' - ' || nvl(tp.nome, tp.razao_social) nome_razao, tp.cpf from tab_empreendimento_responsavel ter,
 															tab_pessoa tp, lov_empreendimento_tipo_resp lv where ter.tipo = lv.id(+) and ter.responsavel = tp.id
 															and ter.empreendimento = :empreendimento order by nome_razao", EsquemaBanco);
 
@@ -237,6 +241,44 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						item = new PessoaLst();
 						item.Id = Convert.ToInt32(reader["id"]);
 						item.Texto = reader["nome_razao"].ToString();
+						item.CPFCNPJ = reader["cpf"].ToString();
+						item.IsAtivo = true;
+						lst.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return lst;
+		}
+
+		internal List<PessoaLst> ObterAssinantes(int pessoaId)
+		{
+			List<PessoaLst> lst = new List<PessoaLst>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				#region Responsaveis do Empreendimento
+
+				Comando comando = bancoDeDados.CriarComando(@"select p.id, nvl(p.nome, p.razao_social) nome_razao, p.cpf
+					  from tab_pessoa_representante pr, tab_pessoa p, tab_pessoa_conjuge pc, tab_pessoa c
+					  where pr.representante = p.id and pr.pessoa = :pessoa_id
+					  and p.id = pc.pessoa (+) and pc.conjuge = c.id (+) order by p.nome", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("pessoa_id", pessoaId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					PessoaLst item;
+
+					while (reader.Read())
+					{
+						item = new PessoaLst();
+						item.Id = Convert.ToInt32(reader["id"]);
+						item.Texto = reader["nome_razao"].ToString();
+						item.CPFCNPJ = reader["cpf"].ToString();
 						item.IsAtivo = true;
 						lst.Add(item);
 					}
@@ -258,7 +300,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				#region Responsaveis do Empreendimento
 
 				Comando comando = bancoDeDados.CriarComando(@"select tp.pessoa_id id, (case when ter.tipo_id != 9 /*Outro*/ then ter.tipo_texto 
-															else ter.especificar end) || ' - ' || nvl(tp.nome, tp.razao_social) nome_razao from 
+															else ter.especificar end) || ' - ' || nvl(tp.nome, tp.razao_social) nome_razao, tp.cpf from 
 															{0}hst_empreendimento_responsavel ter, {0}hst_pessoa tp where ter.responsavel_id = 
 															tp.pessoa_id and ter.responsavel_tid = tp.tid and ter.empreendimento_id = :empreendimento
 															and ter.empreendimento_tid = :tid order by nome_razao", EsquemaBanco);
@@ -275,6 +317,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						item = new PessoaLst();
 						item.Id = Convert.ToInt32(reader["id"]);
 						item.Texto = reader["nome_razao"].ToString();
+						item.CPFCNPJ = reader["cpf"].ToString();
 						item.IsAtivo = true;
 						lst.Add(item);
 					}
@@ -297,6 +340,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				Comando comando = bancoDeDados.CriarComando(@"select t.id         Id,
 															t.fiscalizacao_id     FiscalizacaoId,
 															t.setor_id            SetorId,
+                                                            t.area_fiscalizacao   AreaFiscalizacao,
 															t.sis_coord_id        SistemaCoordId,
 															t.datum_id            Datum,
 															t.area_abrang         AreaAbrangencia,
@@ -313,7 +357,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															--t.data                dataFisc,
 															t.local               Local,
 															t.responsavel_id      ResponsavelId,
-															t.resp_propriedade_id ResponsavelPropriedadeId
+                                                            t.responsavel_tid     ResponsavelTid,
+															t.resp_propriedade_id ResponsavelPropriedadeId,
+															t.assinante_id		  AssinantePropriedadeId
 														from {0}hst_fisc_local_infracao t
 														where t.fiscalizacao_id = :fiscalizacao
 														and t.id_hst = (select max(id)
@@ -324,7 +370,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
 				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
 
-				localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
+                //localInfracao = bancoDeDados.ObterEntity<LocalInfracao>(comando/*, (IDataReader reader, LocalInfracao item) => { item.Data.DataTexto = reader.GetValue<DateTime>("dataFisc").ToString("dd/MM/yyyy"); }*/);
+
+                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+                {
+                    if (reader.Read())
+                    {
+                        localInfracao.Id = reader.GetValue<int>("Id");
+                        localInfracao.FiscalizacaoId = reader.GetValue<int>("FiscalizacaoId");
+                        localInfracao.SetorId = reader.GetValue<int>("SetorId");
+                        localInfracao.AreaFiscalizacao  = reader.GetValue<int?>("AreaFiscalizacao");
+                        localInfracao.SistemaCoordId = reader.GetValue<int>("SistemaCoordId");
+                        localInfracao.Datum  = reader.GetValue<int>("Datum");
+                        localInfracao.AreaAbrangencia  = reader.GetValue<string>("AreaAbrangencia");
+                        localInfracao.LatNorthing = reader.GetValue<string>("LatNorthing");
+                        localInfracao.LonEasting = reader.GetValue<string>("LonEasting");
+                        localInfracao.Hemisferio = reader.GetValue<int>("Hemisferio");
+                        localInfracao.MunicipioId  = reader.GetValue<int>("MunicipioId");
+                        localInfracao.MunicipioTexto = reader.GetValue<string>("MunicipioTexto");
+                        localInfracao.PessoaId  = reader.GetValue<int>("PessoaId");
+                        localInfracao.PessoaTid = reader.GetValue<string>("PessoaTid");
+                        localInfracao.EmpreendimentoId  = reader.GetValue<int>("EmpreendimentoId");
+                        localInfracao.EmpreendimentoTid = reader.GetValue<string>("EmpreendimentoTid");
+                        localInfracao.Tid = reader.GetValue<string>("Tid");
+                        localInfracao.Local = reader.GetValue<string>("Local");
+                        localInfracao.ResponsavelId  = reader.GetValue<int>("ResponsavelId");
+                        localInfracao.ResponsavelPropriedadeId = reader.GetValue<int>("ResponsavelPropriedadeId");
+                        localInfracao.AssinantePropriedadeId = reader.GetValue<int>("AssinantePropriedadeId");
+
+                        if (string.IsNullOrWhiteSpace(localInfracao.PessoaTid))
+                        {
+                            localInfracao.PessoaTid = reader.GetValue<string>("ResponsavelTid");
+                        }
+                    }
+
+                    reader.Close();
+                }
 			}
 			return localInfracao;
 		}

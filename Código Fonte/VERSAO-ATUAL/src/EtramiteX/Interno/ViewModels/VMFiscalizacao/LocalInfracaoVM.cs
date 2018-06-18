@@ -70,6 +70,13 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			set { _responsavel = value; }
 		}
 
+		private List<SelectListItem> _assinante = new List<SelectListItem>();
+		public List<SelectListItem> Assinante
+		{
+			get { return _assinante; }
+			set { _assinante = value; }
+		}
+
 		public LocalInfracao LocalInfracao { get; set; }
 		public Pessoa Pessoa { get; set; }
 
@@ -83,7 +90,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			Pessoa = new Pessoa();
 		}
 
-		public LocalInfracaoVM(LocalInfracao localInfracao, List<Estado> lstEstados, List<Municipio> lstMunicipios, List<Segmento> lstSegmentos, List<CoordenadaTipo> lstTiposCoordenada, List<Datum> lstDatuns, List<Fuso> lstFusos, List<CoordenadaHemisferio> lstHemisferios, List<Setor> lstSetores, Pessoa pessoa, List<PessoaLst> lstResponsaveis)
+		public LocalInfracaoVM(LocalInfracao localInfracao, List<Estado> lstEstados, List<Municipio> lstMunicipios, List<Segmento> lstSegmentos, List<CoordenadaTipo> lstTiposCoordenada, List<Datum> lstDatuns, List<Fuso> lstFusos, List<CoordenadaHemisferio> lstHemisferios, List<Setor> lstSetores, Pessoa pessoa, List<PessoaLst> lstResponsaveis, List<PessoaLst> lstAssinantes)
 		{
 			LocalInfracao = localInfracao;
 
@@ -112,7 +119,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao
 			if (this.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0)
 			{
 				Responsavel = lstResponsaveis.Count == 1 ? ViewModelHelper.CriarSelectList(lstResponsaveis, true, false) : ViewModelHelper.CriarSelectList(lstResponsaveis);
+				Assinante = lstResponsaveis.Count == 1 ? ViewModelHelper.CriarSelectList(lstResponsaveis.FindAll(x => !string.IsNullOrWhiteSpace(x.CPFCNPJ)), true, false) : ViewModelHelper.CriarSelectList(lstResponsaveis.FindAll(x => !string.IsNullOrWhiteSpace(x.CPFCNPJ)));
 			}
+			if (lstAssinantes?.Count > 0)
+				Assinante = ViewModelHelper.CriarSelectList(lstAssinantes, true, false);
 		}
 	}
 }

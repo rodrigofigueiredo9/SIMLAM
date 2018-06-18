@@ -12,6 +12,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 		public byte[] LogoBrasao { get; set; }
 		public byte[] LogoSimlam { get; set; }
 		public byte[] LogoEstado { get; set; }
+		public byte[] LogoNovo { get; set; }
 
 		public string GovernoNome { get; set; }
 		public string SecretariaNome { get; set; }
@@ -64,6 +65,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logoestado.png");
 			LogoEstado = File.ReadAllBytes(pathImg);
+
+			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpg");
+			LogoNovo = File.ReadAllBytes(pathImg);
+			LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 1.8f);
 
 			CabecalhoRodapeBus bus = new CabecalhoRodapeBus();
 			bus.ObterNomes(this);

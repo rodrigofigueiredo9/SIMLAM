@@ -40,7 +40,6 @@
 						<%if (Model.PodeVisualizar) {%><input type="button" title="PDF da Solicitação" class="icone pdf btnPDF" /><% } %>
 						<%if (!Model.PodeAssociar && Model.PodeVisualizar) {%><input type="button" title="Visualizar" class="icone visualizar btnVisualizar" /><% } %>
 						<%if (Model.PodeEditar && !item.IsCredenciado) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
-						<%if (Model.PodeExcluir && !item.IsCredenciado) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
 						<%if (Model.PodeAlterarSituacao) {%><input type="button" title="Alterar Situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
 						<% if (Model.PodeVisualizar) { %><input type="button" title="Enviar para o SICAR" class="icone enviar btnEnviar" /><% } %>
 						<% if (Model.PodeVisualizar && (item.SituacaoID == (int)eCARSolicitacaoSituacao.Pendente || item.SituacaoID == (int)eCARSolicitacaoSituacao.Suspenso || item.SituacaoID == (int)eCARSolicitacaoSituacao.Invalido) && (item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoReprovado || item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoRetificado)) 

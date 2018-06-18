@@ -27,8 +27,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
         public String HoraFiscalizacao { get; set; }
 		public String Municipio { get; set; }
 		public String UF { get; set; }
+		public String AreaFiscalizacao { get; set; }  //0 = DDSIA, 1 = DDSIV, 2 = DRNRE
 
-		
 
 		private EnderecoRelatorio _empEndereco = new EnderecoRelatorio();
 		public EnderecoRelatorio EmpEndereco

@@ -51,14 +51,14 @@
         <div class="block">
 			<div style="margin-top:7px" class="coluna75">
 				<label for="ObjetoInfracao_DescricaoTermoEmbargo">Descrição da interdição/embargo *</label>
-				<%= Html.TextBox("ObjetoInfracao.DescricaoTermoEmbargo", Model.Entidade.DescricaoTermoEmbargo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoTermoEmbargo", @maxlength = "150" }))%>
+				<%= Html.TextArea("ObjetoInfracao.DescricaoTermoEmbargo", Model.Entidade.DescricaoTermoEmbargo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtDescricaoTermoEmbargo", @maxlength = "570" }))%>
 			</div>
 		</div>
         
         <div class="block">
 			<div class="coluna75">
 				<label for="ObjetoInfracao_OpniaoAreaDanificada">Opinar quanto à interdição/embargo da área/atividade/produto, justificando sua manutenção ou a possibilidade de desinterdição/desembargo *</label>
-				<%= Html.TextArea("ObjetoInfracao.OpniaoAreaDanificada", Model.Entidade.OpniaoAreaDanificada, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtOpniaoAreaDanificada", @maxlength = "1000" }))%>
+				<%= Html.TextArea("ObjetoInfracao.OpniaoAreaDanificada", Model.Entidade.OpniaoAreaDanificada, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text media txtOpniaoAreaDanificada", @maxlength = "2000" }))%>
 			</div>
 		</div>
 

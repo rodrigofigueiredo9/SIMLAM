@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="partial.js" />
@@ -98,9 +98,14 @@ var PessoaTela = function () {
 		},
 
 		onBtnSalvarClick: function (_this, onCall) {
+			$(_this.currentTarget).prop('disabled', true);
 			MasterPage.carregando(true);
 			pessoaObj.salvar();
 			MasterPage.carregando(false);
+
+			setTimeout(function () {
+				$(_this.currentTarget).prop('disabled', false);
+			}, 2000)
 		},
 
 		onBtnEditarClick: function (_this, onCall) {

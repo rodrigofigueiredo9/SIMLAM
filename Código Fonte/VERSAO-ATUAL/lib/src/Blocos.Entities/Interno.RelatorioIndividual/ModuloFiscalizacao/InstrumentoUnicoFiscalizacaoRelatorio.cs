@@ -29,6 +29,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloFiscaliza
         public String DocumentoNome { get; set; }
 		public Byte[] LogoBrasao { get; set; }
         public Byte[] Logomarca { get; set; }
+		public Byte[] LogoNovo { get; set; }
 
 		#endregion
 

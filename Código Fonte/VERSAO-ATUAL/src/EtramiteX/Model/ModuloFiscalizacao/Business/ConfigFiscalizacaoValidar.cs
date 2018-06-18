@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao.Configuracoes;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -18,12 +20,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
-		public bool ExcluirTipoInfracao(int id) 
+		public bool ExcluirTipoInfracao(int id)
 		{
 			if (!_da.TipoIsAtivo(id))
 			{
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ExcluirTipoInfracaoDesativado);
-			}else
+			}
+			else
 			{
 				if (_da.TipoIsAssociadoFiscalizacao(id))
 				{
@@ -112,18 +115,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-        #region Penalidade
-        public bool SalvarPenalidade(Penalidade penalidade)
-        {
-            return Validacao.EhValido;
-        }
+		#region Penalidade
+		public bool SalvarPenalidade(Penalidade penalidade)
+		{
+			return Validacao.EhValido;
+		}
 
 
-        #endregion
+		#endregion
 
-        #region Campo
+		#region Campo
 
-        public bool SalvarCampoInfracao(Item campo)
+		public bool SalvarCampoInfracao(Item campo)
 		{
 			return Validacao.EhValido;
 		}
@@ -159,12 +162,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool SalvarPerguntaInfracao(PerguntaInfracao pergunta)
 		{
-			if (String.IsNullOrWhiteSpace(pergunta.Texto)) 
+			if (String.IsNullOrWhiteSpace(pergunta.Texto))
 			{
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.PerguntaNomeObrigatorio);
 			}
 
-			if (pergunta.Respostas.Count <= 0) 
+			if (pergunta.Respostas.Count <= 0)
 			{
 				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.RespostaListaObrigatoria);
 			}
@@ -233,93 +236,152 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		#endregion
 
-        #region Produtos Apreendidos / Destinação
+		#region Produtos Apreendidos / Destinação
 
-        public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
-        {
-            if (listaProdutos == null)
-            {
-                return Validacao.EhValido;
-            }
+		public bool SalvarProdutosApreendidos(List<ProdutoApreendido> listaProdutos)
+		{
+			if (listaProdutos == null)
+			{
+				return Validacao.EhValido;
+			}
 
-            foreach (var item in listaProdutos)
-            {
-                if (item.Excluir == false)
-                {
-                    if (String.IsNullOrWhiteSpace(item.Item))
-                    {
-                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
-                    }
+			foreach (var item in listaProdutos)
+			{
+				if (item.Excluir == false)
+				{
+					if (String.IsNullOrWhiteSpace(item.Item))
+					{
+						Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemProdutoObrigatorio);
+					}
 
-                    if (String.IsNullOrWhiteSpace(item.Unidade))
-                    {
-                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
-                    }
-                }
-            }
-
-
-            return Validacao.EhValido;
-        }
-
-        public bool SalvarDestinacao(List<DestinacaoProduto> listaDestinacao)
-        {
-            if (listaDestinacao == null)
-            {
-                return Validacao.EhValido;
-            }
-
-            foreach (var item in listaDestinacao)
-            {
-                if (item.Excluir == false)
-                {
-                    if (String.IsNullOrWhiteSpace(item.Destino))
-                    {
-                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DestinoObrigatorio);
-                    }
-                }
-            }
+					if (String.IsNullOrWhiteSpace(item.Unidade))
+					{
+						Validacao.Add(Mensagem.FiscalizacaoConfiguracao.UnidadeProdutoObrigatoria);
+					}
+				}
+			}
 
 
-            return Validacao.EhValido;
-        }
+			return Validacao.EhValido;
+		}
 
-        #endregion Produtos Apreendidos / Destinação
+		public bool SalvarDestinacao(List<DestinacaoProduto> listaDestinacao)
+		{
+			if (listaDestinacao == null)
+			{
+				return Validacao.EhValido;
+			}
 
-        #region Códigos da Receita
-
-        public bool SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
-        {
-            if (listaCodigosReceita == null)
-            {
-                return Validacao.EhValido;
-            }
-
-            foreach (var item in listaCodigosReceita)
-            {
-                if (item.Excluir == false)
-                {
-                    if (String.IsNullOrWhiteSpace(item.Codigo))
-                    {
-                        Validacao.Add(Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio);
-                    }
-
-                    //Não estou verificando a descrição para não obrigar que os códigos já cadastrados sejam todos editados
-                    //if (String.IsNullOrWhiteSpace(item.Descricao))
-                    //{
-                    //    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria);
-                    //}
-                }
-            }
+			foreach (var item in listaDestinacao)
+			{
+				if (item.Excluir == false)
+				{
+					if (String.IsNullOrWhiteSpace(item.Destino))
+					{
+						Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DestinoObrigatorio);
+					}
+				}
+			}
 
 
-            return Validacao.EhValido;
-        } 
- 
+			return Validacao.EhValido;
+		}
 
-        #endregion Códigos da Receita
+		#endregion Produtos Apreendidos / Destinação
 
-        public bool Salvar(ConfigFiscalizacao configuracao)
+		#region Códigos da Receita
+
+		public bool SalvarCodigosReceita(List<CodigoReceita> listaCodigosReceita)
+		{
+			if (listaCodigosReceita == null)
+			{
+				return Validacao.EhValido;
+			}
+
+			foreach (var item in listaCodigosReceita)
+			{
+				if (item.Excluir == false)
+				{
+					if (String.IsNullOrWhiteSpace(item.Codigo))
+					{
+						Validacao.Add(Mensagem.FiscalizacaoConfiguracao.CodigoReceitaObrigatorio);
+					}
+
+					//Não estou verificando a descrição para não obrigar que os códigos já cadastrados sejam todos editados
+					//if (String.IsNullOrWhiteSpace(item.Descricao))
+					//{
+					//    Validacao.Add(Mensagem.FiscalizacaoConfiguracao.DescricaoCodigoObrigatoria);
+					//}
+				}
+			}
+
+
+			return Validacao.EhValido;
+		}
+
+
+		#endregion Códigos da Receita
+
+		#region Vrte
+
+		public bool SalvarVrte(List<Vrte> listaVrte)
+		{
+			if (listaVrte == null)
+				return Validacao.EhValido;
+
+			foreach (var item in listaVrte)
+			{
+				if (item.Ano == 0)
+					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.AnoObrigatorio);
+
+				if (item.VrteEmReais == 0)
+					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.VrteObrigatorio);
+
+				var itemDuplicado = _da.ObterVrte(item.Ano);
+				if(itemDuplicado?.Id > 0 && itemDuplicado?.Id != item.Id)
+					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.VrteDuplicado);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		#endregion Vrte
+
+		#region Parametrizacao
+
+		public bool SalvarParametrizacao(Parametrizacao parametrizacao)
+		{
+			if (parametrizacao == null)
+				return Validacao.EhValido;
+
+			if (parametrizacao.CodigoReceitaId == 0)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ParCodigoReceitaObrigatorio);
+
+			if (!parametrizacao.InicioVigencia?.IsValido ?? true)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.InicioVigenciaObrigatorio);
+
+			if (parametrizacao.InicioVigencia?.IsValido ?? false)
+			{
+				var aux = _da.ObterParametrizacao(parametrizacao.CodigoReceitaId, parametrizacao.InicioVigencia?.Data ?? new DateTime());
+				if (aux != null && aux.Id != parametrizacao.Id)
+					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ParametrizacaoDuplicada);
+			}
+
+			if (parametrizacao.ValorMinimoPF == 0)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ValorMinimoPFObrigatorio);
+
+			if (parametrizacao.ValorMinimoPJ == 0)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ValorMinimoPJObrigatorio);
+
+			if ((parametrizacao.ParametrizacaoDetalhes?.Count ?? 0) == 0)
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ParametrizacaoDetalheObrigatorio);
+
+			return Validacao.EhValido;
+		}
+
+		#endregion Parametrizacao
+
+		public bool Salvar(ConfigFiscalizacao configuracao)
 		{
 			Mensagem msg = null;
 			List<string> lstMsg = new List<string>();
@@ -342,8 +404,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			if (configuracao.ItemId == 0)
 			{
-				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemObrigatorio);				
-			} 
+				Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ItemObrigatorio);
+			}
 			else if (!_da.ItemIsAtivo(configuracao.ItemId))
 			{
 				msg = Mensagem.FiscalizacaoConfiguracao.ItemDesativado("Item", configuracao.ItemTexto);
@@ -361,12 +423,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				}
 			}
 
-			configuracao.Subitens.ForEach(x => 
+			configuracao.Subitens.ForEach(x =>
 			{
 				if (!_da.SubitemIsAtivo(x.SubItemId))
 				{
 					lstMsg.Add(x.SubItemTexto);
-				}				
+				}
 			});
 
 			if (lstMsg.Count == 1)
@@ -384,7 +446,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			lstMsg = new List<string>();
 
-			configuracao.Perguntas.ForEach(x => 
+			configuracao.Perguntas.ForEach(x =>
 			{
 				if (!_da.PerguntaIsAtivo(x.PerguntaId))
 				{
@@ -407,7 +469,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			lstMsg = new List<string>();
 
-			configuracao.Campos.ForEach(x => 
+			configuracao.Campos.ForEach(x =>
 			{
 				if (!_da.CampoIsAtivo(x.CampoId))
 				{
@@ -444,7 +506,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				else
 				{
 					Validacao.Add(Mensagem.FiscalizacaoConfiguracao.ExcluirInvalidoPlural(Mensagem.Concatenar(lstFiscalizacao)));
-				}				
+				}
 			}
 			return Validacao.EhValido;
 		}

@@ -147,13 +147,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 			{
 				#region Empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select
+				Comando comando = bancoDeDados.CriarComando(@" select
 				e.id, e.codigo, ls.texto segmento_texto, ls.denominador, e.cnpj, e.denominador denominador_nome, e.tid, ee.zona, ee.municipio municipio_id,
-				(select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio, (select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
-				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
-				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto
-				from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls, {0}tab_empreendimento_endereco ee, {0}cnf_municipio_mod_fiscal cm
-				where e.atividade = a.id(+) and e.segmento = ls.id and ee.correspondencia = 0 and ee.empreendimento = e.id and ee.municipio = cm.municipio(+) and e.id = :id", EsquemaBanco);
+				(select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio, (select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge, 
+				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado, 
+				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto 
+				from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls, {0}tab_empreendimento_endereco ee, {0}cnf_municipio_mod_fiscal cm 
+				where e.atividade = a.id(+) and e.segmento = ls.id and ee.correspondencia = 0 and ee.empreendimento = e.id and ee.municipio = cm.municipio(+) and e.id = :id ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -195,9 +195,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 			{
 				#region Lista das caracterizações do empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select 'select '||t.id||' tipo,
-				a.id caracterizacao_id, a.tid caracterizacao_tid from {0}'||t.tabela||' a where a.empreendimento =:empreendimento and rownum = 1 union all ' campo
-				from {0}lov_caracterizacao_tipo t where t.id != :caracterizacao", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@" select 'select '||t.id||' tipo,
+				a.id caracterizacao_id, a.tid caracterizacao_tid from {0}'||t.tabela||' a where a.empreendimento =:empreendimento and rownum = 1 union all ' campo 
+				from {0}lov_caracterizacao_tipo t where t.id != :caracterizacao ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("caracterizacao", (int)eCaracterizacao.CadastroAmbientalRural, DbType.Int32);
 
@@ -213,16 +213,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 
 				#region CAR
 
-				select += @"(select TO_NUMBER(:caracterizacao) tipo, t.caracterizacao_id, nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id),
+                select += @"(select TO_NUMBER(:caracterizacao) tipo, t.caracterizacao_id, nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id),
 				(select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid
 				from (select a.id caracterizacao_id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento union
 				select a.id caracterizacao_id from crt_cad_ambiental_rural a where a.empreendimento = :empreendimento) t) union all ";
 
-				#endregion
+                /*
+                // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
+                select += @" ( select TO_NUMBER(22) tipo, t.caracterizacao_id,  
+                      nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id), 
+                          (select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid
+                from (select nvl((select a.id from crt_cad_ambiental_rural a where a.empreendimento = :empreendimento), 
+                      (select a.id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento)) caracterizacao_id from dual) t ) union all ";
 
-				if (!string.IsNullOrEmpty(select))
+                 */
+
+                #endregion
+
+                if (!string.IsNullOrEmpty(select))
 				{
-					comando = bancoDeDados.CriarComando(@"
+					comando = bancoDeDados.CriarComando(@" 
 						select lc.id                tipo,
 							   lc.texto             tipo_texto,
 							   pg_rascunho.id       projeto_rascunho_id,
@@ -233,7 +243,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 							   dscLicAtividade.id  dscLicAtividade_id,
 							   dscLicAtividade.tid dscLicAtividade_tid
 						  from {0}lov_caracterizacao_tipo lc,
-							   (" + select.Substring(0, select.Length - 10) + @") c,
+							   (" + select.Substring(0, select.Length - 10) + @" ) c,
 							   (select p.id, p.tid, p.empreendimento, p.caracterizacao from {0}crt_projeto_geo p where p.empreendimento = :empreendimento) pg,
 							   (select p.id, p.tid, p.empreendimento, p.caracterizacao from {0}tmp_projeto_geo p where p.empreendimento = :empreendimento) pg_rascunho,
 							   (select p.id, p.tid, p.empreendimento, p.caracterizacao from {0}crt_dsc_lc_atividade p where p.empreendimento = :empreendimento) dscLicAtividade
@@ -241,7 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 						   and lc.id = pg_rascunho.caracterizacao(+)
 						   and lc.id = c.tipo(+)
 						   and lc.id = dscLicAtividade.caracterizacao(+)
-						 order by lc.id", EsquemaBanco);
+						 order by lc.id ", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 					comando.AdicionarParametroEntrada("caracterizacao", (int)eCaracterizacao.CadastroAmbientalRural, DbType.Int32);

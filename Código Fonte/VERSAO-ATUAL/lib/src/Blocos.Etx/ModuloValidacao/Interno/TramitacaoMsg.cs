@@ -136,7 +136,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MotivoAtivado { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Motivo ativado com sucesso." }; } }
 		public Mensagem MotivoDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Motivo desativado com sucesso." }; } }
 		public Mensagem NomeJaAdicionado { get { return new Mensagem() { Campo = "#Inexistente, .txtMotivo", Tipo = eTipoMensagem.Advertencia, Texto = "Nome já adicionado." }; } }
-		
+
 		#endregion
+
+		public Mensagem NaoExisteNotificacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível tramitar o processo/documento, pois não existe notificação do autuado para esta fiscalização." }; } }
 	}
 }

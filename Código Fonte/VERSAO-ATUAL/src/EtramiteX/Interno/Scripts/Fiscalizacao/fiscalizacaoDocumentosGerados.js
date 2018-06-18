@@ -9,6 +9,7 @@ FiscalizacaoDocumentosGerados = {
 			pdfAuto: '',
 			pdfLaudo: '',
 			pdfIUF: '',
+            pdfIUFBloco: '',
 			pdfAcompanhamento: ''
 		},
 		situacao: 0
@@ -25,12 +26,14 @@ FiscalizacaoDocumentosGerados = {
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfAuto', 'click', FiscalizacaoDocumentosGerados.obterPdfAuto);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfLaudo', 'click', FiscalizacaoDocumentosGerados.obterPdfLaudo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUF', 'click', FiscalizacaoDocumentosGerados.onGerarPdfIUF);
+		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUFBloco', 'click', FiscalizacaoDocumentosGerados.onGerarPdfIUFBloco);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCroqui', 'click', FiscalizacaoDocumentosGerados.obterAnexo);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAcompanhamento', 'click', FiscalizacaoDocumentosGerados.obterAcompanhamento);
 
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCancelado', 'click', FiscalizacaoDocumentosGerados.obterAnexoCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfAutoCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfAutoCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfLaudoCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfLaudoCancelado);
+		FiscalizacaoDocumentosGerados.container.delegate('.btnPdfIUFCancelado', 'click', FiscalizacaoDocumentosGerados.obterPdfIUFCancelado);
 		FiscalizacaoDocumentosGerados.container.delegate('.btnAnexoCroquiCancelado', 'click', FiscalizacaoDocumentosGerados.obterAnexoCancelado);
 	},
 
@@ -48,6 +51,10 @@ FiscalizacaoDocumentosGerados = {
 
 	onGerarPdfIUF: function () {
 	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUF + "/" + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val());
+	},
+
+	onGerarPdfIUFBloco: function () {
+	    MasterPage.redireciona(FiscalizacaoDocumentosGerados.settings.urls.pdfIUFBloco + "/" + $(this).closest('td').find('.hdnArquivoIUFBlocoId').val());
 	},
 
 	obterAcompanhamento: function () {
@@ -72,6 +79,13 @@ FiscalizacaoDocumentosGerados = {
 																		+ '&historico=' + $('.hdnHistoricoId', $(this).closest('td')).val()
 																		+ '&id=' + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val();
 		MasterPage.redireciona(url);
+	},
+
+	obterPdfIUFCancelado: function () {
+	    var url = FiscalizacaoDocumentosGerados.settings.urls.pdfIUF + "/?arquivo=" + $('.hdnArquivoId', $(this).closest('td')).val()
+																		+ '&historico=' + $('.hdnHistoricoId', $(this).closest('td')).val()
+																		+ '&id=' + $('.hdnFiscalizacaoId', FiscalizacaoDocumentosGerados.container).val();
+	    MasterPage.redireciona(url);
 	}
 
 }

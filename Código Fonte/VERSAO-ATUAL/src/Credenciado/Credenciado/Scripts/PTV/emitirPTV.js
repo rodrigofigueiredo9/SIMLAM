@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/jquery.json-2.2.min.js" />
+/// <reference path="../Lib/jquery.json-2.2.min.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -77,8 +77,7 @@ PTVEmitir = {
 	cidadeID: null,
 
 	load: function (container, options) {
-
-
+		
 	    jQuery.fn.filterByText = function (textbox, selectSingleMatch) {
 	        return this.each(function () {
 	            var select = this;
@@ -175,27 +174,15 @@ PTVEmitir = {
 		    e.preventDefault();
 		    return false;
 		});
-
-
-		
-	    
-		
-
 		
 		if (window.location.href.indexOf("Visualizar") == -1) {
 		    PTVEmitir.onChangeLocalVistoria();
 		    $('#DataVistoria').change();
 		}
 		
-	      
-
 		$('#DataHoraVistoriaId').filterByText($('#DataVistoria'), false);
 		
         $('#DataVistoria').change();
-		
-
-		
-
 	},
 
 	verificarDUAEnter: function (e) {
@@ -1313,8 +1300,9 @@ PTVEmitir = {
 				if (response.Erros && response.Erros.length > 0) {
 					Mensagem.gerar(PTVEmitir.container, response.Erros);
 				}
+
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	}
 }

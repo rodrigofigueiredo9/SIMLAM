@@ -41,8 +41,8 @@
 	<table class="dataGridTable tabAnexos" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-                <th>Foto Nº</th>
-				<th>Arquivo</th>
+                <th width="10%">Foto Nº</th>
+				<th width="20%">Arquivo</th>
 				<th>Descrição</th>
 				<% if (!Model.IsVisualizar) { %><th width="15%">Ações</th><% } %>
 			</tr>

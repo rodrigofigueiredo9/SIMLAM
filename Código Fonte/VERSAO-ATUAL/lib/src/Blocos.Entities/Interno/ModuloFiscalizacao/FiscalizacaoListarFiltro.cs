@@ -6,9 +6,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 	public class FiscalizacaoListarFiltro
 	{
 		public String NumeroFiscalizacao { get; set; }
-		public String NumeroAIBloco { get; set; }
-		public String NumeroTEIBloco { get; set; }
-		public String NumeroTADBloco { get; set; }
+		public String NumeroAIIUFBloco { get; set; }
+		public String NumeroTEITADBloco { get; set; }
 
 		private ProtocoloNumero _protocolo = new ProtocoloNumero();
 		public ProtocoloNumero Protocolo
@@ -48,5 +47,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		public Int32 SetorTipo { get; set; }
 		public String SetorTipoTexto { get; set; }
 
+		public Int32 Serie { get; set; }
+		public String SerieTexto { get; set; }
+
+		public Int32 AreaFiscalizacao { get; set; }
+		public String AreaFiscalizacaoTexto { get; set; }
+
+		public Int32 Classificacao { get; set; }
+		public String ClassificacaoTexto { get; set; }
 	}
 }

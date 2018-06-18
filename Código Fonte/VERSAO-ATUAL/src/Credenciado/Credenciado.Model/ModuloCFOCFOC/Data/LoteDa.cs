@@ -853,7 +853,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_criacao) = :anoEmissao
 						and t.id != :lote), 0)
 						+
 						/*EPTV*/
@@ -864,7 +863,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
@@ -875,7 +873,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 						and i.origem = :origem
 						and i.cultivar = :cultivar
 						and i.unidade_medida = :unidade_medida
-						and extract (year from t.data_emissao) = :anoEmissao
 						and t.situacao != 3), 0)) saldo_utilizado from dual";
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
@@ -926,7 +923,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
 					case eDocumentoFitossanitarioTipo.CFOC:
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando.AdicionarParametroEntrada("origem", origemID, DbType.Int32);
-						comando.AdicionarParametroEntrada("anoEmissao", anoEmissao, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						comando.AdicionarParametroEntrada("origem_numero", origemNumero, DbType.String);
@@ -994,8 +990,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Data
                     reader.Close();
                 }
 
+                int dia = dataTitulo.Day;
+                if (DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) < dataTitulo.Day)
+                {
+                    dia = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                }
 
-                DateTime dataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dataTitulo.Day);
+                DateTime dataInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dia);
+
                 if (DateTime.Now.Day < dataTitulo.Day)
                 {
                     dataInicio = dataInicio.AddMonths(-1);

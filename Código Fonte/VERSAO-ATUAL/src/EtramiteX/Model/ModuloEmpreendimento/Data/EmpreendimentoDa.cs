@@ -958,6 +958,55 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			}
 		}
 
+		public Empreendimento ObterPorCodigo(long codigo, BancoDeDados banco = null)
+		{
+			Empreendimento empreendimento = new Empreendimento();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Empreendimento
+
+				Comando comando = bancoDeDados.CriarComando(@"select e.id, e.codigo, e.segmento, ls.texto segmento_texto, ls.denominador segmento_denominador, e.cnpj, e.denominador, 
+				e.nome_fantasia, e.atividade, a.atividade atividade_texto, e.tid from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls 
+				where e.atividade = a.id(+) and e.segmento = ls.id and e.codigo = :codigo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.Int64);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						empreendimento.Id = reader.GetValue<int>("id");
+						empreendimento.Tid = reader.GetValue<string>("tid");
+						empreendimento.Codigo = codigo;
+
+						if (reader["segmento"] != null && !Convert.IsDBNull(reader["segmento"]))
+						{
+							empreendimento.Segmento = Convert.ToInt32(reader["segmento"]);
+							empreendimento.SegmentoTexto = reader["segmento_texto"].ToString();
+							empreendimento.SegmentoDenominador = reader["segmento_denominador"].ToString();
+						}
+
+						empreendimento.CNPJ = reader["cnpj"].ToString();
+						empreendimento.Denominador = reader["denominador"].ToString();
+						empreendimento.NomeFantasia = reader["nome_fantasia"].ToString();
+
+						if (reader["atividade"] != null && !Convert.IsDBNull(reader["atividade"]))
+						{
+							empreendimento.Atividade.Id = Convert.ToInt32(reader["atividade"]);
+							empreendimento.Atividade.Atividade = reader["atividade_texto"].ToString();
+						}
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return empreendimento;
+		}
+
 		public Empreendimento Obter(int id, BancoDeDados banco = null)
 		{
 			Empreendimento empreendimento = new Empreendimento();
@@ -1629,6 +1678,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 
 			return responsaveis;
 		}
+
+		public List<Pessoa> ObterResponsaveis(string cnpj, BancoDeDados banco = null)
+		{
+			List<Pessoa> responsaveis = new List<Pessoa>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select 
+				p.id, nvl(p.nome, p.razao_social) nome_razao_social, nvl(p.cpf, p.cnpj) cpfCnpj
+				from tab_pessoa p
+				where p.cnpj = :cnpj
+				or exists
+				(select 1 from tab_pessoa_representante pr, tab_pessoa pc
+				  where pr.pessoa = pc.id
+				  and pc.cnpj = :cnpj
+				  and pr.representante = p.id)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("cnpj", cnpj, DbType.String);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					Pessoa pessoa = null;
+
+					while (reader.Read())
+					{
+						pessoa = new Pessoa();
+						pessoa.Id = Convert.ToInt32(reader["id"]);
+						pessoa.NomeRazaoSocial = reader["nome_razao_social"].ToString();
+						pessoa.CPFCNPJ = reader["cpfCnpj"].ToString();
+						responsaveis.Add(pessoa);
+					}
+
+					reader.Close();
+				}
+
+			}
+
+			return responsaveis;
+		}
+
 
 		public List<PessoaLst> ObterResponsaveisComTipo(int id, BancoDeDados banco = null)
 		{

@@ -12,6 +12,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 
 		public Arquivo.Arquivo PdfGeradoAutoTermo { get; set; }
 		public Arquivo.Arquivo PdfGeradoLaudo { get; set; }
+        public Arquivo.Arquivo PdfGeradoIUF { get; set; }
 
 		public Arquivo.Arquivo Croqui { get; set; }
 
@@ -31,6 +32,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		{
 			PdfGeradoAutoTermo = new Arquivo.Arquivo();
 			PdfGeradoLaudo = new Arquivo.Arquivo();
+            PdfGeradoIUF = new Arquivo.Arquivo();
 
 			SituacaoData = new DateTecno();
 			Croqui = new Arquivo.Arquivo();

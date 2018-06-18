@@ -103,7 +103,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.SVCRelatorio
 			{
 				if (c.DadosAte == null)
 				{
-					throw new Exception(c.Fato + " - DadosAte não pode ser nula.");
+					throw new Exception(c.Fato + " - Dados Ate não pode ser nula.");
 				}
 
 				if ((DateTime.Now - c.DadosAte) < menor)
