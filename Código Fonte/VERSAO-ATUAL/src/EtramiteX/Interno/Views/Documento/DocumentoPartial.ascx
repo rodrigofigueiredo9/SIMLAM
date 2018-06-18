@@ -129,7 +129,7 @@
             </div>
             <div class="coluna20 prepend2">
                 <label>Telefone</label>
-                <%= Html.TextBox("Documento.InteressadoLivreTelefone", Model.Documento.InteressadoLivreTelefone, new { @class = "text txtInteressadoLivreTelefone maskFone", @maxlength = 13 })%>
+                <%= Html.TextBox("Documento.InteressadoLivreTelefone", Model.Documento.InteressadoLivreTelefone, new { @class = "text txtInteressadoLivreTelefone maskPhoneCell", @maxlength = 13 })%>
             </div>
 
             <!--/div-->

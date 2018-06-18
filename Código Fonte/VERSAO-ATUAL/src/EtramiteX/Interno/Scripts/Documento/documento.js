@@ -1,5 +1,6 @@
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="Lib/mask/jquery.maskMoney-1.4.1.js" />
 
 var Documento = function () {
 	var primeiraVez = true;
@@ -88,6 +89,7 @@ var Documento = function () {
 			container.delegate('.btnLimparFiscalizacao', 'click', _objRef.onLimparFiscalizacao);
 			container.delegate('.btnVisualizarFiscalizacao', 'click', _objRef.onAbrirVisualizarFiscalizacao);
 			container.delegate('.ddlSetoresDestinatario', 'click', _objRef.destinatarioSetorChange);
+			container.delegate('.maskPhoneCell', 'keyup', _objRef.setarMaskTelefone);
 
 
 			container.delegate('.ddlAssinanteSetores', 'change', _objRef.onSelecionarSetor);
@@ -179,6 +181,13 @@ var Documento = function () {
 			var linha = $(this).closest('tr');
 			linha.remove();
 			Listar.atualizarEstiloTable(container.find('.dataGridTable'));
+		},
+
+		setarMaskTelefone: function () {
+			if (this.value[5] == '9')
+				$(this).unmask().mask("(99) 99999-9999");
+			else
+				$(this).unmask().mask("(99) 9999-9999");
 		},
 
 		destinatarioSetorChange: function () {
