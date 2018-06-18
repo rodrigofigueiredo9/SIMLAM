@@ -573,15 +573,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 			}
 		}
 
-		public static List<Lista> PTVTipoDocumentoOrigem
-		{
-			get
-			{
-				GerenciadorConfiguracao<ConfiguracaoPTV> configuracao = new GerenciadorConfiguracao<ConfiguracaoPTV>(new ConfiguracaoPTV());
-				return configuracao.Obter<List<Lista>>(ConfiguracaoPTV.KeyPTVTipoDocumentoOrigem);
-			}
-		}
-
 		public static List<Lista> TipoTransporte
 		{
 			get

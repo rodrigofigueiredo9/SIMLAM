@@ -43,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao, ListaCredenciadoBus.PTVTipoDocumentoOrigem);
+			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao, ListaCredenciadoBus.DocumentosFitossanitario);
 			return View(vm);
 		}
 

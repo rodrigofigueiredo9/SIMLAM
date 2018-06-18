@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Lib/jquery.json-2.2.min.js" />
@@ -33,6 +33,7 @@ EPTVListar = {
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
 		container.delegate('.btnHistorico', 'click', EPTVListar.historico);
 		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.comunicador);
+		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
@@ -133,5 +134,13 @@ EPTVListar = {
 				});
 			},
 			Modal.tamanhoModalMedia);
+	},
+			
+	onChangeTipoDocumento: function () {
+		debugger;
+		if ($(this).val() > 0)
+			$('.txtNumeroDocumento', EPTVListar.container).toggleClass('hide', false);
+		else
+			$('.txtNumeroDocumento', EPTVListar.container).toggleClass('hide', true);
 	}
 }

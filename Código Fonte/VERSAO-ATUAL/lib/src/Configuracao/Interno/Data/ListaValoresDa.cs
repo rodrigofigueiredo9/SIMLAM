@@ -2019,25 +2019,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			}
 
 			return lst;
-		}
-
-		internal List<Lista> ObterPTVTipoDocumentoOrigem()
-		{
-			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select l.id, l.texto from LOV_DOC_FITOSSANITARIOS_TIPO l order by l.id");
-
-			foreach (var item in daReader)
-			{
-				lst.Add(new Lista()
-				{
-					Id = item["id"].ToString(),
-					Texto = item["texto"].ToString(),
-					IsAtivo = true
-				});
-			}
-
-			return lst;
-		}		
+		}	
 
 		internal List<Lista> ObterPTVUnidadeMedida()
 		{

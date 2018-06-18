@@ -69,11 +69,11 @@
 				<div class="block">
 					<div class="coluna60">
 						<label>Tipo do documento de origem</label>
-						<%=Html.DropDownList("Filtros.TipoDocumento", Model.TiposDocumentoOrigem, new { @class="text" }) %>
+						<%=Html.DropDownList("Filtros.TipoDocumento", Model.TiposDocumentoOrigem, new { @class="text ddlTipoDocumento" }) %>
 					</div>
-					<div class="coluna20">
+					<div class="coluna20  txtNumeroDocumento hide">
 						<label>N° do documento de origem</label>
-						<%=Html.TextBox("Filtros.NumeroDocumento", string.Empty, new { @class="text ", @maxlength="100"})%>
+						<%=Html.TextBox("Filtros.NumeroDocumento", string.Empty, new { @class="text", @maxlength="100"})%>
 					</div>
 				</div>
 			</div>
