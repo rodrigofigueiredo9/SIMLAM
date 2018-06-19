@@ -746,6 +746,12 @@
     <Content Include="Content\_imgLogo\logo_entrada.png" />
     <Content Include="Content\_imgLogo\logo_idaf_versoes.jpg" />
     <Content Include="Content\_imgLogo\logo_login.png" />
+    <Content Include="Content\_imgLogo\logo_novo.jpeg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\_imgLogo\logo_novo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\_imgLogo\logo_topo.png" />
     <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
     <Content Include="Content\_img\add.png" />
