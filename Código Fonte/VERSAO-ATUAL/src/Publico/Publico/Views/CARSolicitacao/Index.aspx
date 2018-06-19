@@ -8,6 +8,7 @@
 	<script type="text/javascript">
 		$(function () {
 			CARSolicitacaoListar.load($('#central'));
+			CARSolicitacaoListar.urlBaixarDemonstrativoCAR= '<%= Url.Action("BaixarDemonstrativoCar", "CARSolicitacao")%>'; 
 		});
 	</script>
 </asp:Content>
