@@ -19,6 +19,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int FuncionarioId { get; set; }
 		public int TipoDocumento { get; set; }
 		public string NumeroDocumento { get; set; }
-		public string Produtor { get; set; }
+		public string Interessado { get; set; }
 	}
 }

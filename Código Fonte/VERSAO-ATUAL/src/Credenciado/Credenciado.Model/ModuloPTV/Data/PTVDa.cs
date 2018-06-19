@@ -790,6 +790,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				string comandtxt = string.Empty;
 				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
 				Comando comando = bancoDeDados.CriarComando("");
+				string tabelaTipoDoc = String.Empty;
+				string amarracaoTipoDoc = String.Empty;
 
 				#region Adicionando Filtros
 
@@ -817,34 +819,40 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					comandtxt += comando.FiltroAndLike("c.texto||'/'||cc.cultivar", "cultura_cultivar", filtro.Dados.CulturaCultivar, true, true);
 				}
-				if (!String.IsNullOrEmpty(filtro.Dados.Produtor))
+				if (!String.IsNullOrEmpty(filtro.Dados.Interessado))
 				{
-					comandtxt += comando.FiltroAndLike("c.produtor", "produtor", filtro.Dados.Produtor, true, true);
-				}
-
-				string tabelaTipoDoc = String.Empty;
-				string amarracaoTipoDoc = String.Empty;
-			
+					var consulta = "(SELECT COALESCE(P.NOME, P.RAZAO_SOCIAL, PT.RESPONSAVEL_SEM_DOC) FROM IDAF.TAB_PESSOA P WHERE P.ID = PT.RESPONSAVEL_EMP)";
+					comandtxt += comando.FiltroAndLike(consulta, "interessado", filtro.Dados.Interessado, likeInicio: true);
+				}			
 				if (filtro.Dados.TipoDocumento > 0)
 				{
 					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
 					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
 					{
-						var numeroDocumentoOrigem = filtro.Dados.NumeroDocumento.Split('/').ToList();
-						var numeroDO = numeroDocumentoOrigem.ElementAt(0) ?? "";
-						var serieDO = numeroDocumentoOrigem.ElementAt(1) ?? "";
-
-							switch (filtro.Dados.TipoDocumento)
+						switch (filtro.Dados.TipoDocumento)
 						{
 							case (int)eDocumentoFitossanitarioTipo.CFO:
 								tabelaTipoDoc = ", {0}TAB_CFO CFO  ";
 								amarracaoTipoDoc = " and pr.origem = CFO.ID ";
-								comandtxt += comando.FiltroAnd("CFO.numero", "numeroDocOrigem", numeroDO);
-								comandtxt += comando.FiltroAndLike("CFO.serie", "serieDocOrigem", serieDO, true);
+								comandtxt += comando.FiltroAndLike("CFO.numero||'/'||CFO.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
+
+							case (int)eDocumentoFitossanitarioTipo.CFOC:
+								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_CFOC CFOC  ");
+								amarracaoTipoDoc = " and pr.origem = CFOC.ID ";
+								comandtxt += comando.FiltroAndLike("CFOC.numero||'/'||CFOC.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTV:
+								comandtxt += comando.FiltroAndLike("pt.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_PTV_OUTROUF PO  ");
+								amarracaoTipoDoc = " and pr.origem = PO.ID ";
+								comandtxt += comando.FiltroAndLike("PO.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;							
 						}
-						//comandtxt += comando.FiltroAndLike("c.numeroDocOrigem", "numeroDocOrigem", numeroDO, true, true);
-						//comandtxt += comando.FiltroAndLike("c.serieDocOrigem", "serieDocOrigem", serieDO, true, true);
 					}
 				}
 

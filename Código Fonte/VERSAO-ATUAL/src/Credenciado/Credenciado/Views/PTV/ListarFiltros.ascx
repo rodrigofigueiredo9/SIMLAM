@@ -31,9 +31,9 @@
 			</div>
 			<div class="block hide">
 				<div class="block">
-					<div class="coluna60">
-						<label for="Filtros_Nome">Produtor</label>
-						<%= Html.TextBox("Filtros.Produtor", string.Empty, new { @class = "text", @maxlength="100" })%>
+					<div class="coluna81 append1">
+						<label for="Filtros_Nome">Interessado</label>
+						<%= Html.TextBox("Filtros.Interessado", string.Empty, new { @class = "text", @maxlength="100", @style="width:100%;"  })%>
 					</div>					
 				</div>
 				<div class="block">
@@ -50,9 +50,9 @@
 				</div>
 
 				<div class="block">
-					<div class="coluna60">
+					<div class="coluna81 append1">
 						<label for="Filtros_Nome">Empreendimento</label>
-						<%= Html.TextBox("Filtros.Empreendimento", string.Empty, new { @class = "text", @maxlength="100" })%>
+						<%= Html.TextBox("Filtros.Empreendimento", string.Empty, new { @class = "text", @maxlength="100", @style="width:100%;" })%>
 					</div>
 					
 				</div>
