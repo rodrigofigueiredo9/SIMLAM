@@ -90,7 +90,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 				comando.AdicionarParametroEntrada("fiscalizacao", cobranca.NumeroFiscalizacao > 0 ? cobranca.NumeroFiscalizacao : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("autuado", cobranca.AutuadoPessoaId, DbType.Int32);
 				comando.AdicionarParametroEntrada("codigoreceita", cobranca.CodigoReceitaId, DbType.Int32);
-				comando.AdicionarParametroEntrada("serie", cobranca.SerieId, DbType.Int32);
+				comando.AdicionarParametroEntrada("serie", cobranca.SerieId > 0 ? cobranca.SerieId : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_numero", cobranca.NumeroIUF, DbType.Int32);
 				comando.AdicionarParametroEntrada("iuf_data", cobranca.DataEmissaoIUF.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("protoc_num", cobranca.ProcessoNumero, DbType.String);

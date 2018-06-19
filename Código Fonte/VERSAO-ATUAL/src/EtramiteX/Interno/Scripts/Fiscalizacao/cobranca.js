@@ -152,6 +152,7 @@ Cobranca = {
 	},
 
 	alterarParcelas: function () {
+		debugger;
 		Modal.confirma({
 			btCancelLabel: 'Não',
 			url: Cobranca.settings.urls.confirm,
@@ -245,7 +246,7 @@ Cobranca = {
 						}
 						MasterPage.load();
 						MasterPage.redimensionar();
-						Cobranca.load(Cobranca.container);
+						$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
 						Mascara.load(Cobranca.container);
 					}
 				});
@@ -277,7 +278,7 @@ Cobranca = {
 				}
 				MasterPage.load();
 				MasterPage.redimensionar();
-				Cobranca.load(Cobranca.container);
+				$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
 				Mascara.load(Cobranca.container);
 			}
 		});
