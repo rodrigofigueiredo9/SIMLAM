@@ -76,7 +76,7 @@
 	<div class="block">
 		<div class="coluna30 append2">
 			<label>Vistoria para aprovação do CAR? *</label>
-			<%= Html.DropDownList("VistoriaAprovacaoCAR", Model.VistoriaAprovacaoCAR, ViewModelHelper.SetaDisabled(Model.IsBloquearCampos, new { @class = "ddlVistoriaAprovacaoCAR campoEditavel" }))%>
+			<%= Html.DropDownList("VistoriaAprovacaoCAR", Model.ListaBooleanVistoria, ViewModelHelper.SetaDisabled(Model.IsBloquearCampos, new { @class = "text ddlVistoriaAprovacaoCAR campoEditavel" }))%>
 		</div>
 
 		<div class="coluna30 <%: Model.Caracterizacao.VistoriaAprovacaoCAR > 0 ? "" : "hide" %>">
