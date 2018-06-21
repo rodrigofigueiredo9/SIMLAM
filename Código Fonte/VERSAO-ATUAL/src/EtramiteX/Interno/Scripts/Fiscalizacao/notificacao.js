@@ -115,6 +115,6 @@ Notificacao = {
 
 	cobrancaVisualizar: function () {
 		var obj = Notificacao.obter();
-		MasterPage.redireciona(Notificacao.settings.urls.cobrancaVisualizar + "/?fiscalizacaoId=" + obj.FiscalizacaoId + "&origem=notificacao");
+		MasterPage.redireciona(Notificacao.settings.urls.cobrancaVisualizar + "/0?fiscalizacaoId=" + obj.FiscalizacaoId + "&origem=notificacao");
 	}
 }
