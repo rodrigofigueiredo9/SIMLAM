@@ -154,7 +154,7 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 					return RedirectToAction("Index", Validacao.QueryParamSerializer());
 				}
 
-				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR", resultado, "application/pdf");
+				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR.pdf", resultado, "application/pdf");
 			}
 			catch (Exception exc)
 			{
