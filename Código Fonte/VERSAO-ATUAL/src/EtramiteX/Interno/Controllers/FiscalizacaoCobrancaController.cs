@@ -37,7 +37,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Cobranca(int? id) => View(this.GetCobrancaVM(id));
+		public ActionResult Cobranca(int? id, int? fiscalizacaoId) => View(this.GetCobrancaVM(id, fiscalizacaoId));
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
@@ -99,6 +99,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			var cobranca = entidade ?? (fiscalizacaoId > 0 ? _bus.ObterByFiscalizacao(fiscalizacaoId.GetValueOrDefault(0)) :
 				_bus.Obter(cobrancaId.GetValueOrDefault(0))) ?? new Cobranca();
+
+			if (fiscalizacaoId > 0)
+				cobranca.NumeroFiscalizacao = fiscalizacaoId;
 
 			if (entidade != null)
 			{
