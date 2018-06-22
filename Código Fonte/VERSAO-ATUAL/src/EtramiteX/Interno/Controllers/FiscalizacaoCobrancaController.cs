@@ -17,7 +17,6 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao;
-using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -163,7 +162,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var ultimoParcelamento = cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => Convert.ToBoolean(x?.DataEmissao?.IsValido)) ?? new CobrancaParcelamento(fiscalizacao);
 			if ((ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0) || entidade != null)
 			{
-				ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);
+				if((ultimoParcelamento.DUAS?.Count(x => x.Id > 0) ?? 0) == 0)
+					ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);
 				_bus.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
 
