@@ -56,8 +56,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 				while (nextItem != null)
 				{
-					Log.Error($"BEGIN EnviarCar {DateTime.Now.ToString("r")}");
-
 					//Update item as Started
 					//LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
 
@@ -66,7 +64,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     if (item.Requisicao == null)
                     {
                         nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-                        continue;
+						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
+						continue;
                     }
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
@@ -152,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado ?? "" } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
-						Log.Error("CATCH:" + ex.Message, ex);
+						Log.Error("CATCH:" + nextItem.Requisicao + " =====> " + ex.Message, ex);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
@@ -166,7 +165,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//	File.Delete(pathArquivoTemporario + nextItem.Requisicao);
 					//}
 					//catch (Exception) { /*ignored*/ }
-					Log.Error($"ENDING EnviarCar {DateTime.Now.ToString("r")}");
 				}
 
 				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
