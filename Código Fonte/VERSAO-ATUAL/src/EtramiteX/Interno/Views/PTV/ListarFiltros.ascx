@@ -64,13 +64,6 @@
 						<%=Html.TextBox("Filtros.NumeroDocumento", string.Empty, new { @class="text", @maxlength="100"})%>
 					</div>
 				</div>
-				<div class="block">
-					<div class="coluna20">
-						<input type="checkbox" class="checkbox" <%= Model.Filtros.SomenteEptv ? "checked" : "" %> onclick="$('.hdnSomenteEptv').val(this.checked);"/>
-						<input name="Filtros.SomenteEptv" type="hidden" value="<%= Model.Filtros.SomenteEptv ? "true" : "false" %>" class="hdnSomenteEptv">
-						<label class="labelCheckBox">Somente EPTVs</label>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
