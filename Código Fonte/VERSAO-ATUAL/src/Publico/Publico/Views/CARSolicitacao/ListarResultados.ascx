@@ -36,7 +36,7 @@
 					<%} else {%>
 						<input type="button" title="PDF da Solicitação" class="icone pdf btnPDF" />
 					<%} %>
-					<% if (item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoEntregue) 
+					<% if (item.SituacaoID == (int)eCARSolicitacaoSituacao.Valido || item.SituacaoID == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR) 
 						{ %>
                             <input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" />
                     <% } %>
