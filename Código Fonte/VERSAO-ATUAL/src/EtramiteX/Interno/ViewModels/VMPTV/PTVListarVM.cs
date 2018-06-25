@@ -45,8 +45,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 		}
 
 		public List<SelectListItem> Situacoes { get; set; }
-		
-		public PTVListarVM(List<Lista> lstSituacoes) 
+		public List<SelectListItem> TiposDocumentoOrigem { get; set; }
+
+		public PTVListarVM(List<Lista> lstSituacoes)
 		{
 			this.Situacoes = ViewModelHelper.CriarSelectList(lstSituacoes);
 		}

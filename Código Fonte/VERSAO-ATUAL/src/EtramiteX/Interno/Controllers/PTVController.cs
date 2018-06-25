@@ -46,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Index()
 		{
 			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
+			vm.TiposDocumentoOrigem = ViewModelHelper.CriarSelectList(_busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 

@@ -137,7 +137,6 @@ EPTVListar = {
 	},
 			
 	onChangeTipoDocumento: function () {
-		debugger;
 		if ($(this).val() > 0)
 			$('.txtNumeroDocumento', EPTVListar.container).toggleClass('hide', false);
 		else

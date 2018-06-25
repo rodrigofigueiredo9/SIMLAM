@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Lib/jquery.json-2.2.min.js" />
 PTVListar = {
@@ -28,6 +28,7 @@ PTVListar = {
 		container.delegate('.btnExcluir', 'click', PTVListar.excluir);
 		container.delegate('.btnAtivar', 'click', PTVListar.ativar);
 		container.delegate('.btnCancelar', 'click', PTVListar.cancelar);
+		container.delegate('.ddlTipoDocumento', 'change', PTVListar.onChangeTipoDocumento);
 		
 		Aux.setarFoco(container);
 		PTVListar.container = container;
@@ -147,5 +148,12 @@ PTVListar = {
 				MasterPage.carregando(false);
 			}, 'Confirmar');
 		});
+	},
+
+	onChangeTipoDocumento: function () {
+		if ($(this).val() > 0)
+			$('.txtNumeroDocumento', PTVListar.container).toggleClass('hide', false);
+		else
+			$('.txtNumeroDocumento', PTVListar.container).toggleClass('hide', true);
 	}
 }

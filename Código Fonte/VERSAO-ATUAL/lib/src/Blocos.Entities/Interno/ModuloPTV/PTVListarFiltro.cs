@@ -20,5 +20,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int TipoDocumento { get; set; }
 		public string NumeroDocumento { get; set; }
 		public string Interessado { get; set; }
+		public bool SomenteEptv { get; set; }
 	}
 }
