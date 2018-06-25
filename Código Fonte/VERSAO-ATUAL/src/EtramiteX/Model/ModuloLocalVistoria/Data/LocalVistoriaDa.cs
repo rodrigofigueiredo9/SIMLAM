@@ -228,22 +228,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 List<int> listaIdExcluir = new List<int>();
+                List<int> listaIdExcluirLogico = new List<int>();
 
                 Comando cmdConsulta = bancoDeDados.CriarComando(@"select lv.id from {0}CNF_LOCAL_VISTORIA lv where lv.setor = :setorId", EsquemaBanco);
                 cmdConsulta.DbCommand.CommandText += cmdConsulta.AdicionarNotIn("and", "lv.id", DbType.Int32, local.DiasHorasVistoria.Select(x => x.Id).ToList());
                 cmdConsulta.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(cmdConsulta))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(cmdConsulta))
                 {
                     while (reader.Read())
                     {
-                        listaIdExcluir.Add(reader.GetValue<int>("id"));
+						int dataVistoriaId = reader.GetValue<int>("id");				
+						if(PossuiHorarioAssociado(dataVistoriaId, banco: banco) > 0)
+							listaIdExcluirLogico.Add(dataVistoriaId);
+						else
+							listaIdExcluir.Add(dataVistoriaId);
                     }
 
                     reader.Close();
                 }
 
-                if (listaIdExcluir.Count > 0)
+                if (listaIdExcluir.Count > 0 || listaIdExcluirLogico.Count > 0)
                 {
                     Comando cmdUpdate = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA set tid = :tid where ", EsquemaBanco);
                     cmdUpdate.DbCommand.CommandText += cmdUpdate.AdicionarIn("", "id", DbType.Int32, listaIdExcluir);
@@ -256,17 +261,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                         Historico.Gerar(idExcluido, eHistoricoArtefato.localvistoria, eHistoricoAcao.excluir, bancoDeDados);
                     }
 
-                    Comando comando = bancoDeDados.CriarComando("delete from {0}cnf_local_vistoria lv where lv.setor = :setorId ", EsquemaBanco);
-                    comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "lv.id", DbType.Int32, local.DiasHorasVistoria.Select(x => x.Id).ToList());
-                    comando.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
-                    bancoDeDados.ExecutarNonQuery(comando);
-                }
+					if (listaIdExcluir.Count > 0)
+					{
+						Comando cmdDelete = bancoDeDados.CriarComando("delete from {0}cnf_local_vistoria lv where lv.setor = :setorId ", EsquemaBanco);
+						cmdDelete.DbCommand.CommandText += cmdDelete.AdicionarIn("and", "lv.id", DbType.Int32, listaIdExcluir);
+						cmdDelete.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
+						bancoDeDados.ExecutarNonQuery(cmdDelete);
+					}
 
+					if (listaIdExcluirLogico.Count > 0)
+					{
+						Comando comando = bancoDeDados.CriarComando("update {0}cnf_local_vistoria lv set situacao = 0 where lv.setor = :setorId ", EsquemaBanco);
+						comando.DbCommand.CommandText += comando.AdicionarIn("and", "lv.id", DbType.Int32, listaIdExcluirLogico);
+						comando.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+				}
 
                 bancoDeDados.Commit();
-
             }
-
         }
 
         internal List<DiaHoraVistoria> Listar()
@@ -276,7 +289,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             return lista;
 
         }
-
 
         internal LocalVistoria Obter(int idsetor, BancoDeDados banco)
         {
@@ -371,7 +383,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
-
                 Comando comando = bancoDeDados.CriarComando(@" select count(*) from cnf_local_vistoria lc
                                                               inner join idafcredenciado.tab_ptv ptv on ptv.local_vistoria = lc.setor 
                                                               and ptv.data_hora_vistoria = lc.id and data_vistoria is not null
@@ -389,18 +400,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
         }
 
 
-        internal int PossuiHorarioAssociado(int localId, BancoDeDados banco = null) 
+        internal int PossuiHorarioAssociado(int dataVistoriaId, bool validarFuturo = false,  BancoDeDados banco = null) 
         {
 
             int qtdAssociacao = 0;
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
             {
+                Comando comando = bancoDeDados.CriarComando(@"select count(l.id) qtdLocalVistoria from {0}tab_ptv l
+									where l.data_hora_vistoria = :data_vistoria_id" + (validarFuturo ? " and l.data_vistoria > (sysdate - 1)" : ""), UsuarioCredenciado);
+                comando.AdicionarParametroEntrada("data_vistoria_id", dataVistoriaId, DbType.Int32);
 
-                Comando comando = bancoDeDados.CriarComando(@"select count(l.id) qtdLocalVistoria from {0}tab_ptv l where l.local_vistoria = :LocalId", UsuarioCredenciado);
-                comando.AdicionarParametroEntrada("LocalId", localId, DbType.Int32);
-
-               qtdAssociacao =  bancoDeDados.ExecutarScalar<int>(comando);
+				qtdAssociacao =  bancoDeDados.ExecutarScalar<int>(comando);
             }
             return qtdAssociacao;
 

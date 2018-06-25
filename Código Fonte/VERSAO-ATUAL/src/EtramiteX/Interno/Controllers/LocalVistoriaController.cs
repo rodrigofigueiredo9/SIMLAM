@@ -109,7 +109,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.LocalVistoriaOperar })]
 		public ActionResult PodeExcluir(DiaHoraVistoria DiaHora)
 		{
-			bool verificaPode = _localVistoriaBus.VerificaPodeExcluir(DiaHora);
+			bool verificaPode = _localVistoriaBus.VerificaPodeExcluir(DiaHora, true);
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
