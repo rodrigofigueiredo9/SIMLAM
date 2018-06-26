@@ -144,7 +144,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString() } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, tipo: "gerar-car", catchEnviar: true);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString() } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, tipo: "gerar-car");
 					}
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
@@ -508,89 +508,99 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
             var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 
-			var builder = new StringBuilder();
-			builder.Append(imovel.logradouro);
-			builder.Append(",");
-			builder.Append(imovel.numero);
-			builder.Append(",");
-			builder.Append(imovel.complemento);
-			builder.Append(" - ");
-			builder.Append(imovel.bairro);
-			builder.Append(",");
-			builder.Append(imovel.distrito);
-			builder.Append(",");
-			builder.Append(imovel.corrego);
-
-			var descricaoAcesso = builder.ToString();
-
-			var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
-			var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
-            var eCorrespondencia = new EnderecoCorrespondencia();
-
-            if (endCorrespondencia != null)
-            {
-                
-                
-                eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
-                eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
-                eCorrespondencia.complemento =
-                    (complementoCorrespondencia.Length > 100
-                        ? complementoCorrespondencia.Substring(0, 100)
-                        : complementoCorrespondencia);
-                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
-                eCorrespondencia.cep = endCorrespondencia.cep;
-                eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
-                
-            }
-            else
-            {
-
-                eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
-                eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
-                eCorrespondencia.complemento =
-                    (complementoCorrespondencia.Length > 100
-                        ? complementoCorrespondencia.Substring(0, 100)
-                        : complementoCorrespondencia);
-                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
-                eCorrespondencia.cep = imovel.cep;
-                eCorrespondencia.codigoMunicipio = imovel.municipio;
-                
-            }
-
-			car.imovel = new Imovel()
+			try
 			{
-				nome = imovel.denominador ?? string.Empty,
-				codigoMunicipio = imovel.municipio,
-				cep = imovel.cep,
-				descricaoAcesso = (descricaoAcesso.Length > 1000 ? descricaoAcesso.Substring(0, 1000) : descricaoAcesso),
-				zonaLocalizacao = (imovel.zona == 1 ? Imovel.ZonaUrbana : Imovel.ZonaRural),
-				email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
-				telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
-				modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
-                enderecoCorrespondencia = eCorrespondencia				
-			};
+				var builder = new StringBuilder();
+				builder.Append(imovel.logradouro);
+				builder.Append(",");
+				builder.Append(imovel.numero);
+				builder.Append(",");
+				builder.Append(imovel.complemento);
+				builder.Append(" - ");
+				builder.Append(imovel.bairro);
+				builder.Append(",");
+				builder.Append(imovel.distrito);
+				builder.Append(",");
+				builder.Append(imovel.corrego);
 
-            car = ObterDadosRetificacao(conn, schema, car, requisicao);
+				var descricaoAcesso = builder.ToString();
 
-			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
-			car.proprietariosPosseirosConcessionarios = proprietarios;
+				var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
+				var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
+				var eCorrespondencia = new EnderecoCorrespondencia();
 
-			car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid);
+				if (endCorrespondencia?.id > 0)
+				{
 
-			var cpfCpnjProprietarios = proprietarios.Select(proprietario => proprietario.cpfCnpj).ToList();
-			foreach (var documento in car.documentos)
-			{
-				documento.proprietariosPosseirosConcessionarios = cpfCpnjProprietarios;
+
+					eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
+					eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
+					eCorrespondencia.complemento =
+						(complementoCorrespondencia.Length > 100
+							? complementoCorrespondencia.Substring(0, 100)
+							: complementoCorrespondencia);
+					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+					eCorrespondencia.cep = endCorrespondencia.cep;
+					eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
+
+				}
+				else
+				{
+
+					eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
+					eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
+					eCorrespondencia.complemento =
+						(complementoCorrespondencia.Length > 100
+							? complementoCorrespondencia.Substring(0, 100)
+							: complementoCorrespondencia);
+					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+					eCorrespondencia.cep = imovel.cep;
+					eCorrespondencia.codigoMunicipio = imovel.municipio;
+
+				}
+
+				car.imovel = new Imovel()
+				{
+					nome = imovel.denominador ?? string.Empty,
+					codigoMunicipio = imovel.municipio,
+					cep = imovel.cep,
+					descricaoAcesso = (descricaoAcesso.Length > 1000 ? descricaoAcesso.Substring(0, 1000) : descricaoAcesso),
+					zonaLocalizacao = (imovel.zona == 1 ? Imovel.ZonaUrbana : Imovel.ZonaRural),
+					email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
+					telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
+					modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
+					enderecoCorrespondencia = eCorrespondencia
+				};
+
+				car = ObterDadosRetificacao(conn, schema, car, requisicao);
+
+				var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
+				car.proprietariosPosseirosConcessionarios = proprietarios;
+
+				car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid);
+
+				var cpfCpnjProprietarios = proprietarios.Select(proprietario => proprietario.cpfCnpj).ToList();
+				foreach (var documento in car.documentos)
+				{
+					documento.proprietariosPosseirosConcessionarios = cpfCpnjProprietarios;
+				}
+
+				//car.Informações já auto-geradas ao instanciar um objeto CAR
+
+				car.geo = ObterGeometriasImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.caracterizacao_id, requisicao.caracterizacao_tid, requisicao.projeto_geografico_id, requisicao.projeto_geografico_tid);
+
+				//Atualizar código do protocolo com as informações do código do município do empreendimento
+				car.origem.codigoProtocolo = string.Format("{0}-{1}-{2}", CarUtils.ObterCodigoUF(car.imovel.codigoMunicipio), car.imovel.codigoMunicipio, car.origem.codigoProtocolo);
+
+				return car;
 			}
-
-			//car.Informações já auto-geradas ao instanciar um objeto CAR
-
-			car.geo = ObterGeometriasImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.caracterizacao_id, requisicao.caracterizacao_tid, requisicao.projeto_geografico_id, requisicao.projeto_geografico_tid);
-
-			//Atualizar código do protocolo com as informações do código do município do empreendimento
-			car.origem.codigoProtocolo = string.Format("{0}-{1}-{2}", CarUtils.ObterCodigoUF(car.imovel.codigoMunicipio), car.imovel.codigoMunicipio, car.origem.codigoProtocolo);
-
-			return car;
+			catch (Exception erro)
+			{
+				Log.Error(String.Concat("\n car: ", JsonConvert.SerializeObject(car), " \n imovel: ",
+					(imovel != null ? JsonConvert.SerializeObject(imovel) : " is null"), "\n endereco",
+					(endCorrespondencia != null ? JsonConvert.SerializeObject(endCorrespondencia) : " is null"), "\n\n"), erro);
+				throw erro;
+			}
 		}
 
 		/// <summary>

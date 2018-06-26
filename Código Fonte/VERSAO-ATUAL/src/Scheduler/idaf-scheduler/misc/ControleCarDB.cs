@@ -413,6 +413,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			try
 			{
+				if (conn.State == ConnectionState.Broken || conn.State == ConnectionState.Closed)
+					Log.Error("Conexão fechada ou quebrada.");
+
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("empreendimento", requisicao.empreendimento));
@@ -423,7 +426,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					using (var dr = cmd.ExecuteReader())
 					{
 						if (!dr.Read())
+						{
+							if(dr.IsClosed)
+								Log.Error(String.Concat("ObterItemControleCar: dr is closed. ", " - Estado da conexão: ", conn.State.ToString()));
+							else
+								Log.Error(String.Concat("ObterItemControleCar: não foi possível ler a consulta. ", " - Estado da conexão: ", conn.State.ToString()));
+
 							return null;
+						}
 
 						item = new ItemControleCar()
 						{
