@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
-using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
-using Tecnomapas.Blocos.Entities.Configuracao.Interno;
-
-using System.Web.Mvc;
-
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 {
-    class LocalVistoriaDa
+	class LocalVistoriaDa
     {
         #region Propriedades
 
@@ -30,7 +25,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
         {
             get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
         }
-
 
         #endregion
 
@@ -100,7 +94,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             }
         }
 
-
         internal void Criar(BloqueioLocalVistoria bloq, int idsetor, BancoDeDados banco)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -123,8 +116,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
                 bancoDeDados.Commit();
             }
         }
-
-
 
         internal void Criar(DiaHoraVistoria local, int idsetor, BancoDeDados banco) 
         {
@@ -174,7 +165,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             }
         }
 
-
         internal void ExcluirTodosNaoAssociadosBloqueio(LocalVistoria local, BancoDeDados banco)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -221,8 +211,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
         }
 
-
-
         internal void ExcluirTodosNaoAssociados(LocalVistoria local, BancoDeDados banco)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -250,19 +238,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
                 if (listaIdExcluir.Count > 0 || listaIdExcluirLogico.Count > 0)
                 {
-                    Comando cmdUpdate = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA set tid = :tid where ", EsquemaBanco);
-                    cmdUpdate.DbCommand.CommandText += cmdUpdate.AdicionarIn("", "id", DbType.Int32, listaIdExcluir);
-                    cmdUpdate.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                    bancoDeDados.ExecutarNonQuery(cmdUpdate);
-
-                    foreach (int idExcluido in listaIdExcluir)
-                    {
-                        // Gerando historico para todos os itens excluidos
-                        Historico.Gerar(idExcluido, eHistoricoArtefato.localvistoria, eHistoricoAcao.excluir, bancoDeDados);
-                    }
 
 					if (listaIdExcluir.Count > 0)
 					{
+						Comando cmdUpdate = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA set tid = :tid where ", EsquemaBanco);
+						cmdUpdate.DbCommand.CommandText += cmdUpdate.AdicionarIn("", "id", DbType.Int32, listaIdExcluir);
+						cmdUpdate.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+						bancoDeDados.ExecutarNonQuery(cmdUpdate);
+
+						foreach (int idExcluido in listaIdExcluir)
+						{
+							// Gerando historico para todos os itens excluidos
+							Historico.Gerar(idExcluido, eHistoricoArtefato.localvistoria, eHistoricoAcao.excluir, bancoDeDados);
+						}
+
 						Comando cmdDelete = bancoDeDados.CriarComando("delete from {0}cnf_local_vistoria lv where lv.setor = :setorId ", EsquemaBanco);
 						cmdDelete.DbCommand.CommandText += cmdDelete.AdicionarIn("and", "lv.id", DbType.Int32, listaIdExcluir);
 						cmdDelete.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
@@ -271,6 +260,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
 					if (listaIdExcluirLogico.Count > 0)
 					{
+						Comando cmdUpdate = bancoDeDados.CriarComando(@"update {0}CNF_LOCAL_VISTORIA set tid = :tid where ", EsquemaBanco);
+						cmdUpdate.DbCommand.CommandText += cmdUpdate.AdicionarIn("", "id", DbType.Int32, listaIdExcluirLogico);
+						cmdUpdate.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+						bancoDeDados.ExecutarNonQuery(cmdUpdate);
+
+						foreach (int idExcluido in listaIdExcluirLogico)
+						{
+							// Gerando historico para todos os itens excluidos
+							Historico.Gerar(idExcluido, eHistoricoArtefato.localvistoria, eHistoricoAcao.excluir, bancoDeDados);
+						}
+
 						Comando comando = bancoDeDados.CriarComando("update {0}cnf_local_vistoria lv set situacao = 0 where lv.setor = :setorId ", EsquemaBanco);
 						comando.DbCommand.CommandText += comando.AdicionarIn("and", "lv.id", DbType.Int32, listaIdExcluirLogico);
 						comando.AdicionarParametroEntrada("setorId", local.SetorID, DbType.Int32);
@@ -287,7 +287,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             List<DiaHoraVistoria> lista = new List<DiaHoraVistoria>();
 
             return lista;
-
         }
 
         internal LocalVistoria Obter(int idsetor, BancoDeDados banco)
@@ -297,7 +296,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
                 Comando comando = bancoDeDados.CriarComando(@"select lv.id, lv.setor, lv.dia_semana dia_semana_id, dia.texto dia_semana_texto, lv.hora_inicio, lv.hora_fim, lv.situacao, lv.tid 
-                                                              from {0}cnf_local_vistoria lv, {0}lov_dia_semana dia where dia.id=lv.dia_semana and lv.setor = :id", EsquemaBanco);
+                                                              from {0}cnf_local_vistoria lv, {0}lov_dia_semana dia where dia.id=lv.dia_semana and lv.situacao <> 0 and lv.setor = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("id", idsetor, DbType.Int32);
 
@@ -399,7 +398,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
             return qtdAssociacao;
         }
 
-
         internal int PossuiHorarioAssociado(int dataVistoriaId, bool validarFuturo = false,  BancoDeDados banco = null) 
         {
 
@@ -418,8 +416,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
         }
 
         #endregion
-
-
 
         public List<Setor> ObterSetorAgrupadorTecnico()
         {
@@ -441,7 +437,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
             return lst;
         }
-
 
         internal Resultados<LocalVistoriaListar> Filtrar(Filtro<LocalVistoriaListar> filtros)
         {
@@ -474,7 +469,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
                 #region Quantidade de registro do resultado
 
-                comando.DbCommand.CommandText = String.Format(@"select count(distinct(lv.setor)) from {0}cnf_local_vistoria lv, {0}tab_setor s where s.id=lv.setor and lv.id > 0  " + comandtxt, esquemaBanco);
+                comando.DbCommand.CommandText = String.Format(@"select count(distinct(lv.setor)) from {0}cnf_local_vistoria lv, {0}tab_setor s where s.id=lv.setor and lv.situacao <> 0 and lv.id > 0  " + comandtxt, esquemaBanco);
 
                 retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -483,7 +478,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Data
 
 
                 comandtxt = String.Format(@"select distinct(lv.setor) setor_id, s.nome nome_setor 
-                                            from {0}cnf_local_vistoria lv, {0}tab_setor s where s.id=lv.setor" + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+                                            from {0}cnf_local_vistoria lv, {0}tab_setor s where s.id=lv.setor and lv.situacao <> 0" + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 
                 comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 

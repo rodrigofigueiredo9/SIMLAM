@@ -1,33 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMLocalVistoria;
-using Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business;
-using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
-
-using Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria;
-
-using Tecnomapas.EtramiteX.Interno.ViewModels.VMConfiguracaoVegetal;
-using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal;
-using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
-using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Praga;
-
-using Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Business;
-
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
 	public class LocalVistoriaController : Controller
 	{
-
 		#region Propriedades
 
 		//GrupoQuimicoBus _grupoQuimicoBus = new GrupoQuimicoBus();
@@ -118,7 +105,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		}
 
-
         [Permite(RoleArray = new Object[] { ePermissao.LocalVistoriaOperar })]
         public ActionResult PodeAcrescentarBloqueio(string datInicial, string datFinal, int setorId)
         {
@@ -134,8 +120,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }, JsonRequestBehavior.AllowGet);
 
         }
-
-
 
 		[Permite(RoleArray = new Object[] { ePermissao.LocalVistoriaOperar })]
 		public ActionResult SalvarLocalVistoria(LocalVistoria local)
@@ -202,7 +186,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm)
 			}, JsonRequestBehavior.AllowGet);
 		}
-
 
 		#endregion
 	}
