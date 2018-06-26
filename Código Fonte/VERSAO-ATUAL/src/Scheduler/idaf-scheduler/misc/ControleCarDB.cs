@@ -408,7 +408,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("T.URL_RECIBO,T.STATUS_SICAR,T.CONDICAO,T.SOLICITACAO_CAR_ESQUEMA,NVL(T.SOLICITACAO_PASSIVO, 0)SOLICITACAO_PASSIVO, ");
 			sqlBuilder.Append("NVL(T.SOLICITACAO_SITUACAO_APROVADO, 2)SOLICITACAO_SITUACAO_APROVADO FROM " + schema + ".TAB_CONTROLE_SICAR t WHERE ");
 			sqlBuilder.Append("t.empreendimento = :empreendimento /*AND t.empreendimento_tid = :empreendimento_tid */");
-			sqlBuilder.Append("AND t.solicitacao_car = :solicitacao_car AND t.solicitacao_car_tid = :solicitacao_car_tid ");
+			sqlBuilder.Append("AND t.solicitacao_car = :solicitacao_car /*AND t.solicitacao_car_tid = :solicitacao_car_tid */");
 			sqlBuilder.Append("AND rownum = 1 ORDER BY id DESC");
 
 			try
@@ -418,7 +418,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("empreendimento", requisicao.empreendimento));
 					//cmd.Parameters.Add(new OracleParameter("empreendimento_tid", requisicao.empreendimento_tid));
 					cmd.Parameters.Add(new OracleParameter("solicitacao_car", requisicao.solicitacao_car));
-					cmd.Parameters.Add(new OracleParameter("solicitacao_car_tid", requisicao.solicitacao_car_tid));
+					//cmd.Parameters.Add(new OracleParameter("solicitacao_car_tid", requisicao.solicitacao_car_tid));
 
 					using (var dr = cmd.ExecuteReader())
 					{
