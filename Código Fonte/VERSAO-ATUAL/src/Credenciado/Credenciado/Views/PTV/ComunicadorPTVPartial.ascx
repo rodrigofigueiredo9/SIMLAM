@@ -75,7 +75,7 @@
 	</div>
 
 	<div class="block box">
-		<label for="Mensagem">Justificativa *</label>
+		<label for="Mensagem">Mensagem</label>
 		<% if (Model.Comunicador.liberadoCredenciado) { %>
 			<%= Html.TextArea("txtJustificativa", new { @class = "media txtJustificativa " , @maxlength = "300"  })  %>
 		<% } else {%>

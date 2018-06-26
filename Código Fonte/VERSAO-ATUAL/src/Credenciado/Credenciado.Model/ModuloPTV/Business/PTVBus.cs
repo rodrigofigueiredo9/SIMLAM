@@ -729,15 +729,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 				Blocos.Arquivo.Arquivo arq;
 
-				//if (comunicador.ArquivoCredenciado == null)
-				//{
-				//    comunicador.ArquivoCredenciado = new Blocos.Arquivo.Arquivo();
-				//}
-
 				arq = comunicador.ArquivoCredenciado;
-
-
-
+				
 				PTVConversa conversa;
 				conversa = comunicador.Conversas[0];
 
