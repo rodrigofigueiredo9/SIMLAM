@@ -632,9 +632,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			if ((comunicador.ArquivoCredenciado != null) && (!String.IsNullOrEmpty(comunicador.ArquivoCredenciado.TemporarioNome) || !String.IsNullOrEmpty(comunicador.ArquivoCredenciado.Nome)))
 			{
-				if (!(comunicador.ArquivoCredenciado.Extensao == ".zip" || comunicador.ArquivoCredenciado.Extensao == ".rar"))
+				if (comunicador.ArquivoCredenciado.Extensao != ".zip"
+					&& comunicador.ArquivoCredenciado.Extensao != ".rar"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpeg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".pdf")
 				{
-					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" })));
+					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpg", ".jpeg" })));
 				}
 			}
 
@@ -650,9 +654,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			foreach (PTVConversa conversa in comunicador.Conversas)
 			{
-				if (String.IsNullOrEmpty(conversa.Texto))
+				if (String.IsNullOrWhiteSpace(conversa.Texto) && String.IsNullOrWhiteSpace(conversa.ArquivoNome))
 				{
-					Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+					Validacao.Add(Mensagem.PTV.UmDosCamposPreenchido);
 				}
 			}
 
