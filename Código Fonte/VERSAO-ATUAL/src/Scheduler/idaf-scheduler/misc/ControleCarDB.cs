@@ -132,8 +132,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				}
 			}
 
-
-
 			var sqlBuilder = new StringBuilder();
 			sqlBuilder.Append("UPDATE " + schema + ".TAB_CONTROLE_SICAR SET ");
 			sqlBuilder.Append("tid = :tid,");
@@ -189,14 +187,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("codigo_imovel_masc", resultado.codigoImovelComMascara));
 
 					cmd.Parameters.Add(new OracleParameter("mensagem_resposta", mensagensDeResposta));
-					cmd.Parameters.Add(new OracleParameter("id", item.id));
+					cmd.Parameters.Add(new OracleParameter("id", item?.id));
 
 					cmd.ExecuteNonQuery();
 				}
 				//Inserir no Histórico
 				InserirHistoricoControleCar(conn, requisicao, tid, resultado);
 
-				if(!String.IsNullOrWhiteSpace(mensagemErro))
+				if(!String.IsNullOrWhiteSpace(mensagemErro) && item != null)
 					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
 			catch (Exception exception)
@@ -204,10 +202,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
 
-			if (item == null)
-			{
-				return 0;
-			}
+			if (item == null) return 0;
+
 			return item.id;
 		}
 
@@ -326,6 +322,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			try
 			{
+				if (item == null) throw new Exception("ITEM NULO !!!");
+
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
@@ -355,13 +353,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			catch (Exception exception)
 			{
-				string teste = string.Empty;
-
-				if (item == null) { teste = "ITEM NULO!!!!"; }
-				else teste = "ITEM NÃO NULO";
-
-				Log.Error("Requisicao: " + (requisicao != null ? JsonConvert.SerializeObject(requisicao) : " IS NULL"));
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
+				Log.Error("Requisicao: " + (requisicao != null ? JsonConvert.SerializeObject(requisicao) : " IS NULL"), exception);
 			}
 		}
 
@@ -414,7 +406,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			try
 			{
 				if (conn.State == ConnectionState.Broken || conn.State == ConnectionState.Closed)
-					Log.Error("Conexão fechada ou quebrada.");
+					Log.Error("ObterItemControleCar: Conexão fechada ou quebrada.");
 
 				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
 				{
@@ -429,11 +421,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						{
 							if(dr.IsClosed)
 								Log.Error(String.Concat("ObterItemControleCar: dr is closed. ", " - Estado da conexão: ", conn.State.ToString()));
+							else if(!dr.HasRows)
+								Log.Error(String.Concat("ObterItemControleCar: consulta não retornou resultado. empreendimento: ", requisicao.empreendimento,
+									" - solicitacao_car: ", requisicao.solicitacao_car, " - Estado da conexão: ", conn.State.ToString()));
 							else
 								Log.Error(String.Concat("ObterItemControleCar: não foi possível ler a consulta. ", " - Estado da conexão: ", conn.State.ToString()));
 
 							return null;
 						}
+						
 
 						item = new ItemControleCar()
 						{
