@@ -110,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
             {
                 int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj);
 
-                float ValorUnitario = _da.ObterValorUnitarioDua();
+                float ValorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
 
                 int totalPagos = (int)((float)dua.ValorTotal / (float)ValorUnitario);
 
