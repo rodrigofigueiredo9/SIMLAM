@@ -42,14 +42,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
 		}
 
-        internal float ObterValorUnitarioDua()
+        internal float ObterValorUnitarioDua(string dataReferencia)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
                 Comando comando = bancoDeDados.CriarComando(@"
-                    select valor from cnf_valor_dua t where t.tipo = 2", EsquemaBanco);
+                    select valor from cnf_valor_dua t where t.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') 
+                        and t.tipo = 2 and t.id = (select max(tt.id) from cnf_valor_dua tt where tt.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') and tt.tipo = 2)", EsquemaBanco);
 
-                return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia, DbType.String);
+				return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
             }
         }
 
