@@ -45,7 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -683,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
