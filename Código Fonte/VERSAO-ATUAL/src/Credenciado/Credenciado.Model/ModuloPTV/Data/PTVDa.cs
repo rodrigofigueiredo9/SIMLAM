@@ -790,6 +790,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				string comandtxt = string.Empty;
 				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
 				Comando comando = bancoDeDados.CriarComando("");
+				string tabelaTipoDoc = String.Empty;
+				string amarracaoTipoDoc = String.Empty;
 
 				#region Adicionando Filtros
 
@@ -817,6 +819,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					comandtxt += comando.FiltroAndLike("c.texto||'/'||cc.cultivar", "cultura_cultivar", filtro.Dados.CulturaCultivar, true, true);
 				}
+				if (!String.IsNullOrEmpty(filtro.Dados.Interessado))
+				{
+					var consulta = "(SELECT COALESCE(P.NOME, P.RAZAO_SOCIAL, PT.RESPONSAVEL_SEM_DOC) FROM IDAF.TAB_PESSOA P WHERE P.ID = PT.RESPONSAVEL_EMP)";
+					comandtxt += comando.FiltroAndLike(consulta, "interessado", filtro.Dados.Interessado, likeInicio: true);
+				}			
+				if (filtro.Dados.TipoDocumento > 0)
+				{
+					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
+					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
+					{
+						switch (filtro.Dados.TipoDocumento)
+						{
+							case (int)eDocumentoFitossanitarioTipo.CFO:
+								tabelaTipoDoc = ", {0}TAB_CFO CFO  ";
+								amarracaoTipoDoc = " and pr.origem = CFO.ID ";
+								comandtxt += comando.FiltroAndLike("CFO.numero||'/'||CFO.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.CFOC:
+								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_CFOC CFOC  ");
+								amarracaoTipoDoc = " and pr.origem = CFOC.ID ";
+								comandtxt += comando.FiltroAndLike("CFOC.numero||'/'||CFOC.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTV:
+								comandtxt += comando.FiltroAndLike("pt.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_PTV_OUTROUF PO  ");
+								amarracaoTipoDoc = " and pr.origem = PO.ID ";
+								comandtxt += comando.FiltroAndLike("PO.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;							
+						}
+					}
+				}
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero", "empreendimento", "situacao", "cultura_cultivar" };
@@ -837,12 +875,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.DbCommand.CommandText =
 				"select count(*) from (" + String.Format(@"select pt.id
 														from {0}tab_ptv pt,{0}tab_ptv_produto pr,{0}ins_empreendimento em,{0}lov_solicitacao_ptv_situacao st,{0}tab_cultura c,{0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
-														where pt.id(+) = pr.ptv
+														"+ tabelaTipoDoc + @"where pt.id(+) = pr.ptv
 															and em.id(+) = pt.empreendimento 
 															and st.id = pt.situacao 
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
-															and d.id = pt.destinatario " + comandtxt + " group by pt.id) a ", esquemaBanco);
+															and d.id = pt.destinatario " + amarracaoTipoDoc + comandtxt + " group by pt.id) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -859,12 +897,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 												pt.responsavel_tecnico,
 												stragg(c.texto || '/' || trim(cc.cultivar)) as cultura_cultivar
 											from {0}tab_ptv pt, {0}tab_ptv_produto pr, {0}ins_empreendimento em, {0}lov_solicitacao_ptv_situacao st, {0}tab_cultura c, {0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
-											where pt.id(+) = pr.ptv
+											"+ tabelaTipoDoc +@"where pt.id(+) = pr.ptv
 											  and em.id(+) = pt.empreendimento
 											  and st.id = pt.situacao
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 
-										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+										      and d.id = pt.destinatario " + amarracaoTipoDoc + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion

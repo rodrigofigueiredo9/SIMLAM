@@ -2035,7 +2035,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			}
 
 			return lst;
-		}		
+		}	
 
 		internal List<Lista> ObterPTVUnidadeMedida()
 		{
