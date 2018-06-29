@@ -80,12 +80,13 @@ CARSolicitacaoListar = {
 	baixarDemonstrativoCar: function () {
 		var objeto = CARSolicitacaoListar.obter(this);
 		var data = { solicitacaoId: objeto.Id };
+		var isTitulo = $('.radioSolicitacaoTituloNumero')[1].checked;
 
 		MasterPage.carregando(true);
 		$.ajax({
-			url: CARSolicitacaoListar.urlBaixarDemonstrativoCAR + '/' + objeto.Id,
+			url: CARSolicitacaoListar.urlBaixarDemonstrativoCAR,
+			data: JSON.stringify({ id: objeto.Id, isTitulo: isTitulo }),
 			cache: false,
-			//data: data, 
 			async: false,
 			type: 'POST',
 			dataType: 'json',

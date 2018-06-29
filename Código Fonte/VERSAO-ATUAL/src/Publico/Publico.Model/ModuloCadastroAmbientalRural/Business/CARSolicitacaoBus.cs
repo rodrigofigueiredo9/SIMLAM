@@ -122,9 +122,13 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 			return null;
 		}
 
-		public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+		public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
 		{
-			var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao);
+			var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo);
+			if (urlGerar == null)
+			{
+				return null;
+			}
 
 			RequestJson requestJson = new RequestJson();
 
