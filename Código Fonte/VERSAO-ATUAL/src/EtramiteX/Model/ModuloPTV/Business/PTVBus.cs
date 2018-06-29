@@ -343,7 +343,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								var arquivoBusInst = new ArquivoBus(eExecutorTipo.Interno);
 								foreach (var anexo in  eptvBanco.Anexos)
 								{
-									anexo.Arquivo = arquivoBusInst.Salvar(arquivoBusCred.Obter(anexo.Arquivo.Id.Value));
+									if (anexo.Arquivo.Id > 0)
+									{
+										var arquivoCred = arquivoBusCred.Obter(anexo.Arquivo.Id.Value);
+										if(arquivoCred?.Id > 0)
+											anexo.Arquivo = arquivoBusInst.Salvar(arquivoCred);
+									}
 								}
 							}
 

@@ -122,14 +122,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
             return entidade;
         }
 
-        public List<Lista> obterCodigoReceita(int idFiscalizacao)
+        public List<Lista> obterCodigoReceita(int? codigoRecFisc = null)
         {
             ListaValoresDa lv = new ListaValoresDa();
             List<Lista> cr = null; 
 
             try
             {
-                cr = lv.ObterCodigoReceita(idFiscalizacao);
+                cr = lv.ObterCodigoReceita(codigoRecFisc);
             }catch(Exception exc)
             {
                 Validacao.AddErro(exc);

@@ -32,9 +32,12 @@
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td title="<%= Html.Encode(item.SituacaoArquivoCarTexto)%>"><%= Html.Encode(item.SituacaoArquivoCarTexto)%></td>
 				<td>
-					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, InternoId = item.InternoId, SituacaoSolicitacaoId = item.SituacaoID, SituacaoSolicitacaoTexto = item.SituacaoTexto, SituacaoArquivoCarId = item.SituacaoArquivoCarID, SituacaoArquivoCarTexto = item.SituacaoArquivoCarTexto, UrlPdfReciboSICAR = item.UrlPdfReciboSICAR, Origem = item.Origem, ArquivoSICAR=item.ArquivoSICAR }) %>" />
+					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, InternoId = item.InternoId, SituacaoSolicitacaoId = item.SituacaoID, SituacaoSolicitacaoTexto = item.SituacaoTexto, SituacaoArquivoCarId = item.SituacaoArquivoCarID, SituacaoArquivoCarTexto = item.SituacaoArquivoCarTexto, UrlPdfReciboSICAR = item.UrlPdfReciboSICAR, Origem = item.Origem, ArquivoSICAR=item.ArquivoSICAR, isTitulo = item.IsTitulo }) %>" />
 					<%if (item.IsTitulo) { %>
-						<%if (Model.PodeVisualizar) {%><input type="button" title="PDF do Título" class="icone pdf btnPDFTitulo" /><% } %>
+						<%if (Model.PodeVisualizar) {%>
+						<input type="button" title="PDF do Título" class="icone pdf btnPDFTitulo" />
+						<input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" />
+						<% } %>
 					<% } else { %>
 						<%if (Model.PodeAssociar) {%><input type="button" title="Associar" class="icone associar btnAssociar" /><% } %>
 						<%if (Model.PodeVisualizar) {%><input type="button" title="PDF da Solicitação" class="icone pdf btnPDF" /><% } %>
