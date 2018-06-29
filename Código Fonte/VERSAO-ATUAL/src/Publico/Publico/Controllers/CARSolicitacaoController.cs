@@ -188,7 +188,10 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 
 		public ActionResult BaixarDemonstrativoCar(int id, bool isTitulo)
 		{
-			var schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+			var schemaSolicitacao = 0;
+
+			if (!isTitulo)
+				schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
 
 			var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao, isTitulo);
 

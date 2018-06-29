@@ -79,7 +79,6 @@ CARSolicitacaoListar = {
 
 	baixarDemonstrativoCar: function () {
 		var objeto = CARSolicitacaoListar.obter(this);
-		var data = { solicitacaoId: objeto.Id };
 		var isTitulo = $('.radioSolicitacaoTituloNumero')[1].checked;
 
 		MasterPage.carregando(true);
@@ -106,7 +105,7 @@ CARSolicitacaoListar = {
 				}
 
 
-				CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
+				//CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
 			}
 		});
 		MasterPage.carregando(false);
