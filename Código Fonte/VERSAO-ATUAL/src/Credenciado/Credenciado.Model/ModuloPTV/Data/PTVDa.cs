@@ -1971,7 +1971,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		}
 
        
+		internal string ObterSiglaSetorFuncionario(int funcionario)
+		{
+			var siglaSetor = String.Empty;
+			var listaSiglasSetor = new List<string>();
 
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando cd = bancoDeDados.CriarComando(@"
+					select s.sigla from idaf.tab_funcionario_setor fs 
+						inner join idaf.tab_setor s on fs.setor = s.id 
+					where fs.funcionario = :funcionario");
+
+				cd.AdicionarParametroEntrada("funcionario", funcionario, DbType.Int32);
+
+				using (IDataReader rd = bancoDeDados.ExecutarReader(cd))
+				{
+					while (rd.Read())
+					{
+						listaSiglasSetor.Add(rd.GetValue<string>("sigla"));
+					};
+
+					siglaSetor = String.Join(", ", listaSiglasSetor);
+					rd.Close();
+				}
+			}
+
+			return siglaSetor;
+		}
     
 
 		internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj, int ptvId)
@@ -2017,7 +2044,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					t.data_execucao  data_analise,
 					t.executor_nome  analista,
 					t.situacao_texto,
-					t.motivo
+					t.motivo,
+					t.executor_id,
+					t.executor_tipo_id
 				from hst_ptv t
 				where t.ptv_id = :ptv
 				order by t.data_execucao", UsuarioCredenciado);
@@ -2028,16 +2057,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					while (reader.Read())
 					{
+						var executorTipo = reader.GetValue<int>("executor_tipo_id");
+						var funcionario = reader.GetValue<Int32>("executor_id");
+						var siglaSetor = String.Empty;
+
+						if (executorTipo == 1)
+						{
+							siglaSetor = ObterSiglaSetorFuncionario(funcionario);
+						}
+
 						HistoricoPTV.ListaHistoricos.Add(new PTVItemHistorico()
 						{
 							Id = reader.GetValue<int>("id"),
 							DataAnalise = reader.GetValue<string>("data_analise"),
 							Analista = reader.GetValue<string>("analista"),
 							SituacaoTexto = reader.GetValue<string>("situacao_texto"),
-							MotivoTexto = reader.GetValue<string>("motivo")
+							MotivoTexto = reader.GetValue<string>("motivo"),
+							SetorTexto = siglaSetor
 						});
 					}
-
 					reader.Close();
 				}
 
