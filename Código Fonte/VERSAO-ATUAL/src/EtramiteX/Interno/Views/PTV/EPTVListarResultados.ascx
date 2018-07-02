@@ -32,8 +32,8 @@
                     <% if (Model.PodeAnalisar) { %><input type="button" title="Analisar EPTV" class="icone recebido btnAnalisar" /><% } %>
 					<% if (Model.PodeAnalisar)
 					{ %><input type="button" title="Analisar Desbloqueio" class="icone comparar btnAnalisarDesbloqueio" /><% } %>
-								<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado &&
-										item.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao &&
+								<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+										item.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 										item.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
 					{ %><input type="button" title="Comunicador" class="icone comunicador btnComunicador" /><% } %>
 
