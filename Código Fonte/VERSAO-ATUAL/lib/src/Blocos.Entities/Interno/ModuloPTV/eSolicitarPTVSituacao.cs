@@ -5,6 +5,7 @@
 		Nulo = 0,
 		Cadastrado = 1,
 		AguardandoAnalise = 2,
+		Aprovado = 3,
 		Válido = 3,
 		Rejeitado = 4,
 		AgendarFiscalizacao = 5,
