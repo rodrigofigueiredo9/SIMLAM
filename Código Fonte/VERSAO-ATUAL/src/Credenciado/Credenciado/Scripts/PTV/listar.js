@@ -15,7 +15,8 @@ EPTVListar = {
 			urlEnviarConfirm: null,
 			urlEnviar: null,
 			urlValidarAcessoComunicador: null,
-			urlComunicadorPTV: null
+			urlComunicadorPTV: null,
+			urlSolicitarDesbloqueio: null
 		}
 	},
 
@@ -32,7 +33,8 @@ EPTVListar = {
 		container.delegate('.btnPDF', 'click', EPTVListar.gerarPDF);
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
 		container.delegate('.btnHistorico', 'click', EPTVListar.historico);
-		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.comunicador);
+		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.solicitarDesbloqueio);
+		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
 		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
@@ -131,6 +133,24 @@ EPTVListar = {
 			function (container) {
 				ComunicadorPTV.load(container, {
 					callBackSalvar: EPTVListar.comunicador
+				});
+			},
+			Modal.tamanhoModalMedia);
+	},
+
+	solicitarDesbloqueio: function () {
+		var item = EPTVListar.obter(this);
+
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+			return;
+		}
+
+		Modal.abrir(
+			EPTVListar.settings.urls.urlSolicitarDesbloqueio,
+			{ id: item.Id },
+			function (container) {
+				ComunicadorPTV.load(container, {
+					callBackSalvar: EPTVListar.solicitarDesbloqueio
 				});
 			},
 			Modal.tamanhoModalMedia);

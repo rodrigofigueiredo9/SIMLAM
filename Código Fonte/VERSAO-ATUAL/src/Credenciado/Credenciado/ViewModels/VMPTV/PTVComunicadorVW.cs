@@ -14,8 +14,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 
         public PTVConversa Conversa { get; set; }
 
+		public bool IsDesbloqueio { get; set; } = false;
         public bool IsVisualizar { get; set; }
-        public string Mensagens
+		public string Mensagens
         {
             get
             {
