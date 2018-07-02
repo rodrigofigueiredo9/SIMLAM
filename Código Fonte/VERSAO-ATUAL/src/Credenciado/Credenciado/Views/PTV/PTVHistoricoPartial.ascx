@@ -30,11 +30,11 @@
 	<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th width="18%">Data da análise</th>
-				<th>Analista</th>
-				<th width="20%">Setor</th>
+				<th width="13%">Data da análise</th>
+				<th width="25%">Analista</th>
+				<th width="15%">Setor</th>
 				<th width="10%">Situação</th>
-                <th width="10%">Motivo</th>
+                <th>Motivo</th>
 			</tr>
 		</thead> 
 		<tbody>
