@@ -125,7 +125,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 		public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
 		{
 			var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
-			if (urlGerar == null) return null;
+			if (String.IsNullOrWhiteSpace(urlGerar)) return null;
 
 			RequestJson requestJson = new RequestJson();
 

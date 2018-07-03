@@ -20,6 +20,7 @@ using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloTitulo.Pdf;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
@@ -41,6 +42,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		EntregaBus _busEntrega = new EntregaBus(new EntregaValidar());
 		TituloSituacaoBus _tituloSituacaoBus = new TituloSituacaoBus(new TituloSituacaoValidar());
 		AtividadeBus _busAtividade = new AtividadeBus();
+		CARSolicitacaoBus _busCar = new CARSolicitacaoBus();
 
 		CondicionanteBus _busCondicionante = new CondicionanteBus(new CondicionanteValidar());
 
@@ -1363,6 +1365,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return null;
 		}
+
+		public ActionResult BaixarDemonstrativoCar(int id, bool isTitulo)
+		{
+			var url = _busCar.ObterUrlDemonstrativo(id, 0, isTitulo);
+
+			return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
+		}
+
 
 		#endregion
 	}
