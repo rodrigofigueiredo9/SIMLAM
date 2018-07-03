@@ -15,8 +15,7 @@
 <br />
 
 <div class="block">
-<% if (!Model.IsDesbloqueio)
-	{ %>
+<% if (!Model.IsDesbloqueio) { %>
 <% PTVConversa conversa = null;
 	for (int i = 0; i < Model.Comunicador.Conversas.Count; i++)
 	{

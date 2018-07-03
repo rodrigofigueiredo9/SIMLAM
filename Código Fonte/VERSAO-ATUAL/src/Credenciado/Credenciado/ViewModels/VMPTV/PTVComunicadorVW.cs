@@ -8,7 +8,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 {
-    public class PTVComunicadorVW
+	public class PTVComunicadorVW
     {
         public PTVComunicador Comunicador { get; set; }
 

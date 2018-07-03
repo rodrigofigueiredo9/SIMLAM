@@ -8,7 +8,8 @@ EPTVListar = {
 			urlComunicador: null,
 			urlAnalisar: null,
 			urlValidarAcessoComunicador: null,
-			urlComunicadorPTV: null
+			urlComunicadorPTV: null,
+			urlAnalisarDesbloqueio: null
 		}
 	},
 
@@ -65,5 +66,20 @@ EPTVListar = {
 	},
 
 	analisarDesbloqueio: function () {
+		var item = EPTVListar.obter(this);
+
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+			return;
+		}
+
+		Modal.abrir(
+			EPTVListar.settings.urls.urlAnalisarDesbloqueio,
+			{ id: item.Id },
+			function (container) {
+				ComunicadorPTV.load(container, {
+					callBackSalvar: EPTVListar.analisarDesbloqueio
+				});
+			},
+			Modal.tamanhoModalMedia);
 	}
 }
