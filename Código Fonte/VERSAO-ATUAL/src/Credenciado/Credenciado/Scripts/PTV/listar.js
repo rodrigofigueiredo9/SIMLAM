@@ -32,7 +32,7 @@ EPTVListar = {
 		container.delegate('.btnPDF', 'click', EPTVListar.gerarPDF);
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
 		container.delegate('.btnHistorico', 'click', EPTVListar.historico);
-		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.comunicador);
+		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
 		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);

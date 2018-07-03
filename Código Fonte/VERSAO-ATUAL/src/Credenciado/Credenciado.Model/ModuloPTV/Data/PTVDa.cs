@@ -848,7 +848,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
-								consulta = "(SELECT PTV.NUMERO FROM IDAFCREDENCIADO.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
 								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 
