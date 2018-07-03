@@ -168,6 +168,7 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 			try
 			{
 				Arquivo arquivo = _busTitulo.GerarPdf(id);
+				arquivo.Nome = String.Concat(arquivo.Nome, " .pdf");
 
 				DateTime dataAtual = DateTime.Now;
 				String mensagemTarja = "Consultado em " + dataAtual.ToShortDateString() + " às " + dataAtual.ToString(@"HH\hmm\min");
