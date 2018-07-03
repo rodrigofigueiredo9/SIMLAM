@@ -1361,6 +1361,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						item.Id = reader.GetValue<int>("solic_tit_id");
 						item.Numero = reader.GetValue<string>("numero");
 						item.Ano = reader.GetValue<string>("ano");
+						item.IsTitulo = (item.Ano != null) ? true : false;
 						item.EmpreendimentoDenominador = reader.GetValue<string>("empreendimento_denominador");
 						item.EmpreendimentoCodigo = reader.GetValue<Int64>("empreendimento_codigo");
 						item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
@@ -1585,14 +1586,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			}
 		}
 
-        internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        internal string ObterUrlGeracaoDemonstrativo(int id, int schemaSolicitacao, bool isTitulo)
         {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
-                Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+				Comando comando;
+				if(!isTitulo)
+				{
+					comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :id and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+					comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
 
-                comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
-                comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"SELECT CODIGO_IMOVEL FROM (SELECT  CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 
+															INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = CS.EMPREENDIMENTO
+														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 1 AND TT.ID = :id
+														UNION ALL
+														SELECT CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 																
+															INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = (select e.id from IDAF.TAB_EMPREENDIMENTO e
+															where e.codigo = (select ec.codigo from IDAFCREDENCIADO.TAB_EMPREENDIMENTO ec where ec.id = CS.EMPREENDIMENTO)) 
+														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 1 AND TT.ID = :id)
+														  WHERE ROWNUM = 1 ORDER BY TITULO DESC");
+				}
+
+                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
                 return bancoDeDados.ExecutarScalar<String>(comando);
             }

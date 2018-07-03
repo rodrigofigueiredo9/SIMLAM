@@ -372,7 +372,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = @"select l.solic_tit_id, l.responsavel ,nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, 
-				l.municipio_texto, l.situacao_texto, l.credenciado, l.origem, l.tipo, l.situacao_envio from        
+				l.municipio_texto, l.situacao_id, l.situacao_texto, l.credenciado, l.origem, l.tipo, l.situacao_envio from        
 				(select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, 
 						null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
 						credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
@@ -414,6 +414,7 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 						item.Ano = reader.GetValue<string>("ano");
 						item.EmpreendimentoDenominador = reader.GetValue<string>("empreendimento_denominador");
 						item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
+						item.SituacaoID = reader.GetValue<int>("situacao_id");
 						item.SituacaoTexto = reader.GetValue<string>("situacao_texto");
 						item.IsTitulo = reader.GetValue<int>("tipo") == 2;
 						item.CredenciadoId = reader.GetValue<int>("credenciado");
@@ -431,14 +432,31 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 			return retorno;
 		}
 
-		internal string ObterUrlGeracaoDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+		internal string ObterUrlGeracaoDemonstrativo(int id, int schemaSolicitacao, bool isTitulo)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :solicitacaoId and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+				Comando comando;
+				if (!isTitulo)
+				{
+					comando = bancoDeDados.CriarComando(@"select tcs.codigo_imovel from tab_controle_sicar tcs where tcs.solicitacao_car = :id and tcs.solicitacao_car_esquema = :schemaSolicitacao");
+					comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+				}
+				else
+				{
 
-				comando.AdicionarParametroEntrada("solicitacaoId", solicitacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("schemaSolicitacao", schemaSolicitacao, DbType.Int32);
+					comando = bancoDeDados.CriarComando(@"SELECT CODIGO_IMOVEL FROM (SELECT  CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 
+															  INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = CS.EMPREENDIMENTO
+														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND TT.ID = :id
+														UNION ALL
+														SELECT CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 																
+															  INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = (select e.id from IDAF.TAB_EMPREENDIMENTO e
+															  where e.codigo = (select ec.codigo from IDAFCREDENCIADO.TAB_EMPREENDIMENTO ec where ec.id = CS.EMPREENDIMENTO)) 
+														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND TT.ID = :id)
+														  WHERE ROWNUM = 1 ORDER BY TITULO DESC");
+
+				}
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<String>(comando);
 			}
