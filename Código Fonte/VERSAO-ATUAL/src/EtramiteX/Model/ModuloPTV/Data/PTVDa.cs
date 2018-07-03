@@ -1775,8 +1775,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				string comandtxt = string.Empty;
 				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
 				Comando comando = bancoDeDados.CriarComando("");
-				string tabelaTipoDoc = String.Empty;
-				string amarracaoTipoDoc = String.Empty;
 
 				#region Adicionando Filtros
 
@@ -1828,28 +1826,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
 					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
 					{
+						var consulta = String.Empty;
 						switch (filtro.Dados.TipoDocumento)
 						{
 							case (int)eDocumentoFitossanitarioTipo.CFO:
-								tabelaTipoDoc = ", {0}TAB_CFO CFO  ";
-								amarracaoTipoDoc = " and pr.origem = CFO.ID ";
-								comandtxt += comando.FiltroAndLike("CFO.numero||'/'||CFO.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT CFO.numero||'/'||CFO.serie FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.CFOC:
-								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_CFOC CFOC  ");
-								amarracaoTipoDoc = " and pr.origem = CFOC.ID ";
-								comandtxt += comando.FiltroAndLike("CFOC.numero||'/'||CFOC.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT CFOC.numero||'/'||CFOC.serie FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
-								comandtxt += comando.FiltroAndLike("pt.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
-								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_PTV_OUTROUF PO  ");
-								amarracaoTipoDoc = " and pr.origem = PO.ID ";
-								comandtxt += comando.FiltroAndLike("PO.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
+								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 						}
 					}
@@ -1880,8 +1877,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
 															and d.id = pt.destinatario
-															and pt.situacao > 1
-															" + amarracaoTipoDoc + comandtxt + " group by pt.id) a ", esquemaBanco);
+															and pt.situacao > 1 " + comandtxt + " group by pt.id) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -1904,7 +1900,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 											  
                                               and pt.situacao > 1
-										      and d.id = pt.destinatario " + amarracaoTipoDoc + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion
