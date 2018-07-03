@@ -2482,7 +2482,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				bancoDeDados.IniciarTransacao();
-				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado) ? ", p.data_ativacao = sysdate " : string.Empty;
+				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
 
@@ -2494,7 +2494,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 				var historicoAcao = eHistoricoAcao.analisar;
 
-				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 					historicoAcao = eHistoricoAcao.aprovar;/*TODO:--Aprovar*/
 				else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 					historicoAcao = eHistoricoAcao.rejeitar;/*TODO:--Rejeitar*/
