@@ -852,6 +852,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult AnalisarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
 		public ActionResult ComunicadorPTV(int id)
 		{
 			PTVComunicadorVW vm = new PTVComunicadorVW();

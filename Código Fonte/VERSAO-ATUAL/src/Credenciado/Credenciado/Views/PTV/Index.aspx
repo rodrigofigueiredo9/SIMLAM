@@ -23,7 +23,8 @@
 					urlEnviarConfirm: '<%= Url.Action("EnviarConfirm", "PTV") %>',
 					urlEnviar: '<%= Url.Action("Enviar", "PTV") %>',
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
-					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>'
+					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+					urlSolicitarDesbloqueio: '<%= Url.Action("SolicitarDesbloqueio", "PTV") %>'
 				}
 			});
 

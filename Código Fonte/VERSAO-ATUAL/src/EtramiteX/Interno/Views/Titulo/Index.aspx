@@ -18,6 +18,7 @@
 			TituloListar.urlValidarPossuiCondicionantes = '<%= Url.Action("ValidarPossuiCondicionante", "Titulo") %>';
 			TituloListar.urlValidarAlterarAutorSetor = '<%= Url.Action("ValidarAbrirAlterarAutorSetor", "Titulo") %>';
 			TituloListar.urlAlterarAutorSetor = '<%= Url.Action("AlterarAutorSetor", "Titulo") %>';
+			TituloListar.urlBaixarDemonstrativoCAR = '<%= Url.Action("BaixarDemonstrativoCar", "Titulo") %>';
 			TituloListar.load($('#central'));
 
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>
