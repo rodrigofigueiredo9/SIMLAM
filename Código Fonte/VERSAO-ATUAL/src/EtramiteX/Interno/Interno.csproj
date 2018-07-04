@@ -695,6 +695,7 @@
     <Content Include="Content\_img\projdigital_02.gif" />
     <Content Include="Content\_img\projdigital_03.gif" />
     <Content Include="Content\_img\projdigital_04.gif" />
+    <Content Include="Scripts\AlertaEPTV\alertaChegadaMensagemEPTV.js" />
     <Content Include="Scripts\AlertaEPTV\alertaEPTV.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
     <Content Include="Scripts\Areas\Especificidades\Certidao\CertidaoDispensaLicenciamentoAmbiental.js" />

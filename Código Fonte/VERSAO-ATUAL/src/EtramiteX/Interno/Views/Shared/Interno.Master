@@ -58,6 +58,7 @@
 	<script language="javascript" src="<%= Url.Content("~/Scripts/jquery.tablesorter.js") %>"></script>
 
 	<script language="javascript" src="<%= Url.Content("~/Scripts/AlertaEPTV/alertaEPTV.js") %>"></script>
+	<script language="javascript" src="<%= Url.Content("~/Scripts/AlertaEPTV/alertaChegadaMensagemEPTV.js") %>"></script>
 
 	  
    <script> 
@@ -76,6 +77,17 @@
           } 
 		});
 		<%Validacao.MensagensAlertaEPTV = new List<Mensagem>();%>
+      <%}%>
+
+	<% foreach (var mensagem in Validacao.MensagensAlertaChegadaMensagemEPTV){%>
+		AlertaChegadaMensagemEPTV.exibirMensagemValidacao('<%= mensagem.Texto%>');
+        AlertaChegadaMensagemEPTV.load($(".containerAcoesAlertaChegadaMensagemEPTV"), { 
+          urls: { 
+			  urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+          }, 
+		  id:  '<%= mensagem.Id %>'
+		});
+		<%Validacao.MensagensAlertaChegadaMensagemEPTV = new List<Mensagem>();%>
       <%}%>
  
      <%-- <% if (!String.IsNullOrEmpty(Request.Params["msg"])) 

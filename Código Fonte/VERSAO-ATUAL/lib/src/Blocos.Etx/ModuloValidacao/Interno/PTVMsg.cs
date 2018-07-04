@@ -8,6 +8,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 	partial class Mensagem
 	{
+		public int Id { get; set; }
+
 		private static PTVMsg _emissaoPTVMsg = new PTVMsg();
 
 		public static PTVMsg PTV
@@ -187,6 +189,17 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 				Texto = String.Format("Existem {0} E-PTVs aguardando análise.", qtd),
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTV"
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTV(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"Há uma nova mensagem referente à EPTV {numero}.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTV",
+				Id = id
 			};
 		}
 

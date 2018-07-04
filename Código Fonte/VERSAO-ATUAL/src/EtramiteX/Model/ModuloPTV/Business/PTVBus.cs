@@ -775,6 +775,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return quantidade;
 		}
 
+		public List<PTV> ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			var listPtv = new List<PTV>();
+
+			try
+			{
+				listPtv = _da.ObterNumeroPTVExibirMensagemFuncionario(idFuncionario, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return listPtv;
+		}
+
 		#endregion
 
 		#region Comunicador
@@ -987,12 +1003,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				if (quantidade > 0)
 				{
 					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
-					var temp = Validacao.MensagensAlertaEPTV.Count;
 					houveAlerta = true;
 				}
 			}
 			return houveAlerta;
 		}
+
+		public bool VerificarAlertaChegadaMensagemEPTV()
+		{
+			bool exibirMensagem = false;
+
+			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
+			//verifica se o usuário está habilitado para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
+
+			if (habilitado)
+			{
+				//Verifica quantas PTVs estão aguardando análise
+				var listPtv = ObterNumeroPTVExibirMensagemFuncionario(funcionarioId);
+
+				if (listPtv.Count > 0)
+				{
+					foreach(var ptv in listPtv)
+						Validacao.AddAlertaChegadaMensagemEPTV(Mensagem.PTV.ChegadaMensagemEPTV(ptv.Numero, ptv.Id));
+					exibirMensagem = true;
+				}
+			}
+			return exibirMensagem;
+		}
+
 
 		#endregion Alerta de E-PTV
 	}

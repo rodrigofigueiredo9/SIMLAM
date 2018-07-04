@@ -2174,6 +2174,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Exibir_Mensagem
+
+				comando = bancoDeDados.CriarComando(@"update {0}tab_ptv
+															set exibir_mensagem = 1
+															where id = :ptv_id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("ptv_id", comunicador.PTVId, DbType.Int32);
+
+				#endregion Exibir_Mensagem
+
 				Historico.Gerar(conversa.Id, eHistoricoArtefato.ptvcomunicador, eHistoricoAcao.enviar, bancoDeDados);
 
 				bancoDeDados.Commit();

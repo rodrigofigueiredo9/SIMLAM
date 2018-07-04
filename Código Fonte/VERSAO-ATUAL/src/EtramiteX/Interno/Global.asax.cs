@@ -53,6 +53,7 @@ namespace Interno
 			#region Alerta de E-PTV
 
 			HttpCookie cookieEPTV = Request.Cookies["eptv"];
+			PTVBus _bus = new PTVBus();
 			if (cookieEPTV != null)
 			{
 				if (Convert.ToDateTime(cookieEPTV.Value).AddHours(1) <= DateTime.Now)
@@ -64,10 +65,10 @@ namespace Interno
 					aCookie.Expires = DateTime.Now.AddDays(1);
 					Response.Cookies.Add(aCookie);
 
-					PTVBus _bus = new PTVBus();
 					_bus.VerificaAlertaEPTV();	//emite o alerta
 				}
 			}
+			_bus.VerificarAlertaChegadaMensagemEPTV();
 
 			#endregion Alerta de E-PTV
 		}
