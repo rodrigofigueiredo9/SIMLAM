@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
 LocalVistoria = {
@@ -549,6 +549,7 @@ LocalVistoria = {
 	            DiaSemanaTexto: $('.lblDiaSemana', this).html(),
 	            HoraInicio: $('.lblHoraInicio', this).html(),
 	            HoraFim: $('.lblHoraFim', this).html(),
+				Situacao: 1,
 	            Tid: $('.hdnItemTid', this).val()
 	        });
 	    });
