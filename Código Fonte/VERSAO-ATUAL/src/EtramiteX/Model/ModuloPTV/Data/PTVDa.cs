@@ -1716,7 +1716,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
-								comandtxt += comando.FiltroAndLike("pt.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								consulta = "(SELECT PTV.numero FROM TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
@@ -1751,7 +1752,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															and st.id = pt.situacao 
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
-															and d.id = pt.destinatario " + comandtxt + " group by pt.id) a ", esquemaBanco);
+															and d.id = pt.destinatario
+															and pt.eptv_id is null " + comandtxt + " group by pt.id) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -1763,17 +1765,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 												pt.numero,
 												pt.tipo_numero,
 												nvl(em.denominador, pt.empreendimento_sem_doc) as empreendimento,
-											    pt.situacao,
+												pt.situacao,
 												st.texto as situacao_texto,
 												pt.responsavel_tecnico,
 												stragg(c.texto || '/' || trim(cc.cultivar)) as cultura_cultivar
 											from {0}tab_ptv pt, {0}tab_ptv_produto pr, {0}tab_empreendimento em, {0}lov_ptv_situacao st, {0}tab_cultura c, {0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
 											where pt.id(+) = pr.ptv
-											  and em.id(+) = pt.empreendimento
-											  and st.id = pt.situacao
-											  and c.id = pr.cultura
-											  and cc.id = pr.cultivar 
-										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+												and em.id(+) = pt.empreendimento
+												and st.id = pt.situacao
+												and c.id = pr.cultura
+												and cc.id = pr.cultivar 
+												and d.id = pt.destinatario
+												and pt.eptv_id is null " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion
