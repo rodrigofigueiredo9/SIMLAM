@@ -103,9 +103,11 @@ ComunicadorPTV = {
 	enviar: function () {
 
 		//Pelo menos um dos campos deve estar preenchido
-		if ($('.txtJustificativa', ComunicadorPTV.container).val() == '' && $('.txtArquivoNome', ComunicadorPTV.container).val() == '') {
-			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.UmDosCamposDeveEstarPreenchido]);
-			return false;
+		if ($('.hdnDesbloqueio', ComunicadorPTV.container).val() != "True") {
+			if ($('.txtJustificativa', ComunicadorPTV.container).val() == '' && $('.txtArquivoNome', ComunicadorPTV.container).val() == '') {
+				Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.UmDosCamposDeveEstarPreenchido]);
+				return false;
+			}
 		}
 
 		var ptvComunicador = {
@@ -115,6 +117,7 @@ ComunicadorPTV = {
 			ArquivoCredenciadoId: $('.hdnArqCredenciadoId', ComunicadorPTV.container).val(),
 			liberadoCredenciado: $('.hdnLiberadoCredenciado', ComunicadorPTV.container).val(),
 			ArquivoCredenciado: {},
+			IsDesbloqueio: $('.hdnDesbloqueio', ComunicadorPTV.container).val(),
 			Conversas: new Array()
 		}
 

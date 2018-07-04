@@ -74,6 +74,7 @@
 			<span class="spanInputFile">
 			<input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" /></span>
 			<input type="hidden" class="hdnArquivo hdnAnexoArquivoJson" name="hdnAnexoArquivoJson" value="" />
+			<input type="hidden" class="hdnDesbloqueio" name="hdnDesbloqueio" value="<%= Model.IsDesbloqueio %>" />
 		</div>
 		<div class="ultima spanBotoes">
 			<button type="button" class="inlineBotao btnArq" title="Enviar anexo" onclick="ComunicadorPTV.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">Anexar</button>
@@ -82,7 +83,7 @@
 	</div>
 
 	<div class="block box">
-		<label for="Mensagem">Mensagem</label>
+		<label for="Mensagem"><%= Model.IsDesbloqueio ? "Justificativa *" : "Mensagem" %></label>
 		<% if (Model.Comunicador.liberadoCredenciado) { %>
 			<%= Html.TextArea("txtJustificativa", new { @class = "media txtJustificativa " , @maxlength = "300"  })  %>
 		<% } else {%>

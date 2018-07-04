@@ -654,9 +654,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			foreach (PTVConversa conversa in comunicador.Conversas)
 			{
-				if (String.IsNullOrWhiteSpace(conversa.Texto) && String.IsNullOrWhiteSpace(conversa.ArquivoNome))
+				if (comunicador.IsDesbloqueio)
 				{
-					Validacao.Add(Mensagem.PTV.UmDosCamposPreenchido);
+					if (String.IsNullOrEmpty(conversa.Texto))
+						Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+				}
+				else
+				{
+					if (String.IsNullOrWhiteSpace(conversa.Texto) && String.IsNullOrWhiteSpace(conversa.ArquivoNome))
+						Validacao.Add(Mensagem.PTV.UmDosCamposPreenchido);
 				}
 			}
 
