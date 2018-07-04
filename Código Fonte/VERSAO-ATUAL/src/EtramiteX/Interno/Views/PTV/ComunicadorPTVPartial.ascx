@@ -9,10 +9,11 @@
 	ComunicadorPTV.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
 
-<h1 class="titTela">Comunicador PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
+<h1 class="titTela"><%= Model.IsDesbloqueio ? "Analisar Desbloqueio" : "Comunicador" %> PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
 <br />
 
 <div class="block">
+<% if (!Model.IsDesbloqueio) { %>
 <% PTVConversa conversa = null;
 		for (int i = 0; i < Model.Comunicador.Conversas.Count; i++)  {
 			conversa = Model.Comunicador.Conversas[i]; %>
@@ -54,6 +55,7 @@
 		<% } %>
 	<% } %>
 </div>
+<%} %>
 
 <div class="block box rodape">
 	<!-- Arquivo -->

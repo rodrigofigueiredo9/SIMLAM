@@ -1,5 +1,6 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVListarVM>" %>
 
 <input type="hidden" class="paginaAtual" value="" />
@@ -29,7 +30,12 @@
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td>
                     <% if (Model.PodeAnalisar) { %><input type="button" title="Analisar EPTV" class="icone recebido btnAnalisar" /><% } %>
-                    <% if (Model.PodeAnalisar) { %><input type="button" title="Analisar Desbloqueio" class="icone comparar btnComunicador" /><% } %>
+					<% if (Model.PodeAnalisar)
+					{ %><input type="button" title="Analisar Desbloqueio" class="icone comparar btnAnalisarDesbloqueio" /><% } %>
+								<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+										item.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+										item.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
+					{ %><input type="button" title="Comunicador" class="icone comunicador btnComunicador" /><% } %>
 
                     <input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.ID, NumeroTipo = item.NumeroTipo , Numero = item.Numero, CulturaCultivar = item.CulturaCultivar, SituacaoTexto = item.SituacaoTexto, Situacao = item.Situacao } ) %>" />
 				</td>

@@ -43,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao, ListaCredenciadoBus.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -669,6 +669,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult SolicitarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]

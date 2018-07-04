@@ -14,7 +14,8 @@
 				urls: {
 					urlAnalisar: '<%= Url.Action("EPTVAnalisar", "PTV") %>',
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
-					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>'
+					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+					urlAnalisarDesbloqueio: '<%= Url.Action("AnalisarDesbloqueio", "PTV") %>'
 				}
 			});
 		});

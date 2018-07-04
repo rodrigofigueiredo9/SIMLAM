@@ -8,14 +8,15 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 {
-    public class PTVComunicadorVW
+	public class PTVComunicadorVW
     {
         public PTVComunicador Comunicador { get; set; }
 
         public PTVConversa Conversa { get; set; }
 
+		public bool IsDesbloqueio { get; set; } = false;
         public bool IsVisualizar { get; set; }
-        public string Mensagens
+		public string Mensagens
         {
             get
             {

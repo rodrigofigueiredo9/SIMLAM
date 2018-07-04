@@ -45,7 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -683,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -849,6 +849,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult AnalisarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
