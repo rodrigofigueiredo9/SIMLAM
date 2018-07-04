@@ -24,7 +24,7 @@
 		</div>
 </fieldset>
 	
-<% if (Model.Resultados.Count > 1) { %>
+<% if (Model.Resultados.Count > 0) { %>
 
 <fieldset class="box">
 	<table class="dataGridTable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -39,7 +39,7 @@
 		</thead> 
 		<tbody>
         <% for (int i = 0; i < Model.Resultados.Count; i++) {
-               if (i > 0){ %>
+                %>
                <tr>
 				<td title="<%= Html.Encode(Model.Resultados[i].DataAnalise)%>"><%= Html.Encode(Model.Resultados[i].DataAnalise)%></td>
 				<td title="<%= Html.Encode(Model.Resultados[i].Analista)%>"><%= Html.Encode(Model.Resultados[i].Analista)%></td>
@@ -47,7 +47,7 @@
                 <td title="<%= Html.Encode(Model.Resultados[i].SituacaoTexto)%>"><%= Html.Encode(Model.Resultados[i].SituacaoTexto)%></td>
 				<td title="<%= Html.Encode(Model.Resultados[i].MotivoTexto)%>"><%= Html.Encode(Model.Resultados[i].MotivoTexto)%></td>
 			  </tr> 
-           <% } } %>
+           <%  } %>
 		</tbody>
 	</table>
 </fieldset>
