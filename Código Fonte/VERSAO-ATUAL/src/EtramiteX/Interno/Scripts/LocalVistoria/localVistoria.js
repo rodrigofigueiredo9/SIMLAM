@@ -72,19 +72,54 @@ LocalVistoria = {
 	},
 
 	DataInicialMenorDataFinal: function (dataInicio, dataFim) {
-		vtDtIni = dataInicio.split('/');
-		vtDtFim = dataFim.split('/');
-		dtIni = new Date(vtDtIni[2], vtDtIni[1], vtDtIni[0])
-		dtFim = new Date(vtDtFim[2], vtDtFim[1], vtDtFim[0])
-
-		if (dtFim < dtIni) {
+		if (dataFim < dataInicio) {
 			return false;
 		}
 		return true;
 	},
 
 	onAdicionarBloqueio: function () {
+		if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
 
+		if ($('.txtHoraFinalBloqueio', LocalVistoria.container).val() == '') {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if (!LocalVistoria.ValidarHora($('.txtHoraInicialBloqueio', LocalVistoria.container).val())) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicioInvalida]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+		if (!LocalVistoria.ValidarHora($('.txtHoraFinalBloqueio', LocalVistoria.container).val())) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
+			$('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+		debugger;
+		vtDtIni = $('.txtDataInicialBloqueio', LocalVistoria.container).val().split('/');
+		vtDtFim = $('.txtDataFinalBloqueio', LocalVistoria.container).val().split('/');
+		dtIni = new Date(vtDtIni[2], vtDtIni[1], vtDtIni[0])
+		dtFim = new Date(vtDtFim[2], vtDtFim[1], vtDtFim[0])
+
+		if (!(LocalVistoria.DataInicialMenorDataFinal(dtIni, dtFim))) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.DataInicialMenorDataFinal]);
+			$('.txtDataInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if (dtIni.equals(dtFim)) {
+			if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicialBloqueio', LocalVistoria.container).val(), $('.txtHoraFinalBloqueio', LocalVistoria.container).val()))) {
+				Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
+				$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+				return;
+			}
+		}
 
 	    var podeIncuir = 0;
 	    var item = {
@@ -121,44 +156,9 @@ LocalVistoria = {
 	    MasterPage.carregando(false);
 
 	    if (podeIncuir == 0)
-	        return;
+	        return;	    
 
-
-	    if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-
-	    if ($('.txtHoraFinalBloqueio', LocalVistoria.container).val() == '') {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-
-	    if (!LocalVistoria.ValidarHora($('.txtHoraInicialBloqueio', LocalVistoria.container).val())) {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicioInvalida]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-	    if (!LocalVistoria.ValidarHora($('.txtHoraFinalBloqueio', LocalVistoria.container).val())) {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
-	        $('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
-	        return;
-		}
-
-		if (!(LocalVistoria.DataInicialMenorDataFinal($('.txtDataInicialBloqueio', LocalVistoria.container).val(), $('.txtDataFinalBloqueio', LocalVistoria.container).val()))) {
-			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.DataInicialMenorDataFinal]);
-			$('.txtDataInicialBloqueio', LocalVistoria.container).focus();
-			return;
-		}
-
-		if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicialBloqueio', LocalVistoria.container).val(), $('.txtHoraFinalBloqueio', LocalVistoria.container).val()))) {
-			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
-			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-			return;
-		}
-
+		
 	    var linha = $('.tr_template_bloqueio', LocalVistoria.container).clone();
 	    var item = {
 	        Id: null,

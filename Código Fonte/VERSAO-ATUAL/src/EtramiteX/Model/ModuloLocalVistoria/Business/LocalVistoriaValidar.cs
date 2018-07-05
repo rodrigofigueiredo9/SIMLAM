@@ -70,7 +70,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
                     Validacao.Add(Mensagem.LocalVistoria.HoraInicialMenorHoraFinal(diaOrdenado.DiaSemanaTexto));
                 }
 
-
                 if (diaOrdenado.Situacao == 1)
                 {
 
