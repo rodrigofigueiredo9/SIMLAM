@@ -31,9 +31,9 @@
 		<thead>
 			<tr>
 				<th width="13%">Data da análise</th>
-				<th width="25%">Analista</th>
+				<th width="20%">Analista</th>
 				<th width="15%">Setor</th>
-				<th width="10%">Situação</th>
+				<th width="15%">Situação</th>
                 <th>Motivo</th>
 			</tr>
 		</thead> 
