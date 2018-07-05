@@ -96,7 +96,7 @@ AlertaChegadaMensagemEPTV = {
 			url,
 			{ id: id },
 			function (container) {
-				AlertaChegadaMensagemEPTV.load(container, {
+				ComunicadorPTV.load(container, {
 					callBackSalvar: AlertaChegadaMensagemEPTV.onAcaoClick
 				});
 			},

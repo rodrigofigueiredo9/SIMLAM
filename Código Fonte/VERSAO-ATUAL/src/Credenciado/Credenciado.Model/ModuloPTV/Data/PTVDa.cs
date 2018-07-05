@@ -2182,6 +2182,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				comando.AdicionarParametroEntrada("ptv_id", comunicador.PTVId, DbType.Int32);
 
+				bancoDeDados.ExecutarScalar(comando);
+
 				#endregion Exibir_Mensagem
 
 				Historico.Gerar(conversa.Id, eHistoricoArtefato.ptvcomunicador, eHistoricoAcao.enviar, bancoDeDados);

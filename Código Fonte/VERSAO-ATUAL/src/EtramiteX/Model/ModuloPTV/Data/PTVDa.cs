@@ -2561,8 +2561,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					Comando comando = null;
 					var ids = list.Select(x => x.Id.ToString()).Aggregate((current, next) => current + ", " + next);
 					comando = bancoDeDados.CriarComando(@"update {0}Tab_Ptv pt set pt.exibir_mensagem = 0
-													  where pt.id in (:id)", UsuarioCredenciado, EsquemaBanco);
-					comando.AdicionarParametroEntrada("id", ids, DbType.String);
+													  where pt.id in " + $"({ids})", UsuarioCredenciado, EsquemaBanco);
 					bancoDeDados.ExecutarScalar(comando);
 				}
 			}
