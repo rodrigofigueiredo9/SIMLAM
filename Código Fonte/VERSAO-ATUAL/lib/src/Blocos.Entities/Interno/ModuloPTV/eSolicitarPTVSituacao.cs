@@ -8,6 +8,8 @@
 		Aprovado,
 		Rejeitado,
 		AgendarFiscalizacao,
-		Bloqueado
+		Bloqueado,
+		Inválido = 7,
+		Editado = 8
 	}
 }
