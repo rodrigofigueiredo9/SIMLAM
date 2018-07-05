@@ -839,22 +839,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						{
 							case (int)eDocumentoFitossanitarioTipo.CFO:
 								consulta = "(SELECT CFO.numero||'/'||CFO.serie FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.CFOC:
 								consulta = "(SELECT CFOC.numero||'/'||CFOC.serie FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
 								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
 								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 						}
 					}
