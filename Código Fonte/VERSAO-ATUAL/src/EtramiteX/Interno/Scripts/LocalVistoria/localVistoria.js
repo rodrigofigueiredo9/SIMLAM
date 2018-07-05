@@ -38,7 +38,6 @@ LocalVistoria = {
 
 
 	ValidarHora: function (hora) {
-
 	    if (hora.length != 5) {
 	        return false;
 	    }
@@ -59,7 +58,6 @@ LocalVistoria = {
 	},
 
 	HoraInicioMenorHoraFim: function (horaInicio, HoraFim) {
-
 	    hrsIni = horaInicio.substring(0, 2);
 	    minIni = horaInicio.substring(3, 5);
 
@@ -71,6 +69,18 @@ LocalVistoria = {
 	    }
 	    return true;
 
+	},
+
+	DataInicialMenorDataFinal: function (dataInicio, dataFim) {
+		vtDtIni = dataInicio.split('/');
+		vtDtFim = dataFim.split('/');
+		dtIni = new Date(vtDtIni[2], vtDtIni[1], vtDtIni[0])
+		dtFim = new Date(vtDtFim[2], vtDtFim[1], vtDtFim[0])
+
+		if (dtFim < dtIni) {
+			return false;
+		}
+		return true;
 	},
 
 	onAdicionarBloqueio: function () {
@@ -135,7 +145,19 @@ LocalVistoria = {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
 	        $('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
 	        return;
-	    }
+		}
+
+		if (!(LocalVistoria.DataInicialMenorDataFinal($('.txtDataInicialBloqueio', LocalVistoria.container).val(), $('.txtDataFinalBloqueio', LocalVistoria.container).val()))) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.DataInicialMenorDataFinal]);
+			$('.txtDataInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicialBloqueio', LocalVistoria.container).val(), $('.txtHoraFinalBloqueio', LocalVistoria.container).val()))) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
 
 	    var linha = $('.tr_template_bloqueio', LocalVistoria.container).clone();
 	    var item = {
@@ -202,7 +224,8 @@ LocalVistoria = {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
 	        $('.txtHoraFim', LocalVistoria.container).focus();
 	        return;
-	    }
+		}
+
 	    if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicio', LocalVistoria.container).val(), $('.txtHoraFim', LocalVistoria.container).val())) ) {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
 	        $('.txtHoraInicio', LocalVistoria.container).focus();
