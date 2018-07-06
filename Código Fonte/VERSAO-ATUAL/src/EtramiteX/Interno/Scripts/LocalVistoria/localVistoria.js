@@ -101,7 +101,7 @@ LocalVistoria = {
 			$('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
 			return;
 		}
-		debugger;
+		
 		vtDtIni = $('.txtDataInicialBloqueio', LocalVistoria.container).val().split('/');
 		vtDtFim = $('.txtDataFinalBloqueio', LocalVistoria.container).val().split('/');
 		dtIni = new Date(vtDtIni[2], vtDtIni[1], vtDtIni[0])
