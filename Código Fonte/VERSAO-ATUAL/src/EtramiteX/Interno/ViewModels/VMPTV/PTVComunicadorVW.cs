@@ -22,7 +22,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 				{
                     @JustificativaObrigatoria = Mensagem.PTV.JustificativaObrigatoria,
                     @ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
-                    @ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" }))
+                    @ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpeg" }))
 				});
 			}
         }
