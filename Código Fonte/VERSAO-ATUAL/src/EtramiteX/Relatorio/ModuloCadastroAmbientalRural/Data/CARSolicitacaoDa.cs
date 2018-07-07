@@ -253,7 +253,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 					   and hee.correspondencia = 0
 					   and lee.id = hee.estado_id
 					   and hec.id_hst = he.id
-					   and hcs.protocolo_id = hpt.id_protocolo
+					   and hcs.protocolo_selecionado_id = hpt.id_protocolo
 					   and hcs.id = (select max(id)
 									   from hst_car_solicitacao hcs1
 									  where hcs1.solicitacao_id = hcs.solicitacao_id)

@@ -45,8 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
-			vm.TiposDocumentoOrigem = ViewModelHelper.CriarSelectList(_busLista.DocumentosFitossanitario);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -684,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -763,7 +762,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -824,7 +823,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)

@@ -734,7 +734,49 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 
                     i++;
                 }
-            }
+
+				comando = bancoDeDados.CriarComando(@"
+                                    select fcfi.Arquivo_Id pdf_iuf_bloco,
+										   fcfi.descricao,
+                                           f.id hst_id,
+                                           f.situacao_data
+									from hst_fiscalizacao f,
+									     hst_fisc_consid_final fcf,
+									     Hst_Fisc_Consid_Final_Iuf fcfi
+									where f.fiscalizacao_id = :fiscalizacao
+									      and f.situacao_anterior_id = 2
+									      and f.situacao_id = 1
+									      and f.acao_executada = 301
+									      and fcf.Id = fcfi.Id_Hst(+)
+									      and f.id = fcf.id_hst
+									order by f.situacao_data desc", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("fiscalizacao", fiscalizacaoId, DbType.Int32);
+
+				IEnumerable<IDataReader> daReader2 = DaHelper.ObterLista(comando, bancoDeDados);
+
+				foreach (var item in daReader2)
+				{
+					var documento = new FiscalizacaoDocumento();
+
+					documento.FiscalizacaoId = fiscalizacaoId;
+					documento.HistoricoId = item.GetValue<int>("hst_id");
+					documento.SituacaoData.Data = item.GetValue<DateTime>("situacao_data");
+					documento.PdfGeradoIUF.Id = item.GetValue<int>("pdf_iuf_bloco");
+					documento.NomeArquivo = item.GetValue<string>("descricao");
+
+					if (i > 0 && lst[i - 1].PdfGeradoIUF.Id == documento.PdfGeradoIUF.Id)
+					{
+						documento.PdfGeradoIUF.Id = 0;
+					}
+
+					lst.Add(documento);
+
+					i++;
+				}
+			}
+
+			lst = lst.OrderByDescending(a => a.HistoricoId).OrderByDescending(a => a.SituacaoData.Data).ToList();
 
 			return lst;
 		}

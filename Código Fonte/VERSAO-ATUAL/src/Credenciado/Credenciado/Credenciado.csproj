@@ -749,7 +749,9 @@
     <Content Include="Content\_imgLogo\logo_novo.jpeg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\_imgLogo\logo_novo.jpg" />
+    <Content Include="Content\_imgLogo\logo_novo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\_imgLogo\logo_topo.png" />
     <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
     <Content Include="Content\_img\add.png" />

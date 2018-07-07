@@ -233,7 +233,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
                 and hee.correspondencia = 0
                 and lee.id = hee.estado_id
                 and hec.id_hst = he.id
-				and hcs.protocolo_id = hpt.id_protocolo
+				and hcs.protocolo_selecionado_id = hpt.id_protocolo
                 and hcs.solicitacao_id = :id
                 and hcs.id = (select max(id) from hst_car_solicitacao hcs1 where hcs1.solicitacao_id = hcs.solicitacao_id)        
                 and hcs.solicitacao_id = hcsicar.solicitacao_car(+)

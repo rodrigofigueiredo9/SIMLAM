@@ -193,6 +193,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					cmd.ExecuteNonQuery();
 				}
+				//Inserir no Histórico
+				InserirHistoricoControleCar(conn, requisicao, tid, resultado);
+
 				if(!String.IsNullOrWhiteSpace(mensagemErro))
 					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
@@ -201,8 +204,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
 
-			//Inserir no Histórico
-			InserirHistoricoControleCar(conn, requisicao, tid, resultado);
 			if (item == null)
 			{
 				return 0;
@@ -359,6 +360,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				if (item == null) { teste = "ITEM NULO!!!!"; }
 				else teste = "ITEM NÃO NULO";
 
+				Log.Error("Requisicao: " + (requisicao != null ? JsonConvert.SerializeObject(requisicao) : " IS NULL"));
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message + teste, exception);
 			}
 		}
@@ -661,7 +663,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 				if (listaCodigos.Count() == 1)
 				{
-					if(!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
+					if(!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero, origem))
 					{
 						AtualizaInformacoesCAR(conn, listaCodigos[0], solicitacaoNumero, origem, requisicao, tid);
 						InserirTabelaTransacional(conn, listaCodigos[0], solicitacaoNumero, empreendimento, 1, origem);
@@ -676,7 +678,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					foreach (var codigo in listaCodigos)
 					{
-						if (!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero))
+						if (!VerificarCodigo(conn, listaCodigos[0], solicitacaoNumero, origem))
 						{
 							naoExisteNoSimlam.Add(codigo);
 						}
@@ -700,13 +702,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 		}
 
-		private static bool VerificarCodigo(OracleConnection conn, string codigo, int solicitacao)
+		private static bool VerificarCodigo(OracleConnection conn, string codigo, int solicitacao, string origem)
 		{
 			try
 			{
+				var esquema = origem == RequisicaoJobCar.INSTITUCIONAL ? 1 : 2;
+
 				//using (var cmd = new OracleCommand("SELECT COUNT(ID) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL LIKE '%:codigo%'", conn))
-				using (var cmd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR_ANTERIOR IN " +
-					"(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL LIKE '%:codigo%')", conn))
+				using (var cmd = new OracleCommand(@"SELECT SUM(CONTADOR) FROM (
+														  SELECT COUNT(1) CONTADOR FROM IDAF.TAB_CONTROLE_SICAR S	
+																	  INNER JOIN IDAF.TAB_CAR_SOLICITACAO C ON C.ID = S.SOLICITACAO_CAR
+																WHERE S.SOLICITACAO_CAR_ANTERIOR IN
+																			(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo)
+														  UNION ALL
+														  SELECT COUNT(1) CONTADOR FROM IDAF.TAB_CONTROLE_SICAR S
+																	  INNER JOIN IDAFCREDENCIADO.TAB_CAR_SOLICITACAO C ON C.ID = S.SOLICITACAO_CAR
+																WHERE S.SOLICITACAO_CAR_ANTERIOR IN
+																			(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo)
+															  )", conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("codigo", codigo));
 					if (Convert.ToBoolean(cmd.ExecuteScalar()))

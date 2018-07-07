@@ -1840,7 +1840,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				}
 				if (filtro.Dados.Situacao > 0)
 				{
-					comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
+					if(filtro.Dados.Situacao == 3) //Válido
+						comandtxt += comando.FiltroAnd("(case when pt.situacao = 3 then (select lps.texto from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id) else st.texto end)", "situacao", "Válido");
+					else if (filtro.Dados.Situacao == 7) //Inválido
+						comandtxt += comando.FiltroAnd("(case when pt.situacao = 3 then (select lps.texto from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id) else st.texto end)", "situacao", "Inválido");
+					else
+						comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
 				}
 				if (!String.IsNullOrEmpty(filtro.Dados.Destinatario))
 				{
@@ -1849,6 +1854,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				if (!String.IsNullOrEmpty(filtro.Dados.CulturaCultivar))
 				{
 					comandtxt += comando.FiltroAndLike("c.texto||'/'||cc.cultivar", "cultura_cultivar", filtro.Dados.CulturaCultivar, true, true);
+				}
+				if (!String.IsNullOrEmpty(filtro.Dados.Interessado))
+				{
+					var consulta = "(SELECT COALESCE(P.NOME, P.RAZAO_SOCIAL, PT.RESPONSAVEL_SEM_DOC) FROM IDAF.TAB_PESSOA P WHERE P.ID = PT.RESPONSAVEL_EMP)";
+					comandtxt += comando.FiltroAndLike(consulta, "interessado", filtro.Dados.Interessado, likeInicio: true);
+				}
+				if (filtro.Dados.TipoDocumento > 0)
+				{
+					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
+					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
+					{
+						var consulta = String.Empty;
+						switch (filtro.Dados.TipoDocumento)
+						{
+							case (int)eDocumentoFitossanitarioTipo.CFO:
+								consulta = "(SELECT case when CFO.serie is null then to_char(CFO.numero) else CFO.numero||'/'||CFO.serie end FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.CFOC:
+								consulta = "(SELECT case when CFOC.serie is null then to_char(CFOC.numero) else CFOC.numero||'/'||CFOC.serie end FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTV:
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+						}
+					}
 				}
 
 				List<String> ordenar = new List<String>();
@@ -1876,8 +1916,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
 															and d.id = pt.destinatario
-															and pt.situacao in (2, 4, 5, 6)
-															" + comandtxt + " group by pt.id) a ", esquemaBanco);
+															and pt.situacao > 1 " + comandtxt + " group by pt.id) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -1890,7 +1929,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 												pt.tipo_numero,
 												nvl(em.denominador, pt.empreendimento_sem_doc) as empreendimento,
 											    pt.situacao,
-												st.texto as situacao_texto,
+												(case when pt.situacao = 3 then (select lps.texto from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id) else st.texto end) as situacao_texto,
 												pt.responsavel_tecnico,
 												stragg(c.texto || '/' || trim(cc.cultivar)) as cultura_cultivar
 											from {0}tab_ptv pt, {0}tab_ptv_produto pr, {0}ins_empreendimento em, {0}lov_solicitacao_ptv_situacao st, {0}tab_cultura c, {0}tab_cultura_cultivar cc,{0}tab_destinatario_ptv d
@@ -1899,7 +1938,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 											  and st.id = pt.situacao
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 											  
-                                              and pt.situacao in (2, 4, 5, 6)
+                                              and pt.situacao > 1
 										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
@@ -2478,7 +2517,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				bancoDeDados.IniciarTransacao();
-				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado) ? ", p.data_ativacao = sysdate " : string.Empty;
+				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
 
@@ -2490,7 +2529,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 				var historicoAcao = eHistoricoAcao.analisar;
 
-				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 					historicoAcao = eHistoricoAcao.aprovar;/*TODO:--Aprovar*/
 				else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 					historicoAcao = eHistoricoAcao.rejeitar;/*TODO:--Rejeitar*/
