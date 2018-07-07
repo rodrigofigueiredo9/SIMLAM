@@ -1717,12 +1717,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
 								consulta = "(SELECT PTV.numero FROM TAB_PTV PTV WHERE pr.origem = PTV.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
 								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
 								break;
 							case (int)eDocumentoFitossanitarioTipo.CFCFR:
 								comandtxt += comando.FiltroAnd("pr.numero_origem", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
