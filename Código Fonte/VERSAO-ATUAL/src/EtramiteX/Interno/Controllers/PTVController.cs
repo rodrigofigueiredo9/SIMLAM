@@ -683,7 +683,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, _busLista.DocumentosFitossanitario);
+			var lstTipoDocOrigem = _busLista.DocumentosFitossanitario;
+			lstTipoDocOrigem = lstTipoDocOrigem.Where(x => x.Id != "7").ToList();
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, lstTipoDocOrigem);
 			return View(vm);
 		}
 

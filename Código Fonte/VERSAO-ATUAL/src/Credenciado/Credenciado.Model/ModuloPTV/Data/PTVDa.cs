@@ -851,7 +851,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_PTV_OUTROUF PO  ");
 								amarracaoTipoDoc = " and pr.origem = PO.ID ";
 								comandtxt += comando.FiltroAndLike("PO.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
-								break;							
+								break;
+							default:
+								break;
 						}
 					}
 				}

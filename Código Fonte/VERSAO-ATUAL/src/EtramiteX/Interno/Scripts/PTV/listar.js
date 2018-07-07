@@ -151,7 +151,7 @@ PTVListar = {
 	},
 
 	onChangeTipoDocumento: function () {
-		if ($(this).val() > 0)
+		if ($(this).val() > 0 && $(this).val() != 7)
 			$('.txtNumeroDocumento', PTVListar.container).toggleClass('hide', false);
 		else
 			$('.txtNumeroDocumento', PTVListar.container).toggleClass('hide', true);

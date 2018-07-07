@@ -1706,13 +1706,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						switch (filtro.Dados.TipoDocumento)
 						{
 							case (int)eDocumentoFitossanitarioTipo.CFO:
-								consulta = "(SELECT CFO.numero||'/'||CFO.serie FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT case when CFO.serie is null then to_char(CFO.numero) else CFO.numero||'/'||CFO.serie end FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.CFOC:
-								consulta = "(SELECT CFOC.numero||'/'||CFOC.serie FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
-								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT case when CFOC.serie is null then to_char(CFOC.numero) else CFOC.numero||'/'||CFOC.serie end FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
@@ -1723,6 +1723,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
 								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
 								comandtxt += comando.FiltroAndLike(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								break;
+							case (int)eDocumentoFitossanitarioTipo.CFCFR:
+								comandtxt += comando.FiltroAnd("pr.numero_origem", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+							case (int)eDocumentoFitossanitarioTipo.TF:
+								comandtxt += comando.FiltroAnd("pr.numero_origem", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 						}
 					}
