@@ -300,7 +300,7 @@
 	</div>
 </fieldset>
 
-<div class="block box divCamposSituacao divAprovar <%= Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Aprovado ? "hide":""%>">
+<div class="block box divCamposSituacao divAprovar <%= Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Valido ? "hide":""%>">
 	<div class="block">
 		<div class="coluna15">
 			<label for="DataValidade">Válido até *</label>

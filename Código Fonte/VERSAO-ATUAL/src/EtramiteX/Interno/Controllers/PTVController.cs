@@ -762,7 +762,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -823,7 +823,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)

@@ -331,7 +331,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 						_da.AnalizarEPTV(eptv, bancoDeDadosCredenciado);
 
-						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
 							eptvBanco.ValidoAte = eptv.ValidoAte;
 							eptvBanco.ResponsavelTecnicoId = eptv.ResponsavelTecnicoId;

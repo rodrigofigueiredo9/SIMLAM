@@ -1775,8 +1775,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				string comandtxt = string.Empty;
 				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
 				Comando comando = bancoDeDados.CriarComando("");
-				string tabelaTipoDoc = String.Empty;
-				string amarracaoTipoDoc = String.Empty;
 
 				#region Adicionando Filtros
 
@@ -1828,28 +1826,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
 					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
 					{
+						var consulta = String.Empty;
 						switch (filtro.Dados.TipoDocumento)
 						{
 							case (int)eDocumentoFitossanitarioTipo.CFO:
-								tabelaTipoDoc = ", {0}TAB_CFO CFO  ";
-								amarracaoTipoDoc = " and pr.origem = CFO.ID ";
-								comandtxt += comando.FiltroAndLike("CFO.numero||'/'||CFO.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT case when CFO.serie is null then to_char(CFO.numero) else CFO.numero||'/'||CFO.serie end FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.CFOC:
-								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_CFOC CFOC  ");
-								amarracaoTipoDoc = " and pr.origem = CFOC.ID ";
-								comandtxt += comando.FiltroAndLike("CFOC.numero||'/'||CFOC.serie", "numeroDocOrigem", filtro.Dados.NumeroDocumento, true, true);
+								consulta = "(SELECT case when CFOC.serie is null then to_char(CFOC.numero) else CFOC.numero||'/'||CFOC.serie end FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTV:
-								comandtxt += comando.FiltroAndLike("pt.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 
 							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
-								tabelaTipoDoc = String.Concat(tabelaTipoDoc, ", {0}TAB_PTV_OUTROUF PO  ");
-								amarracaoTipoDoc = " and pr.origem = PO.ID ";
-								comandtxt += comando.FiltroAndLike("PO.numero", "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
 								break;
 						}
 					}
@@ -1880,8 +1877,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 															and c.id = pr.cultura
 															and cc.id = pr.cultivar 
 															and d.id = pt.destinatario
-															and pt.situacao > 1
-															" + amarracaoTipoDoc + comandtxt + " group by pt.id) a ", esquemaBanco);
+															and pt.situacao > 1 " + comandtxt + " group by pt.id) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -1904,7 +1900,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 											  and c.id = pr.cultura
 											  and cc.id = pr.cultivar 											  
                                               and pt.situacao > 1
-										      and d.id = pt.destinatario " + amarracaoTipoDoc + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+										      and d.id = pt.destinatario " + comandtxt + " group by pt.id, pt.numero, pt.tipo_numero, nvl(em.denominador, pt.empreendimento_sem_doc), pt.situacao, st.texto, pt.responsavel_tecnico " + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion
@@ -2482,7 +2478,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				bancoDeDados.IniciarTransacao();
-				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado) ? ", p.data_ativacao = sysdate " : string.Empty;
+				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
 
@@ -2494,7 +2490,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 				var historicoAcao = eHistoricoAcao.analisar;
 
-				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+				if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 					historicoAcao = eHistoricoAcao.aprovar;/*TODO:--Aprovar*/
 				else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 					historicoAcao = eHistoricoAcao.rejeitar;/*TODO:--Rejeitar*/
