@@ -645,11 +645,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor)
+		public List<ListaValor> DiasHorasVistoria(int setor, bool visualizar)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor);
+				return _da.DiasHorasVistoria(setor, visualizar);
 			}
 			catch (Exception exc)
 			{

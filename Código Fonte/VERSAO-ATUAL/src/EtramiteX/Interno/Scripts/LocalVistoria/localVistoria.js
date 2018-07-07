@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
 LocalVistoria = {
@@ -38,7 +38,6 @@ LocalVistoria = {
 
 
 	ValidarHora: function (hora) {
-
 	    if (hora.length != 5) {
 	        return false;
 	    }
@@ -59,7 +58,6 @@ LocalVistoria = {
 	},
 
 	HoraInicioMenorHoraFim: function (horaInicio, HoraFim) {
-
 	    hrsIni = horaInicio.substring(0, 2);
 	    minIni = horaInicio.substring(3, 5);
 
@@ -73,8 +71,55 @@ LocalVistoria = {
 
 	},
 
-	onAdicionarBloqueio: function () {
+	DataInicialMenorDataFinal: function (dataInicio, dataFim) {
+		if (dataFim < dataInicio) {
+			return false;
+		}
+		return true;
+	},
 
+	onAdicionarBloqueio: function () {
+		if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if ($('.txtHoraFinalBloqueio', LocalVistoria.container).val() == '') {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if (!LocalVistoria.ValidarHora($('.txtHoraInicialBloqueio', LocalVistoria.container).val())) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicioInvalida]);
+			$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+		if (!LocalVistoria.ValidarHora($('.txtHoraFinalBloqueio', LocalVistoria.container).val())) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
+			$('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+		
+		vtDtIni = $('.txtDataInicialBloqueio', LocalVistoria.container).val().split('/');
+		vtDtFim = $('.txtDataFinalBloqueio', LocalVistoria.container).val().split('/');
+		dtIni = new Date(vtDtIni[2], vtDtIni[1], vtDtIni[0])
+		dtFim = new Date(vtDtFim[2], vtDtFim[1], vtDtFim[0])
+
+		if (!(LocalVistoria.DataInicialMenorDataFinal(dtIni, dtFim))) {
+			Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.DataInicialMenorDataFinal]);
+			$('.txtDataInicialBloqueio', LocalVistoria.container).focus();
+			return;
+		}
+
+		if (dtIni.equals(dtFim)) {
+			if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicialBloqueio', LocalVistoria.container).val(), $('.txtHoraFinalBloqueio', LocalVistoria.container).val()))) {
+				Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
+				$('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
+				return;
+			}
+		}
 
 	    var podeIncuir = 0;
 	    var item = {
@@ -111,32 +156,9 @@ LocalVistoria = {
 	    MasterPage.carregando(false);
 
 	    if (podeIncuir == 0)
-	        return;
+	        return;	    
 
-
-	    if ($('.txtHoraInicialBloqueio', LocalVistoria.container).val() == '') {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-
-	    if ($('.txtHoraFinalBloqueio', LocalVistoria.container).val() == '') {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimObrigatorio]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-
-	    if (!LocalVistoria.ValidarHora($('.txtHoraInicialBloqueio', LocalVistoria.container).val())) {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicioInvalida]);
-	        $('.txtHoraInicialBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-	    if (!LocalVistoria.ValidarHora($('.txtHoraFinalBloqueio', LocalVistoria.container).val())) {
-	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
-	        $('.txtHoraFinalBloqueio', LocalVistoria.container).focus();
-	        return;
-	    }
-
+		
 	    var linha = $('.tr_template_bloqueio', LocalVistoria.container).clone();
 	    var item = {
 	        Id: null,
@@ -202,7 +224,8 @@ LocalVistoria = {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraFimInvalida]);
 	        $('.txtHoraFim', LocalVistoria.container).focus();
 	        return;
-	    }
+		}
+
 	    if (!(LocalVistoria.HoraInicioMenorHoraFim($('.txtHoraInicio', LocalVistoria.container).val(), $('.txtHoraFim', LocalVistoria.container).val())) ) {
 	        Mensagem.gerar(MasterPage.getContent(LocalVistoria.container), [LocalVistoria.settings.Mensagens.HoraInicialMenorHoraFinal]);
 	        $('.txtHoraInicio', LocalVistoria.container).focus();
@@ -549,6 +572,7 @@ LocalVistoria = {
 	            DiaSemanaTexto: $('.lblDiaSemana', this).html(),
 	            HoraInicio: $('.lblHoraInicio', this).html(),
 	            HoraFim: $('.lblHoraFim', this).html(),
+				Situacao: 1,
 	            Tid: $('.hdnItemTid', this).val()
 	        });
 	    });

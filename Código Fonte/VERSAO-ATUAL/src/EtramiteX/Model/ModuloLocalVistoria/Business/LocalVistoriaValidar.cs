@@ -10,53 +10,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
 {
     class LocalVistoriaValidar
     {
-
         #region Propriedades
 
         LocalVistoriaDa _local = new LocalVistoriaDa();
-                
 
         #endregion
+
         internal bool Salvar(LocalVistoria local)
         {
             if (string.IsNullOrEmpty(local.SetorTexto))
-            {
                 Validacao.Add(Mensagem.LocalVistoria.SetorObrigatorio);
-            }
-
 
             if (local.DiasHorasVistoria.Count < 0)
-            {
                     Validacao.Add(Mensagem.LocalVistoria.PeloMenosUmHorario);
-            }
 
-
-           
             foreach (DiaHoraVistoria dia in local.DiasHorasVistoria)
             {
                 if (string.IsNullOrEmpty(dia.DiaSemanaTexto))
-                {
                     Validacao.Add(Mensagem.LocalVistoria.DiaSemanaObrigatorio);
-                }
 
                 if (string.IsNullOrEmpty(dia.HoraInicio))
-                {
                     Validacao.Add(Mensagem.LocalVistoria.HoraInicioObrigatorio);
-                }
 
                 if (dia.HoraInicio.Length !=5)
-                {
                     Validacao.Add(Mensagem.LocalVistoria.HoraInicioInvalida);
-                }
-
 
                 if (dia.HoraFim.Length != 5)
-                {
                     Validacao.Add(Mensagem.LocalVistoria.HoraFimInvalida);
-                }
             }
 
-           
             int identDiaSemana = -1;
             int horaI = 0;
             int minI = 0;
@@ -69,20 +51,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
             foreach (DiaHoraVistoria diaOrdenado in localOrdenado.DiasHorasVistoria)
             {
                 if (string.IsNullOrEmpty(diaOrdenado.DiaSemanaTexto))
-                {
                     Validacao.Add(Mensagem.LocalVistoria.DiaSemanaObrigatorio);
-                }
 
                 if (string.IsNullOrEmpty(diaOrdenado.HoraInicio))
-                {
                     Validacao.Add(Mensagem.LocalVistoria.HoraInicioObrigatorio);
-                }
 
                 if (string.IsNullOrEmpty(diaOrdenado.HoraFim))
-                {
                     Validacao.Add(Mensagem.LocalVistoria.HoraFimObrigatorio);
-                }
-
 
                 horaI = Int32.Parse(diaOrdenado.HoraInicio.Substring(0, 2));
                 minI = Int32.Parse(diaOrdenado.HoraInicio.Substring(3, 2));
@@ -94,7 +69,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
                     //hora inicial menor ou hora igual minuto inicial menor
                     Validacao.Add(Mensagem.LocalVistoria.HoraInicialMenorHoraFinal(diaOrdenado.DiaSemanaTexto));
                 }
-
 
                 if (diaOrdenado.Situacao == 1)
                 {
@@ -108,25 +82,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
                     else
                     {
                         if ((horaI < ultimaHora) || ((horaI == ultimaHora) && (minI <= ultimoMin)))
-                        {
                             Validacao.Add(Mensagem.LocalVistoria.HoraInicioFimNãoDeveCoincidir(diaOrdenado.DiaSemanaTexto));
-                        }
                     }
                 }
-
             }
 
             return Validacao.EhValido;
-
         }
 
-        internal bool Excluir(int id)
-        {
-            return Validacao.EhValido;
-        }
-
-
-
+        internal bool Excluir(int id) => Validacao.EhValido;
 
         #region Auxiliares
 
@@ -140,6 +104,5 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLocalVistoria.Business
         }
 
         #endregion
-
     }
 }
