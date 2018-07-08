@@ -591,7 +591,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		internal PTV Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				PTV PTV = new PTV();
 

@@ -9,7 +9,9 @@ EPTVListar = {
 			urlAnalisar: null,
 			urlValidarAcessoComunicador: null,
 			urlComunicadorPTV: null,
-			urlAnalisarDesbloqueio: null
+			urlAnalisarDesbloqueio: null,
+			urlVisualizar: null,
+			urlPDF: null
 		}
 	},
 
@@ -22,6 +24,8 @@ EPTVListar = {
 		EPTVListar.container = container;
 		container.listarAjax();
 		container.delegate('.btnAnalisar', 'click', EPTVListar.analisar);
+		container.delegate('.btnVisualizar', 'click', EPTVListar.visualizar);
+		container.delegate('.btnPDF', 'click', EPTVListar.gerarPDF);
 		container.delegate('.btnAnalisarDesbloqueio', 'click', EPTVListar.analisarDesbloqueio);
 		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
 		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
@@ -81,5 +85,15 @@ EPTVListar = {
 				});
 			},
 			Modal.tamanhoModalMedia);
+	},
+
+	visualizar: function () {
+		var objeto = EPTVListar.obter(this);
+		MasterPage.redireciona(EPTVListar.settings.urls.urlVisualizar + '/' + objeto.Id);
+	},
+	
+	gerarPDF: function () {
+		var item = EPTVListar.obter(this);
+		MasterPage.redireciona(EPTVListar.settings.urls.urlPDF + '/' + item.Id);
 	}
 }

@@ -840,6 +840,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View("EPTVVisualizar", vm);
 		}
 
+
+
+
 		#endregion EPTV
 
 		#region PTVComunicador
