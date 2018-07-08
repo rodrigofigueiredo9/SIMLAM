@@ -756,7 +756,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, false));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
@@ -817,7 +817,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, true));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
@@ -849,6 +849,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult AnalisarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]

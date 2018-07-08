@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -13,6 +13,7 @@ TituloListar = {
 	urlValidarAlterarAutorSetor: null,
 	urlValidarAlterarSituacao: null,
 	urlAlterarAutorSetor: null,
+	urlBaixarDemonstrativoCAR: null,
 	container: null,
 	settings: {
 		associarFuncao: null
@@ -30,6 +31,7 @@ TituloListar = {
 		TituloListar.container.delegate('.btnAssociar', 'click', TituloListar.onAssociarTitulo);
 		TituloListar.container.delegate('.btnAlterarSituacaoCondicionante', 'click', TituloListar.onBtnAlterarSituacaoCondicionanteClick);
 		TituloListar.container.delegate('.btnPDF', 'click', TituloListar.gerarPdf);
+		TituloListar.container.delegate('.btnDemonstrativoCar', 'click', TituloListar.baixarDemonstrativoCar);
 
 		Aux.setarFoco(TituloListar.container);
 
@@ -139,5 +141,40 @@ TituloListar = {
 		if (retorno.FecharModal) {
 			Modal.fechar(TituloListar.container);
 		}
+	},
+
+	baixarDemonstrativoCar: function () {
+		debugger;
+		var objeto = $.parseJSON($(this).closest('tr').find('.itemJson').val());
+		
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: TituloListar.urlBaixarDemonstrativoCAR,
+			data: JSON.stringify({ id: objeto.Id, isTitulo: true }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloListar.container);
+				MasterPage.carregando(false);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				MasterPage.carregando(false);
+				if (response.UrlPdfDemonstrativo) {
+					window.open(response.UrlPdfDemonstrativo);
+				}
+				else {
+					Mensagem.limpar(TituloListar.container);
+					Mensagem.gerar(TituloListar.container, [TituloListar.mensagens.GerarPdfSICARUrlNaoEncontrada]);
+				}
+
+
+				//CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
+			}
+		});
+		MasterPage.carregando(false);
 	}
 }

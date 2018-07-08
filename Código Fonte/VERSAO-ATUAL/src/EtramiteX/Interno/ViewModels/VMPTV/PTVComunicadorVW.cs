@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 {
-    public class PTVComunicadorVW
+	public class PTVComunicadorVW
     {
         public PTVComunicador Comunicador { get; set; }
 
         public PTVConversa Conversa { get; set; }
 
+		public bool IsDesbloqueio { get; set; } = false;
         public bool IsVisualizar { get; set; }
         public string Mensagens
         {

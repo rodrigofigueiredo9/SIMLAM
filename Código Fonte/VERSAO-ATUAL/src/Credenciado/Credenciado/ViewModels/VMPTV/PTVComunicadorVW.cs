@@ -8,14 +8,15 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 {
-    public class PTVComunicadorVW
+	public class PTVComunicadorVW
     {
         public PTVComunicador Comunicador { get; set; }
 
         public PTVConversa Conversa { get; set; }
 
+		public bool IsDesbloqueio { get; set; } = false;
         public bool IsVisualizar { get; set; }
-        public string Mensagens
+		public string Mensagens
         {
             get
             {
@@ -23,8 +24,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
                 {
                     @JustificativaObrigatoria = Mensagem.PTV.JustificativaObrigatoria,
                     @ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
-                    @ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" }))
-                });
+                    @ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpeg", ".jpg" })),
+					@UmDosCamposDeveEstarPreenchido = Mensagem.PTV.UmDosCamposPreenchido
+				});
             }
         }
 

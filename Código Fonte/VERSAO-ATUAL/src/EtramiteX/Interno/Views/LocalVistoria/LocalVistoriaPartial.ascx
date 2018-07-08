@@ -180,7 +180,7 @@
 							</td>
                             <% if (!Model.IsVisualizar) { %>
 							    <td>
-                                    <a class="icone excluir btnExcluir" title="Excluir"></a>
+                                    <a class="icone excluir btnExcluirBloqueio" title="Excluir"></a>
 							        <input type="hidden" value="<%= item.Id %>" class="hdnItemBloqueioId" />
                                     <input type="hidden" value="<%= item.Tid %>" class="hdnItemBloqueioTid" />
 							        <input type="hidden" value="<%= i %>" class="hdnItemBloqueioIndex" />
