@@ -301,6 +301,107 @@
 			<%= Html.TextBox("NotaFiscalNumero", Model.PTV.NotaFiscalNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalNumero", @maxlength="60" })) %>
 		</div>
 	</div>
+	<div class="block">
+		<div class="coluna24">
+			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
+			<label>
+				<%=Html.RadioButton("NotaFiscalApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NotaFiscalApresentacao == null), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscal rdbApresentacaoNotaFiscalSim" }))%>
+				Sim
+			</label>
+			<label>
+				<%=Html.RadioButton("NotaFiscalApresentacao", (int)eApresentacaoNotaFiscal.Nao ,Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Nao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscal rdbApresentacaoNotaFiscalNao" }))%>
+				Não
+			</label>
+		</div>
+		<div class="coluna40">
+			<label for="NotaFiscalApresentacao">Tipo da caixa *</label><br />
+			<label>
+				<%=Html.RadioButton("NotaFiscalApresentacao", (int)eTipoNotaFiscalDeCaixa.Madeira, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NotaFiscalApresentacao == null), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscal rdbApresentacaoNotaFiscalSim" }))%>
+				Madeira
+			</label>
+			<label>
+				<%=Html.RadioButton("NotaFiscalApresentacao", (int)eTipoNotaFiscalDeCaixa.Plastico ,Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Nao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscal rdbApresentacaoNotaFiscalNao" }))%>
+				Plástico
+			</label>
+			<label>
+				<%=Html.RadioButton("NotaFiscalApresentacao", (int)eTipoNotaFiscalDeCaixa.Papelao ,Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Nao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscal rdbApresentacaoNotaFiscalNao" }))%>
+				Papelão
+			</label>
+		</div>		
+	</div>
+	<div class="block">
+		<div class="coluna36 nota_fical <%=(Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Nao)? "hide":"" %>">
+			<label for="NotaFiscalNumero">Nº da nota fiscal *</label>
+			<%= Html.TextBox("NotaFiscalNumero", Model.PTV.NotaFiscalNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalNumero", @maxlength="60" })) %>
+		</div>
+		<div class="coluna10">
+			<button class="inlineBotao btnVerificarNotaCaixa">Verificar</button>
+		</div>
+		<div class="coluna15">
+			<label for="VeiculoIdentificacaoNumero">Saldo atual</label>
+			<%= Html.TextBox("SaldoAtual", Model.PTV.VeiculoIdentificacaoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtIdentificacaoVeiculo", @maxlength="15"}))%>
+		</div>
+		<div class="coluna15">
+			<label for="VeiculoIdentificacaoNumero">N° de caixas *</label>
+			<%= Html.TextBox("SaldoAtual", Model.PTV.VeiculoIdentificacaoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtIdentificacaoVeiculo", @maxlength="15"}))%>
+		</div>
+		<div class="coluna10">
+			<button class="inlineBotao btnAddCaixa">Adicionar</button>
+		</div>
+	</div>
+	<div class="gridContainer">
+		<table class="dataGridTable gridCaixa">
+			<thead>
+				<tr>
+					<th style="width: 30%">N° da nota fiscal de caixa </th>
+					<th>Tipo da caixa</th>
+					<th style="width: 10%">Saldo atual</th>
+					<th style="width: 16%">N° de caixas</th>
+					<% if (!Model.IsVisualizar) { %><th style="width: 7%">Ação</th><% } %>
+				</tr>
+			</thead>
+			<tbody>
+				<% foreach (var item in Model.PTV.NotaFiscalDeCaixas) 
+				{
+				%>
+					<tr>
+						<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+						<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
+						<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
+						<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
+						<%if (!Model.IsVisualizar) { %>
+						<td>
+							<a class="icone excluir btnExcluir"></a>
+							<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+						</td>
+						<%} %>
+					</tr>
+				<% } %>
+
+				<tr class="trTemplate hide">
+					<td class="OrigemTipo">
+						<label class="lblOrigemTipo"></label>
+					</td>
+					<td class="cultura_cultivar">
+						<label class="lblCulturaCultivar"></label>
+					</td>
+					<td class="quantidade">
+						<label class="lblQuantidade"></label>
+					</td>
+					<td class="unidade_medida">
+						<label class="lblUnidadeMedida"></label>
+					</td>
+					<td>
+						<a class="icone excluir btnExcluir" title="Remover"></a>
+						<input type="hidden" value="" class="hdnOrigemID" />
+						<input type="hidden" value="0" class="hdnItemJson" />
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+	<br />
 </div>
 
 <div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">

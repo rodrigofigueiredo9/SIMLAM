@@ -72,7 +72,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
         public string EmpreendimentoSemDoc { get; set; }
 
-        public string ResponsavelSemDoc { get; set; } 
+        public string ResponsavelSemDoc { get; set; }
+
+		public List<NotaFiscalCaixa> NotaFiscalDeCaixas { get; set; }
+		public NotaFiscalCaixa NFCaixa { get; set; }
+		
 
 		public PTV()
 		{
@@ -84,6 +88,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 			Produto = new PTVProduto();
 			Destinatario = new DestinatarioPTV();
 			Anexos = new List<Anexo>();
-		}
+			NotaFiscalDeCaixas = new List<NotaFiscalCaixa>();
+			NFCaixa = new NotaFiscalCaixa();
+
 	}
+}
 }
