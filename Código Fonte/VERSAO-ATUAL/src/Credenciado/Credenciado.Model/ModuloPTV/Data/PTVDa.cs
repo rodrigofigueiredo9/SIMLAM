@@ -807,10 +807,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				}
 				if (filtro.Dados.Situacao > 0)
 				{
-					if (filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Válido || filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Inválido)
+					if (filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido || filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Invalido)
 					{
 						var consulta = "(select ip.situacao from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id )";
-						var parametroSituacao = filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Válido ? (int)ePTVSituacao.Valido : (int)ePTVSituacao.Invalido;
+						var parametroSituacao = filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido ? (int)ePTVSituacao.Valido : (int)ePTVSituacao.Invalido;
 						comandtxt += comando.FiltroAnd(consulta, "situacao", parametroSituacao);
 					}
 					else 
