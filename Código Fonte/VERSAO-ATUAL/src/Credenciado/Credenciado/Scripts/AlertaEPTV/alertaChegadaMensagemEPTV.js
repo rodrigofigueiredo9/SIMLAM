@@ -16,7 +16,6 @@ AlertaChegadaMensagemEPTV = {
 	container: null,
 
 	load: function (container, options) {
-		debugger;
 		AlertaChegadaMensagemEPTV.container = container;
 
 		if (options) {
@@ -33,14 +32,14 @@ AlertaChegadaMensagemEPTV = {
 			$(".containerAcoesAlertaChegadaMensagemPTV", AlertaChegadaMensagemEPTV.container).removeClass("hide");
 		}
 		
-		if (AlertaChegadaMensagemEPTV.settings.urls.urlPTVAprovada && campo == 'AlertaEPTVAprovada') {
+		if (AlertaChegadaMensagemEPTV.settings.urls.urlPTVAprovada && campo.equals('AlertaEPTVAprovada')) {
 			AlertaChegadaMensagemEPTV.settings.botoes.push({
 				label: 'Imprimir E-PTV',
 				url: AlertaChegadaMensagemEPTV.settings.urls.urlPTVAprovada,
 				idPTV: AlertaChegadaMensagemEPTV.settings.id
 			});
 		}
-		else if (AlertaChegadaMensagemEPTV.settings.urls.urlPTVRejeitada && campo == 'AlertaEPTVRejeitada') {
+		else if (AlertaChegadaMensagemEPTV.settings.urls.urlPTVRejeitada && campo.equals('AlertaEPTVRejeitada')) {
 			AlertaChegadaMensagemEPTV.settings.botoes.push({
 				label: 'Editar E-PTV',
 				url: AlertaChegadaMensagemEPTV.settings.urls.urlPTVRejeitada,

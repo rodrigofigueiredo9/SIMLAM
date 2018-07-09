@@ -2310,24 +2310,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 			}
 
-			#region Exibir_Mensagem
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			if (list.Count > 0)
 			{
-				Comando comando = null;
-				if (list.Count > 0)
+				#region Exibir_Mensagem
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 				{
+					Comando comando = null;
 					var ids = list.Select(x => x.Id.ToString()).Aggregate((current, next) => current + ", " + next);
 					comando = bancoDeDados.CriarComando(@"update {0}tab_Ptv pt set pt.exibir_msg_credenciado = 0
 													where pt.id in " + $"({ids})", EsquemaBanco);
 					bancoDeDados.ExecutarScalar(comando);
 				}
+
+				#endregion Exibir_Mensagem
+
+				foreach (var ptv in list)
+					ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
 			}
-
-			#endregion Exibir_Mensagem
-
-			foreach (var ptv in list)
-				ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
 
 			return list;
 		}
