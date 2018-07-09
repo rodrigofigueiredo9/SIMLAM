@@ -925,6 +925,7 @@
     <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Agrotoxicos\listar.js" />
+    <Content Include="Scripts\AlertaEPTV\alertaChegadaMensagemEPTV.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeConsolidacao.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducaoItem.js" />

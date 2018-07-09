@@ -1,5 +1,6 @@
-﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
@@ -53,6 +54,26 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js")%>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js")%>"></script>
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/AlertaEPTV/alertaChegadaMensagemEPTV.js") %>"></script>
+
+		<script> 
+			$(function () { 
+				<% if (Validacao.MensagensAlertaChegadaMensagemEPTV.Count() > 0){%>
+				<% var mensagem = Validacao.MensagensAlertaChegadaMensagemEPTV.FirstOrDefault(); %>
+				AlertaChegadaMensagemEPTV.exibirMensagemValidacao('<%= mensagem.Texto%>');
+				AlertaChegadaMensagemEPTV.load($(".containerAcoesAlertaChegadaMensagemEPTV"), { 
+				  urls: { 
+					  urlPTVAprovada: '<%= Url.Action("GerarPdf", "PTV") %>',
+					  urlPTVRejeitada: '<%= Url.Action("Editar", "PTV") %>'
+				  }, 
+				  id: '<%= mensagem.Id %>',
+				  campo: '<%= mensagem.Campo %>'
+				});
+				<%Validacao.MensagensAlertaChegadaMensagemEPTV.Remove(mensagem);%>
+			  <%}%>
+ 
+			}); 
+		  </script>
 
 		<!-- Timer -->
 		<% if (HttpContext.Current.User.Identity.IsAuthenticated) { %>

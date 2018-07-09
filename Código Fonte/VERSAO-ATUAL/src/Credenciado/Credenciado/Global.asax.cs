@@ -5,6 +5,8 @@ using System.Web.Routing;
 using System.Web.Security;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 
 namespace Tecnomapas.EtramiteX.Credenciado
@@ -47,6 +49,16 @@ namespace Tecnomapas.EtramiteX.Credenciado
 			string sessionId = ticket.UserData;
 
 			GerenciarAutenticacao.CarregarUser(login, sessionId);
+
+			#region Alerta de E-PTV
+
+			if (Validacao.MensagensAlertaChegadaMensagemEPTV.Count == 0)
+			{
+				PTVBus _bus = new PTVBus();
+				_bus.VerificarAlertaChegadaMensagemEPTV();
+			}
+
+			#endregion Alerta de E-PTV
 		}
 	}
 }

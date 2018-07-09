@@ -673,6 +673,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return new List<Setor>();
 		}
 
+		public List<PTV> ObterNumeroPTVExibirMensagemCredenciado(int idCredenciado, BancoDeDados banco = null)
+		{
+			var listPtv = new List<PTV>();
+
+			try
+			{
+				listPtv = _da.ObterNumeroPTVExibirMensagemCredenciado(idCredenciado, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return listPtv;
+		}
+
 		#endregion
 
 		public PTVHistorico ObterHistoricoAnalise(int ptvID)
@@ -905,5 +921,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		}
 
 		#endregion
+
+		#region Alerta de E-PTV
+
+		public bool VerificarAlertaChegadaMensagemEPTV()
+		{
+			bool exibirMensagem = false;
+
+			int credenciadoId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
+			var listPtv = ObterNumeroPTVExibirMensagemCredenciado(credenciadoId);
+
+			if (listPtv.Count > 0)
+			{
+				foreach (var ptv in listPtv)
+				{
+					switch (ptv.Situacao)
+					{
+						case (int)eSolicitarPTVSituacao.Aprovado:
+							Validacao.AddAlertaChegadaMensagemEPTV(Mensagem.PTV.ChegadaMensagemEPTVAprovada(ptv.Numero, ptv.Id));
+							break;
+						case (int)eSolicitarPTVSituacao.Rejeitado:
+							Validacao.AddAlertaChegadaMensagemEPTV(Mensagem.PTV.ChegadaMensagemEPTVRejeitada(ptv.Numero, ptv.SituacaoMotivo, ptv.Id));
+							break;
+						case (int)eSolicitarPTVSituacao.AgendarFiscalizacao:
+							Validacao.AddAlertaChegadaMensagemEPTV(Mensagem.PTV.ChegadaMensagemEPTVFiscalizacaoAgendada(ptv.Numero, ptv.LocalVistoriaTexto,
+								ptv.DataHoraVistoriaTexto, ptv.SituacaoMotivo));
+							break;
+					}
+
+				}
+				exibirMensagem = true;
+			}
+
+			return exibirMensagem;
+		}
+
+
+		#endregion Alerta de E-PTV
 	}
 }

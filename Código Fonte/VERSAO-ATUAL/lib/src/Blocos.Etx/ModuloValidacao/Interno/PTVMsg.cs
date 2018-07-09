@@ -203,6 +203,43 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			};
 		}
 
+		public Mensagem ChegadaMensagemEPTVAprovada(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. <br />" +
+						$"Não esqueça de que, para o trânsito, é necessário que os documentos originais anexados na solicitação acompanhem a E-PTV.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVAprovada",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVRejeitada(long numero, string motivo, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi rejeitada. <br />" +
+						$"Motivo: {motivo}",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVRejeitada",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVFiscalizacaoAgendada(long numero, string local, string hora, string info)
+		{
+			return new Mensagem()
+			{
+				Texto = $"Foi agendada fiscalização para a E-PTV {numero}. <br />" +
+						$"Local: {local} <br />" +
+						$"Hora: {hora} <br />" +
+						$"Informação adicional: {info}",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVFiscalizacaoAgendada"
+			};
+		}
+
 		#endregion Alerta de E-PTV
 	}
 }
