@@ -393,6 +393,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(int numeroNF)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@SaldoAtual = 20
+			});
+		}
+
 		#endregion
 
 		#region Ativar/Cancelar PTV

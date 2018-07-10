@@ -19,7 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
 		public NotaFiscalCaixa()
 		{
-
+			notaFiscalCaixaApresentacao = 1;
 		}
 	}
 }

@@ -180,5 +180,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
+
+		#region NotaFiscalCaixa
+		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		#endregion
 	}
 }

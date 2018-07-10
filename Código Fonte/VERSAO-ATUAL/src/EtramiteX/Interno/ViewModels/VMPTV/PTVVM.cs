@@ -85,6 +85,17 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			}
 		}
 
+		public string Mensagens
+		{
+			get
+			{
+				return ViewModelHelper.Json(new
+				{
+					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio
+				});
+			}
+		}
+
 		public PTVVM() { }
 
 		public PTVVM(PTV ptv, List<Lista> lstSituacoes, List<ListaValor> lsResponsavel, List<Lista> lsOrigem, List<TratamentoFitossanitario> lsFitossanitario,

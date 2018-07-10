@@ -37,7 +37,8 @@
 				    urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
 				    urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
 				    urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',
-				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>'
+				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>',
+				    urlVerificarNotaFiscalCaixa: '<%= Url.Action("VerificarNotaFiscalCaixa", "PTV") %>'
 				},
 			});
 
