@@ -2523,9 +2523,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
-		public List<PTV> ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
+		public PTV ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
 		{
-			var list = new List<PTV>();
+			var ptv = new PTV();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = null;
@@ -2534,19 +2534,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													  where Pt.Local_Vistoria in ( select S.Setor
 													                               from {1}Tab_Funcionario_Setor s
 													                               where S.Funcionario = :idFuncionario )
-													  and pt.exibir_mensagem = 1", UsuarioCredenciado, EsquemaBanco);
+													  and pt.exibir_mensagem = 1
+													  and rownum = 1", UsuarioCredenciado, EsquemaBanco);
 				comando.AdicionarParametroEntrada("idFuncionario", idFuncionario, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					while (reader.Read())
+					if (reader.Read())
 					{
-						var ptv = new PTV()
+						ptv = new PTV()
 						{
 							Id = reader.GetValue<int>("id"),
 							Numero = reader.GetValue<long>("numero")
 						};
-						list.Add(ptv);
 					}
 				}
 
@@ -2556,19 +2556,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafcredenciado"))
 			{
-				if (list.Count > 0)
+				if (ptv?.Id > 0)
 				{
 					Comando comando = null;
-					var ids = list.Select(x => x.Id.ToString()).Aggregate((current, next) => current + ", " + next);
+
 					comando = bancoDeDados.CriarComando(@"update {0}Tab_Ptv pt set pt.exibir_mensagem = 0
-													  where pt.id in " + $"({ids})", UsuarioCredenciado, EsquemaBanco);
+													  where pt.id = :ptv_id", UsuarioCredenciado, EsquemaBanco);
+					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
 					bancoDeDados.ExecutarScalar(comando);
 				}
 			}
 
 			#endregion Exibir_Mensagem
 
-			return list;
+			return ptv;
 		}
 
 		#endregion Alerta EPTV
