@@ -358,58 +358,63 @@
 			</div>
 		</div>
 	</div>
-	<div class="gridContainer identificacaoDaCaixa hide">
-		<table class="dataGridTable gridCaixa">
-			<thead>
-				<tr>
-					<th style="width: 30%">N° da nota fiscal de caixa </th>
-					<th>Tipo da caixa</th>
-					<th style="width: 10%">Saldo atual</th>
-					<th style="width: 16%">N° de caixas</th>
-					<% if (!Model.IsVisualizar) { %><th style="width: 7%">Ação</th><% } %>
-				</tr>
-			</thead>
-			<tbody>
-				<% foreach (var item in Model.PTV.NotaFiscalDeCaixas) 
-				{
-				%>
+	<% if (Model.PTV.NotaFiscalDeCaixas.Count() > 0)
+		{%>
+		<div class="gridContainer identificacaoDaCaixa">
+			<table class="dataGridTable gridCaixa">
+				<thead>
 					<tr>
-						<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
-						<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
-						<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
-						<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
-						<%if (!Model.IsVisualizar) { %>
-						<td>
-							<a class="icone excluir btnExcluirCaixa"></a>
-							<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
-						</td>
-						<%} %>
+						<th style="width: 30%">N° da nota fiscal de caixa </th>
+						<th>Tipo da caixa</th>
+						<th style="width: 10%">Saldo atual</th>
+						<th style="width: 16%">N° de caixas</th>
+						<% if (!Model.IsVisualizar)
+				 { %><th style="width: 7%">Ação</th><% } %>
 					</tr>
-				<% } %>
+				</thead>
+				<tbody>
+					<% foreach (var item in Model.PTV.NotaFiscalDeCaixas)
+				 {
+					%>
+						<tr>
+							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
+							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
+							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
+							<%if (!Model.IsVisualizar)
+				 { %>
+							<td>
+								<a class="icone excluir btnExcluirCaixa"></a>
+								<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+							</td>
+							<%} %>
+						</tr>
+					<% } %>
 
-				<tr class="trTemplate hide">
-					<td class="">
-						<label class="lblNFCaixaNumero"></label>
-					</td>
-					<td class="">
-						<label class="lblTipoCaixa"></label>
-					</td>
-					<td class="">
-						<label class="lblSaldoAtual"></label>
-					</td>
-					<td class="">
-						<label class="lblNumeroDeCaixas"></label>
-					</td>
-					<td>
-						<a class="icone excluir btnExcluirCaixa" title="Remover"></a>
-						<input type="hidden" value="" class="hdnOrigemID" />
-						<input type="hidden" value="0" class="hdnItemJson" />
-					</td>
-				</tr>
+					<tr class="trTemplate hide">
+						<td class="">
+							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lblTipoCaixa"></label>
+						</td>
+						<td class="">
+							<label class="lblSaldoAtual"></label>
+						</td>
+						<td class="">
+							<label class="lblNumeroDeCaixas"></label>
+						</td>
+						<td>
+							<a class="icone excluir btnExcluirCaixa" title="Remover"></a>
+							<input type="hidden" value="" class="hdnOrigemID" />
+							<input type="hidden" value="0" class="hdnItemJson" />
+						</td>
+					</tr>
 
-			</tbody>
-		</table>
-	</div>
+				</tbody>
+			</table>
+		</div>
+	<%} %>
 	<br />
 </div>
 

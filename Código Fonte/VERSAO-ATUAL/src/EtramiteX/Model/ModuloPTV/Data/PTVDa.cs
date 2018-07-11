@@ -2260,9 +2260,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
-		#endregion
+		internal List<NotaFiscalCaixa> ObterNFCaixas(int idPTV)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID, LC.TEXTO TIPO_TEXTO
+									FROM TAB_NF_CAIXA NF 
+										INNER JOIN TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
+										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
+									WHERE PNF.PTV = :ptv ORDER BY NF.ID");
+				comando.AdicionarParametroEntrada("ptv", idPTV, DbType.Int32);
 
-		#region Comunicador
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						NotaFiscalCaixa nf = new NotaFiscalCaixa();
+						nf.id = reader.GetValue<int>("ID");
+						nf.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+						nf.numeroCaixas = reader.GetValue<int>("NUMERO_CAIXAS");
+						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
+						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
+						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						lstNotaFiscalDeCaixa.Add(nf);
+					}
+
+					reader.Close();
+				}
+				return lstNotaFiscalDeCaixa;
+				//return (bancoDeDados.ExecutarScalar<int>(comando));
+			}
+		}
+			#endregion
+
+			#region Comunicador
 
 		internal PTVComunicador ObterComunicador(int idPTV, BancoDeDados banco = null)
 		{

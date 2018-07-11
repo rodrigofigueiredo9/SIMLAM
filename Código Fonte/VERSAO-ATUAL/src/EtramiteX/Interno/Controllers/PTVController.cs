@@ -192,6 +192,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 			vm.IsVisualizar = true;
+			
 			return View("Visualizar", vm);
 		}
 

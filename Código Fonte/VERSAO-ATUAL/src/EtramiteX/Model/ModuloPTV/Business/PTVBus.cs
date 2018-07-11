@@ -473,7 +473,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			try
 			{
-				return _da.Obter(id, simplificado);
+				PTV ptv = new PTV();
+
+				ptv = _da.Obter(id, simplificado);
+				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
+
+				return ptv;
 			}
 			catch (Exception ex)
 			{
@@ -780,6 +785,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			try
 			{
 				return _da.VerificarNumeroNFCaixa(notaFiscal);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<NotaFiscalCaixa> ObterNotasFiscalDeCaixas(int idPTV)
+		{
+			try
+			{
+				return _da.ObterNFCaixas(idPTV);
 			}
 			catch (Exception exc)
 			{
