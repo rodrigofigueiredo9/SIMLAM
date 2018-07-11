@@ -106,6 +106,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.rdbTipoCaixa', 'change', PTVEmitir.onChangeTipoCaixa);
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscalCaixa', 'change', PTVEmitir.onPossuiNFCaixa);
 		PTVEmitir.container.delegate('.btnExcluirCaixa', 'click', PTVEmitir.onExcluirCaixa);
+		PTVEmitir.container.delegate('.btnLimparNotaCaixaCaixa', 'click', PTVEmitir.onlimparCamposCaixa);
 
 
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
@@ -1110,6 +1111,10 @@ PTVEmitir = {
 		return objeto;
 	},
 
+	onlimparCamposCaixa: function () {
+		PTVEmitir.limparCamposNFCaixa();
+	},
+
 	limparCamposNFCaixa: function (limparTudo = false) {
 		if (limparTudo) {
 			$('.rdbTipoCaixa')[0].checked = null
@@ -1127,7 +1132,11 @@ PTVEmitir = {
 		$('.txtNFCaixaNumeroDeCaixas').val('');
 		$('.txtNFCaixaSaldoAtual').removeClass('disabled')
 		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
+		$('.txtNotaFiscalCaixaNumero').removeClass('disabled')
+		$('.txtNotaFiscalCaixaNumero').removeAttr('disabled');
 		$('.isNFCaixaVerificado').addClass('hide');
+		$('.btnLimparNotaCaixaCaixa').addClass('hide');
+		$('.btnVerificarNotaCaixaCaixa').removeClass('hide');
 	},
 
 	onVerificarNotaFiscalCaixa: function () {
@@ -1136,11 +1145,12 @@ PTVEmitir = {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NotaFiscalDeCaixaNumeroVazio]);
 			return;
 		}
+		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero
 
 		MasterPage.carregando(true);
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlVerificarNotaFiscalCaixa,
-			data: JSON.stringify({ numeroNF: nfCaixaNumero }),
+			data: JSON.stringify({ notaFiscal: PTVEmitir.nfCaixaTemp }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -1149,28 +1159,25 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					if (response.SaldoAtual > 0) {
-						$('.txtNFCaixaSaldoAtual').val(response.SaldoAtual);
+					debugger;
+					if (response.nfCaixa.saldoAtual >= 0) {
+						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
 						$('.txtNFCaixaSaldoAtual').addClass('disabled')
 						$('.txtNFCaixaSaldoAtual').attr('disabled', 'disabled');
-						PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;
-						PTVEmitir.nfCaixaTemp.saldoAtual = response.SaldoAtual;
-						console.log(PTVEmitir.nfCaixaTemp)
-
-
-						//$("#campo").prop("disabled", true);
-						//$("#campo").prop("disabled", false); 
+						$('.lblSaldoAtualInicial').text("Saldo atual");
+						PTVEmitir.nfCaixaTemp.saldoAtual = response.nfCaixa.saldoAtual;
 					}
-
 					else {
-						$('.txtNFCaixaSaldoAtual').val(response.SaldoAtual);
+						$('.lblSaldoAtualInicial').text("Saldo inicial");
 					}
+					PTVEmitir.nfCaixaTemp.id = response.nfCaixa.id;
+					PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;
 					$('.txtNotaFiscalCaixaNumero').addClass('disabled')						
 					$('.txtNotaFiscalCaixaNumero').attr('disabled', 'disabled')						
 					$('.isNFCaixaVerificado').removeClass('hide');
-				} else if (response.NovoDestinatario) {
-					//$('.novoDestinatario', container).removeClass('hide');
-				}
+					$('.btnLimparNotaCaixaCaixa').removeClass('hide');
+					$('.btnVerificarNotaCaixaCaixa').addClass('hide');
+				} 
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 			}
 		});
@@ -1178,12 +1185,25 @@ PTVEmitir = {
 	},
 
 	onAddCaixaGrid: function () {
-		
-		PTVEmitir.nfCaixaTemp.numeroCaixas = $('.txtNFCaixaNumeroDeCaixas').val();
-		if (PTVEmitir.nfCaixaTemp.numeroCaixas < PTVEmitir.nfCaixaTemp.saldoAtual) {
-			//MENSAGEM DE ERRO
+		// #region Validações
+		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
+			return;
+		} else {
+			PTVEmitir.nfCaixaTemp.numeroCaixas = parseInt($('.txtNFCaixaNumeroDeCaixas').val());
+			PTVEmitir.nfCaixaTemp.saldoAtual = parseInt($('.txtNFCaixaSaldoAtual').val());
 		}
-		
+
+		if (PTVEmitir.nfCaixaTemp.numeroCaixas > PTVEmitir.nfCaixaTemp.saldoAtual) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDeCaixasMaiorQueSaldoAtual]);
+			return;
+		}
+		if (PTVEmitir.nfCaixaTemp.saldoAtual <= 0) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoInicialMaiorQueZero]);
+			return;
+		}
+		// #endregion
+
 		var tabela = $('.gridCaixa');
 		var linha = $('.trTemplate', tabela).clone();
 
@@ -1191,10 +1211,10 @@ PTVEmitir = {
 		
 		//adicionar na grid
 		$('.hdnItemJson', linha).val(JSON.stringify(PTVEmitir.nfCaixaTemp));
-		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.numeroNFCaixa).attr('title', PTVEmitir.nfCaixaTemp.numeroNFCaixa);
-		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto).attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
-		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual).attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
-		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas).attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero)//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
+		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto)//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
+		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual)//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
+		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas)//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
 		
 		$('tbody', tabela).append(linha);
 
@@ -1229,13 +1249,13 @@ PTVEmitir = {
 			$('.isTipoCaixaChecked').removeClass('hide');
 			PTVEmitir.nfCaixaTemp.tipoCaixaId = ($('.rdbTipoCaixa')[0].checked) ? 1 : 3;
 			PTVEmitir.nfCaixaTemp.tipoCaixaTexto = ($('.rdbTipoCaixa')[0].checked) ? "Madeira" : "Papelão";
-			$('.lblNumeroNFCaixa').html = "Nº da nota fiscal de caixa *";
+			$('.lblNumeroNFCaixa').text("Nº da nota fiscal de caixa *");
 
 		} else {
 			$('.isTipoCaixaChecked').removeClass('hide');
 			PTVEmitir.nfCaixaTemp.tipoCaixaId = 2;
 			PTVEmitir.nfCaixaTemp.tipoCaixaTexto = "Plástico";
-			$('.lblNumeroNFCaixa').html = "N° do laudo de higienização *";
+			$('.lblNumeroNFCaixa').text("N° do laudo de higienização *")
 
 		}
 		// $('.txtNumeroDocumento', EPTVListar.container).toggleClass('hide', false);

@@ -394,13 +394,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult VerificarNotaFiscalCaixa(int numeroNF)
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
 		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@SaldoAtual = 20
+				@nfCaixa = nfCaixa
 			});
 		}
 

@@ -91,7 +91,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			{
 				return ViewModelHelper.Json(new
 				{
-					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio
+					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio,
+					@NumeroDeCaixasMaiorQueSaldoAtual = Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual,
+					@SaldoInicialMaiorQueZero = Mensagem.PTV.SaldoInicialMaiorQueZero,
+					@SaldoENumeroCaixasRequerid = Mensagem.PTV.SaldoENumeroCaixasRequerid
 				});
 			}
 		}

@@ -775,6 +775,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			try
+			{
+				return _da.VerificarNumeroNFCaixa(notaFiscal);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
 		#endregion
 
 		#region Comunicador

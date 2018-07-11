@@ -182,7 +182,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		#endregion
 
 		#region NotaFiscalCaixa
-		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Campo = "NotaFiscalNumero", Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDeCaixasMaiorQueSaldoAtual { get { return new Mensagem() { Campo = "NumeroDeCaixas", Texto = "Você não pode consumir mais caixas que o saldo atual.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoInicialMaiorQueZero { get { return new Mensagem() { Campo = "SaldoAtual", Texto = "O saldo inicial precisa ser maior que zero.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoENumeroCaixasRequerid { get { return new Mensagem() { Campo = "SaldoAtual NumeroDeCaixas", Texto = "Os campos saldo inicial e número de caixas precisam ser maior que 0.", Tipo = eTipoMensagem.Advertencia }; } }
 		#endregion
 	}
 }
