@@ -2437,8 +2437,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			{
 				bancoDeDados.IniciarTransacao();
 				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado) ? ", p.data_ativacao = sysdate " : string.Empty;
+				var sqlExibirMensagemCredenciado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao) ? ", p.exibir_msg_credenciado = 1 " : string.Empty;
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + sqlExibirMensagemCredenciado + " where p.id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", eptv.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", eptv.Situacao, DbType.Int32);
@@ -2457,8 +2460,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
 					historicoAcao = eHistoricoAcao.bloquear;/*TODO:--Bloquear*/
 
-				Historico.Gerar(eptv.Id, eHistoricoArtefato.emitirptv, historicoAcao, bancoDeDados);
-
+				Historico.Gerar(eptv.Id, eHistoricoArtefato.emitirptv, historicoAcao, bancoDeDados);			
+				
 				bancoDeDados.Commit();
 			}
 		}

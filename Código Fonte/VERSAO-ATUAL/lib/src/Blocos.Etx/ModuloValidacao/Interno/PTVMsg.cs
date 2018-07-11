@@ -207,7 +207,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem()
 			{
-				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. \n" +
+				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. \n " +
 						$"Não esqueça de que, para o trânsito, é necessário que os documentos originais anexados na solicitação acompanhem a E-PTV.",
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTVAprovada",
