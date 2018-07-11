@@ -2278,9 +2278,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 		#region Alerta EPTV
 
-		public List<PTV> ObterNumeroPTVExibirMensagemCredenciado(int credenciadoId, BancoDeDados banco = null)
+		public PTV ObterNumeroPTVExibirMensagemCredenciado(int credenciadoId, BancoDeDados banco = null)
 		{
-			var list = new List<PTV>();
+			var ptv = new PTV();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				Comando comando = null;
@@ -2288,14 +2288,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 														(select hora_inicio from cnf_local_vistoria lv where pt.data_hora_vistoria = lv.id) data_hora_vistoria_texto
 													  from {0}tab_Ptv pt
 													  where pt.credenciado = :credenciado
-													  and pt.exibir_msg_credenciado = 1", EsquemaBanco);
+													  and pt.exibir_msg_credenciado = 1
+													  and rownum = 1", EsquemaBanco);
 				comando.AdicionarParametroEntrada("credenciado", credenciadoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					while (reader.Read())
+					if (reader.Read())
 					{
-						var ptv = new PTV()
+						ptv = new PTV()
 						{
 							Id = reader.GetValue<int>("id"),
 							Numero = reader.GetValue<long>("numero"),
@@ -2303,34 +2304,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							LocalVistoriaTexto = reader.GetValue<string>("local_vistoria_texto"),
 							DataHoraVistoriaTexto = reader.GetValue<string>("data_hora_vistoria_texto")
 						};
-
-						list.Add(ptv);
 					}
 				}
-
 			}
 
-
-			if (list.Count > 0)
+			if (ptv?.Id > 0)
 			{
 				#region Exibir_Mensagem
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 				{
 					Comando comando = null;
-					var ids = list.Select(x => x.Id.ToString()).Aggregate((current, next) => current + ", " + next);
 					comando = bancoDeDados.CriarComando(@"update {0}tab_Ptv pt set pt.exibir_msg_credenciado = 0
-													where pt.id in " + $"({ids})", EsquemaBanco);
+													where pt.id = :ptv_id ", EsquemaBanco);
+					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
 					bancoDeDados.ExecutarScalar(comando);
 				}
 
 				#endregion Exibir_Mensagem
 
-				foreach (var ptv in list)
-					ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
+				ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
 			}
 
-			return list;
+			return ptv;
 		}
 
 		private string GetSituacaoMotivo(int ptvId, BancoDeDados banco = null)

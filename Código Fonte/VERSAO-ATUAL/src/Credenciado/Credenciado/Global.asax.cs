@@ -49,27 +49,6 @@ namespace Tecnomapas.EtramiteX.Credenciado
 			string sessionId = ticket.UserData;
 
 			GerenciarAutenticacao.CarregarUser(login, sessionId);
-
-			#region Alerta de E-PTV
-
-			HttpCookie cookieEPTV = Request.Cookies["eptv"];
-			PTVBus _bus = new PTVBus();
-			if (cookieEPTV != null)
-			{
-				if (Convert.ToDateTime(cookieEPTV.Value).AddMinutes(1) <= DateTime.Now)
-				{
-					//se já tiver se passado 1 hora ou mais desde que o valor do cookie foi atualizado
-					//substitui o cookie por um novo, com a data atual, e faz a verificação de alerta de EPTV
-					HttpCookie aCookie = new HttpCookie("eptv");
-					aCookie.Value = DateTime.Now.ToString();
-					aCookie.Expires = DateTime.Now.AddDays(1);
-					Response.Cookies.Add(aCookie);
-
-					_bus.VerificarAlertaChegadaMensagemEPTV();
-				}
-			}
-
-			#endregion Alerta de E-PTV
 		}
 	}
 }

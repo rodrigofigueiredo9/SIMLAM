@@ -54,24 +54,42 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js")%>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js")%>"></script>
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
-		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/AlertaEPTV/alertaChegadaMensagemEPTV.js") %>"></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
 		<script> 
-			$(function () { 
-				<% if (Validacao.MensagensAlertaChegadaMensagemEPTV.Count() > 0){%>
-				<% var mensagem = Validacao.MensagensAlertaChegadaMensagemEPTV.FirstOrDefault(); %>
-				AlertaChegadaMensagemEPTV.exibirMensagemValidacao('<%= mensagem.Texto%>');
-				AlertaChegadaMensagemEPTV.load($(".containerAcoesAlertaChegadaMensagemEPTV"), { 
-				  urls: { 
-					  urlPTVAprovada: '<%= Url.Action("GerarPdf", "PTV") %>',
-					  urlPTVRejeitada: '<%= Url.Action("Editar", "PTV") %>'
-				  }, 
-				  id: '<%= mensagem.Id %>',
-				  campo: '<%= mensagem.Campo %>'
-				});
-				<%Validacao.MensagensAlertaChegadaMensagemEPTV.Remove(mensagem);%>
-			  <%}%>
- 
+			$(function () {
+				$.get('<%= Url.Action("AlertaEPTV", "PTV") %>')
+					.done(function (response) {
+						Mensagem.gerar($(".containerAcoes"), response.Msg);
+						var mensagem = response.Msg[0];
+						
+						if ($(".containerAcoes").length == 0) {
+							var msgSistema = '\
+								<!-- REDIRECIONAMENTO ========================================================== -->\
+								<div class="redirecinamento block containerAcoes hide">\
+									<h5>O que deseja fazer agora?</h5>\
+									<p class="hide">#DESCRICAO</p>\
+									<input type="hidden" class="hdnIdAcao" value="" />\
+									<div class="coluna100 margem0 divAcoesContainer">\
+										<p class="floatLeft margem0 append1"><button title="[title]" class="btnTemplateAcao hide">[ACAO]</button></p>\
+										<div class="containerBotoes"></div>\
+									</div>\
+								</div><!-- .redirecinamento -->';
+							$('.mensagemSistema').append(msgSistema);
+						}
+
+						if (mensagem.Campo == 'AlertaEPTVAprovada') {
+							ContainerAcoes.load($(".containerAcoes"), {
+								botoes: [
+									{ label: 'Imprimir E-PTV', url: '<%= Url.Action("GerarPdf", "PTV")%>' + '/' + mensagem.Id }]
+							});
+						} else if (mensagem.Campo == 'AlertaEPTVRejeitada') {
+							ContainerAcoes.load($(".containerAcoes"), {
+								botoes: [
+									{ label: 'Editar E-PTV', url: '<%= Url.Action("Editar", "PTV")%>'+ '/' + mensagem.Id }]
+							});
+						}
+					});
 			}); 
 		  </script>
 

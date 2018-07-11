@@ -207,7 +207,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem()
 			{
-				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. <br />" +
+				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. \n" +
 						$"Não esqueça de que, para o trânsito, é necessário que os documentos originais anexados na solicitação acompanhem a E-PTV.",
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTVAprovada",
@@ -219,7 +219,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem()
 			{
-				Texto = $"A E-PTV {numero} foi rejeitada. <br />" +
+				Texto = $"A E-PTV {numero} foi rejeitada. \n" +
 						$"Motivo: {motivo}",
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTVRejeitada",
@@ -231,9 +231,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem()
 			{
-				Texto = $"Foi agendada fiscalização para a E-PTV {numero}. <br />" +
-						$"Local: {local} <br />" +
-						$"Hora: {hora} <br />" +
+				Texto = $"Foi agendada fiscalização para a E-PTV {numero}. \n" +
+						$"Local: {local} \n" +
+						$"Hora: {hora} \n" +
 						$"Informação adicional: {info}",
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTVFiscalizacaoAgendada"
