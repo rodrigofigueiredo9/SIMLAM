@@ -2198,8 +2198,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			{
 
 				PTVComunicador comunicador = new PTVComunicador();
-				Comando comando = bancoDeDados.CriarComando(@" select c.id, c.ptv_id, p.numero ptv_numero, c.arquivo_interno, c.arquivo_credenciado, c.liberado_credenciado, c.tid 
-                                                            from {0}TAB_PTV_COMUNICADOR c, {0}TAB_PTV P where c.ptv_id=p.id and c.ptv_id = :id", UsuarioCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"
+				select c.id, c.ptv_id, p.numero ptv_numero, c.arquivo_interno, c.arquivo_credenciado, c.liberado_credenciado, c.tid 
+					FROM TAB_PTV P LEFT JOIN TAB_PTV_COMUNICADOR c ON P.ID = c.PTV_ID 
+					WHERE P.ID = :id", UsuarioCredenciado);
 				comando.AdicionarParametroEntrada("id", idPTV, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
