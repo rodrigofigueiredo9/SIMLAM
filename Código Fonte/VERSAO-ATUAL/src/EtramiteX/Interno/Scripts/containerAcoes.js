@@ -111,13 +111,12 @@ ContainerAcoes = {
 		$.each(ContainerAcoes.settings.botoes, function (idx, item) {
 
 			botaoAcao = ContainerAcoes.clone();
-
-			var settings = { callBack: ContainerAcoes.onAcaoClick, url: '', label: '' };
+			var settings = { callBack: ContainerAcoes.onAcaoClick, url: '', label: '', modal: '', idPTV: '' };
 
 			$.extend(settings, item);
 
 			botaoAcao.find("button")
-				.data("url", settings.url)
+				.data({ url: settings.url, modal: settings.modal, idPTV: settings.idPTV })
 				.text(settings.label)
 				.attr('title', settings.label)
 				.removeClass("hide")
@@ -143,9 +142,23 @@ ContainerAcoes = {
 	},
 
 	onAcaoClick: function () {
-
 		var url = $(this).data("url");
-		MasterPage.redireciona(url);
+		var modal = $(this).data("modal");
+		var idPTV = $(this).data("idPTV");
+		
+		if (modal) {
+			Modal.abrir(
+				url,
+				{ id: idPTV },
+				function (container) {
+					ComunicadorPTV.load(container, {
+						callBackSalvar: AlertaChegadaMensagemEPTV.onAcaoClick
+					});
+				},
+				Modal.tamanhoModalMedia);
+		} else {
+			MasterPage.redireciona(url);
+		}
 	},
 
 	onAcaoClickAbrirModal: function () {

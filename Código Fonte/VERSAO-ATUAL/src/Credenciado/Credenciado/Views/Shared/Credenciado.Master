@@ -1,4 +1,4 @@
-<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 
@@ -58,13 +58,14 @@
 
 		<script> 
 			$(function () {
-				$.get('<%= Url.Action("AlertaEPTV", "PTV") %>')
-					.done(function (response) {
-						Mensagem.gerar($(".containerAcoes"), response.Msg);
-						var mensagem = response.Msg[0];
-						
-						if ($(".containerAcoes").length == 0) {
-							var msgSistema = '\
+				if ($(".containerAcoes").length == 0) {
+					$.get('<%= Url.Action("AlertaEPTV", "PTV") %>')
+						.done(function (response) {
+							Mensagem.gerar($(".containerAcoes"), response.Msg);
+							var mensagem = response.Msg[0];
+
+							if ($(".containerAcoes").length == 0) {
+								var msgSistema = '\
 								<!-- REDIRECIONAMENTO ========================================================== -->\
 								<div class="redirecinamento block containerAcoes hide">\
 									<h5>O que deseja fazer agora?</h5>\
@@ -75,21 +76,22 @@
 										<div class="containerBotoes"></div>\
 									</div>\
 								</div><!-- .redirecinamento -->';
-							$('.mensagemSistema').append(msgSistema);
-						}
+								$('.mensagemSistema').append(msgSistema);
+							}
 
-						if (mensagem.Campo == 'AlertaEPTVAprovada') {
-							ContainerAcoes.load($(".containerAcoes"), {
-								botoes: [
-									{ label: 'Imprimir E-PTV', url: '<%= Url.Action("GerarPdf", "PTV")%>' + '/' + mensagem.Id }]
-							});
-						} else if (mensagem.Campo == 'AlertaEPTVRejeitada') {
-							ContainerAcoes.load($(".containerAcoes"), {
-								botoes: [
-									{ label: 'Editar E-PTV', url: '<%= Url.Action("Editar", "PTV")%>'+ '/' + mensagem.Id }]
-							});
-						}
-					});
+							if (mensagem.Campo == 'AlertaEPTVAprovada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Imprimir E-PTV', url: '<%= Url.Action("GerarPdf", "PTV")%>' + '/' + mensagem.Id }]
+								});
+							} else if (mensagem.Campo == 'AlertaEPTVRejeitada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Editar E-PTV', url: '<%= Url.Action("Editar", "PTV")%>' + '/' + mensagem.Id }]
+								});
+							}
+						});
+				}
 			}); 
 		  </script>
 

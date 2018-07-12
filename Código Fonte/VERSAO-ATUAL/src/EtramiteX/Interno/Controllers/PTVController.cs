@@ -885,5 +885,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult AlertaEPTV()
+		{
+			_busPTV.VerificarAlertaChegadaMensagemEPTV();
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+			}, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

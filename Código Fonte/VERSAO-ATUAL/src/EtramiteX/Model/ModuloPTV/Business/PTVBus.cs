@@ -791,20 +791,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return quantidade;
 		}
 
-		public List<PTV> ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
+		public PTV ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
 		{
-			var listPtv = new List<PTV>();
+			var ptv = new PTV();
 
 			try
 			{
-				listPtv = _da.ObterNumeroPTVExibirMensagemFuncionario(idFuncionario, banco);
+				ptv = _da.ObterNumeroPTVExibirMensagemFuncionario(idFuncionario, banco);
 			}
 			catch (Exception ex)
 			{
 				Validacao.AddErro(ex);
 			}
 
-			return listPtv;
+			return ptv;
 		}
 
 		#endregion
@@ -1037,12 +1037,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			if (habilitado)
 			{
 				//Verifica quantas PTVs estão aguardando análise
-				var listPtv = ObterNumeroPTVExibirMensagemFuncionario(funcionarioId);
+				var ptv = ObterNumeroPTVExibirMensagemFuncionario(funcionarioId);
 
-				if (listPtv.Count > 0)
+				if (ptv?.Id > 0)
 				{
-					foreach(var ptv in listPtv)
-						Validacao.AddAlertaChegadaMensagemEPTV(Mensagem.PTV.ChegadaMensagemEPTV(ptv.Numero, ptv.Id));
+					Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTV(ptv.Numero, ptv.Id));
 					exibirMensagem = true;
 				}
 			}

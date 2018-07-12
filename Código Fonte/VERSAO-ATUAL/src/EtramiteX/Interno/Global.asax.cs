@@ -67,9 +67,6 @@ namespace Interno
 
 					_bus.VerificaAlertaEPTV();	//emite o alerta
 				}
-
-				if (Convert.ToDateTime(cookieEPTV.Value).AddMinutes(1) <= DateTime.Now)
-					_bus.VerificarAlertaChegadaMensagemEPTV();
 			}
 
 			#endregion Alerta de E-PTV
