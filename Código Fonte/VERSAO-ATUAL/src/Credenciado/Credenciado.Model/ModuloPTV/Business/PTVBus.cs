@@ -929,7 +929,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			{
 				switch (ptv.Situacao)
 				{
-					case (int)eSolicitarPTVSituacao.Aprovado:
+					case (int)eSolicitarPTVSituacao.Valido:
 						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVAprovada(ptv.Numero, ptv.Id));
 						break;
 					case (int)eSolicitarPTVSituacao.Rejeitado:
