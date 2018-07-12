@@ -80,7 +80,7 @@
 		<%Validacao.MensagensAlertaEPTV = new List<Mensagem>();%>
       <%}%>
 
-		if ($(".containerAcoes").length == 0) {
+		if (($(".containerAcoes").length + $(".containerAcoesAlertaEPTV").length) == 0) {
 			$.ajax({
 				url: '<%= Url.Action("AlertaEPTV", "PTV") %>',
 				cache: false,
