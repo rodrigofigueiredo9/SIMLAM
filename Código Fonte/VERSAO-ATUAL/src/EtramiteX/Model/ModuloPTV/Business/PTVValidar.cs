@@ -783,6 +783,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		/// <summary>
+		/// Verifica se o funcionário possui habilitação para emitir PTV.
+		/// Caso não possua, é exibida uma mensagem de erro.
+		/// Esse método é utilizado nas telas de emissão de PTV e análise de E-PTV.
+		/// </summary>
+		/// <returns>
+		/// Retorna um booleano: true para funcionário habilitado, e false para funcionário não habilitado.
+		/// Caso o retorno seja false, também é exibida uma mensagem de erro.
+		/// </returns>
 		public bool FuncionarioHabilitadoValido()
 		{
 			HabilitacaoEmissaoPTVDa habilitacaoEmissaoPTVDa = new HabilitacaoEmissaoPTVDa();
@@ -793,6 +802,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Verifica se o funcionário possui habilitação para emitir PTV.
+		/// Esse método não gera mensagens de erro, e foi criado para o sistema de alerta de E-PTV.
+		/// </summary>
+		/// <returns>
+		/// Retorna um booleano: true para funcionário habilitado, e false para funcionário não habilitado.
+		/// </returns>
+		public bool FuncionarioHabilitadoValido(int funcionarioId)
+		{
+			bool habilitado = false;
+
+			HabilitacaoEmissaoPTVDa habilitacaoEmissaoPTVDa = new HabilitacaoEmissaoPTVDa();
+			if (habilitacaoEmissaoPTVDa.FuncionarioHabilitadoValido(funcionarioId))
+			{
+				habilitado = true;
+			}
+
+			return habilitado;
 		}
 	}
 }
