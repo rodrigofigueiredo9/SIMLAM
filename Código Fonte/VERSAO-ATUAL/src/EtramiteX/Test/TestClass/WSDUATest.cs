@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 using Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA;
 using Tecnomapas.EtramiteX.Interno.Controllers;
 using Tests.Fakes;
@@ -21,6 +23,7 @@ namespace Test.TestClass
 		#region Properties
 
 		public AutenticacaoController testController = new AutenticacaoController(new FakeFormsAuthenticationService());
+		private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		#endregion Properties
 
@@ -40,6 +43,15 @@ namespace Test.TestClass
 			var dua = wSDUA.ObterDUA("99999999", "131.684.517-62");
 
 			Assert.IsNull(dua);
+		}
+
+		[TestMethod]
+		public void DeveGerarArquivoLog()
+		{
+			Log.Error("DUA: 4324465234 - CPF/CNPJ: 146.568.898-89", new Exception("Teste de erro"));
+			var diretorioLog = new DirectoryInfo(string.Concat(AppDomain.CurrentDomain.BaseDirectory, "\\logs"));
+
+			Assert.IsTrue(diretorioLog.GetFiles().Length > 0);
 		}
 	}
 }

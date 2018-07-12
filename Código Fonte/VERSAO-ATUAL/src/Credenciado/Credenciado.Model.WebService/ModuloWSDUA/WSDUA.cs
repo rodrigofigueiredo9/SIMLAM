@@ -60,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 			catch (Exception exc)
 			{
 				Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-				Log.Error("CATCH: ", exc);
+				Log.Error($"DUA: {numeroDUA} - CPF/CNPJ: {cpfCnpj}", exc);
 			}
 
 			return null;

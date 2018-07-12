@@ -72,14 +72,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 
 		private string RealizarConsultaDuaSefaz(StringBuilder xml)
 		{
-
-			var soapEnvelopeXml = new XmlDocument();
-			soapEnvelopeXml.LoadXml(xml.ToString());
-
-			var resultado = string.Empty;
-
 			try
 			{
+				var soapEnvelopeXml = new XmlDocument();
+				soapEnvelopeXml.LoadXml(xml.ToString());
+
+				var resultado = string.Empty;
+
 				using (var stream = _webRequest.GetRequestStream())
 				{
 					soapEnvelopeXml.Save(stream);
@@ -92,14 +91,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 						resultado = rd.ReadToEnd();
 					}
 				}
+
+				return resultado;
 			}
 			catch (Exception ex)
 			{
-				resultado = ex.Message;
+				throw ex;
 			}
-
-			return resultado;
 		}
-
 	}
 }
