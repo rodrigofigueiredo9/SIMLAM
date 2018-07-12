@@ -358,9 +358,7 @@
 			</div>
 		</div>
 	</div>
-	<% if (Model.PTV.NotaFiscalDeCaixas.Count() > 0)
-		{%>
-		<div class="gridContainer identificacaoDaCaixa">
+		<div class="gridContainer identificacaoDaCaixa" <%= Model.PTV.NotaFiscalDeCaixas.Count() > 0 ? "hide" : "" %>>
 			<table class="dataGridTable gridCaixa">
 				<thead>
 					<tr>
@@ -414,7 +412,6 @@
 				</tbody>
 			</table>
 		</div>
-	<%} %>
 	<br />
 </div>
 

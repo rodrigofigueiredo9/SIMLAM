@@ -1120,9 +1120,8 @@ PTVEmitir = {
 			$('.rdbTipoCaixa')[0].checked = null
 			$('.rdbTipoCaixa')[1].checked = null
 			$('.rdbTipoCaixa')[2].checked = null
-			var retorno = [];
+			
 			$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
-				retorno.push(JSON.parse($('.hdnItemJson', this).val()));
 				$(this).remove();
 			});
 			$('.identificacaoDaCaixa').addClass('hide');
@@ -1186,6 +1185,8 @@ PTVEmitir = {
 
 	onAddCaixaGrid: function () {
 		// #region Validações
+		var valido = true;
+		var mensagensValidacao = [];
 		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
 			return;
@@ -1194,12 +1195,22 @@ PTVEmitir = {
 			PTVEmitir.nfCaixaTemp.saldoAtual = parseInt($('.txtNFCaixaSaldoAtual').val());
 		}
 
-		if (PTVEmitir.nfCaixaTemp.numeroCaixas > PTVEmitir.nfCaixaTemp.saldoAtual) {
-			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDeCaixasMaiorQueSaldoAtual]);
-			return;
-		}
 		if (PTVEmitir.nfCaixaTemp.saldoAtual <= 0) {
-			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoInicialMaiorQueZero]);
+			mensagensValidacao.push(PTVEmitir.settings.Mensagens.SaldoInicialMaiorQueZero);
+			valido = false;
+		}
+		if (PTVEmitir.nfCaixaTemp.numeroCaixas > PTVEmitir.nfCaixaTemp.saldoAtual) {
+			mensagensValidacao.push(PTVEmitir.settings.Mensagens.NumeroDeCaixasMaiorQueSaldoAtual);
+			valido = false;
+		}
+		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
+			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero) {
+				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
+				valido = false;
+			}
+		});
+		if (!valido) {
+			Mensagem.gerar(PTVEmitir.container, mensagensValidacao);
 			return;
 		}
 		// #endregion

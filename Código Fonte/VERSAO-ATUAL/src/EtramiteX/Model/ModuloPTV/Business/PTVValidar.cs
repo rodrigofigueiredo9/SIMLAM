@@ -790,5 +790,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			return true;
 		}
+
+		public bool ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var tipoCaixa = _da.ValidarNumeroNotaFiscalDeCaixa(notaFiscal);
+			if(String.IsNullOrEmpty(tipoCaixa)){
+				Validacao.Add(Mensagem.PTV.NumeroDiferenteDoTipo(notaFiscal.notaFiscalCaixaNumero, tipoCaixa));
+				return false;
+			}
+			return true;
+		}
 	}
 }

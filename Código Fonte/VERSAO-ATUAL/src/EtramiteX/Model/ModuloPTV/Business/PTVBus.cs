@@ -784,6 +784,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			try
 			{
+				if(_validar)
 				return _da.VerificarNumeroNFCaixa(notaFiscal);
 			}
 			catch (Exception exc)
