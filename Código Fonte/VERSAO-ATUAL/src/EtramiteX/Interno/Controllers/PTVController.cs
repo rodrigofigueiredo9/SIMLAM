@@ -45,7 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -683,7 +683,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao);
+			var lstTipoDocOrigem = _busLista.DocumentosFitossanitario;
+			lstTipoDocOrigem = lstTipoDocOrigem.Where(x => x.Id != "7").ToList();
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, lstTipoDocOrigem);
 			return View(vm);
 		}
 
@@ -756,13 +758,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, false));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -817,13 +819,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, true));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -849,6 +851,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult AnalisarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]

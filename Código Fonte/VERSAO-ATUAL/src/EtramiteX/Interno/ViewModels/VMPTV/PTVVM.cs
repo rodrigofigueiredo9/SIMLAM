@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			{
 				return ViewModelHelper.Json(new
 				{
-					Aprovado = eSolicitarPTVSituacao.Aprovado,
+					Aprovado = eSolicitarPTVSituacao.Valido,
 					Rejeitado = eSolicitarPTVSituacao.Rejeitado,
 					AgendarFiscalizacao = eSolicitarPTVSituacao.AgendarFiscalizacao,
 					Bloqueado = eSolicitarPTVSituacao.Bloqueado
@@ -166,7 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 		public List<Acao> SetarAcoesTela(List<Acao> acoes)
 		{
 			//Habilitar Radio
-			acoes.SingleOrDefault(x => x.Id == (int)eSolicitarPTVSituacao.Aprovado).Habilitado = true;// (PTV.Situacao == (int)eSolicitarPTVSituacao.AguardandoAnalise);
+			acoes.SingleOrDefault(x => x.Id == (int)eSolicitarPTVSituacao.Valido).Habilitado = true;// (PTV.Situacao == (int)eSolicitarPTVSituacao.AguardandoAnalise);
 			acoes.SingleOrDefault(x => x.Id == (int)eSolicitarPTVSituacao.Rejeitado).Habilitado = true;// (PTV.Situacao == (int)eSolicitarPTVSituacao.AguardandoAnalise);
 			acoes.SingleOrDefault(x => x.Id == (int)eSolicitarPTVSituacao.AgendarFiscalizacao).Habilitado = (PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado); //true;
 			acoes.SingleOrDefault(x => x.Id == (int)eSolicitarPTVSituacao.Bloqueado).Habilitado = (PTV.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao);// true;

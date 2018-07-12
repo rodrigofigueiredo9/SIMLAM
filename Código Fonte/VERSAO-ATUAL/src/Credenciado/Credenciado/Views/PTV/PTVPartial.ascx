@@ -10,6 +10,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
 
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
+<input class="hdnVisualizar" type="hidden" value="<%= Model.IsVisualizar %>" />
 
 <fieldset class="box">
 	<div class="block">

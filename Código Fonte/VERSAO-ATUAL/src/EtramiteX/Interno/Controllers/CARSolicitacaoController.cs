@@ -453,11 +453,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @UrlPdfReciboSICAR = url }, JsonRequestBehavior.AllowGet);
 		}
 
-        public ActionResult BaixarDemonstrativoCar(int id)
+        public ActionResult BaixarDemonstrativoCar(int id, bool isTitulo)
         {
-            var schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+			var schemaSolicitacao = 0;
 
-            var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao);
+			if(!isTitulo)
+				schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+
+            var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao, isTitulo);
 
             return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
         } 

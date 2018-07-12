@@ -311,12 +311,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						break;
 				}
 
-				titulo.ArquivoPdf.Nome = titulo.Modelo.Nome;
-				return titulo.ArquivoPdf;
+				titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
+                return titulo.ArquivoPdf;
 			}
 
-			titulo.ArquivoPdf.Nome = titulo.Modelo.Nome;
-			titulo.ArquivoPdf.Extensao = ".pdf";
+			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
+			titulo.ArquivoPdf.Extensao = "";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
 

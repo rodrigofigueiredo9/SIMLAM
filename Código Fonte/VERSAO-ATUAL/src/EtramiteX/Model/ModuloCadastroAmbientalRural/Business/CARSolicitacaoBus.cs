@@ -489,6 +489,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		public string ObterUrlRecibo(int solicitacaoId, int schemaSolicitacao)
 		{
 			var urlGerar = _da.ObterUrlGeracaoRecibo(solicitacaoId, schemaSolicitacao);
+			if (urlGerar == null) return null;
 
 			RequestJson requestJson = new RequestJson();
 
@@ -504,11 +505,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
         }
 
-        public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao)
+        public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
         {
-            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao);
+            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
+			if (String.IsNullOrWhiteSpace(urlGerar)) return null;
 
-            RequestJson requestJson = new RequestJson();
+			RequestJson requestJson = new RequestJson();
 
             urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
             //urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";

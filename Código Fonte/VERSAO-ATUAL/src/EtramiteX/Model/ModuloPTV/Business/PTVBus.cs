@@ -20,8 +20,8 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
-using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using System.Web;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -38,6 +38,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		private String SchemaUsuarioInterno { get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioInterno); } }
 
 		private String SchemaUsuarioCredenciado { get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); } }
+
+		private static EtramiteIdentity User
+		{
+			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
+		}
 
 		#endregion
 
@@ -326,7 +331,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 						_da.AnalizarEPTV(eptv, bancoDeDadosCredenciado);
 
-						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
 							eptvBanco.ValidoAte = eptv.ValidoAte;
 							eptvBanco.ResponsavelTecnicoId = eptv.ResponsavelTecnicoId;
@@ -345,7 +350,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								var arquivoBusInst = new ArquivoBus(eExecutorTipo.Interno);
 								foreach (var anexo in eptvBanco.Anexos)
 								{
-									anexo.Arquivo = arquivoBusInst.Salvar(arquivoBusCred.Obter(anexo.Arquivo.Id.Value));
+									if (anexo.Arquivo.Id > 0)
+									{
+										var arquivoCred = arquivoBusCred.Obter(anexo.Arquivo.Id.Value);
+										if (arquivoCred?.Id > 0)
+										{
+											anexo.Arquivo = arquivoBusInst.Salvar(arquivoCred);
+											anexo.Arquivo.Id = 0;
+
+											ArquivoDa _arquivoDa = new ArquivoDa();
+											_arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDadosInterno);
+										}
+									}
 								}
 							}
 
@@ -745,11 +761,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor)
+		public List<ListaValor> DiasHorasVistoria(int setor, bool visualizar)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor);
+				return _da.DiasHorasVistoria(setor, visualizar);
 			}
 			catch (Exception exc)
 			{

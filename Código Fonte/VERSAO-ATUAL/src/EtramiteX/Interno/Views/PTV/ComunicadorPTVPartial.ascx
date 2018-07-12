@@ -9,10 +9,11 @@
 	ComunicadorPTV.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
 
-<h1 class="titTela">Comunicador PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
+<h1 class="titTela"><%= Model.IsDesbloqueio ? "Analisar Desbloqueio" : "Comunicador" %> PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
 <br />
 
 <div class="block">
+<% if (!Model.IsDesbloqueio) { %>
 <% PTVConversa conversa = null;
 		for (int i = 0; i < Model.Comunicador.Conversas.Count; i++)  {
 			conversa = Model.Comunicador.Conversas[i]; %>
@@ -54,6 +55,7 @@
 		<% } %>
 	<% } %>
 </div>
+<%} %>
 
 <div class="block box rodape">
 	<!-- Arquivo -->
@@ -64,6 +66,7 @@
 			<span class="spanInputFile">
 			<input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" /></span>
 			<input type="hidden" class="hdnArquivo hdnAnexoArquivoJson" name="hdnAnexoArquivoJson" value="" />
+			<input type="hidden" class="hdnDesbloqueio" name="hdnDesbloqueio" value="<%= Model.IsDesbloqueio %>" />
 		</div>
 		<div class="ultima spanBotoes">
 			<button type="button" class="inlineBotao btnArq" title="Enviar anexo" onclick="ComunicadorPTV.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">Anexar</button>
@@ -72,7 +75,7 @@
 	</div>
 
 	<div class="block box">
-		<label for="Mensagem">Justificativa *</label>
+		<label for="Mensagem"><%= Model.IsDesbloqueio ? "Justificativa *" : "Mensagem" %></label>
 		<%= Html.TextArea("txtJustificativa", new { @class = "media txtJustificativa", @maxlength = "300"}) %>
 		<%= Html.Hidden("hdnIdPTV",Model.Comunicador.PTVId, new { @class = "hdnIdPTV" })%>
 		<%= Html.Hidden("hdnPTVNumero",Model.Comunicador.PTVNumero.ToString(), new { @class = "hdnPTVNumero" })%>

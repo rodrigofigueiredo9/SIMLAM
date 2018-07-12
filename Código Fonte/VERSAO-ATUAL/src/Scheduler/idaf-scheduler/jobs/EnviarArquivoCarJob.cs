@@ -64,7 +64,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     if (item.Requisicao == null)
                     {
                         nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-                        continue;
+						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
+						continue;
                     }
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
@@ -76,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Atualizar controle de envio do SICAR
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
-						var controleCar = ControleCarDB.ObterItemControleCar(conn, requisicao);
+						//var controleCar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
@@ -145,12 +146,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var msg = ex.Message +
 							Environment.NewLine +
 							Environment.NewLine +
-							resultado;
+							(resultado ?? "");
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
-						Log.Error("CATCH:" + ex.Message, ex);
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado ?? "" } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
+						Log.Error("CATCH:" + nextItem.Requisicao + " =====> " + ex.Message, ex);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
@@ -166,7 +167,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//catch (Exception) { /*ignored*/ }
 				}
 
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
                     {
                         cmd.ExecuteNonQuery();                            

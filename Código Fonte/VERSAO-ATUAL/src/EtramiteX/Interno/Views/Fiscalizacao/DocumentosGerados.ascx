@@ -67,7 +67,7 @@
 				<span class="btnPdfIUF icone pdf" title="PDF do IUF"></span>
 			</td>
 		</tr>
-        <% } else { %>
+        <% } %>
             <% foreach (var item in Model.Fiscalizacao.ConsideracaoFinal.AnexosIUF) { %>
                 <tr>
 		        	<td>
@@ -82,7 +82,6 @@
 		        	</td>
 		        </tr>
             <% } %>
-        <% } %>
 
 
 

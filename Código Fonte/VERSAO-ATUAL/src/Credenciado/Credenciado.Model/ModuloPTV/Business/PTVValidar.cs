@@ -597,7 +597,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			float valorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
 
-			float quantidadeDuaPagos = dua.ReceitaValor / valorUnitario;
+			int quantidadeDuaPagos = (int)(dua.ReceitaValor / valorUnitario);
 
 			int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj, ptvId);
 
@@ -619,7 +619,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			PTV eptv = _da.Obter(idPTV, true);
 			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
-                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
+                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao &&
+                eptv.Situacao != (int)eSolicitarPTVSituacao.Rejeitado )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;
@@ -632,9 +633,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			if ((comunicador.ArquivoCredenciado != null) && (!String.IsNullOrEmpty(comunicador.ArquivoCredenciado.TemporarioNome) || !String.IsNullOrEmpty(comunicador.ArquivoCredenciado.Nome)))
 			{
-				if (!(comunicador.ArquivoCredenciado.Extensao == ".zip" || comunicador.ArquivoCredenciado.Extensao == ".rar"))
+				if (comunicador.ArquivoCredenciado.Extensao != ".zip"
+					&& comunicador.ArquivoCredenciado.Extensao != ".rar"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpeg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".pdf")
 				{
-					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" })));
+					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpg", ".jpeg" })));
 				}
 			}
 
@@ -650,9 +655,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			foreach (PTVConversa conversa in comunicador.Conversas)
 			{
-				if (String.IsNullOrEmpty(conversa.Texto))
+				if (comunicador.IsDesbloqueio)
 				{
-					Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+					if (String.IsNullOrEmpty(conversa.Texto))
+						Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+				}
+				else
+				{
+					if (String.IsNullOrWhiteSpace(conversa.Texto) && String.IsNullOrWhiteSpace(conversa.ArquivoNome))
+						Validacao.Add(Mensagem.PTV.UmDosCamposPreenchido);
 				}
 			}
 

@@ -43,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao, ListaCredenciadoBus.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, false));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -199,7 +199,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, true));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -606,13 +606,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult ObterDiasHorasVistoria(int setor)
+		public ActionResult ObterDiasHorasVistoria(int setor, bool visualizar)
 		{
 			return Json(new
 			{
 				@Valido = Validacao.EhValido,
 				@Erros = Validacao.Erros,
-				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor)
+				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, visualizar)
 
 			});
 		}
@@ -669,6 +669,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult SolicitarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]

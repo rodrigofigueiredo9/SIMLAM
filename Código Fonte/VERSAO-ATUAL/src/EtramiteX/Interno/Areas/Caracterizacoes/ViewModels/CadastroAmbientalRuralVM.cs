@@ -183,6 +183,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public CadastroAmbientalRural Caracterizacao { get; set; }
 		public List<SelectListItem> ListaMunicipios { get; set; }
 		public List<SelectListItem> ListaBoolean { get; set; }
+		public List<SelectListItem> ListaBooleanVistoria { get; set; }
 		public MBR Abrangencia { get; set; }
 
 		private List<ArquivoProcessamentoVM> _arquivosProcessamentoVM = new List<ArquivoProcessamentoVM>();
@@ -199,6 +200,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 
 			ListaMunicipios = ViewModelHelper.CriarSelectList(municipiosLista, true, selecionado: caracterizacao.MunicipioId.ToString());
 			ListaBoolean = ViewModelHelper.CriarSelectList(booleanLista, true, false, selecionado: caracterizacao.OcorreuAlteracaoApos2008.ToString());
+			ListaBooleanVistoria = ViewModelHelper.CriarSelectList(booleanLista, true, false, selecionado: caracterizacao.VistoriaAprovacaoCAR.ToString());
 		}
 	}
 }
