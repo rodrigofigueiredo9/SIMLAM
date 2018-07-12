@@ -59,6 +59,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				caracterizacao.MunicipioId = empreendimento.MunicipioId;
 				caracterizacao.EmpreendimentoId = id;
 				caracterizacao.OcorreuAlteracaoApos2008 = -1;
+				caracterizacao.VistoriaAprovacaoCAR = -1;
 			}
 
 			if (!_bus.Validar.VerificarMunicipioForaES(caracterizacao.MunicipioId, _busLista.Municipios(ViewModelHelper.EstadoDefaultId())))

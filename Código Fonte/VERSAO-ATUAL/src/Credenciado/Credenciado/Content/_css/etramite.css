@@ -505,6 +505,11 @@ input[type=button].icone, .icone {
 	text-indent: -9000px;
 	background: url(../_img/sprite_bt_lista.png) no-repeat left top;
 }
+
+/*input[type=button].icone.comunicador, .icone.comunicador { background-position: left top; background: url(../_img/bt_mensagens-2px.png) no-repeat left top; }
+input[type=button].icone.comunicador:hover, .icone.comunicador:hover { background-position: left center; background: url(../_img/bt_mensagens-2px.png) no-repeat left bottom; }
+input[type=button].icone.comunicador.desativado, .icone.comunicador.desativado { background-position: left bottom; background: url(../_img/bt_mensagens-2px.png) no-repeat left bottom; }
+*/
 input[type=button].icone.visualizar, .icone.visualizar { background-position: left top; }
 input[type=button].icone.visualizar:hover, .icone.visualizar:hover { background-position: left center; }
 input[type=button].icone.visualizar.desativado, .icone.visualizar.desativado { background-position: left bottom; }
@@ -696,6 +701,10 @@ input[type=button].icone.link.desativado, .icone.link.desativado { background-po
 input[type=button].icone.unlink, .icone.unlink { background-position: -1196px top; }
 input[type=button].icone.unlink:hover, .icone.unlink:hover { background-position: -1196px center; }
 input[type=button].icone.unlink.desativado, .icone.unlink.desativado { background-position: -1196px bottom; }
+
+input[type=button].icone.comunicador, .icone.comunicador { background-position: -1240px top; }
+input[type=button].icone.comunicador:hover, .icone.comunicador:hover { background-position: -1240px center; }
+input[type=button].icone.comunicador.desativado, .icone.comunicador.desativado { background-position: -1240px bottom; }
 
 input[type=button].icone.documentText, .icone.documentText { background-position: -575px top; }
 input[type=button].icone.documentText:hover, .icone.documentText:hover { background-position: -575px center; }

@@ -5,6 +5,7 @@ using System.Text;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
@@ -32,6 +33,11 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 			_configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 			_da = new CARSolicitacaoDa();
 			_validar = new CARSolicitacaoValidar();
+		}
+
+		String UrlSICAR
+		{
+			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUrlSICAR); }
 		}
 
 		#region Obter
@@ -114,6 +120,29 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Busine
 			}
 
 			return null;
+		}
+
+		public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
+		{
+			var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
+			if (String.IsNullOrWhiteSpace(urlGerar)) return null;
+
+			RequestJson requestJson = new RequestJson();
+
+			urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+			//urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+
+			var strResposta = requestJson.Executar(urlGerar);
+
+			var resposta = requestJson.Deserializar<dynamic>(strResposta);
+
+			if (resposta["status"] != "s")
+			{
+				return string.Empty;
+			}
+
+			return UrlSICAR + resposta["dados"];  // PRODUCAO 
+			//return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
 		}
 
 		#endregion

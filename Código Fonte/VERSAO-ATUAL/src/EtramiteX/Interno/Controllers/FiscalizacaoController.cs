@@ -75,13 +75,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Filtrar
 
-        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
-        public ActionResult Index()
-        {
-            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
+		public ActionResult Index()
+		{
+			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-            return PartialView(vm);
-        }
+			return PartialView(vm);
+		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
 		public ActionResult Filtrar(ListarVM vm, Paginacao paginacao)
@@ -159,11 +159,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
-			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
-			}
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis, lstAssinantes);
 			vm.LocalInfracaoVM.IsVisualizar = true;
 			vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
@@ -200,11 +199,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
-			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
-			}
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busFuncionario.ObterSetoresFuncionario(), _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault()), lstResponsaveis, lstAssinantes);
 
 			if (Request.IsAjaxRequest())
@@ -242,10 +240,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
 			{
-				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
+				if ((pessoa?.Id ?? 0) > 0)
+					lstAssinantes = ObterListaAssinantes(pessoa.Id);
+				else
+					lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
 			}
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
 			vm.LocalInfracaoVM.IsVisualizar = fiscalizacao.LocalInfracao.Id > 0;
@@ -295,49 +297,47 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<PessoaLst> lstResponsaveis = new List<PessoaLst>();
 			Pessoa pessoa = new Pessoa();
 
-            if (fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
-            {
-                fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(id);
-                lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
-                pessoa = _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-            }
-            else
-            {
-                fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
-                lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
+			if (fiscalizacao.SituacaoId == (int)eFiscalizacaoSituacao.EmAndamento)
+			{
+				fiscalizacao.LocalInfracao = _busLocalInfracao.Obter(id);
+				lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveis(fiscalizacao.LocalInfracao.EmpreendimentoId.Value) : new List<PessoaLst>();
+				pessoa = _busPessoa.Obter(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
+			}
+			else
+			{
+				fiscalizacao.LocalInfracao = _busLocalInfracao.ObterHistorico(id);
+				lstResponsaveis = fiscalizacao.LocalInfracao.EmpreendimentoId.GetValueOrDefault() > 0 ? _busLocalInfracao.ObterResponsaveisHistorico(fiscalizacao.LocalInfracao.EmpreendimentoId.Value, fiscalizacao.LocalInfracao.EmpreendimentoTid) : new List<PessoaLst>();
 
-                if (fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0) == 0)
-                {
-                    fiscalizacao.LocalInfracao.PessoaId = fiscalizacao.LocalInfracao.ResponsavelId;
-                }
+				if (fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0) == 0)
+				{
+					fiscalizacao.LocalInfracao.PessoaId = fiscalizacao.LocalInfracao.ResponsavelId;
+				}
 
-                pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
-            }
+				pessoa = _busLocalInfracao.ObterPessoaSimplificadaPorHistorico(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0), fiscalizacao.LocalInfracao.PessoaTid);
+			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
-			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
-			}
-
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
-            vm.LocalInfracaoVM.IsVisualizar = true;
+			vm.LocalInfracaoVM.IsVisualizar = true;
 
-            vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
-            vm.IsVisualizar = true;
+			vm.ComplementacaoDadosVM = new ComplementacaoDadosVM(new ComplementacaoDados(), _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosRendaMensal, _busLista.FiscalizacaoComplementoDadosNivelEscolaridade, _busLista.TiposResponsavel, _busLista.FiscalizacaoComplementoDadosRespostas, _busLista.FiscalizacaoComplementoDadosReservaLegalTipo);
+			vm.IsVisualizar = true;
 
-            vm.InfracaoVM = new InfracaoVM();
-            vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
+			vm.InfracaoVM = new InfracaoVM();
+			vm.InfracaoVM.Infracao = _busInfracao.Obter(fiscalizacao.Id, false);
 
-            vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
+			vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
 
             //apenas para carregar a aba
             if (vm.InfracaoVM.Infracao.IdsOutrasPenalidades.Count() > 0) vm.InfracaoVM.Infracao.PossuiAdvertencia = true;
-            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null) vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;   //fiscalizações antigas
+            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.FiscalizacaoId > 0) vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;   //fiscalizações antigas
 
-            return View("Visualizar", vm);
-        }
+			return View("Visualizar", vm);
+		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar })]
 		public ActionResult VisualizarFiscalizacaoModal(int id)
@@ -373,12 +373,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
-			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
-			}
-
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
 			vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
 			vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
@@ -922,6 +920,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarObjetoInfracao(ObjetoInfracao entidade)
 		{
 			_busObjetoInfracao.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -949,20 +949,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.ConsideracaoFinalVM.ArquivoVM.Anexos = fiscalizacao.ConsideracaoFinal.Anexos;
 			vm.ConsideracaoFinalVM.ArquivoIUFVM.Anexos = fiscalizacao.ConsideracaoFinal.AnexosIUF;
 
-            if (id != null)
-            {
-                vm.ConsideracaoFinalVM.IUFBloco = _busInfracao.PossuiIUFBloco(id.Value);
-            }
+			if (id != null)
+			{
+				vm.ConsideracaoFinalVM.IUFBloco = _busInfracao.PossuiIUFBloco(id.Value);
+			}
 
-            if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
-            {
-                vm.ConsideracaoFinalVM.ConsideracaoFinalTestemunhaVM.ForEach(x =>
-                {
-                    x.FuncionarioIDAF = ViewModelHelper.CriarSelectList(funcionarioIDAF, false, true);
-                    x.Funcionarios = ViewModelHelper.CriarSelectList(funcionarios, true, true);
-                    x.Setores = ViewModelHelper.CriarSelectList(_busFuncionario.ObterSetoresFuncionario(), true, true);
-                });
-            }
+			if (fiscalizacao.ConsideracaoFinal.Testemunhas.Count == 0)
+			{
+				vm.ConsideracaoFinalVM.ConsideracaoFinalTestemunhaVM.ForEach(x =>
+				{
+					x.FuncionarioIDAF = ViewModelHelper.CriarSelectList(funcionarioIDAF, false, true);
+					x.Funcionarios = ViewModelHelper.CriarSelectList(funcionarios, true, true);
+					x.Setores = ViewModelHelper.CriarSelectList(_busFuncionario.ObterSetoresFuncionario(), true, true);
+				});
+			}
 
 			for (int i = 0; i < fiscalizacao.ConsideracaoFinal.Testemunhas.Count; i++)
 			{
@@ -1221,8 +1221,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<Lista> series = new List<Lista>();
 			List<Lista> penalidades = new List<Lista>();
 
-            infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
-            //infracao = _busInfracao.Obter(id, true);
+			infracao = _busInfracao.ObterHistoricoPorFiscalizacao(id);
+			//infracao = _busInfracao.Obter(id, true);
 
 			for (int i = 0; i < 4; i++)
 			{
@@ -1299,6 +1299,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarInfracao(Infracao entidade)
 		{
 			_busInfracao.Salvar(entidade);
+
+			if (!entidade.ComInfracao.Value)
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1488,6 +1491,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMaterialApreendido(MaterialApreendido entidade)
 		{
 			_busMaterialApreendido.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1511,7 +1516,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Multa = multa,
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
 				//CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
-				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
 			};
 
 			vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
@@ -1546,7 +1551,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Multa = multa,
 				Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: multa.SerieId.ToString()),
 				//CodigosReceita = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
-				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(id), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
+				CodigosReceita = ViewModelHelper.CriarSelectList(_busMulta.obterCodigoReceita(multa.CodigoReceitaId), true, selecionado: multa.CodigoReceitaId.GetValueOrDefault().ToString())
 			};
 
 			vm.MultaVM.DataConclusaoFiscalizacao = _bus.ObterDataConclusao(id);
@@ -1573,6 +1578,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarMulta(Multa entidade)
 		{
 			_busMulta.Salvar(entidade);
+			if(Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1655,6 +1662,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult CriarOutrasPenalidades(OutrasPenalidades entidade)
 		{
 			_busOutrasPenalidades.Salvar(entidade);
+			if (Convert.ToBoolean(entidade.IsDigital))
+				_busInfracao.ExcluirIUFBloco(entidade.FiscalizacaoId);
 
 			return Json(new { id = entidade.Id, Msg = Validacao.Erros });
 		}
@@ -1699,21 +1708,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 			List<PessoaLst> lstAssinantes = new List<PessoaLst>();
 			if ((fiscalizacao.LocalInfracao.DentroEmpreendimento ?? 0) == 0)
-			{
 				lstAssinantes = ObterListaAssinantes(fiscalizacao.LocalInfracao.PessoaId.GetValueOrDefault(0));
-
-				lstAssinantes?.RemoveAll(x => x.Id == 0);
-			}
+			else
+				lstAssinantes = lstResponsaveis.Where(x => !string.IsNullOrEmpty(x.CPFCNPJ)).ToList();
+			lstAssinantes?.RemoveAll(x => x.Id == 0);
 			vm.LocalInfracaoVM = new LocalInfracaoVM(fiscalizacao.LocalInfracao, _busLista.Estados, _busLista.Municipios(_busLista.EstadoDefault), _busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios, _busLista.Setores, pessoa, lstResponsaveis, lstAssinantes);
-            vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
-            vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
-            vm.ObjetoInfracaoVM.Entidade = _busObjetoInfracao.Obter(fiscalizacao.Id);
+			vm.ComplementacaoDadosVM.Entidade = fiscalizacao.ComplementacaoDados;
+			vm.EnquadramentoVM.Entidade = fiscalizacao.Enquadramento;
+			vm.ObjetoInfracaoVM.Entidade = _busObjetoInfracao.Obter(fiscalizacao.Id);
 
-            vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
-            if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null)
-            {
-                vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;
-            }
+			vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+			if (vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo == false && vm.ObjetoInfracaoVM.Entidade.IsDigital != null)
+			{
+				vm.InfracaoVM.Infracao.PossuiInterdicaoEmbargo = true;
+			}
 
 			vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
 
@@ -1732,6 +1740,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.InfracaoVM.CodigoReceitas = ViewModelHelper.CriarSelectList(_busLista.InfracaoCodigoReceita, true, selecionado: fiscalizacao.Infracao.CodigoReceitaId.GetValueOrDefault().ToString());
 			vm.InfracaoVM.Campos = fiscalizacao.Infracao.Campos;
 			vm.InfracaoVM.Perguntas = fiscalizacao.Infracao.Perguntas;
+
+			if (fiscalizacao.SituacaoAtualData.Data.Value.Year < 2018)
+			{
+				bool? falso = false;
+
+				fiscalizacao.ObjetoInfracao.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.ObjetoInfracao.NumeroIUF) ? null : falso;
+				fiscalizacao.MaterialApreendido.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.MaterialApreendido.NumeroIUF) ? null : falso;
+				fiscalizacao.Multa.IsDigital = string.IsNullOrWhiteSpace(fiscalizacao.Multa.NumeroIUF) ? null : falso;
+				fiscalizacao.OutrasPenalidades.IsDigital = null;
+			}
 
 			vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
 			vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
@@ -1798,13 +1816,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Associar
 
-        [Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
-        public ActionResult Associar()
-        {
-            ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
-            vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-            return PartialView("ListarFiltros", vm);
-        }
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
+		public ActionResult Associar()
+		{
+			ListarVM vm = new ListarVM(_busLista.QuantPaginacao, _busLista.Setores, _bus.ObterTipoInfracao(), _bus.ObterItemInfracao(), _busLista.FiscalizacaoSituacao.Where(x => x.Id != "4"/*Cancelar Conclusão*/).ToList(), _busLista.FiscalizacaoSerie, _busLista.InfracaoClassificacao);
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			return PartialView("ListarFiltros", vm);
+		}
 
 		#endregion
 
@@ -1845,15 +1863,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			FiscalizacaoVM vm = new FiscalizacaoVM();
 			Fiscalizacao fiscalizacao = _bus.Obter(id);
 
-            vm.Fiscalizacao = fiscalizacao;
-            vm.Id = fiscalizacao.Id;
-            vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
-            vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
-            vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(id);
-            vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
-            vm.MultaVM.Multa = fiscalizacao.Multa;
-            vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
-            vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
+			vm.Fiscalizacao = fiscalizacao;
+			vm.Id = fiscalizacao.Id;
+			vm.InfracaoVM.Infracao = fiscalizacao.Infracao;
+			vm.ObjetoInfracaoVM.Entidade = fiscalizacao.ObjetoInfracao;
+			vm.ProjetoGeoVM.Projeto = _busProjGeo.ObterProjetoGeograficoPorFiscalizacao(id);
+			vm.MaterialApreendidoVM.MaterialApreendido = fiscalizacao.MaterialApreendido;
+			vm.MultaVM.Multa = fiscalizacao.Multa;
+			vm.OutrasPenalidadesVM.OutrasPenalidades = fiscalizacao.OutrasPenalidades;
+			vm.ConsideracaoFinalVM.ConsideracaoFinal = fiscalizacao.ConsideracaoFinal;
 
 			vm.DocumentosCancelados = _bus.ObterHistoricoDocumentosCancelados(id);
 

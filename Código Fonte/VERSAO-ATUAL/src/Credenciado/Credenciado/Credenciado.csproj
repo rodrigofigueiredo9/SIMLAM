@@ -746,6 +746,12 @@
     <Content Include="Content\_imgLogo\logo_entrada.png" />
     <Content Include="Content\_imgLogo\logo_idaf_versoes.jpg" />
     <Content Include="Content\_imgLogo\logo_login.png" />
+    <Content Include="Content\_imgLogo\logo_novo.jpeg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\_imgLogo\logo_novo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\_imgLogo\logo_topo.png" />
     <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
     <Content Include="Content\_img\add.png" />
@@ -785,6 +791,7 @@
     <Content Include="Content\_img\bt_lista_salvar.png" />
     <Content Include="Content\_img\bt_lista_selecionar_empreendimento.png" />
     <Content Include="Content\_img\bt_lista_visualizar.png" />
+    <Content Include="Content\_img\bt_mensagens-2px.png" />
     <Content Include="Content\_img\bt_mensagens.png" />
     <Content Include="Content\_img\bt_principal.png" />
     <Content Include="Content\_img\cancel.png" />

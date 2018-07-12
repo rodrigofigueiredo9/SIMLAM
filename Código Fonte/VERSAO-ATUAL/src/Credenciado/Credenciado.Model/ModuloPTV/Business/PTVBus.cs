@@ -645,11 +645,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor)
+		public List<ListaValor> DiasHorasVistoria(int setor, bool visualizar)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor);
+				return _da.DiasHorasVistoria(setor, visualizar);
 			}
 			catch (Exception exc)
 			{
@@ -745,15 +745,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 				Blocos.Arquivo.Arquivo arq;
 
-				//if (comunicador.ArquivoCredenciado == null)
-				//{
-				//    comunicador.ArquivoCredenciado = new Blocos.Arquivo.Arquivo();
-				//}
-
 				arq = comunicador.ArquivoCredenciado;
-
-
-
+				
 				PTVConversa conversa;
 				conversa = comunicador.Conversas[0];
 

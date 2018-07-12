@@ -807,7 +807,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				}
 				if (filtro.Dados.Situacao > 0)
 				{
-					comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
+					if (filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido || filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Invalido)
+					{
+						var consulta = "(select ip.situacao from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id )";
+						var parametroSituacao = filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido ? (int)ePTVSituacao.Valido : (int)ePTVSituacao.Invalido;
+						comandtxt += comando.FiltroAnd(consulta, "situacao", parametroSituacao);
+					}
+					else 
+						comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
 				}
 				if (!String.IsNullOrEmpty(filtro.Dados.Destinatario))
 				{
@@ -816,6 +823,41 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				if (!String.IsNullOrEmpty(filtro.Dados.CulturaCultivar))
 				{
 					comandtxt += comando.FiltroAndLike("c.texto||'/'||cc.cultivar", "cultura_cultivar", filtro.Dados.CulturaCultivar, true, true);
+				}
+				if (!String.IsNullOrEmpty(filtro.Dados.Interessado))
+				{
+					var consulta = "(SELECT COALESCE(P.NOME, P.RAZAO_SOCIAL, PT.RESPONSAVEL_SEM_DOC) FROM IDAF.TAB_PESSOA P WHERE P.ID = PT.RESPONSAVEL_EMP)";
+					comandtxt += comando.FiltroAndLike(consulta, "interessado", filtro.Dados.Interessado, likeInicio: true);
+				}			
+				if (filtro.Dados.TipoDocumento > 0)
+				{
+					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
+					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
+					{
+						var consulta = String.Empty;
+						switch (filtro.Dados.TipoDocumento)
+						{
+							case (int)eDocumentoFitossanitarioTipo.CFO:
+								consulta = "(SELECT case when CFO.serie is null then to_char(CFO.numero) else CFO.numero||'/'||CFO.serie end FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.CFOC:
+								consulta = "(SELECT case when CFOC.serie is null then to_char(CFOC.numero) else CFOC.numero||'/'||CFOC.serie end FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTV:
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+						}
+					}
 				}
 
 				List<String> ordenar = new List<String>();
@@ -1858,7 +1900,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-		internal List<ListaValor> DiasHorasVistoria(int setorId)
+		internal List<ListaValor> DiasHorasVistoria(int setorId, bool visualizar)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
@@ -1882,13 +1924,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                       lov_dia_semana d,
                                                                 (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(sysdate,'DD/MM/YY')
                                                                 ) bloq
-                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
+                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor " + (visualizar ? "" : " AND lv.situacao <> 0 ") + @" AND d.id = lv.dia_semana
                                                                AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
                                                                AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
                                                                AND to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))
                                                                OR 
                                                                (
-                                                                  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
+                                                                  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor " + (visualizar ? "" : " AND lv.situacao <> 0 ") + @" AND d.id = lv.dia_semana
                                                                   AND  to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY') 
                                                                   AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') < to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
                                                                   )  )");
@@ -1904,7 +1946,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                                                                         CONNECT BY TRUNC(SYSDATE, 'yy') + LEVEL - 1 <= LAST_DAY(SYSDATE)) ,
                                                                         cnf_local_vistoria lv,
                                                                         lov_dia_semana d
-                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
+                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor " + (visualizar ? "" : " and lv.situacao <> 0 ") + @" and d.id = lv.dia_semana
                                                                 and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(sysdate,'DD/MM/YY HH24:MI')");
                 }
 
@@ -1963,15 +2005,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
                     select valor from cnf_valor_dua t where t.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') 
-                        and t.tipo = 1 and t.id = (select max(tt.id) from cnf_valor_dua tt where tt.data_inicial <= to_date(:dataReferencia, 'yyyy/mm'))", EsquemaBanco);
+                        and t.tipo = 1 and t.id = (select max(tt.id) from cnf_valor_dua tt where tt.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') and tt.tipo = 1)", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia, DbType.String);
+				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia, DbType.String); 
 				return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
 
        
+		internal string ObterSiglaSetorFuncionario(int funcionario)
+		{
+			var siglaSetor = String.Empty;
+			var listaSiglasSetor = new List<string>();
 
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando cd = bancoDeDados.CriarComando(@"
+					select s.sigla from idaf.tab_funcionario_setor fs 
+						inner join idaf.tab_setor s on fs.setor = s.id 
+					where fs.funcionario = :funcionario");
+
+				cd.AdicionarParametroEntrada("funcionario", funcionario, DbType.Int32);
+
+				using (IDataReader rd = bancoDeDados.ExecutarReader(cd))
+				{
+					while (rd.Read())
+					{
+						listaSiglasSetor.Add(rd.GetValue<string>("sigla"));
+					};
+
+					siglaSetor = String.Join(", ", listaSiglasSetor);
+					rd.Close();
+				}
+			}
+
+			return siglaSetor;
+		}
     
 
 		internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj, int ptvId)
@@ -2017,7 +2086,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					t.data_execucao  data_analise,
 					t.executor_nome  analista,
 					t.situacao_texto,
-					t.motivo
+					t.motivo,
+					t.executor_id,
+					t.executor_tipo_id
 				from hst_ptv t
 				where t.ptv_id = :ptv
 				order by t.data_execucao", UsuarioCredenciado);
@@ -2028,16 +2099,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					while (reader.Read())
 					{
+						var executorTipo = reader.GetValue<int>("executor_tipo_id");
+						var funcionario = reader.GetValue<Int32>("executor_id");
+						var siglaSetor = String.Empty;
+
+						if (executorTipo == 1)
+						{
+							siglaSetor = ObterSiglaSetorFuncionario(funcionario);
+						}
+
 						HistoricoPTV.ListaHistoricos.Add(new PTVItemHistorico()
 						{
 							Id = reader.GetValue<int>("id"),
 							DataAnalise = reader.GetValue<string>("data_analise"),
 							Analista = reader.GetValue<string>("analista"),
 							SituacaoTexto = reader.GetValue<string>("situacao_texto"),
-							MotivoTexto = reader.GetValue<string>("motivo")
+							MotivoTexto = reader.GetValue<string>("motivo"),
+							SetorTexto = siglaSetor
 						});
 					}
-
 					reader.Close();
 				}
 

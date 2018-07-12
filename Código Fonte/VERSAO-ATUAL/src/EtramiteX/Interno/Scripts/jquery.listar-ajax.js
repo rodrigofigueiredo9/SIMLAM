@@ -1,4 +1,4 @@
-﻿/// <reference path="JQuery/jquery-1.4.3.js"/>
+/// <reference path="JQuery/jquery-1.4.3.js"/>
 
 // Uso:
 // ('.Container').listarAjax()
@@ -165,7 +165,7 @@
 		if (settings.onBeforeSerializar) {
 			settings.onBeforeSerializar(container);
 		}
-
+		debugger;
 		objetoSerializado = jsonContents($('.filtroSerializarAjax', container));
 
 	    //Solução para a mascara que não deixava filtrar certo, replace do "." que estava retornando uma consulta incorreta

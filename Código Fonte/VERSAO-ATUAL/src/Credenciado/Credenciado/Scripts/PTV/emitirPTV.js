@@ -207,7 +207,7 @@ PTVEmitir = {
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlObterDiasHorasVistoria,
-			data: JSON.stringify({ setor: ddlSelecionado.Id }),
+			data: JSON.stringify({ setor: ddlSelecionado.Id, visualizar: $('.hdnVisualizar', PTVEmitir.container).val() }),
 			cache: false,
 			async: false,
 			type: 'POST',

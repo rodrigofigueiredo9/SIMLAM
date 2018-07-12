@@ -154,7 +154,7 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 					return RedirectToAction("Index", Validacao.QueryParamSerializer());
 				}
 
-				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR", resultado, "application/pdf");
+				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR.pdf", resultado, "application/pdf");
 			}
 			catch (Exception exc)
 			{
@@ -168,6 +168,7 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 			try
 			{
 				Arquivo arquivo = _busTitulo.GerarPdf(id);
+				arquivo.Nome = String.Concat(arquivo.Nome, " .pdf");
 
 				DateTime dataAtual = DateTime.Now;
 				String mensagemTarja = "Consultado em " + dataAtual.ToShortDateString() + " às " + dataAtual.ToString(@"HH\hmm\min");
@@ -184,6 +185,18 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 				Validacao.AddErro(exc);
 			}
 			return RedirectToAction("Index", Validacao.QueryParamSerializer());
+		}
+
+		public ActionResult BaixarDemonstrativoCar(int id, bool isTitulo)
+		{
+			var schemaSolicitacao = 0;
+
+			if (!isTitulo)
+				schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+
+			var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao, isTitulo);
+
+			return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion

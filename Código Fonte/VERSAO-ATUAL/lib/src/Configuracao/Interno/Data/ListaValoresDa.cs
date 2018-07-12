@@ -1475,13 +1475,29 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			return lst;
 		}
 
-        public List<Lista> ObterCodigoReceita(int idFiscalizacao)
+        public List<Lista> ObterCodigoReceita(int? codigoRecFisc = null)
         {
             List<Lista> lst = new List<Lista>();
-            var bancoDeDados = BancoDeDados.ObterInstancia(); 
-            var retorno = DaHelper.ObterLista(bancoDeDados.CriarComando(@"  select l.id, (l.texto || ' - ' || l.descricao) texto from lov_fisc_infracao_codigo_rece l 
-                                                                where l.ativo = 1 OR l.id in 
-                                                                (SELECT M.CODIGO_RECEITA FROM TAB_FISC_MULTA M WHERE M.FISCALIZACAO = " + idFiscalizacao + ")"));
+            var bancoDeDados = BancoDeDados.ObterInstancia();
+			Comando cmd = null;
+
+			if (codigoRecFisc.GetValueOrDefault(0) > 0)
+			{
+				cmd = bancoDeDados.CriarComando(@"select l.id,
+														 (l.texto || ' - ' || l.descricao) texto
+												  from lov_fisc_infracao_codigo_rece l 
+                                                  where l.ativo = 1 or l.id = :codigo");
+				cmd.AdicionarParametroEntrada("codigo", codigoRecFisc.Value, DbType.Int32);
+			}
+			else
+			{
+				cmd = bancoDeDados.CriarComando(@"select l.id,
+														 (l.texto || ' - ' || l.descricao) texto
+												  from lov_fisc_infracao_codigo_rece l 
+                                                  where l.ativo = 1");
+			}
+			var retorno = DaHelper.ObterLista(cmd);
+
             foreach (var item in retorno)
             {
                 lst.Add(new Lista()
@@ -2006,7 +2022,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<Lista> ObterPTVSolicitacaoSituacao()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select l.id, l.texto from lov_solicitacao_ptv_situacao l order by l.id", schema: UsuarioCredenciado);
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select l.id, l.texto from lov_solicitacao_ptv_situacao l where l.id != 8 order by l.id", schema: UsuarioCredenciado);
 
 			foreach (var item in daReader)
 			{
@@ -2019,7 +2035,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			}
 
 			return lst;
-		}		
+		}	
 
 		internal List<Lista> ObterPTVUnidadeMedida()
 		{

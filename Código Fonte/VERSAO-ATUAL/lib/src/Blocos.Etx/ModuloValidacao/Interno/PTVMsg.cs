@@ -169,6 +169,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem JustificativaObrigatoria { get { return new Mensagem() { Campo = "Justificativa", Texto = "A Justificativa é Obrigatória.", Tipo = eTipoMensagem.Advertencia }; } }
 
+		public Mensagem UmDosCamposPreenchido { get { return new Mensagem() { Campo = "Justificativa", Texto = "Pelo menos um dos campos deve estar preenchido.", Tipo = eTipoMensagem.Advertencia }; } }
+
 		public Mensagem SalvarConversa { get { return new Mensagem() { Texto = "Conversa de EPTV enviada com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
 
 		public Mensagem JaExisteComunicadorPTV { get { return new Mensagem() { Texto = "Este EPTV já possui um Comunicador.", Tipo = eTipoMensagem.Advertencia }; } }
@@ -177,7 +179,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem AcessoNaoPermitido { get { return new Mensagem() { Texto = "Este EPTV não pode ser acessado por este usuário.", Tipo = eTipoMensagem.Advertencia }; } }
 
-		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\".", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
 

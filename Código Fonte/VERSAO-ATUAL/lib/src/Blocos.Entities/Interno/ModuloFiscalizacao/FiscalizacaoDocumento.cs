@@ -28,6 +28,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		//Arquivo Uploaded pela Tela de Consideracoes Finais
 		public Arquivo.Arquivo PdfTermoCompromisso { get; set; }
 
+		//Nome do arquivo para IUF de bloco
+		public string NomeArquivo { get; set; }
+
 		public FiscalizacaoDocumento()
 		{
 			PdfGeradoAutoTermo = new Arquivo.Arquivo();
