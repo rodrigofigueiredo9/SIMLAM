@@ -313,7 +313,7 @@
 		<div class="coluna24">
 			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
 			<label>
-				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa checked" }))%>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
 				Sim
 			</label>
 			<label>

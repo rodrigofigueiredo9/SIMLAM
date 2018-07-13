@@ -1196,7 +1196,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar
+						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
 															  from {0}tab_cfo_produto t, crt_unidade_producao_unidade u, tab_cultura_cultivar cc
 															  where u.id = t.unidade_producao
 															    and cc.id = u.cultivar
@@ -1207,7 +1207,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar            
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria            
 															  from {0}tab_cfoc_produto     cp,
 																   {0}tab_lote             l,
 																   {0}tab_lote_item        li,
@@ -1223,19 +1223,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					default: //Recebe como parâmetro o id da cultura: CF/CFR, FT
-						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
+						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 				}
@@ -1245,7 +1248,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					retorno = new List<Lista>();
 					while (reader.Read())
 					{
-						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar") });
+						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar"), Tipo = reader.GetValue<int>("nf_caixa_obrigatoria") });
 					}
 
 					reader.Close();

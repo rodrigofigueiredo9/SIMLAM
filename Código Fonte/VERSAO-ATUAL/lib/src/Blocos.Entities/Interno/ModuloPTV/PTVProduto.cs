@@ -51,6 +51,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
         public bool ExibeQtdKg { get; set; }
 
         public bool SemDoc { get; set; }
+
+		public bool notaFiscalDeCaixaObrigatoria { get; set; }
 	}
 
 }

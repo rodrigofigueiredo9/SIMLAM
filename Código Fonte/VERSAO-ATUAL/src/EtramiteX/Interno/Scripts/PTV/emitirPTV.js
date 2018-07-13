@@ -472,6 +472,11 @@ PTVEmitir = {
 				$('.ddlProdutoCultivar', PTVEmitir.container).ddlLoad(response.Cultivar);
 				$('.txtProdutoQuantidade', PTVEmitir.container).focus();
 				PTVEmitir.onObterUnidadeMedida();
+
+				// Setando propriedade tipo no dropDown
+				response.Cultivar.forEach((cult) => {
+					$('.ddlProdutoCultivar option', PTVEmitir.container).toArray().find(x => x.value == cult.Id).setAttribute("Tipo", cult.Tipo);
+				});
 			}
 		});
 		MasterPage.carregando(false);
@@ -549,6 +554,9 @@ PTVEmitir = {
 		if (produto.OrigemTipo == "5" || produto.OrigemTipo == "6" || produto.OrigemTipo == "7") {
 			return;
 		}
+		if (produto.Cultura <= 0 || produto.Cultivar <= 0 || produto.UnidadeMedida <= 0) {
+			return;
+		}
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlObterSaldoDocOrigem,
@@ -612,16 +620,21 @@ PTVEmitir = {
 		if (NumeroOrigem <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
 			vOrigem = $('.hdnNumeroOrigem', PTVEmitir.container).val();
 		}
-
-		
+				
 
 		var txtUnid = $('.ddlProdutoUnidadeMedida option:selected', container).text();
 
 		var bExibeKg = txtUnid.indexOf("KG") >= 0;
 
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
-
-
+		
+		var nfCaixaObrigatoria = $('.ddlProdutoCultivar option:selected', PTVEmitir.container).attr('Tipo');
+	
+		if (nfCaixaObrigatoria == 1) {
+			$('.rdbApresentacaoNotaFiscalCaixa')[0].checked = true;
+			$('.rdbApresentacaoNotaFiscalCaixa').attr('disabled', 'disabled');
+			$('.isPossuiNFCaixa').removeClass('hide');
+		}
 
 		var item = {
 			PTV: $('.txtNumero', PTVEmitir.container).val(),
@@ -633,6 +646,7 @@ PTVEmitir = {
 			CulturaTexto: $('.ddlProdutoCultura option:selected', container).text(),
 			Cultivar: $('.ddlProdutoCultivar', container).val(),
 			CultivarTexto: $('.ddlProdutoCultivar option:selected', container).text(),
+			nfCaixaObrigatoria,
 			UnidadeMedidaTexto: $('.ddlProdutoUnidadeMedida option:selected', container).text(),
 			UnidadeMedida: $('.ddlProdutoUnidadeMedida option:selected', container).val(),
 			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
@@ -747,6 +761,11 @@ PTVEmitir = {
 		var _objetoExcluido = { Produtos: [] }
 		$($('.hdnItemJson', $(this).closest('tr'))).each(function () {
 			_objetoExcluido.Produtos.push(JSON.parse($(this).val()));
+
+			if ((JSON.parse($(this).val())).nfCaixaObrigatoria == 1) {
+				$('.rdbApresentacaoNotaFiscalCaixa').removeAttr('disabled');
+				debugger;
+			}
 		});
 
 		$(this).closest('tr').toggle(
@@ -1158,6 +1177,8 @@ PTVEmitir = {
 				$(this).remove();
 			});
 			$('.identificacaoDaCaixa').addClass('hide');
+			$('.isTipoCaixaChecked').addClass('hide');
+
 		}
 		$('.txtNotaFiscalCaixaNumero').val('');
 		$('.txtNFCaixaSaldoAtual').val('');
