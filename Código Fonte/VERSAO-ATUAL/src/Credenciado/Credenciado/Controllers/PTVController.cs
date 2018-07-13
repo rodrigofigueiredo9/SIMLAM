@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, false));
+				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -199,7 +199,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, true));
+				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -606,13 +606,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult ObterDiasHorasVistoria(int setor, bool visualizar)
+		public ActionResult ObterDiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			return Json(new
 			{
 				@Valido = Validacao.EhValido,
 				@Erros = Validacao.Erros,
-				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, visualizar)
+				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, dataVistoria)
 
 			});
 		}
