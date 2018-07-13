@@ -145,14 +145,14 @@ ContainerAcoes = {
 		var url = $(this).data("url");
 		var modal = $(this).data("modal");
 		var idPTV = $(this).data("idPTV");
-		
+
 		if (modal) {
 			Modal.abrir(
 				url,
 				{ id: idPTV },
 				function (container) {
 					ComunicadorPTV.load(container, {
-						callBackSalvar: AlertaChegadaMensagemEPTV.onAcaoClick
+						callBackSalvar: ContainerAcoes.onAcaoClick
 					});
 				},
 				Modal.tamanhoModalMedia);
