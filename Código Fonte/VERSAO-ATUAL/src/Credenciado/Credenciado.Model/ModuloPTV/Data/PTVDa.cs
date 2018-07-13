@@ -1917,9 +1917,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                 {
                     comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
                                                                 FROM (
-                                                                      SELECT TRUNC(:dataVistoria, 'mm') + LEVEL - 1 workday
+                                                                      SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
                                                                       FROM DUAL
-                                                                      CONNECT BY TRUNC(:dataVistoria, 'yy') + LEVEL - 1 <= LAST_DAY(:dataVistoria)),
+                                                                      CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))),
                                                                       cnf_local_vistoria lv,
                                                                       lov_dia_semana d,
                                                                 (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(:dataVistoria,'DD/MM/YY')
@@ -1941,15 +1941,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                 else
                 {
                     comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (    SELECT TRUNC(:dataVistoria, 'mm') + LEVEL - 1 workday
+                                                                FROM (    SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
                                                                             FROM DUAL
-                                                                        CONNECT BY TRUNC(:dataVistoria, 'yy') + LEVEL - 1 <= LAST_DAY(:dataVistoria)) ,
+                                                                        CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))) ,
                                                                         cnf_local_vistoria lv,
                                                                         lov_dia_semana d
                                                                 WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
                                                                 and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(:dataVistoria,'DD/MM/YY HH24:MI')");
                 }
-				if (dataVistoria == null || dataVistoria > DateTime.Now) dataVistoria = DateTime.Now;
+				if (dataVistoria == null || dataVistoria > DateTime.Now) dataVistoria = DateTime.Now.AddHours(1);
 
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dataVistoria", dataVistoria, DbType.DateTime);

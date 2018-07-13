@@ -348,26 +348,7 @@
 		</div>
 	</div>
 
-   
-
-	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="block">
-			<div class="coluna40">
-				<label for="LocalEmissao">Local da Vistoria *</label>
-				<%= Html.DropDownList("LocalVistoriaId", Model.lsLocalVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalVistoria"}))%>
-			</div>
-		</div>
-
-		<div class="block">
-			<div class="coluna40">
-				<label for="LocalEmissao">Vistoria de Carga *</label>
-                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
-				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
-			</div>
-		</div>
-	</div>
-
-	<!-- Arquivo -->
+   <!-- Arquivo -->
 	<fieldset class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<legend>Anexos</legend>
 		<div class="block">
@@ -455,4 +436,29 @@
 			</table>
 		</div>
 	</fieldset>
+
+	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+		<div class="block">
+			<div class="coluna40">
+				<label for="LocalEmissao">Local da Vistoria *</label>
+				<%= Html.DropDownList("LocalVistoriaId", Model.lsLocalVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalVistoria"}))%>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="coluna40">
+				<label for="LocalEmissao">Vistoria de Carga *</label>
+                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
+				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
+			</div>
+		</div>
+	</div>
+
+	<div class="block box">
+		<div class="coluna40">
+			<label for="LocalEmissao">Solicitante *</label>
+                <%= Html.TextBox("ResponsavelTecnicoNome", HttpContext.Current.User != null ? HttpContext.Current.User.Identity.Name : "", ViewModelHelper.SetaDisabled(true, new { @class = "txtResponsavelTecnicoNome text" }))%>
+		</div>
+	</div>
+
 </div>
