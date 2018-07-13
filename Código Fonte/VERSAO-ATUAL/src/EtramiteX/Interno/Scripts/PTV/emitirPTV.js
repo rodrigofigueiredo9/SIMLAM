@@ -26,7 +26,8 @@ PTVEmitir = {
 			urlObterTratamentoFisso: null,
 			urlObterItinerario: null,
 			urlVerificarDocumentoOrigem: null,
-			urlVerificarNotaFiscalCaixa: null
+			urlVerificarNotaFiscalCaixa: null,
+			urlObterSaldoDocOrigem: null
 		},
 		Mensagens: null,
 		idsTela: null,
@@ -371,6 +372,7 @@ PTVEmitir = {
 		$('.hdnNumeroOrigem', PTVEmitir.container).val('0');
 		$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val('0');
 		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
+		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
 
 		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
@@ -381,6 +383,7 @@ PTVEmitir = {
 			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
 		}
+		$('.saldoContainer', PTVEmitir.container).addClass('hide');
 
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
@@ -492,7 +495,13 @@ PTVEmitir = {
 		    textoNumeral = arrTexto[0];
 		    serieNumeral = arrTexto[1];
 		}
-
+		var isInteger = parseInt(textoNumeral);
+		if (isInteger) {
+			console.log("É INTEIRO");
+		} else {
+			console.log("NÃO É INTEIRO");
+			return;
+		}
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlVerificarDocumentoOrigem,
@@ -521,6 +530,40 @@ PTVEmitir = {
 			}
 		});
 
+	},
+
+	saldoDocOrigem: function () {
+
+		var Origem = 0;
+		var OrigemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+		if (OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
+			Origem = +$('.hdnNumeroOrigem', PTVEmitir.container).val();
+		}
+		var produto = {
+			Origem,
+			OrigemTipo,
+			Cultura: $('.ddlProdutoCultura', PTVEmitir.container).val(),
+			Cultivar: $('.ddlProdutoCultivar', PTVEmitir.container).val(),
+			UnidadeMedida: $('.ddlProdutoUnidadeMedida', PTVEmitir.container).val()
+		}
+		if (produto.OrigemTipo == "5" || produto.OrigemTipo == "6" || produto.OrigemTipo == "7") {
+			return;
+		}
+
+		$.ajax({
+			url: PTVEmitir.settings.urls.urlObterSaldoDocOrigem,
+			data: JSON.stringify({ produto }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				$('.txtSaldoDocOrigem', PTVEmitir.container).val(response.saldo + " T");
+				$('.saldoContainer', PTVEmitir.container).removeClass('hide');
+			}
+		});
 	},
 
 	//Associoar Cultura
@@ -658,24 +701,13 @@ PTVEmitir = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-
-
-
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
-
-			 
-			   
-
+				
 			    var possuiTon = false;
-
-			  
-			 
 			    for (var i = 0 ; i < response.UnidadeMedida.length; i++) {
-
 			        if (response.UnidadeMedida[i].Texto == "T")
 			            possuiTon = true;
-			    }
-			    
+			    }			    
 
 			    if (possuiTon) {
 			        $('.ddlProdutoUnidadeMedida').append($('<option>', {
@@ -685,9 +717,9 @@ PTVEmitir = {
 
 			        $('.ddlProdutoUnidadeMedida').removeAttr('disabled');
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
-			    }
-			   
+				}
 
+				PTVEmitir.saldoDocOrigem()
 			}
 		});
 
@@ -1111,6 +1143,7 @@ PTVEmitir = {
 		return objeto;
 	},
 
+	// #region Nota Fiscal de caixa
 	onlimparCamposCaixa: function () {
 		PTVEmitir.limparCamposNFCaixa();
 	},
@@ -1158,7 +1191,6 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					debugger;
 					if (response.nfCaixa.saldoAtual >= 0) {
 						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
 						$('.txtNFCaixaSaldoAtual').addClass('disabled')
@@ -1283,5 +1315,5 @@ PTVEmitir = {
 
 	}
 
-	
+	// #endregion
 }

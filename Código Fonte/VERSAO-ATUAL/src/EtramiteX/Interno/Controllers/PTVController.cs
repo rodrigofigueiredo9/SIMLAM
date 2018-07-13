@@ -265,6 +265,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -404,6 +405,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@nfCaixa = nfCaixa
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{	
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
 			});
 		}
 

@@ -67,6 +67,10 @@
 		<div class="coluna10">
 			<button type="button" class="inlineBotao btnVerificarDocumentoOrigem hide">Verificar</button>
 		</div>
+		<div class="coluna15 saldoContainer hide">
+			<label >Saldo</label>
+			<%=Html.TextBox("SaldoDocOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(true, new { @class="text txtSaldoDocOrigem"})) %>
+		</div>
 	</div>
 	<div class="block">
 		<div class="coluna25">
@@ -309,11 +313,11 @@
 		<div class="coluna24">
 			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
 			<label>
-				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NotaFiscalApresentacao == null), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa checked" }))%>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa checked" }))%>
 				Sim
 			</label>
 			<label>
-				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Nao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Nao, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
 				Não
 			</label>
 		</div>
@@ -358,7 +362,7 @@
 			</div>
 		</div>
 	</div>
-		<div class="gridContainer identificacaoDaCaixa" <%= Model.PTV.NotaFiscalDeCaixas.Count() > 0 ? "hide" : "" %>>
+		<div class="gridContainer identificacaoDaCaixa <%= Model.PTV.NotaFiscalDeCaixas.Count() > 0 ? "" : "hide" %>" >
 			<table class="dataGridTable gridCaixa">
 				<thead>
 					<tr>
