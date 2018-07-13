@@ -62,6 +62,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.ddlProdutoCultivar', 'change', PTVEmitir.chageCultivar);
 		PTVEmitir.container.delegate('.btnIdentificacaoProduto', 'click', PTVEmitir.onAdicionarIdentificacaoProduto);
 		PTVEmitir.container.delegate('.btnExcluir', 'click', PTVEmitir.onExcluirIdentificacaoProduto);
+		PTVEmitir.container.delegate('.btnLimparDocumentoOrigem', 'click', PTVEmitir.onLimparIdentificacaoProduto);
 
 		//2-Identificação do Produto
 		PTVEmitir.container.delegate('.btnAssociarCultura', 'click', PTVEmitir.associarCultura);
@@ -366,24 +367,11 @@ PTVEmitir = {
 			labelOrigem.text(option.text());
 		}
 
-		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
-		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
-		$('.txtNumeroOrigem ', PTVEmitir.container).val('');
-		$('.hdnNumeroOrigem', PTVEmitir.container).val('0');
-		$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val('0');
-		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
-		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
+		PTVEmitir.onLimparIdentificacaoProduto();
 
-		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
-			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
-			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
-			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
-		} else {
-			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
-			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
-			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
-		}
-		$('.saldoContainer', PTVEmitir.container).addClass('hide');
+		
+
+		
 
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
@@ -521,6 +509,7 @@ PTVEmitir = {
 				if (response.EhValido) {
 					$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 					$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
+					$('.btnLimparDocumentoOrigem', PTVEmitir.container).removeClass('hide');
 
 					$('.ddlProdutoCultura', PTVEmitir.container).ddlLoad(response.Cultura);
 					$('.hdnNumeroOrigem', PTVEmitir.container).val(response.OrigemID);
@@ -693,6 +682,7 @@ PTVEmitir = {
 		Listar.atualizarEstiloTable(tabela);
 		PTVEmitir.onTratamentoFitossanitário();
 		PTVEmitir.onPossuiLaudoLaboratorial();
+		PTVEmitir.onLimparIdentificacaoProduto()
 	},
 
 	onObterUnidadeMedida: function () {
@@ -753,6 +743,28 @@ PTVEmitir = {
 		}
 	},
 
+	onLimparIdentificacaoProduto: function () {
+		$('.btnLimparDocumentoOrigem', PTVEmitir.container).addClass('hide');
+		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
+		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
+		$('.txtNumeroOrigem ', PTVEmitir.container).val('');
+		$('.hdnNumeroOrigem', PTVEmitir.container).val('0');
+		$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val('0');
+		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
+		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
+
+		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
+			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
+			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
+		} else {
+			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
+			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
+			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
+		}
+		$('.saldoContainer', PTVEmitir.container).addClass('hide');
+	},
+
 	onExcluirIdentificacaoProduto: function () {
 		Mensagem.limpar(PTVEmitir.container);
 		var container = $(this).closest('.gridIdentificacaoProdutos');
@@ -764,7 +776,6 @@ PTVEmitir = {
 
 			if ((JSON.parse($(this).val())).nfCaixaObrigatoria == 1) {
 				$('.rdbApresentacaoNotaFiscalCaixa').removeAttr('disabled');
-				debugger;
 			}
 		});
 
