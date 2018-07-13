@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/jquery.json-2.2.min.js" />
+/// <reference path="../Lib/jquery.json-2.2.min.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -25,7 +25,8 @@ PTVEmitir = {
 			urlObterDadosLaboratorio: null,
 			urlObterTratamentoFisso: null,
 			urlObterItinerario: null,
-			urlVerificarDocumentoOrigem: null
+			urlVerificarDocumentoOrigem: null,
+			urlVerificarNotaFiscalCaixa: null
 		},
 		Mensagens: null,
 		idsTela: null,
@@ -38,6 +39,8 @@ PTVEmitir = {
 
 	cidadeID: null,
 
+	nfCaixaTemp: null, 
+	
 	load: function (container, options) {
 		if (options) { $.extend(PTVEmitir.settings, options); }
 
@@ -94,6 +97,17 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.btnSalvar', 'click', PTVEmitir.onSalvar);
 
 		PTVEmitir.container.delegate('.rbTipoDocumento', 'change', PTVEmitir.onTipoPessoaChange);
+
+		PTVEmitir.container.delegate('.rbTipoDocumento', 'change', PTVEmitir.onTipoPessoaChange);
+
+		//Nota fiscal de caixa
+		PTVEmitir.container.delegate('.btnVerificarNotaCaixaCaixa', 'click', PTVEmitir.onVerificarNotaFiscalCaixa);
+		PTVEmitir.container.delegate('.btnAddCaixa', 'click', PTVEmitir.onAddCaixaGrid);
+		PTVEmitir.container.delegate('.rdbTipoCaixa', 'change', PTVEmitir.onChangeTipoCaixa);
+		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscalCaixa', 'change', PTVEmitir.onPossuiNFCaixa);
+		PTVEmitir.container.delegate('.btnExcluirCaixa', 'click', PTVEmitir.onExcluirCaixa);
+		PTVEmitir.container.delegate('.btnLimparNotaCaixaCaixa', 'click', PTVEmitir.onlimparCamposCaixa);
+
 
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
 			PTVEmitir.habilitarCampos(false);
@@ -1071,7 +1085,8 @@ PTVEmitir = {
 			LocalEmissaoId: $('.ddlLocalEmissao', PTVEmitir.container).val(),
 			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
-			Produtos: []
+			Produtos: [],
+			NotaFiscalDeCaixas: []
 		}
 
 		var retorno = [];
@@ -1083,12 +1098,190 @@ PTVEmitir = {
 		for (var i = 0; i < retorno.length; i++)
 		    if (retorno[i].ExibeQtdKg) {
 		        retorno[i].Quantidade = retorno[i].Quantidade / 1000;
-		    }
+			}
+
+		var caixasTemp = [];
+		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
+			caixasTemp.push(JSON.parse($('.hdnItemJson', this).val()));
+		});
 
 		objeto.Produtos = retorno;
-
-		
+		objeto.NotaFiscalDeCaixas = caixasTemp;		
 
 		return objeto;
+	},
+
+	onlimparCamposCaixa: function () {
+		PTVEmitir.limparCamposNFCaixa();
+	},
+
+	limparCamposNFCaixa: function (limparTudo = false) {
+		if (limparTudo) {
+			$('.rdbTipoCaixa')[0].checked = null
+			$('.rdbTipoCaixa')[1].checked = null
+			$('.rdbTipoCaixa')[2].checked = null
+			
+			$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
+				$(this).remove();
+			});
+			$('.identificacaoDaCaixa').addClass('hide');
+		}
+		$('.txtNotaFiscalCaixaNumero').val('');
+		$('.txtNFCaixaSaldoAtual').val('');
+		$('.txtNFCaixaNumeroDeCaixas').val('');
+		$('.txtNFCaixaSaldoAtual').removeClass('disabled')
+		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
+		$('.txtNotaFiscalCaixaNumero').removeClass('disabled')
+		$('.txtNotaFiscalCaixaNumero').removeAttr('disabled');
+		$('.isNFCaixaVerificado').addClass('hide');
+		$('.btnLimparNotaCaixaCaixa').addClass('hide');
+		$('.btnVerificarNotaCaixaCaixa').removeClass('hide');
+	},
+
+	onVerificarNotaFiscalCaixa: function () {
+		var nfCaixaNumero = $('.txtNotaFiscalCaixaNumero').val();
+		if (nfCaixaNumero == "") {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NotaFiscalDeCaixaNumeroVazio]);
+			return;
+		}
+		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: PTVEmitir.settings.urls.urlVerificarNotaFiscalCaixa,
+			data: JSON.stringify({ notaFiscal: PTVEmitir.nfCaixaTemp }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					debugger;
+					if (response.nfCaixa.saldoAtual >= 0) {
+						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
+						$('.txtNFCaixaSaldoAtual').addClass('disabled')
+						$('.txtNFCaixaSaldoAtual').attr('disabled', 'disabled');
+						$('.lblSaldoAtualInicial').text("Saldo atual");
+						PTVEmitir.nfCaixaTemp.saldoAtual = response.nfCaixa.saldoAtual;
+					}
+					else {
+						$('.lblSaldoAtualInicial').text("Saldo inicial");
+					}
+					PTVEmitir.nfCaixaTemp.id = response.nfCaixa.id;
+					PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;
+					$('.txtNotaFiscalCaixaNumero').addClass('disabled')						
+					$('.txtNotaFiscalCaixaNumero').attr('disabled', 'disabled')						
+					$('.isNFCaixaVerificado').removeClass('hide');
+					$('.btnLimparNotaCaixaCaixa').removeClass('hide');
+					$('.btnVerificarNotaCaixaCaixa').addClass('hide');
+				} 
+				Mensagem.gerar(PTVEmitir.container, response.Msg);
+			}
+		});
+		MasterPage.carregando(false);
+	},
+
+	onAddCaixaGrid: function () {
+		// #region Validações
+		var valido = true;
+		var mensagensValidacao = [];
+		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
+			return;
+		} else {
+			PTVEmitir.nfCaixaTemp.numeroCaixas = parseInt($('.txtNFCaixaNumeroDeCaixas').val());
+			PTVEmitir.nfCaixaTemp.saldoAtual = parseInt($('.txtNFCaixaSaldoAtual').val());
+		}
+
+		if (PTVEmitir.nfCaixaTemp.saldoAtual <= 0) {
+			mensagensValidacao.push(PTVEmitir.settings.Mensagens.SaldoInicialMaiorQueZero);
+			valido = false;
+		}
+		if (PTVEmitir.nfCaixaTemp.numeroCaixas > PTVEmitir.nfCaixaTemp.saldoAtual) {
+			mensagensValidacao.push(PTVEmitir.settings.Mensagens.NumeroDeCaixasMaiorQueSaldoAtual);
+			valido = false;
+		}
+		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
+			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero) {
+				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
+				valido = false;
+			}
+		});
+		if (!valido) {
+			Mensagem.gerar(PTVEmitir.container, mensagensValidacao);
+			return;
+		}
+		// #endregion
+
+		var tabela = $('.gridCaixa');
+		var linha = $('.trTemplate', tabela).clone();
+
+		$(linha).removeClass('hide trTemplate');
+		
+		//adicionar na grid
+		$('.hdnItemJson', linha).val(JSON.stringify(PTVEmitir.nfCaixaTemp));
+		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero)//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
+		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto)//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
+		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual)//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
+		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas)//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		
+		$('tbody', tabela).append(linha);
+
+		var cont = $('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).size();
+		if (cont == 1)
+			$('.identificacaoDaCaixa').removeClass('hide');
+
+		PTVEmitir.limparCamposNFCaixa()
+		Listar.atualizarEstiloTable(tabela);
+	},
+
+	onPossuiNFCaixa: function () {
+		if ($('.rdbApresentacaoNotaFiscalCaixa')[0].checked) {
+			$('.isPossuiNFCaixa').removeClass('hide');
+			PTVEmitir.nfCaixaTemp = { }
+			console.log(PTVEmitir.nfCaixaTemp)
+		} else {
+			$('.isPossuiNFCaixa').addClass('hide');
+			PTVEmitir.limparCamposNFCaixa(true);
+			PTVEmitir.nfCaixaTemp = null
+			console.log(PTVEmitir.nfCaixaTemp)
+		}
+
+	},
+
+	onChangeTipoCaixa: function () {
+		PTVEmitir.nfCaixaTemp = (PTVEmitir.nfCaixaTemp == null) ? {} : PTVEmitir.nfCaixaTemp;
+		
+		PTVEmitir.limparCamposNFCaixa();
+
+		if ($('.rdbTipoCaixa')[0].checked || $('.rdbTipoCaixa')[2].checked) { //MADEIRA OU PAPELÃO
+			$('.isTipoCaixaChecked').removeClass('hide');
+			PTVEmitir.nfCaixaTemp.tipoCaixaId = ($('.rdbTipoCaixa')[0].checked) ? 1 : 3;
+			PTVEmitir.nfCaixaTemp.tipoCaixaTexto = ($('.rdbTipoCaixa')[0].checked) ? "Madeira" : "Papelão";
+			$('.lblNumeroNFCaixa').text("Nº da nota fiscal de caixa *");
+
+		} else {
+			$('.isTipoCaixaChecked').removeClass('hide');
+			PTVEmitir.nfCaixaTemp.tipoCaixaId = 2;
+			PTVEmitir.nfCaixaTemp.tipoCaixaTexto = "Plástico";
+			$('.lblNumeroNFCaixa').text("N° do laudo de higienização *")
+
+		}
+		// $('.txtNumeroDocumento', EPTVListar.container).toggleClass('hide', false);
+	},
+
+	onExcluirCaixa: function () {
+		$(this).closest('tr').remove();
+		var tabela = $('.gridCaixa');
+		Listar.atualizarEstiloTable(tabela);
+
+		var cont = $('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).size();
+		if (cont <= 0)
+			$('.identificacaoDaCaixa').addClass('hide');
+
 	}
+
+	
 }

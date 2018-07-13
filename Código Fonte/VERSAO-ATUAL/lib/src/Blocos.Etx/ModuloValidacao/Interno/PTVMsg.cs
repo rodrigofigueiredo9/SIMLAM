@@ -180,5 +180,17 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
+
+		#region NotaFiscalCaixa
+		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Campo = "", Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDeCaixasMaiorQueSaldoAtual { get { return new Mensagem() { Campo = "", Texto = "Você não pode consumir mais caixas que o saldo atual.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoInicialMaiorQueZero { get { return new Mensagem() { Campo = "", Texto = "O saldo inicial precisa ser maior que zero.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoENumeroCaixasRequerid { get { return new Mensagem() { Campo = "", Texto = "Os campos saldo inicial e número de caixas precisam ser maior que 0.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem InserirGridCaixaNumerosNFIguais { get { return new Mensagem() { Campo = "", Texto = "Esse N° da nota fiscal de caixa já foi inserido.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDiferenteDoTipo(string numero, string tipo)
+		{
+			return new Mensagem() { Texto = String.Format("A nota fiscal {0} está cadastrada com o tipo {1}.", numero, tipo), Tipo = eTipoMensagem.Advertencia };
+		}
+		#endregion
 	}
 }

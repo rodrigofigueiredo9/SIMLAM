@@ -85,6 +85,21 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			}
 		}
 
+		public string Mensagens
+		{
+			get
+			{
+				return ViewModelHelper.Json(new
+				{
+					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio,
+					@NumeroDeCaixasMaiorQueSaldoAtual = Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual,
+					@SaldoInicialMaiorQueZero = Mensagem.PTV.SaldoInicialMaiorQueZero,
+					@SaldoENumeroCaixasRequerid = Mensagem.PTV.SaldoENumeroCaixasRequerid,
+					@InserirGridCaixaNumerosNFIguais = Mensagem.PTV.InserirGridCaixaNumerosNFIguais
+				});
+			}
+		}
+
 		public PTVVM() { }
 
 		public PTVVM(PTV ptv, List<Lista> lstSituacoes, List<ListaValor> lsResponsavel, List<Lista> lsOrigem, List<TratamentoFitossanitario> lsFitossanitario,

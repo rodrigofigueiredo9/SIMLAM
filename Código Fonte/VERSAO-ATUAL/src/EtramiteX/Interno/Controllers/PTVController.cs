@@ -192,6 +192,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 			vm.IsVisualizar = true;
+			
 			return View("Visualizar", vm);
 		}
 
@@ -390,6 +391,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@Destinatario = destinatario
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = nfCaixa
 			});
 		}
 
