@@ -316,7 +316,7 @@
 		<div class="coluna24">
 			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
 			<label>
-				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NotaFiscalApresentacao == (int)eApresentacaoNotaFiscal.Sim || Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
 				Sim
 			</label>
 			<label>
@@ -324,7 +324,7 @@
 				Não
 			</label>
 		</div>
-		<div class="coluna40 isPossuiNFCaixa">
+		<div class="coluna40 isPossuiNFCaixa <%= Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0 ? "hide" : "" %>">
 			<label for="NotaFiscalApresentacao">Tipo da caixa *</label><br />
 			<label>
 				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="1" }))%>

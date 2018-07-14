@@ -367,12 +367,8 @@ PTVEmitir = {
 			labelOrigem.text(option.text());
 		}
 
-		PTVEmitir.onLimparIdentificacaoProduto();
-
-		
-
-		
-
+		PTVEmitir.onLimparIdentificacaoProduto();	
+			
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
 		    $('#EmpreendimentoTexto').removeAttr('disabled');
@@ -388,8 +384,7 @@ PTVEmitir = {
 		    } else {
 		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
 		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
-		        $('label[for="NumeroOrigem"]').show();
-		       
+		        $('label[for="NumeroOrigem"]').show();		       
 		    }
 		    
 		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
@@ -481,20 +476,24 @@ PTVEmitir = {
 
 		var textoNumeral = origemNumero;
 		var serieNumeral = "";
-
+		
+		if (textoNumeral.isNullOrWhitespace()) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDocumentoDeOrigemObrigatório]);
+			return;
+		}
+		
 		if (textoNumeral.toString().indexOf("/") >= 0) {
 
 		    var arrTexto = textoNumeral.split("/");
 		    textoNumeral = arrTexto[0];
 		    serieNumeral = arrTexto[1];
 		}
+		
 		var isInteger = parseInt(textoNumeral);
-		if (isInteger) {
-			console.log("É INTEIRO");
-		} else {
-			console.log("NÃO É INTEIRO");
+		if (!isInteger) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDocumentoDeOrigemTipoNumerico]);
 			return;
-		}
+		} 
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlVerificarDocumentoOrigem,
@@ -1147,6 +1146,7 @@ PTVEmitir = {
 			LocalEmissaoId: $('.ddlLocalEmissao', PTVEmitir.container).val(),
 			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
+			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscal:checked', PTVEmitir.container).val() },
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
@@ -1305,12 +1305,10 @@ PTVEmitir = {
 		if ($('.rdbApresentacaoNotaFiscalCaixa')[0].checked) {
 			$('.isPossuiNFCaixa').removeClass('hide');
 			PTVEmitir.nfCaixaTemp = { }
-			console.log(PTVEmitir.nfCaixaTemp)
 		} else {
 			$('.isPossuiNFCaixa').addClass('hide');
 			PTVEmitir.limparCamposNFCaixa(true);
 			PTVEmitir.nfCaixaTemp = null
-			console.log(PTVEmitir.nfCaixaTemp)
 		}
 
 	},
