@@ -112,7 +112,7 @@
 		<table class="dataGridTable gridProdutos">
 			<thead>
 				<tr>
-					<th style="width: 20%" class="OrigemTipoColumn">Origem</th>
+					<th style="width: 20%" class="OrigemTipoColumn <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">Origem</th>
 					<th>Cultura/Cultivar</th>
 					<th style="width: 10%">Quantidade</th>
 					<th style="width: 16%">Unidade de medida</th>
@@ -139,7 +139,7 @@
            
             %>
 				<tr>
-					<td class="Origem_Tipo" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
+					<td class="Origem_Tipo  <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
 					<td class="cultura_cultivar" title="<%= item.CulturaCultivar %>"><%= item.CulturaCultivar %></td>
 					<td class="quantidade" title="<%=qtd %>"><%=qtd %></td>
 					<td class="unidade_medida" title="<%= unid %>"><%=unid %></td>
@@ -153,7 +153,7 @@
 				<% } %>
 
 				<tr class="trTemplate hide">
-					<td class="OrigemTipo">
+					<td class="OrigemTipo <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">
 						<label class="lblOrigemTipo"></label>
 					</td>
 					<td class="cultura_cultivar">
@@ -176,7 +176,7 @@
 		</table>
 	</div>
 	<br />
-	<div class="isPussuiDocumentoDeOrigem">
+	<div class="isPussuiDocumentoDeOrigem <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">
 		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="EmpreendimentoTexto">Empreendimento *</label>
@@ -189,6 +189,13 @@
 			<div class="coluna58">
 				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
 				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+			</div>
+		</div>
+
+		<div class="block divResponsavel <%=Model.PTV.IsPossuiDocOrigem == 1 ? "hide":""%>">
+			<div class="coluna58">
+				<label>Responsável do empreendimento</label>
+				<%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.SemDocOrigem.responsavel, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtResponsavel"}))%>
 			</div>
 		</div>
 	</div>
@@ -215,13 +222,13 @@
 		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna10">
 				<label>UF</label>
-				<%=Html.DropDownList("UFEmpreendimento", Model.EstadosUF, new { @class="text ddlUFProdutor" })%>
+				<%=Html.DropDownList("UFEmpreendimento", Model.EstadosUF,  ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlUFProdutor" }))%>
 			</div>
 			<div class="coluna30">
 				<label>Município</label>
 				<%=Html.DropDownList("MunicipioEmpreendimento", Model.MunicipiosOT, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipios" }))%>
 			</div>
-		</div
+		</div>
 	</div>
 </fieldset>
 

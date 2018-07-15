@@ -160,7 +160,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
-			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
@@ -177,7 +178,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			List<TratamentoFitossanitario> lsFitossanitario = _busPTV.TratamentoFitossanitário(ptv.Produtos);
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
-
 			PTVVM vm = new PTVVM(
 				ptv,
 				_busLista.PTVSituacao,
@@ -190,7 +190,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
-			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);

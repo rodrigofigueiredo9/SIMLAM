@@ -139,7 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 
 			this.LstCultura = ViewModelHelper.CriarSelectList(lstCultura);
 
-			this.LsTipoTransporte = ViewModelHelper.CriarSelectList(lsTipoTransporte, true, true, ptv.TransporteTipo.ToString());
+			this.LsTipoTransporte = ViewModelHelper.CriarSelectList(lsTipoTransporte, true, true,  ptv.TransporteTipo.ToString());
 
 			LsLaudoLaboratorial = lstLaboratorio ?? new List<LaudoLaboratorial>();
 

@@ -365,6 +365,7 @@ PTVEmitir = {
 	onPossuiDocumentoOrigem: function () {
 		PTVEmitir.limparGridProduto()
 		PTVEmitir.onLimparIdentificacaoProduto()
+
 		if (!$('.rdbIsDocumentoOrigem  ', PTVEmitir.container)[0].checked) {
 			$('.divNumeroDocumentoEnter').addClass('hide');
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
@@ -377,6 +378,7 @@ PTVEmitir = {
 			var tabela = $('.gridProdutos');
 			$('.OrigemTipo', tabela).addClass('hide');
 			$('.OrigemTipoColumn', tabela).addClass('hide');
+			$('.saldoContainer', tabela).addClass('hide');
 		} else {
 			$('.divNumeroDocumentoEnter').removeClass('hide');
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
@@ -389,6 +391,10 @@ PTVEmitir = {
 			var tabela = $('.gridProdutos');
 			$('.OrigemTipo', tabela).removeClass('hide');
 			$('.OrigemTipoColumn', tabela).removeClass('hide');
+
+			$('.txtProdutor').val('');
+			$('.txtCPFCNPJProdutor').val('');
+			$('.txtEnderecoProdutor').val('');
 		}
 	},
 
@@ -423,7 +429,9 @@ PTVEmitir = {
 			}
 
 			$('.ResponsavelEmpreendimento').removeClass('disabled');
-			$('.ResponsavelEmpreendimento').att('disabled', 'disabled');
+			$('.ResponsavelEmpreendimento').removeAttr('disabled');
+
+			$('.divResponsavel').removeClass('hide');
 		}
 		else {
 
@@ -435,7 +443,9 @@ PTVEmitir = {
 		    $('label[for="NumeroOrigem"]').show();
 
 			$('.ResponsavelEmpreendimento').addClass('disabled');
-			$('.ResponsavelEmpreendimento').removeAttr('disabled');		  
+			$('.ResponsavelEmpreendimento').attr('disabled', 'disabled');
+
+			$('.divResponsavel').addClass('hide');
 		}
 
 		$('.txtNumeroOrigem', PTVEmitir.container).focus();
@@ -1206,10 +1216,18 @@ PTVEmitir = {
 			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			NFCaixa: { notaFiscalCaixaApresentacao: ($('.rdbApresentacaoNotaFiscal', PTVEmitir.container)[0].checked) ? 1 : 2 },
+			SemDocOrigem: {
+				Produtor: $('.txtProdutor', PTVEmitir.container).val(),
+				cpfCnpjProdutor: $('.txtCPFCNPJProdutor', PTVEmitir.container).val(),
+				enderecoEmpreendimento: $('.txtEnderecoProdutor', PTVEmitir.container).val(),
+				responsavel: $('.txtResponsavel', PTVEmitir.container).val(),
+				ufEndereco: $('.ddlUFProdutor option:selected', PTVEmitir.container).val(),
+				municipioEndereco: $('.ddlMunicipios option:selected', PTVEmitir.container).val()
+				},
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
-
+		debugger;
 		var retorno = [];
 		$('.gridProdutos tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			retorno.push(JSON.parse($('.hdnItemJson', this).val()));

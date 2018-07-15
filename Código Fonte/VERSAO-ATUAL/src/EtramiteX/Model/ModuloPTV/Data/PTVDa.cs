@@ -135,9 +135,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				PTV.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 				//validação
-				if (String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor))
+				if (!String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor) || !String.IsNullOrWhiteSpace(PTV.SemDocOrigem.responsavel))
 				{
-					PTV.SemDocOrigem.id = InserirProdutoSemDocOrigem(PTV, banco);
+					InserirProdutoSemDocOrigem(PTV, banco); 
 				}
 
 				#region Produto PTV
@@ -169,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					else
 					{
 						comando.SetarValorParametro("numero_origem", item.OrigemNumero);
-						comando.SetarValorParametro("origem", PTV.SemDocOrigem.id);
+						comando.SetarValorParametro("origem", DBNull.Value);
 					}
 
 					comando.SetarValorParametro("cultura", item.Cultura);
@@ -281,6 +281,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				bancoDeDados.ExecutarScalar(comando);
 
+				if (!String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor) || !String.IsNullOrWhiteSpace(PTV.SemDocOrigem.responsavel))
+				{
+					AtualizarProdutoSemDocOrigem(PTV, banco);
+				}
+
 				#region Limpar Dados
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}tab_ptv_produto ", EsquemaBanco);
@@ -295,6 +300,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				#endregion
+
 
 				#region Produto PTV
 
@@ -660,31 +666,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 	
-		internal Int32 InserirProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
+		internal void InserirProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				bancoDeDados.IniciarTransacao();
 				Comando comando = null;
 
-				string sqlCmd = @"INSERT INTO TAB_PTV_SEM_DOC_ORIGEM (ID, TID, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, CPF_CNPJ) 
-					VALUES(SEQ_PTV_SEM_DOC_ORIGEM.NEXTVAL, :tid, :empreendimento, :endereco, :uf, :municipio, :produtor, :cpf_cnpj)  returning id into :id";
+				string sqlCmd = @"INSERT INTO TAB_PTV_SEM_DOC_ORIGEM (ID, TID, PTV, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, RESPONSAVEL, CPF_CNPJ) 
+					VALUES(SEQ_PTV_SEM_DOC_ORIGEM.NEXTVAL, :tid, :ptv, :empreendimento, :endereco, :uf, :municipio, :produtor, :responsavel, :cpf_cnpj)";
 
 				comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", ptv.EmpreendimentoTexto, DbType.String);
 				comando.AdicionarParametroEntrada("endereco", ptv.SemDocOrigem.enderecoEmpreendimento, DbType.String);
-				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.String);
-				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.String);
+				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.Int32);
 				comando.AdicionarParametroEntrada("produtor", ptv.SemDocOrigem.Produtor, DbType.String);
+				comando.AdicionarParametroEntrada("responsavel", ptv.SemDocOrigem.responsavel, DbType.String);
 				comando.AdicionarParametroEntrada("cpf_cnpj", ptv.SemDocOrigem.cpfCnpjProdutor, DbType.String);
-
-				comando.AdicionarParametroSaida("id", DbType.Int32);
 
 				bancoDeDados.ExecutarScalar(comando);
 
-				return Convert.ToInt32(comando.ObterValorParametro("id"));
+			}
+		}
+		internal void AtualizarProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = null;
+
+				string sqlCmd = @"UPDATE TAB_PTV_SEM_DOC_ORIGEM 
+									SET EMPREENDIMENTO = :empreendimento, UF = :uf, MUNICIPIO = :municipio, PRODUTOR = :produtor,
+									RESPONSAVEL = :responsavel, CPF_CNPJ = :cpf_cnpj 
+									WHERE PTV = :ptv";
+
+				comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", ptv.EmpreendimentoTexto, DbType.String);
+				comando.AdicionarParametroEntrada("endereco", ptv.SemDocOrigem.enderecoEmpreendimento, DbType.String);
+				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("produtor", ptv.SemDocOrigem.Produtor, DbType.String);
+				comando.AdicionarParametroEntrada("responsavel", ptv.SemDocOrigem.responsavel, DbType.String);
+				comando.AdicionarParametroEntrada("cpf_cnpj", ptv.SemDocOrigem.cpfCnpjProdutor, DbType.String);
+
+				bancoDeDados.ExecutarScalar(comando);
+
 			}
 		}
 		#endregion
@@ -749,6 +781,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					return PTV;
 				}
+
+				PTV = ObterSemDocOrigem(PTV);
 
 				#region PTV Produto
 
@@ -1183,6 +1217,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
+		internal PTV ObterSemDocOrigem(PTV ptv)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"SELECT ID, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, CPF_CNPJ, RESPONSAVEL
+																FROM TAB_PTV_SEM_DOC_ORIGEM WHERE PTV = :ptv", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						ptv.SemDocOrigem.id = Convert.ToInt32(reader["ID"]);
+						ptv.EmpreendimentoTexto = reader["EMPREENDIMENTO"].ToString();
+						ptv.SemDocOrigem.enderecoEmpreendimento = reader["ENDERECO"].ToString();
+						ptv.SemDocOrigem.ufEndereco = Convert.ToInt32(reader["UF"]);
+						ptv.SemDocOrigem.municipioEndereco = Convert.ToInt32(reader["MUNICIPIO"]);
+						ptv.SemDocOrigem.Produtor = reader["PRODUTOR"].ToString();
+						ptv.SemDocOrigem.cpfCnpjProdutor = reader["CPF_CNPJ"].ToString();
+						ptv.SemDocOrigem.responsavel = reader["RESPONSAVEL"].ToString();
+					}
+					reader.Close();
+				}
+			}
+
+			return ptv;
+
+		}
 		#region Identificação Produto2
 
 		internal List<Lista> ObterCultura()
