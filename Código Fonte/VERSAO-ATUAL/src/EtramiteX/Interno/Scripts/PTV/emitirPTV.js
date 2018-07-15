@@ -26,7 +26,8 @@ PTVEmitir = {
 			urlObterTratamentoFisso: null,
 			urlObterItinerario: null,
 			urlVerificarDocumentoOrigem: null,
-			urlVerificarNotaFiscalCaixa: null
+			urlVerificarNotaFiscalCaixa: null,
+			urlObterSaldoDocOrigem: null
 		},
 		Mensagens: null,
 		idsTela: null,
@@ -61,6 +62,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.ddlProdutoCultivar', 'change', PTVEmitir.chageCultivar);
 		PTVEmitir.container.delegate('.btnIdentificacaoProduto', 'click', PTVEmitir.onAdicionarIdentificacaoProduto);
 		PTVEmitir.container.delegate('.btnExcluir', 'click', PTVEmitir.onExcluirIdentificacaoProduto);
+		PTVEmitir.container.delegate('.btnLimparDocumentoOrigem', 'click', PTVEmitir.onLimparIdentificacaoProduto);
 
 		//2-Identificação do Produto
 		PTVEmitir.container.delegate('.btnAssociarCultura', 'click', PTVEmitir.associarCultura);
@@ -365,23 +367,8 @@ PTVEmitir = {
 			labelOrigem.text(option.text());
 		}
 
-		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
-		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
-		$('.txtNumeroOrigem ', PTVEmitir.container).val('');
-		$('.hdnNumeroOrigem', PTVEmitir.container).val('0');
-		$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val('0');
-		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
-
-		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
-			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
-			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
-			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
-		} else {
-			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
-			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
-			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
-		}
-
+		PTVEmitir.onLimparIdentificacaoProduto();	
+			
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
 		    $('#EmpreendimentoTexto').removeAttr('disabled');
@@ -397,8 +384,7 @@ PTVEmitir = {
 		    } else {
 		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
 		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
-		        $('label[for="NumeroOrigem"]').show();
-		       
+		        $('label[for="NumeroOrigem"]').show();		       
 		    }
 		    
 		    $('#ResponsavelEmpreendimento').replaceWith('<input class="text ddlResponsaveis" id="ResponsavelEmpreendimento" name="ResponsavelEmpreendimento" type="text" value="">');
@@ -469,6 +455,11 @@ PTVEmitir = {
 				$('.ddlProdutoCultivar', PTVEmitir.container).ddlLoad(response.Cultivar);
 				$('.txtProdutoQuantidade', PTVEmitir.container).focus();
 				PTVEmitir.onObterUnidadeMedida();
+
+				// Setando propriedade tipo no dropDown
+				response.Cultivar.forEach((cult) => {
+					$('.ddlProdutoCultivar option', PTVEmitir.container).toArray().find(x => x.value == cult.Id).setAttribute("Tipo", cult.Tipo);
+				});
 			}
 		});
 		MasterPage.carregando(false);
@@ -485,14 +476,24 @@ PTVEmitir = {
 
 		var textoNumeral = origemNumero;
 		var serieNumeral = "";
-
+		
+		if (textoNumeral.isNullOrWhitespace()) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDocumentoDeOrigemObrigatório]);
+			return;
+		}
+		
 		if (textoNumeral.toString().indexOf("/") >= 0) {
 
 		    var arrTexto = textoNumeral.split("/");
 		    textoNumeral = arrTexto[0];
 		    serieNumeral = arrTexto[1];
 		}
-
+		
+		var isInteger = parseInt(textoNumeral);
+		if (!isInteger) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NumeroDocumentoDeOrigemTipoNumerico]);
+			return;
+		} 
 
 		$.ajax({
 			url: PTVEmitir.settings.urls.urlVerificarDocumentoOrigem,
@@ -507,6 +508,7 @@ PTVEmitir = {
 				if (response.EhValido) {
 					$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 					$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
+					$('.btnLimparDocumentoOrigem', PTVEmitir.container).removeClass('hide');
 
 					$('.ddlProdutoCultura', PTVEmitir.container).ddlLoad(response.Cultura);
 					$('.hdnNumeroOrigem', PTVEmitir.container).val(response.OrigemID);
@@ -521,6 +523,43 @@ PTVEmitir = {
 			}
 		});
 
+	},
+
+	saldoDocOrigem: function () {
+
+		var Origem = 0;
+		var OrigemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+		if (OrigemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
+			Origem = +$('.hdnNumeroOrigem', PTVEmitir.container).val();
+		}
+		var produto = {
+			Origem,
+			OrigemTipo,
+			Cultura: $('.ddlProdutoCultura', PTVEmitir.container).val(),
+			Cultivar: $('.ddlProdutoCultivar', PTVEmitir.container).val(),
+			UnidadeMedida: $('.ddlProdutoUnidadeMedida', PTVEmitir.container).val()
+		}
+		if (produto.OrigemTipo == "5" || produto.OrigemTipo == "6" || produto.OrigemTipo == "7") {
+			return;
+		}
+		if (produto.Cultura <= 0 || produto.Cultivar <= 0 || produto.UnidadeMedida <= 0) {
+			return;
+		}
+
+		$.ajax({
+			url: PTVEmitir.settings.urls.urlObterSaldoDocOrigem,
+			data: JSON.stringify({ produto }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				$('.txtSaldoDocOrigem', PTVEmitir.container).val(response.saldo + " T");
+				$('.saldoContainer', PTVEmitir.container).removeClass('hide');
+			}
+		});
 	},
 
 	//Associoar Cultura
@@ -569,16 +608,21 @@ PTVEmitir = {
 		if (NumeroOrigem <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
 			vOrigem = $('.hdnNumeroOrigem', PTVEmitir.container).val();
 		}
-
-		
+				
 
 		var txtUnid = $('.ddlProdutoUnidadeMedida option:selected', container).text();
 
 		var bExibeKg = txtUnid.indexOf("KG") >= 0;
 
 		var NumeroOrigemTexto = $('.txtNumeroOrigem', container).val();
-
-
+		
+		var nfCaixaObrigatoria = $('.ddlProdutoCultivar option:selected', PTVEmitir.container).attr('Tipo');
+	
+		if (nfCaixaObrigatoria == 1) {
+			$('.rdbApresentacaoNotaFiscalCaixa')[0].checked = true;
+			$('.rdbApresentacaoNotaFiscalCaixa').attr('disabled', 'disabled');
+			$('.isPossuiNFCaixa').removeClass('hide');
+		}
 
 		var item = {
 			PTV: $('.txtNumero', PTVEmitir.container).val(),
@@ -590,6 +634,7 @@ PTVEmitir = {
 			CulturaTexto: $('.ddlProdutoCultura option:selected', container).text(),
 			Cultivar: $('.ddlProdutoCultivar', container).val(),
 			CultivarTexto: $('.ddlProdutoCultivar option:selected', container).text(),
+			nfCaixaObrigatoria,
 			UnidadeMedidaTexto: $('.ddlProdutoUnidadeMedida option:selected', container).text(),
 			UnidadeMedida: $('.ddlProdutoUnidadeMedida option:selected', container).val(),
 			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
@@ -636,6 +681,7 @@ PTVEmitir = {
 		Listar.atualizarEstiloTable(tabela);
 		PTVEmitir.onTratamentoFitossanitário();
 		PTVEmitir.onPossuiLaudoLaboratorial();
+		PTVEmitir.onLimparIdentificacaoProduto()
 	},
 
 	onObterUnidadeMedida: function () {
@@ -658,24 +704,13 @@ PTVEmitir = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-
-
-
 			    $('.ddlProdutoUnidadeMedida', PTVEmitir.container).ddlLoad(response.UnidadeMedida);
-
-			 
-			   
-
+				
 			    var possuiTon = false;
-
-			  
-			 
 			    for (var i = 0 ; i < response.UnidadeMedida.length; i++) {
-
 			        if (response.UnidadeMedida[i].Texto == "T")
 			            possuiTon = true;
-			    }
-			    
+			    }			    
 
 			    if (possuiTon) {
 			        $('.ddlProdutoUnidadeMedida').append($('<option>', {
@@ -685,9 +720,9 @@ PTVEmitir = {
 
 			        $('.ddlProdutoUnidadeMedida').removeAttr('disabled');
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
-			    }
-			   
+				}
 
+				PTVEmitir.saldoDocOrigem()
 			}
 		});
 
@@ -707,6 +742,28 @@ PTVEmitir = {
 		}
 	},
 
+	onLimparIdentificacaoProduto: function () {
+		$('.btnLimparDocumentoOrigem', PTVEmitir.container).addClass('hide');
+		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
+		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
+		$('.txtNumeroOrigem ', PTVEmitir.container).val('');
+		$('.hdnNumeroOrigem', PTVEmitir.container).val('0');
+		$('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val('0');
+		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
+		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
+
+		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
+			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
+			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
+		} else {
+			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).addClass('hide');
+			$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
+			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
+		}
+		$('.saldoContainer', PTVEmitir.container).addClass('hide');
+	},
+
 	onExcluirIdentificacaoProduto: function () {
 		Mensagem.limpar(PTVEmitir.container);
 		var container = $(this).closest('.gridIdentificacaoProdutos');
@@ -715,6 +772,10 @@ PTVEmitir = {
 		var _objetoExcluido = { Produtos: [] }
 		$($('.hdnItemJson', $(this).closest('tr'))).each(function () {
 			_objetoExcluido.Produtos.push(JSON.parse($(this).val()));
+
+			if ((JSON.parse($(this).val())).nfCaixaObrigatoria == 1) {
+				$('.rdbApresentacaoNotaFiscalCaixa').removeAttr('disabled');
+			}
 		});
 
 		$(this).closest('tr').toggle(
@@ -1085,6 +1146,7 @@ PTVEmitir = {
 			LocalEmissaoId: $('.ddlLocalEmissao', PTVEmitir.container).val(),
 			EmpreendimentoSemDoc: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelSemDoc: $('.ddlResponsaveis', PTVEmitir.container).val(),
+			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscal:checked', PTVEmitir.container).val() },
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
@@ -1111,6 +1173,7 @@ PTVEmitir = {
 		return objeto;
 	},
 
+	// #region Nota Fiscal de caixa
 	onlimparCamposCaixa: function () {
 		PTVEmitir.limparCamposNFCaixa();
 	},
@@ -1125,6 +1188,8 @@ PTVEmitir = {
 				$(this).remove();
 			});
 			$('.identificacaoDaCaixa').addClass('hide');
+			$('.isTipoCaixaChecked').addClass('hide');
+
 		}
 		$('.txtNotaFiscalCaixaNumero').val('');
 		$('.txtNFCaixaSaldoAtual').val('');
@@ -1158,7 +1223,6 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					debugger;
 					if (response.nfCaixa.saldoAtual >= 0) {
 						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
 						$('.txtNFCaixaSaldoAtual').addClass('disabled')
@@ -1241,12 +1305,10 @@ PTVEmitir = {
 		if ($('.rdbApresentacaoNotaFiscalCaixa')[0].checked) {
 			$('.isPossuiNFCaixa').removeClass('hide');
 			PTVEmitir.nfCaixaTemp = { }
-			console.log(PTVEmitir.nfCaixaTemp)
 		} else {
 			$('.isPossuiNFCaixa').addClass('hide');
 			PTVEmitir.limparCamposNFCaixa(true);
 			PTVEmitir.nfCaixaTemp = null
-			console.log(PTVEmitir.nfCaixaTemp)
 		}
 
 	},
@@ -1283,5 +1345,5 @@ PTVEmitir = {
 
 	}
 
-	
+	// #endregion
 }

@@ -22,6 +22,8 @@ using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using System.Web;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -249,6 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								break;
 						}
 					}
+
 					else
 					{
 						Validacao.Add(Mensagem.PTV.NumeroDocumentoOrigemNaoExistente(origemTipoTexto));
@@ -477,6 +480,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 				ptv = _da.Obter(id, simplificado);
 				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
+				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
 
 				return ptv;
 			}
@@ -784,8 +788,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			try
 			{
-				if(_validar)
-				return _da.VerificarNumeroNFCaixa(notaFiscal);
+				if(_validar.ValidarNumeroNotaFiscalDeCaixa(notaFiscal))
+				{
+					return _da.VerificarNumeroNFCaixa(notaFiscal);
+				}
 			}
 			catch (Exception exc)
 			{
@@ -805,6 +811,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.AddErro(exc);
 			}
 			return null;
+		}
+
+		public decimal ObterSaldoDocOrigem(PTVProduto prod)
+		{
+			decimal saldo = 0;
+			switch ((eDocumentoFitossanitarioTipo)prod.OrigemTipo)
+			{
+				case eDocumentoFitossanitarioTipo.CFO:
+					EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
+					EmissaoCFO cfo = emissaoCFOBus.Obter(prod.Origem);
+					saldo = cfo.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);					
+					break;
+
+				case eDocumentoFitossanitarioTipo.CFOC:
+					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
+					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(prod.Origem);
+					saldo = cfoc.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+					PTVOutroBus ptvOutroBus = new PTVOutroBus();
+					PTVOutro ptvOutro = ptvOutroBus.Obter(prod.Origem);
+					saldo = ptvOutro.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTV:
+					PTVBus ptvBus = new PTVBus();
+					PTV ptv = ptvBus.Obter(prod.Origem);
+					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);					
+					break;
+			}
+			return saldo;
 		}
 		#endregion
 

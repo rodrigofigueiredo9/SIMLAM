@@ -155,6 +155,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			if (ptv.LocalEmissaoId <= 0)
 			{
 				Validacao.Add(Mensagem.PTV.LocalDeEmissaoObrigatorio);
+
+			}
+
+			if(ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0)
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}
 
 			return Validacao.EhValido;
@@ -798,7 +804,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		public bool ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
 		{
 			var tipoCaixa = _da.ValidarNumeroNotaFiscalDeCaixa(notaFiscal);
-			if(String.IsNullOrEmpty(tipoCaixa)){
+			if(!String.IsNullOrEmpty(tipoCaixa)){
 				Validacao.Add(Mensagem.PTV.NumeroDiferenteDoTipo(notaFiscal.notaFiscalCaixaNumero, tipoCaixa));
 				return false;
 			}
