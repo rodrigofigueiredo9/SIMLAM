@@ -214,6 +214,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Nota Fiscal De Caixa
+
+				InserirNotaFiscalDeCaixa(PTV.NotaFiscalDeCaixas, PTV.Id, bancoDeDados);
+
+				#endregion
+
 				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -297,6 +303,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				comando = bancoDeDados.CriarComando(@"delete from {0}tab_ptv_nf_caixa ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where ptv = :ptv");
+				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				#endregion
 
 				#region Produto PTV
@@ -372,6 +383,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						bancoDeDados.ExecutarNonQuery(comando);
 					}
 				}
+
+				#endregion
+
+				#region Nota Fiscal de Caixa
+
+				InserirNotaFiscalDeCaixa(PTV.NotaFiscalDeCaixas, PTV.Id, bancoDeDados);
 
 				#endregion
 
@@ -452,6 +469,58 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				bancoDeDados.Commit();
+			}
+		}
+
+		internal void InserirNotaFiscalDeCaixa(List<NotaFiscalCaixa> lstNotaFiscalDeCaixa, int ptvID, BancoDeDados bancoDeDados)
+		{
+			lstNotaFiscalDeCaixa.ForEach(item =>
+			{
+				Comando comando;
+
+				if (item.id <= 0)
+				{
+					comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
+												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+					comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
+					comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
+					comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+
+					comando.AdicionarParametroSaida("id", DbType.Int32);
+
+					bancoDeDados.ExecutarScalar(comando);
+
+					item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+				}
+
+				comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_PTV_NF_CAIXA (ID, TID, NF_CAIXA, PTV, SALDO_ATUAL, NUMERO_CAIXAS)
+														VALUES(SEQ_PTV_NF_CAIXA.NEXTVAL, :tid, :nfCaixa, :ptv, :saldoAtual, :nCaixas)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("nfCaixa", item.id, DbType.Int32);
+				comando.AdicionarParametroEntrada("ptv", ptvID, DbType.Int32);
+				comando.AdicionarParametroEntrada("saldoAtual", item.saldoAtual, DbType.Int32);
+				comando.AdicionarParametroEntrada("nCaixas", item.numeroCaixas, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+			});
+		}
+
+		internal string ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando;
+				comando = bancoDeDados.CriarComando(@"
+								SELECT TC.TEXTO TIPO_CAIXA FROM TAB_NF_CAIXA NF INNER JOIN LOV_TIPO_CAIXA TC ON NF.TIPO_CAIXA = TC.ID 
+								WHERE NUMERO = :numero AND TIPO_CAIXA != :tipo AND ROWNUM <= 1", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
+				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.Int32);
+
+				return (string)bancoDeDados.ExecutarScalar(comando);
 			}
 		}
 
@@ -1038,6 +1107,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
+					default:
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
+						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
+						and t.numero = :numero", EsquemaBanco); break;
 				}
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
@@ -1360,7 +1433,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar
+						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
 															  from {0}tab_cfo_produto t, crt_unidade_producao_unidade u, tab_cultura_cultivar cc
 															  where u.id = t.unidade_producao
 															    and cc.id = u.cultivar
@@ -1371,7 +1444,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar            
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria            
 															  from {0}tab_cfoc_produto     cp,
 																   {0}tab_lote             l,
 																   {0}tab_lote_item        li,
@@ -1387,19 +1460,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					default: //Recebe como parâmetro o id da cultura: CF/CFR, FT
-						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
+						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 				}
@@ -1409,7 +1485,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					retorno = new List<Lista>();
 					while (reader.Read())
 					{
-						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar") });
+						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar"), Tipo = reader.GetValue<int>("nf_caixa_obrigatoria") });
 					}
 
 					reader.Close();
@@ -2013,7 +2089,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-       
 		internal string ObterSiglaSetorFuncionario(int funcionario)
 		{
 			var siglaSetor = String.Empty;
@@ -2043,7 +2118,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			return siglaSetor;
 		}
     
-
 		internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj, int ptvId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
@@ -2125,6 +2199,72 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				#endregion
 
 				return HistoricoPTV;
+			}
+		}
+
+		internal NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				NotaFiscalCaixa nf = new NotaFiscalCaixa();
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"
+					SELECT ID,
+					(NF.SALDO_INICIAL - (SELECT SUM(PNF.NUMERO_CAIXAS) FROM TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)) SALDO_ATUAL
+					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
+				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
+				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						nf.id = reader.GetValue<int>("ID");
+						nf.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+					}
+					else
+					{
+						nf.id = 0;
+						nf.saldoAtual = -1;
+					}
+
+					reader.Close();
+				}
+				return nf;
+			}
+		}
+
+		internal List<NotaFiscalCaixa> ObterNFCaixas(int idPTV)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID, LC.TEXTO TIPO_TEXTO
+									FROM TAB_NF_CAIXA NF 
+										INNER JOIN TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
+										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
+									WHERE PNF.PTV = :ptv ORDER BY NF.ID");
+				comando.AdicionarParametroEntrada("ptv", idPTV, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						NotaFiscalCaixa nf = new NotaFiscalCaixa();
+						nf.id = reader.GetValue<int>("ID");
+						nf.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+						nf.numeroCaixas = reader.GetValue<int>("NUMERO_CAIXAS");
+						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
+						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
+						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						lstNotaFiscalDeCaixa.Add(nf);
+					}
+
+					reader.Close();
+				}
+				return lstNotaFiscalDeCaixa;
 			}
 		}
 

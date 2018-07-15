@@ -337,7 +337,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
-                @DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
+				@DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -464,6 +465,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@Destinatario = destinatario
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = nfCaixa
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
 			});
 		}
 
