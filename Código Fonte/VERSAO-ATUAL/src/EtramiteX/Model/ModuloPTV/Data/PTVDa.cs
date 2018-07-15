@@ -134,6 +134,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				PTV.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
+				//validação
+				if (String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor))
+				{
+					PTV.SemDocOrigem.id = InserirProdutoSemDocOrigem(PTV, banco);
+				}
+
 				#region Produto PTV
 
 				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
@@ -163,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					else
 					{
 						comando.SetarValorParametro("numero_origem", item.OrigemNumero);
-						comando.SetarValorParametro("origem", DBNull.Value);
+						comando.SetarValorParametro("origem", PTV.SemDocOrigem.id);
 					}
 
 					comando.SetarValorParametro("cultura", item.Cultura);
@@ -653,7 +659,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				return (string)bancoDeDados.ExecutarScalar(comando);
 			}
 		}
+	
+		internal Int32 InserirProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = null;
 
+				string sqlCmd = @"INSERT INTO TAB_PTV_SEM_DOC_ORIGEM (ID, TID, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, CPF_CNPJ) 
+					VALUES(SEQ_PTV_SEM_DOC_ORIGEM.NEXTVAL, :tid, :empreendimento, :endereco, :uf, :municipio, :produtor, :cpf_cnpj)  returning id into :id";
+
+				comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("empreendimento", ptv.EmpreendimentoTexto, DbType.String);
+				comando.AdicionarParametroEntrada("endereco", ptv.SemDocOrigem.enderecoEmpreendimento, DbType.String);
+				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.String);
+				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.String);
+				comando.AdicionarParametroEntrada("produtor", ptv.SemDocOrigem.Produtor, DbType.String);
+				comando.AdicionarParametroEntrada("cpf_cnpj", ptv.SemDocOrigem.cpfCnpjProdutor, DbType.String);
+
+				comando.AdicionarParametroSaida("id", DbType.Int32);
+
+				bancoDeDados.ExecutarScalar(comando);
+
+				return Convert.ToInt32(comando.ObterValorParametro("id"));
+			}
+		}
 		#endregion
 
 		#region Obter /Filtros
@@ -877,9 +910,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
 					default:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
-						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
-						and t.numero = :numero", EsquemaBanco); break;
+						comando = bancoDeDados.CriarComando(@"SELECT P.ID, P.SITUACAO, 0 EMPREENDIMENTO_ID, SD.EMPREENDIMENTO EMPREEENDIMENTO_DENOMINADOR 
+															  FROM TAB_PTV P 
+																	INNER JOIN TAB_PTV_PRODUTO PR ON P.ID = PR.PTV
+																	LEFT JOIN TAB_PTV_SEM_DOC_ORIGEM SD ON PR.ORIGEM = SD.ID
+																WHERE P.NUMERO = :numero", EsquemaBanco);
+						break;
 				}
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
@@ -1243,7 +1279,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					default: //Recebe como parâmetro o id da cultura: CF/CFR, FT
-						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, cc.nf_caixa_obrigatoria
+						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, t.nf_caixa_obrigatoria
 															from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;

@@ -481,6 +481,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				ptv = _da.Obter(id, simplificado);
 				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
 				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
+				if(ptv.Produtos.Count() > 0) ptv.IsPossuiDocOrigem = (ptv.Produtos[0].OrigemTipo == (int)eDocumentoFitossanitarioTipo.SemDocOrigem) ? 0 : 1;
 
 				return ptv;
 			}

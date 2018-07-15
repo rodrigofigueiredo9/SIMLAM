@@ -41,7 +41,21 @@
 		</div>
 	</div>
 </fieldset>
-
+<fieldset class="block box isDocumentoOrigem campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+	<div class="block">
+		<div class="coluna24">
+			<label for="NotaFiscalApresentacao">Possui documento de origem ?</label><br />
+			<label>
+				<%=Html.RadioButton("IsDocumentoOrigem", (int)eApresentacaoNotaFiscal.Sim, ( Model.PTV.IsPossuiDocOrigem == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbIsDocumentoOrigem" }))%>
+				Sim
+			</label>
+			<label>
+				<%=Html.RadioButton("IsDocumentoOrigem", (int)eApresentacaoNotaFiscal.Nao ,(Model.PTV.IsPossuiDocOrigem == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbIsDocumentoOrigem" }))%>
+				Não
+			</label>
+		</div>
+	</div>
+</fieldset>
 <fieldset class="block box identificacao_produto campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Identificação do produto</legend>
 	<% if (!Model.IsVisualizar) { %>
@@ -98,7 +112,7 @@
 		<table class="dataGridTable gridProdutos">
 			<thead>
 				<tr>
-					<th style="width: 20%">Origem</th>
+					<th style="width: 20%" class="OrigemTipoColumn">Origem</th>
 					<th>Cultura/Cultivar</th>
 					<th style="width: 10%">Quantidade</th>
 					<th style="width: 16%">Unidade de medida</th>
@@ -162,20 +176,52 @@
 		</table>
 	</div>
 	<br />
-
-    <div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="coluna58">
-			<label for="EmpreendimentoTexto">Empreendimento *</label>
-			<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
-			<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
-		</div>		
-	</div>
-
-	<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="coluna58">
-			<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-			<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+	<div class="isPussuiDocumentoDeOrigem">
+		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna58">
+				<label for="EmpreendimentoTexto">Empreendimento *</label>
+				<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+				<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+			</div>		
 		</div>
+
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna58">
+				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
+				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+			</div>
+		</div>
+	</div>
+	<div class="isNotPussuiDocumentoDeOrigem <%=Model.PTV.IsPossuiDocOrigem == 1 ? "hide":""%>">
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna40">
+				<label>Produtor</label>
+				<%=Html.TextBox("ProdutorPTV", Model.PTV.SemDocOrigem.Produtor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutor" }))%>
+			</div>
+			<div class="coluna20">
+				<label>CPF/CNPJ*</label>
+				<%=Html.TextBox("CPFCNPJProdutor", Model.PTV.SemDocOrigem.cpfCnpjProdutor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtCPFCNPJProdutor" }))%>
+			</div>
+		</div>
+	
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna70">
+				<label>Endereço</label>
+				<%=Html.TextBox("EnderecoProdutor", Model.PTV.SemDocOrigem.enderecoEmpreendimento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtEnderecoProdutor" }))%>
+			</div>
+		</div>
+
+		
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna10">
+				<label>UF</label>
+				<%=Html.DropDownList("UFEmpreendimento", Model.EstadosUF, new { @class="text ddlUFProdutor" })%>
+			</div>
+			<div class="coluna30">
+				<label>Município</label>
+				<%=Html.DropDownList("MunicipioEmpreendimento", Model.MunicipiosOT, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipios" }))%>
+			</div>
+		</div
 	</div>
 </fieldset>
 

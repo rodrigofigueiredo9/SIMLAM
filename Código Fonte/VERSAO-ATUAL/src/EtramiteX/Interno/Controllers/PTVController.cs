@@ -46,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Index()
 		{
 			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
+
 			return View(vm);
 		}
 
@@ -123,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busPTV.ObterCultura(),
 				_busLista.TipoTransporte,
 				_busLista.Municipios(8), LsSetor);
-
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 
 			return View("Criar", vm);
@@ -159,6 +160,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
@@ -188,6 +190,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
@@ -209,7 +212,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Url = Url.Action(acao, "PTV") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + ptv.Id.ToString()
 			});
 		}
-
+		
 		[HttpGet]
 		[Permite(RoleArray = new object[] { ePermissao.PTVExcluir })]
 		public ActionResult ExcluirConfirm(int id)
@@ -419,6 +422,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterMunicipios(int uf)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@municipios = _busLista.Municipios(uf)
+			});
+		}
 		#endregion
 
 		#region Ativar/Cancelar PTV
