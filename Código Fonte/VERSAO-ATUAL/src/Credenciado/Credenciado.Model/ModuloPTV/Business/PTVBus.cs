@@ -932,6 +932,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					case (int)eSolicitarPTVSituacao.Valido:
 						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVAprovada(ptv.Numero, ptv.Id));
 						break;
+					case (int)eSolicitarPTVSituacao.Bloqueado:
+						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVBloqueada(ptv.Numero, ptv.Id));
+						break;
 					case (int)eSolicitarPTVSituacao.Rejeitado:
 						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVRejeitada(ptv.Numero, ptv.SituacaoMotivo, ptv.Id));
 						break;
@@ -946,7 +949,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			return exibirMensagem;
 		}
-
 
 		#endregion Alerta de E-PTV
 	}

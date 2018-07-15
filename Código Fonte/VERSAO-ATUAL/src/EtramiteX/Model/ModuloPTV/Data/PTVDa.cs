@@ -2528,6 +2528,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
 				var sqlExibirMensagemCredenciado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido ||
 					eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
 					eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao) ? ", p.exibir_msg_credenciado = 1 " : string.Empty;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + sqlExibirMensagemCredenciado + " where p.id = :id", UsuarioCredenciado);

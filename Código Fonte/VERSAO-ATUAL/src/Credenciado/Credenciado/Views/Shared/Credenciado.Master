@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 
@@ -54,6 +54,7 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js")%>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js")%>"></script>
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/PTV/comunicadorptv.js") %>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
 
 		<script> 
@@ -78,11 +79,16 @@
 								</div><!-- .redirecinamento -->';
 								$('.mensagemSistema').append(msgSistema);
 							}
-
+							
 							if (mensagem.Campo == 'AlertaEPTVAprovada') {
 								ContainerAcoes.load($(".containerAcoes"), {
 									botoes: [
 										{ label: 'Imprimir E-PTV', url: '<%= Url.Action("GerarPdf", "PTV")%>' + '/' + mensagem.Id }]
+								});
+							} else if (mensagem.Campo == 'AlertaEPTVBloqueada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Entrar em contato', url: '<%= Url.Action("ComunicadorPTV", "PTV")%>', abrirModal: function () { ContainerAcoes.onAbrirModal('<%= Url.Action("ComunicadorPTV", "PTV")%>', mensagem.Id); } }]
 								});
 							} else if (mensagem.Campo == 'AlertaEPTVRejeitada') {
 								ContainerAcoes.load($(".containerAcoes"), {
@@ -93,7 +99,7 @@
 						});
 				}
 			}); 
-		  </script>
+        </script>
 
 		<!-- Timer -->
 		<% if (HttpContext.Current.User.Identity.IsAuthenticated) { %>

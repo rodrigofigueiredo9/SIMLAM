@@ -217,6 +217,18 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			};
 		}
 
+		public Mensagem ChegadaMensagemEPTVBloqueada(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi bloqueada. Seu empreendimento está bloqueado para emissão de novas PTVs. " +
+					    $"Favor entrar em contato com o local para onde foi solicitada a vistoria da carga.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVBloqueada",
+				Id = id
+			};
+		}
+
 		public Mensagem ChegadaMensagemEPTVRejeitada(long numero, string motivo, int id)
 		{
 			return new Mensagem()
