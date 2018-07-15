@@ -9,6 +9,10 @@
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
 
+<script>
+	PTVEmitir.settings.Mensagens = <%= Model.Mensagens %>;
+</script>
+
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
 <input class="hdnVisualizar" type="hidden" value="<%= Model.IsVisualizar %>" />
 
@@ -98,6 +102,13 @@
 			<div class="coluna10">
 				<button type="button" class="inlineBotao btnVerificarDocumentoOrigem hide">Verificar</button>
 			</div>
+            <div class="coluna10">
+                <button type="button" class="inlineBotao btnLimparDocumentoOrigem hide">Limpar</button>
+            </div>
+            <div class="coluna15 saldoContainer hide">
+                <label>Saldo</label>
+                <%=Html.TextBox("SaldoDocOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(true, new { @class="text txtSaldoDocOrigem"})) %>
+            </div>
 		</div>
 		<div class="block">
 			<div class="coluna25">

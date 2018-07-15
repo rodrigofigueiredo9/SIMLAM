@@ -412,7 +412,7 @@ PTVEmitir = {
 			labelOrigem.text(option.text());
 		}
 
-		PTVEmitir.onLimparIdentificacaoProduto();
+		PTVEmitir.onLimparIdentificacaoProduto(this);
 
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
@@ -727,7 +727,7 @@ PTVEmitir = {
 		if (item.OrigemTipo == '1' || item.OrigemTipo == '2' || item.OrigemTipo == '3') {
 			PTVEmitir.onTratamentoFitossanitário();
 			PTVEmitir.onPossuiLaudoLaboratorial();
-			PTVEmitir.onLimparIdentificacaoProduto();
+			PTVEmitir.onLimparIdentificacaoProduto(this);
 		}
 	},
 
@@ -772,7 +772,7 @@ PTVEmitir = {
 		}
 	},
 
-	onLimparIdentificacaoProduto: function () {
+	onLimparIdentificacaoProduto: function (ctrl) {
 		$('.btnLimparDocumentoOrigem', PTVEmitir.container).addClass('hide');
 		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
 		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
@@ -782,7 +782,7 @@ PTVEmitir = {
 		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
 		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
 
-		if (($(this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+		if (($(ctrl ? ctrl : this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
