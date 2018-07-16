@@ -431,7 +431,7 @@
         <div class="block">
             <div class="coluna60">
                 <label for="InformacoesAdicionais">Informações Adicionais</label>
-                <%= Html.TextArea("InformacoesAdicionais", Model.PTV.InformacoesAdicionais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text media txtInformacoesAdicionais" })) %>
+                <%= Html.TextArea("InformacoesAdicionais", Model.PTV.InformacoesAdicionais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text media txtInformacoesAdicionais", @maxlength="500" })) %>
             </div>
         </div>
     </div>
