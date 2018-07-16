@@ -39,7 +39,8 @@
 				    urlGravarVerificacaoDUA: '<%= Url.Action("GravarVerificacaoDUA", "PTV") %>',
 				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>',
 				    urlVerificarNotaFiscalCaixa: '<%= Url.Action("VerificarNotaFiscalCaixa", "PTV") %>',
-				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>'
+				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>',
+				    urlObterMunicipios: '<%= Url.Action("ObterMunicipios", "PTV") %>'
 				},
 			});
 

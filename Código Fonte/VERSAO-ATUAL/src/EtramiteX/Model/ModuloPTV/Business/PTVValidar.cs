@@ -515,15 +515,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			if (Validacao.EhValido)
 			{
-				if (_da.EmpreendimentoPossuiEPTVBloqueado(item.EmpreendimentoId))
+				if (item.EmpreendimentoId > 0)
 				{
-					Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
+					if (_da.EmpreendimentoPossuiEPTVBloqueado(item.EmpreendimentoId))
+					{
+						Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
+					}
 				}
 			}
 
 			if (Validacao.EhValido)
 			{
-				if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF)
+				if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.SemDocOrigem)
 				{
 					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvData.Data.GetValueOrDefault().Year, ptvID);
 

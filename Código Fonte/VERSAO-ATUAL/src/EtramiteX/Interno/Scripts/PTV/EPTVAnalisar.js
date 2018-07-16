@@ -21,6 +21,7 @@ EPTVAnalisar = {
 
 		container.delegate('.rdbOpcaoSituacao', 'change', EPTVAnalisar.situacaoChange);
 		container.delegate('.btnSalvar', 'click', EPTVAnalisar.salvar);
+		container.delegate('.rbPartidaLacradaOrigem', 'change', EPTVAnalisar.onChangePartidaLacrada);
 	},
 
 	limparCampos: function (container) {
@@ -103,6 +104,17 @@ EPTVAnalisar = {
 		return true;
 	},
 
+	onChangePartidaLacrada: function () {
+		if ($(this).val() == 1) {
+			$('.partida_lacrada', EPTVAnalisar.container).removeClass('hide');
+			$('.txtNumeroLacre', EPTVAnalisar.container).focus();
+		}
+		else {
+			$('.partida_lacrada', EPTVAnalisar.container).addClass('hide');
+			$('.txtNumeroLacre, .txtNumeroPorao, .txtNumeroContainer', EPTVAnalisar.container).val('');
+		}
+	},
+
 	obter: function(){
 		var objeto = {
 			Id: +$('.hdnEmissaoId', EPTVAnalisar.container).val(),
@@ -112,7 +124,11 @@ EPTVAnalisar = {
 			ResponsavelTecnicoId: $('.hdnResponsavelTecnicoId', EPTVAnalisar.container).val(),
 			LocalFiscalizacao: $('.txtLocalFiscalizacao', EPTVAnalisar.container).val(),
 			HoraFiscalizacao: $('.txtHoraFiscalizacao', EPTVAnalisar.container).val(),
-			InformacoesAdicionais: $('.txtInformacoesAdicionais', EPTVAnalisar.container).val()
+			InformacoesAdicionais: $('.txtInformacoesAdicionais', EPTVAnalisar.container).val(),
+			PartidaLacradaOrigem: $('.rbPartidaLacradaOrigem:checked', EPTVAnalisar.container).val(),
+			LacreNumero: $('.txtNumeroLacre', EPTVAnalisar.container).val(),
+			PoraoNumero: $('.txtNumeroPorao', EPTVAnalisar.container).val(),
+			ContainerNumero: $('.txtNumeroContainer', EPTVAnalisar.container).val(),
 		};
 
 		if (objeto.Situacao == 3/*Aprovado*/) {

@@ -134,6 +134,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				PTV.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
+				//validação
+				if (!String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor) || !String.IsNullOrWhiteSpace(PTV.SemDocOrigem.responsavel))
+				{
+					InserirProdutoSemDocOrigem(PTV, banco); 
+				}
+
 				#region Produto PTV
 
 				comando = bancoDeDados.CriarComando(@"insert into tab_ptv_produto(id, tid, ptv, origem_tipo, origem, numero_origem, cultura, cultivar, quantidade, unidade_medida, exibe_kilos)
@@ -275,6 +281,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				bancoDeDados.ExecutarScalar(comando);
 
+				if (!String.IsNullOrWhiteSpace(PTV.SemDocOrigem.Produtor) || !String.IsNullOrWhiteSpace(PTV.SemDocOrigem.responsavel))
+				{
+					AtualizarProdutoSemDocOrigem(PTV, banco);
+				}
+
 				#region Limpar Dados
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}tab_ptv_produto ", EsquemaBanco);
@@ -289,6 +300,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				#endregion
+
 
 				#region Produto PTV
 
@@ -653,7 +665,60 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				return (string)bancoDeDados.ExecutarScalar(comando);
 			}
 		}
+	
+		internal void InserirProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = null;
 
+				string sqlCmd = @"INSERT INTO TAB_PTV_SEM_DOC_ORIGEM (ID, TID, PTV, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, RESPONSAVEL, CPF_CNPJ) 
+					VALUES(SEQ_PTV_SEM_DOC_ORIGEM.NEXTVAL, :tid, :ptv, :empreendimento, :endereco, :uf, :municipio, :produtor, :responsavel, :cpf_cnpj)";
+
+				comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", ptv.EmpreendimentoTexto, DbType.String);
+				comando.AdicionarParametroEntrada("endereco", ptv.SemDocOrigem.enderecoEmpreendimento, DbType.String);
+				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("produtor", ptv.SemDocOrigem.Produtor, DbType.String);
+				comando.AdicionarParametroEntrada("responsavel", ptv.SemDocOrigem.responsavel, DbType.String);
+				comando.AdicionarParametroEntrada("cpf_cnpj", ptv.SemDocOrigem.cpfCnpjProdutor, DbType.String);
+
+				bancoDeDados.ExecutarScalar(comando);
+
+			}
+		}
+		internal void AtualizarProdutoSemDocOrigem(PTV ptv, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = null;
+
+				string sqlCmd = @"UPDATE TAB_PTV_SEM_DOC_ORIGEM 
+									SET EMPREENDIMENTO = :empreendimento, UF = :uf, MUNICIPIO = :municipio, PRODUTOR = :produtor,
+									RESPONSAVEL = :responsavel, CPF_CNPJ = :cpf_cnpj 
+									WHERE PTV = :ptv";
+
+				comando = bancoDeDados.CriarComando(sqlCmd, EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", ptv.EmpreendimentoTexto, DbType.String);
+				comando.AdicionarParametroEntrada("endereco", ptv.SemDocOrigem.enderecoEmpreendimento, DbType.String);
+				comando.AdicionarParametroEntrada("uf", ptv.SemDocOrigem.ufEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", ptv.SemDocOrigem.municipioEndereco, DbType.Int32);
+				comando.AdicionarParametroEntrada("produtor", ptv.SemDocOrigem.Produtor, DbType.String);
+				comando.AdicionarParametroEntrada("responsavel", ptv.SemDocOrigem.responsavel, DbType.String);
+				comando.AdicionarParametroEntrada("cpf_cnpj", ptv.SemDocOrigem.cpfCnpjProdutor, DbType.String);
+
+				bancoDeDados.ExecutarScalar(comando);
+
+			}
+		}
 		#endregion
 
 		#region Obter /Filtros
@@ -668,6 +733,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                     lst.texto situacao_texto, p.empreendimento, p.responsavel_emp, em.denominador, p.partida_lacrada_origem, p.numero_lacre,
                     p.numero_porao, p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal,
                     p.numero_nota_fiscal, p.valido_ate, p.responsavel_tecnico, f.nome responsavel_tecnico_nome, p.municipio_emissao, p.dua_numero,p.dua_tipo_pessoa,p.dua_cpf_cnpj, p.responsavel_sem_doc, p .empreendimento_sem_doc,
+					p.local_fiscalizacao, p.hora_fiscalizacao, p.informacoes_adicionais, 
 					(select pc.nome from tab_pessoa pc where exists (select 1 from tab_credenciado c where c.pessoa = pc.id and c.id = p.credenciado) credenciado_nome
                     from {0}tab_ptv p, {0}tab_empreendimento em, lov_ptv_situacao lst, {0}tab_funcionario f
                     where em.id(+) = p.empreendimento and lst.id = p.situacao and p.responsavel_tecnico = f.id and p.id = :id", EsquemaBanco);
@@ -709,6 +775,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                         PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
                         PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
                         PTV.CredenciadoNome = reader.GetValue<string>("credenciado_nome");
+                        PTV.LocalFiscalizacao = reader.GetValue<string>("local_fiscalizacao");
+                        PTV.HoraFiscalizacao = reader.GetValue<string>("hora_fiscalizacao");
+                        PTV.InformacoesAdicionais = reader.GetValue<string>("informacoes_adicionais");
 					}
 
 					reader.Close();
@@ -718,6 +787,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					return PTV;
 				}
+
+				PTV = ObterSemDocOrigem(PTV);
 
 				#region PTV Produto
 
@@ -879,9 +950,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
 					default:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
-						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
-						and t.numero = :numero", EsquemaBanco); break;
+						comando = bancoDeDados.CriarComando(@"SELECT P.ID, P.SITUACAO, 0 EMPREENDIMENTO_ID, SD.EMPREENDIMENTO EMPREEENDIMENTO_DENOMINADOR 
+															  FROM TAB_PTV P 
+																	INNER JOIN TAB_PTV_PRODUTO PR ON P.ID = PR.PTV
+																	LEFT JOIN TAB_PTV_SEM_DOC_ORIGEM SD ON PR.ORIGEM = SD.ID
+																WHERE P.NUMERO = :numero", EsquemaBanco);
+						break;
 				}
 
 				comando.AdicionarParametroEntrada("numero", numero, DbType.Int64);
@@ -1149,6 +1223,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
+		internal PTV ObterSemDocOrigem(PTV ptv)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"SELECT ID, EMPREENDIMENTO, ENDERECO, UF, MUNICIPIO, PRODUTOR, CPF_CNPJ, RESPONSAVEL
+																FROM TAB_PTV_SEM_DOC_ORIGEM WHERE PTV = :ptv", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("ptv", ptv.Id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						ptv.SemDocOrigem.id = Convert.ToInt32(reader["ID"]);
+						ptv.EmpreendimentoTexto = reader["EMPREENDIMENTO"].ToString();
+						ptv.SemDocOrigem.enderecoEmpreendimento = reader["ENDERECO"].ToString();
+						ptv.SemDocOrigem.ufEndereco = Convert.ToInt32(reader["UF"]);
+						ptv.SemDocOrigem.municipioEndereco = Convert.ToInt32(reader["MUNICIPIO"]);
+						ptv.SemDocOrigem.Produtor = reader["PRODUTOR"].ToString();
+						ptv.SemDocOrigem.cpfCnpjProdutor = reader["CPF_CNPJ"].ToString();
+						ptv.SemDocOrigem.responsavel = reader["RESPONSAVEL"].ToString();
+					}
+					reader.Close();
+				}
+			}
+
+			return ptv;
+
+		}
 		#region Identificação Produto2
 
 		internal List<Lista> ObterCultura()
@@ -1245,7 +1348,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					default: //Recebe como parâmetro o id da cultura: CF/CFR, FT
-						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, cc.nf_caixa_obrigatoria
+						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, t.nf_caixa_obrigatoria
 															from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
@@ -1887,7 +1990,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 			return retorno;
 		}
-
 
 		internal Resultados<PTVListarResultado> FiltrarEPTV(Filtro<PTVListarFiltro> filtro)
 		{
@@ -2679,7 +2781,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		#region EPTV
 
-		internal void AnalizarEPTV(PTV eptv, BancoDeDados banco)
+		internal void AnalisarEPTV(PTV eptv, BancoDeDados banco)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
@@ -2688,7 +2790,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao,
 					p.motivo = :motivo, p.local_fiscalizacao = :local_fiscalizacao, p.hora_fiscalizacao = :hora_fiscalizacao,
-					p.informacoes_adicionais = :informacoes_adicionais, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
+					p.informacoes_adicionais = :informacoes_adicionais, p.partida_lacrada_origem = :partida_lacrada_origem,
+					p.numero_lacre = :numero_lacre, p.numero_porao = :numero_porao, p.numero_container = :numero_container,
+					p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", eptv.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", eptv.Situacao, DbType.Int32);
@@ -2696,6 +2800,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("local_fiscalizacao", DbType.String, 500, eptv.LocalFiscalizacao);
 				comando.AdicionarParametroEntrada("hora_fiscalizacao", eptv.HoraFiscalizacao, DbType.String);
 				comando.AdicionarParametroEntrada("informacoes_adicionais", DbType.String, 500, eptv.InformacoesAdicionais);
+				comando.AdicionarParametroEntrada("partida_lacrada_origem", eptv.PartidaLacradaOrigem, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_lacre", eptv.LacreNumero, DbType.String);
+				comando.AdicionarParametroEntrada("numero_porao", eptv.PoraoNumero, DbType.String);
+				comando.AdicionarParametroEntrada("numero_container", eptv.ContainerNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);

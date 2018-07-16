@@ -71,6 +71,20 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			set { _acoesAlterar = value; }
 		}
 
+		private List<SelectListItem> _estadosUF = new List<SelectListItem>();
+		public List<SelectListItem> EstadosUF
+		{
+			get { return _estadosUF; }
+			set { _estadosUF = value; }
+		}
+
+		private List<SelectListItem> _municipiosOT = new List<SelectListItem>();
+		public List<SelectListItem> MunicipiosOT
+		{
+			get { return _municipiosOT; }
+			set { _municipiosOT = value; }
+		}
+
 		public string IdsTelaAnalisar
 		{
 			get
@@ -126,7 +140,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 
 			this.LstCultura = ViewModelHelper.CriarSelectList(lstCultura);
 
-			this.LsTipoTransporte = ViewModelHelper.CriarSelectList(lsTipoTransporte, true, true, ptv.TransporteTipo.ToString());
+			this.LsTipoTransporte = ViewModelHelper.CriarSelectList(lsTipoTransporte, true, true,  ptv.TransporteTipo.ToString());
 
 			LsLaudoLaboratorial = lstLaboratorio ?? new List<LaudoLaboratorial>();
 

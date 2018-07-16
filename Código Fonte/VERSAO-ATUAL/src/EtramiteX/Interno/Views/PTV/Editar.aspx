@@ -35,7 +35,8 @@
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
 					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
 					urlVerificarNotaFiscalCaixa: '<%= Url.Action("VerificarNotaFiscalCaixa", "PTV") %>',
-				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>'
+				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>',
+				    urlObterMunicipios: '<%= Url.Action("ObterMunicipios", "PTV") %>'
 				},
 			});
 		});

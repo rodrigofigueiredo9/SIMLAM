@@ -338,6 +338,7 @@
     <Compile Include="Interno\ModuloPTV\HabilitacaoEmissao\HabilitacaoEmissaoPTV.cs" />
     <Compile Include="Interno\ModuloPTV\LaudoLaboratorial.cs" />
     <Compile Include="Interno\ModuloPTV\NotaFiscalCaixa.cs" />
+    <Compile Include="Interno\ModuloPTV\ProdutoSemDocOrigem.cs" />
     <Compile Include="Interno\ModuloPTV\PTV.cs" />
     <Compile Include="Interno\ModuloPTVOutro\PTVOutroListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\PTVComunicador.cs" />

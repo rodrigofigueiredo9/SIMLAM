@@ -38,6 +38,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public string Itinerario { get; set; }
 		public int? NotaFiscalApresentacao { get; set; }
 		public string NotaFiscalNumero { get; set; }
+		public int IsPossuiDocOrigem { get; set; }
 		public DateTecno ValidoAte { get; set; }
 		public DateTecno DataAtivacao { get; set; }
 		public DateTecno DataCancelamento { get; set; }
@@ -80,6 +81,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public string HoraFiscalizacao { get; set; }
 		public string InformacoesAdicionais { get; set; }
 
+		public ProdutoSemDocOrigem SemDocOrigem { get; set; }
+
+
 		public PTV()
 		{
 			DataEmissao = new DateTecno();
@@ -92,7 +96,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 			Anexos = new List<Anexo>();
 			NotaFiscalDeCaixas = new List<NotaFiscalCaixa>();
 			NFCaixa = new NotaFiscalCaixa();
-
+			IsPossuiDocOrigem = 1;
+			SemDocOrigem = new ProdutoSemDocOrigem();
 	}
 }
 }

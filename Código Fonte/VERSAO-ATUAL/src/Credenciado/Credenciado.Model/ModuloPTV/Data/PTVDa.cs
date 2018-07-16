@@ -542,6 +542,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				p.empreendimento, p.responsavel_emp, nvl(em.denominador,p.empreendimento_sem_doc) as denominador  , p.partida_lacrada_origem, p.numero_lacre, p.numero_porao,
 				p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal, p.numero_nota_fiscal,
 				p.valido_ate, p.responsavel_tecnico, p.municipio_emissao, p.dua_numero, p.dua_cpf_cnpj, p.local_vistoria, (select s.nome from {0}tab_setor s where s.id=p.local_vistoria) local_vistoria_texto, p.credenciado credenciado_id, nvl(tp.nome, tp.razao_social) credenciado_nome,
+				p.local_fiscalizacao, p.hora_fiscalizacao, p.informacoes_adicionais, 
 				p.data_hora_vistoria, dua_tipo_pessoa, p.responsavel_sem_doc, p.empreendimento_sem_doc, trunc(p.data_vistoria) as data_vistoria from {0}tab_ptv p, ins_empreendimento em, {0}tab_credenciado tc, {0}lov_solicitacao_ptv_situacao lst, {0}tab_pessoa tp 
 				where p.id = :id and em.id(+) = p.empreendimento and lst.id = p.situacao and tc.id = p.credenciado and tc.pessoa = tp.id", UsuarioCredenciado);
 
@@ -585,6 +586,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                         PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
                         PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
                         PTV.DataVistoria = reader.GetValue<DateTime>("data_vistoria");
+
+						PTV.CredenciadoNome = reader.GetValue<string>("credenciado_nome");
+						PTV.LocalFiscalizacao = reader.GetValue<string>("local_fiscalizacao");
+						PTV.HoraFiscalizacao = reader.GetValue<string>("hora_fiscalizacao");
+						PTV.InformacoesAdicionais = reader.GetValue<string>("informacoes_adicionais");
 
 						if (reader.GetValue<DateTime>("valido_ate") != DateTime.MinValue)
 						{
