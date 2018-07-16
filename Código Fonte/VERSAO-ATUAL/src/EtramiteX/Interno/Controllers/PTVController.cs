@@ -46,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Index()
 		{
 			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
+
 			return View(vm);
 		}
 
@@ -123,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busPTV.ObterCultura(),
 				_busLista.TipoTransporte,
 				_busLista.Municipios(8), LsSetor);
-
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 
 			return View("Criar", vm);
@@ -159,6 +160,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
@@ -175,7 +178,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			List<TratamentoFitossanitario> lsFitossanitario = _busPTV.TratamentoFitossanitário(ptv.Produtos);
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
-
 			PTVVM vm = new PTVVM(
 				ptv,
 				_busLista.PTVSituacao,
@@ -188,10 +190,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 			vm.IsVisualizar = true;
+			
 			return View("Visualizar", vm);
 		}
 
@@ -208,7 +213,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Url = Url.Action(acao, "PTV") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + ptv.Id.ToString()
 			});
 		}
-
+		
 		[HttpGet]
 		[Permite(RoleArray = new object[] { ePermissao.PTVExcluir })]
 		public ActionResult ExcluirConfirm(int id)
@@ -264,6 +269,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -393,6 +399,40 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = nfCaixa
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{	
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterMunicipios(int uf)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@municipios = _busLista.Municipios(uf)
+			});
+		}
 		#endregion
 
 		#region Ativar/Cancelar PTV
