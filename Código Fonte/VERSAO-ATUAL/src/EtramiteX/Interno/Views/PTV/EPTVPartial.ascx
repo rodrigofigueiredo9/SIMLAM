@@ -411,7 +411,7 @@
 	<div class="block divCamposSituacao divMotivo <%= (Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Rejeitado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado) ? "hide":""%>">
 		<div class="block ultima">
 			<label for="SituacaoMotivo">Motivo *</label>
-			<%= Html.TextArea("SituacaoMotivo", Model.PTV.SituacaoMotivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text media txtSituacaoMotivo", @maxlength="1000" })) %>
+			<%= Html.TextArea("SituacaoMotivo", Model.PTV.SituacaoMotivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text media txtSituacaoMotivo", @maxlength="500" })) %>
 		</div>
 	</div>
 
