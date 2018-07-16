@@ -480,19 +480,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				if (item.id <= 0)
 				{
-					comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
+					using (BancoDeDados banco = BancoDeDados.ObterInstancia())
+					{
+						comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
 												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
 
-					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-					comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
-					comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
-					comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+						comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
+						comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
+						comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
 
-					comando.AdicionarParametroSaida("id", DbType.Int32);
+						comando.AdicionarParametroSaida("id", DbType.Int32);
 
-					bancoDeDados.ExecutarScalar(comando);
+						banco.ExecutarScalar(comando);
 
-					item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+						item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+					}
 				}
 
 				comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_PTV_NF_CAIXA (ID, TID, NF_CAIXA, PTV, SALDO_ATUAL, NUMERO_CAIXAS)

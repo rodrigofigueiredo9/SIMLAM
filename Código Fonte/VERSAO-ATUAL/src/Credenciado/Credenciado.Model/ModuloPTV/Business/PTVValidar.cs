@@ -157,7 +157,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					Validacao.Add(Mensagem.PTV.AnexoLimiteMaximo);
 				}
 
-				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".png"))
+				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".jpeg"))
 				{
 					Validacao.Add(Mensagem.PTV.AnexoFormatoErrado);
 				}

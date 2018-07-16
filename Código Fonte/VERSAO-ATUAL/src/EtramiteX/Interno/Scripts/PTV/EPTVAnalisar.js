@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -8,7 +8,8 @@ EPTVAnalisar = {
 		urls: {
 			salvar: null
 		},
-		idsTela: null
+		idsTela: null,
+		Mensagens: null
 	},
 	container: null,
 
@@ -32,6 +33,7 @@ EPTVAnalisar = {
 	situacaoChange: function () {
 		EPTVAnalisar.limparCampos();
 
+		container = $('.divAgendarFiscalizacao', EPTVAnalisar.container).addClass('hide');
 		switch (parseInt($('.rdbOpcaoSituacao:checked', EPTVAnalisar.container).val())) {
 			case EPTVAnalisar.settings.idsTela.Aprovado:
 				container = $('.divMotivo', EPTVAnalisar.container).addClass('hide');
@@ -40,9 +42,10 @@ EPTVAnalisar = {
 				break;
 
 			case EPTVAnalisar.settings.idsTela.AgendarFiscalizacao:
-				//container = $('.divAprovar', EPTVAnalisar.container).addClass('hide');
-				//container = $('.divMotivo', EPTVAnalisar.container).addClass('hide');
-				//break;
+				container = $('.divAprovar', EPTVAnalisar.container).addClass('hide');
+				container = $('.divMotivo', EPTVAnalisar.container).addClass('hide');
+				container = $('.divAgendarFiscalizacao', EPTVAnalisar.container).removeClass('hide');
+				break;
 
 			case EPTVAnalisar.settings.idsTela.Rejeitado:
 			case EPTVAnalisar.settings.idsTela.Bloqueado:
@@ -55,7 +58,12 @@ EPTVAnalisar = {
 
 	salvar: function () {
 		var objeto = EPTVAnalisar.obter();
-		
+
+		if (!EPTVAnalisar.validarHora(objeto.HoraFiscalizacao)) {
+			Mensagem.gerar(MasterPage.getContent(EPTVAnalisar.container), [EPTVAnalisar.settings.Mensagens.HoraInvalida]);
+			return;
+		}
+
 		MasterPage.carregando(true);
 
 		$.ajax({
@@ -77,13 +85,34 @@ EPTVAnalisar = {
 		});
 		MasterPage.carregando(false);
 	},
+
+	validarHora: function (hora) {
+		if (hora.length != 5) {
+			return false;
+		}
+
+		hrs = hora.substring(0, 2);
+		min = hora.substring(3, 5);
+
+		if ((hrs == "") || (min == "")) {
+			return false;
+		}
+		if ((hrs < 00) || (hrs > 23) || (min < 00) || (min > 59)) {
+			return false;
+		}
+		return true;
+	},
+
 	obter: function(){
 		var objeto = {
 			Id: +$('.hdnEmissaoId', EPTVAnalisar.container).val(),
 			Situacao: +$('.rdbOpcaoSituacao:checked', EPTVAnalisar.container).val(),
 			SituacaoMotivo: $('.txtSituacaoMotivo', EPTVAnalisar.container).val(),
 			LocalEmissaoId: +$('.ddlLocalEmissao', EPTVAnalisar.container).val(),
-			ResponsavelTecnicoId: $('.hdnResponsavelTecnicoId', EPTVAnalisar.container).val()
+			ResponsavelTecnicoId: $('.hdnResponsavelTecnicoId', EPTVAnalisar.container).val(),
+			LocalFiscalizacao: $('.txtLocalFiscalizacao', EPTVAnalisar.container).val(),
+			HoraFiscalizacao: $('.txtHoraFiscalizacao', EPTVAnalisar.container).val(),
+			InformacoesAdicionais: $('.txtInformacoesAdicionais', EPTVAnalisar.container).val()
 		};
 
 		if (objeto.Situacao == 3/*Aprovado*/) {

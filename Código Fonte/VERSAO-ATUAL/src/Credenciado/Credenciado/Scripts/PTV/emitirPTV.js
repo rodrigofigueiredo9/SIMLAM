@@ -1139,8 +1139,8 @@ PTVEmitir = {
 			}
 
 			var extensao = nomeArquivo.toLowerCase().substr(nomeArquivo.length - 4);
-			if (extensao !== ".pdf" && extensao !== ".jpg" && extensao !== ".png") {
-				erromsg.push(PTVEmitir.settings.Mensagens.AnexoFormatoErrado);
+			if (extensao !== ".pdf" && extensao !== ".jpg" && extensao !== "jpeg") {
+				erroMsg.push(PTVEmitir.settings.Mensagens.AnexoFormatoErrado);
 			}
 		}
 

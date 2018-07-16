@@ -98,6 +98,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 					@InserirGridCaixaNumerosNFIguais = Mensagem.PTV.InserirGridCaixaNumerosNFIguais,
 					@NumeroDocumentoDeOrigemObrigatório = Mensagem.PTV.NumeroDocumentoDeOrigemObrigatório,
 					@NumeroDocumentoDeOrigemTipoNumerico = Mensagem.PTV.NumeroDocumentoDeOrigemTipoNumerico,
+					@HoraInvalida = Mensagem.PTV.HoraInvalida,
 				});
 			}
 		}

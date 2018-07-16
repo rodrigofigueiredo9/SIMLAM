@@ -667,7 +667,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				Comando comando = bancoDeDados.CriarComando(@" select p.id, p.tid, p.tipo_numero, p.numero, p.data_emissao, p.situacao,
                     lst.texto situacao_texto, p.empreendimento, p.responsavel_emp, em.denominador, p.partida_lacrada_origem, p.numero_lacre,
                     p.numero_porao, p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal,
-                    p.numero_nota_fiscal, p.valido_ate, p.responsavel_tecnico, f.nome responsavel_tecnico_nome, p.municipio_emissao, p.dua_numero,p.dua_tipo_pessoa,p.dua_cpf_cnpj, p.responsavel_sem_doc, p .empreendimento_sem_doc
+                    p.numero_nota_fiscal, p.valido_ate, p.responsavel_tecnico, f.nome responsavel_tecnico_nome, p.municipio_emissao, p.dua_numero,p.dua_tipo_pessoa,p.dua_cpf_cnpj, p.responsavel_sem_doc, p .empreendimento_sem_doc,
+					(select pc.nome from tab_pessoa pc where exists (select 1 from tab_credenciado c where c.pessoa = pc.id and c.id = p.credenciado) credenciado_nome
                     from {0}tab_ptv p, {0}tab_empreendimento em, lov_ptv_situacao lst, {0}tab_funcionario f
                     where em.id(+) = p.empreendimento and lst.id = p.situacao and p.responsavel_tecnico = f.id and p.id = :id", EsquemaBanco);
 
@@ -707,6 +708,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
                         PTV.NumeroDua = reader.GetValue<string>("dua_numero");
                         PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
                         PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
+                        PTV.CredenciadoNome = reader.GetValue<string>("credenciado_nome");
 					}
 
 					reader.Close();
@@ -2684,11 +2686,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				bancoDeDados.IniciarTransacao();
 				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.motivo = :motivo, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao,
+					p.motivo = :motivo, p.local_fiscalizacao = :local_fiscalizacao, p.hora_fiscalizacao = :hora_fiscalizacao,
+					p.informacoes_adicionais = :informacoes_adicionais, p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", eptv.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", eptv.Situacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivo", DbType.String, 500, eptv.SituacaoMotivo ?? "");
+				comando.AdicionarParametroEntrada("local_fiscalizacao", DbType.String, 500, eptv.LocalFiscalizacao);
+				comando.AdicionarParametroEntrada("hora_fiscalizacao", eptv.HoraFiscalizacao, DbType.String);
+				comando.AdicionarParametroEntrada("informacoes_adicionais", DbType.String, 500, eptv.InformacoesAdicionais);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);

@@ -21,27 +21,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         {
             string msg = string.Empty;
             Arquivo arquivo = null;
-            try
-            {
-				var extPermitidas = new List<string>() { "png", "jpg", "jpeg" };
-				if (!extPermitidas.Exists(x => x.Contains(Path.GetExtension(file.FileName))))
-					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido(file.FileName, extPermitidas));
+			try
+			{
+				ArquivoBus _bus;
+				string url = HttpContext.Request.UrlReferrer.ToString();
+				if (url.IndexOf("PTVOutro") >= 0)
+					_bus = new ArquivoBus(eExecutorTipo.Interno);
 				else
-				{
-					ArquivoBus _bus;
-					string url = HttpContext.Request.UrlReferrer.ToString();
-					if (url.IndexOf("PTVOutro") >= 0)
-						_bus = new ArquivoBus(eExecutorTipo.Interno);
-					else
-						_bus = new ArquivoBus(eExecutorTipo.Credenciado);
+					_bus = new ArquivoBus(eExecutorTipo.Credenciado);
 
-					arquivo = _bus.SalvarTemp(file);
-				}
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+				arquivo = _bus.SalvarTemp(file);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
             return ViewModelHelper.JsSerializer.Serialize(new { Msg = Validacao.Erros, Arquivo = arquivo });
         }
