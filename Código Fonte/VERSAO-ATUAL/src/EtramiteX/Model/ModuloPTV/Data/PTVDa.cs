@@ -2435,7 +2435,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					reader.Close();
 				}
 				return nf;
-				//return (bancoDeDados.ExecutarScalar<int>(comando));
 			}
 		}
 
