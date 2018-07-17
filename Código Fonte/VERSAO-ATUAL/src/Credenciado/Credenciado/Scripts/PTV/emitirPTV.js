@@ -84,31 +84,25 @@ PTVEmitir = {
 	            var select = this;
 	            var options = [];
 	            $(select).find('option').each(function () {
-	                options.push({ value: $(this).val(), text: $(this).text() });
-	            });
-
-	            $(select).data('options', options);
-	            
+	                options.push({ Id: $(this).val(), Texto: $(this).text() });
+				});
+				
+				$(select).data('options', options);
 	           
-	            $(textbox).bind('change', function () {
-	                //var options = $(select).empty().scrollTop(0).data('options');
-	               
-	                var options = [];
-	                $("#DataHoraVistoriaId option").each(function () {
-	                    options.push({ "id": $(this).val(), "text": $(this).text() });
-	                });
+				$(textbox).bind('change', function () {
+					if (!this.value.isNullOrWhitespace())
+						$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
 
-	                $(select).empty();
+					$(select).empty();
 	                var search = $.trim($(this).val());
 	                var regex = new RegExp(search, 'gi');
-	             
 	              
-	                for (var i = 0; i < options.length; i++) {
-	                    var option = options[i];
-	                    
-	                    if (option.text.match(regex) !== null) {
+					for (var i = 0; i < $(select).data('options').length; i++) {
+						var option = $(select).data('options')[i];
+						
+						if (option.Texto.match(regex) !== null) {
 	                        $(select).append(
-                                    $('<option>').text(option.text).val(option.id)
+                                    $('<option>').text(option.Texto).val(option.Id)
                             );
 	                    }
 	                }
@@ -225,7 +219,7 @@ PTVEmitir = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-
+				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).data('options', response.DiasHorasVistoria);
 			    $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
 
 			    var txtData = JSON.stringify(response.DiasHorasVistoria).toString();
@@ -235,9 +229,9 @@ PTVEmitir = {
 			   
 			    datelist = lstDatas; // populate the array
 			   
-			    $("#DataVistoria").datepicker("refresh"); // 
-			 
-
+				$("#DataVistoria").datepicker("refresh"); //
+				$("#DataVistoria").val('');
+				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
 			}
 		});
 		MasterPage.carregando(false);
