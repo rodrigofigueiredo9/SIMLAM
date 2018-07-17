@@ -2219,7 +2219,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
 					SELECT ID,
-					(NF.SALDO_INICIAL - (SELECT SUM(PNF.NUMERO_CAIXAS) FROM TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)) SALDO_ATUAL
+					(NF.SALDO_INICIAL - (SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)
+					+ (SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)) SALDO_ATUAL
 					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
