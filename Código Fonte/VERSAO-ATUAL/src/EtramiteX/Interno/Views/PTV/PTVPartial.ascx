@@ -64,7 +64,7 @@
 			<label for="OrigemTipo">Documento de origem *</label>
 			<%=Html.DropDownList("OrigemTipo", Model.OrigemTipoList, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlOrigemTipo"})) %>
 		</div>
-		<div class="coluna22 divNumeroDocumentoEnter">
+		<div class="coluna25 divNumeroDocumentoEnter">
 			<input type="hidden" class="hdnNumeroOrigem" value="0" />
 			<input type="hidden" class="hdnEmpreendimentoOrigemID" value="0" />
 			<input type="hidden" class="hdnEmpreendimentoOrigemNome" value="" />
@@ -85,7 +85,7 @@
 			<button type="button" class="inlineBotao btnLimparDocumentoOrigem hide">Limpar</button>
 		</div>
 		<div class="coluna15 saldoContainer hide">
-			<label >Saldo</label>
+			<label >Saldo atual</label>
 			<%=Html.TextBox("SaldoDocOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(true, new { @class="text txtSaldoDocOrigem"})) %>
 		</div>
 	</div>
@@ -185,7 +185,7 @@
 			</div>		
 		</div>
 
-		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+		<div class="block divResponsavelDDL campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna58">
 				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
 				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
@@ -203,7 +203,7 @@
 		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna40">
 				<label>Produtor</label>
-				<%=Html.TextBox("ProdutorPTV", Model.PTV.SemDocOrigem.Produtor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutor" }))%>
+				<%=Html.TextBox("ProdutorPTV", Model.PTV.SemDocOrigem.Produtor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutor",  @maxlength="50" }))%>
 			</div>
 			<div class="coluna20">
 				<label>CPF/CNPJ*</label>
@@ -214,7 +214,7 @@
 		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 			<div class="coluna70">
 				<label>Endereço</label>
-				<%=Html.TextBox("EnderecoProdutor", Model.PTV.SemDocOrigem.enderecoEmpreendimento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtEnderecoProdutor" }))%>
+				<%=Html.TextBox("EnderecoProdutor", Model.PTV.SemDocOrigem.enderecoEmpreendimento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtEnderecoProdutor", @maxlength="150" }))%>
 			</div>
 		</div>
 

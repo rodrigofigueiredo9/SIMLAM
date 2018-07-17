@@ -139,6 +139,7 @@ PTVEmitir = {
 	},
 
 	onTipoNumeroChange: function () {
+		debugger;
 		Mensagem.limpar();
 		$('.ddlSituacoes', PTVEmitir.container).ddlFirst();
 
@@ -381,6 +382,8 @@ PTVEmitir = {
 			$('.saldoContainer', tabela).addClass('hide');
 		} else {
 			$('.divNumeroDocumentoEnter').removeClass('hide');
+			//$('.ddlOrigemTipo').removeClass('disabled').removeAttr('disabled');
+			$('.ddlOrigemTipo').removeClass('disabled').removeAttr('disabled');
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
@@ -399,6 +402,7 @@ PTVEmitir = {
 	},
 
 	onChangeOrigemTipo: function () {
+		debugger;
 		Mensagem.limpar(PTVEmitir.container);
 
 		var labelOrigem = $('.labelOrigem', PTVEmitir.container);
@@ -409,28 +413,27 @@ PTVEmitir = {
 		}
 		
 		PTVEmitir.onLimparIdentificacaoProduto();	
-			
+
+		//Documentos CF/CFR e TR
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
-		    $('#EmpreendimentoTexto').removeAttr('disabled');
-		    $('#EmpreendimentoTexto').removeClass('disabled');
+			$('#EmpreendimentoTexto').removeAttr('disabled');
+			$('#EmpreendimentoTexto').removeClass('disabled');
 
-		    if ($(this).val() == "7") { // Tipo sem documento de origem
+			if ($(this).val() == "7") { // Tipo sem documento de origem
 
-		        $('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
-		        $('.labelOrigem', PTVEmitir.container).addClass('hide');
+				$('.txtNumeroOrigem', PTVEmitir.container).addClass('hide');
+				$('.labelOrigem', PTVEmitir.container).addClass('hide');
 
-		        $('label[for="NumeroOrigem"]').hide();
-		       
-		    } else {
-		        $('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
-		        $('.labelOrigem', PTVEmitir.container).removeClass('hide');
-		        $('label[for="NumeroOrigem"]').show();		       
+				$('label[for="NumeroOrigem"]').hide();
+
+			} else {
+				$('.txtNumeroOrigem', PTVEmitir.container).removeClass('hide');
+				$('.labelOrigem', PTVEmitir.container).removeClass('hide');
+				$('label[for="NumeroOrigem"]').show();
 			}
 
-			$('.ResponsavelEmpreendimento').removeClass('disabled');
-			$('.ResponsavelEmpreendimento').removeAttr('disabled');
-
+			$('.divResponsavelDDL').addClass('hide');
 			$('.divResponsavel').removeClass('hide');
 		}
 		else {
@@ -442,9 +445,7 @@ PTVEmitir = {
 		    $('.labelOrigem', PTVEmitir.container).removeClass('hide');
 		    $('label[for="NumeroOrigem"]').show();
 
-			$('.ResponsavelEmpreendimento').addClass('disabled');
-			$('.ResponsavelEmpreendimento').attr('disabled', 'disabled');
-
+			$('.divResponsavelDDL').removeClass('hide');
 			$('.divResponsavel').addClass('hide');
 		}
 
@@ -613,7 +614,7 @@ PTVEmitir = {
 		});
 	},
 
-	//Associoar Cultura
+	//Associar Cultura
 	associarCultura: function () {
 		Modal.abrir(PTVEmitir.settings.urls.urlAssociarCultura, null, function (container) {
 			CulturaListar.load(container, { onAssociarCallback: PTVEmitir.callBackAssociarCultura });
@@ -627,7 +628,12 @@ PTVEmitir = {
 		if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 			Mensagem.limpar(PTVEmitir.container);
 			MasterPage.carregando(true);
-			var origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+
+			var origemTipo = '0';
+			if ($('.rdbIsDocumentoOrigem  ', PTVEmitir.container)[0].checked) {
+				origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+			}
+
 			var culturaID = $('.ddlProdutoCultura', PTVEmitir.container).val();
 
 			$.ajax({
@@ -754,7 +760,12 @@ PTVEmitir = {
 	onObterUnidadeMedida: function () {
 		MasterPage.carregando(true);
 		var origemID = 0;
-		var origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+
+		var origemTipo = '0';
+		if ($('.rdbIsDocumentoOrigem  ', PTVEmitir.container)[0].checked) {
+			origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
+		}
+
 		var cultivarID = +$('.ddlProdutoCultivar', PTVEmitir.container).val();
 		var culturaID = +$('.ddlProdutoCultura', PTVEmitir.container).val();
 		if (origemTipo <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
@@ -1227,7 +1238,7 @@ PTVEmitir = {
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
-		debugger;
+		
 		var retorno = [];
 		$('.gridProdutos tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			retorno.push(JSON.parse($('.hdnItemJson', this).val()));

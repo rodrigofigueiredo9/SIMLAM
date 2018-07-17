@@ -1435,7 +1435,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 		/// <param name="origemTipo"></param>
 		/// <param name="origemID"></param>
 		/// <returns></returns>
-		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int anoEmissao, int ptv)
+		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int ptv)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{

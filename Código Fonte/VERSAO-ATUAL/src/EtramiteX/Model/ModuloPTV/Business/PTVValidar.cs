@@ -528,7 +528,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			{
 				if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.SemDocOrigem)
 				{
-					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvData.Data.GetValueOrDefault().Year, ptvID);
+					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvID);
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
