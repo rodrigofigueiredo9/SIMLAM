@@ -30,9 +30,23 @@
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td>
 					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.ID, NumeroTipo = item.NumeroTipo , Numero = item.Numero, CulturaCultivar = item.CulturaCultivar, SituacaoTexto = item.SituacaoTexto, Situacao = item.Situacao } ) %>" />
-					<% if (Model.PodeVisualizar) { %><input type="button" title="Visualizar PTV" class="icone visualizar btnVisualizar" /><% } %>
-					<input type="button" title="PDF do PTV" class="icone pdf btnPDF" />
-                    <% if (Model.PodeAnalisar) { %><input type="button" title="Analisar EPTV" class="icone recebido btnAnalisar" /><% } %>
+					<% if (Model.PodeVisualizar &&
+						   (item.Situacao == (int)eSolicitarPTVSituacao.Valido ||
+						    item.Situacao == (int)eSolicitarPTVSituacao.Invalido ||
+							item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)) {%>
+								<input type="button" title="Visualizar PTV" class="icone visualizar btnVisualizar" />
+					<% } %>
+					<% if (item.Situacao == (int)eSolicitarPTVSituacao.Valido ||
+						   item.Situacao == (int)eSolicitarPTVSituacao.Invalido) {%>
+								<input type="button" title="PDF do PTV" class="icone pdf btnPDF" />
+					<% } %>
+                    <% if (Model.PodeAnalisar &&
+							(item.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+							 item.Situacao == (int)eSolicitarPTVSituacao.AguardandoAnalise ||
+							 item.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)) { %>
+								<input type="button" title="Analisar EPTV" class="icone recebido btnAnalisar" />
+					<% } %>
+
 					<% if (Model.PodeAnalisar)
 					{ %><input type="button" title="Analisar Desbloqueio" class="icone comparar btnAnalisarDesbloqueio" /><% } %>
 								<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||

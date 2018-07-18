@@ -11,7 +11,7 @@ EPTVListar = {
 			urlComunicadorPTV: null,
 			urlAnalisarDesbloqueio: null,
 			urlVisualizar: null,
-			urlPDF: null
+			urlPDFEPTV: null
 		}
 	},
 
@@ -94,6 +94,6 @@ EPTVListar = {
 	
 	gerarPDF: function () {
 		var item = EPTVListar.obter(this);
-		MasterPage.redireciona(EPTVListar.settings.urls.urlPDF + '/' + item.Id);
+		MasterPage.redireciona(EPTVListar.settings.urls.urlPDFEPTV + '/' + item.Id);
 	}
 }
