@@ -2420,6 +2420,7 @@
     <Content Include="Views\PTV\AtivarPartial.ascx" />
     <Content Include="Views\PTV\CancelarPartial.ascx" />
     <Content Include="Views\PTV\Ativar.aspx" />
+    <Content Include="Views\PTV\EPTVPartialCredenciado.ascx" />
     <Content Include="Views\PTV\EPTVVisualizar.aspx" />
     <Content Include="Views\PTV\EPTVAnalisar.aspx" />
     <Content Include="Views\PTV\Criar.aspx" />
