@@ -480,21 +480,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				if (item.id <= 0)
 				{
-					using (BancoDeDados banco = BancoDeDados.ObterInstancia())
+					var notaFiscal = VerificarNumeroNFCaixa(item);
+					if (notaFiscal.id > 0)
+						item.id = notaFiscal.id;
+					else
 					{
-						comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
+						using (BancoDeDados banco = BancoDeDados.ObterInstancia())
+						{
+							comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
 												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
 
-						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-						comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
-						comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
-						comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+							comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
+							comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
+							comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
 
-						comando.AdicionarParametroSaida("id", DbType.Int32);
+							comando.AdicionarParametroSaida("id", DbType.Int32);
 
-						banco.ExecutarScalar(comando);
+							banco.ExecutarScalar(comando);
 
-						item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+							item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+						}
 					}
 				}
 
@@ -2219,8 +2225,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
 					SELECT ID,
-					(NF.SALDO_INICIAL - (SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)
-					+ (SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID)) SALDO_ATUAL
+					(NF.SALDO_INICIAL - (nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0)
+					+ nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0))) SALDO_ATUAL          
 					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);

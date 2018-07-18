@@ -90,9 +90,9 @@ PTVEmitir = {
 				$(select).data('options', options);
 	           
 				$(textbox).bind('change', function () {
-					if (!this.value.isNullOrWhitespace())
+					if (!this.value.isNullOrWhitespace() && !this.disabled)
 						$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).removeClass('disabled').removeAttr('disabled');
-
+					
 					$(select).empty();
 	                var search = $.trim($(this).val());
 	                var regex = new RegExp(search, 'gi');
@@ -173,7 +173,6 @@ PTVEmitir = {
 
 		$('.txtNumeroDua', PTVEmitir.container).focus();
 
-
 		$('#DataVistoria').keydown(function (e) {
 		    e.preventDefault();
 		    return false;
@@ -204,9 +203,9 @@ PTVEmitir = {
 	},
 
 	onChangeLocalVistoria: function () {
-
 		var ddl = PTVEmitir.container.find('.ddlLocalVistoria');
 		var ddlSelecionado = ddl.ddlSelecionado();
+
 		MasterPage.carregando(true);
 
 		$.ajax({
@@ -220,18 +219,19 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).data('options', response.DiasHorasVistoria);
-			    $('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
+				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).ddlLoad(response.DiasHorasVistoria);
 
 			    var txtData = JSON.stringify(response.DiasHorasVistoria).toString();
 			   
 			    var lstDatas = txtData.match(/\d{2}\/\d{2}\/\d{2}/g);
 
-			   
 			    datelist = lstDatas; // populate the array
 			   
 				$("#DataVistoria").datepicker("refresh"); //
-				$("#DataVistoria").val('');
 				$('.ddlDatahoraVistoriaporSetor', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+
+				if ($('.ddlLocalVistoria').data('anterior') != $('.ddlLocalVistoria').val() && $('.ddlLocalVistoria').data('anterior')) $("#DataVistoria").val('');
+				$('.ddlLocalVistoria').data('anterior', $('.ddlLocalVistoria').val());
 			}
 		});
 		MasterPage.carregando(false);

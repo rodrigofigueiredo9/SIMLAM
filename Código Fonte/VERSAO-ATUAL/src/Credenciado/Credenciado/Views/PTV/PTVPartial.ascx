@@ -469,28 +469,31 @@
 
    <!-- Arquivo -->
 	<fieldset class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<legend>Anexos</legend>
-		<div class="block">
-			<div class="coluna60 inputFileDiv">
-				<label for="ArquivoTexto">Arquivo *</label>
-				<%= Html.TextBox("Roteiro.Arquivo.Nome", null, new { readOnly = "true", @class = "text txtArquivoNome", @style = "display: none;" })%>
-				<input type="hidden" class="hdnArquivo" name="hdnArquivo" />
-				<div class="anexoArquivos">
-				</div>
-				<input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" />
-			</div>
-		</div>
-		<div class="block">
-			<div class="coluna60">
-				<label for="Descricao">
-					Descrição *</label>
-				<%= Html.TextBox("Descricao", null, new { @maxlength = "100", @class = "text txtAnexoDescricao" })%>
-			</div>
-			<div class="coluna10 botoesAnexoDiv">
-				<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAddAnexoArquivo" title="Adicionar anexo"
-					onclick="PTVEmitir.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">Adicionar</button>
-			</div>
-		</div>
+        <legend>Anexos</legend>
+        <% if (!Model.IsVisualizar) { %>
+        <div class="block">
+            <div class="coluna60 inputFileDiv">
+                <label for="ArquivoTexto">Arquivo *</label>
+                <%= Html.TextBox("Roteiro.Arquivo.Nome", null, new { readOnly = "true", @class = "text txtArquivoNome", @style = "display: none;" })%>
+                <input type="hidden" class="hdnArquivo" name="hdnArquivo" />
+                <div class="anexoArquivos">
+                </div>
+                <input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" />
+            </div>
+        </div>
+        <div class="block">
+            <div class="coluna60">
+                <label for="Descricao">
+                    Descrição *</label>
+                <%= Html.TextBox("Descricao", null, new { @maxlength = "100", @class = "text txtAnexoDescricao" })%>
+            </div>
+            <div class="coluna10 botoesAnexoDiv">
+                <button type="button" style="width: 35px" class="inlineBotao botaoAdicionarIcone btnAddAnexoArquivo" title="Adicionar anexo"
+                    onclick="PTVEmitir.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">
+                    Adicionar</button>
+            </div>
+        </div>
+        <% } %>
 
 		<div class="block dataGrid">
 			<label class="lblGridVazio <%= Model.PTV.Anexos.Count > 0 ? "hide" : "" %>">Não existe anexo adicionado.</label>
@@ -500,7 +503,7 @@
 					<tr>
 						<th>Arquivo</th>
 						<th>Descrição</th>
-						<th width="15%">Ações</th>
+						<% if (!Model.IsVisualizar) { %><th width="15%">Ações</th><% } %>
 					</tr>
 				</thead>
 				<tbody>
@@ -519,17 +522,19 @@
 						<td>
 							<span title="<%= Html.Encode(anexo.Descricao) %>" class="AnexoDescricao"><%= Html.Encode(anexo.Descricao) %></span>
 							<input type="hidden" class="hdnAnexoDescricao" name="PTV.Anexos[<%= y %>].Descricao" value="<%= Html.Encode(anexo.Descricao) %>" />
-						</td>
-						<td>
-							<input type="hidden" class="hdnAnexoArquivoJson" name="PTV.Anexos[<%= y %>].Arquivo" value="<%: ViewModelHelper.JsSerializer.Serialize(anexo.Arquivo) %>" />
-							<input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
-							<input title="Subir" class="icone acima btnSubirLinha" type="button" />
-							<input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
-						</td>
-					</tr>
-					<% } %>
-				</tbody>
-			</table>
+                        </td>
+                        <% if (!Model.IsVisualizar) { %>
+                        <td>
+                            <input type="hidden" class="hdnAnexoArquivoJson" name="PTV.Anexos[<%= y %>].Arquivo" value="<%: ViewModelHelper.JsSerializer.Serialize(anexo.Arquivo) %>" />
+                            <input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
+                            <input title="Subir" class="icone acima btnSubirLinha" type="button" />
+                            <input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
+                        </td>
+                    </tr>
+                    <% } %>
+                    <% } %>
+                </tbody>
+            </table>
 			<table style="display: none">
 				<tbody>
 					<tr class="trAnexoTemplate">
@@ -545,11 +550,13 @@
 							<input type="hidden" class="hdnAnexoDescricao" name="templatePTV.Anexos[#Index].Descricao" value="#DESCRICAO" />
 						</td>
 						<td>
-							<input type="hidden" class="hdnAnexoArquivoJson" name="templatePTV.Anexos[#Index].Arquivo" value="#ARQUIVOJSON" />
-							<input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
-							<input title="Subir" class="icone acima btnSubirLinha" type="button" />
-							<input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
-						</td>
+                            <input type="hidden" class="hdnAnexoArquivoJson" name="templatePTV.Anexos[#Index].Arquivo" value="#ARQUIVOJSON" />
+                            <% if (!Model.IsVisualizar) { %>
+                            <input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
+                            <input title="Subir" class="icone acima btnSubirLinha" type="button" />
+                            <input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
+                            <% } %>
+                        </td>
 					</tr>
 				</tbody>
 			</table>
