@@ -1441,7 +1441,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 		/// <param name="origemTipo"></param>
 		/// <param name="origemID"></param>
 		/// <returns></returns>
-		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int anoEmissao, int ptv)
+		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int ptv)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
@@ -2456,7 +2456,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					reader.Close();
 				}
 				return nf;
-				//return (bancoDeDados.ExecutarScalar<int>(comando));
 			}
 		}
 
@@ -2787,12 +2786,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			{
 				bancoDeDados.IniciarTransacao();
 				var sqlAprovado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido) ? ", p.data_ativacao = sysdate " : string.Empty;
+				var sqlExibirMensagemCredenciado = (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
+					eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao) ? ", p.exibir_msg_credenciado = 1 " : string.Empty;
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao,
 					p.motivo = :motivo, p.local_fiscalizacao = :local_fiscalizacao, p.hora_fiscalizacao = :hora_fiscalizacao,
 					p.informacoes_adicionais = :informacoes_adicionais, p.partida_lacrada_origem = :partida_lacrada_origem,
 					p.numero_lacre = :numero_lacre, p.numero_porao = :numero_porao, p.numero_container = :numero_container,
-					p.situacao_data = sysdate " + sqlAprovado + " where p.id = :id", UsuarioCredenciado);
+					p.situacao_data = sysdate " + sqlAprovado + sqlExibirMensagemCredenciado  + " where p.id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", eptv.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", eptv.Situacao, DbType.Int32);
@@ -2818,8 +2821,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
 					historicoAcao = eHistoricoAcao.bloquear;/*TODO:--Bloquear*/
 
-				Historico.Gerar(eptv.Id, eHistoricoArtefato.emitirptv, historicoAcao, bancoDeDados);
-
+				Historico.Gerar(eptv.Id, eHistoricoArtefato.emitirptv, historicoAcao, bancoDeDados);			
+				
 				bancoDeDados.Commit();
 			}
 		}
@@ -2862,6 +2865,78 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 		}
 
 		#endregion
+
+		#region Alerta EPTV
+
+		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select count(1) qtd
+													  from {0}Tab_Ptv pt
+													  where Pt.Local_Vistoria in ( select S.Setor
+													                               from {1}Tab_Funcionario_Setor s
+													                               where S.Funcionario = :idFuncionario )
+													  and pt.situacao = 2", UsuarioCredenciado, EsquemaBanco);
+				comando.AdicionarParametroEntrada("idFuncionario", idFuncionario, DbType.Int32);
+
+				int quantidade = bancoDeDados.ExecutarScalar<int>(comando);
+
+				return quantidade;
+			}
+		}
+
+		public PTV ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			var ptv = new PTV();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero
+													  from {0}Tab_Ptv pt
+													  where Pt.Local_Vistoria in ( select S.Setor
+													                               from {1}Tab_Funcionario_Setor s
+													                               where S.Funcionario = :idFuncionario )
+													  and pt.exibir_mensagem = 1
+													  and rownum = 1", UsuarioCredenciado, EsquemaBanco);
+				comando.AdicionarParametroEntrada("idFuncionario", idFuncionario, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						ptv = new PTV()
+						{
+							Id = reader.GetValue<int>("id"),
+							Numero = reader.GetValue<long>("numero")
+						};
+					}
+				}
+
+			}
+
+			#region Exibir_Mensagem
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafcredenciado"))
+			{
+				if (ptv?.Id > 0)
+				{
+					Comando comando = null;
+
+					comando = bancoDeDados.CriarComando(@"update {0}Tab_Ptv pt set pt.exibir_mensagem = 0
+													  where pt.id = :ptv_id", UsuarioCredenciado, EsquemaBanco);
+					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
+					bancoDeDados.ExecutarScalar(comando);
+				}
+			}
+
+			#endregion Exibir_Mensagem
+
+			return ptv;
+		}
+
+		#endregion Alerta EPTV
 
 		internal bool ExisteAssinaturaDigital(int funcionarioId)
 		{

@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 
 Mensagem = {
 
@@ -65,13 +65,23 @@ Mensagem = {
 		msg.addClass(arrayCss[tipo]);
 		var ul = msg.find("ul");
 		var totalLength = 0;
+		var msgLength = 0;
 
 		for (var i = 0; i < arrayMsg.length; i++) {
-			ul.append($("<li></li>").text(arrayMsg[i].Texto));
+			var textoQuebrado = arrayMsg[i].Texto.split('\n');
+			if (textoQuebrado.length > 0) {
+				textoQuebrado.forEach(function (texto) {
+					ul.append($("<li></li>").text(texto));
+				});
+			}
+			else {
+				ul.append($("<li></li>").text(arrayMsg[i].Texto));
+			}
 			totalLength += arrayMsg[i].Texto.length;
+			msgLength += textoQuebrado.length > 0 ? textoQuebrado.length : 1;
 		}
 
-		if (totalLength >= 230 || arrayMsg.length >= 3) {
+		if (totalLength >= 230 || msgLength >= 3) {
 			msg.find(".linkVejaMaisMensagens").show();
 		}
 

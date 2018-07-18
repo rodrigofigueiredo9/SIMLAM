@@ -118,7 +118,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				ptv,
 				_busLista.PTVSituacao.Where(x => Convert.ToInt32(x.Id) != (int)eDocumentoFitossanitarioSituacao.Cancelado).ToList(),
 				new List<ListaValor>(),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				new List<LaudoLaboratorial>(),
 				_busPTV.ObterCultura(),
@@ -152,7 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				ptv,
 				_busLista.PTVSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				lstLaboratorio,
 				_busPTV.ObterCultura(),
@@ -182,7 +182,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				ptv,
 				_busLista.PTVSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				lstLaboratorio,
 				_busPTV.ObterCultura(),
@@ -784,7 +784,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
+			_busPTV.ObterResponsavelTecnico(733).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
 
 			PTVVM vm = new PTVVM(
 				ptv,
@@ -925,5 +925,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult AlertaEPTV()
+		{
+			_busPTV.VerificarAlertaChegadaMensagemEPTV();
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+			}, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

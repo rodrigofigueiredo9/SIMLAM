@@ -2405,6 +2405,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Exibir_Mensagem
+
+				comando = bancoDeDados.CriarComando(@"update {0}tab_ptv
+															set exibir_mensagem = 1
+															where id = :ptv_id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("ptv_id", comunicador.PTVId, DbType.Int32);
+
+				bancoDeDados.ExecutarScalar(comando);
+
+				#endregion Exibir_Mensagem
+
 				Historico.Gerar(conversa.Id, eHistoricoArtefato.ptvcomunicador, eHistoricoAcao.enviar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -2494,6 +2506,85 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		}
 
 		#endregion
+
+		#region Alerta EPTV
+
+		public PTV ObterNumeroPTVExibirMensagemCredenciado(int credenciadoId, BancoDeDados banco = null)
+		{
+			var ptv = new PTV();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, (select s.nome from {0}tab_setor s where s.id= pt.local_vistoria) local_vistoria_texto,
+														(select hora_inicio from cnf_local_vistoria lv where pt.data_hora_vistoria = lv.id) data_hora_vistoria_texto
+													  from {0}tab_Ptv pt
+													  where pt.credenciado = :credenciado
+													  and pt.exibir_msg_credenciado = 1
+													  and rownum = 1", EsquemaBanco);
+				comando.AdicionarParametroEntrada("credenciado", credenciadoId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						ptv = new PTV()
+						{
+							Id = reader.GetValue<int>("id"),
+							Numero = reader.GetValue<long>("numero"),
+							Situacao = reader.GetValue<int>("situacao"),
+							LocalVistoriaTexto = reader.GetValue<string>("local_vistoria_texto"),
+							DataHoraVistoriaTexto = reader.GetValue<string>("data_hora_vistoria_texto")
+						};
+					}
+				}
+			}
+
+			if (ptv?.Id > 0)
+			{
+				#region Exibir_Mensagem
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+				{
+					Comando comando = null;
+					comando = bancoDeDados.CriarComando(@"update {0}tab_Ptv pt set pt.exibir_msg_credenciado = 0
+													where pt.id = :ptv_id ", EsquemaBanco);
+					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
+					bancoDeDados.ExecutarScalar(comando);
+				}
+
+				#endregion Exibir_Mensagem
+
+				ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
+			}
+
+			return ptv;
+		}
+
+		private string GetSituacaoMotivo(int ptvId, BancoDeDados banco = null)
+		{
+			string situacaoMotivo = "";
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select cv.texto from {0}tab_ptv_comunicador c, {0}tab_ptv_comuni_conversa cv
+														where c.id = cv.comunicador_id
+														and c.ptv_id = :ptv_id
+														and rownum = 1
+														order by cv.id desc", UsuarioCredenciado, EsquemaBanco);
+				comando.AdicionarParametroEntrada("ptv_id", ptvId, DbType.Int32);
+
+				using (IDataReader readerConversa = bancoDeDados.ExecutarReader(comando))
+				{
+					if (readerConversa.Read())
+						situacaoMotivo = readerConversa.GetValue<string>("texto");
+				}
+			}
+
+			return situacaoMotivo;
+		}
+
+		#endregion Alerta EPTV
 
 		internal bool EmpreendimentoPossuiEPTVBloqueado(int empreendimentoID, BancoDeDados banco = null)
 		{
