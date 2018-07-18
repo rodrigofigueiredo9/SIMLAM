@@ -1325,6 +1325,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 
 				comandtxt += comando.FiltroAndLike("l.numero_autuacao", "numero_autuacao", filtros.Dados.NumeroAutuacao);
 
+				comandtxt += comando.FiltroIn("l.numero_autuacao", "select t.protocolo from tab_tramitacao t where t.protocolo = :numero_autuacao", "numero_autuacao", filtros.Dados.NumeroAutuacaoDoc);
+
 				comandtxt += comando.FiltroIn("l.setor_criacao_id", string.Format("select tse.setor from {0}tab_setor_endereco tse where tse.municipio = :municipio", (string.IsNullOrEmpty(EsquemaBanco) ? "" : ".")), "municipio", filtros.Dados.Municipio);
 
 				if (!filtros.Dados.DataRegistro.IsEmpty && filtros.Dados.DataRegistro.IsValido)

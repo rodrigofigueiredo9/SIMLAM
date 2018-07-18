@@ -84,8 +84,8 @@
 					<%= Html.TextBox("Filtros.Assunto", null, new { @class = "text txtAssunto" })%>
 				</div>
 				<div class="coluna28 prepend1">
-					<label for="Filtros_NumeroAutuacao">Número de autuação (SEP)</label>
-					<%= Html.TextBox("Filtros.NumeroAutuacao", null, new { @class = "text txtNumero" })%>
+					<label for="Filtros_NumeroAutuacaoDoc">Número de autuação (SEP)</label>
+					<%= Html.TextBox("Filtros.NumeroAutuacaoDoc", null, new { @class = "text txtNumero" })%>
 				</div>
 			</div>
 		</div>
