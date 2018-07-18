@@ -576,6 +576,30 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
+		public ActionResult GerarPdfEPTV(int id)
+		{
+			try
+			{
+				if (HttpContext.User != null && HttpContext.User.Identity.IsAuthenticated)
+				{
+					PdfEmissaoPTV pdf = new PdfEmissaoPTV();
+					PTV PTV = _busPTV.ObterPorIDCredenciado(id, simplificado: true);
+
+					return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(PTV.Id, PTV.Tid, PTV.Situacao, PTV.SituacaoTexto), "PTV", dataHoraControleAcesso: true);
+				}
+
+				Validacao.Add(Mensagem.Funcionario.SemPermissao);
+				return Redirect(FormsAuthentication.LoginUrl);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+				return RedirectToAction("Index", "PTV", Validacao.QueryParamSerializer());
+			}
+		}
+
 		#endregion
 
 		#endregion
@@ -881,6 +905,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.IsVisualizar = true;
 			return View("EPTVVisualizar", vm);
 		}
+
+
+
 
 		#endregion EPTV
 
