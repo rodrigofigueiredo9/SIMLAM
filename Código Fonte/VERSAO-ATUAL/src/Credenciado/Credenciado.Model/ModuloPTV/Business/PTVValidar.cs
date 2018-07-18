@@ -619,7 +619,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			PTV eptv = _da.Obter(idPTV, true);
 			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
-                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
+                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao &&
+                eptv.Situacao != (int)eSolicitarPTVSituacao.Rejeitado )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;

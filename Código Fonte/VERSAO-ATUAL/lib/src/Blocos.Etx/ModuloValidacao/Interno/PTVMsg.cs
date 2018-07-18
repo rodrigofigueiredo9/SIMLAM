@@ -8,6 +8,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 	partial class Mensagem
 	{
+		public int Id { get; set; }
+
 		private static PTVMsg _emissaoPTVMsg = new PTVMsg();
 
 		public static PTVMsg PTV
@@ -161,6 +163,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem DataPTVInvalida { get { return new Mensagem() { Campo = "DataAtivacao", Texto = "Data de validade do PTV deve ser maior ou igual a data atual.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem DestinatarioNaoCadastrado { get { return new Mensagem() { Campo = "DestinararioCPFCNPJ", Texto = "O destinatário não está cadastrado, favor clique em 'Novo'.", Tipo = eTipoMensagem.Advertencia }; } }
 
+		public Mensagem NumeroDocumentoDeOrigemObrigatório { get { return new Mensagem() { Campo = "", Texto = "O número do documento de origem precisa ter um valor.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDocumentoDeOrigemTipoNumerico { get { return new Mensagem() { Campo = "", Texto = "O número do documento de origem precisa ser do tipo numérico.", Tipo = eTipoMensagem.Advertencia }; } }
+
 		#endregion
 
 		#region PTVComunicador
@@ -179,6 +184,92 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
+		#endregion
+
+		#region Alerta de E-PTV
+
+		public Mensagem ExistemEPTVsAguardandoAnalise(int qtd)
+		{
+			return new Mensagem() {
+				Texto = String.Format("Existem {0} E-PTVs aguardando análise.", qtd),
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTV"
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTV(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"Há uma nova mensagem referente à EPTV {numero}.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTV",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVAprovada(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi aprovada e pode ser impressa. \n " +
+						$"Não esqueça de que, para o trânsito, é necessário que os documentos originais anexados na solicitação acompanhem a E-PTV.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVAprovada",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVBloqueada(long numero, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi bloqueada. Seu empreendimento está bloqueado para emissão de novas PTVs. " +
+					    $"Favor entrar em contato com o local para onde foi solicitada a vistoria da carga.",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVBloqueada",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVRejeitada(long numero, string motivo, int id)
+		{
+			return new Mensagem()
+			{
+				Texto = $"A E-PTV {numero} foi rejeitada. \n" +
+						$"Motivo: {motivo}",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVRejeitada",
+				Id = id
+			};
+		}
+
+		public Mensagem ChegadaMensagemEPTVFiscalizacaoAgendada(long numero, string local, string hora, string info)
+		{
+			return new Mensagem()
+			{
+				Texto = $"Foi agendada fiscalização para a E-PTV {numero}. \n" +
+						$"Local: {local} \n" +
+						$"Hora: {hora} \n" +
+						$"Informação adicional: {info}",
+				Tipo = eTipoMensagem.Informacao,
+				Campo = "AlertaEPTVFiscalizacaoAgendada"
+			};
+		}
+
+		#endregion Alerta de E-PTV
+
+		#region NotaFiscalCaixa
+		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Campo = "", Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDeCaixasMaiorQueSaldoAtual { get { return new Mensagem() { Campo = "", Texto = "Você não pode consumir mais caixas que o saldo atual.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoInicialMaiorQueZero { get { return new Mensagem() { Campo = "", Texto = "O saldo inicial precisa ser maior que zero.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem SaldoENumeroCaixasRequerid { get { return new Mensagem() { Campo = "", Texto = "Os campos saldo inicial e número de caixas precisam ser maior que 0.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem InserirGridCaixaNumerosNFIguais { get { return new Mensagem() { Campo = "", Texto = "Esse N° da nota fiscal de caixa já foi inserido.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NenhumaNFCaixaAdicionada { get { return new Mensagem() { Campo = "", Texto = "Você não adicionou nenhuma Nota Fiscal de caixa.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NumeroDiferenteDoTipo(string numero, string tipo)
+		{
+			return new Mensagem() { Texto = String.Format("A nota fiscal {0} está cadastrada com o tipo {1}.", numero, tipo), Tipo = eTipoMensagem.Advertencia };
+		}
 		#endregion
 	}
 }

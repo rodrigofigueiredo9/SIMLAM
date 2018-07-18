@@ -88,10 +88,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
+    <Compile Include="TestClass\EPTVTest.cs" />
     <Compile Include="TestClass\CobrancaTest.cs" />
-    <Compile Include="TestClass\VrteTest.cs" />
-    <Compile Include="TestClass\ParametrizacaoTest.cs" />
-    <Compile Include="TestClass\NotificacaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ControllerContextMock.cs" />
   </ItemGroup>
