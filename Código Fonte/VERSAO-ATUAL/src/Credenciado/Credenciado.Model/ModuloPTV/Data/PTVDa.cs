@@ -2284,6 +2284,107 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
+		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int ptv)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				string query = string.Empty;
+
+				switch (origemTipo)
+				{
+					case eDocumentoFitossanitarioTipo.CFO:
+					case eDocumentoFitossanitarioTipo.CFOC:
+					case eDocumentoFitossanitarioTipo.PTV:
+						query = @"
+						select (
+						/*LOTE*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_lote t, tab_lote_item i
+						where i.lote = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida), 0)
+						+
+						/*EPTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_ptv t, tab_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3), 0)
+						+
+						/*PTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from ins_ptv t, ins_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3
+						and t.id != :ptv), 0)) saldo_utilizado from dual";
+						break;
+					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+						query = @"
+						select (
+						/*LOTE*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_lote t, tab_lote_item i
+						where i.lote = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem_numero = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida), 0)
+						+
+						/*EPTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_ptv t, tab_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.numero_origem = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3), 0)
+						+
+						/*PTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from ins_ptv t, ins_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.numero_origem = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3
+						and t.id != :ptv), 0)) saldo_utilizado from dual";
+						break;
+				}
+
+				Comando comando = bancoDeDados.CriarComando(query, UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("ptv", ptv, DbType.Int32);
+				comando.AdicionarParametroEntrada("origem_tipo", (int)origemTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("cultivar", cultivarID, DbType.Int32);
+				comando.AdicionarParametroEntrada("unidade_medida", unidadeMedida, DbType.Int32);
+
+				switch (origemTipo)
+				{
+					case eDocumentoFitossanitarioTipo.CFO:
+					case eDocumentoFitossanitarioTipo.CFOC:
+					case eDocumentoFitossanitarioTipo.PTV:
+						comando.AdicionarParametroEntrada("origem", origemID, DbType.Int32);
+						break;
+					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+						comando.AdicionarParametroEntrada("origem_numero", origemNumero, DbType.String);
+						break;
+				}
+
+				return Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
 		#endregion
 
 		#region Comunicador
@@ -2521,8 +2622,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				Comando comando = null;
-				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, (select s.nome from {0}tab_setor s where s.id= pt.local_vistoria) local_vistoria_texto,
-														(select hora_inicio from cnf_local_vistoria lv where pt.data_hora_vistoria = lv.id) data_hora_vistoria_texto
+				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, pt.local_fiscalizacao, pt.hora_fiscalizacao, pt.informacoes_adicionais
 													  from {0}tab_Ptv pt
 													  where pt.credenciado = :credenciado
 													  and pt.exibir_msg_credenciado = 1
@@ -2538,17 +2638,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							Id = reader.GetValue<int>("id"),
 							Numero = reader.GetValue<long>("numero"),
 							Situacao = reader.GetValue<int>("situacao"),
-							LocalVistoriaTexto = reader.GetValue<string>("local_vistoria_texto"),
-							DataHoraVistoriaTexto = reader.GetValue<string>("data_hora_vistoria_texto")
+							LocalVistoriaTexto = reader.GetValue<string>("local_fiscalizacao"),
+							DataHoraVistoriaTexto = reader.GetValue<string>("hora_fiscalizacao"),
+							SituacaoMotivo = reader.GetValue<string>("informacoes_adicionais")
 						};
 					}
 				}
 			}
 
+			#region Exibir_Mensagem
+
 			if (ptv?.Id > 0)
 			{
-				#region Exibir_Mensagem
-
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 				{
 					Comando comando = null;
@@ -2557,37 +2658,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
 					bancoDeDados.ExecutarScalar(comando);
 				}
-
-				#endregion Exibir_Mensagem
-
-				ptv.SituacaoMotivo = GetSituacaoMotivo(ptv.Id, banco);
 			}
+
+			#endregion Exibir_Mensagem
 
 			return ptv;
-		}
-
-		private string GetSituacaoMotivo(int ptvId, BancoDeDados banco = null)
-		{
-			string situacaoMotivo = "";
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
-			{
-				Comando comando = null;
-				comando = bancoDeDados.CriarComando(@"select cv.texto from {0}tab_ptv_comunicador c, {0}tab_ptv_comuni_conversa cv
-														where c.id = cv.comunicador_id
-														and c.ptv_id = :ptv_id
-														and rownum = 1
-														order by cv.id desc", UsuarioCredenciado, EsquemaBanco);
-				comando.AdicionarParametroEntrada("ptv_id", ptvId, DbType.Int32);
-
-				using (IDataReader readerConversa = bancoDeDados.ExecutarReader(comando))
-				{
-					if (readerConversa.Read())
-						situacaoMotivo = readerConversa.GetValue<string>("texto");
-				}
-			}
-
-			return situacaoMotivo;
 		}
 
 		#endregion Alerta EPTV

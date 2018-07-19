@@ -739,6 +739,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
 					break;
 			}
+
+			decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)prod.OrigemTipo, prod.Origem, prod.OrigemNumero, prod.Cultivar, prod.UnidadeMedida, 0);    //o último parâmetro, idPTV, nesse caso não importa, porque o PTV atual não deve ser desconsiderado do cálculo
+
+			saldo = saldo - saldoOutrosDoc;
+
 			return saldo;
 		}
 

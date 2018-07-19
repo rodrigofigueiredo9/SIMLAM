@@ -59,10 +59,12 @@ EPTVAnalisar = {
 
 	salvar: function () {
 		var objeto = EPTVAnalisar.obter();
-
-		if (!EPTVAnalisar.validarHora(objeto.HoraFiscalizacao)) {
-			Mensagem.gerar(MasterPage.getContent(EPTVAnalisar.container), [EPTVAnalisar.settings.Mensagens.HoraInvalida]);
-			return;
+		
+		if (objeto.Situacao == 5/*Agendar Fiscalização*/) {
+			if (!EPTVAnalisar.validarHora(objeto.HoraFiscalizacao)) {
+				Mensagem.gerar(MasterPage.getContent(EPTVAnalisar.container), [EPTVAnalisar.settings.Mensagens.HoraInvalida]);
+				return;
+			}
 		}
 
 		MasterPage.carregando(true);

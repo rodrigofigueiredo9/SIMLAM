@@ -406,7 +406,7 @@ PTVEmitir = {
 			labelOrigem.text(option.text());
 		}
 
-		PTVEmitir.onLimparIdentificacaoProduto(this);
+		PTVEmitir.onLimparIdentificacaoProduto(true);
 
 		if (($(this).val() > PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
 
@@ -721,7 +721,7 @@ PTVEmitir = {
 		if (item.OrigemTipo == '1' || item.OrigemTipo == '2' || item.OrigemTipo == '3') {
 			PTVEmitir.onTratamentoFitossanitário();
 			PTVEmitir.onPossuiLaudoLaboratorial();
-			PTVEmitir.onLimparIdentificacaoProduto(this);
+			PTVEmitir.onLimparIdentificacaoProduto();
 		}
 	},
 
@@ -766,7 +766,7 @@ PTVEmitir = {
 		}
 	},
 
-	onLimparIdentificacaoProduto: function (ctrl) {
+	onLimparIdentificacaoProduto: function (manterTipo) {
 		$('.btnLimparDocumentoOrigem', PTVEmitir.container).addClass('hide');
 		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
 		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
@@ -776,7 +776,7 @@ PTVEmitir = {
 		$('.hdnEmpreendimentoOrigemNome', PTVEmitir.container).val('');
 		$('.txtSaldoDocOrigem', PTVEmitir.container).val('');
 
-		if (($(ctrl ? ctrl : this).val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado)) {
+		if ($('.ddlOrigemTipo').val() <= PTVEmitir.settings.idsOrigem.origemPTVOutroEstado) {
 			$('.btnVerificarDocumentoOrigem', PTVEmitir.container).removeClass('hide');
 			$('.identificacaoCultura', PTVEmitir.container).addClass('hide');
 			$('.culturaBuscar', PTVEmitir.container).addClass('hide');
@@ -786,6 +786,10 @@ PTVEmitir = {
 			$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
 		}
 		$('.saldoContainer', PTVEmitir.container).addClass('hide');
+
+		if (manterTipo != true) {
+			$('.ddlOrigemTipo').val('0');
+		}
 	},
 
 	onExcluirIdentificacaoProduto: function () {
@@ -1301,7 +1305,7 @@ PTVEmitir = {
 			Numero: $('.txtNumero', PTVEmitir.container).val(),
 			DataEmissao: { DataTexto: $('.txtDataEmissao', PTVEmitir.container).val() },
 			Situacao: $('.ddlSituacoes', PTVEmitir.container).val(),
-			Empreendimento: $('.hdnEmpreendimentoOrigemID', PTVEmitir.container).val(),
+			Empreendimento: $('.hdnEmpreendimentoID', PTVEmitir.container).val(),
 			EmpreendimentoTexto: $('.txtEmpreendimento', PTVEmitir.container).val(),
 			ResponsavelEmpreendimento: $('.ddlResponsaveis', PTVEmitir.container).val(),
 			PartidaLacradaOrigem: $('.rbPartidaLacradaOrigem:checked', PTVEmitir.container).val(),
