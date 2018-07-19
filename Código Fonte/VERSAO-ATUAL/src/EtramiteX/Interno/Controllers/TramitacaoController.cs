@@ -307,6 +307,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					});
 				}
 			}
+
+			if (!String.IsNullOrWhiteSpace(vm.NumeroAutuacao))
+			{
+				vm.Tramitacoes.ForEach(x =>
+				{
+					Arquivar(new ArquivarVM()
+					{
+						Arquivar = new Arquivar
+						{
+							SetorId = x.RemetenteSetor.Id,
+							ObjetivoId = vm.Enviar.ObjetivoId,
+							ArquivoId = 255,
+							EstanteId = 542,
+							PrateleiraModoId = 3383,
+							PrateleiraId = 3383,
+							Despacho = "Arquivamento automático"
+						}
+					});
+				});
+			}
+
 			return Json(new { IsTramitacoesEnviadas = false, Msg = Validacao.Erros });
 		}
 
