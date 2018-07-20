@@ -289,24 +289,38 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				{
 					List<int> ids = new List<int>();
 					string urlRedireciona = string.Empty;
-
-					vm.Tramitacoes.ForEach(x =>
-					{
-						ids.Add(x.Id);
-					});
-
 					urlRedireciona = Url.Action("Index", "Tramitacao");
-					urlRedireciona += "?Msg=" + Validacao.QueryParam() + "&acaoId=" + HttpUtility.HtmlEncode(String.Join(",", ids));
+
+					if (!String.IsNullOrWhiteSpace(vm.Enviar.NumeroAutuacao))
+					{
+						if (Validacao.EhValido)
+							Validacao.Erros.Clear();
+						_bus.Receber(vm.Tramitacoes);
+						Arquivar(new ArquivarVM()
+						{
+							Arquivar = _busArquivamento.ObterArquivamentoAutomatico(vm.Enviar.Despacho, vm.Enviar.ObjetivoId),
+							Itens = vm.Tramitacoes
+						});
+						urlRedireciona += "?Msg=" + Validacao.QueryParam();
+					}
+					else
+					{
+						vm.Tramitacoes.ForEach(x =>
+						{
+							ids.Add(x.Id);
+						});
+						urlRedireciona += "?Msg=" + Validacao.QueryParam() + "&acaoId=" + HttpUtility.HtmlEncode(String.Join(",", ids));
+					}
 
 					return Json(new
 					{
 						IsTramitacoesEnviadas = Validacao.EhValido,
 						UrlRedireciona = urlRedireciona,
-						//@Tramitacoes = vm.Tramitacoes, 
 						Msg = Validacao.Erros
 					});
 				}
-			}
+			}	
+
 			return Json(new { IsTramitacoesEnviadas = false, Msg = Validacao.Erros });
 		}
 
@@ -1268,22 +1282,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.TramitacaoArquivar })]
 		public ActionResult Arquivar(ArquivarVM vm)
-		{
-			vm.Arquivar.DataArquivamento.Data = DateTime.Today;
-			vm.Arquivar.Funcionario.Id = _busArquivamento.User.FuncionarioId;
-
-			foreach (Tramitacao tramitacao in vm.Itens)
-			{
-				tramitacao.Arquivamento = vm.Arquivar;
-				tramitacao.Objetivo.Id = vm.Arquivar.ObjetivoId;
-				tramitacao.Despacho = vm.Arquivar.Despacho;
-				tramitacao.Tipo = (int)eTramitacaoTipo.Normal;
-				tramitacao.SituacaoId = (int)eTramitacaoSituacao.Arquivado;
-				tramitacao.Executor.Id = _busArquivamento.User.FuncionarioId;
-				tramitacao.Remetente.Id = _busArquivamento.User.FuncionarioId;
-				tramitacao.RemetenteSetor.Id = vm.Arquivar.SetorId;
-			}
-
+		{	
 			_busArquivamento.Arquivar(vm.Arquivar, vm.Itens);
 
 			return Json(

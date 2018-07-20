@@ -10,6 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public String Numero { get; set; } // registro
 		public String Nome { get; set; }
 		public string NumeroAutuacao { get; set; }
+		public string NumeroAutuacaoDoc { get; set; }
 		public int Tipo { get; set; }
 		public int Acao { get; set; }
 		public int ProtocoloId { get; set; }
