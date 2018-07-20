@@ -62,6 +62,8 @@
 				if ($(".containerAcoes").length == 0) {
 					$.get('<%= Url.Action("AlertaEPTV", "PTV") %>')
 						.done(function (response) {
+							if (response.Msg.length == 0) return;
+
 							Mensagem.gerar($(".containerAcoes"), response.Msg);
 							var mensagem = response.Msg[0];
 

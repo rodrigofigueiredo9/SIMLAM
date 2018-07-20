@@ -839,8 +839,8 @@ PTVEmitir = {
 				$('.identificacaoCultura', PTVEmitir.container).removeClass('hide');
 				$('.culturaBuscar', PTVEmitir.container).removeClass('hide');
 			}
-			$('.saldoContainer', PTVEmitir.container).addClass('hide');
 		}
+		$('.saldoContainer', PTVEmitir.container).addClass('hide');
 
 		if (manterTipo != true) {
 			$('.ddlOrigemTipo').val('0');

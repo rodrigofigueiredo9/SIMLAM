@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV.Destinatario;
@@ -66,6 +64,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public bool TemAssinatura { get; set; }
 
 		public int Credenciado { get; set; }
+		public string CredenciadoNome { get; set; }
 
 		public List<Anexo> Anexos { get; set; }
 
@@ -77,6 +76,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
 		public List<NotaFiscalCaixa> NotaFiscalDeCaixas { get; set; }
 		public NotaFiscalCaixa NFCaixa { get; set; }
+
+		public string LocalFiscalizacao { get; set; }
+		public string HoraFiscalizacao { get; set; }
+		public string InformacoesAdicionais { get; set; }
 
 		public ProdutoSemDocOrigem SemDocOrigem { get; set; }
 

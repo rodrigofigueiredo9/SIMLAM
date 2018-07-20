@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, false));
+				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -199,7 +199,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, true));
+				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -337,7 +337,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
-                @DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
+				@DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -464,6 +465,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@Destinatario = destinatario
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = nfCaixa
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
 			});
 		}
 
@@ -606,13 +631,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult ObterDiasHorasVistoria(int setor, bool visualizar)
+		public ActionResult ObterDiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			return Json(new
 			{
 				@Valido = Validacao.EhValido,
 				@Erros = Validacao.Erros,
-				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, visualizar)
+				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, dataVistoria)
 
 			});
 		}

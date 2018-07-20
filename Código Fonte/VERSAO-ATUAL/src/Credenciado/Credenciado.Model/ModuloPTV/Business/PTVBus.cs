@@ -23,7 +23,9 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
@@ -381,7 +383,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			try
 			{
-				return _da.Obter(id, simplificado);
+				PTV ptv = new PTV();
+
+				ptv = _da.Obter(id, simplificado);
+				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
+				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
+
+				return ptv;
 			}
 			catch (Exception ex)
 			{
@@ -645,11 +653,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor, bool visualizar)
+		public List<ListaValor> DiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor, visualizar);
+				return _da.DiasHorasVistoria(setor, dataVistoria);
 			}
 			catch (Exception exc)
 			{
@@ -671,6 +679,72 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 
 			return new List<Setor>();
+		}
+
+		public NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			try
+			{
+				if (_validar.ValidarNumeroNotaFiscalDeCaixa(notaFiscal))
+				{
+					return _da.VerificarNumeroNFCaixa(notaFiscal);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<NotaFiscalCaixa> ObterNotasFiscalDeCaixas(int idPTV)
+		{
+			try
+			{
+				return _da.ObterNFCaixas(idPTV);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public decimal ObterSaldoDocOrigem(PTVProduto prod)
+		{
+			decimal saldo = 0;
+			switch ((eDocumentoFitossanitarioTipo)prod.OrigemTipo)
+			{
+				case eDocumentoFitossanitarioTipo.CFO:
+					EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
+					EmissaoCFO cfo = emissaoCFOBus.Obter(prod.Origem);
+					saldo = cfo.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.CFOC:
+					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
+					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(prod.Origem);
+					saldo = cfoc.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+					PTVOutroBus ptvOutroBus = new PTVOutroBus();
+					PTVOutro ptvOutro = ptvOutroBus.Obter(prod.Origem);
+					saldo = ptvOutro.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTV:
+					PTVBus ptvBus = new PTVBus();
+					PTV ptv = ptvBus.Obter(prod.Origem);
+					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+			}
+
+			decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)prod.OrigemTipo, prod.Origem, prod.OrigemNumero, prod.Cultivar, prod.UnidadeMedida, 0);    //o último parâmetro, idPTV, nesse caso não importa, porque o PTV atual não deve ser desconsiderado do cálculo
+
+			saldo = saldo - saldoOutrosDoc;
+
+			return saldo;
 		}
 
 		public PTV ObterNumeroPTVExibirMensagemCredenciado(int idCredenciado, BancoDeDados banco = null)

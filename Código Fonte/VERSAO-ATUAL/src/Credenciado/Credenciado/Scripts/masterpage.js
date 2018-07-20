@@ -2174,3 +2174,10 @@ String.prototype.replaceAll = function(de, para){
 	}
 	return (str);
 }
+
+String.prototype.isNullOrWhitespace = function () {
+
+	if (typeof String(this) === 'undefined' || String(this) == null) return true;
+
+	return String(this).replace(/\s/g, '').length < 1;
+}

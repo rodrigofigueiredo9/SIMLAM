@@ -103,7 +103,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem VistoriaCargaObrigatorio { get { return new Mensagem() { Campo = "VistoriaCargaId", Texto = "Vistoria de Carga é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem AnexoObrigatorio { get { return new Mensagem() { Campo = "", Texto = "Anexo é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem AnexoLimiteMaximo { get { return new Mensagem() { Campo = "", Texto = "Só é permitido o upload de até 5 arquivos.", Tipo = eTipoMensagem.Advertencia }; } }
-		public Mensagem AnexoFormatoErrado { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ser no formato (pdf, jpg, png).", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem AnexoFormatoErrado { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ser no formato (pdf, jpg, jpeg).", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem AnexoTamanhoErrado { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ter tamanho máximo de 2 MB.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ArquivoAnexoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ArquivoId", Texto = "Arquivo é obrigatório." }; } }
@@ -165,6 +165,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem NumeroDocumentoDeOrigemObrigatório { get { return new Mensagem() { Campo = "", Texto = "O número do documento de origem precisa ter um valor.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NumeroDocumentoDeOrigemTipoNumerico { get { return new Mensagem() { Campo = "", Texto = "O número do documento de origem precisa ser do tipo numérico.", Tipo = eTipoMensagem.Advertencia }; } }
+
+		public Mensagem HoraInvalida { get { return new Mensagem() { Campo = "HoraFiscalizacao", Texto = "A hora informada deve estar no formato hh:mm.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
 

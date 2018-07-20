@@ -61,13 +61,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
-
-
-            //if (ptv.Empreendimento <= 0)
-            //{
-            //    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-            //}
-
             if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
              (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
             {
@@ -86,11 +79,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			{
 				Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
 			}
-
-            //if (ptv.ResponsavelEmpreendimento <= 0)
-            //{
-            //    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-            //}
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -118,12 +106,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			{
 				Validacao.Add(Mensagem.PTV.DestinatarioObrigatorio);
 			}
-
-            //if (!ptv.PossuiLaudoLaboratorial.HasValue)
-            //{
-            //    Validacao.Add(Mensagem.PTV.PossuiLaudoLab_Obrigatorio);
-            //}
-
+         
 			if (ptv.TransporteTipo <= 0)
 			{
 				Validacao.Add(Mensagem.PTV.TipoTransporteObrigatorio);
@@ -174,15 +157,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					Validacao.Add(Mensagem.PTV.AnexoLimiteMaximo);
 				}
 
-				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".png"))
+				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".jpeg"))
 				{
 					Validacao.Add(Mensagem.PTV.AnexoFormatoErrado);
 				}
+			}
 
-				//if (ptv.Anexos.Exists(x => x.Arquivo.Buffer.Length > 2097152))/*2mb*/
-				//{
-				//	Validacao.Add(Mensagem.PTV.AnexoTamanhoErrado);
-				//}
+			if (ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0)
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}
 
 			return Validacao.EhValido;
@@ -670,5 +653,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		public bool ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var tipoCaixa = _da.ValidarNumeroNotaFiscalDeCaixa(notaFiscal);
+			if (!String.IsNullOrEmpty(tipoCaixa))
+			{
+				Validacao.Add(Mensagem.PTV.NumeroDiferenteDoTipo(notaFiscal.notaFiscalCaixaNumero, tipoCaixa));
+				return false;
+			}
+			return true;
+		}
 	}
 }

@@ -332,7 +332,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					{
 						bancoDeDadosCredenciado.IniciarTransacao();
 
-						_da.AnalizarEPTV(eptv, bancoDeDadosCredenciado);
+						_da.AnalisarEPTV(eptv, bancoDeDadosCredenciado);
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
@@ -792,11 +792,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor, bool visualizar)
+		public List<ListaValor> DiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor, visualizar);
+				return _da.DiasHorasVistoria(setor, dataVistoria);
 			}
 			catch (Exception exc)
 			{
