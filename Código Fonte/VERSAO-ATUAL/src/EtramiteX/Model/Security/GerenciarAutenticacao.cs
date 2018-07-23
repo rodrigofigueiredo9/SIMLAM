@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Security;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Autenticacao;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Autenticacao;

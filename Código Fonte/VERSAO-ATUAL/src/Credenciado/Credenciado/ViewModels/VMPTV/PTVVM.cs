@@ -67,7 +67,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 					DescricaoAnexoObrigatorio = Mensagem.PTV.DescricaoAnexoObrigatorio,
 					AnexoFormatoErrado = Mensagem.PTV.AnexoFormatoErrado,
 					AnexoLimiteMaximo = Mensagem.PTV.AnexoLimiteMaximo,
-					ArquivoExistente = Mensagem.Arquivo.ArquivoExistente
+					ArquivoExistente = Mensagem.Arquivo.ArquivoExistente,
+					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio,
+					@NumeroDeCaixasMaiorQueSaldoAtual = Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual,
+					@SaldoInicialMaiorQueZero = Mensagem.PTV.SaldoInicialMaiorQueZero,
+					@SaldoENumeroCaixasRequerid = Mensagem.PTV.SaldoENumeroCaixasRequerid,
+					@InserirGridCaixaNumerosNFIguais = Mensagem.PTV.InserirGridCaixaNumerosNFIguais,
+					@NumeroDocumentoDeOrigemObrigatório = Mensagem.PTV.NumeroDocumentoDeOrigemObrigatório,
+					@NumeroDocumentoDeOrigemTipoNumerico = Mensagem.PTV.NumeroDocumentoDeOrigemTipoNumerico,
 				});
 			}
 		}

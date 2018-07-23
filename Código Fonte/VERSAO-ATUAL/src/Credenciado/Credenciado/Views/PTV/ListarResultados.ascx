@@ -1,5 +1,6 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVListarVM>" %>
 
 <input type="hidden" class="paginaAtual" value="" />
@@ -46,6 +47,10 @@
 		{ %><input type="button" title="Historico" class="icone historico btnHistorico" /><% } %>
 					<% if (Model.PodeSolicitarDesbloqueio)
 		{ %><input type="button" title="Solicitar Desbloqueio" class="icone comparar btnSolicitarDesbloqueio" /><% } %>
+					<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
+							item.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+							item.Situacao == (int)eSolicitarPTVSituacao.Bloqueado)
+		{ %><input type="button" title="Comunicador" class="icone comunicador btnComunicador" /><% } %>
 				</td>
 			</tr>
 			<% } %>

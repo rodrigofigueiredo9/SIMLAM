@@ -23,7 +23,9 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
@@ -350,7 +352,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			try
 			{
-				return _da.Obter(id, simplificado);
+				PTV ptv = new PTV();
+
+				ptv = _da.Obter(id, simplificado);
+				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
+				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
+
+				return ptv;
 			}
 			catch (Exception ex)
 			{
@@ -642,6 +650,85 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return new List<Setor>();
 		}
 
+		public NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			try
+			{
+				return _da.VerificarNumeroNFCaixa(notaFiscal);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<NotaFiscalCaixa> ObterNotasFiscalDeCaixas(int idPTV)
+		{
+			try
+			{
+				return _da.ObterNFCaixas(idPTV);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public decimal ObterSaldoDocOrigem(PTVProduto prod)
+		{
+			decimal saldo = 0;
+			switch ((eDocumentoFitossanitarioTipo)prod.OrigemTipo)
+			{
+				case eDocumentoFitossanitarioTipo.CFO:
+					EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
+					EmissaoCFO cfo = emissaoCFOBus.Obter(prod.Origem);
+					saldo = cfo.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.CFOC:
+					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
+					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(prod.Origem);
+					saldo = cfoc.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+					PTVOutroBus ptvOutroBus = new PTVOutroBus();
+					PTVOutro ptvOutro = ptvOutroBus.Obter(prod.Origem);
+					saldo = ptvOutro.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTV:
+					PTVBus ptvBus = new PTVBus();
+					PTV ptv = ptvBus.Obter(prod.Origem);
+					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+			}
+
+			decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)prod.OrigemTipo, prod.Origem, prod.OrigemNumero, prod.Cultivar, prod.UnidadeMedida, 0);    //o último parâmetro, idPTV, nesse caso não importa, porque o PTV atual não deve ser desconsiderado do cálculo
+
+			saldo = saldo - saldoOutrosDoc;
+
+			return saldo;
+		}
+
+		public PTV ObterNumeroPTVExibirMensagemCredenciado(int idCredenciado, BancoDeDados banco = null)
+		{
+			var ptv = new PTV();
+
+			try
+			{
+				ptv = _da.ObterNumeroPTVExibirMensagemCredenciado(idCredenciado, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return ptv;
+		}
+
 		#endregion
 
 		public PTVHistorico ObterHistoricoAnalise(int ptvID)
@@ -698,15 +785,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 				Blocos.Arquivo.Arquivo arq;
 
-				//if (comunicador.ArquivoCredenciado == null)
-				//{
-				//    comunicador.ArquivoCredenciado = new Blocos.Arquivo.Arquivo();
-				//}
-
 				arq = comunicador.ArquivoCredenciado;
-
-
-
+				
 				PTVConversa conversa;
 				conversa = comunicador.Conversas[0];
 
@@ -793,5 +873,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		}
 		
 		#endregion
+
+		#region Alerta de E-PTV
+
+		public bool VerificarAlertaChegadaMensagemEPTV()
+		{
+			bool exibirMensagem = false;
+
+			int credenciadoId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
+			var ptv = ObterNumeroPTVExibirMensagemCredenciado(credenciadoId);
+
+			if (ptv?.Id > 0)
+			{
+				switch (ptv.Situacao)
+				{
+					case (int)eSolicitarPTVSituacao.Valido:
+						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVAprovada(ptv.Numero, ptv.Id));
+						break;
+					case (int)eSolicitarPTVSituacao.Bloqueado:
+						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVBloqueada(ptv.Numero, ptv.Id));
+						break;
+					case (int)eSolicitarPTVSituacao.Rejeitado:
+						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVRejeitada(ptv.Numero, ptv.SituacaoMotivo, ptv.Id));
+						break;
+					case (int)eSolicitarPTVSituacao.AgendarFiscalizacao:
+						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVFiscalizacaoAgendada(ptv.Numero, ptv.LocalVistoriaTexto,
+							ptv.DataHoraVistoriaTexto, ptv.SituacaoMotivo));
+						break;
+				}
+
+				exibirMensagem = true;
+			}
+
+			return exibirMensagem;
+		}
+
+		#endregion Alerta de E-PTV
 	}
 }

@@ -76,6 +76,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMLocalVistoria
                     @DiaSemanaObrigatorio = Mensagem.LocalVistoria.DiaSemanaObrigatorio,
                     @HoraInicioInvalida = Mensagem.LocalVistoria.HoraInicioInvalida,
                     @HoraFimInvalida = Mensagem.LocalVistoria.HoraFimInvalida,
+					@DataInicialMenorDataFinal = Mensagem.LocalVistoria.DataInicialMenorDataFinal,
                     @HoraInicialMenorHoraFinal = Mensagem.LocalVistoria.HoraInicialMenorHoraFinal("")
                 });
 

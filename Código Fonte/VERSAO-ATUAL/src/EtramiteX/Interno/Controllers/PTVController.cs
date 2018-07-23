@@ -45,7 +45,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao);
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSituacao, _busLista.DocumentosFitossanitario);
+
 			return View(vm);
 		}
 
@@ -117,13 +118,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				ptv,
 				_busLista.PTVSituacao.Where(x => Convert.ToInt32(x.Id) != (int)eDocumentoFitossanitarioSituacao.Cancelado).ToList(),
 				new List<ListaValor>(),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				new List<LaudoLaboratorial>(),
 				_busPTV.ObterCultura(),
 				_busLista.TipoTransporte,
 				_busLista.Municipios(8), LsSetor);
-
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 
 			return View("Criar", vm);
@@ -151,7 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				ptv,
 				_busLista.PTVSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				lstLaboratorio,
 				_busPTV.ObterCultura(),
@@ -159,6 +160,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
@@ -175,12 +178,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			List<TratamentoFitossanitario> lsFitossanitario = _busPTV.TratamentoFitossanitário(ptv.Produtos);
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
-
 			PTVVM vm = new PTVVM(
 				ptv,
 				_busLista.PTVSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
-				_busLista.DocumentosFitossanitario,
+				_busLista.DocumentosFitossanitario.Where(x => x.Id != "7").ToList(),
 				lsFitossanitario,
 				lstLaboratorio,
 				_busPTV.ObterCultura(),
@@ -188,10 +190,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				new List<ListaValor>());
 
+			vm.EstadosUF = ViewModelHelper.CriarSelectList(_busLista.Estados, true, true, ptv.SemDocOrigem.ufEndereco.ToString());
+			vm.MunicipiosOT = ViewModelHelper.CriarSelectList(_busLista.Municipios(ptv.SemDocOrigem.ufEndereco), true, true, ptv.SemDocOrigem.municipioEndereco.ToString());
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
 			vm.LstUnidades = ViewModelHelper.CriarSelectList(_busLista.PTVUnidadeMedida);
 			vm.IsVisualizar = true;
+			
 			return View("Visualizar", vm);
 		}
 
@@ -208,7 +213,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Url = Url.Action(acao, "PTV") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + ptv.Id.ToString()
 			});
 		}
-
+		
 		[HttpGet]
 		[Permite(RoleArray = new object[] { ePermissao.PTVExcluir })]
 		public ActionResult ExcluirConfirm(int id)
@@ -264,6 +269,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -393,6 +399,40 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var nfCaixa = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = nfCaixa
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{	
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterMunicipios(int uf)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@municipios = _busLista.Municipios(uf)
+			});
+		}
 		#endregion
 
 		#region Ativar/Cancelar PTV
@@ -502,6 +542,30 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					PTV PTV = _busPTV.Obter(id, simplificado: true);
 
 					return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(id, PTV.Tid, PTV.Situacao, PTV.SituacaoTexto), "PTV", dataHoraControleAcesso: true);
+				}
+
+				Validacao.Add(Mensagem.Funcionario.SemPermissao);
+				return Redirect(FormsAuthentication.LoginUrl);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+				return RedirectToAction("Index", "PTV", Validacao.QueryParamSerializer());
+			}
+		}
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
+		public ActionResult GerarPdfEPTV(int id)
+		{
+			try
+			{
+				if (HttpContext.User != null && HttpContext.User.Identity.IsAuthenticated)
+				{
+					PdfEmissaoPTV pdf = new PdfEmissaoPTV();
+					PTV PTV = _busPTV.ObterPorIDCredenciado(id, simplificado: true);
+
+					return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(PTV.Id, PTV.Tid, PTV.Situacao, PTV.SituacaoTexto), "PTV", dataHoraControleAcesso: true);
 				}
 
 				Validacao.Add(Mensagem.Funcionario.SemPermissao);
@@ -661,7 +725,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult EPTVListar()
 		{
-			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao);
+			var lstTipoDocOrigem = _busLista.DocumentosFitossanitario;
+			lstTipoDocOrigem = lstTipoDocOrigem.Where(x => x.Id != "7").ToList();
+			PTVListarVM vm = new PTVListarVM(_busLista.PTVSolicitacaoSituacao, lstTipoDocOrigem);
 			return View(vm);
 		}
 
@@ -720,7 +786,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
+			_busPTV.ObterResponsavelTecnico(733).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
 
 			PTVVM vm = new PTVVM(
 				ptv,
@@ -740,7 +806,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -795,13 +861,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
 				int situacao = Convert.ToInt32(item.Id);
 
-				if (situacao == (int)eSolicitarPTVSituacao.Aprovado ||
+				if (situacao == (int)eSolicitarPTVSituacao.Valido ||
 					situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
 					situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
 					situacao == (int)eSolicitarPTVSituacao.Bloqueado)
@@ -818,6 +884,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View("EPTVVisualizar", vm);
 		}
 
+
+
+
 		#endregion EPTV
 
 		#region PTVComunicador
@@ -827,6 +896,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult AnalisarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
@@ -852,5 +930,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult AlertaEPTV()
+		{
+			_busPTV.VerificarAlertaChegadaMensagemEPTV();
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+			}, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

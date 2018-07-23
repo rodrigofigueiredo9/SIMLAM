@@ -9,7 +9,12 @@
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
 
+<script>
+	PTVEmitir.settings.Mensagens = <%= Model.Mensagens %>;
+</script>
+
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
+<input class="hdnVisualizar" type="hidden" value="<%= Model.IsVisualizar %>" />
 
 <fieldset class="box">
 	<div class="block">
@@ -97,6 +102,13 @@
 			<div class="coluna10">
 				<button type="button" class="inlineBotao btnVerificarDocumentoOrigem hide">Verificar</button>
 			</div>
+            <div class="coluna10">
+                <button type="button" class="inlineBotao btnLimparDocumentoOrigem hide">Limpar</button>
+            </div>
+            <div class="coluna15 saldoContainer hide">
+                <label>Saldo</label>
+                <%=Html.TextBox("SaldoDocOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(true, new { @class="text txtSaldoDocOrigem"})) %>
+            </div>
 		</div>
 		<div class="block">
 			<div class="coluna25">
@@ -345,51 +357,143 @@
 				<%= Html.TextBox("NotaFiscalNumero", Model.PTV.NotaFiscalNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalNumero", @maxlength="60" })) %>
 			</div>
 		</div>
-	</div>
-
-   
-
-	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
 		<div class="block">
-			<div class="coluna40">
-				<label for="LocalEmissao">Local da Vistoria *</label>
-				<%= Html.DropDownList("LocalVistoriaId", Model.lsLocalVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalVistoria"}))%>
+		<div class="coluna24">
+			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
+			<label>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				Sim
+			</label>
+			<label>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Nao, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				Não
+			</label>
+		</div>
+		<div class="coluna40 isPossuiNFCaixa <%= Model.IsVisualizar ? "hide" : "" %>">
+			<label for="NotaFiscalApresentacao">Tipo da caixa *</label><br />
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="1" }))%>
+				Madeira
+			</label>
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Plastico, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="2" }))%>
+				Plástico
+			</label>
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Papelao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="3" }))%>
+				Papelão
+			</label>
+		</div>		
+	</div>
+	<div class="block">
+		<div class="isTipoCaixaChecked hide">
+			<div class="coluna36">
+				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+			</div>
+			<div class="coluna10">
+				<button class="inlineBotao btnVerificarNotaCaixaCaixa">Verificar</button>
+				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
 			</div>
 		</div>
-
-		<div class="block">
-			<div class="coluna40">
-				<label for="LocalEmissao">Vistoria de Carga *</label>
-                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
-				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%> 
+		<div class="isNFCaixaVerificado hide">
+			<div class="coluna15">
+				<label class="lblSaldoAtualInicial">Saldo atual</label>
+				<%= Html.TextBox("SaldoAtual", Model.PTV.NFCaixa.saldoAtual, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNum8 txtNFCaixaSaldoAtual", @maxlength="8"}))%>
+			</div>
+			<div class="coluna15">
+				<label>N° de caixas *</label>
+				<%= Html.TextBox("NumeroDeCaixas", Model.PTV.NFCaixa.numeroCaixas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNum8 txtNFCaixaNumeroDeCaixas", @maxlength="8"}))%>
+			</div>
+			<div class="coluna10">
+				<button class="inlineBotao btnAddCaixa">Adicionar</button>
 			</div>
 		</div>
 	</div>
+		<div class="gridContainer identificacaoDaCaixa <%= Model.PTV.NotaFiscalDeCaixas.Count() > 0 ? "" : "hide" %>" >
+			<table class="dataGridTable gridCaixa">
+				<thead>
+					<tr>
+						<th style="width: 30%">N° da nota fiscal de caixa </th>
+						<th>Tipo da caixa</th>
+						<th style="width: 10%">Saldo atual</th>
+						<th style="width: 16%">N° de caixas</th>
+						<% if (!Model.IsVisualizar)
+				 { %><th style="width: 7%">Ação</th><% } %>
+					</tr>
+				</thead>
+				<tbody>
+					<% foreach (var item in Model.PTV.NotaFiscalDeCaixas)
+				 {
+					%>
+						<tr>
+							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
+							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
+							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
+							<%if (!Model.IsVisualizar)
+				 { %>
+							<td>
+								<a class="icone excluir btnExcluirCaixa"></a>
+								<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+							</td>
+							<%} %>
+						</tr>
+					<% } %>
 
-	<!-- Arquivo -->
+					<tr class="trTemplate hide">
+						<td class="">
+							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lblTipoCaixa"></label>
+						</td>
+						<td class="">
+							<label class="lblSaldoAtual"></label>
+						</td>
+						<td class="">
+							<label class="lblNumeroDeCaixas"></label>
+						</td>
+						<td>
+							<a class="icone excluir btnExcluirCaixa" title="Remover"></a>
+							<input type="hidden" value="" class="hdnOrigemID" />
+							<input type="hidden" value="0" class="hdnItemJson" />
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+	<br />
+	</div>
+
+   <!-- Arquivo -->
 	<fieldset class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<legend>Anexos</legend>
-		<div class="block">
-			<div class="coluna60 inputFileDiv">
-				<label for="ArquivoTexto">Arquivo *</label>
-				<%= Html.TextBox("Roteiro.Arquivo.Nome", null, new { readOnly = "true", @class = "text txtArquivoNome", @style = "display: none;" })%>
-				<input type="hidden" class="hdnArquivo" name="hdnArquivo" />
-				<div class="anexoArquivos">
-				</div>
-				<input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" />
-			</div>
-		</div>
-		<div class="block">
-			<div class="coluna60">
-				<label for="Descricao">
-					Descrição *</label>
-				<%= Html.TextBox("Descricao", null, new { @maxlength = "100", @class = "text txtAnexoDescricao" })%>
-			</div>
-			<div class="coluna10 botoesAnexoDiv">
-				<button type="button" style="width:35px" class="inlineBotao botaoAdicionarIcone btnAddAnexoArquivo" title="Adicionar anexo"
-					onclick="PTVEmitir.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">Adicionar</button>
-			</div>
-		</div>
+        <legend>Anexos</legend>
+        <% if (!Model.IsVisualizar) { %>
+        <div class="block">
+            <div class="coluna60 inputFileDiv">
+                <label for="ArquivoTexto">Arquivo *</label>
+                <%= Html.TextBox("Roteiro.Arquivo.Nome", null, new { readOnly = "true", @class = "text txtArquivoNome", @style = "display: none;" })%>
+                <input type="hidden" class="hdnArquivo" name="hdnArquivo" />
+                <div class="anexoArquivos">
+                </div>
+                <input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" />
+            </div>
+        </div>
+        <div class="block">
+            <div class="coluna60">
+                <label for="Descricao">
+                    Descrição *</label>
+                <%= Html.TextBox("Descricao", null, new { @maxlength = "100", @class = "text txtAnexoDescricao" })%>
+            </div>
+            <div class="coluna10 botoesAnexoDiv">
+                <button type="button" style="width: 35px" class="inlineBotao botaoAdicionarIcone btnAddAnexoArquivo" title="Adicionar anexo"
+                    onclick="PTVEmitir.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">
+                    Adicionar</button>
+            </div>
+        </div>
+        <% } %>
 
 		<div class="block dataGrid">
 			<label class="lblGridVazio <%= Model.PTV.Anexos.Count > 0 ? "hide" : "" %>">Não existe anexo adicionado.</label>
@@ -399,7 +503,7 @@
 					<tr>
 						<th>Arquivo</th>
 						<th>Descrição</th>
-						<th width="15%">Ações</th>
+						<% if (!Model.IsVisualizar) { %><th width="15%">Ações</th><% } %>
 					</tr>
 				</thead>
 				<tbody>
@@ -418,17 +522,19 @@
 						<td>
 							<span title="<%= Html.Encode(anexo.Descricao) %>" class="AnexoDescricao"><%= Html.Encode(anexo.Descricao) %></span>
 							<input type="hidden" class="hdnAnexoDescricao" name="PTV.Anexos[<%= y %>].Descricao" value="<%= Html.Encode(anexo.Descricao) %>" />
-						</td>
-						<td>
-							<input type="hidden" class="hdnAnexoArquivoJson" name="PTV.Anexos[<%= y %>].Arquivo" value="<%: ViewModelHelper.JsSerializer.Serialize(anexo.Arquivo) %>" />
-							<input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
-							<input title="Subir" class="icone acima btnSubirLinha" type="button" />
-							<input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
-						</td>
-					</tr>
-					<% } %>
-				</tbody>
-			</table>
+                        </td>
+                        <% if (!Model.IsVisualizar) { %>
+                        <td>
+                            <input type="hidden" class="hdnAnexoArquivoJson" name="PTV.Anexos[<%= y %>].Arquivo" value="<%: ViewModelHelper.JsSerializer.Serialize(anexo.Arquivo) %>" />
+                            <input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
+                            <input title="Subir" class="icone acima btnSubirLinha" type="button" />
+                            <input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
+                        </td>
+                    </tr>
+                    <% } %>
+                    <% } %>
+                </tbody>
+            </table>
 			<table style="display: none">
 				<tbody>
 					<tr class="trAnexoTemplate">
@@ -444,14 +550,41 @@
 							<input type="hidden" class="hdnAnexoDescricao" name="templatePTV.Anexos[#Index].Descricao" value="#DESCRICAO" />
 						</td>
 						<td>
-							<input type="hidden" class="hdnAnexoArquivoJson" name="templatePTV.Anexos[#Index].Arquivo" value="#ARQUIVOJSON" />
-							<input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
-							<input title="Subir" class="icone acima btnSubirLinha" type="button" />
-							<input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
-						</td>
+                            <input type="hidden" class="hdnAnexoArquivoJson" name="templatePTV.Anexos[#Index].Arquivo" value="#ARQUIVOJSON" />
+                            <% if (!Model.IsVisualizar) { %>
+                            <input title="Descer" class="icone abaixo btnDescerLinha" type="button" />
+                            <input title="Subir" class="icone acima btnSubirLinha" type="button" />
+                            <input title="Excluir" class="icone excluir btnExcluirAnexo" value="" type="button" />
+                            <% } %>
+                        </td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</fieldset>
+
+	<div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+		<div class="block">
+			<div class="coluna40">
+				<label for="LocalEmissao">Local da Vistoria *</label>
+				<%= Html.DropDownList("LocalVistoriaId", Model.lsLocalVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlLocalVistoria"}))%>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="coluna40">
+				<label for="LocalEmissao">Vistoria de Carga *</label>
+                 <%= Html.TextBox("DataVistoria", Model.PTV.DataVistoria == DateTime.MinValue ?   "" : Model.PTV.DataVistoria.ToString("dd/MM/yy") , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "txtDataHoraVistoria text" }))%>
+				 <%= Html.DropDownList("DataHoraVistoriaId", Model.lsDiaHoraVistoria, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlDatahoraVistoriaporSetor"}))%>
+			</div>
+		</div>
+	</div>
+
+	<div class="block box">
+		<div class="coluna40">
+			<label for="LocalEmissao">Solicitante *</label>
+                <%= Html.TextBox("ResponsavelTecnicoNome", HttpContext.Current.User != null ? HttpContext.Current.User.Identity.Name : "", ViewModelHelper.SetaDisabled(true, new { @class = "txtResponsavelTecnicoNome text" }))%>
+		</div>
+	</div>
+
 </div>

@@ -45,10 +45,17 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 		}
 
 		public List<SelectListItem> Situacoes { get; set; }
-		
-		public PTVListarVM(List<Lista> lstSituacoes) 
-		{
+
+		public List<SelectListItem> TiposDocumentoOrigem { get; set; }
+
+		public PTVListarVM(List<Lista> lstSituacoes, List<Lista> lstTipoDocumentoOrigem) 
+		{			
 			this.Situacoes = ViewModelHelper.CriarSelectList(lstSituacoes);
+			if (Convert.ToBoolean(this.Situacoes?.Exists(x => x.Value == ((int)eSolicitarPTVSituacao.Cadastrado).ToString())))
+				this.Situacoes.Remove(this.Situacoes.FirstOrDefault(x => x.Value == ((int)eSolicitarPTVSituacao.Cadastrado).ToString()));
+			if (Convert.ToBoolean(this.Situacoes?.Exists(x => x.Value == ((int)eSolicitarPTVSituacao.Editado).ToString())))
+				this.Situacoes.Remove(this.Situacoes.FirstOrDefault(x => x.Value == ((int)eSolicitarPTVSituacao.Editado).ToString()));
+			this.TiposDocumentoOrigem = ViewModelHelper.CriarSelectList(lstTipoDocumentoOrigem);
 		}
 
 		public PTVListarVM() { }

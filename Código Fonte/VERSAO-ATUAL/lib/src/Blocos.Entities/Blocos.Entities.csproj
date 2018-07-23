@@ -325,6 +325,7 @@
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioListarResultado.cs" />
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioPTV.cs" />
     <Compile Include="Interno\ModuloPTV\DUARequisicao.cs" />
+    <Compile Include="Interno\ModuloPTV\eApresentacaoNotaFiscalDeCaixa.cs" />
     <Compile Include="Interno\ModuloPTV\eApresentacaoNotaFiscal.cs" />
     <Compile Include="Interno\ModuloPTV\eLaudoLaboratorial.cs" />
     <Compile Include="Interno\ModuloPTV\ePartidaLacradaOrigem.cs" />
@@ -336,6 +337,8 @@
     <Compile Include="Interno\ModuloPTV\HabilitacaoEmissao\HabilitacaoEmissaoPTVOperador.cs" />
     <Compile Include="Interno\ModuloPTV\HabilitacaoEmissao\HabilitacaoEmissaoPTV.cs" />
     <Compile Include="Interno\ModuloPTV\LaudoLaboratorial.cs" />
+    <Compile Include="Interno\ModuloPTV\NotaFiscalCaixa.cs" />
+    <Compile Include="Interno\ModuloPTV\ProdutoSemDocOrigem.cs" />
     <Compile Include="Interno\ModuloPTV\PTV.cs" />
     <Compile Include="Interno\ModuloPTVOutro\PTVOutroListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\PTVComunicador.cs" />

@@ -453,7 +453,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 			get
 			{
 				GerenciadorConfiguracao<ConfiguracaoDocumentoFitossanitario> configSys = new GerenciadorConfiguracao<ConfiguracaoDocumentoFitossanitario>(new ConfiguracaoDocumentoFitossanitario());
-				return configSys.Obter<List<Lista>>(ConfiguracaoDocumentoFitossanitario.KeyDocumentosFitossanitario);
+				return configSys.Obter<List<Lista>>(ConfiguracaoDocumentoFitossanitario.KeyDocumentosFitossanitario).Where(x => x.Id != "7").ToList();
 			}
 		}
 
