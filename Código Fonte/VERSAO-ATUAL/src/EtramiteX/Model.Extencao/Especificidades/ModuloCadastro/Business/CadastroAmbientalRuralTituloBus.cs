@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCad
 				#region Solicitacao CAR
 
 				//Interno
-				cadastro.SICAR = _da.ObterSICARInterno(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(0), banco) ?? new SicarPDF();
+				cadastro.SICAR = _da.ObterNumeroSICAR(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(0), banco) ?? new SicarPDF();
 
 				if (String.IsNullOrWhiteSpace(cadastro.SICAR.Numero))
 					cadastro.SICAR = _da.ObterSICARCredenciado(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(0), banco) ?? new SicarPDF();
