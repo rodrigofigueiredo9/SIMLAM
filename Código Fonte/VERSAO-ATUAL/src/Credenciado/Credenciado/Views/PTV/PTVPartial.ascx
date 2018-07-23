@@ -369,7 +369,7 @@
 				Não
 			</label>
 		</div>
-		<div class="coluna40 isPossuiNFCaixa <%= Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0 ? "hide" : "" %>">
+		<div class="coluna40 isPossuiNFCaixa <%= Model.IsVisualizar ? "hide" : "" %>">
 			<label for="NotaFiscalApresentacao">Tipo da caixa *</label><br />
 			<label>
 				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="1" }))%>

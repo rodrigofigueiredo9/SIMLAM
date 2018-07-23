@@ -1489,7 +1489,8 @@ PTVEmitir = {
 			valido = false;
 		}
 		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
-			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero) {
+			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero
+				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto) {
 				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
 				valido = false;
 			}
