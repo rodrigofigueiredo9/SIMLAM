@@ -2622,7 +2622,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				Comando comando = null;
-				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, pt.local_fiscalizacao, pt.hora_fiscalizacao, pt.informacoes_adicionais
+				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, pt.local_fiscalizacao, pt.hora_fiscalizacao,
+														pt.informacoes_adicionais, pt.motivo
 													  from {0}tab_Ptv pt
 													  where pt.credenciado = :credenciado
 													  and pt.exibir_msg_credenciado = 1
@@ -2640,7 +2641,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							Situacao = reader.GetValue<int>("situacao"),
 							LocalVistoriaTexto = reader.GetValue<string>("local_fiscalizacao"),
 							DataHoraVistoriaTexto = reader.GetValue<string>("hora_fiscalizacao"),
-							SituacaoMotivo = reader.GetValue<string>("informacoes_adicionais")
+							InformacoesAdicionais = reader.GetValue<string>("informacoes_adicionais"),
+							SituacaoMotivo = reader.GetValue<string>("motivo")
 						};
 					}
 				}
