@@ -899,7 +899,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						break;
 					case (int)eSolicitarPTVSituacao.AgendarFiscalizacao:
 						Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTVFiscalizacaoAgendada(ptv.Numero, ptv.LocalVistoriaTexto,
-							ptv.DataHoraVistoriaTexto, ptv.SituacaoMotivo));
+							ptv.DataHoraVistoriaTexto, ptv.InformacoesAdicionais));
 						break;
 				}
 
