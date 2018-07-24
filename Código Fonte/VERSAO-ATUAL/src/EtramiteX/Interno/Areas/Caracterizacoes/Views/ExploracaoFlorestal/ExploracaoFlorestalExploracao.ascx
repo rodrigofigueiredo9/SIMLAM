@@ -14,7 +14,7 @@
 
 	<div class="block">
 		<div class="coluna22 append2">
-			<label for="ExploracaoFlorestal_Identificacao">Identificação</label>
+			<label for="ExploracaoFlorestal_Identificacao">Identificação Geo</label>
 			<%= Html.TextBox("ExploracaoFlorestal.Identificacao", Model.ExploracaoFlorestal.Identificacao, new { @class = "text txtIdentificacao disabled", disabled = "disabled" })%>
 		</div>
 
@@ -23,17 +23,31 @@
 			<%= Html.TextBox("ExploracaoFlorestal.Geometrias", Model.ExploracaoFlorestal.GeometriaTipoTexto, new { @class = "text txtGeometria disabled", disabled = "disabled" })%>
 		</div>
 
+		<div class="coluna22 append2">
+			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
+			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, new { @class = "text ddlFinalidade" })%>
+		</div>
+	</div>
+	<div class="block">
 		<%if(Model.ExploracaoFlorestal.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono) {%>
-		<div class="coluna22 append2">
-			<label for="ExploracaoFlorestal_Exploracoes_AreaCroqui">Área da atividade croqui (m²)</label>
-			<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaCroqui", Model.ExploracaoFlorestal.AreaCroqui.ToStringTrunc(), new { @class = "text txtAreaCroqui disabled maskDecimalPonto", disabled = "disabled" })%>
-            <input type="hidden" class="hdnAreaCroqui" value="<%= Model.ExploracaoFlorestal.AreaCroqui %>" />
-		</div>
+				<div class="coluna22 append2">
+					<label for="ExploracaoFlorestal_Exploracoes_AreaRequerida<%: Model.ExploracaoFlorestal.Identificacao%>">Área requerida (m²) *</label>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaRequerida" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.AreaRequerida, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "12" }))%>
+				</div>
+				<div class="coluna22 append2">
+					<label for="ExploracaoFlorestal_Exploracoes_AreaCroqui">Área da atividade croqui (m²)</label>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaCroqui", Model.ExploracaoFlorestal.AreaCroqui.ToStringTrunc(), new { @class = "text txtAreaCroqui disabled maskDecimalPonto", disabled = "disabled" })%>
+					<input type="hidden" class="hdnAreaCroqui" value="<%= Model.ExploracaoFlorestal.AreaCroqui %>" />
+				</div>
 		<%}else{%>
-		<div class="coluna22 append2">
-			<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores</label>
-			<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "6" }))%>
-		</div>
+				<div class="coluna22 append2">
+					<label for="ExploracaoFlorestal_Exploracoes_ArvoresRequeridas<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores requeridas *</label>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "8" }))%>
+				</div>
+				<div class="coluna22 append2">
+					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores</label>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "6" }))%>
+				</div>
 		<%}%>
 
 		<div class="coluna24">
@@ -44,25 +58,6 @@
 
 	<div class="asmConteudoLink block">
 		<div class="asmConteudoInterno block">
-			<div class="block">
-				<%if(Model.ExploracaoFlorestal.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono) {%>
-				<div class="coluna22 append2">
-					<label for="ExploracaoFlorestal_Exploracoes_AreaRequerida<%: Model.ExploracaoFlorestal.Identificacao%>">Área requerida (m²) *</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaRequerida" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.AreaRequerida, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "12" }))%>
-				</div>
-				<%}else{%>
-				<div class="coluna22 append2">
-					<label for="ExploracaoFlorestal_Exploracoes_ArvoresRequeridas<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores requeridas *</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "8" }))%>
-				</div>
-				<%}%>
-
-				<div class="coluna22">
-					<label for="ExploracaoFlorestal_ExploracaoTipo<%: Model.ExploracaoFlorestal.Identificacao%>">Tipo de exploração *</label>
-					<%= Html.DropDownList("ExploracaoFlorestal.ExploracaoTipo" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoTipos, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlExploracaoTipo " }))%>
-				</div>
-			</div>
-
 			<% if(!Model.IsVisualizar) { %>
 			<div class="block">
 				<div class="coluna22 append2">

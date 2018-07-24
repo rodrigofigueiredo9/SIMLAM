@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal
@@ -11,6 +12,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32 EmpreendimentoId { get; set; }
 		public Int32? FinalidadeExploracao { get; set; }
 		public String FinalidadeEspecificar { get; set; }
+		public Int32 CodigoExploracao { get; set; }
+		public Int32 TipoExploracao { get; set; }
+		public DateTecno DataCadastro { get; set; } = new DateTecno() { Data = DateTime.Now };
 
 		public List<Dependencia> Dependencias { get; set; }
 

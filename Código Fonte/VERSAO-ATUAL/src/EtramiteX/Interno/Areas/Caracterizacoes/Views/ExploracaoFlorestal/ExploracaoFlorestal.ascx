@@ -13,29 +13,21 @@
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 
-<fieldset class="block box" id="exploracaoFlorestalFinalidade">
-	<div class="block">
-		<label for="FinalidadeExploracao">Finalidade da Exploração *</label>
-	</div>
-	<div class="block">
-		<% 
-		foreach (var finalidade in Model.Finalidades){
-			bool selecionado = ((Model.Caracterizacao.FinalidadeExploracao != null) && (Model.Caracterizacao.FinalidadeExploracao.Value & finalidade.Codigo) > 0); %>
-			<label class="coluna32 <%= Model.IsVisualizar ? "" : "labelCheckBox" %>">
-				<input class="checkboxFinalidadeExploracao <%= Model.IsVisualizar ? "disabled" : "" %> checkbox<%= finalidade.Texto %>" type="checkbox" title="<%= finalidade.Texto %>" value="<%= finalidade.Codigo %>" <%= selecionado ? "checked=\"checked\"" : "" %> <%= Model.IsVisualizar ? "disabled=\"disabled\"" : "" %> />
-				<%= finalidade.Texto%>
-			</label>
-		<% } %>
-	</div>
-	<br />
-	<div class="block">
-		<div class="coluna30 divEspecificarFinalidade hide">
-			<label for="FinalidadeEspecificar">Especificar *</label>
-			<%= Html.TextBox("FinalidadeEspecificar", Model.Caracterizacao.FinalidadeEspecificar, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFinalidadeEspecificar ", @maxlength = "50" }))%>
-		</div>
-	</div>
+<fieldset class="block box localizador">
+    <legend class="titLocalizador">Localizador</legend>
+    <div class="coluna22 append2">
+        <label for="CodigoExploracao">Código Exploração</label>
+        <%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
+    </div>
+    <div class="coluna22 append2">
+        <label for="CodigoExploracao">Tipo de Exploração *</label>
+        <%= Html.DropDownList("TipoExploracao", Model.TipoExploracao, new { @class = "text ddlTipoExploracao" })%>
+    </div>
+	<div class="coluna15">
+        <label>Data Cadastro</label>
+        <%= Html.TextBox("DataCadastro", Model.Caracterizacao.DataCadastro.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataCadastro maskData" }))%>
+    </div>
 </fieldset>
-
 
 <%foreach (var item in Model.ExploracaoFlorestalExploracaoVM){ %>
 <fieldset class="block box exploracoesFlorestais" id="exploracao<%: item.ExploracaoFlorestal.Identificacao%>">

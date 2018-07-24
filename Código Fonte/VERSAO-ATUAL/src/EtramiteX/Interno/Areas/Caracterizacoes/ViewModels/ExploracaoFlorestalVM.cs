@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -50,11 +51,11 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _exploracaoFlorestalExploracaoVM = value; }
 		}
 
-		private List<FinalidadeExploracao> _finalidades = new List<FinalidadeExploracao>();
-		public List<FinalidadeExploracao> Finalidades
+		private List<SelectListItem> _tipoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> TipoExploracao
 		{
-			get { return _finalidades; }
-			set { _finalidades = value; }
+			get { return _tipoExploracao; }
+			set { _tipoExploracao = value; }
 		}
 
 		public String Mensagens
@@ -70,21 +71,12 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 
 		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais, List<Lista> exploracaoTipos, List<Lista> produtos, bool isVisualizar = false)
 		{
-			// passa o item "Outros" para a ultiam posição
-			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Texto == "Outros");
-			if (finalidade != null)
-			{
-				finalidades.Remove(finalidade);
-				finalidades.Add(finalidade);
-			}
-
-			Finalidades = finalidades;
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{
-				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(exploracaoTipos, classificacoesVegetais, produtos, exploracao, isVisualizar);
+				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(finalidades, exploracaoTipos, classificacoesVegetais, produtos, exploracao, isVisualizar);
 				ExploracaoFlorestalExploracaoVM.Add(exploracaoVM);
 			}
 		}

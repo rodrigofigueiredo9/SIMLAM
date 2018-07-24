@@ -71,12 +71,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_exploracao_florestal c (id, empreendimento, finalidade, finalidade_outros, tid) 
-				values ({0}seq_crt_exploracao_florestal.nextval, :empreendimento, :finalidade, :finalidade_outros, :tid) returning c.id into :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_exploracao_florestal c (id, empreendimento, finalidade, finalidade_outros, tid, codigo_exploracao, tipo_exploracao, data_cadastro) 
+				values ({0}seq_crt_exploracao_florestal.nextval, :empreendimento, :finalidade, :finalidade_outros, :tid, :codigo_exploracao, :tipo_exploracao, :data_cadastro) returning c.id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("finalidade", caracterizacao.FinalidadeExploracao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, caracterizacao.FinalidadeEspecificar);
+				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -93,8 +96,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
 					{
 						comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_exploracao c (id, exploracao_florestal, identificacao, geometria, area_croqui, 
-						classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
-						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid) returning c.id into :id", EsquemaBanco);
+						classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid, finalidade) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
+						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid, :finalidade) returning c.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
@@ -105,6 +108,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						comando.AdicionarParametroEntrada("arvores_requeridas", item.ArvoresRequeridas, DbType.Decimal);
 						comando.AdicionarParametroEntrada("quantidade_arvores", item.QuantidadeArvores, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_tipo", item.ExploracaoTipoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("finalidade", item.FinalidadeExploracao, DbType.Decimal);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -157,10 +161,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_exploracao_florestal c set c.finalidade = :finalidade, 
-				c.finalidade_outros = :finalidade_outros, c.tid = :tid where c.id = :id", EsquemaBanco);
+				c.finalidade_outros = :finalidade_outros, c.tid = :tid, c.codigo_exploracao = :codigo_exploracao, c.tipo_exploracao = :tipo_exploracao,
+				c.data_cadastro = :data_cadastro where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("finalidade", caracterizacao.FinalidadeExploracao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, caracterizacao.FinalidadeEspecificar);
+				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
 
@@ -212,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_exploracao c set c.identificacao = :identificacao, c.geometria = :geometria, 
 							c.area_croqui = :area_croqui, c.classificacao_vegetacao = :classificacao_vegetacao, c.area_requerida = :area_requerida, c.arvores_requeridas = :arvores_requeridas,
-							c.exploracao_tipo = :exploracao_tipo, c.quantidade_arvores = :quantidade_arvores, c.tid = :tid where c.id = :id", EsquemaBanco);
+							c.exploracao_tipo = :exploracao_tipo, c.quantidade_arvores = :quantidade_arvores, c.tid = :tid, c.finalidade = :finalidade where c.id = :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						}
@@ -226,6 +234,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							comando.AdicionarParametroSaida("id", DbType.Int32);
 						}
 
+						comando.AdicionarParametroEntrada("finalidade", item.FinalidadeExploracao, DbType.Decimal);
 						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
 						comando.AdicionarParametroEntrada("geometria", item.GeometriaTipoId, DbType.Int32);
 						comando.AdicionarParametroEntrada("area_croqui", item.AreaCroqui, DbType.Decimal);
