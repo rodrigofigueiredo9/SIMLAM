@@ -116,6 +116,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("O {0} não está na situação \"Válido\".", origem) };
 		}
 
+		public Mensagem OrigemDataMaiorPTV { get { return new Mensagem() { Texto = "A data de emissão da PTV deve ser maior ou igual à data do documento de origem.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem PtvJaExistente { get { return new Mensagem() { Campo = "Numero", Texto = "O número do PTV já foi utilizado.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NumeroPtvNaoConfigurado { get { return new Mensagem() { Campo = "Numero", Texto = "Número de PTV não configurado no sistema.", Tipo = eTipoMensagem.Advertencia }; } }
         public Mensagem AnoPTVInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Número de Bloco Inválido. O código informado não é do ano atual." }; } }

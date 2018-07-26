@@ -381,9 +381,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (cfo.DataEmissao.Data > ptvData.Data)
+					if (cfo.DataAtivacao.Data > ptvData.Data)
 					{
-						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+						Validacao.Add(Mensagem.PTV.OrigemDataMaiorPTV);
 					}
 					break;
 
@@ -403,9 +403,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (cfoc.DataEmissao.Data > ptvData.Data)
+					if (cfoc.DataAtivacao.Data > ptvData.Data)
 					{
-						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+						Validacao.Add(Mensagem.PTV.OrigemDataMaiorPTV);
 					}
 					break;
 
@@ -424,9 +424,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
 
-					if (ptvOutro.DataEmissao.Data > ptvData.Data)
+					if (ptvOutro.DataAtivacao.Data > ptvData.Data)
 					{
-						Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+						Validacao.Add(Mensagem.PTV.OrigemDataMaiorPTV);
 					}
 					break;
 
