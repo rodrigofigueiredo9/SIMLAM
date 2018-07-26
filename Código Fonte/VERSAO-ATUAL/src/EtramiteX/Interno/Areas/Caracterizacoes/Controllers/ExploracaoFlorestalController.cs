@@ -45,7 +45,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			caracterizacao.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes, 
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao);
+				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.TipoExploracaoFlorestal);
 			
 			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
 			vm.TextoAbrirModal = _validar.AbrirModalAcessar(caracterizacao);
@@ -107,7 +108,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao);
+				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.TipoExploracaoFlorestal);
 
 			vm.TextoMerge = textoMerge;
 			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
@@ -166,7 +168,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao, true);
+				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.TipoExploracaoFlorestal, true);
 
 			vm.TextoMerge = textoMerge;
 			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
@@ -214,7 +217,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult GeoMergiar(ExploracaoFlorestal exploracao)
 		{
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(_bus.MergiarGeo(exploracao), _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao);
+				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.TipoExploracaoFlorestal);
 
 			return Json(new
 			{
@@ -226,5 +230,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult GetCodigoExploracao(int tipoExploracao) => Json(new {
+			@EhValido = Validacao.EhValido,
+			@Msg = Validacao.Erros,
+			@CodigoExploracao = _bus.ObterCodigoExploracao(tipoExploracao)
+		}, JsonRequestBehavior.AllowGet);
 	}
 }

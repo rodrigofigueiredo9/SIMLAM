@@ -12,18 +12,19 @@
 
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
+<input type="hidden" class="hdnCodigoExploracao" value="<%: Model.Caracterizacao.CodigoExploracao %>" />
 
 <fieldset class="block box localizador">
     <legend class="titLocalizador">Localizador</legend>
     <div class="coluna22 append2">
         <label for="CodigoExploracao">Código Exploração</label>
-        <%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
+        <%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracao == 0 ? "" : Model.TipoExploracao.FirstOrDefault(x => x.Selected).Text.Substring(0, 3) + Model.Caracterizacao.CodigoExploracao.ToString().PadLeft(4, '0'), ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
     </div>
     <div class="coluna22 append2">
         <label for="CodigoExploracao">Tipo de Exploração *</label>
         <%= Html.DropDownList("TipoExploracao", Model.TipoExploracao, new { @class = "text ddlTipoExploracao" })%>
     </div>
-	<div class="coluna15">
+	<div class="coluna22">
         <label>Data Cadastro</label>
         <%= Html.TextBox("DataCadastro", Model.Caracterizacao.DataCadastro.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataCadastro maskData" }))%>
     </div>

@@ -11,7 +11,8 @@
 		$(function () {
 			ExploracaoFlorestal.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("Editar", "ExploracaoFlorestal") %>'
+					salvar: '<%= Url.Action("Editar", "ExploracaoFlorestal") %>',
+					getCodigoExploracao: '<%= Url.Action("GetCodigoExploracao", "ExploracaoFlorestal") %>'
 				},
 				idsTela: <%= Model.IdsTela %>
 			});

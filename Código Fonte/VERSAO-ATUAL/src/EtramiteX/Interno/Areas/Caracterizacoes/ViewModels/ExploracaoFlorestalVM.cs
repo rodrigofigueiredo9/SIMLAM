@@ -69,10 +69,12 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 		}
 
-		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais, List<Lista> exploracaoTipos, List<Lista> produtos, bool isVisualizar = false)
+		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais,
+			List<Lista> exploracaoTipos, List<Lista> produtos, List<Lista> tipoExploracao, bool isVisualizar = false)
 		{
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
+			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{

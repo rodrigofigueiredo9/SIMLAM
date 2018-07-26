@@ -23,7 +23,7 @@
 			<%= Html.TextBox("ExploracaoFlorestal.Geometrias", Model.ExploracaoFlorestal.GeometriaTipoTexto, new { @class = "text txtGeometria disabled", disabled = "disabled" })%>
 		</div>
 
-		<div class="coluna22 append2">
+		<div class="coluna24 append2">
 			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, new { @class = "text ddlFinalidade" })%>
 		</div>

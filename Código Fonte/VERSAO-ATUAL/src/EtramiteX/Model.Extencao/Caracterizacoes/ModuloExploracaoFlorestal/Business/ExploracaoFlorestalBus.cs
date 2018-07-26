@@ -213,5 +213,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			throw new NotImplementedException();
 		}
+
+		public int ObterCodigoExploracao(int tipoExploracao, BancoDeDados bancoDeDados = null)
+		{
+			var codigoExploracao = 0;
+
+			try
+			{
+				codigoExploracao = _da.ObterCodigoExploracao(tipoExploracao, bancoDeDados);
+				codigoExploracao++;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return codigoExploracao;
+		}
 	}
 }

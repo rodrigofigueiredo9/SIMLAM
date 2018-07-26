@@ -90,7 +90,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				finalidades.Remove(finalidade);
 				finalidades.Add(finalidade);
 			}
-			Finalidades = ViewModelHelper.CriarSelectList(finalidades);
+			Finalidades = ViewModelHelper.CriarSelectList(finalidades, selecionado: exploracao.FinalidadeExploracao.ToString());
 		}
 	}
 }

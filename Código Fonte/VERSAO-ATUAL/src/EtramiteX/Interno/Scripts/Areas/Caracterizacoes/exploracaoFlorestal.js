@@ -1,11 +1,12 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 
 ExploracaoFlorestal = {
 	settings: {
 		urls: {
 			salvar: '',
-			mergiar: ''
+			mergiar: '',
+			getCodigoExploracao: ''
 		},
 		idsTela: null,
 		mensagens: {},
@@ -21,7 +22,8 @@ ExploracaoFlorestal = {
 
 		ExploracaoFlorestal.container.delegate('.btnSalvar', 'click', ExploracaoFlorestal.salvar);
 		ExploracaoFlorestal.container.delegate('.checkboxFinalidadeExploracao', 'change', ExploracaoFlorestal.onChangeFinalidade);
-
+		ExploracaoFlorestal.container.delegate('.ddlTipoExploracao', 'change', ExploracaoFlorestal.onChangeTipoExploracao);
+		
 		ExploracaoFlorestal.gerenciarFinalidades();
 
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
@@ -121,7 +123,8 @@ ExploracaoFlorestal = {
 			FinalidadeExploracao: 0,
 			FinalidadeEspecificar: $('.txtFinalidadeEspecificar', ExploracaoFlorestal.container).val(),
 			Dependencias: JSON.parse(ExploracaoFlorestal.settings.dependencias),
-			Exploracoes: ExploracaoFlorestalExploracao.obter()
+			Exploracoes: ExploracaoFlorestalExploracao.obter(),
+			CodigoExploracao: $('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(),
 		}
 
 		$('.checkboxFinalidadeExploracao:checked', ExploracaoFlorestal.container).each(function () {
@@ -129,6 +132,33 @@ ExploracaoFlorestal = {
 		});
 
 		return objeto;
+	},
+
+	onChangeTipoExploracao: function () {		
+		$.ajax({
+			url: ExploracaoFlorestal.settings.urls.getCodigoExploracao,
+			data: { tipoExploracao: $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).val() },
+			cache: false,
+			async: false,
+			type: 'GET',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, ExploracaoFlorestal.container);
+				MasterPage.carregando(false);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					var texto = $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).text().substring(0, 3);
+					$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + response.CodigoExploracao.toString().padStart(4, '0'));
+					$('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(response.CodigoExploracao);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(ExploracaoFlorestal.container, response.Msg);
+				}
+			}
+		});
 	},
 
 	salvar: function () {

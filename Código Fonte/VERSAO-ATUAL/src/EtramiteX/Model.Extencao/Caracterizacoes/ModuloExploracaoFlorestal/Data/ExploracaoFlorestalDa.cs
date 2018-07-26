@@ -435,7 +435,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#region Explorações
 
 				comando = bancoDeDados.CriarComando(@"select c.id, c.identificacao, c.geometria, lg.texto geometria_texto, c.area_croqui, c.area_requerida, c.arvores_requeridas, 
-				c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto, c.exploracao_tipo, lef.texto exploracao_tipo_texto, c.quantidade_arvores, c.tid 
+				c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto, c.exploracao_tipo, lef.texto exploracao_tipo_texto, c.quantidade_arvores, c.tid, c.finalidade
 				from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc, {0}lov_crt_exp_flores_exploracao lef 
 				where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.exploracao_tipo  = lef.id and c.exploracao_florestal = :id order by lef.texto", EsquemaBanco);
 
@@ -449,6 +449,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						exploracao = new ExploracaoFlorestalExploracao();
 						exploracao.Id = Convert.ToInt32(reader["id"]);
+						exploracao.FinalidadeExploracao = Convert.ToInt32(reader["finalidade"]);
 						exploracao.Tid = reader["tid"].ToString();
 						exploracao.Identificacao = reader["identificacao"].ToString();
 						exploracao.ArvoresRequeridas = reader["arvores_requeridas"].ToString();
@@ -755,6 +756,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 
 			return caracterizacao;
+		}
+
+		internal int ObterCodigoExploracao(int tipoExploracao, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+								select max(c.codigo_exploracao) from crt_exploracao_florestal c
+							   where c.tipo_exploracao = :tipo_exploracao", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("tipo_exploracao", tipoExploracao, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando);
+			}
 		}
 
 		#endregion

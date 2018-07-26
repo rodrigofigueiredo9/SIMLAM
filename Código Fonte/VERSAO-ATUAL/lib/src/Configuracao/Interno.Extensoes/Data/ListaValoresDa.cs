@@ -485,6 +485,22 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 			return lst;
 		}
 
+		internal List<Lista> ObterTipoExploracaoFlorestal()
+		{
+			List<Lista> lst = new List<Lista>();
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_crt_exp_flores_tipo t");
+			foreach (var item in daReader)
+			{
+				lst.Add(new Lista()
+				{
+					Id = item["id"].ToString(),
+					Texto = Convert.ToString(item["texto"]),
+					IsAtivo = true
+				});
+			}
+			return lst;
+		}
+
 		#endregion
 
 		#region Queima Controlada
