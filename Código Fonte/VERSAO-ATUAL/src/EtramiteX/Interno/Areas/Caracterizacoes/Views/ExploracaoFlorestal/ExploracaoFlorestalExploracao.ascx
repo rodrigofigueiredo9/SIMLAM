@@ -25,7 +25,7 @@
 
 		<div class="coluna24 append2">
 			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
-			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, new { @class = "text ddlFinalidade" })%>
+			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFinalidade" }))%>
 		</div>
 	</div>
 	<div class="block">
