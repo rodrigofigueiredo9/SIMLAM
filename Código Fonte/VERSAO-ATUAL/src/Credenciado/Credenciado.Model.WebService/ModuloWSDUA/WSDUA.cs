@@ -40,6 +40,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA
 				if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
 				{
 					Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
+					Log.Error($"DUA: {numeroDUA} - CPF/CNPJ: {cpfCnpj}", new Exception(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
 					return null;
 				}
 
