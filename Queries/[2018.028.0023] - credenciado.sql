@@ -6,7 +6,6 @@ alter table IDAFCREDENCIADO.tab_ptv add exibir_msg_credenciado numeric(1,0);
 alter table IDAFCREDENCIADO.tab_ptv add local_fiscalizacao varchar2(500 byte);
 alter table IDAFCREDENCIADO.tab_ptv add hora_fiscalizacao varchar2(5 byte);
 alter table IDAFCREDENCIADO.tab_ptv add informacoes_adicionais varchar2(500 byte);
-grant all on "IDAF"."TAB_NF_CAIXA" to "IDAFCREDENCIADO" ;
 
 update lov_solicitacao_ptv_situacao set texto = 'Válido' where texto = 'Aprovado';
 

@@ -44,6 +44,8 @@ COMMENT ON COLUMN "IDAF"."TAB_NF_CAIXA"."TIPO_CAIXA" IS 'Chave estrangeira para 
 COMMENT ON COLUMN "IDAF"."TAB_NF_CAIXA"."SALDO_INICIAL" IS 'Total de saldo de caixas quando cadastrou a Nota Fiscal.';  
 COMMENT ON TABLE "IDAF"."TAB_NF_CAIXA"  IS 'Tabela de Nota Fiscal de caixas.';
 
+grant all on "IDAF"."TAB_NF_CAIXA" to "IDAFCREDENCIADO" ;
+
 CREATE TABLE "IDAF"."TAB_PTV_NF_CAIXA" 
    (	"ID" NUMBER(38,0) NOT NULL ENABLE, 
 	"TID" VARCHAR2(36 BYTE) NOT NULL ENABLE, 
