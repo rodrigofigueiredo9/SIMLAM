@@ -398,11 +398,11 @@
 		</div>
 		<div class="isNFCaixaVerificado hide">
 			<div class="coluna15">
-				<label class="lblSaldoAtualInicial">Saldo atual</label>
+				<label>Total de caixas*</label>
 				<%= Html.TextBox("SaldoAtual", Model.PTV.NFCaixa.saldoAtual, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNum8 txtNFCaixaSaldoAtual", @maxlength="8"}))%>
 			</div>
 			<div class="coluna15">
-				<label>N° de caixas *</label>
+				<label>N° de caixas utilizadas*</label>
 				<%= Html.TextBox("NumeroDeCaixas", Model.PTV.NFCaixa.numeroCaixas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNum8 txtNFCaixaNumeroDeCaixas", @maxlength="8"}))%>
 			</div>
 			<div class="coluna10">
