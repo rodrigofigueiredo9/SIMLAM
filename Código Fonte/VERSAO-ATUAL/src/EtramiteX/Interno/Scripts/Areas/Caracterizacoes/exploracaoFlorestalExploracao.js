@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../jquery.ddl.js" />
 
@@ -19,7 +19,7 @@ ExploracaoFlorestalExploracao = {
 		ExploracaoFlorestalExploracao.container.delegate('.ddlProduto', 'change', ExploracaoFlorestalExploracao.onSelecionarProduto);
 
 		ExploracaoFlorestalExploracao.atualizarMascaras();
-
+		ExploracaoFlorestalExploracao.loadAutoComplete();
 	},
 
 	atualizarMascaras: function () {
@@ -190,5 +190,48 @@ ExploracaoFlorestalExploracao = {
 		});
 
 		return exploracoes;
+	},
+
+	loadAutoComplete: function () {
+		$(".txtNomeCientifico").keyup(function () {
+			var query = $(this).val();
+			ExploracaoFlorestalExploracao.getItems(query);
+		});
+	},
+
+	getItems: function (query) {
+		$.ajax({
+			url: 'http://homologacao.ibama.gov.br/api/taxonomias',
+			data: { "filtro.descricao": query },
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			success: function (response) {
+				if (response.Data != null) {
+					if ($("#targetUL") != undefined) {
+						$("#targetUL").remove();
+					}
+					data = response.Data;
+					$("#targetDiv").append($("<ul id='targetUL'></ul>"));
+					$("#targetUL").find("li").remove();
+					$.each(data, function (i, value) {
+						$("#targetUL").append($("<li class='targetLI' onclick='javascript:ExploracaoFlorestalExploracao.appendTextToTextBox(this)'>" + value + "</li>"));
+
+					});
+				}
+				else {
+					$("#targetUL").find("li").remove();
+					$("#targetUL").remove();
+				}
+			},
+			error: function (xhr, status, error) {
+			}
+		});
+	},
+
+	appendTextToTextBox: function (e) {
+		var textToappend = e.innerText;
+		$(".txtNomeCientifico").val(textToappend);
+		$("#targetUL").remove();
 	}
 }

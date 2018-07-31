@@ -65,6 +65,13 @@
 					<%= Html.DropDownList("Produto" + Model.ExploracaoFlorestal.Identificacao, Model.Produtos, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlProduto" }))%>
 				</div>
 
+				<div class="coluna22 append2">
+					<label for="NomeCientifico<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
+					<div id="targetDiv">
+                        <%= Html.TextBox("NomeCientifico" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtNomeCientifico" }))%>
+                    </div>
+                </div>
+
 				<div class="coluna22 append2 divQuantidade">
 					<label for="Quantidade<%= Model.ExploracaoFlorestal.Identificacao%>">Quantidade *</label>
 					<%= Html.TextBox("Quantidade" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtQuantidade maskDecimalPonto", @maxlength = "12" }))%>
