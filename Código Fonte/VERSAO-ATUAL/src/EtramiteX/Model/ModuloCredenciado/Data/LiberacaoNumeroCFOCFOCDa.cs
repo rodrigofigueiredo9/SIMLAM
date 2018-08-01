@@ -80,25 +80,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			}
 		}
 
-        public DUARequisicao BuscarRespostaConsultaDUA(int filaID)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
-            {
-                var comando = bancoDeDados.CriarComando(@"select tsf.resultado, tsf.sucesso from {0}TAB_SCHEDULER_FILA tsf where tsf.id = :id", UsuarioInterno);
-
-                comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                    if (reader.Read())
-                        return new DUARequisicao
-                        {
-                            Sucesso = reader.GetValue<string>("sucesso") == "verdadeiro",
-                            Resultado = reader.GetValue<string>("resultado"),
-                        };
-
-                return null;
-            }
-        }
-
 		private void Criar_old(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
 		{
 			IDataReader reader = null;
