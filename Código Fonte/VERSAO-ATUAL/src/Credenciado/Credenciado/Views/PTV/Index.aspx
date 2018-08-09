@@ -24,7 +24,9 @@
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
 					urlValidarAcessoSolicitarDesbloqueio: '<%= Url.Action("ValidarAcessoSolicitarDesbloqueio", "PTV") %>',
 					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
-					urlSolicitarDesbloqueio: '<%= Url.Action("SolicitarDesbloqueio", "PTV") %>'
+					urlSolicitarDesbloqueio: '<%= Url.Action("SolicitarDesbloqueio", "PTV") %>',
+					urlConfirmarCancelarEnvio: '<%= Url.Action("CancelarEnvioConfirm", "PTV") %>',
+					urlCancelarEnvio: '<%= Url.Action("CancelarEnvio", "PTV") %>'
 				}
 			});
 

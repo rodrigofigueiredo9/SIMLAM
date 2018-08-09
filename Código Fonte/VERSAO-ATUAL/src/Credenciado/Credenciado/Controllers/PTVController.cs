@@ -270,6 +270,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#endregion
 
+		#region Cancelar Envio
+
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvioConfirm(int id)
+		{
+			PTV ptv = _busPTV.Obter(id, true);
+			ConfirmarVM vm = new ConfirmarVM();
+
+			vm.Id = id;
+			vm.Mensagem = Mensagem.PTV.MensagemCancelarEnvio(ptv.Numero.ToString());
+			vm.Titulo = "Confirmação do cancelamento";
+			return PartialView("Confirmar", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvio(int id)
+		{
+			_busPTV.CancelarEnvio(id);
+			return Json(new {
+				EhValido = Validacao.EhValido,
+				Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
 		#region GerarPDF PTV
 
 		[HttpGet]

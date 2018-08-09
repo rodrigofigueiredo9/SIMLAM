@@ -15,7 +15,9 @@ EPTVListar = {
 			urlEnviar: null,
 			urlValidarAcessoComunicador: null,
 			urlComunicadorPTV: null,
-			urlSolicitarDesbloqueio: null
+			urlSolicitarDesbloqueio: null,
+			urlCancelarEnvio: null,
+			urlConfirmarCancelarEnvio: null
 		}
 	},
 
@@ -33,7 +35,8 @@ EPTVListar = {
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
 		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.solicitarDesbloqueio);
 		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
-		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
+		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);
+		container.delegate('.btnCancelarEnvio', 'click', EPTVListar.cancelarEnvio);
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
@@ -106,6 +109,18 @@ EPTVListar = {
 				});
 				MasterPage.carregando(false);
 			}, 'Enviar');
+		});
+	},
+
+	cancelarEnvio: function () {
+		Mensagem.limpar(EPTVListar.container);
+		debugger;
+		Modal.excluir({
+			'urlConfirm': EPTVListar.settings.urls.urlConfirmarCancelarEnvio,
+			'urlAcao': EPTVListar.settings.urls.urlCancelarEnvio,
+			'id': EPTVListar.obter(this).Id,
+			'btnExcluir': this,
+			'btnTexto': 'Confirmar'
 		});
 	},
 

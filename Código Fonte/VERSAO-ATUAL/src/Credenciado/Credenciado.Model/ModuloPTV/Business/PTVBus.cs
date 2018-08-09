@@ -172,6 +172,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		public void CancelarEnvio(int ptvId)
+		{
+			try
+			{
+				PTV ptv = Obter(ptvId);
+
+				if (_validar.CancelarEnvio(ptv))
+				{
+					ptv.Situacao = (int)eSolicitarPTVSituacao.Cadastrado;
+
+					GerenciadorTransacao.ObterIDAtual();
+
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+					{
+						bancoDeDados.IniciarTransacao();
+
+						_da.CancelarEnvio(ptv, bancoDeDados);
+
+						Validacao.Add(Mensagem.PTV.CanceladoSucesso);
+
+						bancoDeDados.Commit();
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		private string ObterNumeroDigital()
 		{
 			string numeroDigital = string.Empty;

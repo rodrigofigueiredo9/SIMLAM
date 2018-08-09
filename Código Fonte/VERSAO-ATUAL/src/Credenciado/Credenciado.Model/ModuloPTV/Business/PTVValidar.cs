@@ -481,6 +481,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		internal bool CancelarEnvio(PTV ptv)
+		{
+			if (ptv.Situacao != (int)eSolicitarPTVSituacao.AguardandoAnalise)
+			{
+				Validacao.Add(Mensagem.PTV.CancelarEnvioSituacaoInvalida);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		internal bool Excluir(int id)
 		{
 			PTV ptvBanco = _da.Obter(id, true);
