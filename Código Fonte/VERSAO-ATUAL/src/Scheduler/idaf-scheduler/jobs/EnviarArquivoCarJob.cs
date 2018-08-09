@@ -146,12 +146,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var msg = ex.Message +
 							Environment.NewLine +
 							Environment.NewLine +
-							(resultado ?? "");
+							String.Concat("resultado: ", (resultado ?? ""));
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado ?? "" } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
-						Log.Error("CATCH:" + nextItem.Requisicao + " =====> " + ex.Message, ex);
+						Log.Error("CATCH:" + nextItem.Requisicao + " =====> " + msg, ex);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
