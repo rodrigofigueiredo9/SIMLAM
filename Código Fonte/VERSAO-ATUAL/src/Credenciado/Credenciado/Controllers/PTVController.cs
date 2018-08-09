@@ -697,6 +697,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult ValidarAcessoSolicitarDesbloqueio(int id)
+		{
+			_validar.ValidarAcessoSolicitarDesbloqueioPTV(id);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
 		public ActionResult SolicitarDesbloqueio(int id)
 		{
 			PTVComunicadorVW vm = new PTVComunicadorVW();

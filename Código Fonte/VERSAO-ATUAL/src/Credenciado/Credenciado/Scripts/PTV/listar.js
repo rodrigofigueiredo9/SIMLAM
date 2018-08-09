@@ -141,7 +141,7 @@ EPTVListar = {
 	solicitarDesbloqueio: function () {
 		var item = EPTVListar.obter(this);
 
-		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoSolicitarDesbloqueio + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
 			return;
 		}
 

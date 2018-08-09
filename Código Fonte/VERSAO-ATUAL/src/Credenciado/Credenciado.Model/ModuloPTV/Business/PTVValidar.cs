@@ -612,6 +612,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return true;
 		}
 
+		public bool ValidarAcessoSolicitarDesbloqueioPTV(int idPTV)
+		{
+			if (!_da.PossuiAcessoComunicadorPTV(idPTV, Executor.Current.Id))
+			{
+				Validacao.Add(Mensagem.PTV.AcessoNaoPermitido);
+				return false;
+			}
+
+			PTV eptv = _da.Obter(idPTV, true);
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			{
+				Validacao.Add(Mensagem.PTV.SolicitarDesbloqueioPTVSituacaoInvalida);
+				return false;
+			}
+
+			return true;
+		}
+
 		public bool ValidarConversa(PTVComunicador comunicador)
 		{
 			if ((comunicador.ArquivoCredenciado != null) && (!String.IsNullOrEmpty(comunicador.ArquivoCredenciado.TemporarioNome) || !String.IsNullOrEmpty(comunicador.ArquivoCredenciado.Nome)))
