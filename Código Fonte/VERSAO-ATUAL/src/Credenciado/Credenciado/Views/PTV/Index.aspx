@@ -14,7 +14,6 @@
 		$(function () {
 			EPTVListar.load($('#central'), {
 				urls: {
-					urlHistorico: '<%= Url.Action("Historico", "PTV") %>',
 					urlVisualizar: '<%= Url.Action("Visualizar", "PTV") %>',
 					urlEditar: '<%= Url.Action("Editar", "PTV") %>',
 					urlExcluirConfirm: '<%= Url.Action("ExcluirConfirm", "PTV") %>',

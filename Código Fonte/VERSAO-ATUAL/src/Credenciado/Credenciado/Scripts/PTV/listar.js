@@ -6,7 +6,6 @@
 EPTVListar = {
 	settings: {
 		urls: {
-			urlHistorico: null,
 			urlVisualizar: null,
 			urlEditar: null,
 			urlExcluirConfirm: null,
@@ -32,7 +31,6 @@ EPTVListar = {
 		container.delegate('.btnExcluir', 'click', EPTVListar.excluir);
 		container.delegate('.btnPDF', 'click', EPTVListar.gerarPDF);
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
-		container.delegate('.btnHistorico', 'click', EPTVListar.historico);
 		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.solicitarDesbloqueio);
 		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
 		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
@@ -46,15 +44,6 @@ EPTVListar = {
 
 	obter: function (container) {
 		return JSON.parse($(container).closest('tr').find('.itemJson:first').val());
-	},
-
-	historico: function (item, listarSucesso) {
-		Mensagem.limpar(EPTVListar.container);
-
-		var item = EPTVListar.obter(this);
-		Modal.abrir(EPTVListar.settings.urls.urlHistorico + '/' + item.Id, null, function (container) {
-			Modal.defaultButtons(container);
-		}, Modal.tamanhoModalGrande);
 	},
 
 	editar: function () {

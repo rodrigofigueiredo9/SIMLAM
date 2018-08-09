@@ -270,18 +270,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#endregion
 
-		#region Historico
-
-		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
-		public ActionResult Historico(int id)
-		{
-			PTVHistoricoVM vm = new PTVHistoricoVM(_busPTV.ObterHistoricoAnalise(id), ListaCredenciadoBus.PTVSolicitacaoSituacao);
-
-			return PartialView("PTVHistoricoPartial", vm);
-		}
-
-		#endregion
-
 		#region GerarPDF PTV
 
 		[HttpGet]

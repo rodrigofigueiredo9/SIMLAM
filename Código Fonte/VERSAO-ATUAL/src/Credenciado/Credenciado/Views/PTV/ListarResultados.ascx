@@ -43,8 +43,6 @@
 
 					<% if (Model.PodeEnviar)
 		{ %><input type="button" title="Enviar" class="icone recebido btnEnviar" /><% } %>
-					<% if (Model.PodeVisualizar)
-		{ %><input type="button" title="Historico" class="icone historico btnHistorico" /><% } %>
 					<% if (Model.PodeSolicitarDesbloqueio)
 		{ %><input type="button" title="Solicitar Desbloqueio" class="icone comparar btnSolicitarDesbloqueio" /><% } %>
 					<% if (	item.Situacao == (int)eSolicitarPTVSituacao.Rejeitado ||
