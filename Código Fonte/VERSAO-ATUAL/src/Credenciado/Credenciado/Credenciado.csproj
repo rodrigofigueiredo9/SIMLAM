@@ -1170,7 +1170,6 @@
     <Content Include="Views\PTV\Editar.aspx" />
     <Content Include="Views\PTV\Index.aspx" />
     <Content Include="Views\PTV\ListarFiltros.ascx" />
-    <Content Include="Views\PTV\PTVHistoricoPartial.ascx" />
     <Content Include="Views\PTV\ListarResultados.ascx" />
     <Content Include="Views\PTV\PTVPartial.ascx" />
     <Content Include="Views\PTV\Visualizar.aspx" />

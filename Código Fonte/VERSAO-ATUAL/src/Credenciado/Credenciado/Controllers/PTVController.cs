@@ -270,14 +270,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#endregion
 
-		#region Historico
+		#region Cancelar Envio
 
-		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
-		public ActionResult Historico(int id)
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvioConfirm(int id)
 		{
-			PTVHistoricoVM vm = new PTVHistoricoVM(_busPTV.ObterHistoricoAnalise(id), ListaCredenciadoBus.PTVSolicitacaoSituacao);
+			PTV ptv = _busPTV.Obter(id, true);
+			ConfirmarVM vm = new ConfirmarVM();
 
-			return PartialView("PTVHistoricoPartial", vm);
+			vm.Id = id;
+			vm.Mensagem = Mensagem.PTV.MensagemCancelarEnvio(ptv.Numero.ToString());
+			vm.Titulo = "Confirmação do cancelamento";
+			return PartialView("Confirmar", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvio(int id)
+		{
+			_busPTV.CancelarEnvio(id);
+			return Json(new {
+				EhValido = Validacao.EhValido,
+				Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
@@ -693,6 +708,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		public ActionResult ValidarAcessoComunicador(int id)
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult ValidarAcessoSolicitarDesbloqueio(int id)
+		{
+			_validar.ValidarAcessoSolicitarDesbloqueioPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
 		}
 

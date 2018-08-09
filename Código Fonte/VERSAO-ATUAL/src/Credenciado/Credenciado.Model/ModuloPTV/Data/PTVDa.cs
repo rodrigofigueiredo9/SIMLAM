@@ -419,6 +419,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
+		internal void CancelarEnvio(PTV PTV, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao where p.id = :id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.atualizar, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		internal void Excluir(int id, BancoDeDados banco)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))

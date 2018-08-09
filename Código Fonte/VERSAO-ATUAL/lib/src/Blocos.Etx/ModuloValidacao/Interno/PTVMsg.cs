@@ -32,9 +32,18 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem EnviadoSucesso { get { return new Mensagem() { Texto = "PTV enviado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
 
+		public Mensagem CancelarEnvioSituacaoInvalida { get { return new Mensagem() { Texto = "A situação da EPTV deve ser \"Aguardando análise\".", Tipo = eTipoMensagem.Advertencia }; } }
+
 		public Mensagem CanceladoSucesso { get { return new Mensagem() { Texto = "PTV cancelado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
 
+		public Mensagem EnvioCanceladoSucesso { get { return new Mensagem() { Texto = "O envio da PTV foi cancelado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
+
 		public Mensagem MensagemEnviar { get { return new Mensagem() { Texto = "Tem certeza que deseja enviar o EPTV." }; } }
+
+		public Mensagem MensagemCancelarEnvio(string numeroPTV)
+		{
+			return new Mensagem() { Texto = String.Format("Essa ação irá alterar a situação da E-PTV para \"Em elaboração\", não permitindo a análise da E-PTV pelo funcionário do IDAF até que ela seja enviada novamente. Tem certeza de que deseja cancelar o envio da E-PTV número {0}?", numeroPTV) };
+		}
 
 		public Mensagem MensagemExcluir(string situacao)
 		{
@@ -185,6 +194,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem AcessoNaoPermitido { get { return new Mensagem() { Texto = "Este EPTV não pode ser acessado por este usuário.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
+
+		public Mensagem SolicitarDesbloqueioPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		#endregion
 
