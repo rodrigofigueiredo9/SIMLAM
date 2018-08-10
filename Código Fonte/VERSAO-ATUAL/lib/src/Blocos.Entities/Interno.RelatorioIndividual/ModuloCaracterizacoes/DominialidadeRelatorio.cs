@@ -31,6 +31,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCaracteri
 			}
 		}
 
+		public String ATPCroquiHa { get; set; }
+
 		public String TotalCroquiHa { get { return TotalCroqui.Convert(eMetrica.M2ToHa).ToStringTrunc(4); } }
 		public Decimal TotalCroqui
 		{

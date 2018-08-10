@@ -106,6 +106,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCaracteri
 				{
 					return caracterizacao;
 				}
+				#region ATP
+				comando = bancoDeDados.CriarComando(@"SELECT (ATP.AREA_M2) ATP FROM CRT_PROJETO_GEO CRP
+														  INNER JOIN  IDAFGEO.GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
+														  INNER JOIN CRT_DOMINIALIDADE  CRD ON CRD.EMPREENDIMENTO = CRP.EMPREENDIMENTO
+														WHERE CRD.ID  = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						caracterizacao.ATPCroquiHa = reader.GetValue<Decimal>("ATP").Convert(eMetrica.M2ToHa).ToStringTrunc(4); ;
+					}
+				}
+				#endregion
 
 				#region Áreas
 
@@ -214,7 +229,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCaracteri
 				{
 					return caracterizacao;
 				}
+				#region ATP
+				comando = bancoDeDados.CriarComando(@"SELECT (ATP.AREA_M2) ATP FROM CRT_PROJETO_GEO CRP
+														  INNER JOIN  IDAFGEO.GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
+														  INNER JOIN CRT_DOMINIALIDADE  CRD ON CRD.EMPREENDIMENTO = CRP.EMPREENDIMENTO
+														WHERE CRD.ID  = :id", EsquemaBanco);
 
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						caracterizacao.ATPCroquiHa = reader.GetValue<Decimal>("ATP").Convert(eMetrica.M2ToHa).ToStringTrunc(4); ;
+					}
+				}
+				#endregion
 				#region Áreas
 
 				comando = bancoDeDados.CriarComando(@"select a.id Id, a.tipo Tipo, la.texto TipoTexto, a.valor Valor, a.tid Tid
