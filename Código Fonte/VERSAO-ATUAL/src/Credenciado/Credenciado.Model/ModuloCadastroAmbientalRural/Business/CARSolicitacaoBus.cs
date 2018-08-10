@@ -279,7 +279,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public void DesassociarProtocolo(CARSolicitacao carSolicitacao, BancoDeDados banco = null)
 		{
-			try
+			/*
+			 * Regra removida. Regra na qual alterava a situação para SUSPENSO
+			 * try
 			{
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -323,7 +325,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
-			}
+			}*/
 		}
         
         public void EnviarReenviarArquivoSICAR(CARSolicitacao solicitacao, bool isEnviar, BancoDeDados banco = null)
