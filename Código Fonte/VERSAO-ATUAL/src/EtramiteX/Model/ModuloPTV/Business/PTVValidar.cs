@@ -764,6 +764,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return true;
 		}
 
+		public bool ValidarAcessoAnalisarDesbloqueioPTV(int idPTV)
+		{
+			if (!FuncionarioHabilitadoValido())
+			{
+				return false;
+			}
+
+			Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus ptvCredenciadoBus = new Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus();
+			PTV eptv = ptvCredenciadoBus.Obter(idPTV, true);
+
+			if (!_da.PossuiAcessoComunicadorPTV(Executor.Current.Id, eptv.LocalVistoriaId))
+			{
+				Validacao.Add(Mensagem.PTV.AcessoNaoPermitido);
+				return false;
+			}
+
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			{
+				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
+				return false;
+			}
+
+			return true;
+		}
+
 		public bool ValidarConversa(PTVComunicador comunicador)
 		{
 			if (!FuncionarioHabilitadoValido())

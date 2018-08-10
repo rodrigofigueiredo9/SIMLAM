@@ -11,7 +11,8 @@ EPTVListar = {
 			urlComunicadorPTV: null,
 			urlAnalisarDesbloqueio: null,
 			urlVisualizar: null,
-			urlPDFEPTV: null
+			urlPDFEPTV: null,
+			urlValidarAcessoAnalisarDesbloqueio: null,
 		}
 	},
 
@@ -72,7 +73,7 @@ EPTVListar = {
 	analisarDesbloqueio: function () {
 		var item = EPTVListar.obter(this);
 
-		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoAnalisarDesbloqueio + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
 			return;
 		}
 

@@ -193,7 +193,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem AcessoNaoPermitido { get { return new Mensagem() { Texto = "Este EPTV não pode ser acessado por este usuário.", Tipo = eTipoMensagem.Advertencia }; } }
 
-		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\", \"Fiscalização Agendada\" ou \"Rejeitado\".", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem ComunicadorPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem SolicitarDesbloqueioPTVSituacaoInvalida { get { return new Mensagem() { Texto = "O EPTV deve estar na situação \"Bloqueado\".", Tipo = eTipoMensagem.Advertencia }; } }
 
