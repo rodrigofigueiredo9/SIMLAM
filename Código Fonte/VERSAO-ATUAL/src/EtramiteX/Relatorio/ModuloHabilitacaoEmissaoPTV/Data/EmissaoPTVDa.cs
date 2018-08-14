@@ -852,12 +852,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
 					using (BancoDeDados bancoDeDadosCredenciado = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
 					{
-						comandoCred = bancoDeDadosCredenciado.CriarComando(@"select distinct lcda.texto_formatado DeclaracaoAdicionalTexto
-                            from hst_cfoc cfoc, hst_cfoc_produto cp, hst_lote hl, hst_lote_item hli, hst_cultura_cultivar hcc, 
-                            hst_cultivar_configuracao cconf, lov_cultivar_declara_adicional lcda, hst_cfoc_praga tcp where cfoc.id = cp.id_hst and cp.lote_id = hl.lote_id 
-                            and cp.lote_tid = hl.tid and hl.id = hli.id_hst and hli.cultivar_id = hcc.cultivar_id and hli.cultivar_tid = hcc.tid and hcc.id = cconf.id_hst 
-                            and cconf.declaracao_adicional_id = lcda.id and cfoc.id = tcp.id_hst and tcp.praga_id = cconf.praga_id 
-                            and cfoc.cfoc_id = :cfocId and cfoc.tid = :cfocTid and cconf.tipo_producao_id = :tipoProducaoID and hli.cultivar_id = :cultivarID", EsquemaBancoCredenciado);
+						comandoCred = bancoDeDadosCredenciado.CriarComando(@"
+										select distinct lcda.texto_formatado DeclaracaoAdicionalTexto
+										from hst_cfoc cfoc,
+										     hst_cfoc_produto cp,
+										     hst_lote hl,
+										     hst_lote_item hli,
+										     hst_cultura_cultivar hcc,
+										     hst_cultivar_configuracao cconf,
+										     lov_cultivar_declara_adicional lcda,
+										     hst_cfoc_praga tcp
+										where cfoc.id = cp.id_hst
+										      and cp.lote_id = hl.lote_id
+										      and cp.lote_tid = hl.tid
+										      and hl.id = hli.id_hst
+										      and hli.cultivar_id = hcc.cultivar_id
+										      and hli.cultivar_tid = hcc.tid
+										      and hcc.id = cconf.id_hst
+										      and cconf.declaracao_adicional_id = lcda.id
+										      and cfoc.id = tcp.id_hst
+										      and tcp.praga_id = cconf.praga_id
+											  and instr(Cfoc.Informacoes_Complementares, Lcda.Texto_Formatado) > 0	--Para garantir que a declaração adicional consta no documento de origem. Isso é necessário devido a falta de informações nas tabelas histórico.
+										      and cfoc.cfoc_id = :cfocId
+										      and cfoc.tid = :cfocTid
+										      and cconf.tipo_producao_id = :tipoProducaoID
+										      and hli.cultivar_id = :cultivarID", EsquemaBancoCredenciado);
 						comandoCred.AdicionarParametroEntrada("cfocId", origemId, DbType.Int32);
 						comandoCred.AdicionarParametroEntrada("cfocTid", origemTid, DbType.String);
 						comandoCred.AdicionarParametroEntrada("tipoProducaoID", tipoProducaoID, DbType.Int32);
