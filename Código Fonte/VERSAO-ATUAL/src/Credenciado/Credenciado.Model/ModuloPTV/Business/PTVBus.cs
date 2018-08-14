@@ -368,6 +368,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public PTV ObterInstitucional(int id, bool simplificado = false)
+		{
+			try
+			{
+				return _da.ObterInstitucional(id, simplificado);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return null;
+		}
+
 		internal PTV ObterPorNumero(long numero, bool simplificado = false)
 		{
 			try

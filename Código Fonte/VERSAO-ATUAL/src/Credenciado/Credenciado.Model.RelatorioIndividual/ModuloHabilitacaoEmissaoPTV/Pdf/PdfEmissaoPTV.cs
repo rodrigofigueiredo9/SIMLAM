@@ -25,7 +25,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 		}
 		private EmissaoDa _da = new EmissaoDa();
 
-		public MemoryStream Gerar(int id, int situacao, string situacaoTexto)
+		public MemoryStream Gerar(int id, int situacao, string situacaoTexto, PTV ptvInstitucional)
 		{
 			ArquivoDocCaminho = @"~/Content/_pdfAspose/PTV.doc";
 
@@ -33,7 +33,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 			var ptvID = _da.ObterPtvID(id);
 
-			dataSource = _da.Obter(ptvID);
+			//dataSource = _da.Obter(ptvID);
+			if (situacao != (int)ePTVSituacao.EmElaboracao)
+			{
+				dataSource = _da.ObterHistorico(ptvInstitucional.Id, ptvInstitucional.Tid);
+			}
+			else
+			{
+				dataSource = _da.Obter(id);
+				dataSource.DataAtivacao = "--/--/--";
+			}
 			situacao = dataSource.Situacao;
 
             foreach (PTVProdutoRelatorio prod in dataSource.Produtos)
