@@ -19,7 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32 ExploracaoTipoId { get; set; }
 		public Int32 ClassificacaoVegetacaoId { get; set; }
 		public Int32? FinalidadeExploracao { get; set; }
-
+		public bool ParecerFavoravel { get; set; }
 		private Int32 _geometriaTipGeo = 0;
 		public Int32 GeometriaTipoId
 		{

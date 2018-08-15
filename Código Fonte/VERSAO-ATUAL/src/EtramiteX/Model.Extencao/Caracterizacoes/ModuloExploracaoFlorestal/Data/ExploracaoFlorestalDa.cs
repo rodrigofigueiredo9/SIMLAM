@@ -96,8 +96,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
 					{
 						comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_exploracao c (id, exploracao_florestal, identificacao, geometria, area_croqui, 
-						classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid, finalidade) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
-						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid, :finalidade) returning c.id into :id", EsquemaBanco);
+						classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid, finalidade, parecer_favoravel) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
+						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid, :finalidade, :parecer_favoravel) returning c.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
@@ -109,6 +109,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						comando.AdicionarParametroEntrada("quantidade_arvores", item.QuantidadeArvores, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_tipo", item.ExploracaoTipoId, DbType.Int32);
 						comando.AdicionarParametroEntrada("finalidade", item.FinalidadeExploracao, DbType.Decimal);
+						comando.AdicionarParametroEntrada("parecer_favoravel", item.ParecerFavoravel, DbType.Boolean);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -122,12 +123,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							foreach (ExploracaoFlorestalProduto itemAux in item.Produtos)
 							{
-								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, tid)
-								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :tid)", EsquemaBanco);
+								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
+								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
 
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
+								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
+								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -227,8 +230,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						else
 						{
 							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_exploracao c (id, exploracao_florestal, identificacao, geometria, area_croqui, 
-							classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
-							:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid) returning c.id into :id", EsquemaBanco);
+							classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, parecer_favoravel, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
+							:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :parecer_favoravel, :tid) returning c.id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
 							comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -243,6 +246,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						comando.AdicionarParametroEntrada("arvores_requeridas", item.ArvoresRequeridas, DbType.Decimal);
 						comando.AdicionarParametroEntrada("quantidade_arvores", item.QuantidadeArvores, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_tipo", item.ExploracaoTipoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("parecer_favoravel", item.ParecerFavoravel, DbType.Boolean);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
@@ -260,21 +264,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							{
 								if (itemAux.Id > 0)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade, 
-									c.tid = :tid where c.id = :id", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade,
+									c.taxonomia_id = :taxonomia_id, c.taxonomia_nome = :taxonomia_nome, c.tid = :tid where c.id = :id", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("id", itemAux.ProdutoId, DbType.Int32);
 								}
 								else
 								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, tid)
-									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :tid)", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
+									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								}
 
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
+								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
+								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -435,7 +441,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#region Explorações
 
 				comando = bancoDeDados.CriarComando(@"select c.id, c.identificacao, c.geometria, lg.texto geometria_texto, c.area_croqui, c.area_requerida, c.arvores_requeridas, 
-				c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto, c.exploracao_tipo, lef.texto exploracao_tipo_texto, c.quantidade_arvores, c.tid, c.finalidade
+				c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto, c.exploracao_tipo, lef.texto exploracao_tipo_texto, c.quantidade_arvores, c.tid, c.finalidade, c.parecer_favoravel
 				from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc, {0}lov_crt_exp_flores_exploracao lef 
 				where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.exploracao_tipo  = lef.id and c.exploracao_florestal = :id order by lef.texto", EsquemaBanco);
 
@@ -449,6 +455,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						exploracao = new ExploracaoFlorestalExploracao();
 						exploracao.Id = Convert.ToInt32(reader["id"]);
+						exploracao.ParecerFavoravel = Convert.ToBoolean(reader["parecer_favoravel"]);
 						exploracao.FinalidadeExploracao = Convert.ToInt32(reader["finalidade"]);
 						exploracao.Tid = reader["tid"].ToString();
 						exploracao.Identificacao = reader["identificacao"].ToString();
@@ -479,7 +486,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
 						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp where c.produto = lp.id and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao", exploracao.Id, DbType.Int32);
@@ -499,6 +506,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.ProdutoId = Convert.ToInt32(readerAux["produto"]);
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
+								}
+
+								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								{
+									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
+									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);
@@ -604,7 +617,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
 						from {0}hst_crt_exp_florestal_produto c where c.id_hst = :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
@@ -624,6 +637,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.ProdutoId = Convert.ToInt32(readerAux["produto_id"]);
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
+								}
+
+								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								{
+									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
+									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);

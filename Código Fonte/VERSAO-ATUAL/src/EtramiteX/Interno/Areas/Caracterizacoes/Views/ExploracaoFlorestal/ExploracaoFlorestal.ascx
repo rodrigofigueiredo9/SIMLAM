@@ -2,21 +2,6 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
-<style>
-    #targetUL { width: 110px; border: 1px solid silver; margin-top: 2px; list-style: none; }
-	#targetUL li { margin-left: -40px; border-bottom: 1px solid silver; height: 26px; padding-left: 5px; padding-top: 8px; cursor: pointer; }
-</style>
-<span style="font-family: inherit;">#targetUL
-    {
-     width: 110px;
-        border: 1px solid silver;
-        margin-top: 2px;
-        list-style: none;
-        max-height:300px;
-        overflow:auto;
-    }
-</span>
-
 <script>
 	ExploracaoFlorestal.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
 	ExploracaoFlorestal.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';

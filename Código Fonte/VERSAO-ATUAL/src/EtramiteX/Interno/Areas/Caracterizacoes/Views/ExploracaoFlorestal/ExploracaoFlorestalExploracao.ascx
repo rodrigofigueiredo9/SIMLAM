@@ -14,11 +14,16 @@
 
 	<div class="block">
 		<div class="coluna22 append2">
+			<%=Html.CheckBox("ExploracaoFlorestal.ParecerFavoravel", Model.ExploracaoFlorestal.ParecerFavoravel, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="cbParecerFavoravel campoEditavel" })) %>
+			<label for="ExploracaoFlorestal_ParecerFavoravel">Parecer Favorável? *</label>			
+		</div>
+
+		<div class="coluna10">
 			<label for="ExploracaoFlorestal_Identificacao">Identificação Geo</label>
 			<%= Html.TextBox("ExploracaoFlorestal.Identificacao", Model.ExploracaoFlorestal.Identificacao, new { @class = "text txtIdentificacao disabled", disabled = "disabled" })%>
 		</div>
 
-		<div class="coluna22 append2">
+		<div class="coluna11 append2">
 			<label for="ExploracaoFlorestal_Geometrias">Geometria</label>
 			<%= Html.TextBox("ExploracaoFlorestal.Geometrias", Model.ExploracaoFlorestal.GeometriaTipoTexto, new { @class = "text txtGeometria disabled", disabled = "disabled" })%>
 		</div>
@@ -66,10 +71,9 @@
 				</div>
 
 				<div class="coluna22 append2">
-					<label for="NomeCientifico<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
-					<div id="targetDiv">
-                        <%= Html.TextBox("NomeCientifico" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtNomeCientifico" }))%>
-                    </div>
+					<input type="hidden" class="hdnTaxonomiaId" />
+					<label for="Taxonomia<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
+					<%= Html.TextBox("Taxonomia" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtTaxonomia ui-autocomplete-input" }))%>
                 </div>
 
 				<div class="coluna22 append2 divQuantidade">
@@ -88,6 +92,7 @@
 					<thead>
 						<tr>
 							<th>Produto </th>
+							<th>Espécie</th>
 							<th width="20%">Quantidade</th>
 							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
 						</tr>
@@ -97,6 +102,10 @@
 						<tr >
 							<td>
 								<span class="produto" title="<%:produto.ProdutoTexto%>"><%: produto.ProdutoTexto%></span>
+							</td>
+							<td>
+								<span class="taxonomia" title="<%:produto.TaxonomiaTexto%>"><%: produto.TaxonomiaTexto%></span>
+								<input type="hidden" class="taxonomiaId" value='<%: produto.TaxonomiaId%>' />
 							</td>
 							<td>
 								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToString("N2")); %>
@@ -113,6 +122,10 @@
 						<% if(!Model.IsVisualizar) { %>
 							<tr class="trTemplateRow hide">
 								<td><span class="produto"></span></td>
+								<td>
+									<span class="taxonomia"></span>
+									<input type="hidden" class="taxonomiaId" value="" />
+								</td>
 								<td><span class="quantidade"></span></td>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value="" />

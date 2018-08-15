@@ -2845,6 +2845,7 @@
     <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\Simlam_DEV.pubxml" />
     <None Include="Properties\PublishProfiles\versao 2.pubxml" />
     <None Include="Properties\PublishProfiles\versao-ddsiv.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />

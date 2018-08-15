@@ -125,6 +125,7 @@ ExploracaoFlorestal = {
 			Dependencias: JSON.parse(ExploracaoFlorestal.settings.dependencias),
 			Exploracoes: ExploracaoFlorestalExploracao.obter(),
 			CodigoExploracao: $('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(),
+			TipoExploracao: $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).val()
 		}
 
 		$('.checkboxFinalidadeExploracao:checked', ExploracaoFlorestal.container).each(function () {

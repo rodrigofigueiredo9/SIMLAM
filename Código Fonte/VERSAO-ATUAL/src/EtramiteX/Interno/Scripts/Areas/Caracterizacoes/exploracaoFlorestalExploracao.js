@@ -19,7 +19,7 @@ ExploracaoFlorestalExploracao = {
 		ExploracaoFlorestalExploracao.container.delegate('.ddlProduto', 'change', ExploracaoFlorestalExploracao.onSelecionarProduto);
 
 		ExploracaoFlorestalExploracao.atualizarMascaras();
-		ExploracaoFlorestalExploracao.loadAutoComplete();
+		ExploracaoFlorestalExploracao.loadAutocomplete();
 	},
 
 	atualizarMascaras: function () {
@@ -87,12 +87,15 @@ ExploracaoFlorestalExploracao = {
 			Id: 0,
 			ProdutoId: Number($('.ddlProduto', container).val()),
 			ProdutoTexto: $('.ddlProduto :selected', container).text(),
-			Quantidade: $('.txtQuantidade', container).val()
+			Quantidade: $('.txtQuantidade', container).val(),
+			TaxonomiaId: $('.hdnTaxonomiaId', container).val(),
+			TaxonomiaTexto: $('.txtTaxonomia', container).val()
 		}
 
 		if (produto.ProdutoId == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
 			$('.tabExploracaoFlorestalExploracaoProduto tbody tr[class!="trTemplateRow hide"]', container).remove();
 			$('.ddlProduto', container).addClass('disabled').attr('disabled', 'disabled');
+			$('.txtTaxonomia', container).addClass('disabled').attr('disabled', 'disabled');
 			$('.btnAdicionarProduto', container).hide();
 		}
 
@@ -129,11 +132,15 @@ ExploracaoFlorestalExploracao = {
 		linha.find('.hdnItemJSon').val(JSON.stringify(produto));
 		linha.find('.produto').html(produto.ProdutoTexto).attr('title', produto.ProdutoTexto);
 		linha.find('.quantidade').html(produto.Quantidade).attr('title', produto.Quantidade);
+		linha.find('.taxonomia').html(produto.TaxonomiaTexto).attr('title', produto.TaxonomiaTexto);
+		linha.find('.taxonomiaId').html(produto.TaxonomiaId).attr('value', produto.TaxonomiaId);
 
 		$('.dataGridTable tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 
 		$('.txtQuantidade', container).val('');
+		$('.txtTaxonomia', container).val('');
+		$('.hdnTaxonomiaId', container).val('');
 		$('.ddlProduto', container).find('option:first').attr('selected', 'selected');
 	},
 
@@ -162,6 +169,7 @@ ExploracaoFlorestalExploracao = {
 		$('.divExploracaoFlorestalExploracao', ExploracaoFlorestalExploracao.container).each(function () {
 		    var objeto = {
 		        Id: $('.hdnExploracaoId', this).val(),
+				ParecerFavoravel: $('.cbParecerFavoravel', this).val(),
 		        Identificacao: $('.txtIdentificacao', this).val(),
 		        GeometriaTipoId: Number($('.hdnGeometriaId', this).val()),
 		        ClassificacaoVegetacaoId: $('.ddlClassificacoesVegetais', this).val(),
@@ -192,46 +200,28 @@ ExploracaoFlorestalExploracao = {
 		return exploracoes;
 	},
 
-	loadAutoComplete: function () {
-		$(".txtNomeCientifico").keyup(function () {
-			var query = $(this).val();
-			ExploracaoFlorestalExploracao.getItems(query);
-		});
-	},
-
-	getItems: function (query) {
-		$.ajax({
-			url: 'http://homologacao.ibama.gov.br/api/taxonomias',
-			data: { "filtro.descricao": query },
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			success: function (response) {
-				if (response.Data != null) {
-					if ($("#targetUL") != undefined) {
-						$("#targetUL").remove();
-					}
-					data = response.Data;
-					$("#targetDiv").append($("<ul id='targetUL'></ul>"));
-					$("#targetUL").find("li").remove();
-					$.each(data, function (i, value) {
-						$("#targetUL").append($("<li class='targetLI' onclick='javascript:ExploracaoFlorestalExploracao.appendTextToTextBox(this)'>" + value + "</li>"));
-
-					});
-				}
-				else {
-					$("#targetUL").find("li").remove();
-					$("#targetUL").remove();
-				}
+	loadAutocomplete: function () {
+		$(".txtTaxonomia").autocomplete({
+			source: function (request, response) {
+				var tags = [];
+				$.ajax({
+					url: 'http://webidafd/idaf/institucional/api/sinaflor/taxonomias',
+					data: { "search": request.term },
+					type: 'GET',
+					dataType: 'json',
+					contentType: 'application/json;charset=UTF-8',
+					success: function (result) {
+						if (result.data != null) {
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nome + '\", "value": \"' + x.nome + '\", "id": \"' + x.id +'\" }'));
+						}
+						response(tags);
+					},
+				});
 			},
-			error: function (xhr, status, error) {
+			select: function (event, ui) {
+				$(".hdnTaxonomiaId").val(ui.item.id);
 			}
 		});
 	},
-
-	appendTextToTextBox: function (e) {
-		var textToappend = e.innerText;
-		$(".txtNomeCientifico").val(textToappend);
-		$("#targetUL").remove();
-	}
+	
 }
