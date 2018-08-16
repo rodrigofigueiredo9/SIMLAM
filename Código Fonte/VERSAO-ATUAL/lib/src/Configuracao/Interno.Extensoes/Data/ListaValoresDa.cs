@@ -488,12 +488,12 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 		internal List<Lista> ObterTipoExploracaoFlorestal()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_crt_exp_flores_tipo t");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.tipo_atividade, t.texto from lov_tipo_exploracao t", schema: "idafgeo");
 			foreach (var item in daReader)
 			{
 				lst.Add(new Lista()
 				{
-					Id = item["id"].ToString(),
+					Id = item["tipo_atividade"].ToString(),
 					Texto = Convert.ToString(item["texto"]),
 					IsAtivo = true
 				});

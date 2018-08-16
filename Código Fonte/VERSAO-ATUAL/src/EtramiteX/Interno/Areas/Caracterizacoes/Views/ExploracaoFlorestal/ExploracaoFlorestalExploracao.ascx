@@ -32,6 +32,10 @@
 			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFinalidade" }))%>
 		</div>
+		<div class="coluna30 divEspecificarFinalidade hide">
+			<label for="FinalidadeEspecificar">Especificar *</label>
+			<%= Html.TextBox("FinalidadeEspecificar", Model.ExploracaoFlorestal.FinalidadeEspecificar, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFinalidadeEspecificar ", @maxlength = "50" }))%>
+		</div>
 	</div>
 	<div class="block">
 		<%if(Model.ExploracaoFlorestal.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono) {%>

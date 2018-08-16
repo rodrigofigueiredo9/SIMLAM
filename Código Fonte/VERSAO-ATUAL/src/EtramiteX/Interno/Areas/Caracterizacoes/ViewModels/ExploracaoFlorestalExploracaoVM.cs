@@ -59,7 +59,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@QuantidadeObrigatoria = Mensagem.ExploracaoFlorestal.QuantidadeObrigatoria,
 					@QuantidadeMaiorZero = Mensagem.ExploracaoFlorestal.QuantidadeMaiorZero,
 					@QuantidadeInvalida = Mensagem.ExploracaoFlorestal.QuantidadeInvalida,
-					@ProdutoDuplicado = Mensagem.ExploracaoFlorestal.ProdutoDuplicado
+					@ProdutoDuplicado = Mensagem.ExploracaoFlorestal.ProdutoDuplicado,
+					@TaxonomiaObrigatoria = Mensagem.ExploracaoFlorestal.TaxonomiaObrigatoria
 				});
 			}
 		}
@@ -78,7 +79,6 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 
 			ClassificacoesVegetais = ViewModelHelper.CriarSelectList(classificacoesVegetais, true, true, classifSelecionada.ToString());
-			ExploracaoTipos = ViewModelHelper.CriarSelectList(exploracaoTipos, true, true, selecionado: exploracao.ExploracaoTipoId.ToString());
 			Produtos = ViewModelHelper.CriarSelectList(produtos, true, true);
 			ExploracaoFlorestal = exploracao;
 			this.IsVisualizar = IsVisualizar;

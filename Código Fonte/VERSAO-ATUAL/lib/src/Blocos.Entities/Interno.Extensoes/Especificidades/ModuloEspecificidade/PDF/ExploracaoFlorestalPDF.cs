@@ -144,8 +144,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public ExploracaoFlorestalPDF(ExploracaoFlorestal exploracaoFlorestal)
 		{
 			_exploracoes = exploracaoFlorestal.Exploracoes.Select(x => new ExploracaoFlorestalExploracaoPDF(x)).ToList();
-			
-			int auxFinalidades = (exploracaoFlorestal.FinalidadeExploracao.HasValue) ? exploracaoFlorestal.FinalidadeExploracao.Value : 0;
+			var exploracoesFirst = exploracaoFlorestal.Exploracoes.FirstOrDefault() ?? new ExploracaoFlorestalExploracao();
+			int auxFinalidades = (exploracoesFirst.FinalidadeExploracao.HasValue) ? exploracoesFirst.FinalidadeExploracao.Value : 0;
 			Finalidades = EntitiesBus.ObterFinalidades(auxFinalidades);
 		}
 	}

@@ -17,7 +17,11 @@ ExploracaoFlorestalExploracao = {
 		ExploracaoFlorestalExploracao.container.delegate('.btnExcluirProduto', 'click', ExploracaoFlorestalExploracao.excluir);
 		ExploracaoFlorestalExploracao.container.delegate('.asmConteudoInternoExpander.asmExpansivel', 'click', ExploracaoFlorestalExploracao.gerenciarExpandir);
 		ExploracaoFlorestalExploracao.container.delegate('.ddlProduto', 'change', ExploracaoFlorestalExploracao.onSelecionarProduto);
+		ExploracaoFlorestalExploracao.container.delegate('.ddlFinalidade', 'change', ExploracaoFlorestalExploracao.onChangeFinalidade);
 
+		$('.ddlFinalidade', ExploracaoFlorestalExploracao.container).each(function () {
+			ExploracaoFlorestalExploracao.gerenciarFinalidades(this.parentElement.parentElement.parentElement);
+		});
 		ExploracaoFlorestalExploracao.atualizarMascaras();
 		ExploracaoFlorestalExploracao.loadAutocomplete();
 	},
@@ -105,7 +109,7 @@ ExploracaoFlorestalExploracao = {
 			var obj = String($(this).val());
 			if (obj != '') {
 				var prod = (JSON.parse(obj));
-				if (prod.ProdutoId == produto.ProdutoId) {
+				if (prod.ProdutoId == produto.ProdutoId && prod.TaxonomiaId == produto.TaxonomiaId) {
 					mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoDuplicado));
 				}
 			}
@@ -113,6 +117,10 @@ ExploracaoFlorestalExploracao = {
 
 		if (produto.ProdutoId == 0) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoTipoObrigatorio));
+		}
+
+		if (produto.TaxonomiaId == 0) {
+			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.TaxonomiaObrigatoria));
 		}
 
 		if (produto.Quantidade == '' && produto.ProdutoId != ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
@@ -178,7 +186,9 @@ ExploracaoFlorestalExploracao = {
 		        QuantidadeArvores: $('.txtQuantidadeArvores', this).val(),
 		        AreaRequerida: Mascara.getFloatMask($('.txtAreaRequerida', this).val()),
 		        AreaRequeridaTexto: $('.txtAreaRequerida', this).val(),
-		        ArvoresRequeridas: $('.txtArvoresRequeridas', this).val(),
+				ArvoresRequeridas: $('.txtArvoresRequeridas', this).val(),
+				FinalidadeExploracao: $('.ddlFinalidade option:selected', this).val(),
+				FinalidadeEspecificar: $('.txtFinalidadeEspecificar', this).val(),
 		        Produtos: []
 		    };
 
@@ -222,6 +232,19 @@ ExploracaoFlorestalExploracao = {
 				$(".hdnTaxonomiaId").val(ui.item.id);
 			}
 		});
+	},
+
+	onChangeFinalidade: function () {
+		var container = this.parentElement.parentElement.parentElement;
+		$('.divEspecificarFinalidade', container).removeClass('hide');
+		$('.divEspecificarFinalidade', container).addClass('hide');
+		ExploracaoFlorestalExploracao.gerenciarFinalidades(container);
+	},
+
+	gerenciarFinalidades: function (container) {
+		if ($('.ddlFinalidade option:selected', container).val() == 8) {
+			$('.divEspecificarFinalidade', container).removeClass('hide');
+		}
 	},
 	
 }

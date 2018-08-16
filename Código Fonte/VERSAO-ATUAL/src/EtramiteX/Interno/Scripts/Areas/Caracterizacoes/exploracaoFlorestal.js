@@ -21,11 +21,7 @@ ExploracaoFlorestal = {
 		ExploracaoFlorestal.container = MasterPage.getContent(container);
 
 		ExploracaoFlorestal.container.delegate('.btnSalvar', 'click', ExploracaoFlorestal.salvar);
-		ExploracaoFlorestal.container.delegate('.checkboxFinalidadeExploracao', 'change', ExploracaoFlorestal.onChangeFinalidade);
 		ExploracaoFlorestal.container.delegate('.ddlTipoExploracao', 'change', ExploracaoFlorestal.onChangeTipoExploracao);
-		
-		ExploracaoFlorestal.gerenciarFinalidades();
-
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
 
 		if (ExploracaoFlorestal.settings.textoMerge) {
@@ -35,36 +31,6 @@ ExploracaoFlorestal = {
 		if (ExploracaoFlorestal.settings.textoAbrirModal) {
 			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração');
 		}
-
-		$('.exploracoesFlorestais', container).each(function () {
-			var container = this;
-			if ($('.hdnGeometriaId', container).val() == ExploracaoFlorestal.settings.idsTela.GeometriaTipoPonto) {
-				$('.ddlExploracaoTipo option:eq(2)', container).attr('selected', 'selected');
-			}
-		});
-	},
-
-	onChangeFinalidade: function () {
-		$('.divEspecificarFinalidade', ExploracaoFlorestal.container).removeClass('hide');
-		$('.divEspecificarFinalidade', ExploracaoFlorestal.container).addClass('hide');
-		ExploracaoFlorestal.gerenciarFinalidades();
-	},
-
-	gerenciarFinalidades: function () {
-		if ($('.checkboxOutros:checked', ExploracaoFlorestal.container)[0]) {
-			$('.divEspecificarFinalidade', ExploracaoFlorestal.container).removeClass('hide');
-		}
-	},
-
-	validarFinalidadeEspecificar: function () {
-		var container = ExploracaoFlorestal.container;
-		if ($('.checkboxOutros:checked', container)[0] && $('.txtFinalidadeEspecificar', container).val() == '') {
-			var mensagens = new Array();
-			mensagens.push(ExploracaoFlorestal.settings.mensagens.FinalidadeExploracaoEspecificarObrigatorio);
-			Mensagem.gerar(container, mensagens);
-			return false;
-		}
-		return true;
 	},
 
 	abrirModalRedireciona: function (textoModal, titulo) {
@@ -120,22 +86,23 @@ ExploracaoFlorestal = {
 		var objeto = {
 			Id: $('.hdnCaracterizacaoId', ExploracaoFlorestal.container).val(),
 			EmpreendimentoId: $('.hdnEmpreendimentoId', ExploracaoFlorestal.container).val(),
-			FinalidadeExploracao: 0,
-			FinalidadeEspecificar: $('.txtFinalidadeEspecificar', ExploracaoFlorestal.container).val(),
 			Dependencias: JSON.parse(ExploracaoFlorestal.settings.dependencias),
 			Exploracoes: ExploracaoFlorestalExploracao.obter(),
 			CodigoExploracao: $('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(),
 			TipoExploracao: $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).val()
 		}
 
-		$('.checkboxFinalidadeExploracao:checked', ExploracaoFlorestal.container).each(function () {
-			objeto.FinalidadeExploracao += parseInt($(this).val());
-		});
-
 		return objeto;
 	},
 
-	onChangeTipoExploracao: function () {		
+	onChangeTipoExploracao: function () {
+		if ($(this).val() == $('.hdnTipoExploracaoAnterior', ExploracaoFlorestal.container).val() &&
+			$('.hdnTipoExploracaoAnterior', ExploracaoFlorestal.container).val() > 0) {
+			var texto = $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).text().substring(0, 3);
+			$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + $('.hdnCodigoExploracaoAnterior', ExploracaoFlorestal.container).val().padStart(3, '0'));
+			$('.hdnCodigoExploracao', ExploracaoFlorestal.container).val($('.hdnCodigoExploracaoAnterior', ExploracaoFlorestal.container).val());
+			return;
+		}
 		$.ajax({
 			url: ExploracaoFlorestal.settings.urls.getCodigoExploracao,
 			data: { tipoExploracao: $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).val() },
@@ -151,7 +118,7 @@ ExploracaoFlorestal = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					var texto = $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).text().substring(0, 3);
-					$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + response.CodigoExploracao.toString().padStart(4, '0'));
+					$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + response.CodigoExploracao.toString().padStart(3, '0'));
 					$('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(response.CodigoExploracao);
 				}
 
@@ -163,33 +130,31 @@ ExploracaoFlorestal = {
 	},
 
 	salvar: function () {
-		if (ExploracaoFlorestal.validarFinalidadeEspecificar()) {
-			MasterPage.carregando(true);
-			$.ajax({
-				url: ExploracaoFlorestal.settings.urls.salvar,
-				data: JSON.stringify(ExploracaoFlorestal.obter()),
-				cache: false,
-				async: false,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, ExploracaoFlorestal.container);
-				},
-				success: function (response, textStatus, XMLHttpRequest) {
-					if (response.TextoMerge) {
-						ExploracaoFlorestal.abrirModalMerge(response.TextoMerge);
-						return;
-					}
-					if (response.EhValido) {
-						MasterPage.redireciona(response.UrlRedirecionar);
-					}
-					if (response.Msg && response.Msg.length > 0) {
-						Mensagem.gerar(ExploracaoFlorestal.container, response.Msg);
-					}
+		MasterPage.carregando(true);
+		$.ajax({
+			url: ExploracaoFlorestal.settings.urls.salvar,
+			data: JSON.stringify(ExploracaoFlorestal.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, ExploracaoFlorestal.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.TextoMerge) {
+					ExploracaoFlorestal.abrirModalMerge(response.TextoMerge);
+					return;
 				}
-			});
-			MasterPage.carregando(false);
-		}
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(ExploracaoFlorestal.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
 	}
 }
