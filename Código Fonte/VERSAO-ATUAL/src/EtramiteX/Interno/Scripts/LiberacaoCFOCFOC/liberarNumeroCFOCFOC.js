@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../../Lib/JQuery/jquery-1.4.3.min.js" />
 /// <reference path="../../masterpage.js" />
@@ -9,8 +9,7 @@ LiberarNumeroCFOCFOC = {
 			salvar: null,
 			visualizarPessoa: null,
 			verificarCPF: null,
-			urlVerificarConsultaDUA: null,
-		    urlGravarVerificacaoDUA : null
+			urlVerificarConsultaDUA: null
 
 		},
 		Mensagens: null
@@ -41,8 +40,6 @@ LiberarNumeroCFOCFOC = {
 	},
 
 	onChecarRetornoDUA: function () {
-
-	    
 	    $.ajax({
 	        url: LiberarNumeroCFOCFOC.settings.urls.urlVerificarConsultaDUA,
 	        data: JSON.stringify(LiberarNumeroCFOCFOC.RequisicaoDUA),
@@ -104,34 +101,7 @@ LiberarNumeroCFOCFOC = {
 
 		LiberarNumeroCFOCFOC.RequisicaoDUA = { cpf: $('.txtCpf', LiberarNumeroCFOCFOC.container).val(), NumeroDua: $('.txtNumeroDua', LiberarNumeroCFOCFOC.container).val() };
 		
-		$.ajax({
-		    url: LiberarNumeroCFOCFOC.settings.urls.urlGravarVerificacaoDUA,
-		    data: JSON.stringify(LiberarNumeroCFOCFOC.RequisicaoDUA),
-		    cache: false,
-		    async: false,
-		    type: 'POST',
-		    dataType: 'json',
-		    contentType: 'application/json; charset=utf-8',
-		    error: Aux.error,
-		    success: function (response, textStatus, XMLHttpRequest) {
-		        if (!response.Valido) {
-		            MasterPage.carregando(false);
-		            Mensagem.gerar(LiberarNumeroCFOCFOC.container, response.Msg);
-		            return;
-		        }
-
-		        LiberarNumeroCFOCFOC.RequisicaoDUA.filaID = response.FilaID;
-
-		        clearTimeout(LiberarNumeroCFOCFOC.settings.timeoutID);
-		        LiberarNumeroCFOCFOC.settings.timeoutID =
-					setTimeout(function () {
-					    LiberarNumeroCFOCFOC.onChecarRetornoDUA();
-					}, 5000);
-		    }
-		});
-
-		
-		//MasterPage.carregando(false);
+		LiberarNumeroCFOCFOC.onChecarRetornoDUA();
 	},
 
 	abrirModalVisualizarPessoa: function () {

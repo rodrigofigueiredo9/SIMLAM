@@ -547,30 +547,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		private bool ValidarUtilizacaoDUA(int ptvId, string numeroDUA, string cpfCnpj, string tipo)
 		{
 			var bus = new PTVBus();
-			var idFilaConsulta = bus.GravarConsultaDUA(numeroDUA, cpfCnpj, tipo);
-
-			if (idFilaConsulta <= 0)
-			{
-				return Validacao.EhValido;
-			}
-
-			var count = 0;
-			var duaConsultada = false;
-			
-			while (!duaConsultada && count <= 10)
-			{
-				System.Threading.Thread.Sleep(5000);
-				duaConsultada = bus.VerificarSeDUAConsultada(idFilaConsulta);
-				count++;
-			}
-
-			if (!duaConsultada)
-			{
-				Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-				return Validacao.EhValido;
-			}
-
-			bus.VerificarDUA(idFilaConsulta, numeroDUA, cpfCnpj, tipo, ptvId);
+			bus.VerificarDUA(numeroDUA, cpfCnpj, tipo, ptvId);
 
 			return Validacao.EhValido;
 		}

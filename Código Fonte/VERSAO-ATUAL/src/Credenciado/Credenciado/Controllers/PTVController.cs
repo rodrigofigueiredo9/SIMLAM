@@ -664,33 +664,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region DUA
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult GravarVerificacaoDUA(string numero, string cpfCnpj, string tipo, int ptvId)
+		public ActionResult VerificarConsultaDUA(string numero, string cpfCnpj, string tipo, int ptvId)
 		{
-			var filaID = _busPTV.GravarConsultaDUA(numero, cpfCnpj, tipo);
-
-			return Json(new
-			{
-				@Valido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@FilaID = filaID
-			}, JsonRequestBehavior.AllowGet);
-		}
-
-
-		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult VerificarConsultaDUA(int filaID, string numero, string cpfCnpj, string tipo, int ptvId)
-		{
-			cpfCnpj = cpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
-
-            if (!_busPTV.VerificarSeDUAConsultada(filaID))
-                return Json(new
-                {
-                    @Valido = Validacao.EhValido,
-                    @Msg = Validacao.Erros,
-                    @Consultado = false
-                }, JsonRequestBehavior.AllowGet);
-
-            _busPTV.VerificarDUA(filaID, numero, cpfCnpj, tipo, ptvId);
+            _busPTV.VerificarDUA(numero, cpfCnpj, tipo, ptvId);
 
 			return Json(new
 			{

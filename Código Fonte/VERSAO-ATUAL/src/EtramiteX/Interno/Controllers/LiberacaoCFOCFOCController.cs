@@ -112,19 +112,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
         [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
-        public ActionResult VerificarConsultaDUA(int filaID, string NumeroDua, string cpf)
+        public ActionResult VerificarConsultaDUA(string NumeroDua, string cpf)
         { 
-            cpf = cpf.Replace(".", "").Replace("-", "").Replace("/", "");
-
-            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
-                return Json(new
-                {
-                    @Valido = Validacao.EhValido,
-                    @Msg = Validacao.Erros,
-                    @Consultado = false
-                }, JsonRequestBehavior.AllowGet);
-
-            _bus.VerificarDUA(filaID, NumeroDua, cpf);
+            _bus.VerificarDUA(NumeroDua, cpf);
 
             return Json(new
             {
@@ -134,40 +124,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
-        public ActionResult GravarVerificacaoDUA(string NumeroDua, string cpf)
-        {
-            var filaID = _PTVBusCred.GravarConsultaDUA(NumeroDua, cpf, "1");
-
-            return Json(new
-            {
-                @Valido = Validacao.EhValido,
-                @Msg = Validacao.Erros,
-                @FilaID = filaID
-            }, JsonRequestBehavior.AllowGet);
-        }
-
 		[Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
-        public ActionResult VerificarCPF(int filaID, string cpf, string NumeroDua )
+        public ActionResult VerificarCPF(string cpf, string NumeroDua)
 		{
 			CredenciadoPessoa credenciado = null;
 			_bus.VerificarCPF(cpf);
 
 			if (Validacao.EhValido)
-			{
 				credenciado = _busCredenciadoInterno.ObterPorCPF(cpf);
-			}
 
-            if (!_PTVBusCred.VerificarSeDUAConsultada(filaID))
-                return Json(new
-                {
-                    @Valido = Validacao.EhValido,
-                    @Msg = Validacao.Erros,
-                    @Consultado = false
-                }, JsonRequestBehavior.AllowGet);
-
-            _bus.VerificarDUA(filaID, NumeroDua, cpf);
-
+            _bus.VerificarDUA(NumeroDua, cpf);
 
 			return Json(new { @Msg = Validacao.Erros, @EhValido = Validacao.EhValido, @Credenciado = credenciado });
 		}

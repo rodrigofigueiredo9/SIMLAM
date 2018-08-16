@@ -232,7 +232,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
             return numeroDigital;
         }
 
-
 		public string VerificarNumeroPTV(string numero, int tipoNumero)
 		{
 			try
@@ -265,36 +264,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 
 			return numero;
-		}
-
-		public void VerificarDua(string numero, string cpfCnpj, string tipo, int ptvId)
-		{
-			try
-			{
-				if (!_validar.ValidarDuaInicio(numero, cpfCnpj, tipo))
-				{
-					return;
-				}
-
-				WSDUA wsDua = new WSDUA();
-				DUA dua = null;
-
-				if (tipo == "1")
-				{
-					dua = wsDua.ObterDUAPF(numero, cpfCnpj);
-				}
-				else
-				{
-					dua = wsDua.ObterDUAPJ(numero, cpfCnpj);
-				}
-
-				_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
-
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
 		}
 
 		public Dictionary<string, object> VerificarDocumentoOrigem(eDocumentoFitossanitarioTipo origemTipo, string origemTipoTexto, long numero, string serieNumero)
@@ -917,103 +886,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 		#region DUA
 
-		public bool VerificarSeDUAConsultada(int filaID)
-		{
-			bool duaConsultada = false;
-			try
-			{
-				duaConsultada = _da.VerificarSeDUAConsultada(filaID);
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return duaConsultada;
-		}
-
-		public void VerificarDUA(int filaID, string numero, string cpfCnpj, string tipo, int ptvId)
+		public void VerificarDUA(string numero, string cpfCnpj, string tipo, int ptvId)
 		{
 			try
 			{
-				DUA dua = new DUA();
+				var wSDUA = new WSDUA();
+				var dua = wSDUA.ObterDUA(numero, cpfCnpj, tipo == "1" ? eTipoPessoa.Fisica : eTipoPessoa.Juridica);
 
-				var duaRequisicao = _da.BuscarRespostaConsultaDUA(filaID);
-
-				if (duaRequisicao == null)
-					return;
-
-				if (!duaRequisicao.Sucesso)
-				{
-					Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-					return;
-				}
-
-				var xser = new XmlSerializer(typeof(RespostaConsultaDua));
-
-				RespostaConsultaDua xml = null;
-
-				try
-				{
-					xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
-				}
-				catch
-				{
-					Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-					return;
-				}
-
-				if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
-				{
-					Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
-					return;
-				}
-
-				dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
-				dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
-
-				dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
-				dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
-				dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
-
-				dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
-				dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
-
-				_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
+				if(Validacao.EhValido)
+					_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
 			}
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
 			}
 		}
-
-		public int GravarConsultaDUA(string numeroDUA, string cpfCnpj, string tipo)
-		{
-			int filaID = 0;
-			try
-			{
-				if (!_validar.ValidarDuaInicio(numeroDUA, cpfCnpj, tipo))
-				{
-					return 0;
-				}
-
-				cpfCnpj = cpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
-
-				var dua = String.Format("{{ \"dua\": \"{0}\", \"{1}\": \"{2}\" }}", numeroDUA, tipo == "1" ? "cpf" : "cnpj", cpfCnpj);//'{"dua":"1995908182","cnpj":"27473669000580"}',
-
-				filaID = _da.VerificarConsultaDUAFila(Executor.Current.Id, dua);
-
-				if (filaID == 0)
-					filaID = _da.GravarFilaConsultaDUA(Executor.Current.Id, dua);
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return filaID;
-		}
-
+		
 		#endregion
 
 		#region Alerta de E-PTV

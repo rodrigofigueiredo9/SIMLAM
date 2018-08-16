@@ -281,31 +281,7 @@ PTVEmitir = {
 
 		MasterPage.carregando(true);
 
-		$.ajax({
-			url: PTVEmitir.settings.urls.urlGravarVerificacaoDUA,
-			data: JSON.stringify(PTVEmitir.RequisicaoDUA),
-			cache: false,
-			async: true,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: Aux.error,
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (!response.Valido) {
-					MasterPage.carregando(false);
-					Mensagem.gerar(PTVEmitir.container, response.Msg);
-					return;
-				}
-
-				PTVEmitir.RequisicaoDUA.filaID = response.FilaID;
-
-				clearTimeout(PTVEmitir.settings.timeoutID);
-				PTVEmitir.settings.timeoutID =
-					setTimeout(function () {
-						PTVEmitir.onChecarRetornoDUA();
-					}, 5000);
-			}
-		});
+		PTVEmitir.onChecarRetornoDUA();
 	},
 
 	onChecarRetornoDUA: function () {

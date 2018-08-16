@@ -16,7 +16,6 @@
 			{
 				urls:
 				{
-				    urlGravarVerificacaoDUA: '<%=Url.Action("GravarVerificacaoDUA", "LiberacaoCFOCFOC")%>',
 					verificarCPF: '<%=Url.Action("VerificarCPF", "LiberacaoCFOCFOC")%>',
 					visualizarPessoa: '<%=Url.Action("Visualizar", "Credenciado")%>',
 				    salvar: '<%=Url.Action("SalvarLiberacao", "LiberacaoCFOCFOC")%>',

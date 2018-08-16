@@ -37,6 +37,8 @@ PTVEmitir = {
 		onChangeProcDocEmp: new Array()
 	},
 
+	executandoSalvar: null,
+
 	container: null,
 
 	cidadeID: null,
@@ -226,31 +228,7 @@ PTVEmitir = {
 
 	    MasterPage.carregando(true);
 
-	    $.ajax({
-	        url: PTVEmitir.settings.urls.urlGravarVerificacaoDUA,
-	        data: JSON.stringify(PTVEmitir.RequisicaoDUA),
-	        cache: false,
-	        async: true,
-	        type: 'POST',
-	        dataType: 'json',
-	        contentType: 'application/json; charset=utf-8',
-	        error: Aux.error,
-	        success: function (response, textStatus, XMLHttpRequest) {
-	            if (!response.Valido) {
-	                MasterPage.carregando(false);
-	                Mensagem.gerar(PTVEmitir.container, response.Msg);
-	                return;
-	            }
-
-	            PTVEmitir.RequisicaoDUA.filaID = response.FilaID;
-
-	            clearTimeout(PTVEmitir.settings.timeoutID);
-	            PTVEmitir.settings.timeoutID =
-					setTimeout(function () {
-					    PTVEmitir.onChecarRetornoDUA();
-					}, 5000);
-	        }
-	    });
+		PTVEmitir.onChecarRetornoDUA();
 	},
 
 	onChecarRetornoDUA: function () {
@@ -471,9 +449,9 @@ PTVEmitir = {
 				if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 					PTVEmitir.onChangeCultura();
 				}
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onChangeCultura: function () {
@@ -506,7 +484,6 @@ PTVEmitir = {
 				});
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	chageCultivar: function () {
@@ -652,7 +629,6 @@ PTVEmitir = {
 					});
 				}
 			});
-			MasterPage.carregando(false);
 		}
 		return true;
 	},
@@ -802,7 +778,6 @@ PTVEmitir = {
 			}
 		});
 
-		MasterPage.carregando(false);
 	},
 
 	habilitarCampos: function (habilita) {
@@ -950,9 +925,9 @@ PTVEmitir = {
 					$('.novoDestinatario', container).removeClass('hide');
 				}
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	obterDestinatario: function (destinatarioID) {
@@ -984,9 +959,9 @@ PTVEmitir = {
 				}
 
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onLimparDestinatario: function () {
@@ -1070,9 +1045,9 @@ PTVEmitir = {
 					$('.rbPossuiLaudoSim', PTVEmitir.container).removeAttr('checked');
 					$('.rbPossuiLaudoNao', PTVEmitir.container).attr('checked', 'checked');
 				}
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onTratamentoFitossanitário: function () {
@@ -1112,9 +1087,9 @@ PTVEmitir = {
 					$('tbody', tabela).append(linha);
 				});
 				Listar.atualizarEstiloTable(tabela);
+				MasterPage.carregando(false);
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	onChangeRotaTransitoDefinida: function () {
@@ -1158,8 +1133,12 @@ PTVEmitir = {
 	},
 
 	onSalvar: function () {
-		Mensagem.limpar(PTVEmitir.container);
+		if (PTVEmitir.executandoSalvar)
+			return;
+
+		PTVEmitir.executandoSalvar = true;
 		MasterPage.carregando(true);
+		Mensagem.limpar(PTVEmitir.container);
 
 		var objeto = PTVEmitir.obter();
 		$.ajax({
@@ -1171,17 +1150,23 @@ PTVEmitir = {
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
+			failure: function () {
+				PTVEmitir.executandoSalvar = false;
+			},
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					MasterPage.redireciona(response.Url);
 				}
-
+				else {
+					PTVEmitir.executandoSalvar = false;
+				}
+			
 				if (response.Erros && response.Erros.length > 0) {
 					Mensagem.gerar(PTVEmitir.container, response.Erros);
+					MasterPage.carregando(false);
 				}
 			}
 		});
-		MasterPage.carregando(false);
 	},
 
 	obter: function () {
