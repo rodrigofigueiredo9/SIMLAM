@@ -2670,7 +2670,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					if (reader.Read())
 					{
-						comunicador.Id = reader.GetValue<int>("id"); ;
+						comunicador.Id = reader.GetValue<int>("id");
 						comunicador.PTVId = idPTV;
 						comunicador.PTVNumero = reader.GetValue<Int64>("ptv_numero");
 						comunicador.ArquivoInternoId = reader.GetValue<int>("arquivo_interno");

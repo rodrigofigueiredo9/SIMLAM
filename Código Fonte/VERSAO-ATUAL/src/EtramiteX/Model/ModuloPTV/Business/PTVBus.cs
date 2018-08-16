@@ -406,16 +406,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						#region [ Enviar E-mail ]
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
-							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+							eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 						{
 							PTVComunicador comunicador = new PTVComunicador();
 							comunicador.Id = _da.ObterIDComunicador(eptv.Id);
 							comunicador.PTVId = eptv.Id;
-							comunicador.PTVNumero = eptv.Numero;
+							comunicador.PTVNumero = eptvBanco.Numero;
 							comunicador.liberadoCredenciado = true;
 
 							var conversa = new PTVConversa();
-							conversa.Texto = eptv.SituacaoMotivo;
+
+							if (eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							{
+								conversa.Texto = "Foi agendada fiscalização para a E-PTV " + eptvBanco.Numero;
+								conversa.Texto += " / Local: " + eptv.LocalFiscalizacao;
+								conversa.Texto += " / Hora: " + eptv.HoraFiscalizacao;
+								conversa.Texto += " / Informação adicional: " + eptv.InformacoesAdicionais;
+							}
+							else
+							{
+								conversa.Texto = eptv.SituacaoMotivo;
+							}
+
 							comunicador.Conversas.Add(conversa);
 
 							SalvarConversa(comunicador, bancoDeDadosInterno, bancoDeDadosCredenciado);
