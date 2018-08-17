@@ -420,13 +420,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							if (eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
 							{
 								conversa.Texto = "Foi agendada fiscalização para a E-PTV " + eptvBanco.Numero;
-								conversa.Texto += " / Local: " + eptv.LocalFiscalizacao;
-								conversa.Texto += " / Hora: " + eptv.HoraFiscalizacao;
-								conversa.Texto += " / Informação adicional: " + eptv.InformacoesAdicionais;
+								conversa.Texto += "<br />Local: " + eptv.LocalFiscalizacao;
+								conversa.Texto += "<br />Hora: " + eptv.HoraFiscalizacao;
+								conversa.Texto += "<br />Informação adicional: " + eptv.InformacoesAdicionais;
 							}
-							else
+							else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 							{
-								conversa.Texto = eptv.SituacaoMotivo;
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi rejeitada.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
+							}
+							else  //Situação == Bloqueado
+							{
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi bloqueada. Seu empreendimento está bloqueado para emissão de novas PTVs. Favor entrar em contato com o local para onde foi solicitada a vistoria da carga.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
 							}
 
 							comunicador.Conversas.Add(conversa);
