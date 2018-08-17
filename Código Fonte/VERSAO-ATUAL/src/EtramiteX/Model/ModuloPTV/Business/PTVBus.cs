@@ -406,16 +406,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						#region [ Enviar E-mail ]
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
-							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+							eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 						{
 							PTVComunicador comunicador = new PTVComunicador();
 							comunicador.Id = _da.ObterIDComunicador(eptv.Id);
 							comunicador.PTVId = eptv.Id;
-							comunicador.PTVNumero = eptv.Numero;
+							comunicador.PTVNumero = eptvBanco.Numero;
 							comunicador.liberadoCredenciado = true;
 
 							var conversa = new PTVConversa();
-							conversa.Texto = eptv.SituacaoMotivo;
+
+							if (eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							{
+								conversa.Texto = "Foi agendada fiscalização para a E-PTV " + eptvBanco.Numero;
+								conversa.Texto += "<br />Local: " + eptv.LocalFiscalizacao;
+								conversa.Texto += "<br />Hora: " + eptv.HoraFiscalizacao;
+								conversa.Texto += "<br />Informação adicional: " + eptv.InformacoesAdicionais;
+							}
+							else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
+							{
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi rejeitada.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
+							}
+							else  //Situação == Bloqueado
+							{
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi bloqueada. Seu empreendimento está bloqueado para emissão de novas PTVs. Favor entrar em contato com o local para onde foi solicitada a vistoria da carga.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
+							}
+
 							comunicador.Conversas.Add(conversa);
 
 							SalvarConversa(comunicador, bancoDeDadosInterno, bancoDeDadosCredenciado);
