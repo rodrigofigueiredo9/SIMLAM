@@ -43,7 +43,6 @@ ComunicadorPTV = {
 		}
 		
 		var tam = nomeArquivo.length - 4;
-		//var tipoArquivo = nomeArquivo.toLowerCase().substr(tam);
 		var temp = nomeArquivo.toLowerCase().split('.');
 		var tipoArquivo = temp[temp.length - 1];
 		if (tipoArquivo !== "zip"
@@ -54,8 +53,10 @@ ComunicadorPTV = {
 			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoTipoInvalido]);
 			return;
 		}
-
+		
 		var inputFile = $('.inputFileDiv input[type="file"]');
+		
+		var tamanhoArquivo = inputFile[0].files[0].size;
 
 		inputFile.attr("id", "ArquivoId");
 
