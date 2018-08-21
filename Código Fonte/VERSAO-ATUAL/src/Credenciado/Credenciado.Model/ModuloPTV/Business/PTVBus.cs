@@ -308,6 +308,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 								{
 									Validacao.Add(Mensagem.PTV.PTVOutroEstadoSituacaoInvalida);
 								}
+								if ((int)documentoOrigem["credenciado"] != User.FuncionarioId)
+								{
+									Validacao.Add(Mensagem.PTV.PTVOutroEstadoUsuarioDiferente);
+								}
 								break;
 						}
 					}

@@ -698,6 +698,8 @@ PTVEmitir = {
 			PTVEmitir.onTratamentoFitossanitário();
 			PTVEmitir.onPossuiLaudoLaboratorial();
 			PTVEmitir.onLimparIdentificacaoProduto();
+		} else if (item.OrigemTipo == '4') {
+			PTVEmitir.onLimparIdentificacaoProduto();
 		}
 	},
 
