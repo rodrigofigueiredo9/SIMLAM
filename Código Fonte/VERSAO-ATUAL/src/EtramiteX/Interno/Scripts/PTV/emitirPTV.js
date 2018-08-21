@@ -540,6 +540,7 @@ PTVEmitir = {
 						PTVEmitir.onChangeCultura();
 					}
 				}
+				MasterPage.carregando(false);
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 			}
 		});

@@ -1120,7 +1120,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-                        strSql = @"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador 
+                        strSql = @"select t.id, t.situacao, t.credenciado, t.produtor, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
 
                         if (!string.IsNullOrEmpty(serieNumeral))
@@ -1163,6 +1163,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						retorno.Add("credenciado", reader.GetValue<int>("credenciado"));
 						retorno.Add("empreendimento_id", reader.GetValue<int>("empreendimento_id"));
 						retorno.Add("empreendimento_denominador", reader.GetValue<string>("empreendimento_denominador"));
+
+						if (origemTipo == eDocumentoFitossanitarioTipo.CFO)
+						{
+							retorno.Add("produtor", reader.GetValue<int>("produtor"));
+						}
 					}
 				}
 
