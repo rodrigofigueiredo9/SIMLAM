@@ -247,7 +247,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     }
                     catch (Exception ex) 
                     {
-						Log.Error("EnviarArquivoCAR: " + ex.Message, ex);
+						Log.Error("EnviarArquivoCARFunction: " + ex.Message, ex);
                         return ex.Message;
 					}
 				}
