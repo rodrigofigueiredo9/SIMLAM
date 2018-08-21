@@ -25,6 +25,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
@@ -285,6 +286,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					documentoOrigem = _da.VerificarDocumentoOrigem(origemTipo, numero, serieNumero);
 					if (documentoOrigem != null)
 					{
+						CredenciadoDa _credenciadoDa = new CredenciadoDa();
+						var credenciado = _credenciadoDa.Obter(User.FuncionarioId);
+
 						switch (origemTipo)
 						{
 							case eDocumentoFitossanitarioTipo.CFO:
@@ -292,9 +296,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 								{
 									Validacao.Add(Mensagem.PTV.CfoSituacaoInvalida);
 								}
-
-								CredenciadoDa _credenciadoDa = new CredenciadoDa();
-								var credenciado = _credenciadoDa.Obter(User.FuncionarioId);
 
 								PessoaInternoDa _pessoaInternoDa = new PessoaInternoDa();
 								var produtor = _pessoaInternoDa.Obter((int)documentoOrigem["produtor"]);
@@ -308,6 +309,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 								if ((int)documentoOrigem["situacao"] != (int)eDocumentoFitossanitarioSituacao.Valido)
 								{
 									Validacao.Add(Mensagem.PTV.CfocSituacaoInvalida);
+								}
+
+								EmpreendimentoInternoDa _empreendimentoInternoDa = new EmpreendimentoInternoDa();
+								var empreendimento = _empreendimentoInternoDa.Obter((int)documentoOrigem["empreendimento_id"]);
+
+								if ((int)documentoOrigem["credenciado"] != User.FuncionarioId && empreendimento.CNPJ != credenciado.Pessoa.CPFCNPJ)
+								{
+									Validacao.Add(Mensagem.PTV.UsuarioSemPermissaoDocOrigem);
 								}
 								break;
 							case eDocumentoFitossanitarioTipo.PTV:
