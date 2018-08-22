@@ -945,8 +945,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                         else
                         {
-                            //throw new Exception("Erro ao buscar os dados - Imóvel sem caracterização.");
-                        }
+							using (var cmdd = new OracleCommand(q3, conn))
+							{
+
+								cmdd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+								cmdd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+								using (var drr = cmdd.ExecuteReader())
+									if (drr.Read())
+									{
+										requisicao.caracterizacao_id = Convert.ToInt32(drr["caract_id"]);
+										requisicao.caracterizacao_tid = Convert.ToString(drr["caract_tid"]);
+										requisicao.projeto_geografico_id = Convert.ToInt32(drr["projeto_id"]);
+										requisicao.projeto_geografico_tid = Convert.ToString(drr["projeto_tid"]);
+
+										GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
+
+										drr.Close();
+										return requisicao;
+									}
+							}
+						}
                 }
 
                 
