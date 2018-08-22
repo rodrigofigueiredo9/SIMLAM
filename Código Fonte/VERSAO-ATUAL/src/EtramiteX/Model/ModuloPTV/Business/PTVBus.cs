@@ -811,6 +811,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public List<ListaValor> DiasHorasVistoriaEPTV(int ptvId)
+		{
+			try
+			{
+				return _da.DiasHorasVistoriaEPTV(ptvId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public List<ListaValor> DiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			try

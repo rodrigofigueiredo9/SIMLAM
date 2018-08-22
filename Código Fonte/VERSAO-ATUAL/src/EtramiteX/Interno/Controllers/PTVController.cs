@@ -78,7 +78,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity ?? new EtramiteIdentity("", "", "", null, "", 0, 0, "", "", 0, 0);
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { vm.RT = x.Id; });
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { vm.RT = x.Id; });
 
 			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
 			vm.Paginacao.EfetuarPaginacao();
@@ -786,7 +786,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
-			_busPTV.ObterResponsavelTecnico(733).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
 
 			PTVVM vm = new PTVVM(
 				ptv,
@@ -800,7 +800,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
+				_busPTV.DiasHorasVistoriaEPTV(ptv.Id));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
