@@ -279,6 +279,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 				return TotalAreaCroquiDecimal.ToStringTrunc();
 			}
 		}
+
+		public String ATPCroquiHa { get; set; }
+
 		public String TotalAreaCroquiHa
 		{
 			get
@@ -630,6 +633,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 			TotalFlorestaPlantadaDecimal = dominialidade.AreaFlorestaPlantada;
 			Dominios = dominialidade.Dominios.Select(x => new DominioPDF(x)).ToList();
 			AreaDocumento = dominialidade.AreaDocumento;
+			ATPCroquiHa = dominialidade.ATPCroqui.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
 		}
 	}
 }
