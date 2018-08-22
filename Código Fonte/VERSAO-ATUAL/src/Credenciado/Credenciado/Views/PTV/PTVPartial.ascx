@@ -85,7 +85,7 @@
 				<label for="OrigemTipo">Documento de origem *</label>
 				<%=Html.DropDownList("OrigemTipo", Model.OrigemTipoList, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlOrigemTipo"})) %>
 			</div>
-			<div class="coluna22 divNumeroEnter">
+			<div class="coluna25 divNumeroEnter">
 				<input type="hidden" class="hdnNumeroOrigem" value="0" />
 				<input type="hidden" class="hdnEmpreendimentoOrigemID" value="0" />
 				<input type="hidden" class="hdnEmpreendimentoOrigemNome" value="" />

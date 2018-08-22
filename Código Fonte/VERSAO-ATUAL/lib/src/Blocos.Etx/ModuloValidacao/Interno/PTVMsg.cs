@@ -159,6 +159,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem CfocSituacaoInvalida { get { return new Mensagem() { Texto = "A situação do CFOC deve ser \"Válida\".", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem PTVSituacaoInvalida { get { return new Mensagem() { Texto = "A situação do PTV deve ser \"Válida\".", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem PTVOutroEstadoSituacaoInvalida { get { return new Mensagem() { Texto = "A situação do PTV de outro estado deve ser \"Válida\".", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem UsuarioSemPermissaoDocOrigem { get { return new Mensagem() { Texto = "O usuário não possui permissão para utilizar o documento de origem informado.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem CancelarSituacaoInvalida { get { return new Mensagem() { Texto = "A situação do PTV deve ser \"Ativo\".", Tipo = eTipoMensagem.Advertencia }; } }
 
