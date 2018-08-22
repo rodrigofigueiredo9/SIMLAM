@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -212,21 +212,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 				}
 
 				#region CAR
-
-                select += @"(select TO_NUMBER(:caracterizacao) tipo, t.caracterizacao_id, nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id),
-				(select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid
-				from (select a.id caracterizacao_id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento union
-				select a.id caracterizacao_id from crt_cad_ambiental_rural a where a.empreendimento = :empreendimento) t) union all ";
-
-                /*
-                // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
-                select += @" ( select TO_NUMBER(22) tipo, t.caracterizacao_id,  
+				
+                select += @" ( select TO_NUMBER(:caracterizacao) tipo, t.caracterizacao_id,  
                       nvl((select b.tid from tmp_cad_ambiental_rural b where b.id = t.caracterizacao_id), 
                           (select b.tid from crt_cad_ambiental_rural b where b.id = t.caracterizacao_id)) caracterizacao_tid
                 from (select nvl((select a.id from crt_cad_ambiental_rural a where a.empreendimento = :empreendimento), 
                       (select a.id from tmp_cad_ambiental_rural a where a.empreendimento = :empreendimento)) caracterizacao_id from dual) t ) union all ";
 
-                 */
+                 
 
                 #endregion
 
