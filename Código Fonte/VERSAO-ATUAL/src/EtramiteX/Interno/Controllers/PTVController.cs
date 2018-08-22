@@ -21,7 +21,7 @@ using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitacaoEm
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV;
-
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -851,7 +851,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			PTVVM vm = new PTVVM(
 				ptv,
-				_busLista.PTVSituacao,
+				//_busLista.PTVSituacao,
+				ListaCredenciadoBus.PTVSolicitacaoSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
 				_busLista.DocumentosFitossanitario,
 				lsFitossanitario,
@@ -861,7 +862,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
+				_busPTV.DiasHorasVistoriaEPTV(ptv.Id));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
