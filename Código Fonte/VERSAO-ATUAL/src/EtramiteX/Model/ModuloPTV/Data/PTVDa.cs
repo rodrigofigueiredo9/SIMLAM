@@ -1611,7 +1611,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						query = @"
 						select (
 						/*LOTE*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from tab_lote t, tab_lote_item i
 						where i.lote = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1620,7 +1620,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.unidade_medida = :unidade_medida), 0)
 						+
 						/*EPTV*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from tab_ptv t, tab_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1630,7 +1630,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from ins_ptv t, ins_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1644,7 +1644,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						query = @"
 						select (
 						/*LOTE*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from tab_lote t, tab_lote_item i
 						where i.lote = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1653,7 +1653,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and i.unidade_medida = :unidade_medida), 0)
 						+
 						/*EPTV*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from tab_ptv t, tab_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo
@@ -1663,7 +1663,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						and t.situacao != 3), 0)
 						+
 						/*PTV*/
-						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						nvl((select sum(i.quantidade) quantidade
 						from ins_ptv t, ins_ptv_produto i
 						where i.ptv = t.id
 						and i.origem_tipo = :origem_tipo

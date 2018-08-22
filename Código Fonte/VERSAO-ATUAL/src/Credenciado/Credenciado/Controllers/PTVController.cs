@@ -309,10 +309,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				{
 					PdfEmissaoPTV pdf = new PdfEmissaoPTV();
 					PTV PTV = _busPTV.Obter(id, simplificado: true);
+					PTV ptvInst = _busPTV.ObterInstitucional(id, simplificado: true);
 
 					int situacaoId = PTV.Situacao;
 					string situacaoTexto = PTV.SituacaoTexto;
-					return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(id, situacaoId, situacaoTexto), "PTV", dataHoraControleAcesso: true);
+					return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(id, situacaoId, situacaoTexto, ptvInst), "PTV", dataHoraControleAcesso: true);
 				}
 
 				Validacao.Add(Mensagem.Funcionario.SemPermissao);
