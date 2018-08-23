@@ -74,7 +74,7 @@
 		AlertaEPTV.exibirMensagemValidacao('<%=Validacao.MensagensAlertaEPTV.First(x => x.Campo == "AlertaEPTV").Texto%>');
         AlertaEPTV.load($(".containerAcoesAlertaEPTV"), { 
           urls: { 
-            urlEPTVAguardandoAnalise: '<%= Url.Action("EPTVListar", "PTV") %>' 
+            urlEPTVAguardandoAnalise: '<%= Url.Action("EPTVListar", "PTV", new { alerta = true }) %>' 
           } 
 		});
 		<%Validacao.MensagensAlertaEPTV = new List<Mensagem>();%>

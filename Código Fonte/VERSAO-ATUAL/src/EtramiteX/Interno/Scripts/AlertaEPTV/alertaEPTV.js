@@ -29,10 +29,6 @@ AlertaEPTV = {
 			$(".containerAcoesAlertaPTV", AlertaEPTV.container).removeClass("hide");
 		}
 
-		//if (ContainerAcoes.settings.urls.urlVisualizarPdfFiscalizacao) {
-		//	ContainerAcoes.settings.botoes.push({ label: 'Visualizar PDF', url: ContainerAcoes.settings.urls.urlVisualizarPdfFiscalizacao, callBack: ContainerAcoes.onAcaoClickAbrirModal });
-		//}
-
 		if (AlertaEPTV.settings.urls.urlEPTVAguardandoAnalise) {
 			AlertaEPTV.settings.botoes.push({
 				label: 'Analisar E-PTV',

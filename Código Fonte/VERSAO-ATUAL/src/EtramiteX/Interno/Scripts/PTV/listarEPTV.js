@@ -34,6 +34,8 @@ EPTVListar = {
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
 		Aux.setarFoco(container);
+		if ($('.hdnAlerta').val() == "True")
+			$('#Filtros_Situacao', container).val(2);
 	},
 
 	obter: function (container) {

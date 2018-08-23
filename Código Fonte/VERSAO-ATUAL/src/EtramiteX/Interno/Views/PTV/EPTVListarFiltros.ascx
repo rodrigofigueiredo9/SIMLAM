@@ -9,6 +9,7 @@
     <div class="filtroCorpo filtroSerializarAjax block">
         <input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
         <input type="hidden" class="hdnIsAssociar" name="Associar" value="<%= Model.Associar %>" />
+        <input type="hidden" class="hdnAlerta" name="Alerta" value="<%= Request.Params["alerta"] %>" />
         <%= Html.Hidden("UrlVisualizar", Url.Action("EPTVVisualizar"), new { @class = "urlVisualizar" })%>
         <%= Html.Hidden("UrlAnalisar", Url.Action("EPTVAnalisar"), new { @class = "urlAnalisar" })%>
 
