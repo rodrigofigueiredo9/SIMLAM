@@ -22,8 +22,11 @@ using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA;
@@ -172,6 +175,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		public void CancelarEnvio(int ptvId)
+		{
+			try
+			{
+				PTV ptv = Obter(ptvId);
+
+				if (_validar.CancelarEnvio(ptv))
+				{
+					ptv.Situacao = (int)eSolicitarPTVSituacao.Cadastrado;
+
+					GerenciadorTransacao.ObterIDAtual();
+
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+					{
+						bancoDeDados.IniciarTransacao();
+
+						_da.CancelarEnvio(ptv, bancoDeDados);
+
+						Validacao.Add(Mensagem.PTV.CanceladoSucesso);
+
+						bancoDeDados.Commit();
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		private string ObterNumeroDigital()
 		{
 			string numeroDigital = string.Empty;
@@ -253,6 +286,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					documentoOrigem = _da.VerificarDocumentoOrigem(origemTipo, numero, serieNumero);
 					if (documentoOrigem != null)
 					{
+						CredenciadoDa _credenciadoDa = new CredenciadoDa();
+						var credenciado = _credenciadoDa.Obter(User.FuncionarioId);
+
 						switch (origemTipo)
 						{
 							case eDocumentoFitossanitarioTipo.CFO:
@@ -260,11 +296,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 								{
 									Validacao.Add(Mensagem.PTV.CfoSituacaoInvalida);
 								}
+
+								PessoaInternoDa _pessoaInternoDa = new PessoaInternoDa();
+								var produtor = _pessoaInternoDa.Obter((int)documentoOrigem["produtor"]);
+
+								if ((int)documentoOrigem["credenciado"] != User.FuncionarioId && produtor.CPFCNPJ != credenciado.Pessoa.CPFCNPJ)
+								{
+									Validacao.Add(Mensagem.PTV.UsuarioSemPermissaoDocOrigem);
+								}
 								break;
 							case eDocumentoFitossanitarioTipo.CFOC:
 								if ((int)documentoOrigem["situacao"] != (int)eDocumentoFitossanitarioSituacao.Valido)
 								{
 									Validacao.Add(Mensagem.PTV.CfocSituacaoInvalida);
+								}
+
+								EmpreendimentoInternoDa _empreendimentoInternoDa = new EmpreendimentoInternoDa();
+								var empreendimento = _empreendimentoInternoDa.Obter((int)documentoOrigem["empreendimento_id"]);
+
+								if ((int)documentoOrigem["credenciado"] != User.FuncionarioId && empreendimento.CNPJ != credenciado.Pessoa.CPFCNPJ)
+								{
+									Validacao.Add(Mensagem.PTV.UsuarioSemPermissaoDocOrigem);
 								}
 								break;
 							case eDocumentoFitossanitarioTipo.PTV:
@@ -277,6 +329,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 								if ((int)documentoOrigem["situacao"] != (int)ePTVOutroSituacao.Valido)
 								{
 									Validacao.Add(Mensagem.PTV.PTVOutroEstadoSituacaoInvalida);
+								}
+								if ((int)documentoOrigem["credenciado"] != User.FuncionarioId)
+								{
+									Validacao.Add(Mensagem.PTV.UsuarioSemPermissaoDocOrigem);
 								}
 								break;
 						}

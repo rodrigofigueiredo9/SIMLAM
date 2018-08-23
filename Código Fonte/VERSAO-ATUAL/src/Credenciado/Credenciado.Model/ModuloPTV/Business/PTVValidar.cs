@@ -481,6 +481,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		internal bool CancelarEnvio(PTV ptv)
+		{
+			if (ptv.Situacao != (int)eSolicitarPTVSituacao.AguardandoAnalise)
+			{
+				Validacao.Add(Mensagem.PTV.CancelarEnvioSituacaoInvalida);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		internal bool Excluir(int id)
 		{
 			PTV ptvBanco = _da.Obter(id, true);
@@ -583,6 +593,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
                 eptv.Situacao != (int)eSolicitarPTVSituacao.Rejeitado )
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool ValidarAcessoSolicitarDesbloqueioPTV(int idPTV)
+		{
+			if (!_da.PossuiAcessoComunicadorPTV(idPTV, Executor.Current.Id))
+			{
+				Validacao.Add(Mensagem.PTV.AcessoNaoPermitido);
+				return false;
+			}
+
+			PTV eptv = _da.Obter(idPTV, true);
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			{
+				Validacao.Add(Mensagem.PTV.SolicitarDesbloqueioPTVSituacaoInvalida);
 				return false;
 			}
 

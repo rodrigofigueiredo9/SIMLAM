@@ -539,6 +539,7 @@ PTVEmitir = {
 						PTVEmitir.onChangeCultura();
 					}
 				}
+				MasterPage.carregando(false);
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 			}
 		});
@@ -1294,11 +1295,7 @@ PTVEmitir = {
 						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
 						$('.txtNFCaixaSaldoAtual').addClass('disabled')
 						$('.txtNFCaixaSaldoAtual').attr('disabled', 'disabled');
-						$('.lblSaldoAtualInicial').text("Saldo atual");
 						PTVEmitir.nfCaixaTemp.saldoAtual = response.nfCaixa.saldoAtual;
-					}
-					else {
-						$('.lblSaldoAtualInicial').text("Saldo inicial");
 					}
 					PTVEmitir.nfCaixaTemp.id = response.nfCaixa.id;
 					PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;

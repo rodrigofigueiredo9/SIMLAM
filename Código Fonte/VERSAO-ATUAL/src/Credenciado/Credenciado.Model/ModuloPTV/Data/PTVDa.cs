@@ -419,6 +419,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
+		internal void CancelarEnvio(PTV PTV, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao where p.id = :id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.atualizar, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		internal void Excluir(int id, BancoDeDados banco)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -1253,30 +1273,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+                        strSql = @"select t.id, t.situacao, t.credenciado, t.produtor, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+						else
+							strSql += " and serie is null ";
 						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
-                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+                        strSql = @"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+						else
+							strSql += " and serie is null ";
 
 						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
 					default:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
 				}
@@ -1293,8 +1317,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						retorno = new Dictionary<string, object>();
 						retorno.Add("id", reader.GetValue<int>("id"));
 						retorno.Add("situacao", reader.GetValue<int>("situacao"));
+						retorno.Add("credenciado", reader.GetValue<int>("credenciado"));
 						retorno.Add("empreendimento_id", reader.GetValue<int>("empreendimento_id"));
 						retorno.Add("empreendimento_denominador", reader.GetValue<string>("empreendimento_denominador"));
+
+						if (origemTipo == eDocumentoFitossanitarioTipo.CFO)
+						{
+							retorno.Add("produtor", reader.GetValue<int>("produtor"));
+						}
 					}
 				}
 
@@ -2148,9 +2178,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-//                Comando comando = bancoDeDados.CriarComando(@"
-//			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
-
                 Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(*) FROM cnf_local_vistoria_bloqueio WHERE setor = :setor", EsquemaBanco);
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 
@@ -2159,39 +2186,49 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
                 if (totRegistros > 0)
                 {
-                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (
-                                                                      SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
-                                                                      FROM DUAL
-                                                                      CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))),
-                                                                      cnf_local_vistoria lv,
-                                                                      lov_dia_semana d,
-                                                                (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(:dataVistoria,'DD/MM/YY')
-                                                                ) bloq
-                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                               AND to_date(workday,'DD/MM/YY') >= to_date(:dataVistoria,'DD/MM/YY')
-                                                               AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
-                                                               AND to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))
-                                                               OR 
-                                                               (
-                                                                  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                                  AND  to_date(workday,'DD/MM/YY') >= to_date(:dataVistoria,'DD/MM/YY') 
-                                                                  AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') < to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
-                                                                  )  )");
+                    comando = bancoDeDados.CriarComando(@"
+								SELECT lv.id,
+								       d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto,
+								       dia_semana,
+								       lv.hora_inicio,
+								       lv.hora_fim
+								FROM ( SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
+								       FROM DUAL
+								            CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI')) ),
+								            cnf_local_vistoria lv,
+								            lov_dia_semana d
+								WHERE  TO_CHAR(workday,'D') = lv.dia_semana
+								       AND lv.setor=:setor
+								       and lv.situacao = 1
+								       AND d.id = lv.dia_semana
+								       AND to_timestamp(to_char(workday || ' ' || lv.hora_fim)) >= to_timestamp(to_char(:dataVistoria,'DD/MM/YY HH24:MI'))
+								       AND not exists ( SELECT clvb.id
+								                        FROM cnf_local_vistoria_bloqueio clvb
+								                        WHERE clvb.setor = :setor
+								                              and to_timestamp(workday || ' ' || lv.hora_inicio, 'dd/mm/yy hh24:mi') >= to_timestamp(nvl(to_char(clvb.dia_inicio, 'DD/MM/YY HH24:MI'), '01/01/01 00:00'))
+								                              and to_timestamp(workday || ' ' || lv.hora_fim, 'dd/mm/yy hh24:mi') <= to_timestamp(nvl(to_char(clvb.dia_fim, 'DD/MM/YY HH24:MI'), '01/01/01 00:00')) )");
 
 
 
                 }
                 else
                 {
-                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (    SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
-                                                                            FROM DUAL
-                                                                        CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))) ,
-                                                                        cnf_local_vistoria lv,
-                                                                        lov_dia_semana d
-                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
-                                                                and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(:dataVistoria,'DD/MM/YY HH24:MI')");
+                    comando = bancoDeDados.CriarComando(@"
+								SELECT lv.id,
+								       (d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim) texto,
+								       dia_semana,
+								       lv.hora_inicio,
+								       lv.hora_fim
+								FROM ( SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
+								       FROM DUAL
+								            CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))),
+								            cnf_local_vistoria lv,
+								            lov_dia_semana d
+								       WHERE  TO_CHAR(workday,'D') = lv.dia_semana
+								              and lv.setor=:setor
+											  and lv.situacao = 1
+								              and d.id = lv.dia_semana
+								              and to_timestamp(to_char(workday || ' ' || lv.hora_fim)) >= to_timestamp(to_char(:dataVistoria,'DD/MM/YY HH24:MI'))");
                 }
 				if (dataVistoria == null || dataVistoria > DateTime.Now) dataVistoria = DateTime.Now.AddHours(1);
 

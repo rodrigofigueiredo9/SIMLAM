@@ -698,6 +698,8 @@ PTVEmitir = {
 			PTVEmitir.onTratamentoFitossanitário();
 			PTVEmitir.onPossuiLaudoLaboratorial();
 			PTVEmitir.onLimparIdentificacaoProduto();
+		} else if (item.OrigemTipo == '4') {
+			PTVEmitir.onLimparIdentificacaoProduto();
 		}
 	},
 
@@ -1424,11 +1426,7 @@ PTVEmitir = {
 						$('.txtNFCaixaSaldoAtual').val(response.nfCaixa.saldoAtual);
 						$('.txtNFCaixaSaldoAtual').addClass('disabled')
 						$('.txtNFCaixaSaldoAtual').attr('disabled', 'disabled');
-						$('.lblSaldoAtualInicial').text("Saldo atual");
 						PTVEmitir.nfCaixaTemp.saldoAtual = response.nfCaixa.saldoAtual;
-					}
-					else {
-						$('.lblSaldoAtualInicial').text("Saldo inicial");
 					}
 					PTVEmitir.nfCaixaTemp.id = response.nfCaixa.id;
 					PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;

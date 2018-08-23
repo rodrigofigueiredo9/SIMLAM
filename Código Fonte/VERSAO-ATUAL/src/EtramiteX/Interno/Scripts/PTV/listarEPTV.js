@@ -11,7 +11,8 @@ EPTVListar = {
 			urlComunicadorPTV: null,
 			urlAnalisarDesbloqueio: null,
 			urlVisualizar: null,
-			urlPDFEPTV: null
+			urlPDFEPTV: null,
+			urlValidarAcessoAnalisarDesbloqueio: null,
 		}
 	},
 
@@ -33,6 +34,8 @@ EPTVListar = {
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
 		Aux.setarFoco(container);
+		if ($('.hdnAlerta').val() == "True")
+			$('#Filtros_Situacao', container).val(2);
 	},
 
 	obter: function (container) {
@@ -72,7 +75,7 @@ EPTVListar = {
 	analisarDesbloqueio: function () {
 		var item = EPTVListar.obter(this);
 
-		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoAnalisarDesbloqueio + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
 			return;
 		}
 

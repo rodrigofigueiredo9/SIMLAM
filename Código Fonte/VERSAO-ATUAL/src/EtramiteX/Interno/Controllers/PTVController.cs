@@ -21,7 +21,7 @@ using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitacaoEm
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV;
-
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -78,7 +78,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity ?? new EtramiteIdentity("", "", "", null, "", 0, 0, "", "", 0, 0);
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { vm.RT = x.Id; });
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { vm.RT = x.Id; });
 
 			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
 			vm.Paginacao.EfetuarPaginacao();
@@ -786,7 +786,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			List<LaudoLaboratorial> lstLaboratorio = _busPTV.ObterLaudoLaboratorial(ptv.Produtos);
 
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
-			_busPTV.ObterResponsavelTecnico(func.UsuarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { ptv.ResponsavelTecnicoId = x.Id; ptv.ResponsavelTecnicoNome = x.Texto; });
 
 			PTVVM vm = new PTVVM(
 				ptv,
@@ -800,7 +800,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
+				_busPTV.DiasHorasVistoriaEPTV(ptv.Id));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
@@ -851,7 +851,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			PTVVM vm = new PTVVM(
 				ptv,
-				_busLista.PTVSituacao,
+				//_busLista.PTVSituacao,
+				ListaCredenciadoBus.PTVSolicitacaoSituacao,
 				_busPTV.ObterResponsaveisEmpreendimento(ptv.Empreendimento, ptv.Produtos),
 				_busLista.DocumentosFitossanitario,
 				lsFitossanitario,
@@ -861,7 +862,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_busLista.Municipios(8),
 				locaisVistorias,
 				false,
-				_busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
+				_busPTV.DiasHorasVistoriaEPTV(ptv.Id));
 
 			foreach (var item in _busLista.PTVSolicitacaoSituacao)
 			{
@@ -895,6 +896,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult ValidarAcessoComunicador(int id)
 		{
 			_validar.ValidarAcessoComunicadorPTV(id);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult ValidarAcessoAnalisarDesbloqueio(int id)
+		{
+			_validar.ValidarAcessoAnalisarDesbloqueioPTV(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
 		}
 

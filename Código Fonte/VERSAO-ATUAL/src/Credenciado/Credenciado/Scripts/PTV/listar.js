@@ -6,7 +6,6 @@
 EPTVListar = {
 	settings: {
 		urls: {
-			urlHistorico: null,
 			urlVisualizar: null,
 			urlEditar: null,
 			urlExcluirConfirm: null,
@@ -16,7 +15,9 @@ EPTVListar = {
 			urlEnviar: null,
 			urlValidarAcessoComunicador: null,
 			urlComunicadorPTV: null,
-			urlSolicitarDesbloqueio: null
+			urlSolicitarDesbloqueio: null,
+			urlCancelarEnvio: null,
+			urlConfirmarCancelarEnvio: null
 		}
 	},
 
@@ -32,10 +33,10 @@ EPTVListar = {
 		container.delegate('.btnExcluir', 'click', EPTVListar.excluir);
 		container.delegate('.btnPDF', 'click', EPTVListar.gerarPDF);
 		container.delegate('.btnEnviar', 'click', EPTVListar.enviar);
-		container.delegate('.btnHistorico', 'click', EPTVListar.historico);
 		container.delegate('.btnSolicitarDesbloqueio', 'click', EPTVListar.solicitarDesbloqueio);
 		container.delegate('.btnComunicador', 'click', EPTVListar.comunicador);
-		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);		
+		container.delegate('.ddlTipoDocumento', 'change', EPTVListar.onChangeTipoDocumento);
+		container.delegate('.btnCancelarEnvio', 'click', EPTVListar.cancelarEnvio);
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
@@ -46,15 +47,6 @@ EPTVListar = {
 
 	obter: function (container) {
 		return JSON.parse($(container).closest('tr').find('.itemJson:first').val());
-	},
-
-	historico: function (item, listarSucesso) {
-		Mensagem.limpar(EPTVListar.container);
-
-		var item = EPTVListar.obter(this);
-		Modal.abrir(EPTVListar.settings.urls.urlHistorico + '/' + item.Id, null, function (container) {
-			Modal.defaultButtons(container);
-		}, Modal.tamanhoModalGrande);
 	},
 
 	editar: function () {
@@ -120,6 +112,18 @@ EPTVListar = {
 		});
 	},
 
+	cancelarEnvio: function () {
+		Mensagem.limpar(EPTVListar.container);
+		debugger;
+		Modal.excluir({
+			'urlConfirm': EPTVListar.settings.urls.urlConfirmarCancelarEnvio,
+			'urlAcao': EPTVListar.settings.urls.urlCancelarEnvio,
+			'id': EPTVListar.obter(this).Id,
+			'btnExcluir': this,
+			'btnTexto': 'Confirmar'
+		});
+	},
+
 	comunicador: function () {
 		var item = EPTVListar.obter(this);
 
@@ -141,7 +145,7 @@ EPTVListar = {
 	solicitarDesbloqueio: function () {
 		var item = EPTVListar.obter(this);
 
-		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoComunicador + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
+		if (!MasterPage.validarAjax(EPTVListar.settings.urls.urlValidarAcessoSolicitarDesbloqueio + '/' + item.Id, null, EPTVListar.container, false).EhValido) {
 			return;
 		}
 
