@@ -220,54 +220,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             return Validacao.EhValido;
         }
 
-        public bool AcessarAlterarSituacao(CARSolicitacao entidade)
+        public bool AcessarAlterarSituacao(CARSolicitacao entidade, int funcionarioId)
         {
             if (entidade.Id <= 0)
             {
                 Validacao.Add(Mensagem.Padrao.Inexistente);
                 return false;
             }
-
-            if (entidade.Protocolo.Id.GetValueOrDefault() > 0)
-            {
-                if (!_protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault()))
-                {
-                    Validacao.Add(Mensagem.CARSolicitacao.ProtocoloPosseAlterarSituacao);
-                    return false;
-                }
-            }
-
-            //String tituloSituacao = String.Empty;
-
-            //if (_da.ExisteCredenciado(entidade.Id))
-            //	tituloSituacao = _da.ObterSituacaoTituloCARExistenteCredenciado(entidade.Empreendimento.Id);
-            //else
-            //	tituloSituacao = _da.ObterSituacaoTituloCARExistente(entidade.Empreendimento.Id);
-
-
-            //if (!String.IsNullOrWhiteSpace(tituloSituacao))
-            //{
-            //	Validacao.Add(Mensagem.CARSolicitacao.EmpreendimentoPossuiTitulo(tituloSituacao));
-            //	return false;
-            //}
-
-            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro)
+			
+            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
                 Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacao(entidade.SituacaoTexto));
 
-            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido)
+			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido && !validarFuncionario(funcionarioId))
                 Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacao(entidade.SituacaoTexto));
 
             var origemSolicitacao = (int)(_da.ExisteCredenciado(entidade.Id) ? eCARSolicitacaoOrigem.Credenciado : eCARSolicitacaoOrigem.Institucional);
 
             eStatusArquivoSICAR situacaoArquivo = _da.BuscaSituacaoAtualArquivoSICAR(entidade.Id, origemSolicitacao).Item1;
 
-            if (situacaoArquivo == eStatusArquivoSICAR.ArquivoEntregue)
-                Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacaoSolicitacaoEnviadaSICAR);
-
-            if (situacaoArquivo != eStatusArquivoSICAR.Nulo && situacaoArquivo != eStatusArquivoSICAR.ArquivoReprovado)
+            if (situacaoArquivo != eStatusArquivoSICAR.Nulo && situacaoArquivo != eStatusArquivoSICAR.ArquivoReprovado && situacaoArquivo != eStatusArquivoSICAR.ArquivoEntregue)
                 Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacaoSolicitacaoEmProcessamentoSICAR);
 
-            return Validacao.EhValido;
+			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Pendente && !validarFuncionario(funcionarioId))
+				Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+
+			return Validacao.EhValido;
         }
 
         public bool AcessoEnviarReenviarArquivoSICAR(CARSolicitacao entidade, int origem)
@@ -325,20 +304,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return false;
             }
 
-            if (entidade.Protocolo.Id.GetValueOrDefault() > 0 && !_protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault()))
-            {
-                Validacao.Add(Mensagem.CARSolicitacao.ProtocoloPosseAlterarSituacao);
-                return false;
-            }
-
-            //if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido)
-            //{
-            //	CARSolicitacao entidadeAtual = _da.Obter(entidade.Id, false);
-            //
-            //	if (!Salvar(entidadeAtual))
-            //		return Validacao.EhValido;
-            //}
-
+            
             var origemSolicitacao = (int)(_da.ExisteCredenciado(entidade.Id) ? eCARSolicitacaoOrigem.Credenciado : eCARSolicitacaoOrigem.Institucional);
 
             var situacaoArquivo = _da.BuscaSituacaoAtualArquivoSICAR(entidade.Id, origemSolicitacao).Item1;
@@ -354,15 +320,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 && (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
-            if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso && situacaoArquivo == eStatusArquivoSICAR.Nulo
+			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && situacaoArquivo == eStatusArquivoSICAR.ArquivoEntregue
+				&& (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
+				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
+
+			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso && situacaoArquivo == eStatusArquivoSICAR.Nulo
                 && (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
-
-            /*if (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
-            {
-                if (situacaoArquivo != eStatusArquivoSICAR.Nulo && situacaoArquivo != eStatusArquivoSICAR.ArquivoReprovado)
-                    Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacaoSolicitacaoEnviadaSICAR);
-            }*/
 
             return Validacao.EhValido;
         }
@@ -429,5 +393,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             }
             return Validacao.EhValido;
         }
+
+		public bool validarFuncionario(int id)
+		{
+			return _da.ValidarFuncionarioPermissao(id);
+		}
     }
 }

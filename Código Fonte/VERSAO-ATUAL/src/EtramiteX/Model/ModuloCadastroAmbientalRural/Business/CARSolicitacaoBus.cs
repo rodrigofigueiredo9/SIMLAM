@@ -168,31 +168,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
-				if (IsCredenciado)
+				if (_validar.AlterarSituacao(entidade))
 				{
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+					if (IsCredenciado)
 					{
-						bancoDeDados.IniciarTransacao();
-
-						_busCredenciado.AlterarSituacao(new CARSolicitacao() { Id = entidade.Id }, entidade, bancoDeDados);
-						_busCredenciado.FazerVirarPassivo(entidade.Id, bancoDeDados);
-						bancoDeDados.Commit();
-					}
-				}
-				else
-				{
-					if (_validar.AlterarSituacao(entidade))
-					{
-						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 						{
 							bancoDeDados.IniciarTransacao();
 
-							_da.AlterarSituacao(entidade, bancoDeDados);
-							_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
-
+							_busCredenciado.AlterarSituacao(new CARSolicitacao() { Id = entidade.Id }, entidade, bancoDeDados);
+							_busCredenciado.FazerVirarPassivo(entidade.Id, bancoDeDados);
 							bancoDeDados.Commit();
 						}
 					}
+					else
+					{
+							using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+							{
+								bancoDeDados.IniciarTransacao();
+
+								_da.AlterarSituacao(entidade, bancoDeDados);
+								_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
+
+								bancoDeDados.Commit();
+							}
+					}
+					int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido) ?
+						(int)eStatusArquivoSICAR.Cancelado :
+						(int)eStatusArquivoSICAR.ArquivoReprovado;
+
+					_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo);
 				}
 
 				if (mostrarMsg)
