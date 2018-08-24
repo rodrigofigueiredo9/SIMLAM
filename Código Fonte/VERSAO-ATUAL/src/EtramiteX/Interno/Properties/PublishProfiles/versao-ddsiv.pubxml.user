@@ -5,11 +5,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-<<<<<<< HEAD
-    <_PublishTargetUrl>D:\Projetos\IDAF\publish\Institucional</_PublishTargetUrl>
-=======
-    <_PublishTargetUrl>C:\Users\patrick.vianna\Documents\Publicação\Produção\Institucional</_PublishTargetUrl>
->>>>>>> 4982_Car_nao_invalida
+    <_PublishTargetUrl>C:\Users\patrick.vianna\Documents\Publicação\Homologação\Institucional</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="Areas/Caracterizacoes/Views/Aquicultura/Aquicultura.ascx">
@@ -2512,17 +2508,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:37</publishTime>
     </File>
     <File Include="bin/Interno.Model.WebService.dll">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:24:19</publishTime>
-    </File>
-    <File Include="bin/Interno.Model.WebService.pdb">
-      <publishTime>05/30/2018 11:24:19</publishTime>
-=======
       <publishTime>08/22/2018 17:57:55</publishTime>
     </File>
     <File Include="bin/Interno.Model.WebService.pdb">
       <publishTime>08/22/2018 17:57:55</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="bin/itextsharp.dll">
       <publishTime>08/03/2018 13:26:38</publishTime>
@@ -2552,17 +2541,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/10/2012 20:53:02</publishTime>
     </File>
     <File Include="bin/Tecnomapas.Blocos.Arquivo.dll">
-<<<<<<< HEAD
-      <publishTime>05/04/2018 14:46:16</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.Blocos.Arquivo.pdb">
-      <publishTime>05/04/2018 14:46:16</publishTime>
-=======
       <publishTime>08/03/2018 15:05:33</publishTime>
     </File>
     <File Include="bin/Tecnomapas.Blocos.Arquivo.pdb">
       <publishTime>08/03/2018 15:05:33</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="bin/Tecnomapas.Blocos.Autenticacao.dll">
       <publishTime>08/22/2018 17:21:55</publishTime>
@@ -2574,18 +2556,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:37</publishTime>
     </File>
     <File Include="bin/Tecnomapas.Blocos.Entities.dll">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:24:15</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.Blocos.Entities.pdb">
-      <publishTime>05/30/2018 11:24:15</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.Blocos.Etx.dll">
-      <publishTime>05/30/2018 11:25:30</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.Blocos.Etx.pdb">
-      <publishTime>05/30/2018 11:25:30</publishTime>
-=======
       <publishTime>08/22/2018 17:57:49</publishTime>
     </File>
     <File Include="bin/Tecnomapas.Blocos.Entities.pdb">
@@ -2596,7 +2566,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/Tecnomapas.Blocos.Etx.pdb">
       <publishTime>08/22/2018 18:09:49</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="bin/Tecnomapas.Blocos.RelatorioPersonalizado.dll">
       <publishTime>08/03/2018 15:05:42</publishTime>
@@ -2605,54 +2574,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 15:05:42</publishTime>
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Configuracao.dll">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:24:16</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Configuracao.pdb">
-      <publishTime>05/30/2018 11:24:16</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.dll">
-      <publishTime>05/30/2018 11:25:34</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.dll">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.pdb">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.pdb">
-      <publishTime>05/30/2018 11:25:34</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.dll">
-      <publishTime>05/30/2018 11:25:33</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.pdb">
-      <publishTime>05/30/2018 11:25:33</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.WebService.dll">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Credenciado.Model.WebService.pdb">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.dll">
-      <publishTime>05/30/2018 11:25:42</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.dll">
-      <publishTime>05/30/2018 11:25:38</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.Extensoes.dll">
-      <publishTime>05/30/2018 11:25:36</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.Extensoes.pdb">
-      <publishTime>05/30/2018 11:25:36</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.pdb">
-      <publishTime>05/30/2018 11:25:38</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-=======
       <publishTime>08/22/2018 18:09:48</publishTime>
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Configuracao.pdb">
@@ -2699,24 +2620,11 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll">
       <publishTime>08/22/2018 18:09:51</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.dll.config">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.pdb">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Interno.pdb">
-      <publishTime>05/30/2018 11:25:42</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Perfil.dll">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-    </File>
-    <File Include="bin/Tecnomapas.EtramiteX.Perfil.pdb">
-      <publishTime>05/30/2018 11:25:31</publishTime>
-=======
       <publishTime>08/22/2018 18:09:51</publishTime>
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Interno.pdb">
@@ -2727,7 +2635,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/Tecnomapas.EtramiteX.Perfil.pdb">
       <publishTime>08/22/2018 18:09:51</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="bin/Tecnomapas.Utilitarios.Numero.dll">
       <publishTime>08/03/2018 13:26:38</publishTime>
@@ -2736,18 +2643,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:38</publishTime>
     </File>
     <File Include="bin/Utilities.dll">
-<<<<<<< HEAD
-      <publishTime>05/08/2018 14:21:50</publishTime>
-    </File>
-    <File Include="bin/Utilities.pdb">
-      <publishTime>05/08/2018 14:21:50</publishTime>
-    </File>
-    <File Include="bin/Yogesh.ExcelXml.dll">
-      <publishTime>05/04/2018 14:46:16</publishTime>
-    </File>
-    <File Include="bin/Yogesh.ExcelXml.pdb">
-      <publishTime>05/04/2018 14:46:16</publishTime>
-=======
       <publishTime>08/10/2018 13:13:52</publishTime>
     </File>
     <File Include="bin/Utilities.pdb">
@@ -2758,17 +2653,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/Yogesh.ExcelXml.pdb">
       <publishTime>08/03/2018 15:05:34</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_chave/Chaves Pública e Privada.pfx">
       <publishTime>08/03/2018 13:26:39</publishTime>
     </File>
     <File Include="Content/_css/etramite.css">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:27</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_css/ie.css">
       <publishTime>08/03/2018 13:26:41</publishTime>
@@ -3260,11 +3150,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:41</publishTime>
     </File>
     <File Include="Content/_img/sprite_bt_lista.png">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:27</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_img/sprite_menu_principal.png">
       <publishTime>08/03/2018 13:26:41</publishTime>
@@ -3330,11 +3216,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:41</publishTime>
     </File>
     <File Include="Content/_imgLogo/logo_novo.jpg">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_imgLogo/logo_topo.png">
       <publishTime>08/03/2018 13:26:41</publishTime>
@@ -3409,11 +3291,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Content/_pdfAspose/Instrumento_Unico_Fiscalizacao.docx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_pdfAspose/Laudo_de_Fiscalizacao.docx">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3422,31 +3300,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Content/_pdfAspose/Laudo_de_Fiscalizacao_Novo.docx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_pdfAspose/Oficio_Administrativo.docx">
       <publishTime>07/02/2018 08:06:04</publishTime>
     </File>
     <File Include="Content/_pdfAspose/Pendencias_SICAR.doc">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_pdfAspose/PTV.doc">
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Content/_pdfAspose/Registro_Recebimento.docx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_pdfAspose/Relatorio.doc">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3470,17 +3336,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Content/_pdfAspose/SolicitacaoInscricaoCAR.docx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-    </File>
-    <File Include="Content/_pdfAspose/SolicitacaoInscricaoCAR_Credenciado.docx">
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 16:17:07</publishTime>
     </File>
     <File Include="Content/_pdfAspose/SolicitacaoInscricaoCAR_Credenciado.docx">
       <publishTime>08/22/2018 16:17:07</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Content/_pdfAspose/Termo_Habilitacao_Func.docx">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3558,11 +3417,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Scripts/Areas/Caracterizacoes/dominialidade.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Areas/Caracterizacoes/dominio.js">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3826,11 +3681,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Scripts/CARSolicitacao/listar.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/CARSolicitacao/solicitacao.js">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3929,37 +3780,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Documento/consultarInformacoes.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Documento/converterDocumento.js">
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Scripts/Documento/documento.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Documento/listar.js">
       <publishTime>08/03/2018 13:26:42</publishTime>
     </File>
     <File Include="Scripts/Empreendimento/associar.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-    </File>
-    <File Include="Scripts/Empreendimento/empreendimento.js">
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Scripts/Empreendimento/empreendimento.js">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Empreendimento/inline.js">
       <publishTime>08/03/2018 13:26:42</publishTime>
@@ -3986,15 +3822,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/cobranca.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-    </File>
-    <File Include="Scripts/Fiscalizacao/cobrancaListar.js">
-      <publishTime>05/30/2018 11:09:28</publishTime>
-    </File>
-    <File Include="Scripts/Fiscalizacao/fiscalizacao.js">
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/cobrancaListar.js">
@@ -4002,7 +3829,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacao.js">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoAlterarSituacao.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -4011,53 +3837,31 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoConfiguracao.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:28</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoConfiguracaoListar.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoConfiguracaoListarParametrizacao.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoConfiguracaoListarPergunta.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoDocumentosGerados.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Scripts/Fiscalizacao/fiscalizacaoListar.js">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoListar.js">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoProdutosDestinos.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/fiscalizacaoVrte.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Scripts/Fiscalizacao/notificacao.js">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Scripts/Fiscalizacao/notificacao.js">
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Fiscalizacao/projetoGeografico.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -4078,11 +3882,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/jquery.associar-multiplo.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/jquery.cb.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -4964,11 +4764,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Scripts/masterpage.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/mensagem.js">
       <publishTime>08/22/2018 15:26:35</publishTime>
@@ -5001,11 +4797,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Pessoa/associar.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Pessoa/inline.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5023,17 +4815,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Pessoa/tela.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Scripts/Processo/consultarInformacoes.js">
-      <publishTime>05/24/2018 16:22:32</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Scripts/Processo/consultarInformacoes.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Processo/editarApensadosJuntados.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5075,11 +4860,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/PTV/emitirPTV.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/PTV/EPTVAnalisar.js">
       <publishTime>08/22/2018 15:26:35</publishTime>
@@ -5217,11 +4998,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Scripts/Tramitacao/enviar.js">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Scripts/Tramitacao/enviarExterno.js">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5353,11 +5130,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Arquivo/ArquivoFiscalizacao.ascx">
-<<<<<<< HEAD
-      <publishTime>05/03/2018 10:24:52</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Atividade/AsmAtividadesSolicitadas.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5423,15 +5196,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/CARSolicitacao/Index.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/CARSolicitacao/ListarFiltros.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/CARSolicitacao/ListarResultados.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/CARSolicitacao/ListarFiltros.ascx">
@@ -5439,7 +5203,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/CARSolicitacao/ListarResultados.ascx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/CARSolicitacao/SolicitacaoPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5589,11 +5352,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/ConfiguracaoVegetal/DeclaracaoAdicional/DeclaracaoAdicionalPartial.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/ConfiguracaoVegetal/DeclaracaoAdicional/Index.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5689,17 +5448,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Documento/ConsultarInformacoes.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-    </File>
-    <File Include="Views/Documento/ConverterDocumento.aspx">
-      <publishTime>04/25/2018 09:33:47</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Views/Documento/ConverterDocumento.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Documento/ConverterDocumentoCriarRespTecnicoVisualizar.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5711,11 +5463,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Documento/Criar.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Documento/CriarRespTecnico.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5724,33 +5472,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Documento/DocumentoPartial.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-    </File>
-    <File Include="Views/Documento/Editar.aspx">
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Views/Documento/Editar.aspx">
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Documento/Index.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Documento/ListarFiltros.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:12:22</publishTime>
-    </File>
-    <File Include="Views/Documento/ListarResultados.ascx">
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Views/Documento/ListarResultados.ascx">
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Documento/Requerimento.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5759,15 +5493,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Documento/Visualizar.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-    </File>
-    <File Include="Views/Documento/VisualizarModal.ascx">
-      <publishTime>04/25/2018 09:33:18</publishTime>
-    </File>
-    <File Include="Views/Documento/VisualizarPartial.ascx">
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Views/Documento/VisualizarModal.ascx">
@@ -5775,24 +5500,11 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Documento/VisualizarPartial.ascx">
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Empreendimento/AsmResponsavel.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Empreendimento/Criar.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Empreendimento/Editar.aspx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Empreendimento/EmpreendimentoInline.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Empreendimento/EmpreendimentoModal.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/Empreendimento/Editar.aspx">
@@ -5803,7 +5515,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Empreendimento/EmpreendimentoModal.ascx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Empreendimento/EmpreendimentoPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5824,11 +5535,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Empreendimento/Salvar.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Empreendimento/Visualizar.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5897,11 +5604,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/ConcluirCadastro.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/ConfiguracaoIndex.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -5931,27 +5634,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/ConfigurarParametrizacao.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoDetalhe.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoListar.aspx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoListarFiltros.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoListarResultados.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoPartial.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoVisualizar.aspx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoDetalhe.ascx">
@@ -5971,7 +5653,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Fiscalizacao/ConfigurarParametrizacaoVisualizar.aspx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/ConfigurarPenalidade.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6007,11 +5688,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/ConfigurarVrte.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/ConsideracaoFinal.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6020,15 +5697,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/DocumentosCancelados.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/DocumentosGerados.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/DocumentosGeradosModal.ascx">
-      <publishTime>05/30/2018 11:09:29</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/DocumentosGerados.ascx">
@@ -6036,7 +5704,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Fiscalizacao/DocumentosGeradosModal.ascx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/FiscalizacaoCampos.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6060,15 +5727,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/FiscalizacaoVrte.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/Index.aspx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/Infracao.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/Index.aspx">
@@ -6076,7 +5734,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Fiscalizacao/Infracao.ascx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/InfracaoCamposPerguntas.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6085,24 +5742,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/InterdicaoEmbargo.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ListarFiltros.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/ListarResultados.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/LocalInfracao.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/MaterialApreendido.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/Fiscalizacao/Multa.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/ListarFiltros.ascx">
@@ -6119,7 +5758,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Fiscalizacao/Multa.ascx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/Notificacao.aspx">
       <publishTime>03/12/2018 09:14:54</publishTime>
@@ -6134,11 +5772,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/12/2018 09:14:54</publishTime>
     </File>
     <File Include="Views/Fiscalizacao/OutrasPenalidades.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:30</publishTime>
-=======
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Fiscalizacao/ProjetoGeoBaseReferenciaPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6159,42 +5793,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/FiscalizacaoCobranca/Cobranca.aspx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaListar.aspx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaListarFiltros.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaListarResultados.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaParcelamento.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaPartial.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/CobrancaVisualizar.aspx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoCobranca/FiscalizacaoPessoaModal.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoNotificacao/Notificacao.aspx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoNotificacao/NotificacaoCobranca.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoNotificacao/NotificacaoPartial.ascx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-    </File>
-    <File Include="Views/FiscalizacaoNotificacao/NotificacaoVisualizar.aspx">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
     </File>
     <File Include="Views/FiscalizacaoCobranca/CobrancaListar.aspx">
@@ -6229,7 +5827,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/FiscalizacaoNotificacao/NotificacaoVisualizar.aspx">
       <publishTime>08/22/2018 15:13:42</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Funcionario/AlterarFuncionario.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6472,17 +6069,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Processo/ConsultarInformacoesPartial.ascx">
-<<<<<<< HEAD
-      <publishTime>05/24/2018 16:23:04</publishTime>
-    </File>
-    <File Include="Views/Processo/Criar.aspx">
-      <publishTime>04/25/2018 09:33:08</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Processo/Criar.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Processo/CriarRespTecnico.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6491,11 +6081,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Processo/Editar.aspx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:33:04</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Processo/EditarApensadosJuntados.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6531,17 +6117,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Processo/Visualizar.aspx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:32:51</publishTime>
-    </File>
-    <File Include="Views/Processo/VisualizarModal.ascx">
-      <publishTime>04/25/2018 09:32:34</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Processo/VisualizarModal.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Processo/VisualizarPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6607,11 +6186,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Protocolo/DocumentoVisualizarModal.ascx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:32:26</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Protocolo/DocumentoVisualizarPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6629,11 +6204,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Protocolo/ProcessoVisualizarModal.ascx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:32:18</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Protocolo/ProcessoVisualizarPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6744,21 +6315,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Requerimento/Criar.aspx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:33:14</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Requerimento/CriarRespTecnico.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Requerimento/Editar.aspx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:32:57</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Requerimento/Finalizar.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -6788,11 +6351,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Requerimento/Visualizar.aspx">
-<<<<<<< HEAD
-      <publishTime>04/25/2018 09:33:52</publishTime>
-=======
       <publishTime>08/03/2018 13:26:43</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Requerimento/VisualizarPartial.ascx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -7107,11 +6666,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Tramitacao/EnviarEmPosse.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Tramitacao/EnviarExterno.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -7120,11 +6675,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Views/Tramitacao/EnviarPartial.ascx">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 09:04:01</publishTime>
-=======
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
     <File Include="Views/Tramitacao/EnviarRegistro.aspx">
       <publishTime>08/03/2018 13:26:43</publishTime>
@@ -7184,17 +6735,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2018 13:26:43</publishTime>
     </File>
     <File Include="Web.config">
-<<<<<<< HEAD
-      <publishTime>05/30/2018 11:25:44</publishTime>
-    </File>
-    <File Include="Web.sitemap">
-      <publishTime>05/30/2018 11:09:30</publishTime>
-=======
       <publishTime>08/22/2018 17:20:19</publishTime>
     </File>
     <File Include="Web.sitemap">
       <publishTime>08/22/2018 15:26:35</publishTime>
->>>>>>> 4982_Car_nao_invalida
     </File>
   </ItemGroup>
 </Project>
