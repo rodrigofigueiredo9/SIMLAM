@@ -282,13 +282,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult AlterarSituacao(int id)
 		{
 			CARSolicitacao solicitacao = _bus.Obter(id);
-
+			EtramiteIdentity func = User.Identity as EtramiteIdentity;
+			
 			if (solicitacao.Id == 0)
 			{
 				solicitacao = _busCredenciado.Obter(id);
 			}
-
-			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
+			
+			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao, func.FuncionarioId))
 			{
 				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
 			}

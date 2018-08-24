@@ -390,5 +390,8 @@
         DeclaracaoAdicional,
         ConfigurarCodigoReceita,
         ConfigurarPenalidade,
+
+		CadastroAmbientalRuralSolicitacaoInvalida = 385,
+
 	}
 }

@@ -85,6 +85,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ProtocoloPosse { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O processo/documento não está na posse do funcionário logado." }; } }
 		public Mensagem ProtocoloPosseAlterarSituacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a posse do processo/documento ao qual está associado à Solicitação de Inscrição." }; } }
 
+		public Mensagem PermissaoAlterarSituacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a permissão para alterar a situação da Solicitação de Inscrição no CAR." }; } }
+
 		public Mensagem ProtocoloPosseExcluir(string numero)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não é possível excluir a Solicitação de Inscrição, pois o processo/documento {0} não está na sua posse.", numero) };
