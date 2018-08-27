@@ -58,6 +58,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _tipoExploracao = value; }
 		}
 
+		private List<SelectListItem> _codigoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> CodigoExploracao
+		{
+			get { return _codigoExploracao; }
+			set { _codigoExploracao = value; }
+		}
+
 		public String Mensagens
 		{
 			get
@@ -75,6 +82,14 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
 			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
+
+			var codigoExploracao = new List<Lista>()
+			{
+				new Lista(){
+					Id = caracterizacao.CodigoExploracao.ToString(),
+					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoExploracao.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
+			};
+			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{

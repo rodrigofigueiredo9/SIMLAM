@@ -4,13 +4,14 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script>
-	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
+	ExploracaoFlorestalExploracao.settings.mensagens = '<%= Model.Mensagens %>';
 </script>
 
 <div class="block filtroCorpo divExploracaoFlorestalExploracao">
 	<input type="hidden" class="hdnGeometriaId" value="<%:Model.ExploracaoFlorestal.GeometriaTipoId%>" />
 	<input type="hidden" class="hdnExploracaoId" value="<%:Model.ExploracaoFlorestal.Id%>" />
 	<input type="hidden" class="hdnClassificacaoVegetacaoId" value="<%:Model.ExploracaoFlorestal.ClassificacaoVegetacaoId%>" />
+	<input type="hidden" class="hdnIsVisualizar" value="<%:Model.IsVisualizar%>" />
 
 	<div class="block">
 		<div class="coluna22 append2">

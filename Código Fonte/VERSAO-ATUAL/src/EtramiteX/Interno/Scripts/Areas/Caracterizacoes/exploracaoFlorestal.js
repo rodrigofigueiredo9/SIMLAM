@@ -22,6 +22,7 @@ ExploracaoFlorestal = {
 
 		ExploracaoFlorestal.container.delegate('.btnSalvar', 'click', ExploracaoFlorestal.salvar);
 		ExploracaoFlorestal.container.delegate('.ddlTipoExploracao', 'change', ExploracaoFlorestal.onChangeTipoExploracao);
+		ExploracaoFlorestal.container.delegate('.ddlCodigoExploracao', 'change', ExploracaoFlorestal.onChangeCodigoExploracao);
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
 
 		if (ExploracaoFlorestal.settings.textoMerge) {
@@ -30,6 +31,16 @@ ExploracaoFlorestal = {
 
 		if (ExploracaoFlorestal.settings.textoAbrirModal) {
 			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração');
+		}
+		if ($('.hdnIsVisualizar').val() == "True")
+			$('.asmConteudoInternoExpander').click();
+	},
+
+	onChangeCodigoExploracao: function () {
+		if ($(this).val() <= 0) {
+			$('.exploracoesFlorestais', ExploracaoFlorestal.container).hide();
+		} else {
+			$('.exploracoesFlorestais', ExploracaoFlorestal.container).show();
 		}
 	},
 
