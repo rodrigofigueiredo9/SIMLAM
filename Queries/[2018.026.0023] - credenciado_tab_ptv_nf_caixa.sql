@@ -1,3 +1,4 @@
+---Tabelas de Nota Fiscal de Caixa
 CREATE SEQUENCE  "IDAFCREDENCIADO"."SEQ_PTV_NF_CAIXA"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 11 NOCACHE  NOORDER  NOCYCLE ;
 
 CREATE TABLE "IDAFCREDENCIADO"."TAB_PTV_NF_CAIXA" 
@@ -36,3 +37,36 @@ CREATE TABLE "IDAFCREDENCIADO"."TAB_PTV_NF_CAIXA"
    
    grant SELECT on "IDAFCREDENCIADO"."TAB_PTV_NF_CAIXA" to "IDAF" ;
  
+ 
+---------------------------------
+
+---Alterações no comunicador
+
+alter table HST_PTV_COMUNI_CONVERSA
+modify texto null;
+
+alter table IDAFCREDENCIADO.tab_ptv add exibir_mensagem numeric(1,0);
+alter table IDAFCREDENCIADO.tab_ptv add exibir_msg_credenciado numeric(1,0);
+alter table IDAFCREDENCIADO.tab_ptv add local_fiscalizacao varchar2(500 byte);
+alter table IDAFCREDENCIADO.tab_ptv add hora_fiscalizacao varchar2(5 byte);
+alter table IDAFCREDENCIADO.tab_ptv add informacoes_adicionais varchar2(500 byte);
+
+
+---------------------------------
+
+---Alterações nas situações da EPTV
+
+update lov_solicitacao_ptv_situacao set texto = 'Válido' where texto = 'Aprovado';
+
+insert into lov_solicitacao_ptv_situacao
+select (select max(id) + 1 from lov_solicitacao_ptv_situacao), 'Inválido' from dual
+where not exists 
+(select 1 from lov_solicitacao_ptv_situacao where texto = 'Inválido');
+
+INSERT INTO LOV_SOLICITACAO_PTV_SITUACAO (ID, TEXTO) VALUES(8, 'Editado');
+
+UPDATE LOV_SOLICITACAO_PTV_SITUACAO SET TEXTO = 'Rejeitado' WHERE ID = 4;
+
+
+
+UPDATE CNF_IMPLANTACAO SET VALOR = '2018.026.0023' WHERE CAMPO like 'ultimoscript';
