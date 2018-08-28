@@ -1,7 +1,4 @@
-﻿--Alteração método emitirptv, PACKAGE- HISTORICO, BANCO- IDAFCREDENCIADO
-
-
----------------------------------------------------------
+    ---------------------------------------------------------
     -- Solicitar Emissão de Permissão de Transito de Vegetais
     ---------------------------------------------------------
     procedure emitirptv(p_id               number,
@@ -279,4 +276,108 @@
                      j.unidade_medida,
                      j.unidade_medida_texto);
             end loop;
+			
+			----------------------------------------------------------------------------------------------------------------
+			-- Notas Fiscais de Caixa
+			----------------------------------------------------------------------------------------------------------------
+			for j in (select tpnf.id,
+							 tpnf.tid,
+							 tnf.id nf_caixa_id,
+							 tnf.tid nf_caixa_tid,
+							 tpnf.saldo_atual,
+							 tpnf.numero_caixas
+						from tab_ptv_nf_caixa tpnf,
+							 IDAF.tab_nf_caixa tnf
+					   where tpnf.nf_caixa = tnf.id
+							 and tpnf.ptv = p_id) loop
+				insert into hst_ptv_nf_caixa
+					(id,
+					 tid,
+					 id_hst,
+					 ptv_nf_caixa_id,
+					 ptv_id,
+					 nf_caixa_id,
+					 nf_caixa_tid,
+					 saldo_atual,
+					 numero_caixas)
+				values
+					(seq_hst_ptv_nf_caixa.nextval,
+					 i.tid,
+					 v_id,
+					 j.id,
+					 i.id,
+					 j.nf_caixa_id,
+					 j.nf_caixa_tid,
+					 j.saldo_atual,
+					 j.numero_caixas);
+			end loop;
+		
+            ----------------------------------------------------------------------------------------------------------------
+            -- Arquivos/Itens
+            ----------------------------------------------------------------------------------------------------------------
+            for j in (select tr.id,
+                             tr.arquivo   arquivo_id,
+                             ta.tid       arquivo_tid,
+                             tr.ordem,
+                             tr.descricao,
+                             tr.tid
+                        from tab_ptv_arquivo tr, tab_arquivo ta
+                       where tr.arquivo = ta.id
+                         and tr.ptv = p_id) loop
+                insert into hst_ptv_arquivo
+                    (id,
+                     id_hst,
+                     ptv_arq_id,
+                     ptv_id,
+                     arquivo_id,
+                     arquivo_tid,
+                     ordem,
+                     descricao,
+                     tid)
+                values
+                    (seq_hst_ptv_arquivo.nextval,
+                     v_id,
+                     j.id,
+                     i.id,
+                     j.arquivo_id,
+                     j.arquivo_tid,
+                     j.ordem,
+                     j.descricao,
+                     i.tid);
+            end loop;
         
+            -- roda Historico de Conversa
+            if (p_acao = 3 /*Excluir*/
+               ) then
+                for h in (select tpc.id
+                            from tab_ptv_comunicador tpc
+                           where tpc.ptv_id = p_id) loop
+                    ptvcomunicador(h.id,
+                                   p_acao,
+                                   p_executor_id,
+                                   p_executor_nome,
+                                   p_executor_login,
+                                   p_executor_tipo_id,
+                                   p_executor_tid);
+                end loop;
+            end if;
+        
+        end loop;
+    
+        v_sucesso := true;
+    
+        if (not v_sucesso) then
+            Raise_application_error(-20000,
+                                    'Erro ao gerar o Histórico de PTV. Mensagem: ' ||
+                                    dbms_utility.format_error_stack ||
+                                    dbms_utility.format_call_stack);
+        end if;
+    
+        --Tratamento de exceção
+    exception
+        when others then
+            Raise_application_error(-20000,
+                                    'Erro ao gerar o Histórico de PTV. Mensagem: ' ||
+                                    dbms_utility.format_error_stack ||
+                                    dbms_utility.format_call_stack);
+    end;

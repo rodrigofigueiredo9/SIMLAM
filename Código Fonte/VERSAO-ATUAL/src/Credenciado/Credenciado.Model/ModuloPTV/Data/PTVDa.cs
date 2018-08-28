@@ -481,6 +481,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					delete {0}tab_ptv_comunicador pc where pc.ptv_id = :id;
 					delete {0}tab_ptv_produto pr where pr.ptv = :id;
 					delete {0}tab_ptv_arquivo pr where pr.ptv = :id;
+					delete {0}tab_ptv_nf_caixa pr where pr.ptv = :id;
 					delete {0}tab_ptv p where p.id = :id;
 				end;", UsuarioCredenciado);
 
@@ -507,7 +508,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					{
 						using (BancoDeDados banco = BancoDeDados.ObterInstancia())
 						{
-							comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
+							banco.IniciarTransacao();
+
+							comando = banco.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
 												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -520,6 +523,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							banco.ExecutarScalar(comando);
 
 							item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+							Historico.Gerar(item.id, eHistoricoArtefato.notafiscalcaixa, eHistoricoAcao.criar, banco);
+
+							banco.Commit();
 						}
 					}
 				}

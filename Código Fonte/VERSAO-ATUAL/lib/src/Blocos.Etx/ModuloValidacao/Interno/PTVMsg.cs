@@ -45,9 +45,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Texto = String.Format("Essa ação irá alterar a situação da E-PTV para \"Em elaboração\", não permitindo a análise da E-PTV pelo funcionário do IDAF até que ela seja enviada novamente. Tem certeza de que deseja cancelar o envio da E-PTV número {0}?", numeroPTV) };
 		}
 
-		public Mensagem MensagemExcluir(string situacao)
+		public Mensagem MensagemExcluir(string ptv)
 		{
-			return new Mensagem() { Texto = string.Format("Tem certeza que deseja excluir o EPTV {0}?", situacao), Tipo = eTipoMensagem.Advertencia };
+			return new Mensagem() { Texto = string.Format("Tem certeza que deseja excluir o EPTV {0}?", ptv), Tipo = eTipoMensagem.Advertencia };
 		}
 
 		#region Campos Obrigatóroios

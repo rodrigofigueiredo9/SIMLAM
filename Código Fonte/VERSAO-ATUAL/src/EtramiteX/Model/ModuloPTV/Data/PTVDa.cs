@@ -640,6 +640,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						bancoDeDados.ExecutarScalar(comando);
 
 						item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+						Historico.Gerar(item.id, eHistoricoArtefato.notafiscalcaixa, eHistoricoAcao.criar, bancoDeDados);
 					}
 				}
 
