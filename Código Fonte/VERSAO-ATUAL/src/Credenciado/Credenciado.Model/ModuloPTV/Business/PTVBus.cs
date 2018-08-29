@@ -770,7 +770,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					break;
 
 				case eDocumentoFitossanitarioTipo.PTV:
-					PTVBus ptvBus = new PTVBus();
+					PTVInternoBus ptvBus = new PTVInternoBus();
 					PTV ptv = ptvBus.Obter(prod.Origem);
 					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
 					break;

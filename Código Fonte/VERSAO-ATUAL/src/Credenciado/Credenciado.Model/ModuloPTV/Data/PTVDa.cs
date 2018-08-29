@@ -1300,7 +1300,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador 
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador
@@ -1324,7 +1324,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						retorno = new Dictionary<string, object>();
 						retorno.Add("id", reader.GetValue<int>("id"));
 						retorno.Add("situacao", reader.GetValue<int>("situacao"));
-						retorno.Add("credenciado", reader.GetValue<int>("credenciado"));
+
+						if (origemTipo != eDocumentoFitossanitarioTipo.PTV)
+						{
+							retorno.Add("credenciado", reader.GetValue<int>("credenciado"));
+						}
+						else
+						{
+							retorno.Add("credenciado", User.FuncionarioId);
+						}
 						retorno.Add("empreendimento_id", reader.GetValue<int>("empreendimento_id"));
 						retorno.Add("empreendimento_denominador", reader.GetValue<string>("empreendimento_denominador"));
 
