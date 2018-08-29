@@ -322,7 +322,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 					comando = bancoDeDados.CriarComando(@"
 				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio,
-					solicitacao_car_anterior = :solicitacao_car_anterior, solicitacao_car_anterior_tid = :solicitacao_car_anterior_tid,  = :solicitacao_car_ant_esquema,  = :codigo_imovel,
+					solicitacao_car_anterior = :solicitacao_car_anterior, solicitacao_car_anterior_tid = :solicitacao_car_anterior_tid, solicitacao_car_ant_esquema = :solicitacao_car_ant_esquema, codigo_imovel = :codigo_imovel,
                     r.tid = :tid, r.arquivo = null where r.id = :id", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
