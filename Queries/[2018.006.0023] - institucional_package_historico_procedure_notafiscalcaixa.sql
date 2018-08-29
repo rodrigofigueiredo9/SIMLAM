@@ -1,3 +1,6 @@
+--ATENÇÃO!!!!
+--Lembrar de inserir a procedure no cabeçalho e no body.
+
 	---------------------------------------------------------
 	-- Cadastro de Nota Fiscal de Caixa
 	---------------------------------------------------------
