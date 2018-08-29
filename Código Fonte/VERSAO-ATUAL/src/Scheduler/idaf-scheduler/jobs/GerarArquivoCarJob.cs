@@ -494,6 +494,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento);
             var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento);
 
+			var complementoCorrespondencia = String.Empty;
+			var bairroCorrespondencia = String.Empty;
+			var eCorrespondencia = new EnderecoCorrespondencia();
 			try
 			{
 				var builder = new StringBuilder();
@@ -511,30 +514,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 				var descricaoAcesso = builder.ToString();
 
-				var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
-				var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
-				var eCorrespondencia = new EnderecoCorrespondencia();
-
 				if (endCorrespondencia?.id > 0)
 				{
+					complementoCorrespondencia = endCorrespondencia.complemento + " C.P.:" + endCorrespondencia.caixaPostal;
+					bairroCorrespondencia = endCorrespondencia.bairro + ", " + endCorrespondencia.distrito + ", " + endCorrespondencia.corrego;
 					eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
 					eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
-					eCorrespondencia.complemento =
-						(complementoCorrespondencia.Length > 100
-							? complementoCorrespondencia.Substring(0, 100)
-							: complementoCorrespondencia);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
 					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
 					eCorrespondencia.cep = endCorrespondencia.cep;
 					eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
 				}
 				else
 				{
+					complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
+					bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
 					eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
 					eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
-					eCorrespondencia.complemento =
-						(complementoCorrespondencia.Length > 100
-							? complementoCorrespondencia.Substring(0, 100)
-							: complementoCorrespondencia);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
 					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
 					eCorrespondencia.cep = imovel.cep;
 					eCorrespondencia.codigoMunicipio = imovel.municipio;
@@ -601,7 +598,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				var cmd =
 					new OracleCommand(
 						"SELECT * FROM " + schema +
-						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id", conn))
+						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id ORDER BY ID", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
 
@@ -628,7 +625,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						new OracleCommand(
 							"SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
 							schema +
-							$".HST_EMPREENDIMENTO_ENDERECO t WHERE t.id_hst in ({idsHst}) AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
+							$".HST_EMPREENDIMENTO_ENDERECO t WHERE t.id_hst in ({idsHst}) AND correspondencia IN (0,1) ORDER BY ID DESC",
 							conn))
 				{
 					using (var dr = cmd.ExecuteReader())
