@@ -148,7 +148,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return Validacao.EhValido;
 		}
 
-		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool mostrarMsg = true)
+		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool mostrarMsg = true, int funcionarioId = 0)
 		{
 			try
 			{
@@ -168,7 +168,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
-				if (_validar.AlterarSituacao(entidade))
+				if (_validar.AlterarSituacao(entidade, funcionarioId))
 				{
 					if (IsCredenciado)
 					{
@@ -193,16 +193,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 								bancoDeDados.Commit();
 							}
 					}
-					int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido) ?
-						(int)eStatusArquivoSICAR.Cancelado :
-						(int)eStatusArquivoSICAR.ArquivoReprovado;
+					
+					if (mostrarMsg && Validacao.EhValido)
+					{
+						int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido) ?
+							(int)eStatusArquivoSICAR.Cancelado :
+							(int)eStatusArquivoSICAR.ArquivoReprovado;
 
-					_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo);
-				}
+						_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo);
 
-				if (mostrarMsg)
-				{
-					Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
+						Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
+					}
 				}
 			}
 			catch (Exception exc)

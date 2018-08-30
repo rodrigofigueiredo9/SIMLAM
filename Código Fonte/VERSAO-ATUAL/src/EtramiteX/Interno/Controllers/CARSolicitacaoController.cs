@@ -282,14 +282,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult AlterarSituacao(int id)
 		{
 			CARSolicitacao solicitacao = _bus.Obter(id);
-			EtramiteIdentity func = User.Identity as EtramiteIdentity;
 			
 			if (solicitacao.Id == 0)
 			{
 				solicitacao = _busCredenciado.Obter(id);
 			}
 			
-			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao, func.FuncionarioId))
+			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
 			{
 				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
 			}
@@ -302,7 +301,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoAlterarSituacao })]
 		public ActionResult AlterarSituacao(CARSolicitacao solicitacao)
 		{
-			_bus.AlterarSituacao(solicitacao);
+			EtramiteIdentity func = User.Identity as EtramiteIdentity;
+
+			_bus.AlterarSituacao(solicitacao, funcionarioId: func.FuncionarioId);
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + solicitacao.Id + "&situacaoId=" + solicitacao.SituacaoId;
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @UrlRedirecionar = urlRetorno }, JsonRequestBehavior.AllowGet);

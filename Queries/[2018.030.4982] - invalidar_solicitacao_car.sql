@@ -1,5 +1,5 @@
 INSERT INTO lov_autenticacao_permissao (ID, NOME, CODIGO, FUNCIONARIO_TIPO, DESCRICAO, GRUPO, TIPO)
-VALUES(385, 'Alterar Situação Solicitação Inválida',
+VALUES(385, 'Alterar Situação Solicitação – sem posse/credenciado',
 'CadastroAmbientalRuralSolicitacaoInvalida',
 3,
 'Alterar Situação Solicitação para inválida',
