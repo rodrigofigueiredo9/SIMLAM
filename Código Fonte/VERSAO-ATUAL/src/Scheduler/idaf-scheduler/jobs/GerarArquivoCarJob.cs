@@ -699,10 +699,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				var cmd =
 					new OracleCommand(
 						"SELECT meio_contato_id,valor FROM " + schema +
-						".HST_EMPREENDIMENTO_CONTATO t WHERE t.emp_contato_id = :emp_contato_id", conn))
+						$".HST_EMPREENDIMENTO_CONTATO t WHERE t.id_hst in ({idsHst})", conn))
 			{
-				cmd.Parameters.Add(new OracleParameter("emp_contato_id", empreendimentoId));
-
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
