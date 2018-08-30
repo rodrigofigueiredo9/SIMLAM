@@ -220,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             return Validacao.EhValido;
         }
 
-        public bool AcessarAlterarSituacao(CARSolicitacao entidade, int funcionarioId)
+        public bool AcessarAlterarSituacao(CARSolicitacao entidade)
         {
             if (entidade.Id <= 0)
             {
@@ -228,24 +228,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return false;
             }
 			
-            if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
-				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro ||
-				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
-                Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacao(entidade.SituacaoTexto));
-
-			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido && !validarFuncionario(funcionarioId))
-                Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacao(entidade.SituacaoTexto));
-
-            var origemSolicitacao = (int)(_da.ExisteCredenciado(entidade.Id) ? eCARSolicitacaoOrigem.Credenciado : eCARSolicitacaoOrigem.Institucional);
-
-            eStatusArquivoSICAR situacaoArquivo = _da.BuscaSituacaoAtualArquivoSICAR(entidade.Id, origemSolicitacao).Item1;
-
-            if (situacaoArquivo != eStatusArquivoSICAR.Nulo && situacaoArquivo != eStatusArquivoSICAR.ArquivoReprovado && situacaoArquivo != eStatusArquivoSICAR.ArquivoEntregue)
-                Validacao.Add(Mensagem.CARSolicitacao.AcessarAlterarSituacaoSolicitacaoEmProcessamentoSICAR);
-
-			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Pendente && !validarFuncionario(funcionarioId))
-				Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
-
 			return Validacao.EhValido;
         }
 
@@ -296,14 +278,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             return Validacao.EhValido;
         }
 
-        public bool AlterarSituacao(CARSolicitacao entidade)
+        public bool AlterarSituacao(CARSolicitacao entidade, int funcionarioId)
         {
             if (entidade.Id <= 0)
             {
                 Validacao.Add(Mensagem.Padrao.Inexistente);
                 return false;
             }
-
             
             var origemSolicitacao = (int)(_da.ExisteCredenciado(entidade.Id) ? eCARSolicitacaoOrigem.Credenciado : eCARSolicitacaoOrigem.Institucional);
 
@@ -312,7 +293,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             if (entidade.SituacaoId <= 0)
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoObrigatoria);
 
-            if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Pendente && situacaoArquivo == eStatusArquivoSICAR.ArquivoReprovado
+			if (String.IsNullOrWhiteSpace(entidade.Motivo))
+				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoMotivoObrigatorio);
+
+		
+			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Pendente && situacaoArquivo == eStatusArquivoSICAR.ArquivoReprovado
                 && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido)
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
@@ -328,7 +313,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 && (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
-            return Validacao.EhValido;
+
+			if ((entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Pendente || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido) && !validarFuncionario(funcionarioId))
+				Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+
+			return Validacao.EhValido;
         }
 
         public bool RetificacaoValidar(CARSolicitacao entidade)

@@ -134,6 +134,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         public Mensagem GerarPdfSICARUrlNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado o endereço para o PDF de recibo da inscrição no SICAR." }; } }
         public Mensagem ReenviarMsgConfirmacao { get { return new Mensagem() { Tipo = eTipoMensagem.Confirmacao, Texto = "Os dados do envio atual serão perdidos e um novo arquivo será gerado. Deseja continuar?." }; } }
+        public Mensagem AlterarSituacaoMsgConfirmacao { get { return new Mensagem() { Tipo = eTipoMensagem.Confirmacao, Texto = "Esta Solicitação de Inscrição no CAR já foi enviada ao SICAR, e só deve ser invalidada após cancelamento no SICAR. Deseja continuar?." }; } }
         public Mensagem ErroEnviarArquivoSICAR(bool isEnviar, string solicitacaoSituacao, string arquivoSituacao)
         {
             return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Você não pode {0} uma solicitação \"{1}\" quando o arquivo está na situação \"{2}\". Aguarde o processamento atual.", ((isEnviar) ? "enviar" : "reenviar"), solicitacaoSituacao, arquivoSituacao) };
