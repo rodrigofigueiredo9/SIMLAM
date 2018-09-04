@@ -698,23 +698,23 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT meio_contato_id,valor FROM " + schema +
-						".HST_EMPREENDIMENTO_CONTATO t WHERE t.emp_contato_id = :emp_contato_id", conn))
+						"SELECT meio_contato, valor FROM " + schema +
+						$".TAB_EMPREENDIMENTO_CONTATO t WHERE empreendimento = :empreendimento", conn))
 			{
-				cmd.Parameters.Add(new OracleParameter("emp_contato_id", empreendimentoId));
+				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
 					{
-						var meioContato = Convert.ToInt32(dr["meio_contato_id"]);
+						var meioContato = Convert.ToInt32(dr["meio_contato"]);
 						if (meioContato == 5)
 						{
-							empreendimento.email += dr.GetValue<string>("valor") + " ";
+							empreendimento.email = dr.GetValue<string>("valor") + " ";
 						}
-						else
+						else if(meioContato == 1)
 						{
-							empreendimento.telefone += dr.GetValue<string>("valor") + " ";
+							empreendimento.telefone = dr.GetValue<string>("valor") + " ";
 						}
 					}
 				}
