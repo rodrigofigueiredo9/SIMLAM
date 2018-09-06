@@ -14,7 +14,7 @@
 					salvar: '<%= Url.Action("Criar", "ExploracaoFlorestal") %>',
 					getCodigoExploracao: '<%= Url.Action("GetCodigoExploracao", "ExploracaoFlorestal") %>'
 				},
-				idsTela: <%= Model.IdsTela %>
+				idsTela: '<%= Model.IdsTela %>'
 			});
 		});
 	</script>

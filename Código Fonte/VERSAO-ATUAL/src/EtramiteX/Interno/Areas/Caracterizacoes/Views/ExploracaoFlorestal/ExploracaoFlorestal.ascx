@@ -30,7 +30,7 @@
 		</div>
 		<div class="coluna22 append2">
 			<label for="TipoExploracao">Tipo de Exploração *</label>
-			<%= Html.DropDownList("TipoExploracao1", Model.TipoExploracao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlTipoExploracao" }))%>
+			<%= Html.DropDownList("TipoExploracao1", Model.TipoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipoExploracao" }))%>
 		</div>
 		<div class="coluna22">
 			<label>Data Cadastro</label>

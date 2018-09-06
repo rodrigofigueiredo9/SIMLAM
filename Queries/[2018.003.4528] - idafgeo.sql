@@ -24,16 +24,19 @@ CREATE TABLE "IDAFGEO"."LOV_TIPO_EXPLORACAO"
  
  
 insert into idafgeo.LOV_TIPO_EXPLORACAO (chave, texto, tipo_atividade)
-values (1, 'AUS -  Uso Alternativo do Solo', 370);
+values ('AUS', 'AUS -  Uso Alternativo do Solo', 370);
 insert into idafgeo.LOV_TIPO_EXPLORACAO (chave, texto, tipo_atividade)
-values (2, 'CAI - Corte de Árvore Isolada', 374);
+values ('CAI', 'CAI - Corte de Árvore Isolada', 374);
 insert into idafgeo.LOV_TIPO_EXPLORACAO (chave, texto, tipo_atividade)
-values (3, 'EFP - Exploração de Floresta Plantada', 929);
+values ('EFP', 'EFP - Exploração de Floresta Plantada', 929);
 
 
 -- INSERT INTO TAB_FEICAO_COLUNAS
 insert into idafgeo.tab_feicao_colunas (feicao, coluna, tipo, tamanho, alias, is_obrigatorio, is_visivel, is_editavel, tabela_referenciada, coluna_referenciada) 
 values (31,'TIPO_EXPLORACAO', 4,1,'Tipo de Exploração',1,1,0, 'LOV_TIPO_EXPLORACAO', 'CHAVE');
+
+insert into idafgeo.tab_feicao_colunas (feicao, coluna, tipo, tamanho, alias, is_obrigatorio, is_visivel, is_editavel, tabela_referenciada, coluna_referenciada) 
+values (34,'TIPO_EXPLORACAO', 4,1,'Tipo de Exploração',1,1,0, 'LOV_TIPO_EXPLORACAO', 'CHAVE');
 
 -- ADD COLUMN TIPO_EXPLORACAO INTO TABELAS DO GEO
 alter table IDAFGEO.DES_PATIV add TIPO_EXPLORACAO VARCHAR2(50 BYTE);

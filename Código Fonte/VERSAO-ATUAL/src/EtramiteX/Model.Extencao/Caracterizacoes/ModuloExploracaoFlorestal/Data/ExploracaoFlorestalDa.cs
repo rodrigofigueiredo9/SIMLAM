@@ -678,60 +678,84 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   3					 geometria_tipo,
 								   a.area_m2            area_croqui,
 								   a.avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_aativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   2 geometria_tipo,
 								   null                 area_croqui,
 								   '[x]' avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_lativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   1 geometria_tipo,
 								   null                 area_croqui,
 								   '[x]' avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_pativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   3 geometria_tipo,
 								   a.area_m2            area_croqui,
 								   a.avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_aiativ      a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
-							   and g.caracterizacao = :caracterizacao) tab", EsquemaBanco, EsquemaBancoGeo);
+							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao) tab", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("caracterizacao", (int)eCaracterizacao.ExploracaoFlorestal, DbType.Int32);
@@ -752,6 +776,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						exploracao.GeometriaTipoTexto = _caracterizacaoConfig.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoGeometriaTipo).
 									SingleOrDefault(x => x.Id == (exploracao.GeometriaTipoId).ToString()).Texto;
 
+						if(!Convert.IsDBNull(reader["codigo_exploracao"]))
+							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
+						else
+							caracterizacao.CodigoExploracao = 1;
+						caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+						if(!Convert.IsDBNull(reader["data"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
 						caracterizacao.Exploracoes.Add(exploracao);
 					}
 

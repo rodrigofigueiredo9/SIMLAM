@@ -83,12 +83,15 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			IsVisualizar = isVisualizar;
 			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
 
-			var codigoExploracao = new List<Lista>()
+			var codigoExploracao = new List<Lista>();
+			if (caracterizacao.CodigoExploracao > 0)
 			{
+				codigoExploracao = new List<Lista>() {
 				new Lista(){
 					Id = caracterizacao.CodigoExploracao.ToString(),
 					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoExploracao.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
-			};
+				};
+			}
 			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
