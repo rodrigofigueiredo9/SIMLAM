@@ -56,7 +56,7 @@
 					<%= Html.TextBox("Situacao.DataAtual", Model.Solicitacao.DataSituacao.DataTexto, new { @class = "disabled text txtSituacaoDataAnterior maskData", @disabled="disabled" })%>
 				</div>
 			</div>
-			<%if (Model.Solicitacao.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido)
+			<%if (!Model.isVisualizar)
 			{ %>
 				<div class="block">
 					<div class="coluna20">
@@ -73,11 +73,11 @@
 
 			<div class="ultima divMotivo">
 				<label for="AlterarSituacao_Motivo">Motivo*</label>
-				<%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.Motivo, ViewModelHelper.SetaDisabled(Model.Solicitacao.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido, new { @class = "media text txtSituacaoMotivo ", @maxlength="300" }))%>
+				<%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.Motivo, ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "media text txtSituacaoMotivo ", @maxlength="300" }))%>
 			</div>
 		</fieldset>
 
-		<%if (Model.Solicitacao.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido)
+		<%if (!Model.isVisualizar)
 			{ %>
 		<div class="block box botoesSalvarCancelar">
 			<div class="block">

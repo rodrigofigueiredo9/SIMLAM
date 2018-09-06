@@ -15,6 +15,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
 			set { _solicitacao = value; }
 		}
 
+		public bool isVisualizar { get; set; }
+
 		public List<SelectListItem> Situacoes { get; private set; }
 
 		public CARSolicitacaoAlterarSituacaoVM() : this(new CARSolicitacao(), new List<Lista>()) { }

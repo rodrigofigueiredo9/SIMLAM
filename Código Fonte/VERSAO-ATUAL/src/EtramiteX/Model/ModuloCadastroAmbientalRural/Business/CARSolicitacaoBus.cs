@@ -15,6 +15,7 @@ using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Business
@@ -28,6 +29,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		ProtocoloBus _busProtocolo = new ProtocoloBus();
 		CARSolicitacaoCredenciadoBus _busCredenciado = new CARSolicitacaoCredenciadoBus();
 		CARSolicitacaoDa _da = null;
+		ProtocoloDa _protocoloDa = new ProtocoloDa();
 
 		String UrlSICAR
 		{
@@ -443,6 +445,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			}
 
 			return Validacao.EhValido;
+		}
+
+		public bool ValidarVisualizarAlterarSituacao(CARSolicitacao entidade, int funcionarioId)
+		{
+			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Nulo ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso)
+				return true;
+
+			if (_validar.validarFuncionario(funcionarioId))
+				return false;
+			else
+			{
+				if(!(entidade.Protocolo.Id.GetValueOrDefault() > 0 && _protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault()) ) )
+					return true;
+				else
+				{
+					if (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Pendente)
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		public bool ExisteProtocoloAssociado(int protocolo, int associado)
