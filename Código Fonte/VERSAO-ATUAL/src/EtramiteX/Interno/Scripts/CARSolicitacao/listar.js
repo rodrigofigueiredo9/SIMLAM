@@ -149,12 +149,12 @@ CARSolicitacaoListar = {
 	        },
 	        success: function (response, textStatus, XMLHttpRequest) {
 	            MasterPage.carregando(false);
-	            if (response.UrlPdfDemonstrativo) {
+				if (!response.UrlPdfDemonstrativo.isNullOrWhitespace()) {
 	                window.open(response.UrlPdfDemonstrativo);
 	            }
 	            else {
-	                Mensagem.limpar(CARSolicitacaoListar.container);
-	                Mensagem.gerar(CARSolicitacaoListar.container, [CARSolicitacaoListar.mensagens.GerarPdfSICARUrlNaoEncontrada]);
+					Mensagem.limpar(CARSolicitacaoListar.container);
+					Mensagem.gerar(CARSolicitacaoListar.container, [CARSolicitacaoListar.mensagens.ErroPdfDemonstrativo]);
 	            }
 
 

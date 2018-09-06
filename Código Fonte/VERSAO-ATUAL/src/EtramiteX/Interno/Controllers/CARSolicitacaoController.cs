@@ -462,7 +462,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
             var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao, isTitulo);
 
-            return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
+            return Json(new { @UrlPdfDemonstrativo = url, Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
         } 
 
 		public ActionResult BaixarAquivoSICAR(int id)

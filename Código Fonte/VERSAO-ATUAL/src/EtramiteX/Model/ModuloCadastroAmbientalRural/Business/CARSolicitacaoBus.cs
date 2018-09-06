@@ -504,25 +504,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
         public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
         {
-            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
-			if (String.IsNullOrWhiteSpace(urlGerar)) return null;
+			try
+			{
+				var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
+				if (String.IsNullOrWhiteSpace(urlGerar))
+					throw new Exception();
 
-			RequestJson requestJson = new RequestJson();
+				RequestJson requestJson = new RequestJson();
 
-            urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
-            //urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+				//urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
+				urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
 
-            var strResposta = requestJson.Executar(urlGerar);
+				var strResposta = requestJson.Executar(urlGerar);
 
-            var resposta = requestJson.Deserializar<dynamic>(strResposta);
+				var resposta = requestJson.Deserializar<dynamic>(strResposta);
 
-            if (resposta["status"] != "s")
-            {
-                return string.Empty;
-            }
+				if (resposta["status"] != "s")
+				{
+					return string.Empty;
+				}
 
-            return UrlSICAR + resposta["dados"];  // PRODUCAO 
-            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+				return UrlSICAR + resposta["dados"];  // PRODUCAO 
+				//return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+			}catch(Exception ex)
+			{
+				Validacao.Add(Mensagem.CARSolicitacao.ErroPdfDemonstrativo);
+				return string.Empty;
+			}
         } 
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)

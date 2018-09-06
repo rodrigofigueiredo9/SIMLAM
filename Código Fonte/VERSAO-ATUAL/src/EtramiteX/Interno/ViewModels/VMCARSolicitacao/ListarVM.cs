@@ -88,6 +88,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
                 return ViewModelHelper.Json(new
                 {
                     @GerarPdfSICARUrlNaoEncontrada = Mensagem.CARSolicitacao.GerarPdfSICARUrlNaoEncontrada,
+					@ErroPdfDemonstrativo = Mensagem.CARSolicitacao.ErroPdfDemonstrativo,
                     @ReenviarMsgConfirmacao = Mensagem.CARSolicitacao.@ReenviarMsgConfirmacao
 
                 });
