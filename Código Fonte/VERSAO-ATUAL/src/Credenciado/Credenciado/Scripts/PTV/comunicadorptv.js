@@ -56,7 +56,12 @@ ComunicadorPTV = {
 		
 		var inputFile = $('.inputFileDiv input[type="file"]');
 		
-		var tamanhoArquivo = inputFile[0].files[0].size;
+		var tamanhoArquivo = inputFile[0].files[0].size / (1024 * 1024);	//o tamanho do arquivo é dado em bytes, precisa converter para Kb
+
+		if (tamanhoArquivo > 2) {
+			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.AnexoTamanhoMaximo]);
+			return;
+		}
 
 		inputFile.attr("id", "ArquivoId");
 

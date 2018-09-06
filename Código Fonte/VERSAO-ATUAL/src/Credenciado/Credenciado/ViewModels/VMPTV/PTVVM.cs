@@ -67,6 +67,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
 					DescricaoAnexoObrigatorio = Mensagem.PTV.DescricaoAnexoObrigatorio,
 					AnexoFormatoErrado = Mensagem.PTV.AnexoFormatoErrado,
 					AnexoLimiteMaximo = Mensagem.PTV.AnexoLimiteMaximo,
+					AnexoTamanhoMaximo = Mensagem.PTV.AnexoTamanhoMaximo,
 					ArquivoExistente = Mensagem.Arquivo.ArquivoExistente,
 					@NotaFiscalDeCaixaNumeroVazio = Mensagem.PTV.NotaFiscalDeCaixaNumeroVazio,
 					@NumeroDeCaixasMaiorQueSaldoAtual = Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual,
