@@ -314,7 +314,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
 
-			if ((entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Pendente || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido) && !validarFuncionario(funcionarioId))
+			if ((entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Pendente || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido) && !validarFuncionario(funcionarioId))
 				Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
 
 			return Validacao.EhValido;

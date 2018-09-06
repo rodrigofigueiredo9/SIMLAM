@@ -282,6 +282,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult AlterarSituacao(int id)
 		{
 			CARSolicitacao solicitacao = _bus.Obter(id);
+			EtramiteIdentity func = User.Identity as EtramiteIdentity;
 			
 			if (solicitacao.Id == 0)
 			{
@@ -294,6 +295,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			CARSolicitacaoAlterarSituacaoVM vm = new CARSolicitacaoAlterarSituacaoVM(solicitacao, _bus.ObterSituacoes(solicitacao.SituacaoId));
+			vm.isVisualizar = _bus.ValidarVisualizarAlterarSituacao(solicitacao, func.FuncionarioId);
 			return View(vm);
 		}
 

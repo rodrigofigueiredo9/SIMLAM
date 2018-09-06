@@ -48,38 +48,42 @@ CARSolicitacaoAlterarSituacao = {
 
 	salvar: function () {
 		Mensagem.limpar(CARSolicitacaoAlterarSituacao.container);
-		//var objeto = CARSolicitacaoListar.obter(this);
+		var SituacaoAnteriorTexto = $('.txtSituacaoAtual').val();
 
-		Modal.confirma({
-			btnOkCallback: function (container) {
-				CARSolicitacaoAlterarSituacao.callBackAlterarSituacao(container);
-			},
-			titulo: "Alterar situação solicitação CAR",
-			conteudo: CARSolicitacaoAlterarSituacao.mensagem.AlterarSituacaoMsgConfirmacao.Texto,
-			tamanhoModal: Modal.tamanhoModalMedia
-		});
+		if (SituacaoAnteriorTexto === 'Válido') {
+			Modal.confirma({
+				btnOkCallback: function (container) {
+					CARSolicitacaoAlterarSituacao.callBackAlterarSituacao(container);
+				},
+				titulo: "Alterar situação solicitação CAR",
+				conteudo: CARSolicitacaoAlterarSituacao.mensagem.AlterarSituacaoMsgConfirmacao.Texto,
+				tamanhoModal: Modal.tamanhoModalMedia
+			});
+		} else {
+			MasterPage.carregando(true);
+			$.ajax({
+				url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
+				data: JSON.stringify(CARSolicitacaoAlterarSituacao.obter()),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: function (XMLHttpRequest, textStatus, erroThrown) {
+					Aux.error(XMLHttpRequest, textStatus, erroThrown, SecagemMecanicaGraos.container);
+				},
+				success: function (response, textStatus, XMLHttpRequest) {
+					if (response.EhValido) {
+						MasterPage.redireciona(response.UrlRedirecionar);
+					}
+					if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, response.Msg);
+					}
+				}
+			});
 
-		//MasterPage.carregando(true);
-		//$.ajax({
-		//	url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
-		//	data: JSON.stringify(CARSolicitacaoAlterarSituacao.obter()),
-		//	cache: false,
-		//	async: false,
-		//	type: 'POST',
-		//	dataType: 'json',
-		//	contentType: 'application/json; charset=utf-8',
-		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
-		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, SecagemMecanicaGraos.container);
-		//	},
-		//	success: function (response, textStatus, XMLHttpRequest) {
-		//		if (response.EhValido) {
-		//			MasterPage.redireciona(response.UrlRedirecionar);
-		//		}
-		//		if (response.Msg && response.Msg.length > 0) {
-		//			Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, response.Msg);
-		//		}
-		//	}
-		//});
+		}
+
 		MasterPage.carregando(false);
 	},
 

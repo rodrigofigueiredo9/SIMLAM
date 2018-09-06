@@ -72,7 +72,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem SolicitacaoEmpreendimentoNomeRazaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterizacao Dominialidade deve estar cadastrada." }; } }
 
 
-		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A nova situação é não é permitida." }; } }
+		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A nova situação não é permitida." }; } }
 
 		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Situacao_Nova", Texto = "A nova situação é obrigatória" }; } }
 		public Mensagem SolicitacaoAlterarSituacaoMotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AlterarSituacao_Motivo", Texto = "Motivo é obrigatório" }; } }
