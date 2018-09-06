@@ -1088,8 +1088,13 @@ PTVEmitir = {
 	//----------ANEXOS - ENVIAR ARQUIVO---------------
 
 	onEnviarAnexoArquivoClick: function (url) {
-		if ($('.tabAnexos tbody tr', PTVEmitir.container).length == 5) {
-			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.AnexoLimiteMaximo]);
+		debugger;
+
+		var inputFile = $('.inputFileDiv input:file', PTVEmitir.container);
+		var tamanhoArquivo = inputFile[0].files[0].size / (1024*1024);	//o tamanho do arquivo é dado em bytes, precisa converter para Kb
+
+		if (tamanhoArquivo > 2) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.AnexoTamanhoMaximo]);
 			return;
 		}
 
@@ -1144,8 +1149,7 @@ PTVEmitir = {
 		tabAnexos.removeClass('hide');
 		$('.lblGridVazio', tabAnexos.closest('fieldset')).addClass('hide');
 		$('.txtArquivoNome, .txtAnexoDescricao', PTVEmitir.container).val('');
-
-		var inputFile = $('.inputFileDiv input:file', PTVEmitir.container);
+		
 		PTVEmitir.atualizaEstiloGrid('tabAnexos');
 
 		FileUpload.upload(url, inputFile, PTVEmitir.msgArqEnviado);

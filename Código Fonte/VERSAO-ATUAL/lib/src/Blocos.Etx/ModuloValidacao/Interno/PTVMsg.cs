@@ -113,7 +113,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem AnexoObrigatorio { get { return new Mensagem() { Campo = "", Texto = "Anexo é obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem AnexoLimiteMaximo { get { return new Mensagem() { Campo = "", Texto = "Só é permitido o upload de até 5 arquivos.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem AnexoFormatoErrado { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ser no formato (pdf, jpg, jpeg).", Tipo = eTipoMensagem.Advertencia }; } }
-		public Mensagem AnexoTamanhoErrado { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ter tamanho máximo de 2 MB.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem AnexoTamanhoMaximo { get { return new Mensagem() { Campo = "", Texto = "Anexo deve ter tamanho máximo de 2 MB.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem ArquivoAnexoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ArquivoId", Texto = "Arquivo é obrigatório." }; } }
 		public Mensagem DescricaoAnexoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Descricao", Texto = "Descrição é obrigatória." }; } }

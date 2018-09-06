@@ -20,12 +20,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPTV
         {
             get
             {
-                return ViewModelHelper.Json(new
-                {
-                    @JustificativaObrigatoria = Mensagem.PTV.JustificativaObrigatoria,
-                    @ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
-                    @ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpeg", ".jpg" })),
-					@UmDosCamposDeveEstarPreenchido = Mensagem.PTV.UmDosCamposPreenchido
+				return ViewModelHelper.Json(new
+				{
+					@JustificativaObrigatoria = Mensagem.PTV.JustificativaObrigatoria,
+					@ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
+					@ArquivoTipoInvalido = Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpeg", ".jpg" })),
+					@UmDosCamposDeveEstarPreenchido = Mensagem.PTV.UmDosCamposPreenchido,
+					@AnexoTamanhoMaximo = Mensagem.PTV.AnexoTamanhoMaximo
 				});
             }
         }
