@@ -293,7 +293,6 @@
 		CadastroAmbientalRuralSolicitacaoVisualizar,
 		CadastroAmbientalRuralSolicitacaoEditar,
 		CadastroAmbientalRuralSolicitacaoExcluir,
-		CadastroAmbientalRuralSolicitacaoAlterarSituacao,
 
 		CadastroAmbientalRuralVisualizar,
 		CadastroAmbientalRuralExcluir,
@@ -396,6 +395,7 @@
 
 
 
+		CadastroAmbientalRuralSolicitacaoAlterarSituacao = 262,
 		CadastroAmbientalRuralSolicitacaoInvalida = 385,
 
 	}

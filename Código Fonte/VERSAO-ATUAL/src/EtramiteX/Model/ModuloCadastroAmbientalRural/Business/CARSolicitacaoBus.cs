@@ -9,6 +9,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
+using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
@@ -456,7 +457,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso)
 				return true;
 
-			if (_validar.validarFuncionario(funcionarioId))
+			if (_validar.validarFuncionario(funcionarioId, (int)ePermissao.CadastroAmbientalRuralSolicitacaoInvalida))
 				return false;
 			else
 			{
