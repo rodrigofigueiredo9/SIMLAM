@@ -1609,7 +1609,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			}
 		}
 
-		internal bool ValidarFuncionarioPermissao(int funcionarioId, BancoDeDados banco = null)
+		internal bool ValidarFuncionarioPermissao(int funcionarioId, int permissao, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -1618,7 +1618,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 																where pp.permissao = :permissao and fp.funcionario = :funcionario");
 
 				comando.AdicionarParametroEntrada("funcionario", funcionarioId, DbType.Int32);
-				comando.AdicionarParametroEntrada("permissao", (int)ePermissao.CadastroAmbientalRuralSolicitacaoInvalida, DbType.Int32);
+				comando.AdicionarParametroEntrada("permissao", permissao, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}

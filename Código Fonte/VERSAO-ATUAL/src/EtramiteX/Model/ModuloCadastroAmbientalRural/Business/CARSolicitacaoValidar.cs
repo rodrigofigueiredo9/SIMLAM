@@ -11,6 +11,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
+using Tecnomapas.Blocos.Entities.Interno.Security;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Business
 {
@@ -314,9 +315,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
 
-			if ((entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Pendente || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido) && !validarFuncionario(funcionarioId))
-				Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
-
+			if ((entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Pendente || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido) && !validarFuncionario(funcionarioId, (int)ePermissao.CadastroAmbientalRuralSolicitacaoInvalida))
+			{
+				if(origemSolicitacao == (int)eCARSolicitacaoOrigem.Credenciado)
+					Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+				else
+				{
+					if(!validarFuncionario(funcionarioId, (int)ePermissao.CadastroAmbientalRuralSolicitacaoAlterarSituacao))
+						Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+					else
+					{
+						if (!(entidade.Protocolo.Id.GetValueOrDefault() > 0 && _protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault())))
+							Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+						else
+						{
+							if (entidade.SituacaoAnteriorId != (int)eCARSolicitacaoSituacao.Pendente)
+								Validacao.Add(Mensagem.CARSolicitacao.PermissaoAlterarSituacao);
+						}
+					}
+				}
+			}
+			
 			return Validacao.EhValido;
         }
 
@@ -383,9 +402,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
             return Validacao.EhValido;
         }
 
-		public bool validarFuncionario(int id)
+		public bool validarFuncionario(int id, int permissao)
 		{
-			return _da.ValidarFuncionarioPermissao(id);
+			return _da.ValidarFuncionarioPermissao(id, permissao);
 		}
     }
 }
