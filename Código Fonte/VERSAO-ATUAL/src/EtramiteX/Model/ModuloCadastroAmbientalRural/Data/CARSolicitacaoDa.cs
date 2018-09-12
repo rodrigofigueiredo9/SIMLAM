@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
+using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
@@ -178,6 +179,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				Historico.Gerar(entidade.Id, eHistoricoArtefato.carsolicitacao, eHistoricoAcao.alterarsituacao, bancoDeDados);
 
 				Consulta.Gerar(entidade.Id, eHistoricoArtefato.carsolicitacaotitulo, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+
+		internal void AlterarSituacaoArquivoSicar(CARSolicitacao entidade, int situacaoArquivo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update tab_controle_sicar t
+				set t.situacao_envio         = :situacao
+				where t.solicitacao_car = :solicitacao
+				returning t.id into :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("solicitacao", entidade.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", situacaoArquivo, DbType.Int32);
+				comando.AdicionarParametroSaida("id", DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				int idControleSicar = Convert.ToInt32(comando.ObterValorParametro("id"));
+				GerarHistoricoControleArquivoCarSicar(idControleSicar, banco);
 
 				bancoDeDados.Commit();
 			}
@@ -719,7 +744,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 					Comando comando = bancoDeDados.CriarComando(@"select c.id, p.requerimento from tab_car_solicitacao c
 																inner join tab_protocolo p on c.protocolo_selecionado = p.id
-															where p.requerimento = :requerimento ", EsquemaBanco);
+															where p.requerimento = :requerimento and c.situacao != 3 ", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);
 
@@ -1579,6 +1604,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				Comando comando = bancoDeDados.CriarComando(@"select count(1) from {0}tab_car_solicitacao where id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", solicitacaoId, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		internal bool ValidarFuncionarioPermissao(int funcionarioId, int permissao, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(1) from tab_funcionario_papel fp 
+																inner join tab_autenticacao_papel_perm pp on fp.papel = pp.papel
+																where pp.permissao = :permissao and fp.funcionario = :funcionario");
+
+				comando.AdicionarParametroEntrada("funcionario", funcionarioId, DbType.Int32);
+				comando.AdicionarParametroEntrada("permissao", permissao, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}

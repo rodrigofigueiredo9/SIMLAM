@@ -9,12 +9,14 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
+using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Business
@@ -28,6 +30,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		ProtocoloBus _busProtocolo = new ProtocoloBus();
 		CARSolicitacaoCredenciadoBus _busCredenciado = new CARSolicitacaoCredenciadoBus();
 		CARSolicitacaoDa _da = null;
+		ProtocoloDa _protocoloDa = new ProtocoloDa();
 
 		String UrlSICAR
 		{
@@ -148,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return Validacao.EhValido;
 		}
 
-		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool mostrarMsg = true)
+		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool mostrarMsg = true, int funcionarioId = 0)
 		{
 			try
 			{
@@ -168,36 +171,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
-				if (IsCredenciado)
+				if (_validar.AlterarSituacao(entidade, funcionarioId))
 				{
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+					if (IsCredenciado)
 					{
-						bancoDeDados.IniciarTransacao();
-
-						_busCredenciado.AlterarSituacao(new CARSolicitacao() { Id = entidade.Id }, entidade, bancoDeDados);
-						_busCredenciado.FazerVirarPassivo(entidade.Id, bancoDeDados);
-						bancoDeDados.Commit();
-					}
-				}
-				else
-				{
-					if (_validar.AlterarSituacao(entidade))
-					{
-						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 						{
 							bancoDeDados.IniciarTransacao();
 
-							_da.AlterarSituacao(entidade, bancoDeDados);
-							_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
-
+							_busCredenciado.AlterarSituacao(new CARSolicitacao() { Id = entidade.Id }, entidade, bancoDeDados);
+							_busCredenciado.FazerVirarPassivo(entidade.Id, bancoDeDados);
 							bancoDeDados.Commit();
 						}
 					}
-				}
+					else
+					{
+							using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+							{
+								bancoDeDados.IniciarTransacao();
 
-				if (mostrarMsg)
-				{
-					Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
+								_da.AlterarSituacao(entidade, bancoDeDados);
+								_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
+
+								bancoDeDados.Commit();
+							}
+					}
+					
+					if (mostrarMsg && Validacao.EhValido)
+					{
+						int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido) ?
+							(int)eStatusArquivoSICAR.Cancelado :
+							(int)eStatusArquivoSICAR.ArquivoReprovado;
+
+						_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo);
+
+						Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
+					}
 				}
 			}
 			catch (Exception exc)
@@ -437,6 +446,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			}
 
 			return Validacao.EhValido;
+		}
+
+		public bool ValidarVisualizarAlterarSituacao(CARSolicitacao entidade, int funcionarioId)
+		{
+			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Nulo ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR ||
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso)
+				return true;
+
+			if (_validar.validarFuncionario(funcionarioId, (int)ePermissao.CadastroAmbientalRuralSolicitacaoInvalida))
+				return false;
+			else
+			{
+				if(!(entidade.Protocolo.Id.GetValueOrDefault() > 0 && _protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault()) ) )
+					return true;
+				else
+				{
+					if (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Pendente)
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		public bool ExisteProtocoloAssociado(int protocolo, int associado)
