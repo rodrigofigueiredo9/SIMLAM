@@ -7,7 +7,7 @@
 	ExploracaoFlorestal.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	ExploracaoFlorestal.settings.textoMerge = '<%= Model.TextoMerge %>';
 	ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo = '<%= Model.AtualizarDependenciasModalTitulo %>';	
-	ExploracaoFlorestal.settings.mensagens = '<%=Model.Mensagens%>';
+	ExploracaoFlorestal.settings.mensagens = <%=Model.Mensagens%>;
 </script>
 
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />

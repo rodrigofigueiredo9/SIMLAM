@@ -43,7 +43,7 @@
 	<div class="block">
 		<div class="coluna75">
 			<label for="Laudo_Caracterizacao">Caracterização *</label><br />
-			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacoes.Count <= 1, new { @class = "text ddlCaracterizacoes" }))%>
+			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlCaracterizacoes" }))%>
 		</div>
 	</div>
 

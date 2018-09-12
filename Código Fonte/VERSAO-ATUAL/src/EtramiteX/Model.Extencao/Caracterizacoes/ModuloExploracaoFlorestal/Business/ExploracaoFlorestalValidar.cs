@@ -98,23 +98,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				if (item.ClassificacaoVegetacaoId <= 0)
 					Validacao.Add(Mensagem.ExploracaoFlorestal.ClassificacaoVegetacaoObrigatoria(item.Identificacao));
 
-				if (item.Produtos.Count == 0)
-					Validacao.Add(Mensagem.ExploracaoFlorestal.ProdutoObrigatorio(item.Identificacao));
-				else
+				if (Convert.ToBoolean(item.ParecerFavoravel))
 				{
-					foreach (ExploracaoFlorestalProduto produto in item.Produtos)
+					if (item.Produtos.Count == 0)
+						Validacao.Add(Mensagem.ExploracaoFlorestal.ProdutoObrigatorio(item.Identificacao));
+					else
 					{
-						if (produto.ProdutoId == (int)eProduto.SemRendimento) continue;
-						
-						if (!String.IsNullOrWhiteSpace(produto.Quantidade))
+						foreach (ExploracaoFlorestalProduto produto in item.Produtos)
 						{
-							if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 7, 2))
-								Validacao.Add(Mensagem.Dominialidade.AreaInvalida("exploracao" + item.Identificacao, "Quantidade"));
-							else if (DecimalEtx.ToDecimalMask(produto.Quantidade).GetValueOrDefault() <= 0)
-								Validacao.Add(Mensagem.Dominialidade.AreaMaiorZero("exploracao" + item.Identificacao, "Quantidade"));
+							if (produto.ProdutoId == (int)eProduto.SemRendimento) continue;
+
+							if (!String.IsNullOrWhiteSpace(produto.Quantidade))
+							{
+								if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 7, 2))
+									Validacao.Add(Mensagem.Dominialidade.AreaInvalida("exploracao" + item.Identificacao, "Quantidade"));
+								else if (DecimalEtx.ToDecimalMask(produto.Quantidade).GetValueOrDefault() <= 0)
+									Validacao.Add(Mensagem.Dominialidade.AreaMaiorZero("exploracao" + item.Identificacao, "Quantidade"));
+							}
+							else
+								Validacao.Add(Mensagem.Dominialidade.AreaObrigatoria("exploracao" + item.Identificacao, "Quantidade"));
 						}
-						else
-							Validacao.Add(Mensagem.Dominialidade.AreaObrigatoria("exploracao" + item.Identificacao, "Quantidade"));
 					}
 				}
 			}

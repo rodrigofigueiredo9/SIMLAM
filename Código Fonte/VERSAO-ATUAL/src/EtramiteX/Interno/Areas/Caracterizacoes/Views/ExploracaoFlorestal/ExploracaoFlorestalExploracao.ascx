@@ -1,10 +1,11 @@
-﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Configuracao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalExploracaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script>
-	ExploracaoFlorestalExploracao.settings.mensagens = '<%= Model.Mensagens %>';
+	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
 </script>
 
 <div class="block filtroCorpo divExploracaoFlorestalExploracao">
@@ -14,11 +15,6 @@
 	<input type="hidden" class="hdnIsVisualizar" value="<%:Model.IsVisualizar%>" />
 
 	<div class="block">
-		<div class="coluna22 append2">
-			<%=Html.CheckBox("ExploracaoFlorestal.ParecerFavoravel", Model.ExploracaoFlorestal.ParecerFavoravel, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="cbParecerFavoravel campoEditavel" })) %>
-			<label for="ExploracaoFlorestal_ParecerFavoravel">Parecer Favorável? *</label>			
-		</div>
-
 		<div class="coluna10">
 			<label for="ExploracaoFlorestal_Identificacao">Identificação Geo</label>
 			<%= Html.TextBox("ExploracaoFlorestal.Identificacao", Model.ExploracaoFlorestal.Identificacao, new { @class = "text txtIdentificacao disabled", disabled = "disabled" })%>
@@ -29,13 +25,25 @@
 			<%= Html.TextBox("ExploracaoFlorestal.Geometrias", Model.ExploracaoFlorestal.GeometriaTipoTexto, new { @class = "text txtGeometria disabled", disabled = "disabled" })%>
 		</div>
 
-		<div class="coluna24 append2">
+		<div class="coluna22 append2">
 			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFinalidade" }))%>
 		</div>
-		<div class="coluna30 divEspecificarFinalidade hide">
+		<div class="coluna24 divEspecificarFinalidade hide">
 			<label for="FinalidadeEspecificar">Especificar *</label>
 			<%= Html.TextBox("FinalidadeEspecificar", Model.ExploracaoFlorestal.FinalidadeEspecificar, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFinalidadeEspecificar ", @maxlength = "50" }))%>
+		</div>
+
+		<div class="coluna12 append2">			
+			<label for="ExploracaoFlorestal_ParecerFavoravel">Parecer Favorável? *</label>
+			<label>
+				<%=Html.RadioButton("ExploracaoFlorestal.ParecerFavoravel" + Model.ExploracaoFlorestal.Identificacao.Replace(" ", ""), (int)ConfiguracaoSistema.NAO, Model.ExploracaoFlorestal.ParecerFavoravel.HasValue ? !Convert.ToBoolean(Model.ExploracaoFlorestal.ParecerFavoravel.Value) : false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio rbParecerFavoravel" }))%>
+				Não
+			</label>
+			<label>
+				<%=Html.RadioButton("ExploracaoFlorestal.ParecerFavoravel" + Model.ExploracaoFlorestal.Identificacao.Replace(" ", ""), (int)ConfiguracaoSistema.SIM, Model.ExploracaoFlorestal.ParecerFavoravel.HasValue ? Convert.ToBoolean(Model.ExploracaoFlorestal.ParecerFavoravel.Value) : false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="radio rbParecerFavoravel" }))%>
+				Sim
+			</label>
 		</div>
 	</div>
 	<div class="block">
@@ -66,7 +74,7 @@
 		</div>
 	</div>
 
-	<div class="asmConteudoLink block">
+	<div class="asmConteudoLink hide block">
 		<div class="asmConteudoInterno block">
 			<% if(!Model.IsVisualizar) { %>
 			<div class="block">
@@ -92,7 +100,7 @@
 			</div>
 			<% } %>
 
-			<div class="block coluna55 dataGrid" id="exploracaoProduto<%= Model.ExploracaoFlorestal.Identificacao%>">
+			<div class="block coluna55 dataGrid" id="exploracaoProduto<%= Model.ExploracaoFlorestal.Identificacao.Replace(" ", "") %>">
 				<table class="dataGridTable tabExploracaoFlorestalExploracaoProduto" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					<thead>
 						<tr>

@@ -780,7 +780,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
 						else
 							caracterizacao.CodigoExploracao = 1;
-						caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+						if(!Convert.IsDBNull(reader["tipo_exploracao"]))
+							caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
 						if(!Convert.IsDBNull(reader["data"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
 						caracterizacao.Exploracoes.Add(exploracao);

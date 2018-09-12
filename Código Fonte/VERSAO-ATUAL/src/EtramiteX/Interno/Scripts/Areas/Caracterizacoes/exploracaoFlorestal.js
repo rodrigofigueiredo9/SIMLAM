@@ -43,7 +43,7 @@ ExploracaoFlorestal = {
 			$('.exploracoesFlorestais', ExploracaoFlorestal.container).show();
 		}
 	},
-
+	
 	abrirModalRedireciona: function (textoModal, titulo) {
 		Modal.confirma({
 			removerFechar: true,

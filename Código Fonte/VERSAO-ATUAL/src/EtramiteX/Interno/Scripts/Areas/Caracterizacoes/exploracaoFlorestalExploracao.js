@@ -18,12 +18,34 @@ ExploracaoFlorestalExploracao = {
 		ExploracaoFlorestalExploracao.container.delegate('.asmConteudoInternoExpander.asmExpansivel', 'click', ExploracaoFlorestalExploracao.gerenciarExpandir);
 		ExploracaoFlorestalExploracao.container.delegate('.ddlProduto', 'change', ExploracaoFlorestalExploracao.onSelecionarProduto);
 		ExploracaoFlorestalExploracao.container.delegate('.ddlFinalidade', 'change', ExploracaoFlorestalExploracao.onChangeFinalidade);
+		ExploracaoFlorestalExploracao.container.delegate('.rbParecerFavoravel', 'change', ExploracaoFlorestalExploracao.onChangeParecerFavoravel);
 
 		$('.ddlFinalidade', ExploracaoFlorestalExploracao.container).each(function () {
 			ExploracaoFlorestalExploracao.gerenciarFinalidades(this.parentElement.parentElement.parentElement);
 		});
+
+		$('.rbParecerFavoravel', ExploracaoFlorestalExploracao.container).each(function () {
+			$(this).attr('initialize', true);
+			$(this).change();
+		});
+
 		ExploracaoFlorestalExploracao.atualizarMascaras();
 		ExploracaoFlorestalExploracao.loadAutocomplete();
+	},
+
+	onChangeParecerFavoravel: function () {
+		var container = this.parentElement.parentElement.parentElement.parentElement;
+		var showConteudo = $(this).val() > 0;
+		if ($(this).attr('initialize')) {
+			showConteudo = this.checked;
+			$(this).removeAttr('initialize');
+		} 
+
+		if (showConteudo) {
+			$('.asmConteudoLink', container).show();
+		} else {
+			$('.asmConteudoLink', container).hide();
+		}
 	},
 
 	atualizarMascaras: function () {
@@ -94,7 +116,7 @@ ExploracaoFlorestalExploracao = {
 			Quantidade: $('.txtQuantidade', container).val(),
 			TaxonomiaId: $('.hdnTaxonomiaId', container).val(),
 			TaxonomiaTexto: $('.txtTaxonomia', container).val()
-		}
+		};
 
 		if (produto.ProdutoId == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
 			$('.tabExploracaoFlorestalExploracaoProduto tbody tr[class!="trTemplateRow hide"]', container).remove();
@@ -177,7 +199,7 @@ ExploracaoFlorestalExploracao = {
 		$('.divExploracaoFlorestalExploracao', ExploracaoFlorestalExploracao.container).each(function () {
 		    var objeto = {
 		        Id: $('.hdnExploracaoId', this).val(),
-				ParecerFavoravel: $('.cbParecerFavoravel', this).val(),
+				ParecerFavoravel: Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked)[0].value > 0,
 		        Identificacao: $('.txtIdentificacao', this).val(),
 		        GeometriaTipoId: Number($('.hdnGeometriaId', this).val()),
 		        ClassificacaoVegetacaoId: $('.ddlClassificacoesVegetais', this).val(),
@@ -215,7 +237,7 @@ ExploracaoFlorestalExploracao = {
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: 'http://webidafd/idaf/institucional/api/sinaflor/taxonomias',
+					url: 'http://webidafd:8091/idaf/institucional/api/sinaflor/taxonomias',
 					data: { "search": request.term },
 					type: 'GET',
 					dataType: 'json',
@@ -245,6 +267,5 @@ ExploracaoFlorestalExploracao = {
 		if ($('.ddlFinalidade option:selected', container).val() == 8) {
 			$('.divEspecificarFinalidade', container).removeClass('hide');
 		}
-	},
-	
+	}	
 }
