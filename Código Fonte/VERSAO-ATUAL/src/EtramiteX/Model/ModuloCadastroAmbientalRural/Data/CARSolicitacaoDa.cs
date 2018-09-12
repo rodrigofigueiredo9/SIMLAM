@@ -744,7 +744,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 					Comando comando = bancoDeDados.CriarComando(@"select c.id, p.requerimento from tab_car_solicitacao c
 																inner join tab_protocolo p on c.protocolo_selecionado = p.id
-															where p.requerimento = :requerimento ", EsquemaBanco);
+															where p.requerimento = :requerimento and c.situacao != 3 ", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("requerimento", car.Requerimento.Id, DbType.Int32);
 
