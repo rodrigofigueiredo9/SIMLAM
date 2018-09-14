@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32 CodigoExploracao { get; set; }
 		public Int32 TipoExploracao { get; set; }
 		public DateTecno DataCadastro { get; set; } = new DateTecno() { Data = DateTime.Now };
+		public String CodigoExploracaoTexto { get; set; }
 
 		public List<Dependencia> Dependencias { get; set; }
 

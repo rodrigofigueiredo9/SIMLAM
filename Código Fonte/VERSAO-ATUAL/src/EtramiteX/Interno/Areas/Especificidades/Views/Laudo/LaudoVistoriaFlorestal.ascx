@@ -45,6 +45,10 @@
 			<label for="Laudo_Caracterizacao">Caracterização *</label><br />
 			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlCaracterizacoes" }))%>
 		</div>
+		<div class="coluna20 prepend2">
+			<button type="button" class="inlineBotao btnAddCaracterizacao botaoAdicionarIcone" title="Adicionar caracterização">Adicionar</button>
+		</div>
+		<% Html.RenderPartial("LaudoVistoriaFlorestalCaracterizacoes.ascx", Model); %>
 	</div>
 
 	<div class="block">

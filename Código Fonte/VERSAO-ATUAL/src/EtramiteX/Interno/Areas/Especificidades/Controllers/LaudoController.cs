@@ -176,6 +176,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = string.Empty }, JsonRequestBehavior.AllowGet);
 			}
 
+			//var exploracoes = ;
 			vm = new LaudoVistoriaFlorestalVM(
 				laudo,
 				lstProcessosDocumentos,
