@@ -553,7 +553,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				comando.DbCommand.CommandText = String.Format(@"select t.tramitacao_hst_id, t.tramitacao_id, t.protocolo, t.protocolo_id, t.protocolo_tid, 
 				t.protocolo_numero, t.protocolo_ano, t.protocolo_numero_completo, t.protocolo_numero_autuacao, t.protocolo_tipo_id, t.protocolo_tipo_texto, 
 				t.remetente_id, t.remetente_tid, t.remetente_nome, t.remetente_setor_id, t.remetente_setor_sigla, t.remetente_setor_nome, t.destinatario_id, 
-				t.destinatario_tid, t.destinatario_nome, t.destinatario_setor_id, t.destinatario_setor_sigla, t.destinatario_setor_nome, t.objetivo_id, t.objetivo_texto, 
+				t.destinatario_tid, coalesce(t.destinatario_nome, a.destino_externo) destinatario_nome, t.destinatario_setor_id, t.destinatario_setor_sigla, t.destinatario_setor_nome, t.objetivo_id, t.objetivo_texto, 
 				t.situacao_id, t.situacao_texto, t.data_execucao data_recebimento, t.data_envio, t.data_execucao, t.tid from {0}tab_tramitacao a, {0}lst_hst_tramitacao t 
 				where a.tid = t.tid and a.id = t.tramitacao_id and t.situacao_id = :situacao_tramitacao "
 					+ comandtxt + DaHelper.Ordenar(colunas, ordenar), esquema);
