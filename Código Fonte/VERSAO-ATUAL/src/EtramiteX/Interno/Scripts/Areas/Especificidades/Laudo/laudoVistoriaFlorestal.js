@@ -71,7 +71,6 @@ LaudoVistoriaFlorestal = {
 				if (response.Destinatarios) {
 					$('.ddlDestinatarios', LaudoVistoriaFlorestal.container).ddlLoad(response.Destinatarios);
 				}
-
 				if (response.Caracterizacoes) {
 					$('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).ddlLoad(response.Caracterizacoes);
 				}

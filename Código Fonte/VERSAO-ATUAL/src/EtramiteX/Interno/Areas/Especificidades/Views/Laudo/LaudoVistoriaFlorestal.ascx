@@ -48,7 +48,7 @@
 		<div class="coluna20 prepend2">
 			<button type="button" class="inlineBotao btnAddCaracterizacao botaoAdicionarIcone" title="Adicionar caracterização">Adicionar</button>
 		</div>
-		<% Html.RenderPartial("LaudoVistoriaFlorestalCaracterizacoes.ascx", Model); %>
+		<% Html.RenderPartial("~/Areas/Especificidades/Views/Laudo/LaudoVistoriaFlorestalCaracterizacoes.ascx", Model); %>
 	</div>
 
 	<div class="block">

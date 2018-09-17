@@ -34,7 +34,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 			if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
 						
-			if (caracterizacao.TipoExploracao <= 0)
+			if (caracterizacao.TipoAtividade <= 0)
 				Validacao.Add(Mensagem.ExploracaoFlorestal.ExploracaoTipoObrigatorio);
 
 			foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)

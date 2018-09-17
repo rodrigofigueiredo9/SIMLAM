@@ -1,7 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<LaudoVistoriaFlorestalVM>" %>
 
-<div class="dataGrid <%= ((Model.ExploracaoFlorestal.Count > 0)?string.Empty:"hide") %> ">
+<div class="dataGrid <%= ((Model.ExploracaoFlorestal.Count > 0) ? string.Empty : "hide") %> ">
 	<table class="dataGridTable ordenavel" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>

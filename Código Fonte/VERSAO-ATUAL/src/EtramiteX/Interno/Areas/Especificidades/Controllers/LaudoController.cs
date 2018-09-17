@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -12,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Especificidade;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.Business;
@@ -176,12 +179,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = string.Empty }, JsonRequestBehavior.AllowGet);
 			}
 
-			//var exploracoes = ;
+			var busExploracao = new ExploracaoFlorestalBus();
+			var exploracao = busExploracao.ObterPorEmpreendimento(especificidade.EmpreendimentoId, true);
+			var exploracoesLst = new List<Lista>();
+			if (exploracao.Id > 0)
+				exploracoesLst.Add(new Lista() { Id = exploracao.Id.ToString(), Texto = exploracao.CodigoExploracaoTexto, IsAtivo = true });
+
 			vm = new LaudoVistoriaFlorestalVM(
 				laudo,
 				lstProcessosDocumentos,
 				lstAtividades,
-				_busLaudo.ObterCaracterizacoes(especificidade.EmpreendimentoId),
+				exploracoesLst,
 				destinatarios,
 				_protocoloBus.ObterResponsaveisTecnicos(especificidade.ProtocoloId),
 				_busLista.ObterEspecificidadeConclusoes,
@@ -189,6 +197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				especificidade.AtividadeProcDocReqKey,
 				especificidade.IsVisualizar);
 
+			vm.ExploracaoFlorestal = new List<ExploracaoFlorestal>() { exploracao };
 			if (especificidade.TituloId > 0)
 			{
 				vm.Atividades.Atividades = titulo.Atividades;
@@ -642,13 +651,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.TituloCriar, ePermissao.TituloEditar, ePermissao.TituloVisualizar })]
 		public ActionResult ObterDadosLaudoVistoriaFlorestal(int id, int empreendimento)
 		{
-			LaudoVistoriaFlorestalBus laudoBus = new LaudoVistoriaFlorestalBus();
+			var laudoBus = new LaudoVistoriaFlorestalBus();
+			var busExploracao = new ExploracaoFlorestalBus();
+			var exploracao = busExploracao.ObterPorEmpreendimento(empreendimento);
+			var exploracoesLst = new List<CaracterizacaoLst>();
+			if(exploracao.Id > 0)
+				exploracoesLst.Add(new CaracterizacaoLst() { Id = exploracao.Id, Texto = exploracao.CodigoExploracaoTexto ?? "", IsAtivo = true });
 
 			return Json(new
 			{
 				@Destinatarios = _busTitulo.ObterDestinatarios(id),
 				@ResponsaveisTecnico = _protocoloBus.ObterResponsaveisTecnicos(id),
-				@Caracterizacoes = laudoBus.ObterCaracterizacoes(empreendimento)
+				@Caracterizacoes = exploracoesLst
 			}, JsonRequestBehavior.AllowGet);
 		}
 

@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
-				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoAtividade, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -165,7 +165,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				c.data_cadastro = :data_cadastro where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
-				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoAtividade, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
@@ -408,7 +408,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			{
 				#region Exploração Florestal
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid from {0}crt_exploracao_florestal c where c.id = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.texto tipo_atividade from {0}crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
+						where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -421,9 +423,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if(!Convert.IsDBNull(reader["codigo_exploracao"]))
 							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
 						if(!Convert.IsDBNull(reader["tipo_exploracao"]))
-							caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
 						if(!Convert.IsDBNull(reader["data_cadastro"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+						if (!Convert.IsDBNull(reader["tipo_atividade"]))
+							caracterizacao.CodigoExploracaoTexto = reader["tipo_atividade"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 
@@ -433,9 +437,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#endregion
 
 				if (caracterizacao.Id <= 0 || simplificado)
-				{
 					return caracterizacao;
-				}
 
 				#region Explorações
 
@@ -781,7 +783,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						else
 							caracterizacao.CodigoExploracao = 1;
 						if(!Convert.IsDBNull(reader["tipo_exploracao"]))
-							caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
 						if(!Convert.IsDBNull(reader["data"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
 						caracterizacao.Exploracoes.Add(exploracao);

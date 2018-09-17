@@ -26,7 +26,7 @@
 	<%} else {%>
 		<div class="coluna22 append2">
 			<label for="CodigoExploracao">Código Exploração</label>
-			<%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracao == 0 ? "" : Model.TipoExploracao.FirstOrDefault(x => x.Selected).Text.Substring(0, 3) + Model.Caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0'), ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
+			<%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
 		</div>
 		<div class="coluna22 append2">
 			<label for="TipoExploracao">Tipo de Exploração *</label>

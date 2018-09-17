@@ -81,7 +81,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		{
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
-			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
+			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoAtividade.ToString());
 
 			var codigoExploracao = new List<Lista>();
 			if (caracterizacao.CodigoExploracao > 0)
@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				codigoExploracao = new List<Lista>() {
 				new Lista(){
 					Id = caracterizacao.CodigoExploracao.ToString(),
-					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoExploracao.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
+					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoAtividade.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
 				};
 			}
 			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());

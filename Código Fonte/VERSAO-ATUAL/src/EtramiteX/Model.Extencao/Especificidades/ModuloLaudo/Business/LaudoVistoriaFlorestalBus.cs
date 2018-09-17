@@ -266,39 +266,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			return null;
 		}
 
-		public List<CaracterizacaoLst> ObterCaracterizacoes(int empreendimento)
-		{
-			List<CaracterizacaoLst> caracterizacoesRetorno = new List<CaracterizacaoLst>();
-			List<CaracterizacaoLst> caracterizacoes = _caracterizacaoConfig.Obter<List<CaracterizacaoLst>>(ConfiguracaoCaracterizacao.KeyCaracterizacoes);
-			caracterizacoes = caracterizacoes.Where(x => x.Id == (int)eCaracterizacao.ExploracaoFlorestal || x.Id == (int)eCaracterizacao.QueimaControlada || x.Id == (int)eCaracterizacao.Silvicultura).ToList();
-			int caracterizacao = 0;
-
-			CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-			CaracterizacaoValidar caracterizacaoValidar = new CaracterizacaoValidar();
-
-			foreach (CaracterizacaoLst item in caracterizacoes)
-			{
-				caracterizacao = caracterizacaoBus.Existe(empreendimento, (eCaracterizacao)item.Id);
-
-				if (caracterizacao <= 0)
-				{
-					continue;
-				}
-
-				List<Dependencia> dependencias = caracterizacaoBus.ObterDependencias(caracterizacao, (eCaracterizacao)item.Id, eCaracterizacaoDependenciaTipo.Caracterizacao);
-				string retorno = caracterizacaoValidar.DependenciasAlteradas(empreendimento, item.Id, eCaracterizacaoDependenciaTipo.Caracterizacao, dependencias);
-
-				if (!string.IsNullOrEmpty(retorno))
-				{
-					continue;
-				}
-
-				caracterizacoesRetorno.Add(item);
-			}
-
-			return caracterizacoesRetorno;
-		}
-
 		public static List<string> ObterFinalidades(int? finalidades)
 		{
 			List<string> finalidadesSelecionadas = new List<string>();

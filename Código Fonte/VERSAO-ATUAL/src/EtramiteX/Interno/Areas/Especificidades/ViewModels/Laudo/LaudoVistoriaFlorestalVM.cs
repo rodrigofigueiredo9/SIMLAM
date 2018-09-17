@@ -94,12 +94,10 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo
 		public List<ExploracaoFlorestal> ExploracaoFlorestal { get; set; }
 
 		public LaudoVistoriaFlorestalVM(LaudoVistoriaFlorestal laudo,List<Protocolos> processosDocumentos,List<AtividadeSolicitada> atividades,
-			List<CaracterizacaoLst> caracterizacoes, List<PessoaLst> destinatarios, List<PessoaLst> responsaveisTecnicos, List<Lista> parecerTecnico, 
+			List<Lista> caracterizacoes, List<PessoaLst> destinatarios, List<PessoaLst> responsaveisTecnicos, List<Lista> parecerTecnico, 
 			List<TituloCondicionante> condicionantes = null, string processoDocumentoSelecionado = null, bool isVisualizar = false)
 		{
 			Laudo = laudo;
-			caracterizacoes = caracterizacoes.Where(x => x.Id == (int)eCaracterizacao.ExploracaoFlorestal || x.Id == (int)eCaracterizacao.QueimaControlada || x.Id == (int)eCaracterizacao.Silvicultura).ToList();
-
 			IsVisualizar = isVisualizar;
 			ArquivoVM.IsVisualizar = isVisualizar;
 			Atividades = new AtividadeEspecificidadeVM(processosDocumentos, atividades, processoDocumentoSelecionado, 0, isVisualizar);
