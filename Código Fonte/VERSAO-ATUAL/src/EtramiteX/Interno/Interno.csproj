@@ -76,10 +76,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\System.Web.WebPages.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -269,8 +265,6 @@
     <Compile Include="Controllers\AgrotoxicoController.cs" />
     <Compile Include="Controllers\CFOCController.cs" />
     <Compile Include="Controllers\CFOController.cs" />
-    <Compile Include="Controllers\FiscalizacaoCobrancaController.cs" />
-    <Compile Include="Controllers\FiscalizacaoNotificacaoController.cs" />
     <Compile Include="Controllers\HabilitacaoEmissaoPTVController.cs" />
     <Compile Include="Controllers\CARSolicitacaoController.cs" />
     <Compile Include="Controllers\ConfiguracaoDocumentoFitossanitarioController.cs" />
@@ -300,14 +294,8 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
@@ -2187,6 +2175,8 @@
     <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
+    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />

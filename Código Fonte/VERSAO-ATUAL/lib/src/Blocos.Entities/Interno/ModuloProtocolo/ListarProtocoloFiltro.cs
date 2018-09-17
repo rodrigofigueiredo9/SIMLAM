@@ -10,6 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public String Numero { get; set; } // registro
 		public String Nome { get; set; }
 		public string NumeroAutuacao { get; set; }
+		public string NumeroAutuacaoDoc { get; set; }
 		public int Tipo { get; set; }
 		public int Acao { get; set; }
 		public int ProtocoloId { get; set; }
@@ -24,8 +25,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public bool InteressadoIsCnpj { get; set; }
 		public int Municipio { get; set; }
 		public int AutorId { get; set; }
-
 		public int CredenciadoPessoaId { get; set; }
+		public string Assunto { get; set; }
 
 		private DateTecno _dataRegistro = new DateTecno();
 		public DateTecno DataRegistro

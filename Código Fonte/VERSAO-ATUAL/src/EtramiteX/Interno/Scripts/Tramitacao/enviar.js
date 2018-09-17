@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -31,8 +31,10 @@ Enviar = {
 
 		Enviar.settings.container = MasterPage.getContent(content);
 
+		$('.ddlObjetivos', content).change(Enviar.motivoChange);
 		$('.ddlSetoresRemetente', content).change(Enviar.remetenteSetorChange);
 		$('.ddlSetoresDestinatario', content).change(Enviar.destinatarioSetorChange);
+		$('.ddlFormaEnvio', content).change(Enviar.formaEnvioChange);
 		$('.rdbOpcaoBuscaProcesso', content).click(Enviar.opcaoBuscarTramitacoes);
 		$('.btnAddProcDoc', content).click(Enviar.addTramitacaoPorNumeroProtocolo);
 
@@ -46,7 +48,8 @@ Enviar = {
 		content.delegate('.btnVisualizar', 'click', Enviar.onVisualizarProtocolo);
 
 		$('.ddlSetoresRemetente', content).focus();
-		Enviar.marcarTodos();
+        Enviar.marcarTodos();
+        Enviar.motivoChange();
 	},
 
 	onVisualizarProtocolo: function(){
@@ -111,12 +114,54 @@ Enviar = {
 		}
 	},
 
+    motivoChange: function() {
+		var ddlA = $('.ddlObjetivos', Enviar.settings.container);
+		var juntadaProcessoSEP = $('.ddlObjetivos :selected', Enviar.settings.container)[0].label == "Juntada Processo SEP";
+		$(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', juntadaProcessoSEP);
+		$(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
+		var doc = $('.hdnProtocoloTipo', Enviar.settings.container).toArray().find(x => (x.value == 'Documento Avulso' || x.value == 'Ofício (Administrativo)') && x.parentElement.parentElement.children[0].children[0].checked);
+		var ddlSetorDestinatario = $('.ddlSetoresDestinatario', Enviar.settings.container);
+		ddlSetorDestinatario.toggleClass('disabled', false);
+		ddlSetorDestinatario.removeAttr('disabled');
+		if (doc || juntadaProcessoSEP) {
+			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), true);
+
+			if (juntadaProcessoSEP) {
+				ddlSetorDestinatario.val(Array.from(ddlSetorDestinatario[0].options).filter(x => x.label == "Processo SEP")[0].value);
+				ddlSetorDestinatario.toggleClass('disabled', true);
+				ddlSetorDestinatario.attr('disabled', 'disabled');
+			}
+		}
+        else
+			Enviar.asterisco($('.lblDespacho', Enviar.settings.container), false);
+    },
+
+	asterisco: function (control, exibir) {
+
+		control.text(control.text().replace(' *', ''));
+
+		if (exibir) {
+			control.text(control.text() + ' *');
+		}
+	},
+
 	destinatarioSetorChange: function () {
 		var ddlB = $('.ddlDestinatarios', Enviar.settings.container);
 		var ddlA = $(this, Enviar.settings.container);
 		var url = Enviar.settings.urls.funcionariosDestinatario;
 
-		ddlA.ddlCascate(ddlB, { url: url, disabled: false });
+        ddlA.ddlCascate(ddlB, { url: url, disabled: false });
+
+		var outros = $('.ddlSetoresDestinatario :selected', Enviar.settings.container)[0].label == 'Outros'
+		var juntadaProcessoSEP = $('.ddlObjetivos :selected', Enviar.settings.container)[0].label == "Juntada Processo SEP";
+        $(".ddlFuncionario", Enviar.settings.container).toggleClass('hide', outros || juntadaProcessoSEP);
+        $(".numAutuacao", Enviar.settings.container).toggleClass('hide', !juntadaProcessoSEP);
+        $(".pnlOutros", Enviar.settings.container).toggleClass('hide', !outros);
+	},
+
+	formaEnvioChange: function () {
+		var ddlA = $(this, Enviar.settings.container);
+		$(".rastreio", Enviar.settings.container).toggleClass('hide', !(ddlA.val() == '1' || ddlA.val() == '2'));
 	},
 
 	opcaoBuscarTramitacoes: function () {
@@ -332,7 +377,11 @@ Enviar = {
 				Remetente: { Id: $('.hdnRemetenteId', content).val() },
 				Destinatario: { Id: $('.ddlDestinatarios', content).val() },
 				TramitacaoTipo: $('.hdnEnviarTramitacaoTipo', content).val(),
-				SituacaoId: $('.hdnEnviarSituacaoId', content).val()
+				SituacaoId: $('.hdnEnviarSituacaoId', content).val(),
+				DestinoExterno: $('.txtDestinoExterno', content).val(),
+				CodigoRastreio: $('.txtCodigoRastreio', content).val(),
+				FormaEnvio: $('.ddlFormaEnvio :selected', content).val(),
+				NumeroAutuacao: $('.txtNumeroAutuacao', content).val()
 			}
 		};
 		return contentJson;

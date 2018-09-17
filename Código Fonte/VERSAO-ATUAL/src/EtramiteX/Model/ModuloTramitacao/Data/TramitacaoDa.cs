@@ -47,8 +47,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_tramitacao a (id, protocolo, tipo, objetivo, situacao, despacho,
-				executor, remetente, remetente_setor, destinatario, destinatario_setor, tid, data_envio) values ({0}seq_tramitacao.nextval, :protocolo, :tipo, :objetivo, 
-				:situacao, :despacho, :executor, :remetente, :remetente_setor, :destinatario, :destinatario_setor, :tid, sysdate) returning a.id into :id", EsquemaBanco);
+				executor, remetente, remetente_setor, destinatario, destinatario_setor, tid, data_envio, destino_externo, codigo_rastreio, forma_envio, numero_autuacao)
+				values ({0}seq_tramitacao.nextval, :protocolo, :tipo, :objetivo, 
+				:situacao, :despacho, :executor, :remetente, :remetente_setor, :destinatario, :destinatario_setor, :tid, sysdate,
+				:destino_externo, :codigo_rastreio, :forma_envio, :numero_autuacao) returning a.id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("protocolo", tramitacao.Protocolo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo", tramitacao.Tipo, DbType.Int32);
@@ -60,6 +62,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				comando.AdicionarParametroEntrada("remetente_setor", tramitacao.RemetenteSetor.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("destinatario", tramitacao.Destinatario.Id > 0 ? (int?)tramitacao.Destinatario.Id : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("destinatario_setor", tramitacao.DestinatarioSetor.Id > 0 ? (int?)tramitacao.DestinatarioSetor.Id : null, DbType.Int32);
+				comando.AdicionarParametroEntrada("destino_externo", tramitacao.DestinoExterno, DbType.String);
+				comando.AdicionarParametroEntrada("codigo_rastreio", tramitacao.CodigoRastreio, DbType.String);
+				comando.AdicionarParametroEntrada("forma_envio", tramitacao.FormaEnvio, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_autuacao", tramitacao.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 

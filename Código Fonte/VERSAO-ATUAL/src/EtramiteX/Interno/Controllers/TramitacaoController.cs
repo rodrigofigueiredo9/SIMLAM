@@ -267,6 +267,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 							}
 						}
 					}
+					if ((vm.Tramitacoes?.Count(x => x.Protocolo?.Tipo?.Texto == "Documento Avulso" || x.Protocolo?.Tipo?.Texto == "Ofício (Administrativo)") ?? 0) == 0)
+						vm.SetoresDestinatario.Remove(vm.SetoresDestinatario.Find(x => x.Value == "258"));
 				}
 			}
 
@@ -325,6 +327,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				tramitacao.DestinatarioSetor.Id = vm.Enviar.DestinatarioSetor.Id;
 				tramitacao.Destinatario = vm.Enviar.Destinatario;
 				tramitacao.OrgaoExterno = vm.Enviar.OrgaoExterno;//somente para tramitação para órgão externo
+				tramitacao.DestinoExterno = vm.Enviar.DestinoExterno;
+				tramitacao.CodigoRastreio = vm.Enviar.CodigoRastreio;
+				tramitacao.FormaEnvio = vm.Enviar.FormaEnvio;
+				tramitacao.NumeroAutuacao = vm.Enviar.NumeroAutuacao;
+				if (tramitacao.Protocolo?.Id > 0)
+				{
+					var protocolo = _busProtocolo.Obter(tramitacao.Protocolo.Id.GetValueOrDefault(0));
+					if (protocolo != null)
+						tramitacao.Protocolo.Tipo = protocolo.Tipo;
+				}
 			}
 		}
 

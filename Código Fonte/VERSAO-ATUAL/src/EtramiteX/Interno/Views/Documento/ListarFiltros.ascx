@@ -41,7 +41,7 @@
 				<div class="coluna33 prepend1">
 					<label for="Filtros_Tipo">Tipo do documento</label>
 					<%= Html.DropDownList("Filtros.Tipo", Model.ListaTiposDocumento, new { @class = "text " })%>
-				</div>
+				</div>				
 				<div class="coluna28 prepend1">
 					<label for="Filtros_Municipio">Município de origem do documento</label>
 					<%= Html.DropDownList("Filtros.Municipio", Model.ListaMunicipios, new { @class = "text " })%>
@@ -76,6 +76,16 @@
 				<div class="coluna28 prepend1">
 					<label for="Filtros_EmpreendimentoCnpj">CNPJ do empreendimento</label>
 					<%= Html.TextBox("Filtros.EmpreendimentoCnpj", null, new { @class = "text maskCnpjParcial" })%>
+				</div>
+			</div>
+			<div class="block hide">
+				<div class="coluna58">
+					<label for="Filtros_Assunto">Assunto</label>
+					<%= Html.TextBox("Filtros.Assunto", null, new { @class = "text txtAssunto" })%>
+				</div>
+				<div class="coluna28 prepend1">
+					<label for="Filtros_NumeroAutuacaoDoc">Número de autuação (SEP)</label>
+					<%= Html.TextBox("Filtros.NumeroAutuacaoDoc", null, new { @class = "text txtNumero" })%>
 				</div>
 			</div>
 		</div>

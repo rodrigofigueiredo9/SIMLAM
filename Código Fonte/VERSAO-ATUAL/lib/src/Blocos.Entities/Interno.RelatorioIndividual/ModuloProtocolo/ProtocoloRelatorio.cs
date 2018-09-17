@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloPessoa;
 
@@ -28,6 +28,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloProtocolo
 		public string UsuarioCargo { get; set; }
 		public string ProtocoloAssociadoTipo { get; set; }
 		public string ProtocoloAssociadoNumero { get; set; }
+		public string Destinatario { get; set; }
+		public string SetorDestinatario { get; set; }
+		public string Assunto { get; set; }
+		public string Descricao { get; set; }
 
 		public EmpreendimentoRelatorio Empreendimento { get; set; }
 		public PessoaRelatorio Interessado { get; set; }
