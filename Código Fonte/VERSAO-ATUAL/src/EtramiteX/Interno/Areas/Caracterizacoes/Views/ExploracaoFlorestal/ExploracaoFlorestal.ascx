@@ -15,7 +15,7 @@
 <input type="hidden" class="hdnCodigoExploracao" value="<%: Model.Caracterizacao.CodigoExploracao %>" />
 
 <input type="hidden" class="hdnCodigoExploracaoAnterior" value="<%: Model.Caracterizacao.CodigoExploracao %>" />
-<input type="hidden" class="hdnTipoExploracaoAnterior" value="<%: Model.Caracterizacao.TipoExploracao %>" />
+<input type="hidden" class="hdnTipoExploracaoAnterior" value="<%: Model.Caracterizacao.TipoAtividade %>" />
 
 <fieldset class="block box localizador">
     <legend class="titLocalizador">Localizador</legend>

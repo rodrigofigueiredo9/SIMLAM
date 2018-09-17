@@ -27,7 +27,7 @@
 				<td title="<%= Html.Encode(item.DataCadastro.DataTexto)%>" ><%= Html.Encode(item.DataCadastro.DataTexto)%></td>
 				<td title="<%= Html.Encode(item.Localizador)%>"><%= Html.Encode(item.Localizador)%></td>
 				<td>
-					<input type="hidden" value="<%= item.Id %>" class="itemId" />
+					<input type="hidden" value="<%= item.EmpreendimentoId %>" class="itemId" />
 					<%if (Model.PodeVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
 				</td>
 			</tr>

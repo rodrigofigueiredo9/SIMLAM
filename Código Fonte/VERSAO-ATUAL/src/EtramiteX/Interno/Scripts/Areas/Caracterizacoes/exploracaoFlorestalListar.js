@@ -1,6 +1,4 @@
-/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
-/// <reference path="../masterpage.js" />
-/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../../masterpage.js" />
 
 ExploracaoFlorestalListar = {
 	container: null,
@@ -11,6 +9,7 @@ ExploracaoFlorestalListar = {
 		container = MasterPage.getContent(container);
 		if (options) { $.extend(ExploracaoFlorestalListar.settings, options); }
 
+		container.listarAjax();
 		container.delegate('.btnVisualizar', 'click', ExploracaoFlorestalListar.visualizar);
 
 		Aux.setarFoco(container);

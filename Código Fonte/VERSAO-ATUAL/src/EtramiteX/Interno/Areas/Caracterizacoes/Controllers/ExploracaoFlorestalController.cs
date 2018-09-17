@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Web;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
+using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExploracaoFlorestal;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
@@ -148,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.exploracaoflorestal)]
 		[Permite(RoleArray = new Object[] { ePermissao.ExploracaoFlorestalVisualizar })]
-		public ActionResult Visualizar(int id)
+		public ActionResult VisualizarExploracaoFlorestal(int id)
 		{
 			if (!_validar.Acessar(id))
 			{
@@ -227,6 +230,44 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ExploracaoFlorestal", vm),
 				@Dependencias = ViewModelHelper.Json(vm.Caracterizacao.Dependencias)
 			}, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		#region Filtrar
+
+		public ActionResult Visualizar(int id)
+		{
+			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
+			vm.Filtros.EmpreendimentoId = id;
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			return PartialView(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoListar })]
+		public ActionResult Filtrar(ListarVM vm, Paginacao paginacao)
+		{
+			if (!String.IsNullOrEmpty(vm.UltimaBusca))
+				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ListarVM>(vm.UltimaBusca).Filtros;
+
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+
+			var resultados = _bus.Filtrar(vm.Filtros, vm.Paginacao);
+
+			vm.Paginacao = paginacao;
+			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			if (resultados == null)
+				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+
+			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.Resultados = resultados.Itens;
+			vm.PodeVisualizar = User.IsInRole(ePermissao.FiscalizacaoVisualizar.ToString());
+
+			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Caracterizacoes/Views/ExploracaoFlorestal/ListarResultados.ascx", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion

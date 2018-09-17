@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -205,6 +206,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			//Caso a coluna das atividades NÃO esteja na tabela Principal
 			throw new NotImplementedException();
+		}
+
+		public Resultados<ExploracaoFlorestal> Filtrar(ListarExploracaoFlorestalFiltro filtrosListar, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<ListarExploracaoFlorestalFiltro> filtro = new Filtro<ListarExploracaoFlorestalFiltro>(filtrosListar, paginacao);
+				Resultados<ExploracaoFlorestal> resultados = _da.Filtrar(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
 		}
 
 		#endregion

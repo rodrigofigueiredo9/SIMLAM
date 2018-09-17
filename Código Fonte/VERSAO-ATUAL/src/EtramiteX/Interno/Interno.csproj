@@ -374,7 +374,7 @@
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Index.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarFiltros.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
@@ -415,7 +415,7 @@
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\VisualizarExploracaoFlorestal.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ProcessamentoPartial.ascx" />
@@ -1915,7 +1915,7 @@
     <Compile Include="ViewModels\VMDocumento\SalvarVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ResponsavelVM.cs" />
-    <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
+	<Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ListarVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\EmpreendimentoVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\LocalizarVM.cs" />

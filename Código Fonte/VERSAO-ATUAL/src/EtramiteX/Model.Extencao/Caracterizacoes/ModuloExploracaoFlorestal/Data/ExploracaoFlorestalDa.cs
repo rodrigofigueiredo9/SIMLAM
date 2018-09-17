@@ -354,7 +354,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#endregion
 
-		#region Obter
+		#region Obter / Filtrar
 
 		internal ExploracaoFlorestal ObterPorEmpreendimento(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -810,6 +810,96 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
+		}
+
+		public Resultados<ExploracaoFlorestal> Filtrar(Filtro<ListarExploracaoFlorestalFiltro> filtros, BancoDeDados banco = null)
+		{
+			var lista = new Resultados<ExploracaoFlorestal>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+
+				string comandtxt = string.Empty;
+				Comando comando = bancoDeDados.CriarComando("");
+
+				#region Adicionando Filtros
+
+				if (filtros.Dados.EmpreendimentoId > 0)
+					comandtxt += comando.FiltroAnd("c.empreendimento", "empreendimento", filtros.Dados.EmpreendimentoId);
+
+				if (filtros.Dados.TipoAtividade != null)
+					comandtxt += comando.FiltroAndLike("lv.chave", "tipo_atividade", filtros.Dados.TipoAtividade, true);
+
+				if (filtros.Dados.CodigoExploracao != null)
+					comandtxt += comando.FiltroAnd("c.codigo_exploracao", "codigo_exploracao", filtros.Dados.CodigoExploracao);
+
+				if (!string.IsNullOrWhiteSpace(filtros.Dados.DataExploracao))
+					comandtxt += comando.FiltroAnd("c.data_cadastro", "data_cadastro", filtros.Dados.DataExploracao);
+
+				#endregion
+
+				#region Ordenação
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "tipo_atividade", "codigo_exploracao", "data_cadastro" };
+
+				if (filtros.OdenarPor > 0)
+					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+				else
+					ordenar.Add("tipo_atividade");
+				#endregion Ordenação
+
+				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_atividade,
+						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
+						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
+						from crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade) " + comandtxt + ") consulta", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				lista.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtros.Menor);
+				comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+				#region QUERY
+
+				comandtxt = String.Format(@"select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_atividade,
+						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
+						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
+						from crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)" + comandtxt +
+						Blocos.Etx.ModuloCore.Data.DaHelper.Ordenar(colunas, ordenar, filtros.OdenarPor == 0), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var caracterizacao = new ExploracaoFlorestal
+						{
+							Id = reader.GetValue<int>("id"),
+							EmpreendimentoId = reader.GetValue<int>("empreendimento"),
+							CodigoExploracaoTexto = reader.GetValue<string>("codigo_exploracao_texto"),
+							TipoAtividadeTexto = reader.GetValue<string>("tipo_atividade"),
+							Localizador = reader.GetValue<string>("localizador")							
+						};
+
+						if (!Convert.IsDBNull(reader["codigo_exploracao"]))
+							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
+						if (!Convert.IsDBNull(reader["tipo_exploracao"]))
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
+						if (!Convert.IsDBNull(reader["data_cadastro"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+
+						lista.Itens.Add(caracterizacao);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return lista;
 		}
 
 		#endregion
