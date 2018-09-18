@@ -331,7 +331,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("id", controleArquivoSICAR.Id, DbType.Int32);
-					if (retificado == null)
+					if (retificado == null || retificado.Id == solicitacao.Id)
 					{
 						comando.AdicionarParametroEntrada("solicitacao_car_anterior", null, DbType.Int32);
 						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", null, DbType.String);
