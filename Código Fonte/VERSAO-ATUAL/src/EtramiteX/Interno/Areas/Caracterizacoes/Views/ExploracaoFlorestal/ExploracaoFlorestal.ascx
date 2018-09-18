@@ -19,24 +19,18 @@
 
 <fieldset class="block box localizador">
     <legend class="titLocalizador">Localizador</legend>
-	<% if (Model.IsVisualizar) { %>
-		<div class="coluna22 append2">
-			<%= Html.DropDownList("DdlCodigoExploracao", Model.CodigoExploracao, new { @class = "text ddlCodigoExploracao" })%>
-		</div>
-	<%} else {%>
-		<div class="coluna22 append2">
-			<label for="CodigoExploracao">Código Exploração</label>
-			<%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
-		</div>
-		<div class="coluna22 append2">
-			<label for="TipoExploracao">Tipo de Exploração *</label>
-			<%= Html.DropDownList("TipoExploracao1", Model.TipoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipoExploracao" }))%>
-		</div>
-		<div class="coluna22">
-			<label>Data Cadastro</label>
-			<%= Html.TextBox("DataCadastro", Model.Caracterizacao.DataCadastro.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataCadastro maskData" }))%>
-		</div>
-	<%} %>
+	<div class="coluna22 append2">
+		<label for="CodigoExploracao">Código Exploração</label>
+		<%= Html.TextBox("CodigoExploracao", Model.Caracterizacao.CodigoExploracaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
+	</div>
+	<div class="coluna22 append2">
+		<label for="TipoExploracao">Tipo de Exploração *</label>
+		<%= Html.DropDownList("TipoExploracao1", Model.TipoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipoExploracao" }))%>
+	</div>
+	<div class="coluna22">
+		<label>Data Cadastro</label>
+		<%= Html.TextBox("DataCadastro", Model.Caracterizacao.DataCadastro.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataCadastro maskData" }))%>
+	</div>
 </fieldset>
 
 <%foreach (var item in Model.ExploracaoFlorestalExploracaoVM){ %>

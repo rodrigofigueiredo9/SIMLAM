@@ -18,7 +18,7 @@
 			<div class="block fixado">
 				<div class="coluna15">
 					<label for="Filtros_TipoAtividade">Tipo de Atividade</label>
-					<%= Html.Hidden("Filtros.Empreendimento", Model.Filtros.EmpreendimentoId, new { @class = "hdnEmpreendimento" })%>
+					<%= Html.Hidden("Filtros.EmpreendimentoId", Model.Filtros.EmpreendimentoId, new { @class = "hdnEmpreendimento" })%>
 					<%= Html.TextBox("Filtros.TipoAtividade", null, new { @class = "text txtTipoAtividade setarFoco", @maxlength = "3" })%>
 				</div>
 				<div class="coluna15 prepend2">

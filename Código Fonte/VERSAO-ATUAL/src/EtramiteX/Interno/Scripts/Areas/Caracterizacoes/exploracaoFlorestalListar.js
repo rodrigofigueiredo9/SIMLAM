@@ -14,6 +14,7 @@ ExploracaoFlorestalListar = {
 
 		Aux.setarFoco(container);
 		ExploracaoFlorestalListar.container = container;
+		$('.btnBuscar', container).click();
 	},
 
 	visualizar: function () {
