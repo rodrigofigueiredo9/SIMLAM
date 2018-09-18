@@ -296,9 +296,12 @@
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
     <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
