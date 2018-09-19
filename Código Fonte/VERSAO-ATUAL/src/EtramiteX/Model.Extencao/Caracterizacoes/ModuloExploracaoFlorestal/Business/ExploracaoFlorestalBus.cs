@@ -151,8 +151,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			try
 			{
 				exploracaoFlorestalList = _da.ObterPorEmpreendimentoList(empreendimento, simplificado: simplificado);
-				foreach(var exploracao in exploracaoFlorestalList)
-					exploracao.Dependencias = _busCaracterizacao.ObterDependencias(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
 			}
 			catch (Exception exc)
 			{
@@ -162,7 +160,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return exploracaoFlorestalList;
 		}
 
-		public ExploracaoFlorestal ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
+		public IEnumerable<ExploracaoFlorestal> ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -178,32 +176,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		public ExploracaoFlorestal MergiarGeo(ExploracaoFlorestal caracterizacaoAtual)
 		{
-			ExploracaoFlorestal dadosGeo = ObterDadosGeo(caracterizacaoAtual.EmpreendimentoId);
-			caracterizacaoAtual.Dependencias = _busCaracterizacao.ObterDependenciasAtual(caracterizacaoAtual.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			var dadosGeo = ObterDadosGeo(caracterizacaoAtual.EmpreendimentoId);
 
-			foreach (ExploracaoFlorestalExploracao exploracao in dadosGeo.Exploracoes)
+			foreach (var dado in dadosGeo)
 			{
-				if (!caracterizacaoAtual.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+				foreach (ExploracaoFlorestalExploracao exploracao in dado.Exploracoes)
 				{
-					caracterizacaoAtual.Exploracoes.Add(exploracao);
+					if (!caracterizacaoAtual.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+						caracterizacaoAtual.Exploracoes.Add(exploracao);
 				}
 			}
 
 			List<ExploracaoFlorestalExploracao> exploracoesRemover = new List<ExploracaoFlorestalExploracao>();
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacaoAtual.Exploracoes)
 			{
-				if (!dadosGeo.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+				foreach (var dado in dadosGeo)
 				{
-					exploracoesRemover.Add(exploracao);
-					continue;
-				}
-				else
-				{
-					ExploracaoFlorestalExploracao exploracaoAux = dadosGeo.Exploracoes.SingleOrDefault(x => x.Identificacao == exploracao.Identificacao) ?? new ExploracaoFlorestalExploracao();
-					exploracao.Identificacao = exploracaoAux.Identificacao;
-					exploracao.GeometriaTipoId = exploracaoAux.GeometriaTipoId;
-					exploracao.GeometriaTipoTexto = exploracaoAux.GeometriaTipoTexto;
-					exploracao.AreaCroqui = exploracaoAux.AreaCroqui;
+					if (!dado.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+					{
+						exploracoesRemover.Add(exploracao);
+						continue;
+					}
+					else
+					{
+						ExploracaoFlorestalExploracao exploracaoAux = dado.Exploracoes.SingleOrDefault(x => x.Identificacao == exploracao.Identificacao) ?? new ExploracaoFlorestalExploracao();
+						exploracao.Identificacao = exploracaoAux.Identificacao;
+						exploracao.GeometriaTipoId = exploracaoAux.GeometriaTipoId;
+						exploracao.GeometriaTipoTexto = exploracaoAux.GeometriaTipoTexto;
+						exploracao.AreaCroqui = exploracaoAux.AreaCroqui;
+					}
 				}
 			}
 

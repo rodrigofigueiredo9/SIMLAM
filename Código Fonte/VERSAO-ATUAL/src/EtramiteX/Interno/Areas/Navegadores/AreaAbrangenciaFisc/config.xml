@@ -17,8 +17,8 @@
 		<!-- URL do Servico das Imagens-->
 		<mapaImagemURL>http://mapas.geobases.es.gov.br/ArcGIS/rest/services/IMAGEM/Aerolevantamento/MapServer</mapaImagemURL>
 
-		<mapaLoteURL>http://webidafh/ArcGIS/rest/services/IDAF/D_FISCAL/MapServer</mapaLoteURL>
+		<mapaLoteURL>http://local.pentago.com.br:8090/ArcGIS/rest/services/IDAF/D_FISCAL/MapServer</mapaLoteURL>
 		
-		<webserviceURL>http://webidafh/simlam/GeoProcessamento/Mapa</webserviceURL>
+		<webserviceURL>http://local.pentago.com.br:8090/simlam/GeoProcessamento/Mapa</webserviceURL>
 	</service>
 </configuration>

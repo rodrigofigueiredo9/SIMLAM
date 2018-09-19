@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -38,22 +40,26 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
 			}
 
-			ExploracaoFlorestal caracterizacao = _bus.ObterDadosGeo(id);
-			caracterizacao.EmpreendimentoId = id;
+			var exploracaoFlorestalList = _bus.ObterDadosGeo(id);
 
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
-			{
+			if (!_validar.Acessar(id))
 				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
+
+			var vmList = new ExploracaoFlorestalListVM();
+			vmList.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(id);
+
+			foreach (var caracterizacao in exploracaoFlorestalList)
+			{
+				ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
+					_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+					_listaBus.TipoExploracaoFlorestal);
+
+				vmList.ExploracaoFlorestalVM.Add(vm);
 			}
 
-			caracterizacao.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
-			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes, 
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-				_listaBus.TipoExploracaoFlorestal);
-			
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vm.TextoAbrirModal = _validar.AbrirModalAcessar(caracterizacao);
-			return View(vm);
+			return View(vmList);
 		}
 
 		[HttpPost]
@@ -67,9 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				caracterizacao.Dependencias);
 
 			if (!string.IsNullOrEmpty(textoMerge))
-			{
 				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
-			}
 
 			_bus.Salvar(caracterizacao);
 			return Json(new
@@ -89,36 +93,38 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Editar(int id)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
-			{
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-			}
 
 			if (!_validar.Acessar(id))
-			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
 
-			ExploracaoFlorestal caracterizacao = _bus.ObterPorEmpreendimento(id);
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				caracterizacao.EmpreendimentoId,
+			var vmList = new ExploracaoFlorestalListVM();
+			vmList.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			var textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
+				id,
 				(int)eCaracterizacao.ExploracaoFlorestal,
 				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				caracterizacao.Dependencias);
+				vmList.Dependencias);
+			vmList.TextoMerge = textoMerge;
+			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(id);
 
-			if (!string.IsNullOrEmpty(textoMerge))
+			var exploracaoFlorestalList = _bus.ObterPorEmpreendimentoList(id)?.ToList();
+			for (int i = 0; i < exploracaoFlorestalList.Count; i++)
 			{
-				caracterizacao = _bus.MergiarGeo(caracterizacao);
+				var caracterizacao = exploracaoFlorestalList[i];
+
+				if (!string.IsNullOrEmpty(textoMerge))
+					caracterizacao = _bus.MergiarGeo(caracterizacao);
+
+				ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
+					_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+					_listaBus.TipoExploracaoFlorestal);
+
+				vmList.ExploracaoFlorestalVM.Add(vm);
 			}
 
-			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-				_listaBus.TipoExploracaoFlorestal);
-
-			vm.TextoMerge = textoMerge;
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vm.TextoAbrirModal = _validar.AbrirModalAcessar(caracterizacao);
-
-			return View(vm);
+			return View(vmList);
 		}
 
 		[HttpPost]
@@ -132,9 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				caracterizacao.Dependencias);
 
 			if (!string.IsNullOrEmpty(textoMerge))
-			{
 				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
-			}
 
 			_bus.Salvar(caracterizacao);
 			return Json(new
@@ -154,31 +158,34 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult VisualizarExploracaoFlorestal(int id)
 		{
 			if (!_validar.Acessar(id))
-			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
 
-			ExploracaoFlorestal caracterizacao = _bus.ObterPorEmpreendimento(id);
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				caracterizacao.EmpreendimentoId,
+			var vmList = new ExploracaoFlorestalListVM();
+			vmList.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+
+			var textoMerge = _caracterizacaoValidar.DependenciasAlteradas(id,
 				(int)eCaracterizacao.ExploracaoFlorestal,
 				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				caracterizacao.Dependencias, true);
+				vmList.Dependencias, true);
+			vmList.TextoMerge = textoMerge;
+			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(id);
 
-			if (!string.IsNullOrEmpty(textoMerge))
+			var exploracaoFlorestalList = _bus.ObterPorEmpreendimentoList(id)?.ToList();
+			for (int i = 0; i < exploracaoFlorestalList.Count; i++)
 			{
-				caracterizacao = _bus.MergiarGeo(caracterizacao);
+				var caracterizacao = exploracaoFlorestalList[i];
+
+				if (!string.IsNullOrEmpty(textoMerge))
+					caracterizacao = _bus.MergiarGeo(caracterizacao);
+
+				ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
+					_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
+					_listaBus.TipoExploracaoFlorestal, true);
+				vmList.ExploracaoFlorestalVM.Add(vm);
 			}
 
-			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
-				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-				_listaBus.TipoExploracaoFlorestal, true);
-
-			vm.TextoMerge = textoMerge;
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vm.TextoAbrirModal = _validar.AbrirModalAcessar(caracterizacao);
-
-			return View(vm);
+			return View(vmList);
 		}
 
 		#endregion
@@ -222,13 +229,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(_bus.MergiarGeo(exploracao), _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
 				_listaBus.TipoExploracaoFlorestal);
-
+			var dependencias = _caracterizacaoBus.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ExploracaoFlorestal", vm),
-				@Dependencias = ViewModelHelper.Json(vm.Caracterizacao.Dependencias)
+				@Dependencias = ViewModelHelper.Json(dependencias)
 			}, JsonRequestBehavior.AllowGet);
 		}
 

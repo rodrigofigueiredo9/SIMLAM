@@ -17,14 +17,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public String Localizador { get; set; }
 		public DateTecno DataCadastro { get; set; } = new DateTecno() { Data = DateTime.Now };
 
+		public List<ExploracaoFlorestalExploracao> Exploracoes { get; set; }
 		public List<Dependencia> Dependencias { get; set; }
 
-		public List<ExploracaoFlorestalExploracao> Exploracoes { get; set; }
-		
 		public ExploracaoFlorestal()
 		{
-			Dependencias = new List<Dependencia>();
 			Exploracoes = new List<ExploracaoFlorestalExploracao>();
+			Dependencias = new List<Dependencia>();
 		}
 	}
 }

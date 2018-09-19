@@ -14,28 +14,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 	public class ExploracaoFlorestalVM
 	{
 		public Boolean IsVisualizar { get; set; }
-		public String TextoAbrirModal { get; set; }
-		public String TextoMerge { get; set; }
-		public String AtualizarDependenciasModalTitulo { get; set; }
-		public Int32? FinalidadeExploracao { get; set; }
 
-		public String IdsTela
-		{
-			get
-			{
-				return ViewModelHelper.Json(new
-				{
-					@GeometriaTipoPonto = eExploracaoFlorestalGeometria.Ponto,
-					@ProdutoLenha = eProduto.Lenha,
-					@ProdutoToras = eProduto.Toras,
-					@ProdutoToretes = eProduto.Toretes,
-					@ProdutoMouroesEstacas = eProduto.MouroesEstacas,
-					@ProdutoEscoras = eProduto.Escoras,
-					@ProdutoPalmito = eProduto.Palmito,
-					@ProdutoSemRendimento = eProduto.SemRendimento
-				});
-			}
-		}
+		public Int32? FinalidadeExploracao { get; set; }
 
 		private ExploracaoFlorestal _caracterizacao = new ExploracaoFlorestal();
 		public ExploracaoFlorestal Caracterizacao
@@ -65,13 +45,20 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _codigoExploracao = value; }
 		}
 
-		public String Mensagens
+		public String IdsTela
 		{
 			get
 			{
 				return ViewModelHelper.Json(new
 				{
-					@FinalidadeExploracaoEspecificarObrigatorio = Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio("")
+					@GeometriaTipoPonto = eExploracaoFlorestalGeometria.Ponto,
+					@ProdutoLenha = eProduto.Lenha,
+					@ProdutoToras = eProduto.Toras,
+					@ProdutoToretes = eProduto.Toretes,
+					@ProdutoMouroesEstacas = eProduto.MouroesEstacas,
+					@ProdutoEscoras = eProduto.Escoras,
+					@ProdutoPalmito = eProduto.Palmito,
+					@ProdutoSemRendimento = eProduto.SemRendimento
 				});
 			}
 		}

@@ -147,14 +147,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
-		public string AbrirModalAcessar(ExploracaoFlorestal caracterizacao)
+		public string AbrirModalAcessar(int empreendimentoId)
 		{
-			EmpreendimentoCaracterizacao empreendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			EmpreendimentoCaracterizacao empreendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(empreendimentoId);
 
 			if (empreendimento.ZonaLocalizacao == eZonaLocalizacao.Rural)
 			{
 				DominialidadeDa dominialidadeDa = new DominialidadeDa();
-				Dominialidade dominialidade = dominialidadeDa.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId);
+				Dominialidade dominialidade = dominialidadeDa.ObterPorEmpreendimento(empreendimentoId);
 
 				foreach (Dominio dominio in dominialidade.Dominios)
 				{

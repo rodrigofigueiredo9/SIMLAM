@@ -157,6 +157,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CoordenadaAtividadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ConsumoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\ExploracaoFlorestalListVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoVM.cs" />
@@ -1915,7 +1916,7 @@
     <Compile Include="ViewModels\VMDocumento\SalvarVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ResponsavelVM.cs" />
-	<Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
+    <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ListarVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\EmpreendimentoVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\LocalizarVM.cs" />
