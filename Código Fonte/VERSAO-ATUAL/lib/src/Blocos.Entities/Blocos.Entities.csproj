@@ -87,6 +87,8 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eMongeTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eVertedouroTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloDominialidade\eCompensacaoTipo.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\eTipoExploracao.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ListarExploracaoFlorestalFiltro.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeConsolidacao\UnidadeConsolidacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoUnidadeMedida.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoTipoProducao.cs" />

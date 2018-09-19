@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
@@ -41,6 +42,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _classificacoesVegetais = value; }
 		}
 
+		private List<SelectListItem> _finalidades = new List<SelectListItem>();
+		public List<SelectListItem> Finalidades
+		{
+			get { return _finalidades; }
+			set { _finalidades = value; }
+		}
+
 		public String Mensagens
 		{
 			get
@@ -51,12 +59,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@QuantidadeObrigatoria = Mensagem.ExploracaoFlorestal.QuantidadeObrigatoria,
 					@QuantidadeMaiorZero = Mensagem.ExploracaoFlorestal.QuantidadeMaiorZero,
 					@QuantidadeInvalida = Mensagem.ExploracaoFlorestal.QuantidadeInvalida,
-					@ProdutoDuplicado = Mensagem.ExploracaoFlorestal.ProdutoDuplicado
+					@ProdutoDuplicado = Mensagem.ExploracaoFlorestal.ProdutoDuplicado,
+					@TaxonomiaObrigatoria = Mensagem.ExploracaoFlorestal.TaxonomiaObrigatoria
 				});
 			}
 		}
 
-		public ExploracaoFlorestalExploracaoVM(List<Lista> exploracaoTipos, List<Lista> classificacoesVegetais, List<Lista> produtos, ExploracaoFlorestalExploracao exploracao, bool IsVisualizar = false)
+		public ExploracaoFlorestalExploracaoVM(List<FinalidadeExploracao> finalidades, List<Lista> exploracaoTipos, List<Lista> classificacoesVegetais, List<Lista> produtos, ExploracaoFlorestalExploracao exploracao, bool IsVisualizar = false)
 		{
 			int classifSelecionada = exploracao.ClassificacaoVegetacaoId;
 			if (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
@@ -70,10 +79,18 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 
 			ClassificacoesVegetais = ViewModelHelper.CriarSelectList(classificacoesVegetais, true, true, classifSelecionada.ToString());
-			ExploracaoTipos = ViewModelHelper.CriarSelectList(exploracaoTipos, true, true, selecionado: exploracao.ExploracaoTipoId.ToString());
 			Produtos = ViewModelHelper.CriarSelectList(produtos, true, true);
 			ExploracaoFlorestal = exploracao;
 			this.IsVisualizar = IsVisualizar;
+
+			// passa o item "Outros" para a ultiam posição
+			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Texto == "Outros");
+			if (finalidade != null)
+			{
+				finalidades.Remove(finalidade);
+				finalidades.Add(finalidade);
+			}
+			Finalidades = ViewModelHelper.CriarSelectList(finalidades, selecionado: exploracao.FinalidadeExploracao.ToString());
 		}
 	}
 }

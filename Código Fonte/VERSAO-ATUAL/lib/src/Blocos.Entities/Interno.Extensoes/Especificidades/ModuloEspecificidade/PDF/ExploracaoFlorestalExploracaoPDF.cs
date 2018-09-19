@@ -128,7 +128,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public ExploracaoFlorestalExploracaoPDF(ExploracaoFlorestalExploracao exploracao)
 		{
 			GeometriaTipoId = exploracao.GeometriaTipoId;
-			TipoExploracao = exploracao.ExploracaoTipoTexto;
 			VegetacaoTipo = exploracao.ClassificacaoVegetacaoTexto;
 			VegetacaoTipoId = exploracao.ClassificacaoVegetacaoId;
 			ArvoresRequeridas = exploracao.ArvoresRequeridas;

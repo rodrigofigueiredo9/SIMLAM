@@ -82,6 +82,8 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes
 		public const string KeyCaracterizacaoProdutosExploracao = "CaracterizacaoProdutosExploracao";
 		public List<Lista> CaracterizacaoProdutosExploracao { get { return _daLista.ObterCaracterizacaoProdutosExploracao(); } }
 
+		public const string KeyTipoExploracaoFlorestal = "TipoExploracaoFlorestal";
+		public List<Lista> TipoExploracaoFlorestal { get { return _daLista.ObterTipoExploracaoFlorestal(); } }
 		#endregion
 
 		#region Queima Controlada

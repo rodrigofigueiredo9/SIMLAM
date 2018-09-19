@@ -774,17 +774,11 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 
 						cont++;
 
-						if (leitorFeicao.Atual.Atributos.IndiceDe("NOME") >= 0)
-						{
-							Atributo atributo = leitorFeicao.Atual.Atributos["NOME"];
-							leitorFeicao.Atual.Atributos.Clear();
-							leitorFeicao.Atual.Atributos.Adicionar(atributo);
-						}
-						else if (leitorFeicao.Atual.Atributos.IndiceDe("NAME") >= 0)
+						if (leitorFeicao.Atual.Atributos.IndiceDe("NAME") >= 0)
 						{
 							Atributo atributo = leitorFeicao.Atual.Atributos["NAME"];
+							leitorFeicao.Atual.Atributos.RemoveAt(leitorFeicao.Atual.Atributos.IndiceDe("NAME"));
 							atributo.Nome = "NOME";
-							leitorFeicao.Atual.Atributos.Clear();
 							leitorFeicao.Atual.Atributos.Adicionar(atributo);
 						}
 

@@ -7,7 +7,6 @@ using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
-using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
@@ -71,12 +70,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_exploracao_florestal c (id, empreendimento, finalidade, finalidade_outros, tid) 
-				values ({0}seq_crt_exploracao_florestal.nextval, :empreendimento, :finalidade, :finalidade_outros, :tid) returning c.id into :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_exploracao_florestal c (id, empreendimento, tid, codigo_exploracao, tipo_exploracao, data_cadastro) 
+				values ({0}seq_crt_exploracao_florestal.nextval, :empreendimento, :tid, :codigo_exploracao, :tipo_exploracao, :data_cadastro) returning c.id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("finalidade", caracterizacao.FinalidadeExploracao, DbType.Decimal);
-				comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, caracterizacao.FinalidadeEspecificar);
+				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoAtividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -93,8 +93,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
 					{
 						comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_exploracao c (id, exploracao_florestal, identificacao, geometria, area_croqui, 
-						classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
-						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid) returning c.id into :id", EsquemaBanco);
+						classificacao_vegetacao, area_requerida, arvores_requeridas, quantidade_arvores, tid, finalidade, finalidade_outros, parecer_favoravel) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
+						:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :quantidade_arvores, :tid, :finalidade, :finalidade_outros, :parecer_favoravel) returning c.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
@@ -104,7 +104,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						comando.AdicionarParametroEntrada("area_requerida", item.AreaRequerida, DbType.Decimal);
 						comando.AdicionarParametroEntrada("arvores_requeridas", item.ArvoresRequeridas, DbType.Decimal);
 						comando.AdicionarParametroEntrada("quantidade_arvores", item.QuantidadeArvores, DbType.Int32);
-						comando.AdicionarParametroEntrada("exploracao_tipo", item.ExploracaoTipoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("finalidade", item.FinalidadeExploracao, DbType.Decimal);
+						comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, item.FinalidadeEspecificar);
+						comando.AdicionarParametroEntrada("parecer_favoravel", item.ParecerFavoravel, DbType.Boolean);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -118,12 +120,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							foreach (ExploracaoFlorestalProduto itemAux in item.Produtos)
 							{
-								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, tid)
-								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :tid)", EsquemaBanco);
+								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
+								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
 
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
+								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
+								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -156,11 +160,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_exploracao_florestal c set c.finalidade = :finalidade, 
-				c.finalidade_outros = :finalidade_outros, c.tid = :tid where c.id = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_exploracao_florestal c set 
+				c.tid = :tid, c.codigo_exploracao = :codigo_exploracao, c.tipo_exploracao = :tipo_exploracao,
+				c.data_cadastro = :data_cadastro where c.id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("finalidade", caracterizacao.FinalidadeExploracao, DbType.Decimal);
-				comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, caracterizacao.FinalidadeEspecificar);
+				comando.AdicionarParametroEntrada("codigo_exploracao", caracterizacao.CodigoExploracao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_exploracao", caracterizacao.TipoAtividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_cadastro", caracterizacao.DataCadastro.Data, DbType.DateTime);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
 
@@ -212,20 +218,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_exploracao c set c.identificacao = :identificacao, c.geometria = :geometria, 
 							c.area_croqui = :area_croqui, c.classificacao_vegetacao = :classificacao_vegetacao, c.area_requerida = :area_requerida, c.arvores_requeridas = :arvores_requeridas,
-							c.exploracao_tipo = :exploracao_tipo, c.quantidade_arvores = :quantidade_arvores, c.tid = :tid where c.id = :id", EsquemaBanco);
+							c.quantidade_arvores = :quantidade_arvores, c.tid = :tid, c.finalidade = :finalidade, c.finalidade_outros = :finalidade_outros, c.parecer_favoravel = :parecer_favoravel where c.id = :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						}
 						else
 						{
 							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_exploracao c (id, exploracao_florestal, identificacao, geometria, area_croqui, 
-							classificacao_vegetacao, area_requerida, arvores_requeridas, exploracao_tipo, quantidade_arvores, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
-							:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas, :exploracao_tipo, :quantidade_arvores, :tid) returning c.id into :id", EsquemaBanco);
+							classificacao_vegetacao, area_requerida, arvores_requeridas, quantidade_arvores, finalidade, finalidade_outros, parecer_favoravel, tid) values ({0}seq_crt_exp_flores_exploracao.nextval, :exploracao_florestal, :identificacao, 
+							:geometria, :area_croqui, :classificacao_vegetacao, :area_requerida, :arvores_requeridas,  :quantidade_arvores, :finalidade, :finalidade_outros, :parecer_favoravel, :tid) returning c.id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
 							comando.AdicionarParametroSaida("id", DbType.Int32);
 						}
 
+						comando.AdicionarParametroEntrada("finalidade", item.FinalidadeExploracao, DbType.Decimal);
+						comando.AdicionarParametroEntrada("finalidade_outros", DbType.String, 80, item.FinalidadeEspecificar);
 						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
 						comando.AdicionarParametroEntrada("geometria", item.GeometriaTipoId, DbType.Int32);
 						comando.AdicionarParametroEntrada("area_croqui", item.AreaCroqui, DbType.Decimal);
@@ -233,7 +241,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						comando.AdicionarParametroEntrada("area_requerida", item.AreaRequerida, DbType.Decimal);
 						comando.AdicionarParametroEntrada("arvores_requeridas", item.ArvoresRequeridas, DbType.Decimal);
 						comando.AdicionarParametroEntrada("quantidade_arvores", item.QuantidadeArvores, DbType.Int32);
-						comando.AdicionarParametroEntrada("exploracao_tipo", item.ExploracaoTipoId, DbType.Int32);
+						comando.AdicionarParametroEntrada("parecer_favoravel", item.ParecerFavoravel, DbType.Boolean);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
@@ -251,21 +259,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							{
 								if (itemAux.Id > 0)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade, 
-									c.tid = :tid where c.id = :id", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade,
+									c.taxonomia_id = :taxonomia_id, c.taxonomia_nome = :taxonomia_nome, c.tid = :tid where c.id = :id", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("id", itemAux.ProdutoId, DbType.Int32);
 								}
 								else
 								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, tid)
-									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :tid)", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
+									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								}
 
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
+								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
+								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -344,7 +354,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#endregion
 
-		#region Obter
+		#region Obter / Filtrar
 
 		internal ExploracaoFlorestal ObterPorEmpreendimento(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -364,6 +374,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 
 			return caracterizacao;
+		}
+
+		internal IEnumerable<ExploracaoFlorestal> ObterPorEmpreendimentoList(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		{
+			var exploracaoFlorestalList = new List<ExploracaoFlorestal>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento", EsquemaBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						int valor = Convert.ToInt32(reader["id"]);
+						var exploracao = Obter(valor, bancoDeDados, simplificado);
+						exploracaoFlorestalList.Add(exploracao);
+					}
+				}
+			}
+
+			return exploracaoFlorestalList;
 		}
 
 		internal ExploracaoFlorestal Obter(int id, BancoDeDados banco = null, string tid = null, bool simplificado = false)
@@ -398,7 +431,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			{
 				#region Exploração Florestal
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.finalidade, c.finalidade_outros, c.tid from {0}crt_exploracao_florestal c where c.id = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.texto tipo_atividade from {0}crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
+						where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -408,8 +443,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						caracterizacao.Id = id;
 						caracterizacao.EmpreendimentoId = Convert.ToInt32(reader["empreendimento"]);
-						caracterizacao.FinalidadeExploracao = Convert.ToInt32(reader["finalidade"]);
-						caracterizacao.FinalidadeEspecificar = reader["finalidade_outros"].ToString();
+						if(!Convert.IsDBNull(reader["codigo_exploracao"]))
+							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
+						if(!Convert.IsDBNull(reader["tipo_exploracao"]))
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
+						if(!Convert.IsDBNull(reader["data_cadastro"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+						if (!Convert.IsDBNull(reader["tipo_atividade"]))
+							caracterizacao.CodigoExploracaoTexto = reader["tipo_atividade"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 
@@ -419,16 +460,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#endregion
 
 				if (caracterizacao.Id <= 0 || simplificado)
-				{
 					return caracterizacao;
-				}
 
 				#region Explorações
 
-				comando = bancoDeDados.CriarComando(@"select c.id, c.identificacao, c.geometria, lg.texto geometria_texto, c.area_croqui, c.area_requerida, c.arvores_requeridas, 
-				c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto, c.exploracao_tipo, lef.texto exploracao_tipo_texto, c.quantidade_arvores, c.tid 
-				from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc, {0}lov_crt_exp_flores_exploracao lef 
-				where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.exploracao_tipo  = lef.id and c.exploracao_florestal = :id order by lef.texto", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"select c.id, c.identificacao, c.geometria, lg.texto geometria_texto, c.area_croqui, c.area_requerida,
+				c.arvores_requeridas, c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto,
+				c.quantidade_arvores, c.tid, c.finalidade, c.finalidade_outros, c.parecer_favoravel
+				from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc
+				where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.exploracao_florestal = :id order by c.identificacao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -440,6 +480,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						exploracao = new ExploracaoFlorestalExploracao();
 						exploracao.Id = Convert.ToInt32(reader["id"]);
+						exploracao.ParecerFavoravel = Convert.ToBoolean(reader["parecer_favoravel"]);
+						exploracao.FinalidadeExploracao = Convert.IsDBNull(reader["finalidade"]) ? 0 : Convert.ToInt32(reader["finalidade"]);
+						exploracao.FinalidadeEspecificar = reader["finalidade_outros"].ToString();
 						exploracao.Tid = reader["tid"].ToString();
 						exploracao.Identificacao = reader["identificacao"].ToString();
 						exploracao.ArvoresRequeridas = reader["arvores_requeridas"].ToString();
@@ -461,15 +504,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							exploracao.ClassificacaoVegetacaoTexto = reader["classificacao_vegetacao_texto"].ToString();
 						}
 
-						if (reader["exploracao_tipo"] != null && !Convert.IsDBNull(reader["exploracao_tipo"]))
-						{
-							exploracao.ExploracaoTipoId = Convert.ToInt32(reader["exploracao_tipo"]);
-							exploracao.ExploracaoTipoTexto = reader["exploracao_tipo_texto"].ToString();
-						}
-
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
 						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp where c.produto = lp.id and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao", exploracao.Id, DbType.Int32);
@@ -489,6 +526,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.ProdutoId = Convert.ToInt32(readerAux["produto"]);
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
+								}
+
+								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								{
+									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
+									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);
@@ -520,7 +563,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			{
 				#region Exploração Florestal
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.empreendimento_id, c.finalidade, c.finalidade_outros, c.tid 
+				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.empreendimento_id, c.tid 
 				from {0}hst_crt_exploracao_florestal c where c.exploracao_florestal_id = :id and c.tid = :tid", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -534,8 +577,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						caracterizacao.Id = id;
 						caracterizacao.EmpreendimentoId = Convert.ToInt32(reader["empreendimento_id"]);
-						caracterizacao.FinalidadeExploracao = Convert.ToInt32(reader["finalidade"]);
-						caracterizacao.FinalidadeEspecificar = reader["finalidade_outros"].ToString();
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 
@@ -552,7 +593,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#region Explorações
 
 				comando = bancoDeDados.CriarComando(@"select c.id, c.exp_florestal_exploracao_id, c.identificacao, c.geometria_id, c.geometria_texto, c.area_croqui, c.area_requerida, 
-				c.arvores_requeridas, c.classificacao_vegetacao_id, c.classificacao_vegetacao_texto, c.exploracao_tipo_id, c.exploracao_tipo_texto, c.quantidade_arvores, c.tid 
+				c.arvores_requeridas, c.classificacao_vegetacao_id, c.classificacao_vegetacao_texto, c.quantidade_arvores, c.tid 
 				from {0}hst_crt_exp_florest_exploracao c where c.id_hst = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
@@ -586,15 +627,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							exploracao.ClassificacaoVegetacaoTexto = reader["classificacao_vegetacao_texto"].ToString();
 						}
 
-						if (reader["exploracao_tipo_id"] != null && !Convert.IsDBNull(reader["exploracao_tipo_id"]))
-						{
-							exploracao.ExploracaoTipoId = Convert.ToInt32(reader["exploracao_tipo_id"]);
-							exploracao.ExploracaoTipoTexto = reader["exploracao_tipo_texto"].ToString();
-						}
-
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
 						from {0}hst_crt_exp_florestal_produto c where c.id_hst = :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
@@ -614,6 +649,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.ProdutoId = Convert.ToInt32(readerAux["produto_id"]);
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
+								}
+
+								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								{
+									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
+									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);
@@ -662,60 +703,84 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   3					 geometria_tipo,
 								   a.area_m2            area_croqui,
 								   a.avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_aativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   2 geometria_tipo,
 								   null                 area_croqui,
 								   '[x]' avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_lativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   1 geometria_tipo,
 								   null                 area_croqui,
 								   '[x]' avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_pativ       a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao
 							union all
 							select a.atividade,
 								   a.codigo             identificacao,
 								   3 geometria_tipo,
 								   a.area_m2            area_croqui,
 								   a.avn,
-								   a.aa
+								   a.aa,
+								   lv.tipo_atividade tipo_exploracao,
+								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
+								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   a.data
 							  from {1}geo_aiativ      a,
 								   {0}crt_projeto_geo         g,
-								   {0}lov_caracterizacao_tipo lc
+								   {0}lov_caracterizacao_tipo lc,
+								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
 							   and a.projeto = g.id
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
-							   and g.caracterizacao = :caracterizacao) tab", EsquemaBanco, EsquemaBancoGeo);
+							   and g.caracterizacao = :caracterizacao
+							   and lv.chave (+)= a.tipo_exploracao) tab", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("caracterizacao", (int)eCaracterizacao.ExploracaoFlorestal, DbType.Int32);
@@ -736,6 +801,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						exploracao.GeometriaTipoTexto = _caracterizacaoConfig.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoGeometriaTipo).
 									SingleOrDefault(x => x.Id == (exploracao.GeometriaTipoId).ToString()).Texto;
 
+						if(!Convert.IsDBNull(reader["codigo_exploracao"]))
+							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
+						else
+							caracterizacao.CodigoExploracao = 1;
+						if(!Convert.IsDBNull(reader["tipo_exploracao"]))
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
+						if(!Convert.IsDBNull(reader["data"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
 						caracterizacao.Exploracoes.Add(exploracao);
 					}
 
@@ -746,6 +819,110 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 
 			return caracterizacao;
+		}
+
+		internal int ObterCodigoExploracao(int tipoExploracao, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+								select max(c.codigo_exploracao) from crt_exploracao_florestal c
+							   where c.tipo_exploracao = :tipo_exploracao", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("tipo_exploracao", tipoExploracao, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando);
+			}
+		}
+
+		public Resultados<ExploracaoFlorestal> Filtrar(Filtro<ListarExploracaoFlorestalFiltro> filtros, BancoDeDados banco = null)
+		{
+			var lista = new Resultados<ExploracaoFlorestal>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+
+				string comandtxt = string.Empty;
+				Comando comando = bancoDeDados.CriarComando("");
+
+				#region Adicionando Filtros
+
+				if (filtros.Dados.EmpreendimentoId > 0)
+					comandtxt += comando.FiltroAnd("c.empreendimento", "empreendimento", filtros.Dados.EmpreendimentoId);
+
+				if (filtros.Dados.TipoAtividade != null)
+					comandtxt += comando.FiltroAndLike("lv.chave", "tipo_atividade", filtros.Dados.TipoAtividade, true);
+
+				if (filtros.Dados.CodigoExploracao != null)
+					comandtxt += comando.FiltroAnd("c.codigo_exploracao", "codigo_exploracao", filtros.Dados.CodigoExploracao);
+
+				if (!string.IsNullOrWhiteSpace(filtros.Dados.DataExploracao))
+					comandtxt += comando.FiltroAnd("c.data_cadastro", "data_cadastro", filtros.Dados.DataExploracao);
+
+				#endregion
+
+				#region Ordenação
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "tipo_atividade", "codigo_exploracao", "data_cadastro" };
+
+				if (filtros.OdenarPor > 0)
+					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+				else
+					ordenar.Add("tipo_atividade");
+				#endregion Ordenação
+
+				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_atividade,
+						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
+						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
+						from crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade) where 1=1 " + comandtxt + ") consulta", (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				lista.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtros.Menor);
+				comando.AdicionarParametroEntrada("maior", filtros.Maior);
+
+				#region QUERY
+
+				comandtxt = String.Format(@"select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_atividade,
+						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
+						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
+						from crt_exploracao_florestal c
+						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade) where 1=1 " + comandtxt +
+						Blocos.Etx.ModuloCore.Data.DaHelper.Ordenar(colunas, ordenar, filtros.OdenarPor == 0), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var caracterizacao = new ExploracaoFlorestal
+						{
+							Id = reader.GetValue<int>("id"),
+							EmpreendimentoId = reader.GetValue<int>("empreendimento"),
+							CodigoExploracaoTexto = reader.GetValue<string>("codigo_exploracao_texto"),
+							TipoAtividadeTexto = reader.GetValue<string>("tipo_atividade"),
+							Localizador = reader.GetValue<string>("localizador")							
+						};
+
+						if (!Convert.IsDBNull(reader["codigo_exploracao"]))
+							caracterizacao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
+						if (!Convert.IsDBNull(reader["tipo_exploracao"]))
+							caracterizacao.TipoAtividade = Convert.ToInt32(reader["tipo_exploracao"]);
+						if (!Convert.IsDBNull(reader["data_cadastro"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+
+						lista.Itens.Add(caracterizacao);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return lista;
 		}
 
 		#endregion

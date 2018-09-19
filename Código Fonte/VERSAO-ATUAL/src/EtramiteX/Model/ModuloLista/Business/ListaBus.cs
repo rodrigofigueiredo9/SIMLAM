@@ -436,6 +436,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyExploracaoFlorestalExploracao); }
 		}
 
+		public List<Lista> TipoExploracaoFlorestal
+		{
+			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyTipoExploracaoFlorestal); }
+		}
+
 		#endregion
 
 		#region Queima Controlada

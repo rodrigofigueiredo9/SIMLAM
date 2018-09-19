@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -143,6 +144,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return caracterizacao;
 		}
 
+		public IEnumerable<ExploracaoFlorestal> ObterPorEmpreendimentoList(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		{
+			IEnumerable<ExploracaoFlorestal> exploracaoFlorestalList = null;
+
+			try
+			{
+				exploracaoFlorestalList = _da.ObterPorEmpreendimentoList(empreendimento, simplificado: simplificado);
+				foreach(var exploracao in exploracaoFlorestalList)
+					exploracao.Dependencias = _busCaracterizacao.ObterDependencias(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return exploracaoFlorestalList;
+		}
+
 		public ExploracaoFlorestal ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
 			try
@@ -207,11 +226,50 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			throw new NotImplementedException();
 		}
 
+		public Resultados<ExploracaoFlorestal> Filtrar(ListarExploracaoFlorestalFiltro filtrosListar, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<ListarExploracaoFlorestalFiltro> filtro = new Filtro<ListarExploracaoFlorestalFiltro>(filtrosListar, paginacao);
+				Resultados<ExploracaoFlorestal> resultados = _da.Filtrar(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		#endregion
 
 		public bool CopiarDadosCredenciado(Dependencia caracterizacao, int empreendimentoInternoId, BancoDeDados bancoDeDados, BancoDeDados bancoCredenciado = null)
 		{
 			throw new NotImplementedException();
+		}
+
+		public int ObterCodigoExploracao(int tipoExploracao, BancoDeDados bancoDeDados = null)
+		{
+			var codigoExploracao = 0;
+
+			try
+			{
+				codigoExploracao = _da.ObterCodigoExploracao(tipoExploracao, bancoDeDados);
+				codigoExploracao++;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return codigoExploracao;
 		}
 	}
 }

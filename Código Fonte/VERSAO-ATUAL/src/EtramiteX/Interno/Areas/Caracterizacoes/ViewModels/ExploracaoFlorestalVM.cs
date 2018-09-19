@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -50,11 +51,18 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _exploracaoFlorestalExploracaoVM = value; }
 		}
 
-		private List<FinalidadeExploracao> _finalidades = new List<FinalidadeExploracao>();
-		public List<FinalidadeExploracao> Finalidades
+		private List<SelectListItem> _tipoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> TipoExploracao
 		{
-			get { return _finalidades; }
-			set { _finalidades = value; }
+			get { return _tipoExploracao; }
+			set { _tipoExploracao = value; }
+		}
+
+		private List<SelectListItem> _codigoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> CodigoExploracao
+		{
+			get { return _codigoExploracao; }
+			set { _codigoExploracao = value; }
 		}
 
 		public String Mensagens
@@ -63,28 +71,32 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			{
 				return ViewModelHelper.Json(new
 				{
-					@FinalidadeExploracaoEspecificarObrigatorio = Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio
+					@FinalidadeExploracaoEspecificarObrigatorio = Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio("")
 				});
 			}
 		}
 
-		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais, List<Lista> exploracaoTipos, List<Lista> produtos, bool isVisualizar = false)
+		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais,
+			List<Lista> exploracaoTipos, List<Lista> produtos, List<Lista> tipoExploracao, bool isVisualizar = false)
 		{
-			// passa o item "Outros" para a ultiam posição
-			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Texto == "Outros");
-			if (finalidade != null)
-			{
-				finalidades.Remove(finalidade);
-				finalidades.Add(finalidade);
-			}
-
-			Finalidades = finalidades;
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
+			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoAtividade.ToString());
+
+			var codigoExploracao = new List<Lista>();
+			if (caracterizacao.CodigoExploracao > 0)
+			{
+				codigoExploracao = new List<Lista>() {
+				new Lista(){
+					Id = caracterizacao.CodigoExploracao.ToString(),
+					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoAtividade.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
+				};
+			}
+			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{
-				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(exploracaoTipos, classificacoesVegetais, produtos, exploracao, isVisualizar);
+				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(finalidades, exploracaoTipos, classificacoesVegetais, produtos, exploracao, isVisualizar);
 				ExploracaoFlorestalExploracaoVM.Add(exploracaoVM);
 			}
 		}
