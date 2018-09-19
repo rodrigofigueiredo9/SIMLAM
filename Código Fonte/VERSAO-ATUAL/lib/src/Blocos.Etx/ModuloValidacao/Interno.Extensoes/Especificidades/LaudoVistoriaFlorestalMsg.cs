@@ -22,6 +22,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem ConsideracoesObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Consideracao", Texto = "Considerações é obrigatório." }; } }
 		public Mensagem ParecerTecnicoDescricaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_ParecerDescricao", Texto = "Descrição do Parecer técnico é obrigatório." }; } }
 		public Mensagem ConclusaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Conclusao", Texto = "Conclusão é obrigatória." }; } }
+		public Mensagem CaracterizacaoDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Caracterizacao", Texto = "A caraterização selecionada já foi adicionada ao título." }; } }
 
 		public Mensagem CaracterizacaoInvalida(string caracterizacao)
 		{

@@ -376,6 +376,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return caracterizacao;
 		}
 
+		internal IEnumerable<ExploracaoFlorestal> ObterPorEmpreendimentoList(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		{
+			var exploracaoFlorestalList = new List<ExploracaoFlorestal>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento", EsquemaBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						int valor = Convert.ToInt32(reader["id"]);
+						var exploracao = Obter(valor, bancoDeDados, simplificado);
+						exploracaoFlorestalList.Add(exploracao);
+					}
+				}
+			}
+
+			return exploracaoFlorestalList;
+		}
+
 		internal ExploracaoFlorestal Obter(int id, BancoDeDados banco = null, string tid = null, bool simplificado = false)
 		{
 			ExploracaoFlorestal caracterizacao = new ExploracaoFlorestal();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
@@ -180,10 +181,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			var busExploracao = new ExploracaoFlorestalBus();
-			var exploracao = busExploracao.ObterPorEmpreendimento(especificidade.EmpreendimentoId, true);
-			var exploracoesLst = new List<Lista>();
-			if (exploracao.Id > 0)
-				exploracoesLst.Add(new Lista() { Id = exploracao.Id.ToString(), Texto = exploracao.CodigoExploracaoTexto, IsAtivo = true });
+			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(especificidade.EmpreendimentoId, true)?.ToList();
 
 			vm = new LaudoVistoriaFlorestalVM(
 				laudo,
@@ -197,11 +195,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				especificidade.AtividadeProcDocReqKey,
 				especificidade.IsVisualizar);
 
-			vm.ExploracaoFlorestal = new List<ExploracaoFlorestal>() { exploracao };
+			vm.ExploracaoFlorestal = exploracoesLst;
+
 			if (especificidade.TituloId > 0)
-			{
 				vm.Atividades.Atividades = titulo.Atividades;
-			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
 
@@ -653,16 +650,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			var laudoBus = new LaudoVistoriaFlorestalBus();
 			var busExploracao = new ExploracaoFlorestalBus();
-			var exploracao = busExploracao.ObterPorEmpreendimento(empreendimento);
-			var exploracoesLst = new List<CaracterizacaoLst>();
-			if(exploracao.Id > 0)
-				exploracoesLst.Add(new CaracterizacaoLst() { Id = exploracao.Id, Texto = exploracao.CodigoExploracaoTexto ?? "", IsAtivo = true });
+			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(empreendimento);
+			var caracterizacaoLst = exploracoesLst.Select(x => new CaracterizacaoLst {
+				Id = x.Id,
+				Texto = x.CodigoExploracaoTexto ?? "",
+				ParecerFavoravel = x.Exploracoes.Exists(y => y.ParecerFavoravel == true),
+				IsAtivo = true
+			});
 
 			return Json(new
 			{
 				@Destinatarios = _busTitulo.ObterDestinatarios(id),
 				@ResponsaveisTecnico = _protocoloBus.ObterResponsaveisTecnicos(id),
-				@Caracterizacoes = exploracoesLst
+				@Caracterizacoes = caracterizacaoLst
 			}, JsonRequestBehavior.AllowGet);
 		}
 

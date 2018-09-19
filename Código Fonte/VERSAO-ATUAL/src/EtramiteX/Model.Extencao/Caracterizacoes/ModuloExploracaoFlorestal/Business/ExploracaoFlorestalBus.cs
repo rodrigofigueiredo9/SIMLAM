@@ -144,6 +144,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return caracterizacao;
 		}
 
+		public IEnumerable<ExploracaoFlorestal> ObterPorEmpreendimentoList(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		{
+			IEnumerable<ExploracaoFlorestal> exploracaoFlorestalList = null;
+
+			try
+			{
+				exploracaoFlorestalList = _da.ObterPorEmpreendimentoList(empreendimento, simplificado: simplificado);
+				foreach(var exploracao in exploracaoFlorestalList)
+					exploracao.Dependencias = _busCaracterizacao.ObterDependencias(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return exploracaoFlorestalList;
+		}
+
 		public ExploracaoFlorestal ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
 			try

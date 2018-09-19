@@ -25,14 +25,16 @@ ExploracaoFlorestal = {
 		ExploracaoFlorestal.container.delegate('.ddlCodigoExploracao', 'change', ExploracaoFlorestal.onChangeCodigoExploracao);
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
 
-		if (ExploracaoFlorestal.settings.textoMerge) {
-			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoMerge, ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo);
-		}
+		if ($('.hdnIsVisualizar').val() != "True") {
+			if (ExploracaoFlorestal.settings.textoMerge) {
+				ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoMerge, ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo);
+			}
 
-		if (ExploracaoFlorestal.settings.textoAbrirModal) {
-			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração');
+			if (ExploracaoFlorestal.settings.textoAbrirModal) {
+				ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração');
+			}
 		}
-		if ($('.hdnIsVisualizar').val() == "True")
+		else
 			$('.asmConteudoInternoExpander').click();
 	},
 

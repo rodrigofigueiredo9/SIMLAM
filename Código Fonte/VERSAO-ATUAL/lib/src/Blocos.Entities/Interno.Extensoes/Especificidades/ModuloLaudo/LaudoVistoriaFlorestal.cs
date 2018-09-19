@@ -19,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLau
 		public String Consideracao { get; set; }
 		public String Restricao { get; set; }
 		public String ParecerDescricao { get; set; }
+		public String ParecerDescricaoDesfavoravel { get; set; }
 
 		private DateTecno _dataVistoria = new DateTecno();
 		public DateTecno DataVistoria

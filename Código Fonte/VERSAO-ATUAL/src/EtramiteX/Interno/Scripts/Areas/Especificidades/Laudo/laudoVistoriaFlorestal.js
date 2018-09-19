@@ -5,6 +5,7 @@ LaudoVistoriaFlorestal = {
 	container: null,
 	urlEspecificidade: null,
 	urlObterDadosLaudoVistoriaFlorestal: null,
+	Mensagens: null,
 	idsTela: null,
 
 	load: function (especificidadeRef) {
@@ -14,6 +15,9 @@ LaudoVistoriaFlorestal = {
 		LaudoVistoriaFlorestal.container.find('.fsArquivos').arquivo({ extPermitidas: ['jpg', 'gif', 'png', 'bmp'] });
 
 		LaudoVistoriaFlorestal.container.delegate('.ddlEspecificidadeConclusoes', 'change', LaudoVistoriaFlorestal.changeDdlEspecificidadeConclusoes);
+		LaudoVistoriaFlorestal.container.delegate('.btnAddCaracterizacao', 'click', LaudoVistoriaFlorestal.adicionarCaracterizacao);
+		LaudoVistoriaFlorestal.container.delegate('.btnExcluirExploracao', 'click', LaudoVistoriaFlorestal.excluirCaracterizacao);
+
 		LaudoVistoriaFlorestal.gerenciarCampos();
 	},
 
@@ -72,7 +76,14 @@ LaudoVistoriaFlorestal = {
 					$('.ddlDestinatarios', LaudoVistoriaFlorestal.container).ddlLoad(response.Destinatarios);
 				}
 				if (response.Caracterizacoes) {
-					$('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).ddlLoad(response.Caracterizacoes);
+					var dropDown = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container);
+					dropDown.find('option').remove();
+					dropDown.append('<option value="">*** Selecione ***</option>');					
+					$.each(response.Caracterizacoes, function () {
+						dropDown.append('<option value="' + this.Id + '" parecerfavoravel="' + (this.ParecerFavoravel ? 'true' : 'false') + '">' + this.Texto + '</option>');
+					});
+
+					dropDown.val(0);
 				}
 
 				if (response.ResponsaveisTecnico) {
@@ -86,6 +97,66 @@ LaudoVistoriaFlorestal = {
 		var anexos = new Array();
 		anexos = LaudoVistoriaFlorestal.container.find('.fsArquivos').arquivo('obterObjeto');
 		return anexos;
+	},
+
+	publicarMensagem: function (mensagens) {
+		if (mensagens.length > 0) {
+			Mensagem.gerar(LaudoVistoriaFlorestal.container, mensagens)
+			return true;
+		}
+		return false;
+	},
+
+	adicionarCaracterizacao: function () {
+		Mensagem.limpar(LaudoVistoriaFlorestal.container);
+		var mensagens = new Array(); 
+		var tabela = $('.tabCaracterizacao tbody tr', LaudoVistoriaFlorestal.container);
+
+		var id = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).val();
+		var descricao = $('.ddlCaracterizacoes option:selected', LaudoVistoriaFlorestal.container).html(); 
+		var parecerFavoravel = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).attr('parecerfavoravel');
+
+		$(tabela).each(function (i, cod) {			
+			if ($('.exploracaoId', cod).val() == id) {
+				mensagens.push(LaudoVistoriaFlorestal.Mensagens.CaracterizacaoDuplicada);
+			}
+		});
+		
+		if (LaudoVistoriaFlorestal.publicarMensagem(mensagens)) {
+			return false;
+		}
+
+		//monta o objeto 
+		var objeto = {
+			Id: id,
+			CodigoExploracaoTexto: descricao,
+			ParecerFavoravel: parecerFavoravel
+		};
+
+		var linha = '';
+		linha = $('.trTemplateRow', LaudoVistoriaFlorestal.container).clone();
+
+		linha.find('.hdnItemJSon').val(JSON.stringify(objeto));
+		linha.find('.descricao').text(descricao);
+		linha.find('.descricao').attr('title', descricao);
+		linha.find('.exploracaoId').val(id);
+		linha.find('.parecerFavoravel').val(parecerFavoravel);
+
+		linha.removeClass('trTemplateRow hide');
+		$('.tabCaracterizacao > tbody:last', LaudoVistoriaFlorestal.container).append(linha);
+
+		Listar.atualizarEstiloTable($('.tabCaracterizacao', LaudoVistoriaFlorestal.container));
+
+		//limpa os campos de texto 
+		$('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).val('');
+	},
+
+	excluirCaracterizacao: function () {
+		$(this).closest('tr').remove();
+	},
+
+	gerenciarVisibilidadeDescricaoTecnica: function () {
+
 	}
 };
 
