@@ -1788,71 +1788,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			#region Buscar dominialdiade para ARL_...
 
-			//var dominioId = 0;
-			//var dominioTid = string.Empty;
-
-			//using (
-			//	var cmd =
-			//		new OracleCommand(
-			//			"SELECT dominialidade_dominio_id,tid FROM " + schema +
-			//			".HST_CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade_id = :dominialidade_id AND dominialidade_tid = :dominialidade_tid",
-			//			conn))
-			//{
-			//	cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-			//	cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
-
-			//	using (var dr = cmd.ExecuteReader())
-			//	{
-			//		while (dr.Read())
-			//		{
-			//			dominioId = Convert.ToInt32(dr["dominialidade_dominio_id"]);
-			//			dominioTid = Convert.ToString(dr["tid"]);
-			//		}
-			//	}
-			//}
-
-			//var identificacaoReserva = new List<Tuple<int, string>>();
-
-			//using (
-			//	var cmd =
-			//		new OracleCommand(
-			//			"SELECT identificacao,situacao_id FROM " + schema +
-			//			".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid AND t.situacao_id IN (2,3)", conn))
-			//{
-			//	cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
-			//	cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
-
-			//	using (var dr = cmd.ExecuteReader())  
-			//	{
-			//		while (dr.Read())
-			//		{
-			//			identificacaoReserva.Add(new Tuple<int, string>(Convert.ToInt32(dr["situacao_id"]), Convert.ToString(dr["identificacao"])));
-			//		}
-			//	}
-			//}
-
-
-			var identificacaoReserva = new List<Tuple<int, string>>();
-
-			using (
-				var cmd =
-					new OracleCommand(
-						"SELECT identificacao,situacao_id FROM " + schema +
-						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.situacao_id IN (2,3) and (t.dominio_id, t.dominio_tid) in (SELECT dominialidade_dominio_id,tid FROM " + schema +
-						".HST_CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade_id = :dominialidade_id AND dominialidade_tid = :dominialidade_tid)", conn))
-			{
-				cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-				cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
-
-				using (var dr = cmd.ExecuteReader())
-				{
-					while (dr.Read())
-					{
-						identificacaoReserva.Add(new Tuple<int, string>(Convert.ToInt32(dr["situacao_id"]), Convert.ToString(dr["identificacao"])));
-					}
-				}
-			}
-
+			var identificacaoReserva = ObterIdentificacaoReserva(conn, schema, dominialidadeId, dominialidadeTid);
 
 			#endregion
 
@@ -2544,6 +2480,52 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
             return geometrias;
         }
+
+		private static List<Tuple<int, string>> ObterIdentificacaoReserva(OracleConnection conn, string schema, int dominialidadeId, string dominialidadeTid)
+		{
+			var identificacaoReserva = ObterIdentificacaoReservaConsulta(conn, schema, dominialidadeId, dominialidadeTid);
+
+			if (identificacaoReserva.Count > 0)
+				return identificacaoReserva;
+			else
+			{
+				var outroSchema = (schema == CarUtils.GetEsquemaInstitucional()) ? CarUtils.GetEsquemaCredenciado() : CarUtils.GetEsquemaInstitucional();
+				var instancia = (schema == CarUtils.GetEsquemaInstitucional()) ? CarUtils.GetBancoCredenciado() : CarUtils.GetBancoInstitucional();
+				var outroConn = new OracleConnection(instancia);
+				
+				outroConn.Open();
+
+				identificacaoReserva = ObterIdentificacaoReservaConsulta(outroConn, outroSchema, dominialidadeId, dominialidadeTid);
+			}
+
+			return identificacaoReserva;
+		}
+
+		public static List<Tuple<int, string>> ObterIdentificacaoReservaConsulta(OracleConnection conn, string schema, int dominialidadeId, string dominialidadeTid)
+		{
+			var identificacaoReserva = new List<Tuple<int, string>>();
+
+			using (var cmd =
+						new OracleCommand(@"SELECT identificacao,situacao_id FROM " + schema + @".HST_CRT_DOMINIALIDADE_RESERVA t 
+							WHERE t.situacao_id IN (2,3) and (t.dominio_id, t.dominio_tid) in ( SELECT dominialidade_dominio_id,tid 
+							FROM " + schema + @".HST_CRT_DOMINIALIDADE_DOMINIO t 
+							WHERE t.dominialidade_id = :dominialidade_id AND dominialidade_tid = :dominialidade_tid)
+							", conn))
+			{
+				cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+				cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+				using (var dr = cmd.ExecuteReader())
+				{
+					while (dr.Read())
+					{
+						identificacaoReserva.Add(new Tuple<int, string>(Convert.ToInt32(dr["situacao_id"]), Convert.ToString(dr["identificacao"])));
+					}
+				}
+			}
+
+			return identificacaoReserva;
+		}
 #endregion
 
 		/// <summary>
