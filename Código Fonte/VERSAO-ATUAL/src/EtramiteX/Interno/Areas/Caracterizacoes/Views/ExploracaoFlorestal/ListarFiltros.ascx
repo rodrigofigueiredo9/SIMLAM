@@ -11,15 +11,18 @@
 		<input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
 		<%= Html.Hidden("UrlFiltrar", Url.Action("Filtrar"), new { @class = "urlFiltrar" })%>
 		<%= Html.Hidden("UrlVisualizar", Url.Action("VisualizarExploracaoFlorestal"), new { @class = "urlVisualizar" })%>
+		<%= Html.Hidden("UrlEditar", Url.Action("Editar"), new { @class = "urlEditar" })%>
+		<%= Html.Hidden("UrlExcluir", Url.Action("Excluir"), new { @class = "urlExcluir" })%>
+		<%= Html.Hidden("UrlExcluirConfirm", Url.Action("ExcluirConfirm"), new { @class = "urlExcluirConfirm" })%>
 		<%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>
 		<%= Html.Hidden("Paginacao.OrdenarPor", "0", new { @class = "ordenarPor" })%>
 
 		<div class="coluna98">
 			<div class="block fixado">
 				<div class="coluna15">
-					<label for="Filtros_TipoAtividade">Tipo de Atividade</label>
+					<label for="Filtros_TipoExploracao">Tipo de Exploração</label>
 					<%= Html.Hidden("Filtros.EmpreendimentoId", Model.Filtros.EmpreendimentoId, new { @class = "hdnEmpreendimento" })%>
-					<%= Html.TextBox("Filtros.TipoAtividade", null, new { @class = "text txtTipoAtividade setarFoco", @maxlength = "3" })%>
+					<%= Html.TextBox("Filtros.TipoExploracao", null, new { @class = "text txtTipoExploracao setarFoco", @maxlength = "3" })%>
 				</div>
 				<div class="coluna15 prepend2">
 					<label for="Filtros_CodigoExploracao">Código Exploração</label>

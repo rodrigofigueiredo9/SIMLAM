@@ -26,7 +26,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId)) return false;
 
-			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true) ?? new ExploracaoFlorestal()).Id > 0)
+			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true, caracterizacao.TipoExploracao) ?? new ExploracaoFlorestal()).Id > 0)
 			{
 				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
 				return false;
@@ -34,7 +34,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 			if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
 						
-			if (caracterizacao.TipoAtividade <= 0)
+			if (caracterizacao.TipoExploracao <= 0)
 				Validacao.Add(Mensagem.ExploracaoFlorestal.ExploracaoTipoObrigatorio);
 
 			foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
@@ -147,14 +147,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
-		public string AbrirModalAcessar(ExploracaoFlorestal caracterizacao)
+		public string AbrirModalAcessar(int empreendimentoId)
 		{
-			EmpreendimentoCaracterizacao empreendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			EmpreendimentoCaracterizacao empreendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(empreendimentoId);
 
 			if (empreendimento.ZonaLocalizacao == eZonaLocalizacao.Rural)
 			{
 				DominialidadeDa dominialidadeDa = new DominialidadeDa();
-				Dominialidade dominialidade = dominialidadeDa.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId);
+				Dominialidade dominialidade = dominialidadeDa.ObterPorEmpreendimento(empreendimentoId);
 
 				foreach (Dominio dominio in dominialidade.Dominios)
 				{

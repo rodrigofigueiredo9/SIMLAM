@@ -14,28 +14,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 	public class ExploracaoFlorestalVM
 	{
 		public Boolean IsVisualizar { get; set; }
-		public String TextoAbrirModal { get; set; }
-		public String TextoMerge { get; set; }
-		public String AtualizarDependenciasModalTitulo { get; set; }
-		public Int32? FinalidadeExploracao { get; set; }
 
-		public String IdsTela
-		{
-			get
-			{
-				return ViewModelHelper.Json(new
-				{
-					@GeometriaTipoPonto = eExploracaoFlorestalGeometria.Ponto,
-					@ProdutoLenha = eProduto.Lenha,
-					@ProdutoToras = eProduto.Toras,
-					@ProdutoToretes = eProduto.Toretes,
-					@ProdutoMouroesEstacas = eProduto.MouroesEstacas,
-					@ProdutoEscoras = eProduto.Escoras,
-					@ProdutoPalmito = eProduto.Palmito,
-					@ProdutoSemRendimento = eProduto.SemRendimento
-				});
-			}
-		}
+		public Int32? FinalidadeExploracao { get; set; }
 
 		private ExploracaoFlorestal _caracterizacao = new ExploracaoFlorestal();
 		public ExploracaoFlorestal Caracterizacao
@@ -65,13 +45,20 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _codigoExploracao = value; }
 		}
 
-		public String Mensagens
+		public String IdsTela
 		{
 			get
 			{
 				return ViewModelHelper.Json(new
 				{
-					@FinalidadeExploracaoEspecificarObrigatorio = Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio("")
+					@GeometriaTipoPonto = eExploracaoFlorestalGeometria.Ponto,
+					@ProdutoLenha = eProduto.Lenha,
+					@ProdutoToras = eProduto.Toras,
+					@ProdutoToretes = eProduto.Toretes,
+					@ProdutoMouroesEstacas = eProduto.MouroesEstacas,
+					@ProdutoEscoras = eProduto.Escoras,
+					@ProdutoPalmito = eProduto.Palmito,
+					@ProdutoSemRendimento = eProduto.SemRendimento
 				});
 			}
 		}
@@ -81,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		{
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
-			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoAtividade.ToString());
+			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
 
 			var codigoExploracao = new List<Lista>();
 			if (caracterizacao.CodigoExploracao > 0)
@@ -89,7 +76,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				codigoExploracao = new List<Lista>() {
 				new Lista(){
 					Id = caracterizacao.CodigoExploracao.ToString(),
-					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoAtividade.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
+					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoExploracao.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
 				};
 			}
 			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
