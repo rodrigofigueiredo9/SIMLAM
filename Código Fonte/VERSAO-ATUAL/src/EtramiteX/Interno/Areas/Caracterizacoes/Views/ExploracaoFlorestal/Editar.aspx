@@ -31,7 +31,7 @@
 
 		<div class="block box">
 			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
-			<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.ExploracaoFlorestalVM.FirstOrDefault().Caracterizacao.EmpreendimentoId}) %>">Cancelar</a></span>
+			<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.ExploracaoFlorestalVM.Count > 0 ? Model.ExploracaoFlorestalVM.FirstOrDefault().Caracterizacao.EmpreendimentoId : 0 }) %>">Cancelar</a></span>
 		</div>
 	</div>
 </asp:Content>

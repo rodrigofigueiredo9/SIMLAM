@@ -6,12 +6,20 @@ alter table IDAF.CRT_EXP_FLORESTAL_EXPLORACAO modify EXPLORACAO_TIPO NULL;
 
 --ALTER TABLE CRT_EXP_FLORESTAL_EXPLORACAO
 alter table IDAF.crt_exp_florestal_exploracao add finalidade numeric(38,0);
-alter table IDAF.crt_exp_florestal_exploracao add parecer_favoravel numeric(1,0) default 0 not null;
+alter table IDAF.crt_exp_florestal_exploracao add parecer_favoravel numeric(1,0) null;
 alter table IDAF.crt_exp_florestal_exploracao add finalidade_outros	VARCHAR2(80 BYTE);
 update IDAF.crt_exp_florestal_exploracao ef set ef.finalidade = (select e.finalidade from CRT_EXPLORACAO_FLORESTAL e 
 where e.id = ef.exploracao_florestal),
 ef.finalidade_outros = (select e.finalidade_outros from CRT_EXPLORACAO_FLORESTAL e 
 where e.id = ef.exploracao_florestal);
+
+alter table CRT_EXPLORACAO_FLORESTAL drop constraint UK_CRT_EXPLORACAO_FLORESTAL;
+  
+alter table CRT_EXPLORACAO_FLORESTAL  add CONSTRAINT "UK_CRT_EXPLORACAO_FLORESTAL" UNIQUE ("EMPREENDIMENTO", "TIPO_EXPLORACAO")
+USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+TABLESPACE "IDAF_TBS"  ENABLE;
 
 
 --ALTER TABLE CRT_EXP_FLORESTAL_PRODUTO

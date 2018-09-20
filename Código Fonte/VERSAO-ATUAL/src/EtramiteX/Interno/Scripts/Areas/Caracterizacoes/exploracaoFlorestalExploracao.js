@@ -194,12 +194,18 @@ ExploracaoFlorestalExploracao = {
 		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 	},
 
-	obter: function () {
+	obter: function (container) {
+		if (!container)
+			container = ExploracaoFlorestalExploracao.container;
 		var exploracoes = [];
-		$('.divExploracaoFlorestalExploracao', ExploracaoFlorestalExploracao.container).each(function () {
+		$('.divExploracaoFlorestalExploracao', container).each(function () {
+			var parecerFavoravel = null;
+			if (Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked).length > 0)
+				parecerFavoravel = Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked)[0].value > 0;
+
 		    var objeto = {
 		        Id: $('.hdnExploracaoId', this).val(),
-				ParecerFavoravel: Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked)[0].value > 0,
+				ParecerFavoravel: parecerFavoravel,
 		        Identificacao: $('.txtIdentificacao', this).val(),
 		        GeometriaTipoId: Number($('.hdnGeometriaId', this).val()),
 		        ClassificacaoVegetacaoId: $('.ddlClassificacoesVegetais', this).val(),

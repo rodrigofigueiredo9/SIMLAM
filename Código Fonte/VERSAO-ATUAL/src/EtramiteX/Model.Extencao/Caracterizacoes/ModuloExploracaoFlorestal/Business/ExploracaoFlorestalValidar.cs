@@ -26,7 +26,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId)) return false;
 
-			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true) ?? new ExploracaoFlorestal()).Id > 0)
+			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true, caracterizacao.TipoExploracao) ?? new ExploracaoFlorestal()).Id > 0)
 			{
 				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
 				return false;
@@ -34,7 +34,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 			if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
 						
-			if (caracterizacao.TipoAtividade <= 0)
+			if (caracterizacao.TipoExploracao <= 0)
 				Validacao.Add(Mensagem.ExploracaoFlorestal.ExploracaoTipoObrigatorio);
 
 			foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)

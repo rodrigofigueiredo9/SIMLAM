@@ -11,6 +11,8 @@ ExploracaoFlorestalListar = {
 
 		container.listarAjax();
 		container.delegate('.btnVisualizar', 'click', ExploracaoFlorestalListar.visualizar);
+		container.delegate('.btnEditar', 'click', ExploracaoFlorestalListar.editar);
+		container.delegate('.btnExcluir', 'click', ExploracaoFlorestalListar.excluir);
 
 		Aux.setarFoco(container);
 		ExploracaoFlorestalListar.container = container;
@@ -19,13 +21,27 @@ ExploracaoFlorestalListar = {
 
 	visualizar: function () {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
+		MasterPage.redireciona($('.urlVisualizar', ExploracaoFlorestalListar.container).val() + "/" + itemId);
+	},
 
-		if (ExploracaoFlorestalListar.settings.associarFuncao) {
-			Modal.abrir($('.urlVisualizar', ExploracaoFlorestalListar.container).val() + "/" + itemId, null, function (container) {
-				Modal.defaultButtons(container);
-			});
-		} else {
-			MasterPage.redireciona($('.urlVisualizar', ExploracaoFlorestalListar.container).val() + "/" + itemId);
-		}
+	editar: function () {
+		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
+		MasterPage.redireciona($('.urlEditar', ExploracaoFlorestalListar.container).val() + "/" + itemId);
+	},
+
+	excluir: function () {
+		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
+
+		Modal.excluir({
+			'urlConfirm': $('.urlExcluirConfirm', ExploracaoFlorestalListar.container).val() + "/" + itemId,
+			'urlAcao': $('.urlExcluir', ExploracaoFlorestalListar.container).val() + "/" + itemId,
+			'id': $('.hdnEmpreendimento', ExploracaoFlorestalListar.container).val(),
+			'callBack': ExploracaoFlorestalListar.callBackExcluirCaracterizacao,
+			'naoExecutarUltimaBusca': true
+		});
+	},
+
+	callBackExcluirCaracterizacao: function (data) {
+		MasterPage.redireciona(data.urlRedireciona);
 	}
 }

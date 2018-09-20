@@ -127,6 +127,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#region Obter
 
+		public ExploracaoFlorestal ObterPorId(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+			ExploracaoFlorestal caracterizacao = null;
+
+			try
+			{
+				caracterizacao = _da.Obter(id, banco, simplificado);
+				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
 		public ExploracaoFlorestal ObterPorEmpreendimento(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
 		{
 			ExploracaoFlorestal caracterizacao = null;

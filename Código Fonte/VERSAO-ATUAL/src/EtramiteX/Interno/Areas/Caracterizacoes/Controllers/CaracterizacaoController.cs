@@ -109,9 +109,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeCriar.ToString()) &&
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeEditar.ToString());
 
-				x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+				if (x.Tipo != eCaracterizacao.ExploracaoFlorestal)
+				{
+					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
+				}
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
-				x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
 
                 // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
 				//Caracterizacao cadastrada = cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();

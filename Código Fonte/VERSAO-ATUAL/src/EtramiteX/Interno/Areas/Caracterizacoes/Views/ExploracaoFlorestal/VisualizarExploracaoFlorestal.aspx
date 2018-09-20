@@ -1,5 +1,5 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ExploracaoFlorestalVM>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ExploracaoFlorestalListVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Visualizar Exploração Florestal</asp:Content>
 
@@ -26,7 +26,7 @@
 		</div>
 
 		<div class="block box">
-			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoId}) %>">Cancelar</a></span>
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("Visualizar", new { id = Model.ExploracaoFlorestalVM.FirstOrDefault().Caracterizacao.EmpreendimentoId}) %>">Cancelar</a></span>
 		</div>
 	</div>
 </asp:Content>

@@ -11,7 +11,7 @@
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th width="17%">Tipo de Atividade</th>
+				<th width="17%">Tipo de Exploração</th>
 				<th width="17%">Código Exploração</th>
 				<th width="17%">Data Exploração</th>
 				<th>Localizador</th>
@@ -22,13 +22,15 @@
 		<tbody>
 		<% foreach (var item in Model.Resultados) { %>
 			<tr>
-				<td title="<%= Html.Encode(item.TipoAtividadeTexto)%>"><%= Html.Encode(item.TipoAtividadeTexto)%></td>
+				<td title="<%= Html.Encode(item.TipoExploracaoTexto)%>"><%= Html.Encode(item.TipoExploracaoTexto)%></td>
 				<td title="<%= Html.Encode(item.CodigoExploracaoTexto)%>"><%= Html.Encode(item.CodigoExploracaoTexto)%></td>
 				<td title="<%= Html.Encode(item.DataCadastro.DataTexto)%>" ><%= Html.Encode(item.DataCadastro.DataTexto)%></td>
 				<td title="<%= Html.Encode(item.Localizador)%>"><%= Html.Encode(item.Localizador)%></td>
 				<td>
-					<input type="hidden" value="<%= item.EmpreendimentoId %>" class="itemId" />
+					<input type="hidden" value="<%= item.Id %>" class="itemId" />
 					<%if (Model.PodeVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
+					<% if (Model.PodeEditar) { %><button title="Editar" class="icone editar btnEditar" type="button"></button><% } %>
+					<% if (Model.PodeExcluir) { %><button title="Excluir" class="icone excluir btnExcluir" type="button"></button><% } %>
 				</td>
 			</tr>
 		<% } %>

@@ -12,8 +12,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32 EmpreendimentoId { get; set; }
 		public Int32 CodigoExploracao { get; set; }
 		public String CodigoExploracaoTexto { get; set; }
-		public Int32 TipoAtividade { get; set; }
-		public String TipoAtividadeTexto { get; set; }
+		public Int32 TipoExploracao { get; set; }
+		public String TipoExploracaoTexto { get; set; }
 		public String Localizador { get; set; }
 		public DateTecno DataCadastro { get; set; } = new DateTecno() { Data = DateTime.Now };
 
