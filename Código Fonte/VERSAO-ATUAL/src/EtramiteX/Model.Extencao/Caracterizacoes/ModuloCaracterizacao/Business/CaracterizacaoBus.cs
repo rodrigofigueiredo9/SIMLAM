@@ -114,68 +114,66 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 
 		public bool CopiarDadosCredenciado(int projetoDigitalID, BancoDeDados banco, BancoDeDados bancoCredenciado)
 		{
-			CaractCredBus.CaracterizacaoBus caracCredBus = new CaractCredBus.CaracterizacaoBus();
-			ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
-			int empreendimentoID = projetoDigitalCredenciadoBus.Obter(projetoDigitalID, 0, null, null).EmpreendimentoId ?? 0;
-
-			if (empreendimentoID < 1)
+			try
 			{
-				return false;
-			}
+				CaractCredBus.CaracterizacaoBus caracCredBus = new CaractCredBus.CaracterizacaoBus();
+				ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
+				int empreendimentoID = projetoDigitalCredenciadoBus.Obter(projetoDigitalID, 0, null, null).EmpreendimentoId ?? 0;
 
-			EmpreendimentoCaracterizacao empreendimento = caracCredBus.ObterEmpreendimentoSimplificado(empreendimentoID);
-			ProjetoGeograficoBus projetoGeograficoBus = new ProjetoGeograficoBus();
+				if (empreendimentoID < 1) return false;
 
-			List<Dependencia> dependencias = projetoDigitalCredenciadoBus.ObterDependencias(projetoDigitalID);
-			ICaracterizacaoBus caracterizacaoBus;
-			GerenciadorTransacao.ObterIDAtual();
+				EmpreendimentoCaracterizacao empreendimento = caracCredBus.ObterEmpreendimentoSimplificado(empreendimentoID);
+				ProjetoGeograficoBus projetoGeograficoBus = new ProjetoGeograficoBus();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				bancoDeDados.IniciarTransacao();
+				List<Dependencia> dependencias = projetoDigitalCredenciadoBus.ObterDependencias(projetoDigitalID);
+				ICaracterizacaoBus caracterizacaoBus;
+				GerenciadorTransacao.ObterIDAtual();
 
-				foreach (Dependencia item in dependencias.Where(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico).ToList())
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
-					projetoGeograficoBus.CopiarDadosCredenciado(item, empreendimento.InternoID, bancoDeDados, bancoCredenciado);
+					bancoDeDados.IniciarTransacao();
+
+					foreach (Dependencia item in dependencias.Where(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico).ToList())
+					{
+						projetoGeograficoBus.CopiarDadosCredenciado(item, empreendimento.InternoID, bancoDeDados, bancoCredenciado);
+
+						if (!Validacao.EhValido) break;
+					}
 
 					if (!Validacao.EhValido)
 					{
-						break;
+						bancoDeDados.Rollback();
+						return false;
 					}
-				}
 
-				if (!Validacao.EhValido)
-				{
-					bancoDeDados.Rollback();
-					return false;
-				}
-
-				foreach (Dependencia item in dependencias.Where(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.Caracterizacao).ToList())
-				{
-					caracterizacaoBus = CaracterizacaoBusFactory.Criar((eCaracterizacao)item.DependenciaCaracterizacao);
-
-					if (caracterizacaoBus == null)
+					foreach (Dependencia item in dependencias.Where(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.Caracterizacao).ToList())
 					{
-						Validacao.Add(eTipoMensagem.Erro, item.DependenciaCaracterizacaoTexto + " Bus não criada");
+						caracterizacaoBus = CaracterizacaoBusFactory.Criar((eCaracterizacao)item.DependenciaCaracterizacao);
+
+						if (caracterizacaoBus == null)
+							Validacao.Add(eTipoMensagem.Erro, item.DependenciaCaracterizacaoTexto + " Bus não criada");
+
+						if (!caracterizacaoBus.CopiarDadosCredenciado(item, empreendimento.InternoID, bancoDeDados, bancoCredenciado))
+							break;
 					}
 
-					if (!caracterizacaoBus.CopiarDadosCredenciado(item, empreendimento.InternoID, bancoDeDados, bancoCredenciado))
+					if (!Validacao.EhValido)
 					{
-						break;
+						bancoDeDados.Rollback();
+						return false;
 					}
+
+					Validacao.Add(Mensagem.ProjetoDigital.CopiarCaracterizacao);
+					bancoDeDados.Commit();
 				}
 
-				if (!Validacao.EhValido)
-				{
-					bancoDeDados.Rollback();
-					return false;
-				}
-
-				Validacao.Add(Mensagem.ProjetoDigital.CopiarCaracterizacao);
-				bancoDeDados.Commit();
+				return true;
 			}
-
-			return true;
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+				return false;
+			}
 		}
 
 		internal void AtualizarDependentes(int dependenciaID, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo eCaracterizacaoDependenciaTipo, string dependenciaTID, BancoDeDados banco)
