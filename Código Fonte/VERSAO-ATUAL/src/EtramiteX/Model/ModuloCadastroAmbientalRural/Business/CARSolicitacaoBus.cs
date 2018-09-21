@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return Validacao.EhValido;
 		}
 
-		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool mostrarMsg = true, int funcionarioId = 0)
+		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool isTitulo = false, int funcionarioId = 0)
 		{
 			try
 			{
@@ -171,7 +171,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
-				if (_validar.AlterarSituacao(entidade, funcionarioId))
+				if (_validar.AlterarSituacao(entidade, funcionarioId, isTitulo))
 				{
 					if (IsCredenciado)
 					{
@@ -197,7 +197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 							}
 					}
 					
-					if (mostrarMsg && Validacao.EhValido)
+					if (!isTitulo && Validacao.EhValido)
 					{
 						int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido) ?
 							(int)eStatusArquivoSICAR.Cancelado :
@@ -543,8 +543,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 			RequestJson requestJson = new RequestJson();
 
-            urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
-            //urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+            //urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
+            urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
 
             var strResposta = requestJson.Executar(urlGerar);
 
@@ -555,8 +555,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return string.Empty;
             }
 
-            return UrlSICAR + resposta["dados"];  // PRODUCAO 
-            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+            //return UrlSICAR + resposta["dados"];  // PRODUCAO 
+            return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
         } 
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)
