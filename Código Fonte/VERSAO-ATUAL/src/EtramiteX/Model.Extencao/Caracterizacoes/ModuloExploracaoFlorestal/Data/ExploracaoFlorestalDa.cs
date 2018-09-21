@@ -875,7 +875,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					comandtxt += comando.FiltroAnd("c.codigo_exploracao", "codigo_exploracao", filtros.Dados.CodigoExploracao);
 
 				if (!string.IsNullOrWhiteSpace(filtros.Dados.DataExploracao))
-					comandtxt += comando.FiltroAnd("c.data_cadastro", "data_cadastro", filtros.Dados.DataExploracao);
+					comandtxt += comando.FiltroAnd("to_char(c.data_cadastro, 'dd/MM/yyyy')", "data_cadastro", filtros.Dados.DataExploracao);
 
 				#endregion
 
