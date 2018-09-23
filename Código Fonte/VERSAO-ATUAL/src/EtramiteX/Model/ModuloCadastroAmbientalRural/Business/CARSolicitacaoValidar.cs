@@ -305,7 +305,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
 			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && situacaoArquivo == eStatusArquivoSICAR.ArquivoEntregue
-				&& (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
+				&& (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR))
 				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
 			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso && situacaoArquivo == eStatusArquivoSICAR.Nulo
@@ -385,7 +385,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 		public bool AlterarSituacaoPorTitulo(CARSolicitacao car)
 		{
-			if (protocoloEmPosse(car.Protocolo.Id.GetValueOrDefault()))
+			if (!protocoloEmPosse(car.Protocolo.Id.GetValueOrDefault()))
 			{
 				Validacao.Add(Mensagem.CARSolicitacao.ProtocoloPosseAlterarSituacao);
 				return false;
