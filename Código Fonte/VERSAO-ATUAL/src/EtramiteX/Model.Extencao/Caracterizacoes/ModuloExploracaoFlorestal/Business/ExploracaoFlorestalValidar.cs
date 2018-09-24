@@ -98,6 +98,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				if (item.ClassificacaoVegetacaoId <= 0)
 					Validacao.Add(Mensagem.ExploracaoFlorestal.ClassificacaoVegetacaoObrigatoria(item.Identificacao));
 
+				if(item.ParecerFavoravel == null)
+					Validacao.Add(Mensagem.ExploracaoFlorestal.ParecerFavoravelObrigatorio(item.Identificacao));
+
 				if (Convert.ToBoolean(item.ParecerFavoravel))
 				{
 					if (item.Produtos.Count == 0)

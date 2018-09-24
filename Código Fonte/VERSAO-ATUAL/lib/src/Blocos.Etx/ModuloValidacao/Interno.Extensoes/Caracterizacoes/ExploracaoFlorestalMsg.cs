@@ -58,6 +58,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = String.Format("ExploracaoFlorestal_ClassificacaoVegetal{0}, #exploracao{0}", identificacao), Texto = @"Classificação da vegetação é obrigatória." };
 		}
 
+		public Mensagem ParecerFavoravelObrigatorio(string identificacao)
+		{
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = String.Format("ExploracaoFlorestal_ParecerFavoravel{0}, #exploracao{0}", identificacao), Texto = @"Parecer favorável/desfavorável é obrigatório." };
+		}
+
 		public Mensagem ProdutoObrigatorio(string identificacao)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "exploracao" + identificacao, Texto = @"Produto é obrigatório" };
