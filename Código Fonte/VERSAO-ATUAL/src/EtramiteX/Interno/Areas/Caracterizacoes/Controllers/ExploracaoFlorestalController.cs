@@ -66,20 +66,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Criar(List<ExploracaoFlorestal> caracterizacao)
 		{
 			int empreendimentoId = 0;
-			foreach (var exploracao in caracterizacao)
-			{
-				string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-					exploracao.EmpreendimentoId,
-					(int)eCaracterizacao.ExploracaoFlorestal,
-					eCaracterizacaoDependenciaTipo.Caracterizacao,
-					exploracao.Dependencias);
+			var exploracao = caracterizacao.FirstOrDefault();
+			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
+				exploracao.EmpreendimentoId,
+				(int)eCaracterizacao.ExploracaoFlorestal,
+				eCaracterizacaoDependenciaTipo.Caracterizacao,
+				exploracao.Dependencias);
 
-				if (!string.IsNullOrEmpty(textoMerge))
-					return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
+			if (!string.IsNullOrEmpty(textoMerge))
+				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
 
-				_bus.Salvar(exploracao);
-				empreendimentoId = exploracao.EmpreendimentoId;
-			}
+			_bus.Salvar(caracterizacao);
+			empreendimentoId = exploracao.EmpreendimentoId;
 
 			return Json(new
 			{
@@ -131,20 +129,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Editar(List<ExploracaoFlorestal> caracterizacao)
 		{
 			int empreendimentoId = 0;
-			foreach (var exploracao in caracterizacao)
-			{
-				string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-					exploracao.EmpreendimentoId,
-					(int)eCaracterizacao.ExploracaoFlorestal,
-					eCaracterizacaoDependenciaTipo.Caracterizacao,
-					exploracao.Dependencias);
+			var exploracao = caracterizacao.FirstOrDefault();
 
-				if (!string.IsNullOrEmpty(textoMerge))
-					return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
+			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
+				exploracao.EmpreendimentoId,
+				(int)eCaracterizacao.ExploracaoFlorestal,
+				eCaracterizacaoDependenciaTipo.Caracterizacao,
+				exploracao.Dependencias);
 
-				_bus.Salvar(exploracao);
-				empreendimentoId = exploracao.EmpreendimentoId;
-			}
+			if (!string.IsNullOrEmpty(textoMerge))
+				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
+
+			_bus.Salvar(caracterizacao);
+			empreendimentoId = exploracao.EmpreendimentoId;
 
 			return Json(new
 			{

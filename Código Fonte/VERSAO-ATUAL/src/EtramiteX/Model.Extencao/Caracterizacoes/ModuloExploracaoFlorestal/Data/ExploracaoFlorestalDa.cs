@@ -299,49 +299,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
-		internal void Excluir(int empreendimento, BancoDeDados banco = null)
+		internal void Excluir(int exploracaoId, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}crt_exploracao_florestal c where c.empreendimento = :empreendimento", EsquemaBanco);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				#region Histórico
 
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-					while (reader.Read())
-					{
-						var id = Convert.ToInt32(reader["id"]);
+				//Atualizar o tid para a nova ação
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_exploracao_florestal c set c.tid = :tid where c.id = :id", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", exploracaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				bancoDeDados.ExecutarNonQuery(comando);
 
-						#region Histórico
+				Historico.Gerar(exploracaoId, eHistoricoArtefatoCaracterizacao.exploracaoflorestal, eHistoricoAcao.excluir, bancoDeDados, null);
 
-						//Atualizar o tid para a nova ação
-						comando = bancoDeDados.CriarComando(@"update {0}crt_exploracao_florestal c set c.tid = :tid where c.id = :id", EsquemaBanco);
-						comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-						bancoDeDados.ExecutarNonQuery(comando);
+				#endregion
 
-						Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.exploracaoflorestal, eHistoricoAcao.excluir, bancoDeDados, null);
+				#region Apaga os dados da caracterização
 
-						#endregion
+				comando = bancoDeDados.CriarComando(@"begin " +
+					"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
+					"delete from {0}crt_exp_florestal_produto r where r.exp_florestal_exploracao in (select d.id from {0}crt_exp_florestal_exploracao d where d.exploracao_florestal = :caracterizacao);" +
+					"delete from {0}crt_exp_florestal_exploracao b where b.exploracao_florestal = :caracterizacao;" +
+					"delete from {0}crt_exploracao_florestal e where e.id = :caracterizacao;" +
+				"end;", EsquemaBanco);
 
-						#region Apaga os dados da caracterização
+				comando.AdicionarParametroEntrada("caracterizacao", exploracaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependente_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependente_caracterizacao", (int)eCaracterizacao.ExploracaoFlorestal, DbType.Int32);
 
-						comando = bancoDeDados.CriarComando(@"begin " +
-							"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
-							"delete from {0}crt_exp_florestal_produto r where r.exp_florestal_exploracao in (select d.id from {0}crt_exp_florestal_exploracao d where d.exploracao_florestal = :caracterizacao);" +
-							"delete from {0}crt_exp_florestal_exploracao b where b.exploracao_florestal = :caracterizacao;" +
-							"delete from {0}crt_exploracao_florestal e where e.id = :caracterizacao;" +
-						"end;", EsquemaBanco);
+				bancoDeDados.ExecutarNonQuery(comando);
 
-						comando.AdicionarParametroEntrada("caracterizacao", id, DbType.Int32);
-						comando.AdicionarParametroEntrada("dependente_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
-						comando.AdicionarParametroEntrada("dependente_caracterizacao", (int)eCaracterizacao.ExploracaoFlorestal, DbType.Int32);
-
-						bancoDeDados.ExecutarNonQuery(comando);
-
-						#endregion
-					}
-				}
+				#endregion
 			}
 		}
 

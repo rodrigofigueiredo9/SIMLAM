@@ -48,11 +48,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#region Comandos DML
 
-		public bool Salvar(ExploracaoFlorestal caracterizacao)
+		public bool Salvar(IEnumerable<ExploracaoFlorestal> exploracoes)
 		{
 			try
 			{
-				if (_validar.Salvar(caracterizacao))
+				if (_validar.Salvar(exploracoes))
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
@@ -60,16 +60,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						bancoDeDados.IniciarTransacao();
 
-						_da.Salvar(caracterizacao, bancoDeDados);
-
-						//Gerencia as dependências da caracterização
-						_busCaracterizacao.Dependencias(new Caracterizacao()
+						foreach (var caracterizacao in exploracoes)
 						{
-							Id = caracterizacao.Id,
-							Tipo = eCaracterizacao.ExploracaoFlorestal,
-							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
-							Dependencias = caracterizacao.Dependencias
-						}, bancoDeDados);
+							_da.Salvar(caracterizacao, bancoDeDados);
+
+							//Gerencia as dependências da caracterização
+							_busCaracterizacao.Dependencias(new Caracterizacao()
+							{
+								Id = caracterizacao.Id,
+								Tipo = eCaracterizacao.ExploracaoFlorestal,
+								DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+								Dependencias = caracterizacao.Dependencias
+							}, bancoDeDados);
+						}
 
 						Validacao.Add(Mensagem.ExploracaoFlorestal.Salvar);
 
@@ -90,14 +93,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			try
 			{
 				if (!_caracterizacaoValidar.Basicas(empreendimento))
-				{
 					return Validacao.EhValido;
-				}
 
 				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(empreendimento, eCaracterizacao.ExploracaoFlorestal))
-				{
 					return Validacao.EhValido;
-				}
 
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -105,9 +104,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				{
 					bancoDeDados.IniciarTransacao();
 
-					_da.Excluir(empreendimento, bancoDeDados);
+					var exploracoes = _da.ObterPorEmpreendimentoList(empreendimento, true);
+					foreach(var exploracao in exploracoes)
+						_da.Excluir(exploracao.Id, bancoDeDados);
 
-					_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal);
+					_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal, bancoDeDados);
 
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 

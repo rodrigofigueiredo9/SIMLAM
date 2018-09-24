@@ -12,7 +12,6 @@ ExploracaoFlorestalListar = {
 		container.listarAjax();
 		container.delegate('.btnVisualizar', 'click', ExploracaoFlorestalListar.visualizar);
 		container.delegate('.btnEditar', 'click', ExploracaoFlorestalListar.editar);
-		container.delegate('.btnExcluir', 'click', ExploracaoFlorestalListar.excluir);
 
 		Aux.setarFoco(container);
 		ExploracaoFlorestalListar.container = container;
