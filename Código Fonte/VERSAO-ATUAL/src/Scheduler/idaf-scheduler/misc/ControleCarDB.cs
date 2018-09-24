@@ -536,8 +536,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("situacao = :situacao,");
 			sqlBuilder.Append("situacao_data = SYSDATE,");
 			sqlBuilder.Append("situacao_anterior = situacao,");
-			sqlBuilder.Append("situacao_anterior_data = situacao_data,");
-			sqlBuilder.Append("motivo = :motivo");
+			sqlBuilder.Append("situacao_anterior_data = situacao_data");
 			sqlBuilder.Append(" WHERE id = :id");
 
 			try
@@ -546,8 +545,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao", situacao));
-					if (situacao == 2 || situacao == 1) cmd.Parameters.Add(new OracleParameter("motivo", " "));
-					if (situacao == 6 || situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
 					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
 					cmd.ExecuteNonQuery();

@@ -1,4 +1,6 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural" %>
 
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<CARSolicitacaoAlterarSituacaoVM>" %>
 
@@ -13,9 +15,12 @@
 				urls: {
 					salvar: '<%= Url.Action("AlterarSituacao", "CARSolicitacao") %>'
 				}
+
 			});
+
+			CARSolicitacaoAlterarSituacao.mensagem = <%=Model.Mensagens %> ;
 		});
-	</script>
+    </script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -51,25 +56,29 @@
 					<%= Html.TextBox("Situacao.DataAtual", Model.Solicitacao.DataSituacao.DataTexto, new { @class = "disabled text txtSituacaoDataAnterior maskData", @disabled="disabled" })%>
 				</div>
 			</div>
-			<div class="block">
-				<div class="coluna20">
-					<label for="Situacao_Nova">Nova situação*</label>
-					<%= Html.DropDownList("Situacao.Nova", Model.Situacoes, new {@class = "text ddlSituacaoNova"}) %>
-				</div>
+			<%if (!Model.isVisualizar)
+			{ %>
+				<div class="block">
+					<div class="coluna20">
+						<label for="Situacao_Nova">Nova situação*</label>
+						<%= Html.DropDownList("Situacao.Nova", Model.Situacoes, new { @class = "text ddlSituacaoNova" }) %>
+					</div>
 
-				<div class="coluna15 prepend1">
-					<label for="Situacao_DataNova">Data da nova situação*</label>
-					<%= Html.TextBox("Situacao.DataNova", DateTime.Now.Date.ToShortDateString(), new { @class = "disabled text txtDataSituacaoNova", @disabled="disabled" })%>
+					<div class="coluna15 prepend1">
+						<label for="Situacao_DataNova">Data da nova situação*</label>
+						<%= Html.TextBox("Situacao.DataNova", DateTime.Now.Date.ToShortDateString(), new { @class = "disabled text txtDataSituacaoNova", @disabled = "disabled" })%>
+					</div>
 				</div>
-			</div>
+			<% } %>
 
-			<div class="ultima divMotivo <%= Model.Solicitacao.SituacaoId == 4? "" : " hide" %> ">
+			<div class="ultima divMotivo">
 				<label for="AlterarSituacao_Motivo">Motivo*</label>
-				<%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.Motivo, new { @class = "media text txtSituacaoMotivo", @maxlength="300"})%>
+				<%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.Motivo, ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "media text txtSituacaoMotivo ", @maxlength="300" }))%>
 			</div>
-
 		</fieldset>
 
+		<%if (!Model.isVisualizar)
+			{ %>
 		<div class="block box botoesSalvarCancelar">
 			<div class="block">
 				<button class="btnSalvar floatLeft" type="button" value="Salvar"><span>Salvar</span></button>
@@ -77,5 +86,6 @@
 
 			</div>
 		</div>
+		<% } %>
 	</div>
 </asp:Content>
