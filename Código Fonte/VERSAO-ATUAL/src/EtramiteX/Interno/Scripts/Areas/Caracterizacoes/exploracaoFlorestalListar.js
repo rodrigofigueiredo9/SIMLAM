@@ -27,21 +27,5 @@ ExploracaoFlorestalListar = {
 	editar: function () {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
 		MasterPage.redireciona($('.urlEditar', ExploracaoFlorestalListar.container).val() + "/" + itemId);
-	},
-
-	excluir: function () {
-		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
-
-		Modal.excluir({
-			'urlConfirm': $('.urlExcluirConfirm', ExploracaoFlorestalListar.container).val(),
-			'urlAcao': $('.urlExcluir', ExploracaoFlorestalListar.container).val(),
-			'id': itemId,
-			'callBack': ExploracaoFlorestalListar.callBackExcluirCaracterizacao,
-			'naoExecutarUltimaBusca': true
-		});
-	},
-
-	callBackExcluirCaracterizacao: function (data) {
-		MasterPage.redireciona(data.urlRedireciona);
 	}
 }
