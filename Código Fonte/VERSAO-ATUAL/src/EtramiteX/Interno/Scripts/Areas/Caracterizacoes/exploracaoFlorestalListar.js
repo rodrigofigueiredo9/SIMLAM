@@ -33,9 +33,9 @@ ExploracaoFlorestalListar = {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
 
 		Modal.excluir({
-			'urlConfirm': $('.urlExcluirConfirm', ExploracaoFlorestalListar.container).val() + "/" + itemId,
-			'urlAcao': $('.urlExcluir', ExploracaoFlorestalListar.container).val() + "/" + itemId,
-			'id': $('.hdnEmpreendimento', ExploracaoFlorestalListar.container).val(),
+			'urlConfirm': $('.urlExcluirConfirm', ExploracaoFlorestalListar.container).val(),
+			'urlAcao': $('.urlExcluir', ExploracaoFlorestalListar.container).val(),
+			'id': itemId,
 			'callBack': ExploracaoFlorestalListar.callBackExcluirCaracterizacao,
 			'naoExecutarUltimaBusca': true
 		});
