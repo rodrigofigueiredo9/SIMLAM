@@ -281,7 +281,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Resultados = resultados.Itens;
 			vm.PodeVisualizar = User.IsInRole(ePermissao.FiscalizacaoVisualizar.ToString());
 			vm.PodeEditar = User.IsInRole(String.Format("{0}Editar", eCaracterizacao.ExploracaoFlorestal.ToString()));
-			vm.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", eCaracterizacao.ExploracaoFlorestal.ToString()));
 
 			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Caracterizacoes/Views/ExploracaoFlorestal/ListarResultados.ascx", vm) }, JsonRequestBehavior.AllowGet);
 		}

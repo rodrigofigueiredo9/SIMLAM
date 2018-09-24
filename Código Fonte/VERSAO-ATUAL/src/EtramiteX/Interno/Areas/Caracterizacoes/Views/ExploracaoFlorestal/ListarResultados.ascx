@@ -30,7 +30,6 @@
 					<input type="hidden" value="<%= item.Id %>" class="itemId" />
 					<%if (Model.PodeVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
 					<% if (Model.PodeEditar) { %><button title="Editar" class="icone editar btnEditar" type="button"></button><% } %>
-					<% if (Model.PodeExcluir) { %><button title="Excluir" class="icone excluir btnExcluir" type="button"></button><% } %>
 				</td>
 			</tr>
 		<% } %>

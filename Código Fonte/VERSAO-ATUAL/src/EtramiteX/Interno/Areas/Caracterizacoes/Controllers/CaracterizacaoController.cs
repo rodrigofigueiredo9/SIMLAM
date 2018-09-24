@@ -110,10 +110,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeEditar.ToString());
 
 				if (x.Tipo != eCaracterizacao.ExploracaoFlorestal)
-				{
 					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
-					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
-				}
+				x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 
                 // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"

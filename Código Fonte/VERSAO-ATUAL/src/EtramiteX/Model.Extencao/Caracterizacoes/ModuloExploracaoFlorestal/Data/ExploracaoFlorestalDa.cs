@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -302,8 +303,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				bancoDeDados.IniciarTransacao();
-
 				Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}crt_exploracao_florestal c where c.empreendimento = :empreendimento", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -343,8 +342,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						#endregion
 					}
 				}
-
-				bancoDeDados.Commit();
 			}
 		}
 
