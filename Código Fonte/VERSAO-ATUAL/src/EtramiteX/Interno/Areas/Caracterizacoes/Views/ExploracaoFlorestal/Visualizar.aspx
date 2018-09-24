@@ -16,5 +16,9 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div id="central">
         <% Html.RenderPartial("ListarFiltros"); %>
+
+		<div class="block box">
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Filtros.EmpreendimentoId }) %>">Cancelar</a></span>
+		</div>
     </div>
 </asp:Content>

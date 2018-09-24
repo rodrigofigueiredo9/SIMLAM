@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -22,104 +23,107 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#endregion
 
-		internal bool Salvar(ExploracaoFlorestal caracterizacao)
+		internal bool Salvar(IEnumerable<ExploracaoFlorestal> exploracoes)
 		{
-			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId)) return false;
-
-			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true, caracterizacao.TipoExploracao) ?? new ExploracaoFlorestal()).Id > 0)
+			foreach (var caracterizacao in exploracoes)
 			{
-				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-				return false;
-			}
+				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId)) return false;
 
-			if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
-						
-			if (caracterizacao.TipoExploracao <= 0)
-				Validacao.Add(Mensagem.ExploracaoFlorestal.ExploracaoTipoObrigatorio);
-
-			foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
-			{
-				if (item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
+				if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true, caracterizacao.TipoExploracao) ?? new ExploracaoFlorestal()).Id > 0)
 				{
-					if (!String.IsNullOrWhiteSpace(item.AreaRequeridaTexto))
-					{
-						if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(item.AreaRequeridaTexto), 7, 2))
-							Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaInvalida(item.Identificacao));
-						else if (item.AreaRequerida <= 0)
-							Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaMaiorZero(item.Identificacao));
-					}
-					else
-						Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaObrigatoria(item.Identificacao));
-
+					Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
+					return false;
 				}
-				else
-				{
-					if (item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto || item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Linha)
-					{
-						#region Arvores Requeridas
 
-						if (!String.IsNullOrWhiteSpace(item.ArvoresRequeridas))
+				if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
+
+				if (caracterizacao.TipoExploracao <= 0)
+					Validacao.Add(Mensagem.ExploracaoFlorestal.ExploracaoTipoObrigatorio);
+
+				foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
+				{
+					if (item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
+					{
+						if (!String.IsNullOrWhiteSpace(item.AreaRequeridaTexto))
 						{
-							if (Convert.ToDecimal(item.ArvoresRequeridas) <= 0)
-								Validacao.Add(Mensagem.ExploracaoFlorestal.ArvoresRequeridasMaiorZero(item.Identificacao));
+							if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(item.AreaRequeridaTexto), 7, 2))
+								Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaInvalida(item.Identificacao));
+							else if (item.AreaRequerida <= 0)
+								Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaMaiorZero(item.Identificacao));
 						}
 						else
-							Validacao.Add(Mensagem.ExploracaoFlorestal.ArvoresRequeridasObrigatoria(item.Identificacao));
+							Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaObrigatoria(item.Identificacao));
 
-						#endregion
-
-						#region Numero de Arvores
-
-						if (!String.IsNullOrWhiteSpace(item.QuantidadeArvores))
-						{
-							bool existeProdutoSemRendimento = item.Produtos.Where(x => x.ProdutoId == (int)eProduto.SemRendimento).ToList().Count() > 0;
-
-							if (!existeProdutoSemRendimento)
-							{
-								if (Convert.ToInt32(item.QuantidadeArvores) <= 0)
-									Validacao.Add(Mensagem.ExploracaoFlorestal.QdeArvoresRequeridasMaiorZero(item.Identificacao));
-							}
-						}
-						else
-							Validacao.Add(Mensagem.ExploracaoFlorestal.QdeArvoresRequeridasObrigatoria(item.Identificacao));
-
-						#endregion
 					}
-				}
-
-				if (item.FinalidadeExploracao <= 0)
-					Validacao.Add(Mensagem.ExploracaoFlorestal.FinalidadeExploracaoObrigatorio);
-				else
-				{
-					if (item.FinalidadeExploracao == (int)eExploracaoFlorestalFinalidade.Outros && String.IsNullOrWhiteSpace(item.FinalidadeEspecificar))
-						Validacao.Add(Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio(item.Identificacao));
-				}
-
-				if (item.ClassificacaoVegetacaoId <= 0)
-					Validacao.Add(Mensagem.ExploracaoFlorestal.ClassificacaoVegetacaoObrigatoria(item.Identificacao));
-
-				if(item.ParecerFavoravel == null)
-					Validacao.Add(Mensagem.ExploracaoFlorestal.ParecerFavoravelObrigatorio(item.Identificacao));
-
-				if (Convert.ToBoolean(item.ParecerFavoravel))
-				{
-					if (item.Produtos.Count == 0)
-						Validacao.Add(Mensagem.ExploracaoFlorestal.ProdutoObrigatorio(item.Identificacao));
 					else
 					{
-						foreach (ExploracaoFlorestalProduto produto in item.Produtos)
+						if (item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto || item.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Linha)
 						{
-							if (produto.ProdutoId == (int)eProduto.SemRendimento) continue;
+							#region Arvores Requeridas
 
-							if (!String.IsNullOrWhiteSpace(produto.Quantidade))
+							if (!String.IsNullOrWhiteSpace(item.ArvoresRequeridas))
 							{
-								if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 7, 2))
-									Validacao.Add(Mensagem.Dominialidade.AreaInvalida("exploracao" + item.Identificacao, "Quantidade"));
-								else if (DecimalEtx.ToDecimalMask(produto.Quantidade).GetValueOrDefault() <= 0)
-									Validacao.Add(Mensagem.Dominialidade.AreaMaiorZero("exploracao" + item.Identificacao, "Quantidade"));
+								if (Convert.ToDecimal(item.ArvoresRequeridas) <= 0)
+									Validacao.Add(Mensagem.ExploracaoFlorestal.ArvoresRequeridasMaiorZero(item.Identificacao));
 							}
 							else
-								Validacao.Add(Mensagem.Dominialidade.AreaObrigatoria("exploracao" + item.Identificacao, "Quantidade"));
+								Validacao.Add(Mensagem.ExploracaoFlorestal.ArvoresRequeridasObrigatoria(item.Identificacao));
+
+							#endregion
+
+							#region Numero de Arvores
+
+							if (!String.IsNullOrWhiteSpace(item.QuantidadeArvores))
+							{
+								bool existeProdutoSemRendimento = item.Produtos.Where(x => x.ProdutoId == (int)eProduto.SemRendimento).ToList().Count() > 0;
+
+								if (!existeProdutoSemRendimento)
+								{
+									if (Convert.ToInt32(item.QuantidadeArvores) <= 0)
+										Validacao.Add(Mensagem.ExploracaoFlorestal.QdeArvoresRequeridasMaiorZero(item.Identificacao));
+								}
+							}
+							else
+								Validacao.Add(Mensagem.ExploracaoFlorestal.QdeArvoresRequeridasObrigatoria(item.Identificacao));
+
+							#endregion
+						}
+					}
+
+					if (item.FinalidadeExploracao <= 0)
+						Validacao.Add(Mensagem.ExploracaoFlorestal.FinalidadeExploracaoObrigatorio);
+					else
+					{
+						if (item.FinalidadeExploracao == (int)eExploracaoFlorestalFinalidade.Outros && String.IsNullOrWhiteSpace(item.FinalidadeEspecificar))
+							Validacao.Add(Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio(item.Identificacao));
+					}
+
+					if (item.ClassificacaoVegetacaoId <= 0)
+						Validacao.Add(Mensagem.ExploracaoFlorestal.ClassificacaoVegetacaoObrigatoria(item.Identificacao));
+
+					if (item.ParecerFavoravel == null)
+						Validacao.Add(Mensagem.ExploracaoFlorestal.ParecerFavoravelObrigatorio(item.Identificacao));
+
+					if (Convert.ToBoolean(item.ParecerFavoravel))
+					{
+						if (item.Produtos.Count == 0)
+							Validacao.Add(Mensagem.ExploracaoFlorestal.ProdutoObrigatorio(item.Identificacao));
+						else
+						{
+							foreach (ExploracaoFlorestalProduto produto in item.Produtos)
+							{
+								if (produto.ProdutoId == (int)eProduto.SemRendimento) continue;
+
+								if (!String.IsNullOrWhiteSpace(produto.Quantidade))
+								{
+									if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 7, 2))
+										Validacao.Add(Mensagem.Dominialidade.AreaInvalida("exploracao" + item.Identificacao, "Quantidade"));
+									else if (DecimalEtx.ToDecimalMask(produto.Quantidade).GetValueOrDefault() <= 0)
+										Validacao.Add(Mensagem.Dominialidade.AreaMaiorZero("exploracao" + item.Identificacao, "Quantidade"));
+								}
+								else
+									Validacao.Add(Mensagem.Dominialidade.AreaObrigatoria("exploracao" + item.Identificacao, "Quantidade"));
+							}
 						}
 					}
 				}
