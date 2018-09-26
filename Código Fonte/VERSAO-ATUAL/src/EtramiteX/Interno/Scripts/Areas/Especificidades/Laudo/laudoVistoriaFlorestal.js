@@ -80,9 +80,10 @@ LaudoVistoriaFlorestal = {
 					dropDown.find('option').remove();
 					dropDown.append('<option value="">*** Selecione ***</option>');					
 					$.each(response.Caracterizacoes, function () {
-						dropDown.append('<option value="' + this.Id + '" parecerfavoravel="' + (this.ParecerFavoravel ? 'true' : 'false') + '">' + this.Texto + '</option>');
+						dropDown.append('<option value="' + this.Id + '" parecerfavoravel="' + this.ParecerFavoravel + '" parecerdesfavoravel="' + this.ParecerDesavoravel + '">' + this.Texto + '</option>');
 					});
-
+					dropDown.removeClass('disabled');
+					dropDown.removeAttr('disabled');
 					dropDown.val(0);
 				}
 
@@ -113,8 +114,10 @@ LaudoVistoriaFlorestal = {
 		var tabela = $('.tabCaracterizacao tbody tr', LaudoVistoriaFlorestal.container);
 
 		var id = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).val();
+		if (id == 0 || id == "") return;
 		var descricao = $('.ddlCaracterizacoes option:selected', LaudoVistoriaFlorestal.container).html(); 
 		var parecerFavoravel = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).attr('parecerfavoravel');
+		var parecerDesfavoravel = $('.ddlCaracterizacoes', LaudoVistoriaFlorestal.container).attr('parecerdesfavoravel');
 
 		$(tabela).each(function (i, cod) {			
 			if ($('.exploracaoId', cod).val() == id) {
@@ -130,7 +133,8 @@ LaudoVistoriaFlorestal = {
 		var objeto = {
 			Id: id,
 			CodigoExploracaoTexto: descricao,
-			ParecerFavoravel: parecerFavoravel
+			ParecerFavoravel: parecerFavoravel,
+			ParecerDesfavoravel: parecerDesfavoravel
 		};
 
 		var linha = '';
@@ -141,6 +145,7 @@ LaudoVistoriaFlorestal = {
 		linha.find('.descricao').attr('title', descricao);
 		linha.find('.exploracaoId').val(id);
 		linha.find('.parecerFavoravel').val(parecerFavoravel);
+		linha.find('.parecerDesfavoravel').val(parecerDesfavoravel);
 
 		linha.removeClass('trTemplateRow hide');
 		$('.tabCaracterizacao > tbody:last', LaudoVistoriaFlorestal.container).append(linha);

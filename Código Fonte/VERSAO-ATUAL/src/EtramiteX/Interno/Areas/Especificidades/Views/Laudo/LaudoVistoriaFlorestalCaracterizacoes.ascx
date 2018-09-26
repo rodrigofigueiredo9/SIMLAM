@@ -19,7 +19,8 @@
                 <td>
 					<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(exploracao)%>' /> 
 					<input type="hidden" value="<%= exploracao.Id %>" class="exploracaoId" /> 
-					<input type="hidden" value="<%= exploracao.Exploracoes.Exists(x => x.ParecerFavoravel == true) %>" class="parecerFavoravel" /> 
+					<input type="hidden" class="parecerFavoravel" value="" /> 
+					<input type="hidden" class="parecerDesfavoravel" value="" /> 
                     <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
                 </td>
             </tr>
@@ -30,6 +31,7 @@
 					<input type="hidden" class="hdnItemJSon" value="" /> 
 					<input type="hidden" class="exploracaoId" value="" /> 
 					<input type="hidden" class="parecerFavoravel" value="" /> 
+					<input type="hidden" class="parecerDesfavoravel" value="" /> 
                     <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
                 </td>
 			</tr>
