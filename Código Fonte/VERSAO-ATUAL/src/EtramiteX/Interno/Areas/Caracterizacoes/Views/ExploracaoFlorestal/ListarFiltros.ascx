@@ -2,7 +2,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExploracaoFlorestal" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
 
-<h2 class="titTela"><%= Model.IsVisualizar ? "Visualizar ": "Editar " %>Exploração Florestal</h2>
+<h2 class="titTela"><%= Model.Filtros.IsVisualizar ? "Visualizar ": "Editar " %>Exploração Florestal</h2>
 <br />
 
 <div class="filtroExpansivo">
@@ -21,6 +21,7 @@
 			<div class="block fixado">
 				<div class="coluna15">
 					<label for="Filtros_TipoExploracao">Tipo de Exploração</label>
+					<%= Html.Hidden("Filtros.IsVisualizar", Model.Filtros.IsVisualizar)%>
 					<%= Html.Hidden("Filtros.EmpreendimentoId", Model.Filtros.EmpreendimentoId, new { @class = "hdnEmpreendimento" })%>
 					<%= Html.TextBox("Filtros.TipoExploracao", null, new { @class = "text txtTipoExploracao setarFoco", @maxlength = "3" })%>
 				</div>
