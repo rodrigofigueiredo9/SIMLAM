@@ -114,14 +114,14 @@ ExploracaoFlorestalExploracao = {
 			ProdutoId: Number($('.ddlProduto', container).val()),
 			ProdutoTexto: $('.ddlProduto :selected', container).text(),
 			Quantidade: $('.txtQuantidade', container).val(),
-			TaxonomiaId: $('.hdnTaxonomiaId', container).val(),
-			TaxonomiaTexto: $('.txtTaxonomia', container).val()
+			EspeciePopularId: $('.hdnEspecieId', container).val(),
+			EspeciePopularTexto: $('.txtEspecie', container).val()
 		};
 
 		if (produto.ProdutoId == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
 			$('.tabExploracaoFlorestalExploracaoProduto tbody tr[class!="trTemplateRow hide"]', container).remove();
 			$('.ddlProduto', container).addClass('disabled').attr('disabled', 'disabled');
-			$('.txtTaxonomia', container).addClass('disabled').attr('disabled', 'disabled');
+			$('.txtEspecie', container).addClass('disabled').attr('disabled', 'disabled');
 			$('.btnAdicionarProduto', container).hide();
 		}
 
@@ -131,7 +131,7 @@ ExploracaoFlorestalExploracao = {
 			var obj = String($(this).val());
 			if (obj != '') {
 				var prod = (JSON.parse(obj));
-				if (prod.ProdutoId == produto.ProdutoId && prod.TaxonomiaId == produto.TaxonomiaId) {
+				if (prod.ProdutoId == produto.ProdutoId && prod.EspecieId == produto.EspecieId) {
 					mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoDuplicado));
 				}
 			}
@@ -141,8 +141,8 @@ ExploracaoFlorestalExploracao = {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoTipoObrigatorio));
 		}
 
-		if (produto.TaxonomiaId == 0) {
-			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.TaxonomiaObrigatoria));
+		if (produto.EspeciePopularId == 0) {
+			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.EspecieObrigatoria));
 		}
 
 		if (produto.Quantidade == '' && produto.ProdutoId != ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
@@ -162,15 +162,15 @@ ExploracaoFlorestalExploracao = {
 		linha.find('.hdnItemJSon').val(JSON.stringify(produto));
 		linha.find('.produto').html(produto.ProdutoTexto).attr('title', produto.ProdutoTexto);
 		linha.find('.quantidade').html(produto.Quantidade).attr('title', produto.Quantidade);
-		linha.find('.taxonomia').html(produto.TaxonomiaTexto).attr('title', produto.TaxonomiaTexto);
-		linha.find('.taxonomiaId').html(produto.TaxonomiaId).attr('value', produto.TaxonomiaId);
+		linha.find('.especie').html(produto.EspecieTexto).attr('title', produto.EspecieTexto);
+		linha.find('.especieId').html(produto.EspecieId).attr('value', produto.EspecieId);
 
 		$('.dataGridTable tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
 
 		$('.txtQuantidade', container).val('');
-		$('.txtTaxonomia', container).val('');
-		$('.hdnTaxonomiaId', container).val('');
+		$('.txtEspecie', container).val('');
+		$('.hdnEspecieId', container).val('');
 		$('.ddlProduto', container).find('option:first').attr('selected', 'selected');
 	},
 
@@ -239,25 +239,25 @@ ExploracaoFlorestalExploracao = {
 	},
 
 	loadAutocomplete: function () {
-		$(".txtTaxonomia").autocomplete({
+		$(".txtEspecie").autocomplete({
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: 'http://webidafd:8091/idaf/institucional/api/sinaflor/taxonomias',
-					data: { "search": request.term },
+					url: 'http://webidafd:8091/IDAF/Institucional/api/Especie',
+					data: { "Search": request.term },
 					type: 'GET',
 					dataType: 'json',
 					contentType: 'application/json;charset=UTF-8',
 					success: function (result) {
 						if (result.data != null) {
-							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nome + '\", "value": \"' + x.nome + '\", "id": \"' + x.id +'\" }'));
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.especiePopularId +'\" }'));
 						}
 						response(tags);
 					},
 				});
 			},
 			select: function (event, ui) {
-				$(".hdnTaxonomiaId").val(ui.item.id);
+				$(".hdnEspecieId").val(ui.item.value);
 			}
 		});
 	},

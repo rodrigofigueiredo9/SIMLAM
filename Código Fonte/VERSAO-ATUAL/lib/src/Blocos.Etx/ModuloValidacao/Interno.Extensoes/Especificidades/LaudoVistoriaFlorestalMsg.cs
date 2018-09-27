@@ -20,7 +20,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem CaracterizacaoCadastrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Caracterizacao", Texto = "A Caracterização selecionada deve estar cadastrada." }; } }
 		public Mensagem ObjetivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Objetivo", Texto = "Objetivo é obrigatório." }; } }
 		public Mensagem ConsideracoesObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Consideracao", Texto = "Considerações é obrigatório." }; } }
-		public Mensagem ParecerTecnicoDescricaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_ParecerDescricao", Texto = "Descrição do Parecer técnico é obrigatório." }; } }
+		public Mensagem ParecerTecnicoDescricaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_ParecerDescricao", Texto = "Descrição do Parecer Técnico Favorável a Exploração é obrigatório." }; } }
+		public Mensagem ParecerTecnicoDescricaoDesfavoravelObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_ParecerDescricaoDesfavoravel", Texto = "Descrição do Parecer Técnico Desfavorável a Exploração é obrigatório." }; } }
 		public Mensagem ConclusaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Conclusao", Texto = "Conclusão é obrigatória." }; } }
 		public Mensagem CaracterizacaoDuplicada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Laudo_Caracterizacao", Texto = "A caraterização selecionada já foi adicionada ao título." }; } }
 

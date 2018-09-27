@@ -93,7 +93,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[Permite(RoleArray = new Object[] { ePermissao.ExploracaoFlorestalEditar })]
 		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.exploracaoflorestal)]
-		public ActionResult Editar(int id)
+		public ActionResult EditarExploracaoFlorestal(int id)
 		{
 			var exploracaoFlorestal = _bus.ObterPorId(id, false);
 			if (!_caracterizacaoValidar.Basicas(exploracaoFlorestal.EmpreendimentoId))
@@ -250,6 +250,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Visualizar(int id)
 		{
 			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
+			vm.IsVisualizar = true;
+			vm.Filtros.EmpreendimentoId = id;
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			return PartialView(vm);
+		}
+
+		public ActionResult Editar(int id)
+		{
+			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
+			vm.IsVisualizar = false;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return PartialView(vm);
@@ -283,11 +293,5 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
-
-		public ActionResult GetCodigoExploracao(int tipoExploracao) => Json(new {
-			@EhValido = Validacao.EhValido,
-			@Msg = Validacao.Erros,
-			@CodigoExploracao = _bus.ObterCodigoExploracao(tipoExploracao)
-		}, JsonRequestBehavior.AllowGet);
 	}
 }

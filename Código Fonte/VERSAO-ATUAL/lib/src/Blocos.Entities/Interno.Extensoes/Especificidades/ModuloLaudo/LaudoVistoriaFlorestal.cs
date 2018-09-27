@@ -13,13 +13,15 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLau
 		public Int32 Destinatario { get; set; }
 		public String DestinatarioNomeRazao { get; set; }
 		public Int32 Responsavel { get; set; }
-		public Int32 Caracterizacao { get; set; }
 		public Int32 Conclusao { get; set; }
 		public String Objetivo { get; set; }
 		public String Consideracao { get; set; }
 		public String Restricao { get; set; }
 		public String ParecerDescricao { get; set; }
 		public String ParecerDescricaoDesfavoravel { get; set; }
+		public Boolean FavoravelObrigatorio { get; set; }
+		public Boolean DesfavoravelObrigatorio { get; set; }
+		public Int32 Caracterizacao { get; set; }
 
 		private DateTecno _dataVistoria = new DateTecno();
 		public DateTecno DataVistoria

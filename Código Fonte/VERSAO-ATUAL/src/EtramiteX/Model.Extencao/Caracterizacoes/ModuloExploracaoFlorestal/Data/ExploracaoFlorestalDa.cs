@@ -121,14 +121,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							foreach (ExploracaoFlorestalProduto itemAux in item.Produtos)
 							{
-								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
-								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
+								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_id, especie_nome, tid)
+								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :tid)", EsquemaBanco);
 
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
-								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
-								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
+								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -261,22 +260,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								if (itemAux.Id > 0)
 								{
 									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade,
-									c.taxonomia_id = :taxonomia_id, c.taxonomia_nome = :taxonomia_nome, c.tid = :tid where c.id = :id", EsquemaBanco);
+									c.especie_id = :especie_id, c.especie_nome = :especie_nome, c.tid = :tid where c.id = :id", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("id", itemAux.ProdutoId, DbType.Int32);
 								}
 								else
 								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, taxonomia_id, taxonomia_nome, tid)
-									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :taxonomia_id, :taxonomia_nome, :tid)", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_id, especie_nome, tid)
+									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :tid)", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								}
 
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
-								comando.AdicionarParametroEntrada("taxonomia_id", itemAux.TaxonomiaId, DbType.Int32);
-								comando.AdicionarParametroEntrada("taxonomia_nome", itemAux.TaxonomiaTexto, DbType.String);
+								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -491,8 +489,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
-						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp where c.produto = lp.id and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
+						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
+						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto, c.tid 
+						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e
+						where c.produto = lp.id and c.especie_popular_id = ep.id and ep.especie = e.id and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao", exploracao.Id, DbType.Int32);
 
@@ -513,10 +513,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
 								}
 
-								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								if (readerAux["especie_popular_id"] != null && !Convert.IsDBNull(readerAux["especie_popular_id"]))
 								{
-									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
-									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
+									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
+									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);
@@ -614,7 +614,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.taxonomia_id, c.taxonomia_nome, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.especie_popular_id, c.especie_popular_texto, c.tid 
 						from {0}hst_crt_exp_florestal_produto c where c.id_hst = :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
@@ -636,10 +636,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 									produto.ProdutoTexto = readerAux["produto_texto"].ToString();
 								}
 
-								if (readerAux["taxonomia_id"] != null && !Convert.IsDBNull(readerAux["taxonomia_id"]))
+								if (readerAux["especie_popular_id"] != null && !Convert.IsDBNull(readerAux["especie_popular_id"]))
 								{
-									produto.TaxonomiaId = Convert.ToInt32(readerAux["taxonomia_id"]);
-									produto.TaxonomiaTexto = readerAux["taxonomia_nome"].ToString();
+									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
+									produto.ProdutoTexto = readerAux["especie_popular_texto"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);

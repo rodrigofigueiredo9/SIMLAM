@@ -5,8 +5,7 @@ ExploracaoFlorestal = {
 	settings: {
 		urls: {
 			salvar: '',
-			mergiar: '',
-			getCodigoExploracao: ''
+			mergiar: ''
 		},
 		idsTela: null,
 		mensagens: {},
@@ -21,8 +20,6 @@ ExploracaoFlorestal = {
 		ExploracaoFlorestal.container = MasterPage.getContent(container);
 
 		ExploracaoFlorestal.container.delegate('.btnSalvar', 'click', ExploracaoFlorestal.salvar);
-		ExploracaoFlorestal.container.delegate('.ddlTipoExploracao', 'change', ExploracaoFlorestal.onChangeTipoExploracao);
-		ExploracaoFlorestal.container.delegate('.ddlCodigoExploracao', 'change', ExploracaoFlorestal.onChangeCodigoExploracao);
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
 
 		if (ExploracaoFlorestal.settings.textoMerge) {
@@ -38,14 +35,6 @@ ExploracaoFlorestal = {
 		}
 	},
 
-	onChangeCodigoExploracao: function () {
-		if ($(this).val() <= 0) {
-			$('.exploracoesFlorestais', ExploracaoFlorestal.container).hide();
-		} else {
-			$('.exploracoesFlorestais', ExploracaoFlorestal.container).show();
-		}
-	},
-	
 	abrirModalRedireciona: function (textoModal, titulo) {
 		Modal.confirma({
 			removerFechar: true,
@@ -111,40 +100,6 @@ ExploracaoFlorestal = {
 		});
 
 		return objetoList;
-	},
-
-	onChangeTipoExploracao: function () {
-		if ($(this).val() == $('.hdnTipoExploracaoAnterior', ExploracaoFlorestal.container).val() &&
-			$('.hdnTipoExploracaoAnterior', ExploracaoFlorestal.container).val() > 0) {
-			var texto = $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).text().substring(0, 3);
-			$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + $('.hdnCodigoExploracaoAnterior', ExploracaoFlorestal.container).val().padStart(3, '0'));
-			$('.hdnCodigoExploracao', ExploracaoFlorestal.container).val($('.hdnCodigoExploracaoAnterior', ExploracaoFlorestal.container).val());
-			return;
-		}
-		$.ajax({
-			url: ExploracaoFlorestal.settings.urls.getCodigoExploracao,
-			data: { tipoExploracao: $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).val() },
-			cache: false,
-			async: false,
-			type: 'GET',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, ExploracaoFlorestal.container);
-				MasterPage.carregando(false);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					var texto = $('.ddlTipoExploracao option:selected', ExploracaoFlorestal.container).text().substring(0, 3);
-					$('.txtCodigoExploracao', ExploracaoFlorestal.container).val(texto + response.CodigoExploracao.toString().padStart(3, '0'));
-					$('.hdnCodigoExploracao', ExploracaoFlorestal.container).val(response.CodigoExploracao);
-				}
-
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(ExploracaoFlorestal.container, response.Msg);
-				}
-			}
-		});
 	},
 
 	salvar: function () {

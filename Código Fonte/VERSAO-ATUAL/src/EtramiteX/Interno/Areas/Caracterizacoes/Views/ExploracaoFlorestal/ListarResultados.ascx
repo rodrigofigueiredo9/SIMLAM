@@ -28,8 +28,8 @@
 				<td title="<%= Html.Encode(item.Localizador)%>"><%= Html.Encode(item.Localizador)%></td>
 				<td>
 					<input type="hidden" value="<%= item.Id %>" class="itemId" />
-					<%if (Model.PodeVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
-					<% if (Model.PodeEditar) { %><button title="Editar" class="icone editar btnEditar" type="button"></button><% } %>
+					<%if (Model.PodeVisualizar && Model.IsVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>
+					<% if (Model.PodeEditar && !Model.IsVisualizar) { %><button title="Editar" class="icone editar btnEditar" type="button"></button><% } %>
 				</td>
 			</tr>
 		<% } %>
