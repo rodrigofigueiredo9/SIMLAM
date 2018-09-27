@@ -524,10 +524,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				and s.protocolo_selecionado = p.id
 				and s.protocolo_selecionado = ps.id(+)
 				and s.empreendimento = e.id
-				and s.empreendimento = pg.empreendimento
+				and s.empreendimento = pg.empreendimento(+)
 				and s.declarante = pes.id
 				and s.requerimento = tr.id
-				and pg.caracterizacao = 1
+				and 1 = pg.caracterizacao(+)
 				and f.funcionario_id = s.autor
 				and f.tid = (select autor_tid from hst_car_solicitacao where acao_executada = 342 and solicitacao_id = s.id)
 				and s.id = :id", EsquemaBanco);
