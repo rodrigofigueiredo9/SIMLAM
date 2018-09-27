@@ -110,7 +110,7 @@
 
 			<div class="block">
 				<div class="coluna20">
-					<label for="Empreendimento.Enderecos[0].Cep">CEP</label>
+					<label for="Empreendimento.Enderecos[0].Cep">CEP *</label>
 					<%= Html.TextBox("Empreendimento.Enderecos[0].Cep", Model.Empreendimento.Enderecos[0].Cep, new { @class = "txtCep text maskCep disabled", @disabled = "disabled" })%>
 				</div>
 
