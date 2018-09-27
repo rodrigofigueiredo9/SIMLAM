@@ -25,7 +25,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem QuantidadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Quantidade", Texto = @"Quantidade do Produto é obrigatória." }; } }
 		public Mensagem QuantidadeMaiorZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Quantidade", Texto = @"Quantidade deve ser maior do que zero." }; } }
 		public Mensagem QuantidadeInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Quantidade", Texto = @"Quantidade inválida." }; } }
-		public Mensagem TaxonomiaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Taxonomia", Texto = @"Nome cientifíco/comum é obrigatório." }; } }
+		public Mensagem EspecieObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Especie", Texto = @"Nome cientifíco/comum é obrigatório." }; } }
 
 		public Mensagem NaoPossuiAVNOuAA { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Área da atividade deve sobrepor Área de Vegetação Nativa - AVN ou Área Alterada - AA." }; } }
 		public Mensagem PossuiAVNNaoCaracterizada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"No projeto geográfico da Dominialidade possui Área de Floresta-Nativa com estágio não caracterizado." }; } }

@@ -68,19 +68,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			}
 
 			if (String.IsNullOrWhiteSpace(esp.Consideracao))
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConsideracoesObrigatorio);
-			}
 
-			if (String.IsNullOrWhiteSpace(esp.ParecerDescricao))
-			{
+			if (esp.FavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricao))
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
-			}
+
+			if (esp.DesfavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricaoDesfavoravel))
+				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoDesfavoravelObrigatorio);
 
 			if (esp.Conclusao <= 0)
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConclusaoObrigatoria);
-			}
 
 			return Validacao.EhValido;
 		}

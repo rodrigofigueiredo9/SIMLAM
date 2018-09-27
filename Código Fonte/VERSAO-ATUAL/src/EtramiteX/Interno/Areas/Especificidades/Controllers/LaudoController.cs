@@ -654,7 +654,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var caracterizacaoLst = exploracoesLst.Select(x => new CaracterizacaoLst {
 				Id = x.Id,
 				Texto = x.CodigoExploracaoTexto ?? "",
-				ParecerFavoravel = x.Exploracoes.Exists(y => y.ParecerFavoravel == true),
+				ParecerFavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == true).Select(y => y.Identificacao)?.ToList()),
+				ParecerDesfavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == false).Select(y => y.Identificacao)?.ToList()),
 				IsAtivo = true
 			});
 

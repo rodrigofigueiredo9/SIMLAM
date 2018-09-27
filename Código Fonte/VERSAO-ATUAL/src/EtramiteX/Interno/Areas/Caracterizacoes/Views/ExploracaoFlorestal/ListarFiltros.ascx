@@ -2,7 +2,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExploracaoFlorestal" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
 
-<h2 class="titTela">Visualizar Exploração Florestal</h2>
+<h2 class="titTela"><%= Model.IsVisualizar ? "Visualizar ": "Editar " %>Exploração Florestal</h2>
 <br />
 
 <div class="filtroExpansivo">
@@ -11,7 +11,7 @@
 		<input type="hidden" class="ultimaBusca" name="UltimaBusca" value="<%= Model.UltimaBusca %>" />
 		<%= Html.Hidden("UrlFiltrar", Url.Action("Filtrar"), new { @class = "urlFiltrar" })%>
 		<%= Html.Hidden("UrlVisualizar", Url.Action("VisualizarExploracaoFlorestal"), new { @class = "urlVisualizar" })%>
-		<%= Html.Hidden("UrlEditar", Url.Action("Editar"), new { @class = "urlEditar" })%>
+		<%= Html.Hidden("UrlEditar", Url.Action("EditarExploracaoFlorestal"), new { @class = "urlEditar" })%>
 		<%= Html.Hidden("UrlExcluir", Url.Action("Excluir"), new { @class = "urlExcluir" })%>
 		<%= Html.Hidden("UrlExcluirConfirm", Url.Action("ExcluirConfirm"), new { @class = "urlExcluirConfirm" })%>
 		<%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>

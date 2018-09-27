@@ -379,6 +379,7 @@
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarFiltros.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
@@ -419,7 +420,7 @@
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\DespolpamentoCafe.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Visualizar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\EditarExploracaoFlorestal.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\VisualizarExploracaoFlorestal.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Visualizar.aspx" />

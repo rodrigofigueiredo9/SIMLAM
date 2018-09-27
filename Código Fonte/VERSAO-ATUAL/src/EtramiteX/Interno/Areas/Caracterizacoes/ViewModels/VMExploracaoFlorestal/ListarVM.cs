@@ -33,6 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExplor
 		public String UltimaBusca { get; set; }
 		public Boolean PodeVisualizar { get; set; }
 		public Boolean PodeEditar { get; set; }
+		public Boolean IsVisualizar { get; set; }
 
 		public ListarVM() { }
 

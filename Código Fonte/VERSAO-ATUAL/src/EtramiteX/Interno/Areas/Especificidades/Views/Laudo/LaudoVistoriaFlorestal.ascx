@@ -44,7 +44,7 @@
 	<div class="block">
 		<div class="coluna40">
 			<label for="Laudo_Caracterizacao">Caracterização *</label><br />
-			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlCaracterizacoes" }))%>
+			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacoes.Count <= 1, new { @class = "text ddlCaracterizacoes" }))%>
 		</div>
 		<div class="coluna20 prepend2">
 			<button type="button" class="inlineBotao btnAddCaracterizacao botaoAdicionarIcone" title="Adicionar caracterização">Adicionar</button>
@@ -55,7 +55,7 @@
 		<div class="coluna40">
 			<% Html.RenderPartial("~/Areas/Especificidades/Views/Laudo/LaudoVistoriaFlorestalCaracterizacoes.ascx", Model); %>
 		</div>
-	</div>
+	</div><br />
 
 	<div class="block">
 		<div class="ultima">
@@ -64,14 +64,14 @@
 		</div>
 	</div>
 
-	<div class="block">
+	<div class="block descricaoFavoravel hide">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico Favorável a Exploração *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
 		</div>
 	</div>
 
-	<div class="block">
+	<div class="block descricaoDesfavoravel hide">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricaoDesfavoravel">Descrição do Parecer Técnico Desfavorável a Exploração *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricaoDesfavoravel", Model.Laudo.ParecerDescricaoDesfavoravel, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricaoDesfavoravel" }))%>

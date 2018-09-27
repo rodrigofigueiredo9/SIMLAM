@@ -9,7 +9,8 @@
 		public bool IsProjeto { get; set; }
 		public bool IsDescricao { get; set; }
 		public bool IsExibirCredenciado { get; set; }
-		public bool ParecerFavoravel { get; set; }
+		public string ParecerFavoravel { get; set; }
+		public string ParecerDesfavoravel { get; set; }
 		public ePermissaoTipo Permissao { get; set; }
 	}
 }

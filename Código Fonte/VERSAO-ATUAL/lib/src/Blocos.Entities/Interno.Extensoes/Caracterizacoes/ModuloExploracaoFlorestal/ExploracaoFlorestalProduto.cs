@@ -11,7 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32 ProdutoId { get; set; }
 		public String ProdutoTexto { get; set; }
 		public String Quantidade { get; set; }
-		public Int32 TaxonomiaId { get; set; }
-		public String TaxonomiaTexto { get; set; }
+		public Int32 EspeciePopularId { get; set; }
+		public String EspeciePopularTexto { get; set; }
 	}
 }

@@ -84,9 +84,9 @@
 				</div>
 
 				<div class="coluna22 append2">
-					<input type="hidden" class="hdnTaxonomiaId" />
-					<label for="Taxonomia<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
-					<%= Html.TextBox("Taxonomia" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtTaxonomia ui-autocomplete-input" }))%>
+					<input type="hidden" class="hdnEspecieId" />
+					<label for="Especie<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
+					<%= Html.TextBox("Especie" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtEspecie ui-autocomplete-input" }))%>
                 </div>
 
 				<div class="coluna22 append2 divQuantidade">
@@ -117,8 +117,8 @@
 								<span class="produto" title="<%:produto.ProdutoTexto%>"><%: produto.ProdutoTexto%></span>
 							</td>
 							<td>
-								<span class="taxonomia" title="<%:produto.TaxonomiaTexto%>"><%: produto.TaxonomiaTexto%></span>
-								<input type="hidden" class="taxonomiaId" value='<%: produto.TaxonomiaId%>' />
+								<span class="especie" title="<%:produto.EspeciePopularTexto%>"><%: produto.EspeciePopularTexto%></span>
+								<input type="hidden" class="especieId" value='<%: produto.EspeciePopularId%>' />
 							</td>
 							<td>
 								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToString("N2")); %>
@@ -136,8 +136,8 @@
 							<tr class="trTemplateRow hide">
 								<td><span class="produto"></span></td>
 								<td>
-									<span class="taxonomia"></span>
-									<input type="hidden" class="taxonomiaId" value="" />
+									<span class="especie"></span>
+									<input type="hidden" class="especieId" value="" />
 								</td>
 								<td><span class="quantidade"></span></td>
 								<td class="tdAcoes">
