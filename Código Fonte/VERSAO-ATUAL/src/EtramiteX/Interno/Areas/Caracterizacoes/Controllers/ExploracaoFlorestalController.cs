@@ -250,7 +250,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Visualizar(int id)
 		{
 			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
-			vm.IsVisualizar = true;
+			vm.Filtros.IsVisualizar = true;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return PartialView(vm);
@@ -259,7 +259,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Editar(int id)
 		{
 			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
-			vm.IsVisualizar = false;
+			vm.Filtros.IsVisualizar = false;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			return PartialView(vm);
@@ -286,7 +286,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
 			vm.Paginacao.EfetuarPaginacao();
 			vm.Resultados = resultados.Itens;
-			vm.PodeVisualizar = User.IsInRole(ePermissao.FiscalizacaoVisualizar.ToString());
+			vm.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", eCaracterizacao.ExploracaoFlorestal.ToString()));
 			vm.PodeEditar = User.IsInRole(String.Format("{0}Editar", eCaracterizacao.ExploracaoFlorestal.ToString()));
 
 			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Caracterizacoes/Views/ExploracaoFlorestal/ListarResultados.ascx", vm) }, JsonRequestBehavior.AllowGet);

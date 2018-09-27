@@ -5,7 +5,8 @@
 ExploracaoFlorestalExploracao = {
 	settings: {
 		mensagens: null,
-		idsTela: null
+		idsTela: null,
+		getEspecie: null
 	},
 	container: null,
 
@@ -103,6 +104,12 @@ ExploracaoFlorestalExploracao = {
 			$('.txtQuantidade', container).val('');
 			Mascara.load(container);
 		}
+
+		if (produto == 1) {
+			$('.lblEspecie', container)[0].textContent = 'Nome cientifíco/comum';
+		} else {
+			$('.lblEspecie', container)[0].textContent = 'Nome cientifíco/comum *';
+		}
 	},
 
 	adicionar: function () {
@@ -141,7 +148,7 @@ ExploracaoFlorestalExploracao = {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoTipoObrigatorio));
 		}
 
-		if (produto.EspeciePopularId == 0) {
+		if (produto.EspeciePopularId == 0 && produto.ProdutoId != 1) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.EspecieObrigatoria));
 		}
 
@@ -162,8 +169,8 @@ ExploracaoFlorestalExploracao = {
 		linha.find('.hdnItemJSon').val(JSON.stringify(produto));
 		linha.find('.produto').html(produto.ProdutoTexto).attr('title', produto.ProdutoTexto);
 		linha.find('.quantidade').html(produto.Quantidade).attr('title', produto.Quantidade);
-		linha.find('.especie').html(produto.EspecieTexto).attr('title', produto.EspecieTexto);
-		linha.find('.especieId').html(produto.EspecieId).attr('value', produto.EspecieId);
+		linha.find('.especie').html(produto.EspeciePopularTexto).attr('title', produto.EspeciePopularTexto);
+		linha.find('.especieId').html(produto.EspeciePopularId).attr('value', produto.EspeciePopularId);
 
 		$('.dataGridTable tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
@@ -243,25 +250,25 @@ ExploracaoFlorestalExploracao = {
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: 'http://webidafd:8091/IDAF/Institucional/api/Especie',
+					url: ExploracaoFlorestalExploracao.settings.getEspecie,
 					data: { "Search": request.term },
 					type: 'GET',
 					dataType: 'json',
 					contentType: 'application/json;charset=UTF-8',
 					success: function (result) {
 						if (result.data != null) {
-							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.especiePopularId +'\" }'));
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId +'\" }'));
 						}
 						response(tags);
 					},
 				});
 			},
 			select: function (event, ui) {
-				$(".hdnEspecieId").val(ui.item.value);
+				$(".hdnEspecieId").val(ui.item.id);
 			}
 		});
 	},
-
+	
 	onChangeFinalidade: function () {
 		var container = this.parentElement.parentElement.parentElement;
 		$('.divEspecificarFinalidade', container).removeClass('hide');

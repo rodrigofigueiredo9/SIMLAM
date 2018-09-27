@@ -6,6 +6,7 @@
 
 <script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
+	ExploracaoFlorestalExploracao.settings.getEspecie = '<%= System.Configuration.ConfigurationManager.AppSettings["getEspecie"].ToString() %>';
 </script>
 
 <div class="block filtroCorpo divExploracaoFlorestalExploracao">
@@ -85,7 +86,7 @@
 
 				<div class="coluna22 append2">
 					<input type="hidden" class="hdnEspecieId" />
-					<label for="Especie<%= Model.ExploracaoFlorestal.Identificacao%>">Nome cientifíco/comum *</label>
+					<label for="Especie<%= Model.ExploracaoFlorestal.Identificacao%>" class="lblEspecie">Nome cientifíco/comum *</label>
 					<%= Html.TextBox("Especie" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtEspecie ui-autocomplete-input" }))%>
                 </div>
 
