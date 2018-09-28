@@ -138,6 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				titulo.Anexos = _busTitulo.ObterAnexos(especificidade.TituloId);
 				titulo.Atividades = _busTitulo.ObterAtividades(especificidade.TituloId);
 				titulo.Condicionantes = _busTitulo.ObterCondicionantes(especificidade.TituloId);
+				titulo.Exploracoes = _busTitulo.ObterExploracoes(especificidade.TituloId);
 
 				laudo = _busLaudo.Obter(especificidade.TituloId) as LaudoVistoriaFlorestal;
 
@@ -195,10 +196,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				especificidade.AtividadeProcDocReqKey,
 				especificidade.IsVisualizar);
 
-			vm.ExploracaoFlorestal = exploracoesLst;
-
 			if (especificidade.TituloId > 0)
+			{
 				vm.Atividades.Atividades = titulo.Atividades;
+				vm.Exploracoes = titulo.Exploracoes;
+				if(vm.Caracterizacoes.Count > 0)
+					vm.Caracterizacoes.FirstOrDefault(x => x.Value == titulo.Exploracoes.FirstOrDefault().Id.ToString()).Selected = true;
+			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo
 {
@@ -22,6 +23,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLau
 		public Boolean FavoravelObrigatorio { get; set; }
 		public Boolean DesfavoravelObrigatorio { get; set; }
 		public Int32 Caracterizacao { get; set; }
+		public IEnumerable<TituloExploracaoFlorestal> Exploracoes { get; set; }
 
 		private DateTecno _dataVistoria = new DateTecno();
 		public DateTecno DataVistoria

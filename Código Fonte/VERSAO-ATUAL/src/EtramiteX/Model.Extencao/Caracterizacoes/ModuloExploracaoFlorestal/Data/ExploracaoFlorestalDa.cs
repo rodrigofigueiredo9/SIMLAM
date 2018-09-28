@@ -413,7 +413,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			{
 				#region Exploração Florestal
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.texto tipo_exploracao_texto from {0}crt_exploracao_florestal c
+				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
+						c.data_cadastro, c.tid, lv.texto tipo_exploracao_texto,
+						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador
+						from {0}crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
 						where c.id = :id", EsquemaBanco);
 
@@ -433,6 +436,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
 						if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
 							caracterizacao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
+						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
+							caracterizacao.Localizador = reader["localizador"].ToString();
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 
