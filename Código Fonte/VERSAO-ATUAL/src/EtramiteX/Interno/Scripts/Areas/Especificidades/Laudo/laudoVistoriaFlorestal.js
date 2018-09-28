@@ -50,8 +50,8 @@ LaudoVistoriaFlorestal = {
 			DesfavoravelObrigatorio: !$('.descricaoDesfavoravel', LaudoVistoriaFlorestal.container).attr('class').includes('hide'),
 			Conclusao: LaudoVistoriaFlorestal.container.find('.ddlEspecificidadeConclusoes').val(),
 			Restricao: LaudoVistoriaFlorestal.container.find('.txtRestricao:visible').val(),
-			Anexos: LaudoVistoriaFlorestal.container.find('.fsArquivos').arquivo('obterObjeto'),
-			Caracterizacao: LaudoVistoriaFlorestal.container.find('.ddlCaracterizacoes').val()
+			Anexos: LaudoVistoriaFlorestal.container.find('.fsArquivos').arquivo('obterObjeto'),		
+			Caracterizacao: 4 //ExploracaoFlorestal
 			//Caracterizacao: $('.exploracaoId', LaudoVistoriaFlorestal.container).toArray().filter(x => x.value > 0).map(x => x.value).join(',')
 		};
 	},
