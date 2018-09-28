@@ -480,6 +480,7 @@
     <Content Include="Areas\Especificidades\Views\Certificado\CertificadoRegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
+    <Content Include="Scripts\Titulo\tituloExploracao.js" />
     <Content Include="Views\Titulo\TituloExploracao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoConstatacao.ascx" />
