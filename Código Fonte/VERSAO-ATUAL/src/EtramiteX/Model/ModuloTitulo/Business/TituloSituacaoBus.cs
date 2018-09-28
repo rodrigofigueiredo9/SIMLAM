@@ -744,6 +744,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				#endregion
 
+				#region Explorações
+
+
+
+				#endregion Explorações
+
 				if (!Validacao.EhValido)
 				{
 					bancoDeDados.Rollback();

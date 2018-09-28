@@ -107,15 +107,14 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo
 		}
 
 		public LaudoVistoriaFlorestalVM(LaudoVistoriaFlorestal laudo,List<Protocolos> processosDocumentos,List<AtividadeSolicitada> atividades,
-			List<ExploracaoFlorestal> caracterizacoes, List<PessoaLst> destinatarios, List<PessoaLst> responsaveisTecnicos, List<Lista> parecerTecnico, 
+			List<CaracterizacaoLst> caracterizacoes, List<PessoaLst> destinatarios, List<PessoaLst> responsaveisTecnicos, List<Lista> parecerTecnico, 
 			List<TituloCondicionante> condicionantes = null, string processoDocumentoSelecionado = null, bool isVisualizar = false)
 		{
 			Laudo = laudo;
 			IsVisualizar = isVisualizar;
 			ArquivoVM.IsVisualizar = isVisualizar;
 			Atividades = new AtividadeEspecificidadeVM(processosDocumentos, atividades, processoDocumentoSelecionado, 0, isVisualizar);
-			Caracterizacoes = ViewModelHelper.CriarSelectList(caracterizacoes?
-				.Select(x => new Lista() { Id = x.Id.ToString(), Texto = x.Localizador }).ToList(), true, true);
+			Caracterizacoes = ViewModelHelper.CriarSelectList(caracterizacoes, true, true);
 			Destinatarios = ViewModelHelper.CriarSelectList(destinatarios, true, true, Laudo.Destinatario.ToString());
 			ResponsaveisTecnico = ViewModelHelper.CriarSelectList(responsaveisTecnicos, true, true, Laudo.Responsavel.ToString());
 			Conclusoes = ViewModelHelper.CriarSelectList(parecerTecnico, true, true, Laudo.Conclusao.ToString());

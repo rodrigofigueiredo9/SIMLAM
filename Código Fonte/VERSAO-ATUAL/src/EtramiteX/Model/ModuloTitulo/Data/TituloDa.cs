@@ -221,6 +221,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				#endregion
 
+				#region Exploracoes
+
+				if (titulo.Exploracoes != null && titulo.Exploracoes.Count > 0)
+				{
+					foreach (TituloExploracaoFlorestal item in titulo.Exploracoes)
+					{
+						comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_florestal s (id, titulo, exploracao_florestal)
+						values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+				}
+
+				#endregion
+
 				#region Destinatário de e-mails
 
 				if (titulo.DestinatarioEmails != null && titulo.DestinatarioEmails.Count > 0)
@@ -407,6 +425,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				//Exploracoes
+				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where exists(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo{0} and e.id = a.exploracao_florestal)",
+				comando.AdicionarNotIn("and", "a.titulo_exploracao_florestal", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
+				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_florestal a ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where a.titulo = :titulo{0}",
+				comando.AdicionarNotIn("and", "a.id", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
+				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				//Destinatário de e-mails
 				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_pessoas a ", EsquemaBanco);
 				comando.DbCommand.CommandText += String.Format("where a.tipo = 1 and a.titulo = :titulo{0}",
@@ -546,6 +577,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						comando.AdicionarParametroEntrada("atividade", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("protocolo", item.Protocolo.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
+				}
+
+				#endregion
+
+				#region Exploracoes
+
+				if (titulo.Exploracoes != null && titulo.Exploracoes.Count > 0)
+				{
+					foreach (TituloExploracaoFlorestal item in titulo.Exploracoes)
+					{
+						if (item.Id > 0)
+						{
+							comando = bancoDeDados.CriarComando(@"update {0}tab_titulo_exp_florestal e set e.titulo = :titulo, exploracao_florestal = :exploracao_florestal
+							where e.id = :id", EsquemaBanco);
+							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+						}
+						else
+						{
+							comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_florestal s (id, titulo, exploracao_florestal)
+							values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)", EsquemaBanco);
+						}
+
+						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 					}
@@ -1462,6 +1520,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				#endregion
 
+				#region Exploracoes
+
+				comando = bancoDeDados.CriarComando(@"select s.id, s.titulo, s.exploracao_florestal,
+				concat(concat(concat(lv.chave, lpad(to_char(e.codigo_exploracao), 3, '0')), '-'), to_char(e.data_cadastro, 'ddMMyyyy')) localizador
+				from {0}tab_titulo_exp_florestal s
+				inner join crt_exploracao_florestal e
+					on (s.exploracao_florestal = e.id)
+				left join idafgeo.lov_tipo_exploracao lv
+					on (e.tipo_exploracao = lv.tipo_atividade)
+				where s.titulo = :titulo", EsquemaBanco);
+				comando.AdicionarParametroEntrada("titulo", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					TituloExploracaoFlorestal item;
+					while (reader.Read())
+					{
+						item = new TituloExploracaoFlorestal();
+						item.Id = Convert.ToInt32(reader["id"]);
+						item.TituloId = Convert.ToInt32(reader["titulo"]);
+						item.ExploracaoFlorestalId = Convert.ToInt32(reader["exploracao_florestal"]);
+
+						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
+							item.ExploracaoFlorestalTexto = reader["localizador"].ToString();
+
+						titulo.Exploracoes.Add(item);
+					}
+					reader.Close();
+				}
+
+				#endregion
+
 				#region Destinatário de e-mails
 
 				comando = bancoDeDados.CriarComando(@"select s.id, s.titulo, s.pessoa, nvl(p.nome,p.razao_social) pessoa_nome, s.tid from {0}tab_titulo_pessoas s, {0}tab_pessoa p 
@@ -1971,11 +2061,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						tituloExploracao.ExploracaoFlorestalTexto = item["localizador"].ToString();
 
 					comando = bancoDeDados.CriarComando(@"select tp.id, tp.titulo_exploracao_florestal,
-							tp.exp_florestal_exploracao, ep.identificacao
+								tp.exp_florestal_exploracao, ep.identificacao
 							from {0}tab_titulo_exp_flor_exp tp
-							inner join {0}crt_exp_florestal_exploracao ep", EsquemaBanco);
+							inner join {0}crt_exp_florestal_exploracao ep
+								on (tp.exp_florestal_exploracao = ep.id)
+                            where tp.exp_florestal_exploracao = :titulo_exploracao_id", EsquemaBanco);
 
-					comando.AdicionarParametroEntrada("id", tituloExploracao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("titulo_exploracao_id", tituloExploracao.Id, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{

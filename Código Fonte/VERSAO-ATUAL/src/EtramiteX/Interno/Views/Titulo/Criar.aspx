@@ -19,6 +19,7 @@
 	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
 	<script src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
 	<script src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/tituloExploracao.js") %>" ></script>
 
 	<script>
 		$(function () {
