@@ -25,6 +25,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAnaliseItens.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
@@ -48,6 +49,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		TituloModeloBus _busModelo = new TituloModeloBus(new TituloModeloValidacao());
 		CondicionanteDa _daCondicionante = new CondicionanteDa();
 		CARSolicitacaoBus _busCARSolicitacao = new CARSolicitacaoBus();
+		ExploracaoFlorestalBus _busExploracao = new ExploracaoFlorestalBus();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 
@@ -745,8 +747,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				#endregion
 
 				#region Explorações
-
-
+				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+				{
+					if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido)
+						_busExploracao.FinalizarExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), banco);
+				}
 
 				#endregion Explorações
 

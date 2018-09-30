@@ -124,6 +124,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
+		public void FinalizarExploracao(int empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				_da.FinalizarExploracao(empreendimento, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		#endregion
 
 		#region Obter
