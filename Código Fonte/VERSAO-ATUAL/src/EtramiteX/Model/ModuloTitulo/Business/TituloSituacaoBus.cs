@@ -702,7 +702,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							solicitacao.SituacaoId = (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR;
 							solicitacao.DataSituacao.Data = DateTime.Now;
 
-							_busCARSolicitacao.AlterarSituacao(solicitacao, bancoDeDados, mostrarMsg: false);
+							_busCARSolicitacao.AlterarSituacao(solicitacao, bancoDeDados, isTitulo: true);
 						}
 						else
 						{
@@ -724,7 +724,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							solicitacao.SituacaoId = (int)eCARSolicitacaoSituacao.Valido;
 							solicitacao.DataSituacao.Data = DateTime.Now;
 
-							_busCARSolicitacao.AlterarSituacao(solicitacao, bancoDeDados, mostrarMsg: false);
+							_busCARSolicitacao.AlterarSituacao(solicitacao, bancoDeDados, isTitulo: true);
 						}
 						else
 						{

@@ -72,7 +72,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem SolicitacaoEmpreendimentoNomeRazaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterizacao Dominialidade deve estar cadastrada." }; } }
 
 
-		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A nova situação é não é permitida." }; } }
+		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A nova situação não é permitida." }; } }
 
 		public Mensagem SolicitacaoAlterarSituacaoNovaSituacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Situacao_Nova", Texto = "A nova situação é obrigatória" }; } }
 		public Mensagem SolicitacaoAlterarSituacaoMotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AlterarSituacao_Motivo", Texto = "Motivo é obrigatório" }; } }
@@ -84,6 +84,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem ProtocoloPosse { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O processo/documento não está na posse do funcionário logado." }; } }
 		public Mensagem ProtocoloPosseAlterarSituacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a posse do processo/documento ao qual está associado à Solicitação de Inscrição." }; } }
+
+		public Mensagem PermissaoAlterarSituacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a permissão para alterar a situação da Solicitação de Inscrição no CAR." }; } }
 
 		public Mensagem ProtocoloPosseExcluir(string numero)
 		{
@@ -132,6 +134,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         public Mensagem GerarPdfSICARUrlNaoEncontrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não foi encontrado o endereço para o PDF de recibo da inscrição no SICAR." }; } }
         public Mensagem ReenviarMsgConfirmacao { get { return new Mensagem() { Tipo = eTipoMensagem.Confirmacao, Texto = "Os dados do envio atual serão perdidos e um novo arquivo será gerado. Deseja continuar?." }; } }
+        public Mensagem AlterarSituacaoMsgConfirmacao { get { return new Mensagem() { Tipo = eTipoMensagem.Confirmacao, Texto = "Esta Solicitação de Inscrição no CAR já foi enviada ao SICAR, e só deve ser invalidada após cancelamento no SICAR. Deseja continuar?." }; } }
         public Mensagem ErroEnviarArquivoSICAR(bool isEnviar, string solicitacaoSituacao, string arquivoSituacao)
         {
             return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Você não pode {0} uma solicitação \"{1}\" quando o arquivo está na situação \"{2}\". Aguarde o processamento atual.", ((isEnviar) ? "enviar" : "reenviar"), solicitacaoSituacao, arquivoSituacao) };

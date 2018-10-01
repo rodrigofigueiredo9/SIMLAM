@@ -70,7 +70,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						Log.Error($" CONTROLE SICAR (GERAR) IS NULL ::: {requisicao}");
 						continue;
 					}
-
 					ObterDadosRequisicao(conn, requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
                     
@@ -78,6 +77,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					{
                         CAR car;	
                         //REQUISIÇÃO CAR
+						//throw new Exception("THROW TESTE");
 						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
 						{
 							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
