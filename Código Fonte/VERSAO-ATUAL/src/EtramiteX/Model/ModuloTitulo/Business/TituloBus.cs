@@ -807,8 +807,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
                     return true;
                 else
                     return false;
-
-
             }
             catch (Exception exc)
             {

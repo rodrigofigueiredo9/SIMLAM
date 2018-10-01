@@ -281,12 +281,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoAlterarSituacao })]
 		public ActionResult AlterarSituacao(int id)
 		{
-			CARSolicitacao solicitacao = _bus.Obter(id);
+			CARSolicitacao solicitacao = _bus.ObterSimplificado(id);
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
 			
 			if (solicitacao.Id == 0)
 			{
-				solicitacao = _busCredenciado.Obter(id);
+				solicitacao = _busCredenciado.ObterSimplificado(id);
 			}
 			
 			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
@@ -359,14 +359,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				if (_bus.ExisteCredenciado(id))
 				{
-					CARSolicitacao solicitacao = _busCredenciado.Obter(id);
+					CARSolicitacao solicitacao = _busCredenciado.ObterSimplificado(id);
 					int situacaoId = solicitacao.SituacaoId;
 					string situacaoTexto = solicitacao.SituacaoTexto;
 					resultado = new PdfCARSolicitacaoCredenciado().Gerar(id, situacaoId, situacaoTexto);
 				}
 				else
 				{
-					CARSolicitacao solicitacao = _bus.Obter(id, true);
+					CARSolicitacao solicitacao = _bus.ObterSimplificado(id);
 					int situacaoId = solicitacao.SituacaoId;
 					string situacaoTexto = solicitacao.SituacaoTexto;
 					resultado = new PdfCARSolicitacao().Gerar(id, situacaoId, situacaoTexto);

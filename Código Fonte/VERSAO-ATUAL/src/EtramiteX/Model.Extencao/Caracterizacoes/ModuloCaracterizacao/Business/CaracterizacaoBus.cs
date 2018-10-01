@@ -191,17 +191,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 
             try
             {
-                /*
-                caracterizacoes = ObterCaracterizacoesEmpreendimento(empreendimentoId);
-
-                foreach (var carac in caracterizacoes)
-                {
-                    if (carac.Tipo == eCaracterizacao.CadastroAmbientalRural)
-                    {
-                        return true;
-                    }
-                }*/
-
                 caracterizacoes = ObterCaracterizacoesCAR(empreendimentoCod);
 
                 foreach (var carac in caracterizacoes)

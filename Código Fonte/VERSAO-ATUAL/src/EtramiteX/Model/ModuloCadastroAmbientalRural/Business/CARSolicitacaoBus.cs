@@ -303,6 +303,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return null;
 		}
 
+		public CARSolicitacao ObterSimplificado(int id, bool simplificado = false, string tid = null, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ObterSimplificado(id, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+			   
 		public CARSolicitacao ObterHistorico(int id, bool simplificado = false, string tid = null, BancoDeDados banco = null)
 		{
 			try

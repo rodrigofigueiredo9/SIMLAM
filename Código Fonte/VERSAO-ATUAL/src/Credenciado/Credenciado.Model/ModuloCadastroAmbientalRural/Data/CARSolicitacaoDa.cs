@@ -541,7 +541,60 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return solicitacao;
 		}
 
-        internal CARSolicitacao ObterOnInstitucional(int id, BancoDeDados banco = null)
+		public CARSolicitacao ObterSimplificado(int id, BancoDeDados banco = null)
+		{
+			CARSolicitacao solicitacao = new CARSolicitacao();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				#region Solicitação
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT 	CAR.TID,
+						CAR.NUMERO,
+						CAR.DATA_EMISSAO,
+						CAR.SITUACAO_DATA,
+						CAR.REQUERIMENTO,
+						LVC.ID SITUACAO,
+						LVC.TEXTO SITUACAO_TEXTO,
+						EMP.ID EMPREENDIMENTO_ID,
+						EMP.DENOMINADOR EMPREENDIMENTO_NOME,
+						EMP.CODIGO EMPREENDIMENTO_CODIGO
+					FROM TAB_CAR_SOLICITACAO					CAR 
+					INNER JOIN TAB_EMPREENDIMENTO				EMP ON EMP.ID = CAR.EMPREENDIMENTO
+					INNER JOIN LOV_CAR_SOLICITACAO_SITUACAO		LVC ON LVC.ID = CAR.SITUACAO    
+					WHERE CAR.ID = :id
+				", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						solicitacao.Id = id;
+						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Numero = reader.GetValue<String>("numero");
+						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
+						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
+						solicitacao.SituacaoTexto = reader.GetValue<String>("situacao_texto");
+						solicitacao.DataSituacao.DataTexto = reader.GetValue<String>("situacao_data");
+						solicitacao.Requerimento.Id = reader.GetValue<Int32>("requerimento");
+						solicitacao.Empreendimento.Id = reader.GetValue<Int32>("empreendimento_id");
+						solicitacao.Empreendimento.NomeRazao = reader.GetValue<String>("empreendimento_nome");
+						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return solicitacao;
+		}
+
+		internal CARSolicitacao ObterOnInstitucional(int id, BancoDeDados banco = null)
         {
             CARSolicitacao solicitacao = new CARSolicitacao();
 
@@ -980,7 +1033,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
 
-							solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
+							solicitacao = _da.ObterSimplificado(solicitacaoId, banco: bancoDeDados);
 							return solicitacao;
 						}
 
@@ -1028,7 +1081,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							CARSolicitacaoInternoDa _da = new CARSolicitacaoInternoDa();
 
-							solicitacao = _da.Obter(solicitacaoId, banco: bancoDeDados);
+							solicitacao = _da.ObterSimplificado(solicitacaoId, banco: bancoDeDados);
 							solicitacao.Esquema = esquema;
 							return solicitacao;
 						}
