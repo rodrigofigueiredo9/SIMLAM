@@ -128,6 +128,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			try
 			{
+				var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+				if (idProjetoGeo == 0)
+					throw new Exception("Projeto Geográfico não encontrado");
+
+				var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true);
+				_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id);
+
+				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+				_projetoGeoBus.Refazer(projeto);
+				foreach (var arquivo in projeto.Arquivos)
+					_projetoGeoBus.Reprocessar(arquivo);
+
 				_da.FinalizarExploracao(empreendimento, banco);
 			}
 			catch (Exception exc)

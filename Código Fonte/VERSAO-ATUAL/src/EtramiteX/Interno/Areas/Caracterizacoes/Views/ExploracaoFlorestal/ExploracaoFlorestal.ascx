@@ -17,8 +17,6 @@
 		<input type="hidden" class="hdnEmpreendimentoId" value="<%: exploracao.Caracterizacao.EmpreendimentoId%>" />
 		<input type="hidden" class="hdnCaracterizacaoId" value="<%: exploracao.Caracterizacao.Id %>" />
 		<input type="hidden" class="hdnCodigoExploracao" value="<%: exploracao.Caracterizacao.CodigoExploracao %>" />
-		<input type="hidden" class="hdnCodigoExploracaoAnterior" value="<%: exploracao.Caracterizacao.CodigoExploracao %>" />
-		<input type="hidden" class="hdnTipoExploracaoAnterior" value="<%: exploracao.Caracterizacao.TipoExploracao %>" />
         <div class="block">
             <div class="coluna22 append2">
                 <label for="CodigoExploracao">Código Exploração</label>

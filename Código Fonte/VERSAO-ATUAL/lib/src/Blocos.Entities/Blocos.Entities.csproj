@@ -88,6 +88,7 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eVertedouroTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloDominialidade\eCompensacaoTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\eTipoExploracao.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalProduto.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ListarExploracaoFlorestalFiltro.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeConsolidacao\UnidadeConsolidacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoUnidadeMedida.cs" />
@@ -560,7 +561,7 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\eExploracaoFlorestalGeometria.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestal.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalExploracao.cs" />
-    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalProduto.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalGeo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Especie.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorte.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteInformacao.cs" />

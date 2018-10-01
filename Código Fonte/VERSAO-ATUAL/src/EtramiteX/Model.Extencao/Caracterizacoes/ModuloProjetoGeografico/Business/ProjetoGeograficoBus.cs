@@ -604,6 +604,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		public void ApagarGeometriaDeExploracao(int exploracaoId, BancoDeDados banco = null)
+		{
+			try
+			{
+				_da.ApagarGeometriaDeExploracao(exploracaoId, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		#endregion
 
 		#region Obter

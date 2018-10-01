@@ -224,8 +224,12 @@ ExploracaoFlorestalExploracao = {
 				ArvoresRequeridas: $('.txtArvoresRequeridas', this).val(),
 				FinalidadeExploracao: $('.ddlFinalidade option:selected', this).val(),
 				FinalidadeEspecificar: $('.txtFinalidadeEspecificar', this).val(),
-		        Produtos: []
-		    };
+				Produtos: [],
+				ExploracaoFlorestalGeo: null
+			};
+
+			if ($('.hdnDetalheGeo', this).val() != "")
+				objeto.ExploracaoFlorestalGeo = JSON.parse($('.hdnDetalheGeo', this).val());
 
 			if (objeto.GeometriaTipoId != 3) {
 				objeto.QuantidadeArvores = objeto.QuantidadeArvores.toString().trim().replace(/\./g, '');

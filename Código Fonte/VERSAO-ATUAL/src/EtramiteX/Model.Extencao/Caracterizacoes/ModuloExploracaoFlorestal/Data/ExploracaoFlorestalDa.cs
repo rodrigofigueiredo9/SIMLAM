@@ -115,6 +115,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
+						#region Exploracao Geo
+
+						if (item.ExploracaoFlorestalGeo != null)
+						{
+							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_geo c (id, exp_florestal_exploracao, geo_pativ_id,
+							geo_lativ_id, geo_aativ_id, geo_aiativ_id) values ({0}seq_exp_florestal_geo.nextval, :exp_florestal_exploracao, :geo_pativ_id, 
+							:geo_lativ_id, :geo_aativ_id, :geo_aiativ_id)", EsquemaBanco);
+
+							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_pativ_id", item.ExploracaoFlorestalGeo.GeoPativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_lativ_id", item.ExploracaoFlorestalGeo.GeoLativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_aativ_id", item.ExploracaoFlorestalGeo.GeoAativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_aiativ_id", item.ExploracaoFlorestalGeo.GeoAiativId, DbType.Int32);
+
+							bancoDeDados.ExecutarNonQuery(comando);
+						}
+
+						#endregion
+
 						#region Produtos
 
 						if (item.Produtos != null && item.Produtos.Count > 0)
@@ -341,7 +360,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				Comando comando = bancoDeDados.CriarComando(@"
 				update {0}crt_exploracao_florestal e
 				set e.data_conclusao = sysdate
-				where e.empreendimento = :empreendimento", EsquemaBanco);
+				where e.empreendimento = :empreendimento
+				and e.data_conclusao is null", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -362,7 +382,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s
-						where s.empreendimento = :empreendimento " + (tipoExploracao > 0 ? " and s.tipo_exploracao = :tipo_exploracao" : "") +
+						where s.empreendimento = :empreendimento and s.data_conclusao is null" +
+						(tipoExploracao > 0 ? " and s.tipo_exploracao = :tipo_exploracao" : "") +
 						" and rownum = 1", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				if(tipoExploracao > 0)
@@ -433,7 +454,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#region Exploração Florestal
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
-						c.data_cadastro, c.tid, lv.texto tipo_exploracao_texto,
+						c.data_cadastro, c.data_conclusao, c.tid, lv.texto tipo_exploracao_texto,
 						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador
 						from {0}crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
@@ -453,6 +474,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
 						if(!Convert.IsDBNull(reader["data_cadastro"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+						if (!Convert.IsDBNull(reader["data_conclusao"]))
+							caracterizacao.DataConclusao = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
 						if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
 							caracterizacao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
@@ -707,7 +730,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'OUTRO') > 0				then 8/*aa - OUTRO*/
 								when tab.avn = '[x]' then 5 /*Arvores isoladas->Ponto e Linha*/
 						   end) class_vegetal
-					  from (select a.atividade,
+					  from (select a.id, a.atividade,
 								   a.codigo             identificacao,
 								   3					 geometria_tipo,
 								   a.area_m2            area_croqui,
@@ -729,7 +752,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
 							union all
-							select a.atividade,
+							select a.id, a.atividade,
 								   a.codigo             identificacao,
 								   2 geometria_tipo,
 								   null                 area_croqui,
@@ -751,7 +774,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
 							union all
-							select a.atividade,
+							select a.id, a.atividade,
 								   a.codigo             identificacao,
 								   1 geometria_tipo,
 								   null                 area_croqui,
@@ -773,9 +796,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
 							union all
-							select a.atividade,
+							select a.id, a.atividade,
 								   a.codigo             identificacao,
-								   3 geometria_tipo,
+								   4 geometria_tipo,
 								   a.area_m2            area_croqui,
 								   a.avn,
 								   a.aa,
@@ -808,7 +831,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						detalhe = new ExploracaoFlorestalExploracao();
 						detalhe.Identificacao = reader["identificacao"].ToString();
-						detalhe.GeometriaTipoId = Convert.ToInt32(reader["geometria_tipo"]);
+						if (Convert.ToInt32(reader["geometria_tipo"]) == 4)
+							detalhe.GeometriaTipoId = (int)eTipoGeometria.Poligono;
+						else
+							detalhe.GeometriaTipoId = Convert.ToInt32(reader["geometria_tipo"]);
 
 						detalhe.ClassificacaoVegetacaoId = reader.GetValue<int>("class_vegetal");
 
@@ -833,6 +859,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							if (!Convert.IsDBNull(reader["data"]))
 								exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
 						}
+
+						detalhe.ExploracaoFlorestalGeo = new ExploracaoFlorestalGeo();
+						switch (Convert.ToInt32(reader["geometria_tipo"]))
+						{
+							case (int)eTipoGeometria.Ponto:
+								detalhe.ExploracaoFlorestalGeo.GeoPativId = Convert.ToInt32(reader["id"]);
+								break;
+							case (int)eTipoGeometria.Linha:
+								detalhe.ExploracaoFlorestalGeo.GeoLativId = Convert.ToInt32(reader["id"]);
+								break;
+							case (int)eTipoGeometria.Poligono:
+								detalhe.ExploracaoFlorestalGeo.GeoAativId = Convert.ToInt32(reader["id"]);
+								break;
+							default:
+								detalhe.ExploracaoFlorestalGeo.GeoAiativId = Convert.ToInt32(reader["id"]);
+								break;
+						}
+
 						if (exploracaoFlorestalList.Contains(exploracao))
 							exploracaoFlorestalList.Remove(exploracao);
 						exploracao.Exploracoes.Add(detalhe);
@@ -887,6 +931,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				if (!string.IsNullOrWhiteSpace(filtros.Dados.DataExploracao))
 					comandtxt += comando.FiltroAnd("to_char(c.data_cadastro, 'dd/MM/yyyy')", "data_cadastro", filtros.Dados.DataExploracao);
 
+				if (!filtros.Dados.IsVisualizar)
+					comandtxt += " and c.data_conclusao is null";
+
 				#endregion
 
 				#region Ordenação
@@ -899,7 +946,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					ordenar.Add("tipo_exploracao_texto");
 				#endregion Ordenação
 
-				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_exploracao_texto,
+				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
+						c.data_cadastro, c.data_conclusao, c.tid, lv.chave tipo_exploracao_texto,
 						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
 						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
 						from crt_exploracao_florestal c
@@ -912,7 +960,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				#region QUERY
 
-				comandtxt = String.Format(@"select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.tid, lv.chave tipo_exploracao_texto,
+				comandtxt = String.Format(@"select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao, c.data_cadastro, c.data_conclusao,
+						c.tid, lv.chave tipo_exploracao_texto,
 						concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy')) localizador,
 						concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')) codigo_exploracao_texto
 						from crt_exploracao_florestal c
@@ -942,6 +991,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
 						if (!Convert.IsDBNull(reader["data_cadastro"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
+						if (!Convert.IsDBNull(reader["data_conclusao"]))
+							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
 
 						lista.Itens.Add(caracterizacao);
 					}
