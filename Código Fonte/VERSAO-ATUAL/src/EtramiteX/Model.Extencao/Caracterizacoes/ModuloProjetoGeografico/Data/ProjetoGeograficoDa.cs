@@ -647,11 +647,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"begin
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"begin
 						delete from {1}geo_pativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> 1
+							and cp.parecer_favoravel <> :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -659,7 +659,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_lativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> 1
+							and cp.parecer_favoravel <> :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -667,7 +667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_aativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> 1
+							and cp.parecer_favoravel <> :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -675,13 +675,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_aiativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> 1
+							and cp.parecer_favoravel <> :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
 								and cg.geo_aiativ_id = g.id));
 						end;", EsquemaBanco, EsquemaBancoGeo);
 				comando.AdicionarParametroEntrada("exploracao_id", exploracaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("parecer_favoravel", false, DbType.Boolean);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 

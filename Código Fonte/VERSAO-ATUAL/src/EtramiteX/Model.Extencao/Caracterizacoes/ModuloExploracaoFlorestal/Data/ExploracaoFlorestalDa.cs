@@ -355,8 +355,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				bancoDeDados.IniciarTransacao();
-
 				Comando comando = bancoDeDados.CriarComando(@"
 				update {0}crt_exploracao_florestal e
 				set e.data_conclusao = sysdate
@@ -366,8 +364,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
-
-				bancoDeDados.Commit();
 			}
 		}
 

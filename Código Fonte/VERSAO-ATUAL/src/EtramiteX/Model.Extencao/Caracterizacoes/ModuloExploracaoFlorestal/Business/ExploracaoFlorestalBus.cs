@@ -5,6 +5,7 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
@@ -128,19 +129,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			try
 			{
-				var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
-				if (idProjetoGeo == 0)
-					throw new Exception("Projeto Geográfico não encontrado");
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
 
-				var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true);
-				_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id);
+					var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+					if (idProjetoGeo == 0)
+						throw new Exception("Projeto Geográfico não encontrado");
 
-				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-				_projetoGeoBus.Refazer(projeto);
-				foreach (var arquivo in projeto.Arquivos)
-					_projetoGeoBus.Reprocessar(arquivo);
+					var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true, banco: bancoDeDados);
+					_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
 
-				_da.FinalizarExploracao(empreendimento, banco);
+					var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+					_projetoGeoBus.Refazer(projeto);
+					foreach (var arquivo in projeto.Arquivos)
+					{
+						if (arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosIDAF || arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosGEOBASES)
+							_projetoGeoBus.ReprocessarBaseReferencia(arquivo);
+						else
+							_projetoGeoBus.Reprocessar(arquivo);
+					}
+
+					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
+					_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
+					_projetoGeoBus.Finalizar(projeto);
+
+					_da.FinalizarExploracao(empreendimento, bancoDeDados);
+
+					bancoDeDados.Commit();
+				}
 			}
 			catch (Exception exc)
 			{

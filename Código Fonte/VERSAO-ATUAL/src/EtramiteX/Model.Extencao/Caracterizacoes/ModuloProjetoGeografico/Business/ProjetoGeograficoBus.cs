@@ -348,6 +348,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 				{
+					bancoDeDados.IniciarTransacao();
+
 					arquivo.Etapa = (int)eFilaEtapaGeo.Validacao;//1;
 					arquivo.Situacao = (int)eFilaSituacaoGeo.Aguardando;//1;
 
