@@ -11,8 +11,8 @@ LaudoVistoriaFlorestal = {
 	load: function (especificidadeRef) {
 		LaudoVistoriaFlorestal.container = especificidadeRef;
 		AtividadeEspecificidade.load(LaudoVistoriaFlorestal.container);
-		TituloExploracao.load(LaudoVistoriaFlorestal.container);
-		TituloExploracao.Mensagens = LaudoVistoriaFlorestal.Mensagens;
+		TituloLaudoExploracaoFlorestal.load(LaudoVistoriaFlorestal.container);
+		TituloLaudoExploracaoFlorestal.Mensagens = LaudoVistoriaFlorestal.Mensagens;
 		TituloCondicionante.load($('.condicionantesContainer', LaudoVistoriaFlorestal.container));
 		LaudoVistoriaFlorestal.container.find('.fsArquivos').arquivo({ extPermitidas: ['jpg', 'gif', 'png', 'bmp'] });
 

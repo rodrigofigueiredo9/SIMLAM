@@ -7,6 +7,7 @@
 <script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
 <script>
 	AutorizacaoExploracaoFlorestal.settings.urls.obterDadosAutorizacaoExploracaoFlorestal = '<%= Url.Action("ObterDadosAutorizacaoDestinatarios", "Autorizacao", new {area="Especificidades"}) %>';
+	AutorizacaoExploracaoFlorestal.settings.urls.obterDadosExploracao = '<%= Url.Action("ObterDadosExploracao", "Autorizacao", new {area="Especificidades"}) %>';
 	AutorizacaoExploracaoFlorestal.settings.urls.obterLaudoVistoria = '<%= Url.Action("Associar","Titulo", new {area=""}) %>';
 	AutorizacaoExploracaoFlorestal.settings.urls.validarAssociarVistoria = '<%= Url.Action("ValidarAssociarLaudoVistoria","Autorizacao", new {area="Especificidades"}) %>';
 	AutorizacaoExploracaoFlorestal.settings.modelos.LaudoVistoriaFlorestal = <%: (int)eEspecificidade.LaudoVistoriaFlorestal %>;
@@ -16,13 +17,6 @@
 	<legend>Especificidade</legend>
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
 	<br />
-
-	<div class="block">
-		<div class="coluna75">
-			<label>Destinatário *</label>
-			<%: Html.DropDownList("Autorizacao.Destinatario", Model.Destinatarios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Destinatarios.Count <= 1, new { @class = "text  ddlDestinatarios" }))%>
-		</div>
-	</div>
 
 	<div class="block">
 		<div class="coluna75">
@@ -36,6 +30,9 @@
 			<button class="inlineBotao <%: Model.TituloAssociado.Id > 0 && !Model.IsVisualizar ? "" : "hide" %> btnVistoriaLimpar">Limpar</button>
 		</div>
 	</div>
+
+	<% Html.RenderPartial("~/Views/Titulo/TituloAutorizacaoExploracaoFlorestal.ascx", Model); %>
+	<br />
 
 	<div class="block">
 		<div class="coluna75">

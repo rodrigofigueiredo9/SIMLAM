@@ -41,7 +41,7 @@
 		</div>
 	</div>
 
-	<% Html.RenderPartial("~/Views/Titulo/TituloExploracao.ascx", Model); %>
+	<% Html.RenderPartial("~/Views/Titulo/TituloLaudoVistoriaFlorestal.ascx", Model); %>
 	<br />
 
 	<div class="block">

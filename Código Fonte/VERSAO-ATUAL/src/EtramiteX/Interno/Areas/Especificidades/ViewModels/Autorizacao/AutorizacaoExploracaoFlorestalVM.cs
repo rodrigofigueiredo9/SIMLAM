@@ -57,6 +57,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autoriza
 			set { _autorizacao = value; }
 		}
 
+		private List<SelectListItem> _exploracoes = new List<SelectListItem>();
+		public List<SelectListItem> Exploracoes
+		{
+			get { return _exploracoes; }
+			set { _exploracoes = value; }
+		}
+
 		public String LaudoVistoriaTextoTela
 		{
 			get
@@ -71,6 +78,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autoriza
 			IsVisualizar = isVisualizar;
 			Destinatarios = ViewModelHelper.CriarSelectList(destinatarios, true);
 			Atividades = new AtividadeEspecificidadeVM(processosDocumentos, atividades, processoDocumentoSelecionado, 0, isVisualizar);
+			Atividades.Especificidade = eEspecificidade.AutorizacaoExploracaoFlorestal;
+			Atividades.Destinatarios = Destinatarios;
 
 			Condicionantes.MostrarBotoes = !isVisualizar;
 			Condicionantes.Condicionantes = condicionantes ?? new List<TituloCondicionante>();

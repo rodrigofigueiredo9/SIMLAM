@@ -616,6 +616,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return new List<TituloExploracaoFlorestal>();
 		}
 
+		public List<TituloExploracaoFlorestal> ObterExploracoesTituloAssociado(int id)
+		{
+			try
+			{
+				return _da.ObterExploracoesTituloAssociado(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return new List<TituloExploracaoFlorestal>();
+		}
+
+
 		public List<Municipio> ObterLocais()
 		{
 			ListaBus busLista = new ListaBus();

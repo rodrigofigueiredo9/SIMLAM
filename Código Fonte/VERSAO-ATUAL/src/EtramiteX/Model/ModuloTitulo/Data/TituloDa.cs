@@ -232,8 +232,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
+						comando.AdicionarParametroSaida("id", DbType.Int32);
 
 						bancoDeDados.ExecutarNonQuery(comando);
+
+						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+						if (item.TituloExploracaoFlorestalExploracaoList != null && item.TituloExploracaoFlorestalExploracaoList.Count > 0)
+						{
+							foreach (TituloExploracaoFlorestalExploracao itemDetalhe in item.TituloExploracaoFlorestalExploracaoList)
+							{
+								comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_flor_exp s (id, titulo_exploracao_florestal, exp_florestal_exploracao)
+								values ({0}seq_titulo_exp_flor_exp.nextval, :titulo_exploracao_florestal, :exp_florestal_exploracao)", EsquemaBanco);
+
+								comando.AdicionarParametroEntrada("titulo_exploracao_florestal", itemDetalhe.Id, DbType.Int32);
+								comando.AdicionarParametroEntrada("exp_florestal_exploracao", itemDetalhe.ExploracaoFlorestalExploracaoId, DbType.Int32);
+
+								bancoDeDados.ExecutarNonQuery(comando);
+							}
+						}
 					}
 				}
 
@@ -2079,6 +2096,65 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							tituloExploracaoFlorestalExploracao.TituloExploracaoFlorestalId = Convert.ToInt32(reader["titulo_exploracao_florestal"]);
 							tituloExploracaoFlorestalExploracao.ExploracaoFlorestalExploracaoId = Convert.ToInt32(reader["exp_florestal_exploracao"]);
 
+							if (reader["identificacao"] != null && !Convert.IsDBNull(reader["identificacao"]))
+								tituloExploracaoFlorestalExploracao.ExploracaoFlorestalExploracaoTexto = reader["identificacao"].ToString();
+
+							tituloExploracao.TituloExploracaoFlorestalExploracaoList.Add(tituloExploracaoFlorestalExploracao);
+						}
+
+						reader.Close();
+					}
+
+					lst.Add(tituloExploracao);
+				}
+			}
+			return lst;
+		}
+
+		internal List<TituloExploracaoFlorestal> ObterExploracoesTituloAssociado(int tituloId)
+		{
+			List<TituloExploracaoFlorestal> lst = new List<TituloExploracaoFlorestal>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select
+						te.id, te.titulo, te.exploracao_florestal,
+						concat(concat(concat(lv.chave, lpad(to_char(e.codigo_exploracao), 3, '0')), '-'), to_char(e.data_cadastro, 'ddMMyyyy')) localizador
+					from {0}tab_titulo_exp_florestal te
+					inner join {0}crt_exploracao_florestal e
+						on (te.exploracao_florestal = e.id)
+					left join idafgeo.lov_tipo_exploracao lv
+						on (e.tipo_exploracao = lv.tipo_atividade)
+					where te.titulo = :tituloId
+					", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("tituloId", tituloId);
+
+				IEnumerable<IDataReader> daReader = DaHelper.ObterLista(comando, bancoDeDados);
+
+				foreach (var item in daReader)
+				{
+					TituloExploracaoFlorestal tituloExploracao = new TituloExploracaoFlorestal();
+					tituloExploracao.Id = Convert.ToInt32(item["id"]);
+					tituloExploracao.TituloId = Convert.ToInt32(item["titulo"]);
+					tituloExploracao.ExploracaoFlorestalId = Convert.ToInt32(item["exploracao_florestal"]);
+
+					if (item["localizador"] != null && !Convert.IsDBNull(item["localizador"]))
+						tituloExploracao.ExploracaoFlorestalTexto = item["localizador"].ToString();
+
+					comando = bancoDeDados.CriarComando(@"select ep.id, ep.identificacao
+							from {0}crt_exp_florestal_exploracao ep
+                            where ep.parecer_favoravel = :parecer_favoravel and ep.exploracao_florestal = :exploracao_florestal", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("exploracao_florestal", tituloExploracao.ExploracaoFlorestalId, DbType.Int32);
+					comando.AdicionarParametroEntrada("parecer_favoravel", true, DbType.Boolean);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						TituloExploracaoFlorestalExploracao tituloExploracaoFlorestalExploracao = null;
+						while (reader.Read())
+						{
+							tituloExploracaoFlorestalExploracao = new TituloExploracaoFlorestalExploracao();
+							tituloExploracaoFlorestalExploracao.ExploracaoFlorestalExploracaoId = Convert.ToInt32(reader["id"]);
 							if (reader["identificacao"] != null && !Convert.IsDBNull(reader["identificacao"]))
 								tituloExploracaoFlorestalExploracao.ExploracaoFlorestalExploracaoTexto = reader["identificacao"].ToString();
 
