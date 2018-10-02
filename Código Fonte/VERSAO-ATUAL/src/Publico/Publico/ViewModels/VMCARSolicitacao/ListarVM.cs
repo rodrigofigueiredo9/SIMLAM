@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
 
 namespace Tecnomapas.EtramiteX.Publico.ViewModels.VMCARSolicitacao
 {
@@ -51,6 +52,20 @@ namespace Tecnomapas.EtramiteX.Publico.ViewModels.VMCARSolicitacao
 		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
 		{
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
+		}
+
+		public string Mensagens
+		{
+			get
+			{
+				return ViewModelHelper.Json(new
+				{
+					@GerarPdfSICARUrlNaoEncontrada = Mensagem.CARSolicitacao.GerarPdfSICARUrlNaoEncontrada,
+					@ErroPdfDemonstrativo = Mensagem.CARSolicitacao.ErroPdfDemonstrativo,
+					@ReenviarMsgConfirmacao = Mensagem.CARSolicitacao.@ReenviarMsgConfirmacao
+
+				});
+			}
 		}
 	}
 }
