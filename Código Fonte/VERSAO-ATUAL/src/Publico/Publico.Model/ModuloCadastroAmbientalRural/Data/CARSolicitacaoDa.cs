@@ -458,16 +458,16 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				}
 				else
 				{
-
-					comando = bancoDeDados.CriarComando(@"SELECT CODIGO_IMOVEL FROM (SELECT  CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 
-															INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = CS.EMPREENDIMENTO
-														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 1 AND TT.ID = :id
-														UNION ALL
-														SELECT CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 																
-															INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = (select e.id from IDAF.TAB_EMPREENDIMENTO e
-															where e.codigo = (select ec.codigo from IDAFCREDENCIADO.TAB_EMPREENDIMENTO ec where ec.id = CS.EMPREENDIMENTO)) 
-														  WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 2 AND TT.ID = :id)
-														  WHERE ROWNUM = 1 ORDER BY TITULO DESC");
+					comando = bancoDeDados.CriarComando(@"
+						SELECT CODIGO_IMOVEL FROM (SELECT  CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 
+							INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = CS.EMPREENDIMENTO
+							WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 1 AND CS.CODIGO_IMOVEL IS NOT NULL AND TT.ID = :id
+						UNION ALL
+						SELECT CS.CODIGO_IMOVEL, TT.ID TITULO FROM TAB_TITULO TT 																
+							INNER JOIN TAB_CONTROLE_SICAR CS ON TT.EMPREENDIMENTO = (select e.id from IDAF.TAB_EMPREENDIMENTO e
+							where e.codigo = (select ec.codigo from IDAFCREDENCIADO.TAB_EMPREENDIMENTO ec where ec.id = CS.EMPREENDIMENTO)) 
+							WHERE TT.SITUACAO = 3 /*Concluído*/ AND CS.SOLICITACAO_CAR_ESQUEMA = 2 AND CS.CODIGO_IMOVEL IS NOT NULL AND TT.ID = :id)
+							WHERE ROWNUM = 1 ORDER BY TITULO DESC");
 
 				}
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
