@@ -91,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 
 				int situacaoId = PTV.Situacao;
 				string situacaoTexto = PTV.SituacaoTexto;
-				return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(id, situacaoId, situacaoTexto), "EPTV");
+				return ViewModelHelper.GerarArquivoPdf(pdf.Gerar(id, situacaoId, situacaoTexto, PTV), "EPTV");
 			}
 			catch (Exception exc)
 			{
