@@ -26,3 +26,8 @@
   COMMENT ON COLUMN "IDAF"."TAB_INTEGRACAO_SINAFLOR"."DATA" IS 'Informa a data da integracao no SINAFLOR.';
   
   COMMENT ON TABLE "IDAF"."TAB_INTEGRACAO_SINAFLOR"  IS 'Tabela de integracao com SINAFLOR.';
+
+  COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.CODIGO_EXPLORACAO IS 'Codigo identificador acrescido de acordo com o tipo de atividade (tipo_exploracao).';
+  COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.TIPO_EXPLORACAO IS 'Código do tipo de atividade cadastrado no IBAMA (idafgeo.lov_tipo_exploracao CAMPO(tipo_atividade)).';
+  COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.DATA_CADASTRO IS 'Data de cadastro da exploracao no IDAF.';
+  COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.FINALIDADE IS 'Finalidade da exploracao (coluna criada na tabela filha) - não utilizada.';

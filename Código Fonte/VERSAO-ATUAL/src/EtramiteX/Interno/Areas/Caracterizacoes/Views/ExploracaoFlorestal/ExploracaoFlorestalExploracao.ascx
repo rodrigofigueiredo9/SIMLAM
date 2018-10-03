@@ -14,6 +14,7 @@
 	<input type="hidden" class="hdnExploracaoId" value="<%:Model.ExploracaoFlorestal.Id%>" />
 	<input type="hidden" class="hdnClassificacaoVegetacaoId" value="<%:Model.ExploracaoFlorestal.ClassificacaoVegetacaoId%>" />
 	<input type="hidden" class="hdnIsVisualizar" value="<%:Model.IsVisualizar%>" />
+	<input type="hidden" class="hdnDetalheGeo" value="<%:ViewModelHelper.Json(Model.ExploracaoFlorestal.ExploracaoFlorestalGeo)%>" />
 
 	<div class="block">
 		<div class="coluna10">

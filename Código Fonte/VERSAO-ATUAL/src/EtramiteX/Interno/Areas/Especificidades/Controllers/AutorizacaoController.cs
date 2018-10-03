@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autorizacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Especificidade;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAutorizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
@@ -138,6 +139,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (especificidade.TituloId > 0)
 			{
 				vm.Atividades.Atividades = titulo.Atividades;
+				vm.Atividades.Especificidade = eEspecificidade.AutorizacaoExploracaoFlorestal;
+				vm.Atividades.Destinatarios = vm.Destinatarios;
+				var select = vm.Atividades.Destinatarios.FirstOrDefault(x => x.Value == autorizacao.Destinatario.ToString());
+				select.Selected = true;
+
+				var exploracoes = _busTitulo.ObterExploracoes(titulo.Id);
+				var exploracao = exploracoes.FirstOrDefault();
+				vm.TituloExploracaoDetalhes = exploracao.TituloExploracaoFlorestalExploracaoList;
+				vm.Exploracoes = ViewModelHelper.CriarSelectList(exploracoes.Select(x => new Lista()
+				{
+					Id = x.ExploracaoFlorestalId.ToString(),
+					Texto = x.ExploracaoFlorestalTexto
+				}).ToList(), selecionado: exploracao.ExploracaoFlorestalId.ToString());
 			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
@@ -230,10 +244,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Auxiliar
 
-		public ActionResult ObterDadosAutorizacaoDestinatarios(Protocolo protocolo)
-		{
-			return Json(new { @Destinatarios = _busTitulo.ObterDestinatarios(protocolo.Id.GetValueOrDefault()) }, JsonRequestBehavior.AllowGet);
-		}
+		public ActionResult ObterDadosAutorizacaoDestinatarios(Protocolo protocolo) =>
+			Json(new { @Destinatarios = _busTitulo.ObterDestinatarios(protocolo.Id.GetValueOrDefault()) }, JsonRequestBehavior.AllowGet);
+
+		public ActionResult ObterDadosExploracao(int tituloAssociadoId) =>
+			Json(new { @Exploracoes = _busTitulo.ObterExploracoesTituloAssociado(tituloAssociadoId) }, JsonRequestBehavior.AllowGet);
 
 		#endregion
 	}

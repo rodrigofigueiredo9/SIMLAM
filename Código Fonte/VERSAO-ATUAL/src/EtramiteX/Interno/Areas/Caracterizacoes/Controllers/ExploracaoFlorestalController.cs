@@ -166,16 +166,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var vmList = new ExploracaoFlorestalListVM();
 			vmList.Dependencias = exploracaoFlorestal.Dependencias;
 
-			var textoMerge = _caracterizacaoValidar.DependenciasAlteradas(exploracaoFlorestal.EmpreendimentoId,
-				(int)eCaracterizacao.ExploracaoFlorestal,
-				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				vmList.Dependencias, true);
-			vmList.TextoMerge = textoMerge;
-			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(exploracaoFlorestal.EmpreendimentoId);
+			if (exploracaoFlorestal.DataConclusao.IsEmpty)
+			{
+				var textoMerge = _caracterizacaoValidar.DependenciasAlteradas(exploracaoFlorestal.EmpreendimentoId,
+					(int)eCaracterizacao.ExploracaoFlorestal,
+					eCaracterizacaoDependenciaTipo.Caracterizacao,
+					vmList.Dependencias, true);
+				vmList.TextoMerge = textoMerge;
+				vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+				vmList.TextoAbrirModal = _validar.AbrirModalAcessar(exploracaoFlorestal.EmpreendimentoId);
 
-			if (!string.IsNullOrEmpty(textoMerge))
-				exploracaoFlorestal = _bus.MergiarGeo(exploracaoFlorestal);
+				if (!string.IsNullOrEmpty(textoMerge))
+					exploracaoFlorestal = _bus.MergiarGeo(exploracaoFlorestal);
+			}
 
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(exploracaoFlorestal, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,

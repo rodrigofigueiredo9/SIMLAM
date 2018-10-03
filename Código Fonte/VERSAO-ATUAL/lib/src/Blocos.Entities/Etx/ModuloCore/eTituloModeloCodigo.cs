@@ -2,6 +2,8 @@
 {
 	public enum eTituloModeloCodigo
 	{
+		LaudoVistoriaFlorestal = 4,
+		AutorizacaoExploracaoFlorestal = 5,
 		CertificadoRegistroAtividadeFlorestal = 19
 	}
 }

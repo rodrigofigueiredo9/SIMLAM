@@ -138,6 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				titulo.Anexos = _busTitulo.ObterAnexos(especificidade.TituloId);
 				titulo.Atividades = _busTitulo.ObterAtividades(especificidade.TituloId);
 				titulo.Condicionantes = _busTitulo.ObterCondicionantes(especificidade.TituloId);
+				titulo.Exploracoes = _busTitulo.ObterExploracoes(especificidade.TituloId);
 
 				laudo = _busLaudo.Obter(especificidade.TituloId) as LaudoVistoriaFlorestal;
 
@@ -181,13 +182,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			var busExploracao = new ExploracaoFlorestalBus();
-			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(especificidade.EmpreendimentoId, true)?.ToList();
+			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(especificidade.EmpreendimentoId);
+			var caracterizacaoLst = new List<CaracterizacaoLst>();
+			if (exploracoesLst.Count() > 0)
+			{
+				caracterizacaoLst = exploracoesLst.Select(x => new CaracterizacaoLst
+				{
+					Id = x.Id,
+					Texto = x.CodigoExploracaoTexto ?? "",
+					ParecerFavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == true).Select(y => y.Identificacao)?.ToList()),
+					ParecerDesfavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == false).Select(y => y.Identificacao)?.ToList()),
+					IsAtivo = true
+				})?.ToList();
+			}
 
 			vm = new LaudoVistoriaFlorestalVM(
 				laudo,
 				lstProcessosDocumentos,
 				lstAtividades,
-				exploracoesLst,
+				caracterizacaoLst,
 				destinatarios,
 				_protocoloBus.ObterResponsaveisTecnicos(especificidade.ProtocoloId),
 				_busLista.ObterEspecificidadeConclusoes,
@@ -195,10 +208,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				especificidade.AtividadeProcDocReqKey,
 				especificidade.IsVisualizar);
 
-			vm.ExploracaoFlorestal = exploracoesLst;
-
 			if (especificidade.TituloId > 0)
+			{
 				vm.Atividades.Atividades = titulo.Atividades;
+				vm.Exploracoes = titulo.Exploracoes;
+			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
 

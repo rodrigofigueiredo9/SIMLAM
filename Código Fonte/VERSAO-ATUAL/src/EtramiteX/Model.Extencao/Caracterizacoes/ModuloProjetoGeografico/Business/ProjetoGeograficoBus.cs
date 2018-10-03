@@ -348,6 +348,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 				{
+					bancoDeDados.IniciarTransacao();
+
 					arquivo.Etapa = (int)eFilaEtapaGeo.Validacao;//1;
 					arquivo.Situacao = (int)eFilaSituacaoGeo.Aguardando;//1;
 
@@ -601,6 +603,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						bancoDeDados.Commit();
 					}
 				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
+		public void ApagarGeometriaDeExploracao(int exploracaoId, BancoDeDados banco = null)
+		{
+			try
+			{
+				_da.ApagarGeometriaDeExploracao(exploracaoId, banco);
 			}
 			catch (Exception exc)
 			{
