@@ -64,6 +64,9 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autoriza
 			set { _exploracoes = value; }
 		}
 
+		private List<TituloExploracaoFlorestalExploracao> _tituloExploracaoDetalhes = new List<TituloExploracaoFlorestalExploracao>();
+		public List<TituloExploracaoFlorestalExploracao> TituloExploracaoDetalhes { get { return _tituloExploracaoDetalhes; } set { _tituloExploracaoDetalhes = value; } }
+
 		public String LaudoVistoriaTextoTela
 		{
 			get

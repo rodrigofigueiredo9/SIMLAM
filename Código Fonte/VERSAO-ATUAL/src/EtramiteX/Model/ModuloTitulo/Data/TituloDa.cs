@@ -621,8 +621,37 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
+						comando.AdicionarParametroSaida("id", DbType.Int32);
 
 						bancoDeDados.ExecutarNonQuery(comando);
+
+						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+						if (item.TituloExploracaoFlorestalExploracaoList?.Count > 0)
+						{
+							foreach (TituloExploracaoFlorestalExploracao itemDetalhe in item.TituloExploracaoFlorestalExploracaoList)
+							{
+								if (itemDetalhe.Id > 0)
+								{
+									comando = bancoDeDados.CriarComando(@"update {0}tab_titulo_exp_flor_exp e
+									set e.titulo_exploracao_florestal = :titulo_exploracao_florestal,
+									e.exp_florestal_exploracao = :exp_florestal_exploracao
+									where e.id = :id", EsquemaBanco);
+									comando.AdicionarParametroEntrada("id", itemDetalhe.Id, DbType.Int32);
+								}
+								else
+								{
+									comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_flor_exp s (id, titulo_exploracao_florestal, exp_florestal_exploracao)
+									values ({0}seq_titulo_exp_flor_exp.nextval, :titulo_exploracao_florestal, :exp_florestal_exploracao)", EsquemaBanco);
+								}
+
+								comando.AdicionarParametroEntrada("titulo_exploracao_florestal", item.Id, DbType.Int32);
+								comando.AdicionarParametroEntrada("exp_florestal_exploracao", itemDetalhe.ExploracaoFlorestalExploracaoId, DbType.Int32);
+
+								bancoDeDados.ExecutarNonQuery(comando);
+							}
+						}
+
 					}
 				}
 
@@ -2078,11 +2107,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						tituloExploracao.ExploracaoFlorestalTexto = item["localizador"].ToString();
 
 					comando = bancoDeDados.CriarComando(@"select tp.id, tp.titulo_exploracao_florestal,
-								tp.exp_florestal_exploracao, ep.identificacao
+								tp.exp_florestal_exploracao, ep.identificacao, ep.autorizacao_sinaflor_id
 							from {0}tab_titulo_exp_flor_exp tp
 							inner join {0}crt_exp_florestal_exploracao ep
 								on (tp.exp_florestal_exploracao = ep.id)
-                            where tp.exp_florestal_exploracao = :titulo_exploracao_id", EsquemaBanco);
+                            where tp.titulo_exploracao_florestal = :titulo_exploracao_id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("titulo_exploracao_id", tituloExploracao.Id, DbType.Int32);
 
@@ -2098,6 +2127,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 							if (reader["identificacao"] != null && !Convert.IsDBNull(reader["identificacao"]))
 								tituloExploracaoFlorestalExploracao.ExploracaoFlorestalExploracaoTexto = reader["identificacao"].ToString();
+							if (reader["autorizacao_sinaflor_id"] != null && !Convert.IsDBNull(reader["autorizacao_sinaflor_id"]))
+								tituloExploracaoFlorestalExploracao.AutorizacaoSinaflorId = Convert.ToInt32(reader["autorizacao_sinaflor_id"]);
 
 							tituloExploracao.TituloExploracaoFlorestalExploracaoList.Add(tituloExploracaoFlorestalExploracao);
 						}

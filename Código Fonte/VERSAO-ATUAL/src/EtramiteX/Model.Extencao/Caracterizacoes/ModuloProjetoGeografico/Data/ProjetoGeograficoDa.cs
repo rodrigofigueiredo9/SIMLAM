@@ -651,7 +651,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_pativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> :parecer_favoravel
+							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -659,7 +659,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_lativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> :parecer_favoravel
+							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -667,7 +667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_aativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> :parecer_favoravel
+							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
@@ -675,7 +675,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						delete from {1}geo_aiativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel <> :parecer_favoravel
+							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
