@@ -293,6 +293,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			controleArquivoSICAR.SolicitacaoCarId = solicitacao.Id;
             CARSolicitacao retificado = new CARSolicitacao();
             String codigoRetificacao = String.Empty;
+            String codigoImovelTxt = String.Empty;
 
             retificado = ObterPorEmpreendimentoCod(solicitacao.Empreendimento.Codigo ?? 0);
 
@@ -387,10 +388,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				else
 				{
 					#region Editar controle arquivo SICAR
+					if (!String.IsNullOrWhiteSpace(codigoRetificacao))
+						codigoImovelTxt = " codigo_imovel = :codigo_imovel, ";
 
 					comando = bancoDeDados.CriarComando(@"
 				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio,
-					solicitacao_car_anterior = :solicitacao_car_anterior, solicitacao_car_anterior_tid = :solicitacao_car_anterior_tid, solicitacao_car_ant_esquema = :solicitacao_car_ant_esquema, codigo_imovel = :codigo_imovel,
+					solicitacao_car_anterior = :solicitacao_car_anterior, solicitacao_car_anterior_tid = :solicitacao_car_anterior_tid, solicitacao_car_ant_esquema = :solicitacao_car_ant_esquema,
+					" + codigoImovelTxt + @"
                     r.tid = :tid, r.arquivo = null where r.id = :id");
 
 					comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
@@ -410,7 +414,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
 						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
 					}
-					comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
+					if (String.IsNullOrWhiteSpace(codigoRetificacao))
+						comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
+
 					bancoDeDados.ExecutarNonQuery(comando);
 
 					#endregion
