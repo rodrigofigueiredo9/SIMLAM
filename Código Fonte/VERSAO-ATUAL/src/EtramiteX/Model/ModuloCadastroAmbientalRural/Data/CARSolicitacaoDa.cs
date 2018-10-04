@@ -414,7 +414,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
 						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
 					}
-					if (String.IsNullOrWhiteSpace(codigoRetificacao))
+					if (!String.IsNullOrWhiteSpace(codigoRetificacao))
 						comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
