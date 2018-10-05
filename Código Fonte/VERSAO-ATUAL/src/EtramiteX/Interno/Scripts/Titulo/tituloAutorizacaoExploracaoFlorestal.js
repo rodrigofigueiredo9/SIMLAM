@@ -4,8 +4,7 @@
 
 TituloAutorizacaoExploracaoFlorestal = {
 	settings: {
-		afterChangeProcDoc: null,
-		urlExcluirAutorizacao: null
+		afterChangeProcDoc: null
 	},
 	container: null,
 	protocolo: null,
@@ -34,19 +33,13 @@ TituloAutorizacaoExploracaoFlorestal = {
 			})
 		);
 
-		//$('.exploracaoId', TituloAutorizacaoExploracaoFlorestal.container).toArray().filter(x => x.value > 0).map(x =>
-		//	exploracao.TituloExploracaoFlorestalExploracaoList.push({ ExploracaoFlorestalExploracaoId: x.value })
-		//);
-
 		return exploracao;
 	},
 
 	onChangeExploracao: function () {
 		var id = $('.ddlExploracoes', TituloAutorizacaoExploracaoFlorestal.container).val();
-		if (id == 0 || id == "") {
-			$('.tabExploracoes > tbody > tr:not(:first)', TituloAutorizacaoExploracaoFlorestal.container).remove();
-			return;
-		}
+		$('.tabExploracoes > tbody > tr:not(:first)', TituloAutorizacaoExploracaoFlorestal.container).remove();
+		if (id == 0 || id == "") return;
 
 		var exploracoes = JSON.parse($('.ddlExploracoes option:selected', TituloLaudoExploracaoFlorestal.container).attr('detalhes').replaceAll("'", '"'));
 
@@ -54,9 +47,10 @@ TituloAutorizacaoExploracaoFlorestal = {
 			var linha = '';
 			linha = $('.trTemplateRow', TituloAutorizacaoExploracaoFlorestal.container).clone();
 
-			linha.find('[descricao]').text(detalhe.ExploracaoFlorestalExploracaoTexto);
-			linha.find('[descricao]').attr('title', detalhe.ExploracaoFlorestalExploracaoTexto);
-			linha.find('[exploracaoId]').val(detalhe.ExploracaoFlorestalExploracaoId);
+			linha.find('.descricao').text(detalhe.ExploracaoFlorestalExploracaoTexto);
+			linha.find('.descricao').attr('title', detalhe.ExploracaoFlorestalExploracaoTexto);
+			linha.find('.exploracaoId').val(detalhe.ExploracaoFlorestalExploracaoId);
+			linha.find('.hdnId').val(detalhe.Id);
 
 			linha.removeClass('trTemplateRow hide');
 			$('.tabExploracoes > tbody:last', TituloAutorizacaoExploracaoFlorestal.container).append(linha);
@@ -66,15 +60,7 @@ TituloAutorizacaoExploracaoFlorestal = {
 	},
 
 	excluirExploracao: function () {
-		var autorizacaoId = $(this).find('.autorizacaoSinaflorId').text(detalhe.ExploracaoFlorestalExploracaoTexto);
-		if (autorizacaoId > 0) {
-			$.post(TituloAutorizacaoExploracaoFlorestal.settings.urlExcluirAutorizacao, autorizacaoId, function (data, textStatus, XMLHttpRequest) {
-				if (textStatus == 'sucess')
-					$(this).closest('tr').remove();
-			});
-		}
-		else
-			$(this).closest('tr').remove();
+		$(this).closest('tr').remove();
 	}
 };
 

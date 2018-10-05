@@ -133,26 +133,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				{
 					bancoDeDados.IniciarTransacao();
 
-					var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
-					if (idProjetoGeo == 0)
-						throw new Exception("Projeto Geográfico não encontrado");
-
-					var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true, banco: bancoDeDados);
-					_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
-
-					var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-					_projetoGeoBus.Refazer(projeto);
-					foreach (var arquivo in projeto.Arquivos)
+					if (_da.ExisteExploracaoDesfavoravel(empreendimento, banco))
 					{
-						if (arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosIDAF || arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosGEOBASES)
-							_projetoGeoBus.ReprocessarBaseReferencia(arquivo);
-						else
-							_projetoGeoBus.Reprocessar(arquivo);
-					}
+						var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+						if (idProjetoGeo == 0)
+							throw new Exception("Projeto Geográfico não encontrado");
 
-					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
-					_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
-					_projetoGeoBus.Finalizar(projeto);
+						var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true, banco: bancoDeDados);
+						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
+
+						var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+						_projetoGeoBus.Refazer(projeto);
+						foreach (var arquivo in projeto.Arquivos)
+						{
+							if (arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosIDAF || arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosGEOBASES)
+								_projetoGeoBus.ReprocessarBaseReferencia(arquivo);
+							else
+								_projetoGeoBus.Reprocessar(arquivo);
+						}
+
+						projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
+						_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
+						_projetoGeoBus.Finalizar(projeto);
+					}
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 
@@ -306,6 +309,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 
 			return null;
+		}
+
+		public bool ExisteExploracaoEmAndamento(int empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ExisteExploracaoEmAndamento(empreendimento, banco);
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		#endregion

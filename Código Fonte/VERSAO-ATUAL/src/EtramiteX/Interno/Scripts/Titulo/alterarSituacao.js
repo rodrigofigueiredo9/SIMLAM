@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
@@ -8,7 +8,8 @@ TituloAlterarSituacao = {
 			pdfTitulo: '',
 			validarObterSituacao: '',
 			salvar: '',
-			redirecionar: ''
+			redirecionar: '',
+			integracaoSinaflor: null
 		},
 		gerouPdf: false
 	},
@@ -80,7 +81,8 @@ TituloAlterarSituacao = {
 				break;
 		}
 
-		$.ajax({ url: TituloAlterarSituacao.settings.urls.validarObterSituacao,
+		$.ajax({
+			url: TituloAlterarSituacao.settings.urls.validarObterSituacao,
 			data: { id: $('.hdnTituloId', TituloAlterarSituacao.container).val(), acao: $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val() },
 			cache: false, async: true,
 			error: function (XMLHttpRequest, textStatus, erroThrown) {
@@ -109,27 +111,37 @@ TituloAlterarSituacao = {
 		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 
 		MasterPage.carregando(true);
-		$.ajax({ url: TituloAlterarSituacao.settings.urls.salvar,
-			data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
-				MasterPage.carregando(false);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg+'&acaoId='+response.AcaoId);
+
+		$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: objeto.CodigoSicar },
+			function (data, textStatus, XMLHttpRequest) {
+				debugger;
+				if (textStatus == "200") {
+					$.ajax({
+						url: TituloAlterarSituacao.settings.urls.salvar,
+						data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
+						cache: false,
+						async: false,
+						type: 'POST',
+						dataType: 'json',
+						contentType: 'application/json; charset=utf-8',
+						error: function (XMLHttpRequest, textStatus, erroThrown) {
+							Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
+							MasterPage.carregando(false);
+						},
+						success: function (response, textStatus, XMLHttpRequest) {
+							if (response.EhValido) {
+								MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId);
+							} else {
+								if (response.Msg && response.Msg.length > 0) {
+									Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);
+								}
+							}
+							MasterPage.carregando(false);
+						}
+					});
 				} else {
-					if (response.Msg && response.Msg.length > 0) {
-						Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);
-					}
+					MasterPage.carregando(false);
 				}
-				MasterPage.carregando(false);
-			}
-		});
+			}, "json");
 	}
 }
