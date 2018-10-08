@@ -140,13 +140,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						{
 							foreach (ExploracaoFlorestalProduto itemAux in item.Produtos)
 							{
-								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_popular_id, tid)
-								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :tid)", EsquemaBanco);
+								comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_popular_id, destinacao_material_id, tid)
+								values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :destinacao_material_id, :tid)", EsquemaBanco);
 
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
 								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
+								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -285,8 +286,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								}
 								else
 								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_popular_id, tid)
-									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :tid)", EsquemaBanco);
+									comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_produto c (id, exp_florestal_exploracao, produto, quantidade, especie_popular_id, destinacao_material_id, tid)
+									values ({0}seq_crt_exp_florestal_produto.nextval, :exp_florestal_exploracao, :produto, :quantidade, :especie_popular_id, :destinacao_material_id, :tid)", EsquemaBanco);
 
 									comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								}
@@ -294,6 +295,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
 								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
+								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -533,9 +535,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						#region Produtos
 
 						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
-						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto, c.tid 
-						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e
-						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
+						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
+						c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
+						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
+						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = (+)lv.id
+						and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao", exploracao.Id, DbType.Int32);
 
@@ -560,6 +564,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
+								}
+
+								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
+								{
+									produto.DestinacaoMaterialId = Convert.ToInt32(readerAux["destinacao_material_id"]);
+									produto.DestinacaoMaterialTexto = readerAux["destinacao_material_texto"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);
@@ -657,7 +667,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						#region Produtos
 
-						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.especie_popular_id, c.especie_popular_texto, c.tid 
+						comando = bancoDeDados.CriarComando(@"select c.exp_florestal_produto_id, c.produto_id, c.produto_texto, c.quantidade, c.especie_popular_id, c.especie_popular_texto, c.destinacao_material_id, c.destinacao_material_texto, c.tid 
 						from {0}hst_crt_exp_florestal_produto c where c.id_hst = :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
@@ -683,6 +693,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 									produto.ProdutoTexto = readerAux["especie_popular_texto"].ToString();
+								}
+
+								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
+								{
+									produto.DestinacaoMaterialId = Convert.ToInt32(readerAux["destinacao_material_id"]);
+									produto.DestinacaoMaterialTexto = readerAux["destinacao_material_texto"].ToString();
 								}
 
 								exploracao.Produtos.Add(produto);

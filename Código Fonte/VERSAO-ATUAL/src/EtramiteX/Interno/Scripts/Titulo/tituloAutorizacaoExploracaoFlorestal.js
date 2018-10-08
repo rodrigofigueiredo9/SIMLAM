@@ -21,19 +21,22 @@ TituloAutorizacaoExploracaoFlorestal = {
 	},
 
 	obterExploracoes: function () {
-		var exploracao = {
+		var TituloExploracaoFlorestal = {
 			ExploracaoFlorestalId: $('.ddlExploracoes', TituloAutorizacaoExploracaoFlorestal.container).val(),
 			TituloExploracaoFlorestalExploracaoList: []
 		};
 
 		$('.tabExploracoes > tbody > tr:not(:first) > td', TituloAutorizacaoExploracaoFlorestal.container).toArray().filter(x => x.childElementCount > 1).map(x =>
-			exploracao.TituloExploracaoFlorestalExploracaoList.push({
+			TituloExploracaoFlorestal.TituloExploracaoFlorestalExploracaoList.push({
 				Id: Array.from(x.children).filter(x => x["name"] === 'hdnId')[0].value,
 				ExploracaoFlorestalExploracaoId: Array.from(x.children).filter(x => x["name"] === 'exploracaoId')[0].value
 			})
 		);
 
-		return exploracao;
+		var exploracoes = [];
+		exploracoes.push(TituloExploracaoFlorestal);
+
+		return exploracoes;
 	},
 
 	onChangeExploracao: function () {

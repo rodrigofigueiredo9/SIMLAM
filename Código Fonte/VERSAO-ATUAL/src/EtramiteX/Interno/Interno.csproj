@@ -2854,6 +2854,7 @@
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
     <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\Publish.pubxml" />
     <None Include="Properties\PublishProfiles\Simlam_DEV.pubxml" />

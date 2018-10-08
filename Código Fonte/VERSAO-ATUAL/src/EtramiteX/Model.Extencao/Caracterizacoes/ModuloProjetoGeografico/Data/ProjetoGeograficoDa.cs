@@ -440,6 +440,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						{0}geo_operacoesprocessamentogeo.ImportarParaDesenhFinalizada(:projeto, v_fila_tipo);
 					end if;
 
+					{0}geo_operacoesprocessamentogeo.ApagarGeometriasOficial(:projeto, v_fila_tipo);
+
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);

@@ -6,8 +6,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 	{
 		public TituloExploracaoFlorestal() { }
 
-		public int Id { get; set; }
-		public int TituloId { get; set; }
+		public int? Id { get; set; }
+		public int? TituloId { get; set; }
 		public int ExploracaoFlorestalId { get; set; }
 		public string ExploracaoFlorestalTexto { get; set; }
 

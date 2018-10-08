@@ -51,32 +51,32 @@ TituloAlterarSituacao = {
 
 		switch (parseInt($('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val())) {
 			case 1:
-				container = $('.divEmitirParaAssinatura', TituloAlterarSituacao.container)
+				container = $('.divEmitirParaAssinatura', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 2:
-				container = $('.divCancelarEmissao', TituloAlterarSituacao.container)
+				container = $('.divCancelarEmissao', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 3:
-				container = $('.divAssinar', TituloAlterarSituacao.container)
+				container = $('.divAssinar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 4:
-				container = $('.divProrrogar', TituloAlterarSituacao.container)
+				container = $('.divProrrogar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 5:
-				container = $('.divEncerrar', TituloAlterarSituacao.container)
+				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 6:
-				container = $('.divConcluir', TituloAlterarSituacao.container)
+				container = $('.divConcluir', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 		}
@@ -109,39 +109,50 @@ TituloAlterarSituacao = {
 			DataEncerramento: { DataTexto: $('.txtDataEncerramento', TituloAlterarSituacao.container).val() }
 		};
 		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
+		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
+		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 
 		MasterPage.carregando(true);
 
-		$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: objeto.CodigoSicar },
-			function (data, textStatus, XMLHttpRequest) {
-				debugger;
-				if (textStatus == "200") {
-					$.ajax({
-						url: TituloAlterarSituacao.settings.urls.salvar,
-						data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
-						cache: false,
-						async: false,
-						type: 'POST',
-						dataType: 'json',
-						contentType: 'application/json; charset=utf-8',
-						error: function (XMLHttpRequest, textStatus, erroThrown) {
-							Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
-							MasterPage.carregando(false);
-						},
-						success: function (response, textStatus, XMLHttpRequest) {
-							if (response.EhValido) {
-								MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId);
-							} else {
-								if (response.Msg && response.Msg.length > 0) {
-									Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);
-								}
-							}
-							MasterPage.carregando(false);
-						}
-					});
+		if (modelo === 13) {
+			$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: codigoSicar },
+				function (data, textStatus, XMLHttpRequest) {
+					if (textStatus === "200") {
+						TituloAlterarSituacao.alterarSituacao();
+					} else {
+						Mensagem.gerar(data);
+						MasterPage.carregando(false);
+					}
+				}, "json"
+			);
+		} else {
+			TituloAlterarSituacao.alterarSituacao();
+		}
+	},
+
+	alterarSituacao: function () {
+		$.ajax({
+			url: TituloAlterarSituacao.settings.urls.salvar,
+			data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
+				MasterPage.carregando(false);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId);
 				} else {
-					MasterPage.carregando(false);
+					if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);
+					}
 				}
-			}, "json");
+				MasterPage.carregando(false);
+			}
+		});
 	}
 }

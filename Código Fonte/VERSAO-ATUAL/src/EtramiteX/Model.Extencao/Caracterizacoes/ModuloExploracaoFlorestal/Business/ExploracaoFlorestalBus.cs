@@ -155,7 +155,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
 						_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
 						_projetoGeoBus.Finalizar(projeto);
+
+						#region Dependencias
+
+						//Gerencia as dependências da caracterização
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = exploracao.Id,
+							Tipo = eCaracterizacao.ExploracaoFlorestal,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = exploracao.Dependencias
+						}, bancoDeDados);
+
+						CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
+						caracterizacaoBus.AtualizarDependentes(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+
+						#endregion
 					}
+
+					if (Validacao.EhValido)
+						Validacao.Erros.Clear();
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 

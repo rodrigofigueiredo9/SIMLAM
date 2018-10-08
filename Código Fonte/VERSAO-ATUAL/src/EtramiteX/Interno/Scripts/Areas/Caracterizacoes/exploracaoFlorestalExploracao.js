@@ -42,10 +42,20 @@ ExploracaoFlorestalExploracao = {
 			$(this).removeAttr('initialize');
 		} 
 
+		var area = $("label[for='ExploracaoFlorestal_Exploracoes_AreaCroqui']", container);
+		var qtd = $("label[for='ExploracaoFlorestal_Exploracoes_QuantidadeArvores']", container);
 		if (showConteudo) {
 			$('.asmConteudoLink', container).show();
+			if (area.length > 0)
+				area[0].textContent = 'Área da atividade croqui (m²) – Autorizada';
+			if (qtd.length > 0)
+				qtd[0].textContent = 'N° de árvores autorizadas';
 		} else {
 			$('.asmConteudoLink', container).hide();
+			if (area.length > 0)
+				area[0].textContent = 'Área da atividade croqui (m²)';
+			if (qtd.length > 0)
+				qtd[0].textContent = 'N° de árvores';
 		}
 	},
 
@@ -122,7 +132,9 @@ ExploracaoFlorestalExploracao = {
 			ProdutoTexto: $('.ddlProduto :selected', container).text(),
 			Quantidade: $('.txtQuantidade', container).val(),
 			EspeciePopularId: $('.hdnEspecieId', container).val(),
-			EspeciePopularTexto: $('.txtEspecie', container).val()
+			EspeciePopularTexto: $('.txtEspecie', container).val(),
+			DestinacaoMaterialId: Number($('.ddlDestinacaoMaterial', container).val()),
+			DestinacaoMaterialTexto: $('.ddlDestinacaoMaterial :selected', container).text()
 		};
 
 		if (produto.ProdutoId == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
@@ -171,6 +183,7 @@ ExploracaoFlorestalExploracao = {
 		linha.find('.quantidade').html(produto.Quantidade).attr('title', produto.Quantidade);
 		linha.find('.especie').html(produto.EspeciePopularTexto).attr('title', produto.EspeciePopularTexto);
 		linha.find('.especieId').html(produto.EspeciePopularId).attr('value', produto.EspeciePopularId);
+		linha.find('.destinacaoMaterial').html(produto.DestinacaoMaterialTexto).attr('title', produto.DestinacaoMaterialTexto);
 
 		$('.dataGridTable tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
@@ -179,6 +192,7 @@ ExploracaoFlorestalExploracao = {
 		$('.txtEspecie', container).val('');
 		$('.hdnEspecieId', container).val('');
 		$('.ddlProduto', container).find('option:first').attr('selected', 'selected');
+		$('.ddlDestinacaoMaterial', container).find('option:first').attr('selected', 'selected');
 	},
 
 	excluir: function () {

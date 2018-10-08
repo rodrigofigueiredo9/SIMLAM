@@ -398,6 +398,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			}
 		}
 
+		public string ObterCodigoSicarPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ObterCodigoSicarPorEmpreendimento(empreendimentoId, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return "";
+		}
+
 		#endregion
 
 		#region Auxiliares
