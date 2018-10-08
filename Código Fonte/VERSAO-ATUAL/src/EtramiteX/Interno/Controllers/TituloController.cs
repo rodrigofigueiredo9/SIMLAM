@@ -965,7 +965,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			titulo.Modelo = _busModelo.Obter(titulo.Modelo.Id);
 
 			var busCar = new CARSolicitacaoBus();
-			var codigoSicar = busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0));
+			var codigoSicar = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal ? busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0)) : "";
 			AlterarSituacaoVM vm = new AlterarSituacaoVM(_busLista.MotivosEncerramento, titulo, codigoSicar: codigoSicar);
 			vm.AcoesAlterar = _busLista.TituloAlterarSituacaoAcoes;
 			vm.AcoesAlterar = _tituloSituacaoBus.SetarAcoesTela(vm.AcoesAlterar, titulo);

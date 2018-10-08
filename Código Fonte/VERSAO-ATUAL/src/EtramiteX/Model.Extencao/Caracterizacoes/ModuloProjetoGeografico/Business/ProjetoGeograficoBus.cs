@@ -366,13 +366,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void Refazer(ProjetoGeografico projeto)
+		public void Refazer(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
 				if (_validar.Refazer(projeto))
 				{
-					_da.Refazer(projeto.Id);
+					_da.Refazer(projeto.Id, banco);
 					Validacao.Add(Mensagem.ProjetoGeografico.RefeitoSucesso);
 				}
 			}

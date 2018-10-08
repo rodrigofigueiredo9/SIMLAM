@@ -143,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
 
 						var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-						_projetoGeoBus.Refazer(projeto);
+						_projetoGeoBus.Refazer(projeto, bancoDeDados);
 						foreach (var arquivo in projeto.Arquivos)
 						{
 							if (arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosIDAF || arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosGEOBASES)
