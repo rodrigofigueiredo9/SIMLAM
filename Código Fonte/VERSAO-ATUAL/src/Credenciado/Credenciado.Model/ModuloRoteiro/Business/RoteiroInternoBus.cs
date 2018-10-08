@@ -121,7 +121,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRoteiro.Business
 
 			List<String> titulos = new List<String>();
 
-			foreach (var atividade in atividades)
+			foreach (var atividade in atividades)	//parei aqui, ainda não fiz nenhum loop
 			{
 				foreach (var finalidade in atividade.Finalidades)
 				{

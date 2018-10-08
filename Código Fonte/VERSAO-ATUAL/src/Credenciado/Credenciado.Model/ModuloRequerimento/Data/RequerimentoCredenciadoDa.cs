@@ -492,7 +492,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 							requerimento.Empreendimento.Denominador = reader["denominador"].ToString();
 							requerimento.Empreendimento.CNPJ = reader["empreendimento_cnpj"].ToString();
 							requerimento.Empreendimento.InternoId = reader.GetValue<int?>("empreendimento_interno");
-							requerimento.Empreendimento.CredenciadoId = reader.GetValue<int?>("empreendimento_credenciado");
+							requerimento.Empreendimento.CredenciadoId = reader.GetValue<int?>("empreendimento_credenciado");	//PAREI AQUI
 						}
 
 						if (reader["situacao"] != null && !Convert.IsDBNull(reader["situacao"]))
