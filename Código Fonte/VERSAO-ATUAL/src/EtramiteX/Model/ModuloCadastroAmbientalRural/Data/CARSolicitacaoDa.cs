@@ -1457,7 +1457,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select
-                       l.codigo_imovel                       
+                       l.codigo_imovel                      
 				  from (select tsicar.codigo_imovel
                               from tab_car_solicitacao tcs, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco ee,
                                    lov_municipio lme, lov_car_solicitacao_situacao lcss, tab_controle_sicar tsicar,lov_situacao_envio_sicar lses
@@ -1496,7 +1496,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						   and c.empreendimento_id = :empreendimento) l
 				 where l.codigo_imovel is not null and rownum = 1", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("empreendimentoId", empreendimentoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<string>(comando);
 			}

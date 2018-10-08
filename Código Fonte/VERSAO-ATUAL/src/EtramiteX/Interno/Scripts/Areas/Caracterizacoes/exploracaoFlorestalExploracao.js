@@ -126,6 +126,7 @@ ExploracaoFlorestalExploracao = {
 		Mensagem.limpar(ExploracaoFlorestalExploracao.container);
 
 		var container = $(this).closest('fieldset');
+		var destinacao = Number($('.ddlDestinacaoMaterial', container).val());
 		produto = {
 			Id: 0,
 			ProdutoId: Number($('.ddlProduto', container).val()),
@@ -133,8 +134,8 @@ ExploracaoFlorestalExploracao = {
 			Quantidade: $('.txtQuantidade', container).val(),
 			EspeciePopularId: $('.hdnEspecieId', container).val(),
 			EspeciePopularTexto: $('.txtEspecie', container).val(),
-			DestinacaoMaterialId: Number($('.ddlDestinacaoMaterial', container).val()),
-			DestinacaoMaterialTexto: $('.ddlDestinacaoMaterial :selected', container).text()
+			DestinacaoMaterialId: destinacao > 0 ? destinacao : null,
+			DestinacaoMaterialTexto: destinacao > 0 ? $('.ddlDestinacaoMaterial :selected', container).text() : ""
 		};
 
 		if (produto.ProdutoId == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {

@@ -13,7 +13,7 @@
 					validarObterSituacao: '<%= Url.Action("ValidarObterSituacao", "Titulo") %>',
 					salvar: '<%= Url.Action("AlterarSituacao", "Titulo") %>',
 					redirecionar: '<%= Url.Action("Index", "Titulo") %>',
-					integracaoSinaflor: '<%= System.Configuration.ConfigurationManager.AppSettings["integracaoSinaflor"].ToString() %>';
+					integracaoSinaflor: '<%= System.Configuration.ConfigurationManager.AppSettings["integracaoSinaflor"].ToString() %>'
 			}
 		});
 	});

@@ -147,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
 								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
-								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId, DbType.Int32);
+								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId > 0 ? itemAux.DestinacaoMaterialId : null, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -295,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
 								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
-								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId, DbType.Int32);
+								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId > 0 ? itemAux.DestinacaoMaterialId : null, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 								bancoDeDados.ExecutarNonQuery(comando);
@@ -538,7 +538,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
 						c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
 						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
-						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = (+)lv.id
+						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = lv.id(+)
 						and c.exp_florestal_exploracao = :exploracao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao", exploracao.Id, DbType.Int32);
@@ -750,8 +750,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
-								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+									case lv.tipo_atividade
+										where 370 then seq_codigo_exploracao_aus.nextval
+										where 374 then seq_codigo_exploracao_cai.nextval
+										where 929 then seq_codigo_exploracao_efp.nextval
+									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aativ       a,
 								   {0}crt_projeto_geo         g,
@@ -772,8 +775,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
-								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								  case lv.tipo_atividade
+										where 370 then seq_codigo_exploracao_aus.nextval
+										where 374 then seq_codigo_exploracao_cai.nextval
+										where 929 then seq_codigo_exploracao_efp.nextval
+									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_lativ       a,
 								   {0}crt_projeto_geo         g,
@@ -794,8 +800,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
-								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								  case lv.tipo_atividade
+										where 370 then seq_codigo_exploracao_aus.nextval
+										where 374 then seq_codigo_exploracao_cai.nextval
+										where 929 then seq_codigo_exploracao_efp.nextval
+									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_pativ       a,
 								   {0}crt_projeto_geo         g,
@@ -816,8 +825,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   (select max(c.codigo_exploracao)+1 from crt_exploracao_florestal c
-								   where c.tipo_exploracao = lv.tipo_atividade) codigo_exploracao,
+								   case lv.tipo_atividade
+										where 370 then seq_codigo_exploracao_aus.nextval
+										where 374 then seq_codigo_exploracao_cai.nextval
+										where 929 then seq_codigo_exploracao_efp.nextval
+									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aiativ      a,
 								   {0}crt_projeto_geo         g,
@@ -1034,7 +1046,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.AdicionarParametroEntrada("parecer_favoravel", false, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar<bool>(comando);
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
 		}
 

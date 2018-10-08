@@ -108,7 +108,6 @@ TituloAlterarSituacao = {
 			DataAssinatura: { DataTexto: $('.txtDataAssinatura', TituloAlterarSituacao.container).val() },
 			DataEncerramento: { DataTexto: $('.txtDataEncerramento', TituloAlterarSituacao.container).val() }
 		};
-		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 
@@ -118,7 +117,7 @@ TituloAlterarSituacao = {
 			$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: codigoSicar },
 				function (data, textStatus, XMLHttpRequest) {
 					if (textStatus === "200") {
-						TituloAlterarSituacao.alterarSituacao();
+						TituloAlterarSituacao.alterarSituacao(objeto);
 					} else {
 						Mensagem.gerar(data);
 						MasterPage.carregando(false);
@@ -126,11 +125,12 @@ TituloAlterarSituacao = {
 				}, "json"
 			);
 		} else {
-			TituloAlterarSituacao.alterarSituacao();
+			TituloAlterarSituacao.alterarSituacao(objeto);
 		}
 	},
 
-	alterarSituacao: function () {
+	alterarSituacao: function (objeto) {
+		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 		$.ajax({
 			url: TituloAlterarSituacao.settings.urls.salvar,
 			data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
