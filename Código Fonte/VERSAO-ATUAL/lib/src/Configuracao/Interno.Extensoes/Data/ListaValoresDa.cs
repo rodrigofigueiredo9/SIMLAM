@@ -168,6 +168,22 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 			return lst;
 		}
 
+		internal List<Lista> ObterCaracterizacaoDestinacaoMaterialLenhoso()
+		{
+			List<Lista> lst = new List<Lista>();
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_dest_material_lenhoso t");
+			foreach (var item in daReader)
+			{
+				lst.Add(new Lista()
+				{
+					Id = item["id"].ToString(),
+					Texto = Convert.ToString(item["texto"]),
+					IsAtivo = true
+				});
+			}
+			return lst;
+		}
+
 		internal List<DependenciaLst> ObterCaracterizacoesDependencias()
 		{
 			List<DependenciaLst> lst = new List<DependenciaLst>();

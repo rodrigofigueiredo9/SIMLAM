@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
@@ -8,7 +8,8 @@ TituloAlterarSituacao = {
 			pdfTitulo: '',
 			validarObterSituacao: '',
 			salvar: '',
-			redirecionar: ''
+			redirecionar: '',
+			integracaoSinaflor: null
 		},
 		gerouPdf: false
 	},
@@ -50,37 +51,38 @@ TituloAlterarSituacao = {
 
 		switch (parseInt($('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val())) {
 			case 1:
-				container = $('.divEmitirParaAssinatura', TituloAlterarSituacao.container)
+				container = $('.divEmitirParaAssinatura', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 2:
-				container = $('.divCancelarEmissao', TituloAlterarSituacao.container)
+				container = $('.divCancelarEmissao', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 3:
-				container = $('.divAssinar', TituloAlterarSituacao.container)
+				container = $('.divAssinar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 4:
-				container = $('.divProrrogar', TituloAlterarSituacao.container)
+				container = $('.divProrrogar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 5:
-				container = $('.divEncerrar', TituloAlterarSituacao.container)
+				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 6:
-				container = $('.divConcluir', TituloAlterarSituacao.container)
+				container = $('.divConcluir', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 		}
 
-		$.ajax({ url: TituloAlterarSituacao.settings.urls.validarObterSituacao,
+		$.ajax({
+			url: TituloAlterarSituacao.settings.urls.validarObterSituacao,
 			data: { id: $('.hdnTituloId', TituloAlterarSituacao.container).val(), acao: $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val() },
 			cache: false, async: true,
 			error: function (XMLHttpRequest, textStatus, erroThrown) {
@@ -107,9 +109,30 @@ TituloAlterarSituacao = {
 			DataEncerramento: { DataTexto: $('.txtDataEncerramento', TituloAlterarSituacao.container).val() }
 		};
 		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
+		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
+		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 
 		MasterPage.carregando(true);
-		$.ajax({ url: TituloAlterarSituacao.settings.urls.salvar,
+
+		if (modelo === 13) {
+			$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: codigoSicar },
+				function (data, textStatus, XMLHttpRequest) {
+					if (textStatus === "200") {
+						TituloAlterarSituacao.alterarSituacao();
+					} else {
+						Mensagem.gerar(data);
+						MasterPage.carregando(false);
+					}
+				}, "json"
+			);
+		} else {
+			TituloAlterarSituacao.alterarSituacao();
+		}
+	},
+
+	alterarSituacao: function () {
+		$.ajax({
+			url: TituloAlterarSituacao.settings.urls.salvar,
 			data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
 			cache: false,
 			async: false,
@@ -122,7 +145,7 @@ TituloAlterarSituacao = {
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg+'&acaoId='+response.AcaoId);
+					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId);
 				} else {
 					if (response.Msg && response.Msg.length > 0) {
 						Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);

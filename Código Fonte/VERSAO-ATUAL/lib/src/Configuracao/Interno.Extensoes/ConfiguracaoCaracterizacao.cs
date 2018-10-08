@@ -82,6 +82,9 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes
 		public const string KeyCaracterizacaoProdutosExploracao = "CaracterizacaoProdutosExploracao";
 		public List<Lista> CaracterizacaoProdutosExploracao { get { return _daLista.ObterCaracterizacaoProdutosExploracao(); } }
 
+		public const string KeyCaracterizacaoDestinacaoMaterialLenhoso = "CaracterizacaoDestinacaoMaterialLenhoso";
+		public List<Lista> CaracterizacaoDestinacaoMaterialLenhoso { get { return _daLista.ObterCaracterizacaoDestinacaoMaterialLenhoso(); } }
+
 		public const string KeyTipoExploracaoFlorestal = "TipoExploracaoFlorestal";
 		public List<Lista> TipoExploracaoFlorestal { get { return _daLista.ObterTipoExploracaoFlorestal(); } }
 		#endregion

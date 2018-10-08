@@ -27,7 +27,7 @@
 			<%= Html.TextBox("ExploracaoFlorestal.Geometrias", Model.ExploracaoFlorestal.GeometriaTipoTexto, new { @class = "text txtGeometria disabled", disabled = "disabled" })%>
 		</div>
 
-		<div class="coluna22 append2">
+		<div class="coluna24 append2">
 			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFinalidade" }))%>
 		</div>
@@ -54,7 +54,7 @@
 					<label for="ExploracaoFlorestal_Exploracoes_AreaRequerida<%: Model.ExploracaoFlorestal.Identificacao%>">Área requerida (m²) *</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaRequerida" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.AreaRequerida, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "12" }))%>
 				</div>
-				<div class="coluna22 append2">
+				<div class="coluna24 append2">
 					<label for="ExploracaoFlorestal_Exploracoes_AreaCroqui">Área da atividade croqui (m²)</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaCroqui", Model.ExploracaoFlorestal.AreaCroqui.ToStringTrunc(), new { @class = "text txtAreaCroqui disabled maskDecimalPonto", disabled = "disabled" })%>
 					<input type="hidden" class="hdnAreaCroqui" value="<%= Model.ExploracaoFlorestal.AreaCroqui %>" />
@@ -64,13 +64,13 @@
 					<label for="ExploracaoFlorestal_Exploracoes_ArvoresRequeridas<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores requeridas *</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "8" }))%>
 				</div>
-				<div class="coluna22 append2">
-					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores</label>
+				<div class="coluna24 append2">
+					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores">N° de árvores</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "6" }))%>
 				</div>
 		<%}%>
 
-		<div class="coluna24">
+		<div class="coluna35">
 			<label for="ExploracaoFlorestal_ClassificacaoVegetal<%: Model.ExploracaoFlorestal.Identificacao%>">Classificação da vegetação *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.ClassificacaoVegetal" + Model.ExploracaoFlorestal.Identificacao, Model.ClassificacoesVegetais, new { @class = "text ddlClassificacoesVegetais disabled", disabled = "disabled" })%>
 		</div>
@@ -85,30 +85,36 @@
 					<%= Html.DropDownList("Produto" + Model.ExploracaoFlorestal.Identificacao, Model.Produtos, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlProduto" }))%>
 				</div>
 
-				<div class="coluna22 append2">
+				<div class="coluna24 append2">
 					<input type="hidden" class="hdnEspecieId" />
 					<label for="Especie<%= Model.ExploracaoFlorestal.Identificacao%>" class="lblEspecie">Nome cientifíco/comum *</label>
 					<%= Html.TextBox("Especie" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtEspecie ui-autocomplete-input" }))%>
                 </div>
 
-				<div class="coluna22 append2 divQuantidade">
+				<div class="coluna8 divQuantidade">
 					<label for="Quantidade<%= Model.ExploracaoFlorestal.Identificacao%>">Quantidade *</label>
 					<%= Html.TextBox("Quantidade" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtQuantidade maskDecimalPonto", @maxlength = "12" }))%>
 				</div>
 
-				<div class="coluna10">
+				<div class="coluna26 append2">
+					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material Lenhoso</label>
+					<%= Html.DropDownList("DestinacaoMaterial" + Model.ExploracaoFlorestal.Identificacao, Model.DestinacaoMaterial, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlDestinacaoMaterial" }))%>
+				</div>
+
+				<div class="coluna8">
 					<button type="button" style="width: 35px" class="inlineBotao botaoAdicionarIcone btnAdicionarProduto btnAddItem <%= Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0? "hide":"" %> " title="Adicionar">+</button>
 				</div>
 			</div>
 			<% } %>
 
-			<div class="block coluna55 dataGrid" id="exploracaoProduto<%= Model.ExploracaoFlorestal.Identificacao.Replace(" ", "") %>">
+			<div class="block coluna87 dataGrid" id="exploracaoProduto<%= Model.ExploracaoFlorestal.Identificacao.Replace(" ", "") %>">
 				<table class="dataGridTable tabExploracaoFlorestalExploracaoProduto" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 					<thead>
 						<tr>
 							<th>Produto </th>
 							<th>Espécie</th>
-							<th width="20%">Quantidade</th>
+							<th width="10%">Quantidade</th>
+							<th>Destinação do Material Lenhoso </th>
 							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
 						</tr>
 					</thead>
@@ -126,6 +132,9 @@
 								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToString("N2")); %>
 								<span class="quantidade" title="<%:qtd%>"><%: qtd %></span>
 							</td>
+							<td>
+								<span class="destinacao" title="<%:produto.DestinacaoMaterialTexto%>"><%: produto.DestinacaoMaterialTexto%></span>
+							</td>
 							<%if (!Model.IsVisualizar){%>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(produto)%>' />
@@ -142,6 +151,7 @@
 									<input type="hidden" class="especieId" value="" />
 								</td>
 								<td><span class="quantidade"></span></td>
+								<td><span class="destinacaoMaterial"></span></td>
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnItemJSon" value="" />
 									<input title="Excluir" type="button" class="icone excluir btnExcluirProduto" value="" />

@@ -2,10 +2,6 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Autorizacao" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<AutorizacaoExploracaoFlorestalVM>" %>
 
-<script>
-	TituloAutorizacaoExploracaoFlorestal.settings.urlExcluirAutorizacao = '<%= System.Configuration.ConfigurationManager.AppSettings["getEspecie"].ToString() %>';
-</script>
-
 <div class="block">
     <div class="coluna40">
         <label for="Autorizacao_Exploracao">Código da Exploração *</label><br />
@@ -20,30 +16,27 @@
                 <thead>
                     <tr>
                         <th>Caracterização favorável da Exploração</th>
-                        <th class="semOrdenacao" width="12%">Ações</th>
+                        <% if (!Model.IsVisualizar) { %><th class="semOrdenacao" width="12%">Ações</th><%} %>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="trTemplateRow hide">
-                        <td><span class="descricao" title=""></span></td>
-                        <td>
-                            <input type="hidden" class="exploracao" name="exploracaoId" value="" />
-                            <input type="hidden" class="exploracao" name="autorizacaoSinaflorId" value="" />
-                            <input type="hidden" class="exploracao" name="hdnId" value="" />
-                            <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
-                        </td>
+                        <td><span class="descricao" title=""></span>
+                            <input type="hidden" class="autorizacaoSinaflorId" name="autorizacaoSinaflorId" value="" />
+                            <input type="hidden" class="hdnId" name="hdnId" value="" />
+							<input type="hidden" class="exploracaoId" name="exploracaoId" value="" />
+						</td>
+						<% if (!Model.IsVisualizar) { %><td><input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" /></td> <%} %>
                     </tr>
 					 <% foreach (var exploracao in Model.TituloExploracaoDetalhes) { %>
                     <tr>
                         <td>
                             <span class="descricao" title="<%:exploracao.ExploracaoFlorestalExploracaoTexto%>"><%:exploracao.ExploracaoFlorestalExploracaoTexto%></span>
+                            <input type="hidden" class="exploracaoId" name="exploracaoId" value="<%= exploracao.ExploracaoFlorestalExploracaoId %>" />
+                            <input type="hidden" class="autorizacaoSinaflorId" name="autorizacaoSinaflorId" value="<%= exploracao.AutorizacaoSinaflorId %>" />
+                            <input type="hidden" class="hdnId" name="hdnId" value="<%= exploracao.Id %>" />
                         </td>
-                        <td>
-                            <input type="hidden" name="exploracaoId" value="<%= exploracao.ExploracaoFlorestalExploracaoId %>" />
-                            <input type="hidden" name="autorizacaoSinaflorId" value="<%= exploracao.AutorizacaoSinaflorId %>" />
-                            <input type="hidden" name="hdnId" value="<%= exploracao.Id %>" />
-                            <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
-                        </td>
+                        <% if (!Model.IsVisualizar) { %><td><input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" /></td><%} %>
                     </tr>
                     <% } %>
                 </tbody>

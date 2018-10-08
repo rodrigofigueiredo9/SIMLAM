@@ -440,6 +440,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						{0}geo_operacoesprocessamentogeo.ImportarParaDesenhFinalizada(:projeto, v_fila_tipo);
 					end if;
 
+					{0}geo_operacoesprocessamentogeo.ApagarGeometriasOficial(:projeto, v_fila_tipo);
+
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
@@ -680,6 +682,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
 								and cg.geo_aiativ_id = g.id));
+						delete from {0}crt_exp_florestal_geo cg where exists
+						(select 1 from {0}crt_exp_florestal_exploracao cp
+							where cp.id = cg.exp_florestal_exploracao
+							and cp.exploracao_florestal = :exploracao_id
+							and cp.parecer_favoravel = :parecer_favoravel);
 						end;", EsquemaBanco, EsquemaBancoGeo);
 				comando.AdicionarParametroEntrada("exploracao_id", exploracaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("parecer_favoravel", false, DbType.Boolean);

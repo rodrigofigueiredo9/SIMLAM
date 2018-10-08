@@ -28,6 +28,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			set { _produtos = value; }
 		}
 
+		private List<SelectListItem> _destinacaoMaterial = new List<SelectListItem>();
+		public List<SelectListItem> DestinacaoMaterial
+		{
+			get { return _destinacaoMaterial; }
+			set { _destinacaoMaterial = value; }
+		}
+
 		private ExploracaoFlorestalExploracao _exploracaoFlorestal = new ExploracaoFlorestalExploracao();
 		public ExploracaoFlorestalExploracao ExploracaoFlorestal
 		{
@@ -65,7 +72,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 		}
 
-		public ExploracaoFlorestalExploracaoVM(List<FinalidadeExploracao> finalidades, List<Lista> exploracaoTipos, List<Lista> classificacoesVegetais, List<Lista> produtos, ExploracaoFlorestalExploracao exploracao, bool IsVisualizar = false)
+		public ExploracaoFlorestalExploracaoVM(List<FinalidadeExploracao> finalidades, List<Lista> exploracaoTipos, List<Lista> classificacoesVegetais,
+			List<Lista> produtos, List<Lista> destinacao, ExploracaoFlorestalExploracao exploracao, bool IsVisualizar = false)
 		{
 			int classifSelecionada = exploracao.ClassificacaoVegetacaoId;
 			if (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
@@ -80,6 +88,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 
 			ClassificacoesVegetais = ViewModelHelper.CriarSelectList(classificacoesVegetais, true, true, classifSelecionada.ToString());
 			Produtos = ViewModelHelper.CriarSelectList(produtos, true, true);
+			DestinacaoMaterial = ViewModelHelper.CriarSelectList(destinacao, true, true);
 			ExploracaoFlorestal = exploracao;
 			this.IsVisualizar = IsVisualizar;
 

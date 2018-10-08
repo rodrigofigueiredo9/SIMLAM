@@ -31,3 +31,44 @@
   COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.TIPO_EXPLORACAO IS 'Código do tipo de atividade cadastrado no IBAMA (idafgeo.lov_tipo_exploracao CAMPO(tipo_atividade)).';
   COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.DATA_CADASTRO IS 'Data de cadastro da exploracao no IDAF.';
   COMMENT ON COLUMN IDAF.CRT_EXPLORACAO_FLORESTAL.FINALIDADE IS 'Finalidade da exploracao (coluna criada na tabela filha) - não utilizada.';
+
+begin
+	
+	update idaf.LOV_CRT_PRODUTO set texto = 'Lenha (st)' where id = 1;
+	update idaf.LOV_CRT_PRODUTO set texto = 'Tora (m³)' where id = 2;	
+	update idaf.LOV_CRT_PRODUTO set texto = 'Toretes (m³)' where id = 3;	
+	update idaf.LOV_CRT_PRODUTO set texto = 'Mourões (m³)' where id = 4;	
+	update idaf.LOV_CRT_PRODUTO set texto = 'Escoramento (m³)' where id = 5;	
+	update idaf.LOV_CRT_PRODUTO set texto = 'Palmito (und)' where id = 6;
+	
+	insert into idaf.LOV_CRT_PRODUTO (id, texto)
+	select 8, 'Casca (kg)' from dual where not exists (select 1 from idaf.LOV_CRT_PRODUTO where id = 8);
+	
+	insert into idaf.LOV_CRT_PRODUTO (id, texto)
+	select 9, 'Folhas (kg)' from dual where not exists (select 1 from idaf.LOV_CRT_PRODUTO where id = 9);
+	
+	insert into idaf.LOV_CRT_PRODUTO (id, texto)
+	select 10, 'Muda/Planta (und)' from dual where not exists (select 1 from idaf.LOV_CRT_PRODUTO where id = 10);
+	
+	update idaf.CRT_EXP_FLORESTAL_PRODUTO set PRODUTO = 8 where PRODUTO = 7;
+	delete from idaf.LOV_CRT_PRODUTO where id = 7;
+
+end;
+
+begin 
+	update idaf.LOV_CRT_EXP_FLORES_FINALIDADE set texto = 'Infraestrutura' where id = 4;
+	update idaf.LOV_CRT_EXP_FLORES_FINALIDADE set texto = 'Mineração' where id = 7;
+
+	delete from idaf.LOV_CRT_EXP_FLORES_FINALIDADE where id in (2, 3);
+end;
+
+begin 
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Lenha para carvão');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Lenha para outros fins');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Lenha para uso dentro da propriedade');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Lenha para uso doméstico');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Madeira para outros fins');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Madeira para serraria');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Maderia para uso dentro da propriedade');
+	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Outro produto florestal');
+end;

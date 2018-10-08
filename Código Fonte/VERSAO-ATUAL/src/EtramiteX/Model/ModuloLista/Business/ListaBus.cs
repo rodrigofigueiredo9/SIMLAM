@@ -361,6 +361,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosExploracao); }
 		}
 
+		public List<Lista> CaracterizacaoDestinacaoMaterialLenhoso
+		{
+			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoDestinacaoMaterialLenhoso); }
+		}
+
 		#region Dominialidades
 
 		public List<Lista> DominialidadeComprovacoes

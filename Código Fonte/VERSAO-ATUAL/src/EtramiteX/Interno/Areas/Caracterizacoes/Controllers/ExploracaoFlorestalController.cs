@@ -53,7 +53,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(caracterizacao, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 					_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-					_listaBus.TipoExploracaoFlorestal);
+					_listaBus.CaracterizacaoDestinacaoMaterialLenhoso, _listaBus.TipoExploracaoFlorestal);
 
 				vmList.ExploracaoFlorestalVM.Add(vm);
 			}
@@ -117,7 +117,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(exploracaoFlorestal, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-				_listaBus.TipoExploracaoFlorestal);
+				_listaBus.CaracterizacaoDestinacaoMaterialLenhoso, _listaBus.TipoExploracaoFlorestal);
 
 			vmList.ExploracaoFlorestalVM.Add(vm);
 
@@ -182,7 +182,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(exploracaoFlorestal, _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 				_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-				_listaBus.TipoExploracaoFlorestal, true);
+				_listaBus.CaracterizacaoDestinacaoMaterialLenhoso, _listaBus.TipoExploracaoFlorestal, true);
 			vmList.ExploracaoFlorestalVM.Add(vm);
 
 			return View(vmList);
@@ -232,7 +232,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				ExploracaoFlorestalVM vm = new ExploracaoFlorestalVM(_bus.MergiarGeo(exploracao), _listaBus.ExploracaoFlorestalFinalidadesExploracoes,
 					_listaBus.ExploracaoFlorestalClassificacoesVegetais, _listaBus.ExploracaoFlorestalExploracoesTipos, _listaBus.CaracterizacaoProdutosExploracao,
-					_listaBus.TipoExploracaoFlorestal);
+					_listaBus.CaracterizacaoDestinacaoMaterialLenhoso,_listaBus.TipoExploracaoFlorestal);
 				empreendimentoId = exploracao.EmpreendimentoId;
 			}
 			vmList.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(empreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
