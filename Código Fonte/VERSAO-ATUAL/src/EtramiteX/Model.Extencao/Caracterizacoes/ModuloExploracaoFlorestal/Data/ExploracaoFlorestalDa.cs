@@ -751,9 +751,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
 									case lv.tipo_atividade
-										where 370 then seq_codigo_exploracao_aus.nextval
-										where 374 then seq_codigo_exploracao_cai.nextval
-										where 929 then seq_codigo_exploracao_efp.nextval
+										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
+										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
+										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
 									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aativ       a,
@@ -776,9 +776,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
 								  case lv.tipo_atividade
-										where 370 then seq_codigo_exploracao_aus.nextval
-										where 374 then seq_codigo_exploracao_cai.nextval
-										where 929 then seq_codigo_exploracao_efp.nextval
+										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
+										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
+										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
 									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_lativ       a,
@@ -801,9 +801,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
 								  case lv.tipo_atividade
-										where 370 then seq_codigo_exploracao_aus.nextval
-										where 374 then seq_codigo_exploracao_cai.nextval
-										where 929 then seq_codigo_exploracao_efp.nextval
+										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
+										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
+										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
 									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_pativ       a,
@@ -826,9 +826,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
 								   case lv.tipo_atividade
-										where 370 then seq_codigo_exploracao_aus.nextval
-										where 374 then seq_codigo_exploracao_cai.nextval
-										where 929 then seq_codigo_exploracao_efp.nextval
+										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
+										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
+										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
 									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aiativ      a,
