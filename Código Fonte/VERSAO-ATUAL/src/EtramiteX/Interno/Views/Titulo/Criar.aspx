@@ -18,9 +18,7 @@
 	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteDescricaoSalvar.js") %>" ></script>
 	<script src="<%= Url.Content("~/Scripts/Titulo/condicionanteVisualizar.js") %>" ></script>
 	<script src="<%= Url.Content("~/Scripts/Titulo/tituloCondicionante.js") %>" ></script>
-	<script src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>
-	<script src="<%= Url.Content("~/Scripts/Titulo/tituloLaudoExploracaoFlorestal.js") %>" ></script>
-	<script src="<%= Url.Content("~/Scripts/Titulo/tituloAutorizacaoExploracaoFlorestal.js") %>" ></script>
+	<script src="<%= Url.Content("~/Scripts/Titulo/atividadeEspecificidade.js") %>" ></script>	
 
 	<script>
 		$(function () {

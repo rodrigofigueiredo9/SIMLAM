@@ -113,17 +113,26 @@ TituloAlterarSituacao = {
 
 		MasterPage.carregando(true);
 
-		if (modelo === 13) {
-			$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: codigoSicar },
-				function (data, textStatus, XMLHttpRequest) {
-					if (textStatus === "200") {
-						TituloAlterarSituacao.alterarSituacao(objeto);
-					} else {
-						Mensagem.gerar(data);
+		if (modelo == 13) {
+				$.ajax({
+					type: "POST",
+					url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+					success: function (msg) {
+						debugger;
+						console.info(msg);
+						alterarSituacao(objeto);
+					},
+					error: function (XMLHttpRequest, textStatus, errorThrown) {
+						var data = JSON.parse(XMLHttpRequest.response);
 						MasterPage.carregando(false);
+						var msg = "";
+						if (data.message.lengh > 1)
+							msg = data.message[0].description[0];
+						else
+							msg = data.message;
+						ExibirMensagemValidacao(msg);
 					}
-				}, "json"
-			);
+				});
 		} else {
 			TituloAlterarSituacao.alterarSituacao(objeto);
 		}
@@ -155,4 +164,26 @@ TituloAlterarSituacao = {
 			}
 		});
 	}
+}
+
+function ExibirMensagemValidacao(erro) {
+	var mensagem = '\
+			<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
+				<div class=\"textoMensagem \">\
+					<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
+					<p> Mensagem do Sistema</p>\
+					<ul>\
+						<li>' + erro + '</li>\
+					</ul>\
+				</div>\
+				<div class=\"redirecinamento block containerAcoes hide\">\
+					<h5> O que deseja fazer agora ?</h5>\
+					<p class=\"hide\">#DESCRICAO</p>\
+					<div class=\"coluna100 margem0 divAcoesContainer\">\
+						<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+						<div class=\"containerBotoes\"></div>\
+					</div>\
+				</div>\
+			</div>';
+	$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
 }

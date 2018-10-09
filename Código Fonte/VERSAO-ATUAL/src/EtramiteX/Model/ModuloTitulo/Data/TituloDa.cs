@@ -228,7 +228,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					foreach (TituloExploracaoFlorestal item in titulo.Exploracoes)
 					{
 						comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_florestal s (id, titulo, exploracao_florestal)
-						values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)", EsquemaBanco);
+						values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)
+						returning s.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
@@ -245,7 +246,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 								comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_flor_exp s (id, titulo_exploracao_florestal, exp_florestal_exploracao)
 								values ({0}seq_titulo_exp_flor_exp.nextval, :titulo_exploracao_florestal, :exp_florestal_exploracao)", EsquemaBanco);
 
-								comando.AdicionarParametroEntrada("titulo_exploracao_florestal", itemDetalhe.Id, DbType.Int32);
+								comando.AdicionarParametroEntrada("titulo_exploracao_florestal", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", itemDetalhe.ExploracaoFlorestalExploracaoId, DbType.Int32);
 
 								bancoDeDados.ExecutarNonQuery(comando);

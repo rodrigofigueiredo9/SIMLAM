@@ -5,6 +5,7 @@
 
 <script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Autorizacao/AutorizacaoExploracaoFlorestal.js") %>"></script>
 <script src="<%= Url.Content("~/Scripts/Titulo/listar.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/tituloAutorizacaoExploracaoFlorestal.js") %>" ></script>
 <script>
 	AutorizacaoExploracaoFlorestal.settings.urls.obterDadosAutorizacaoExploracaoFlorestal = '<%= Url.Action("ObterDadosAutorizacaoDestinatarios", "Autorizacao", new {area="Especificidades"}) %>';
 	AutorizacaoExploracaoFlorestal.settings.urls.obterDadosExploracao = '<%= Url.Action("ObterDadosExploracao", "Autorizacao", new {area="Especificidades"}) %>';

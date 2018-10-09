@@ -44,7 +44,7 @@ TituloAutorizacaoExploracaoFlorestal = {
 		$('.tabExploracoes > tbody > tr:not(:first)', TituloAutorizacaoExploracaoFlorestal.container).remove();
 		if (id == 0 || id == "") return;
 
-		var exploracoes = JSON.parse($('.ddlExploracoes option:selected', TituloLaudoExploracaoFlorestal.container).attr('detalhes').replaceAll("'", '"'));
+		var exploracoes = JSON.parse($('.ddlExploracoes option:selected', TituloAutorizacaoExploracaoFlorestal.container).attr('detalhes').replaceAll("'", '"'));
 
 		$(exploracoes).each((i, detalhe) => {
 			var linha = '';

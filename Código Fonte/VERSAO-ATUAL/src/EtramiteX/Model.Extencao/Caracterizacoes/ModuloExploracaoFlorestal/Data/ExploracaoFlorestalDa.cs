@@ -339,6 +339,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				comando = bancoDeDados.CriarComando(@"begin " +
 					"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
 					"delete from {0}crt_exp_florestal_produto r where r.exp_florestal_exploracao in (select d.id from {0}crt_exp_florestal_exploracao d where d.exploracao_florestal = :caracterizacao);" +
+					"delete from {0}crt_exp_florestal_geo r where r.exp_florestal_exploracao in (select d.id from {0}crt_exp_florestal_exploracao d where d.exploracao_florestal = :caracterizacao);" +
 					"delete from {0}crt_exp_florestal_exploracao b where b.exploracao_florestal = :caracterizacao;" +
 					"delete from {0}crt_exploracao_florestal e where e.id = :caracterizacao;" +
 				"end;", EsquemaBanco);
@@ -750,11 +751,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-									case lv.tipo_atividade
-										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
-										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
-										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
-									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aativ       a,
 								   {0}crt_projeto_geo         g,
@@ -775,11 +771,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								  case lv.tipo_atividade
-										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
-										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
-										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
-									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_lativ       a,
 								   {0}crt_projeto_geo         g,
@@ -800,11 +791,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								  case lv.tipo_atividade
-										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
-										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
-										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
-									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_pativ       a,
 								   {0}crt_projeto_geo         g,
@@ -825,11 +811,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   case lv.tipo_atividade
-										where 370 then (select seq_codigo_exploracao_aus.nextval from dual)
-										where 374 then (select seq_codigo_exploracao_cai.nextval from dual)
-										where 929 then (select seq_codigo_exploracao_efp.nextval from dual)
-									else 0 end as codigo_exploracao,
 								   a.data
 							  from {1}geo_aiativ      a,
 								   {0}crt_projeto_geo         g,
@@ -870,11 +851,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (exploracaoAnterior.TipoExploracao != Convert.ToInt32(reader["tipo_exploracao"]) || detalheAnterior.GeometriaTipoId != detalhe.GeometriaTipoId)
 						{
 							exploracao = new ExploracaoFlorestal();
-							exploracao.EmpreendimentoId = empreendimento;
-							if (!Convert.IsDBNull(reader["codigo_exploracao"]))
-								exploracao.CodigoExploracao = Convert.ToInt32(reader["codigo_exploracao"]);
-							else
-								exploracao.CodigoExploracao = 1;
+							exploracao.EmpreendimentoId = empreendimento;						
+							exploracao.CodigoExploracao = this.GetCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), bancoDeDados);
+						
 							if (!Convert.IsDBNull(reader["tipo_exploracao"]))
 								exploracao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
 							if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
@@ -1061,6 +1040,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<bool>(comando);
+			}
+		}
+
+		private int GetCodigoExploracao(int tipoExploracao, BancoDeDados banco = null)
+		{
+			var select = "";
+			if(tipoExploracao == 370)
+				select = "select seq_codigo_exploracao_aus.nextval from dual";
+			else if (tipoExploracao == 374)
+				select = "select seq_codigo_exploracao_cai.nextval from dual";
+			else if (tipoExploracao == 929)
+				select = "select seq_codigo_exploracao_cai.nextval from dual";
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(select);
+				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
 		}
 
