@@ -113,8 +113,8 @@ TituloAlterarSituacao = {
 
 		MasterPage.carregando(true);
 
-		if (modelo === 13) {
-			$.get(TituloAlterarSituacao.integracaoSinaflor, { tituloId: objeto.Id, codigoSicar: codigoSicar },
+		if (modelo == 13) {
+			$.post(TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
 				function (data, textStatus, XMLHttpRequest) {
 					if (textStatus === "200") {
 						TituloAlterarSituacao.alterarSituacao(objeto);
@@ -122,7 +122,7 @@ TituloAlterarSituacao = {
 						Mensagem.gerar(data);
 						MasterPage.carregando(false);
 					}
-				}, "json"
+				}
 			);
 		} else {
 			TituloAlterarSituacao.alterarSituacao(objeto);
