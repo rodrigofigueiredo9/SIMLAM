@@ -23,11 +23,11 @@ ExploracaoFlorestal = {
 		ExploracaoFlorestalExploracao.load(container, { idsTela: ExploracaoFlorestal.settings.idsTela });
 
 		if (ExploracaoFlorestal.settings.textoMerge) {
-			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoMerge, ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo);
+			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoMerge, ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo, true);
 		}
 
 		if (ExploracaoFlorestal.settings.textoAbrirModal) {
-			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração');
+			ExploracaoFlorestal.abrirModalRedireciona(ExploracaoFlorestal.settings.textoAbrirModal, 'Área de Vegetação Nativa em Estágio Desconhecido de Regeneração', false);
 		}
 
 		if ($('.hdnIsVisualizar').val() == "True") {
@@ -35,7 +35,7 @@ ExploracaoFlorestal = {
 		}
 	},
 
-	abrirModalRedireciona: function (textoModal, titulo) {
+	abrirModalRedireciona: function (textoModal, titulo, atualizarDependencias) {
 		Modal.confirma({
 			removerFechar: true,
 			btnCancelCallback: function (conteudoModal) {
@@ -43,7 +43,8 @@ ExploracaoFlorestal = {
 			},
 			btnOkLabel: 'Confirmar',
 			btnOkCallback: function (conteudoModal) {
-				ExploracaoFlorestal.settings.dependencias = null;
+				if (atualizarDependencias)
+					ExploracaoFlorestal.settings.dependencias = null;
 				Modal.fechar(conteudoModal);
 			},
 			conteudo: textoModal,
@@ -91,7 +92,7 @@ ExploracaoFlorestal = {
 			var objeto = {
 				Id: $('.hdnCaracterizacaoId', this).val(),
 				EmpreendimentoId: $('.hdnEmpreendimentoId', this).val(),
-				Dependencias: JSON.parse(ExploracaoFlorestal.settings.dependencias),
+				Dependencias: ExploracaoFlorestal.settings.dependencias,
 				Exploracoes: ExploracaoFlorestalExploracao.obter(this),
 				CodigoExploracao: $('.hdnCodigoExploracao', this).val(),
 				TipoExploracao: $('.ddlTipoExploracao option:selected', this).val()

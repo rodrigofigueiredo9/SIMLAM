@@ -3,7 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script>
-	ExploracaoFlorestal.settings.dependencias = '<%= ViewModelHelper.Json(Model.Dependencias) %>';
+	ExploracaoFlorestal.settings.dependencias = <%= ViewModelHelper.Json(Model.Dependencias) %>;
 	ExploracaoFlorestal.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	ExploracaoFlorestal.settings.textoMerge = '<%= Model.TextoMerge %>';
 	ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo = '<%= Model.AtualizarDependenciasModalTitulo %>';

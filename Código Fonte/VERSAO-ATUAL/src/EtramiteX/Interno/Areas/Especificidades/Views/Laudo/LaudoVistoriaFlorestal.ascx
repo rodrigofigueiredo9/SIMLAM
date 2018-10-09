@@ -3,6 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/tituloLaudoExploracaoFlorestal.js") %>" ></script>
 
 <script>
 	LaudoVistoriaFlorestal.urlEspecificidade = '<%= Url.Action("LaudoVistoriaFlorestal", "Laudo", new {area="Especificidades"}) %>';
