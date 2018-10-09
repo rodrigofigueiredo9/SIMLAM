@@ -43,12 +43,18 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			get
 			{
-				if (Destinatarios[0].Tipo == 1)
+				if (Destinatarios != null && Destinatarios.Count > 0)
 				{
-					return "Ao(a) Sr(a) ";
-				}
+					if (Destinatarios[0].Tipo == 1)
+					{
+						return "Ao(a) Sr(a) ";
+					}
 
-				return "À ";
+					return "À ";
+				}else
+				{
+					return string.Empty;
+				}
 			}
 		}
 
