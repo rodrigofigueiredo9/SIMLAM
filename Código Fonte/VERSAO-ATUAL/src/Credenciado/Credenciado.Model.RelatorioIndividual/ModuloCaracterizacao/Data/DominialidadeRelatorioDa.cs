@@ -303,7 +303,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCarac
 				}
 				#region ATP
 				comando = bancoDeDados.CriarComando(@"SELECT (ATP.AREA_M2) ATP FROM CRT_PROJETO_GEO CRP
-														  INNER JOIN  IDAFGEO.GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
+														  INNER JOIN  IDAFCREDENCIADOGEO.GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
 														  INNER JOIN CRT_DOMINIALIDADE  CRD ON CRD.EMPREENDIMENTO = CRP.EMPREENDIMENTO
 														WHERE CRD.ID  = :id", EsquemaBanco);
 
