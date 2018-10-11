@@ -167,16 +167,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							Dependencias = exploracao.Dependencias
 						}, bancoDeDados);
 
-						CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-						caracterizacaoBus.AtualizarDependentes(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(projeto.InternoID, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.ProjetoGeografico, projeto.Tid, bancoDeDados);
 
 						#endregion
 					}
 
+					_da.FinalizarExploracao(empreendimento, bancoDeDados);
+
 					if (Validacao.EhValido)
 						Validacao.Erros.Clear();
-
-					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 
 					bancoDeDados.Commit();
 				}
@@ -342,28 +342,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
+		public bool ExisteExploracaoGeoNaoCadastrada(int projeto, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ExisteExploracaoGeoNaoCadastrada(projeto, banco);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		#endregion
 
 		public bool CopiarDadosCredenciado(Dependencia caracterizacao, int empreendimentoInternoId, BancoDeDados bancoDeDados, BancoDeDados bancoCredenciado = null)
 		{
 			throw new NotImplementedException();
-		}
-
-		public int ObterCodigoExploracao(int tipoExploracao, BancoDeDados bancoDeDados = null)
-		{
-			var codigoExploracao = 0;
-
-			try
-			{
-				codigoExploracao = _da.ObterCodigoExploracao(tipoExploracao, bancoDeDados);
-				codigoExploracao++;
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return codigoExploracao;
 		}
 	}
 }

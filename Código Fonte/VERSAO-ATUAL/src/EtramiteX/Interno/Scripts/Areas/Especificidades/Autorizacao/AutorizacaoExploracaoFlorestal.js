@@ -26,6 +26,7 @@ AutorizacaoExploracaoFlorestal = {
 	obterDadosAutorizacaoExploracaoFlorestal: function (protocolo) {
 		if (protocolo == null) {
 			$('.ddlDestinatarios', AutorizacaoExploracaoFlorestal.container).ddlClear();
+			$('.ddlExploracoes', AutorizacaoExploracaoFlorestal.container).ddlClear();
 			return;
 		}
 

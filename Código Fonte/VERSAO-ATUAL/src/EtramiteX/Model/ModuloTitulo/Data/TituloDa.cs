@@ -445,8 +445,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				//Exploracoes
 				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where exists(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo{0} and e.id = a.exploracao_florestal)",
-				comando.AdicionarNotIn("and", "a.titulo_exploracao_florestal", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
+				comando.DbCommand.CommandText += String.Format("where exists(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo{0} and e.id = a.titulo_exploracao_florestal ",
+				comando.AdicionarNotIn("and", "e.id", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
+				comando.DbCommand.CommandText += ")";
 				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 

@@ -5,30 +5,30 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.Security;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMProjetoGeografico;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDominialidade.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
-using Cred = Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
-using Tecnomapas.EtramiteX.Interno.Model.ModuloProjetoDigital.Business;
-using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
-using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
-using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
-using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
+using Cred = Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -43,6 +43,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		ProjetoGeograficoValidar _validar = new ProjetoGeograficoValidar();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
+		ExploracaoFlorestalBus _exploracaoFlorestalBus = new ExploracaoFlorestalBus();
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 		GerenciadorConfiguracao<ConfiguracaoSistema> _config = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
@@ -113,6 +114,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			#region Verificar o Redirecionamento
 
+			if (tipo == eCaracterizacao.ExploracaoFlorestal)
+				vm.isCadastrarCaracterizacao = _exploracaoFlorestalBus.ExisteExploracaoGeoNaoCadastrada(vm.Projeto.Id);
 			vm.UrlAvancar = CaracterizacaoVM.GerarUrl(vm.Projeto.EmpreendimentoId, vm.isCadastrarCaracterizacao, (eCaracterizacao)tipo);
 
 			List<DependenciaLst> dependencias = _caracterizacaoConfig.Obter<List<DependenciaLst>>(ConfiguracaoCaracterizacao.KeyCaracterizacoesDependencias);

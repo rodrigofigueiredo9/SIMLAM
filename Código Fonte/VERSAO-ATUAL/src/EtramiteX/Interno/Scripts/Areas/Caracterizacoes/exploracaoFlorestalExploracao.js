@@ -48,14 +48,18 @@ ExploracaoFlorestalExploracao = {
 			$('.asmConteudoLink', container).show();
 			if (area.length > 0)
 				area[0].textContent = 'Área da atividade croqui (m²) – Autorizada';
-			if (qtd.length > 0)
+			if (qtd.length > 0) {
 				qtd[0].textContent = 'N° de árvores autorizadas';
+				$("divQuantidade", container).show();
+			}
 		} else {
 			$('.asmConteudoLink', container).hide();
 			if (area.length > 0)
 				area[0].textContent = 'Área da atividade croqui (m²)';
-			if (qtd.length > 0)
+			if (qtd.length > 0) {
 				qtd[0].textContent = 'N° de árvores';
+				$("divQuantidade", container).hide();
+			}
 		}
 	},
 
@@ -266,11 +270,12 @@ ExploracaoFlorestalExploracao = {
 
 	loadAutocomplete: function () {
 		$(".txtEspecie").autocomplete({
+			maxShowItems: 20,
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
 					url: ExploracaoFlorestalExploracao.settings.getEspecie,
-					data: { "Search": request.term },
+					data: { "Search": request.term, "PageSize": 20 },
 					type: 'GET',
 					dataType: 'json',
 					contentType: 'application/json;charset=UTF-8',
