@@ -150,6 +150,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				vm.Exploracoes = ViewModelHelper.CriarSelectList(exploracoes.Select(x => new Lista()
 				{
 					Id = x.ExploracaoFlorestalId.ToString(),
+					Codigo = x.Id.ToString(),
 					Texto = x.ExploracaoFlorestalTexto
 				}).ToList(), selecionado: exploracao.ExploracaoFlorestalId.ToString());
 			}

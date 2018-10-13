@@ -53,6 +53,7 @@ AutorizacaoExploracaoFlorestal = {
 		AutorizacaoExploracaoFlorestal.container.find('.txtLaudoVistoriaFlorestal').val('');
 		AutorizacaoExploracaoFlorestal.container.find('.btnVistoriaAdicionar').toggleClass('hide', false);
 		AutorizacaoExploracaoFlorestal.container.find('.btnVistoriaLimpar').toggleClass('hide', true);
+		AutorizacaoExploracaoFlorestal.container.find('.ddlExploracoes').val('');
 	},
 
 	btnLaudoVistoriaAdicionarClick: function () {

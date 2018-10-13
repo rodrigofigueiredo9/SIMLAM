@@ -50,7 +50,7 @@ ExploracaoFlorestalExploracao = {
 				area[0].textContent = 'Área da atividade croqui (m²) – Autorizada';
 			if (qtd.length > 0) {
 				qtd[0].textContent = 'N° de árvores autorizadas';
-				$("divQuantidade", container).show();
+				$(".divNumArvores", container).show();
 			}
 		} else {
 			$('.asmConteudoLink', container).hide();
@@ -58,7 +58,7 @@ ExploracaoFlorestalExploracao = {
 				area[0].textContent = 'Área da atividade croqui (m²)';
 			if (qtd.length > 0) {
 				qtd[0].textContent = 'N° de árvores';
-				$("divQuantidade", container).hide();
+				$(".divNumArvores", container).hide();
 			}
 		}
 	},

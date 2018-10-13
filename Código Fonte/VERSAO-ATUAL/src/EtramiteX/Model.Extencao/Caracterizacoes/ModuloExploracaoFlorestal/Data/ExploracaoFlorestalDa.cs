@@ -360,11 +360,52 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"
+				Comando comando = bancoDeDados.CriarComandoPlSql(@" begin
 				update {0}crt_exploracao_florestal e
-				set e.data_conclusao = sysdate
-				where e.empreendimento = :empreendimento
-				and e.data_conclusao is null", EsquemaBanco);
+					set e.data_conclusao = sysdate
+					where e.empreendimento = :empreendimento
+					and e.data_conclusao is null;
+				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_pativ_id)
+					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_pativ g 
+					inner join crt_exp_florestal_exploracao cp
+					on(cp.identificacao = g.codigo)
+					where cp.parecer_favoravel = 1
+					and exists
+					(
+						select 1 from crt_exploracao_florestal c
+						where cp.exploracao_florestal = c.id
+						and c.empreendimento = :empreendimento
+						and exists
+						(
+							select * from crt_projeto_geo p
+							where p.id = g.projeto
+							and p.empreendimento = c.empreendimento
+						)
+					)
+					and not exists
+					(select 1 from crt_exp_florestal_geo gp 
+					where gp.geo_pativ_id = g.id);
+				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_aativ_id)
+					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_aativ g 
+					inner join crt_exp_florestal_exploracao cp
+					on(cp.identificacao = g.codigo)
+					where cp.parecer_favoravel = 1
+					and exists
+					(
+						select 1 from crt_exploracao_florestal c
+						where cp.exploracao_florestal = c.id
+						and c.empreendimento = :empreendimento
+						and exists
+						(
+							select * from crt_projeto_geo p
+							where p.id = g.projeto
+							and p.empreendimento = c.empreendimento
+						)
+					)
+					and not exists
+					(select 1 from crt_exp_florestal_geo gp 
+					where gp.geo_aativ_id = g.id);
+				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -764,12 +805,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
-								and not exists(select 1 from {0}crt_exp_florestal_exploracao cp
-									where cp.identificacao = a.codigo
-									and exists
-									(select 1 from {0}crt_exploracao_florestal c
-										where c.id = cp.exploracao_florestal
-										and c.empreendimento = g.empreendimento))
+								and not exists(select 1 from crt_exp_florestal_geo cp
+									where cp.geo_aativ_id = a.id )
 							union all
 							select a.id, a.atividade,
 								   a.codigo             identificacao,
@@ -790,12 +827,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
-								and not exists(select 1 from {0}crt_exp_florestal_exploracao cp
-									where cp.identificacao = a.codigo
-									and exists
-									(select 1 from {0}crt_exploracao_florestal c
-										where c.id = cp.exploracao_florestal
-										and c.empreendimento = g.empreendimento))
 							union all
 							select a.id, a.atividade,
 								   a.codigo             identificacao,
@@ -816,12 +847,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
 							   and lv.chave (+)= a.tipo_exploracao
-								and not exists(select 1 from {0}crt_exp_florestal_exploracao cp
-									where cp.identificacao = a.codigo
-									and exists
-									(select 1 from {0}crt_exploracao_florestal c
-										where c.id = cp.exploracao_florestal
-										and c.empreendimento = g.empreendimento))
+								and not exists(select 1 from crt_exp_florestal_geo cp
+									where cp.geo_pativ_id = a.id )
 							union all
 							select a.id, a.atividade,
 								   a.codigo             identificacao,
@@ -841,13 +868,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							   and lc.id = :caracterizacao
 							   and g.empreendimento = :empreendimento
 							   and g.caracterizacao = :caracterizacao
-							   and lv.chave (+)= a.tipo_exploracao
-								and not exists(select 1 from {0}crt_exp_florestal_exploracao cp
-									where cp.identificacao = a.codigo
-									and exists
-									(select 1 from {0}crt_exploracao_florestal c
-										where c.id = cp.exploracao_florestal
-										and c.empreendimento = g.empreendimento))) tab
+							   and lv.chave (+)= a.tipo_exploracao) tab
 							order by tab.tipo_exploracao, tab.geometria_tipo, tab.identificacao", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -879,7 +900,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							exploracao = new ExploracaoFlorestal();
 							exploracao.EmpreendimentoId = empreendimento;
 							if (exploracaoAnterior.CodigoExploracao > 0 && exploracaoAnterior.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))
-								exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao++;
+								exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao + 1;
 							else
 								exploracao.CodigoExploracao = this.ObterCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), empreendimento, bancoDeDados);
 							if (!Convert.IsDBNull(reader["tipo_exploracao"]))
@@ -936,7 +957,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				var codigo = bancoDeDados.ExecutarScalar<int>(comando);
-				return codigo ++;
+				return codigo + 1;
 			}
 		}
 
@@ -1084,9 +1105,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				Comando comando = bancoDeDados.CriarComando(@"
 								select sum(soma) from 
 								(
-									select count(*) soma from {0}geo_pativ where PROJETO = :projeto
+									select count(*) soma from idafgeo.geo_pativ g where g.projeto = :projeto
+									and not exists (select 1 from crt_exp_florestal_geo eg where eg.geo_pativ_id = g.id )
 									union all 
-									select count(*) soma from {0}geo_aativ where PROJETO = :projeto
+									select count(*) soma from idafgeo.geo_aativ g where g.projeto = :projeto
+									and not exists (select 1 from crt_exp_florestal_geo eg where eg.geo_aativ_id = g.id )
 								)", EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", projeto, DbType.Int32);

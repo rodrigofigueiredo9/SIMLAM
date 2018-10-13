@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							{
 								bool existeProdutoSemRendimento = item.Produtos.Where(x => x.ProdutoId == (int)eProduto.SemRendimento).ToList().Count() > 0;
 
-								if (!existeProdutoSemRendimento)
+								if (!existeProdutoSemRendimento && (item.ParecerFavoravel ?? false))
 								{
 									if (Convert.ToInt32(item.QuantidadeArvores) <= 0)
 										Validacao.Add(Mensagem.ExploracaoFlorestal.QdeArvoresRequeridasMaiorZero(item.Identificacao));

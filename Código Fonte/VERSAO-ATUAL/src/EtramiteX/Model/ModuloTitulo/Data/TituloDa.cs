@@ -444,16 +444,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Exploracoes
-				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where exists(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo{0} and e.id = a.titulo_exploracao_florestal ",
-				comando.AdicionarNotIn("and", "e.id", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
-				comando.DbCommand.CommandText += ")";
+				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a
+							where exists(select 1 from {0}tab_titulo_exp_florestal e
+								where e.titulo = :titulo and e.id = a.titulo_exploracao_florestal)", EsquemaBanco);
 				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_florestal a ", EsquemaBanco);
-				comando.DbCommand.CommandText += String.Format("where a.titulo = :titulo{0}",
-				comando.AdicionarNotIn("and", "a.id", DbType.Int32, titulo.Exploracoes.Select(x => x.Id).ToList()));
+				comando.DbCommand.CommandText += "where a.titulo = :titulo";
 				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -609,17 +607,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				{
 					foreach (TituloExploracaoFlorestal item in titulo.Exploracoes)
 					{
-						if (item.Id > 0)
-						{
-							comando = bancoDeDados.CriarComando(@"update {0}tab_titulo_exp_florestal e set e.titulo = :titulo, exploracao_florestal = :exploracao_florestal
-							where e.id = :id", EsquemaBanco);
-							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
-						}
-						else
-						{
-							comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_florestal s (id, titulo, exploracao_florestal)
-							values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)", EsquemaBanco);
-						}
+						comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_florestal s (id, titulo, exploracao_florestal)
+							values ({0}seq_titulo_exp_florestal.nextval, :titulo, :exploracao_florestal)
+							returning s.id into :id", EsquemaBanco);
+						
 
 						comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("exploracao_florestal", item.ExploracaoFlorestalId, DbType.Int32);
@@ -633,19 +624,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						{
 							foreach (TituloExploracaoFlorestalExploracao itemDetalhe in item.TituloExploracaoFlorestalExploracaoList)
 							{
-								if (itemDetalhe.Id > 0)
-								{
-									comando = bancoDeDados.CriarComando(@"update {0}tab_titulo_exp_flor_exp e
-									set e.titulo_exploracao_florestal = :titulo_exploracao_florestal,
-									e.exp_florestal_exploracao = :exp_florestal_exploracao
-									where e.id = :id", EsquemaBanco);
-									comando.AdicionarParametroEntrada("id", itemDetalhe.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_flor_exp s (id, titulo_exploracao_florestal, exp_florestal_exploracao)
+								comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_exp_flor_exp s (id, titulo_exploracao_florestal, exp_florestal_exploracao)
 									values ({0}seq_titulo_exp_flor_exp.nextval, :titulo_exploracao_florestal, :exp_florestal_exploracao)", EsquemaBanco);
-								}
 
 								comando.AdicionarParametroEntrada("titulo_exploracao_florestal", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", itemDetalhe.ExploracaoFlorestalExploracaoId, DbType.Int32);
@@ -2176,7 +2156,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 					comando = bancoDeDados.CriarComando(@"select ep.id, ep.identificacao
 							from {0}crt_exp_florestal_exploracao ep
-                            where ep.parecer_favoravel = :parecer_favoravel and ep.exploracao_florestal = :exploracao_florestal", EsquemaBanco);
+                            where ep.parecer_favoravel = :parecer_favoravel
+							and ep.exploracao_florestal = :exploracao_florestal
+							and not exists (select 1 from tab_titulo_exp_flor_exp t
+							where t.exp_florestal_exploracao = ep.id)", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("exploracao_florestal", tituloExploracao.ExploracaoFlorestalId, DbType.Int32);
 					comando.AdicionarParametroEntrada("parecer_favoravel", true, DbType.Boolean);
@@ -2197,7 +2180,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						reader.Close();
 					}
 
-					lst.Add(tituloExploracao);
+					if(tituloExploracao?.TituloExploracaoFlorestalExploracaoList?.Count() > 0)
+						lst.Add(tituloExploracao);
 				}
 			}
 			return lst;

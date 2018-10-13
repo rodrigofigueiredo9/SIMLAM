@@ -111,38 +111,49 @@ TituloAlterarSituacao = {
 		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 		
-		MasterPage.carregando(true);
-
 		if (modelo == 13) {
+			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
+			MasterPage.carregando(true);
 			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
 			var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
+			var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 
-				$.ajax({
-					type: "POST",
-					url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
-						'/prazo/' + objeto.Prazo + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
-					success: function (msg) {
-						debugger;
-						console.info(msg);
-						TituloAlterarSituacao.alterarSituacao(objeto);
-					},
-					error: function (XMLHttpRequest, textStatus, errorThrown) {
+			$.ajax({
+				type: "POST",
+				url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
+					'/prazo/' + (objeto.Prazo  != '' ? objeto.Prazo : '0') + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+				success: function (msg) {
+					console.info(msg);
+					$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
+					TituloAlterarSituacao.alterarSituacao(objeto);
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					MasterPage.carregando(false);
+					$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
+					if (XMLHttpRequest.response != "") {
 						var data = JSON.parse(XMLHttpRequest.response);
-						MasterPage.carregando(false);
+						console.log(data);
 						var msg = "";
-						if (data.message.lengh > 1)
-							msg = data.message[0].description[0];
+						if (data.message.length > 0) {
+							if (data.message[0].description) {
+								msg = data.message[0].description[0];
+							} else {
+								msg = data.message[0];
+							}
+						}
 						else
 							msg = data.message;
 						ExibirMensagemValidacao(msg);
 					}
-				});
+				}
+			});
 		} else {
 			TituloAlterarSituacao.alterarSituacao(objeto);
 		}
 	},
 
 	alterarSituacao: function (objeto) {
+		MasterPage.carregando(true);
 		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 		$.ajax({
 			url: TituloAlterarSituacao.settings.urls.salvar,

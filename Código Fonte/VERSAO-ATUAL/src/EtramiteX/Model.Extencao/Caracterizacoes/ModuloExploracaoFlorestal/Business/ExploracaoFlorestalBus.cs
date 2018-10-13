@@ -106,10 +106,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					bancoDeDados.IniciarTransacao();
 
 					var exploracoes = _da.ObterPorEmpreendimentoList(empreendimento, true);
-					foreach(var exploracao in exploracoes)
+					var exploracoesEmAberto = exploracoes?.Where(x => x.DataConclusao.IsEmpty == true);
+					foreach(var exploracao in exploracoesEmAberto)
 						_da.Excluir(exploracao.Id, bancoDeDados);
 
-					_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal, bancoDeDados);
+					if(exploracoesEmAberto?.Count() == exploracoes?.Count())
+						_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal, bancoDeDados);
 
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 
@@ -139,8 +141,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (idProjetoGeo == 0)
 							throw new Exception("Projeto Geográfico não encontrado");
 
-						var exploracao = this.ObterPorEmpreendimento(empreendimento, simplificado: true, banco: bancoDeDados);
-						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
+						var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
+						foreach (var exploracao in exploracoes)
+							_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
 
 						var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
 						_projetoGeoBus.Refazer(projeto, bancoDeDados);
@@ -156,21 +159,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
 						_projetoGeoBus.Finalizar(projeto);
 
-						#region Dependencias
-
-						//Gerencia as dependências da caracterização
-						_busCaracterizacao.Dependencias(new Caracterizacao()
+						foreach (var exploracao in exploracoes)
 						{
-							Id = exploracao.Id,
-							Tipo = eCaracterizacao.ExploracaoFlorestal,
-							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
-							Dependencias = exploracao.Dependencias
-						}, bancoDeDados);
-
-						_busCaracterizacao.AtualizarDependentes(exploracao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
-						_busCaracterizacao.AtualizarDependentes(projeto.InternoID, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.ProjetoGeografico, projeto.Tid, bancoDeDados);
-
-						#endregion
+							exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+							_busCaracterizacao.Dependencias(new Caracterizacao()
+							{
+								Id = exploracao.Id,
+								Tipo = eCaracterizacao.ExploracaoFlorestal,
+								DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+								Dependencias = exploracao.Dependencias
+							}, bancoDeDados);
+							_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+						}
 					}
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
