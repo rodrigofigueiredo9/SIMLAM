@@ -131,8 +131,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				laudo.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
-				laudo.ExploracaoFlorestal = new ExploracaoFlorestalPDF(new ExploracaoFlorestalBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-				
+				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault());
+				laudo.ExploracaoFlorestal = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
 				laudo.QueimaControlada = new QueimaControladaPDF(new QueimaControladaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
 				laudo.Silvicultura = new SilviculturaPDF(new SilviculturaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
@@ -176,14 +176,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
 				{
-					if (laudo.ExploracaoFlorestal.CorteRasoExploracoes.Count <= 0)
+					if (laudo.ExploracaoFlorestal.Count <= 0)
 					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteRaso"));
-					}
-
-					if (laudo.ExploracaoFlorestal.CorteSeletivoExploracoes.Count <= 0)
-					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteSele"));
+						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal"));
 					}
 
 					itenRemover.Add(doc.LastTable("«TableStart:QueimaControlada.QueimasContr"));

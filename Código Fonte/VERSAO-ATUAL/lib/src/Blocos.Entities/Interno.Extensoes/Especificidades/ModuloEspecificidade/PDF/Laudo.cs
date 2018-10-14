@@ -17,7 +17,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public AtividadePDF Atividade { get; set; }
 		public DominioPDF Dominio { get; set; }
 		public DominialidadePDF Dominialidade { get; set; }
-		public ExploracaoFlorestalPDF ExploracaoFlorestal { get; set; }
+		public List<ExploracaoFlorestalPDF> ExploracaoFlorestal { get; set; }
 		public RegularizacaoFundiariaPDF RegularizacaoFundiaria { get; set; }
 		public SilviculturaPDF Silvicultura { get; set; }
 		public QueimaControladaPDF QueimaControlada { get; set; }
@@ -67,7 +67,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Atividade = new AtividadePDF();
 			Dominio = new DominioPDF();
 			Dominialidade = new DominialidadePDF();
-			ExploracaoFlorestal = new ExploracaoFlorestalPDF();
+			ExploracaoFlorestal = new List<ExploracaoFlorestalPDF>();
 			RegularizacaoFundiaria = new RegularizacaoFundiariaPDF();
 			Silvicultura = new SilviculturaPDF();
 			QueimaControlada = new QueimaControladaPDF();
