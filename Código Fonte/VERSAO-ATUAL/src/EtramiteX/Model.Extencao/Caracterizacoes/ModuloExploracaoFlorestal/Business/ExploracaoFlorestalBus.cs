@@ -106,7 +106,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					bancoDeDados.IniciarTransacao();
 
 					var exploracoes = _da.ObterPorEmpreendimentoList(empreendimento, true);
-					var exploracoesEmAberto = exploracoes?.Where(x => x.DataConclusao.IsEmpty == true);
+					var exploracoesEmAberto = exploracoes?.Where(x => x.DataConclusao.IsValido == false);
 					foreach(var exploracao in exploracoesEmAberto)
 						_da.Excluir(exploracao.Id, bancoDeDados);
 

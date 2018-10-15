@@ -518,6 +518,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
 						if (!Convert.IsDBNull(reader["data_conclusao"]))
 							caracterizacao.DataConclusao = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
+						else
+							caracterizacao.DataConclusao = new DateTecno();
 						if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
 							caracterizacao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
