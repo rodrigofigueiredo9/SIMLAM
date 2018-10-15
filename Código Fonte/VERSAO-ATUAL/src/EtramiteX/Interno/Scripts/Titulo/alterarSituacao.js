@@ -110,18 +110,23 @@ TituloAlterarSituacao = {
 		};
 		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
-		
-		if (modelo == 13) {
+		var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
+		if (situacao == 4)
+			situacao = 6;
+
+		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6)) {
 			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
 			MasterPage.carregando(true);
 			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
 			var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
-			var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
+			var prazo = objeto.Prazo;
+			if (situacao == 6)
+				prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
 
 			$.ajax({
 				type: "POST",
 				url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
-					'/prazo/' + (objeto.Prazo  != '' ? objeto.Prazo : '0') + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+					'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
 				success: function (msg) {
 					console.info(msg);
 					$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
