@@ -67,7 +67,7 @@
 
 			<div class="coluna20 append2">
 				<label for="DataEmissao">Data de emissão *</label>
-				<%= Html.TextBox("DataEmissao", string.Empty, new { @class = "text txtDataEmissao maskData" })%>
+				<%= Html.TextBox("DataEmissao", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "text txtDataEmissao maskData disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna20">
@@ -121,7 +121,7 @@
 			<div class="block">
 				<div class="coluna20 append2">
 					<label for="DataEncerramento">Data do encerramento *</label>
-					<%= Html.TextBox("DataEncerramento", string.Empty, new { @class = "text txtDataEncerramento maskData" })%>
+					<%= Html.TextBox("DataEncerramento", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "text disabled txtDataEncerramento maskData", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna20">

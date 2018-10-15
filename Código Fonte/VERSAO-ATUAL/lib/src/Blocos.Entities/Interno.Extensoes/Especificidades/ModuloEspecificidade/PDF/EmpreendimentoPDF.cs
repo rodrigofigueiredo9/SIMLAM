@@ -6,6 +6,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 	{
 		public Int32? Id { get; set; }
 		public String Codigo { get; set; }
+		public String CodigoImovel { get; set; }
 		public String Nome { get; set; }
 		public String CNPJ { get; set; }
 		public String Denominador { get; set; }

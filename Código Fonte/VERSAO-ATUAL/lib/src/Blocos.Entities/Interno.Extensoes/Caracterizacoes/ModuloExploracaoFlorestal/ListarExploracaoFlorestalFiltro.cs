@@ -5,7 +5,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 	public class ListarExploracaoFlorestalFiltro
 	{
 		public int EmpreendimentoId { get; set; }
-		public String TipoExploracao { get; set; }
+		public int TipoExploracao { get; set; }
 		public String CodigoExploracao { get; set; }
 		public String DataExploracao { get; set; }
 		public bool IsVisualizar { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
@@ -14,6 +15,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExplor
 		{
 			get { return _paginacao; }
 			set { _paginacao = value; }
+		}
+
+		private List<SelectListItem> _tipoExploracaoList = new List<SelectListItem>();
+		public List<SelectListItem> TipoExploracaoList
+		{
+			get { return _tipoExploracaoList; }
+			set { _tipoExploracaoList = value; }
 		}
 
 		private ListarExploracaoFlorestalFiltro _filtros = new ListarExploracaoFlorestalFiltro();
@@ -41,8 +49,9 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExplor
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false);
 		}
 
-		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
+		public void SetListItens(List<Lista> tipoExploracao,List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
 		{
+			TipoExploracaoList = ViewModelHelper.CriarSelectList(tipoExploracao, true, true);
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false, selecionadoTexto: quantidadePagina.ToString());
 		}
 	}

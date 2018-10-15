@@ -23,7 +23,7 @@
 					<label for="Filtros_TipoExploracao">Tipo de Exploração</label>
 					<%= Html.Hidden("Filtros.IsVisualizar", Model.Filtros.IsVisualizar)%>
 					<%= Html.Hidden("Filtros.EmpreendimentoId", Model.Filtros.EmpreendimentoId, new { @class = "hdnEmpreendimento" })%>
-					<%= Html.TextBox("Filtros.TipoExploracao", null, new { @class = "text txtTipoExploracao setarFoco", @maxlength = "3" })%>
+					<%= Html.DropDownList("Filtros.TipoExploracao", Model.TipoExploracaoList, new { @class = "text txtTipoExploracao setarFoco" })%>
 				</div>
 				<div class="coluna15 prepend2">
 					<label for="Filtros_CodigoExploracao">Código Exploração</label>

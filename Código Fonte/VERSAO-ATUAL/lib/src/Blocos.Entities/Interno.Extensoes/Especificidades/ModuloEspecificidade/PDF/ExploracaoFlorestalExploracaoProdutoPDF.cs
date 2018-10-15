@@ -9,6 +9,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String Nome { get; set; }
 		public Decimal Quantidade { get; set; }
 		public String UnidadeMedida { get; set; }
+		public String Especie { get; set; }
+		public String DestinacaoMaterial { get; set; }
 
 		public String QuantidadeTexto
 		{
@@ -22,6 +24,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		public ExploracaoFlorestalExploracaoProdutoPDF(ExploracaoFlorestalProduto produto)
 		{
+			Especie = produto.EspeciePopularTexto;
+			DestinacaoMaterial = produto.DestinacaoMaterialTexto;
 			if (produto.ProdutoId == (int)eProduto.SemRendimento)
 			{
 				Nome = produto.ProdutoTexto;

@@ -440,8 +440,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						{0}geo_operacoesprocessamentogeo.ImportarParaDesenhFinalizada(:projeto, v_fila_tipo);
 					end if;
 
-					{0}geo_operacoesprocessamentogeo.ApagarGeometriasOficial(:projeto, v_fila_tipo);
-
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
@@ -658,14 +656,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
 								and cg.geo_pativ_id = g.id));
-						delete from {1}geo_lativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.geo_lativ_id = g.id));
 						delete from {1}geo_aativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
@@ -674,14 +664,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
 								and cg.geo_aativ_id = g.id));
-						delete from {1}geo_aiativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.geo_aiativ_id = g.id));
 						delete from {0}crt_exp_florestal_geo cg where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.id = cg.exp_florestal_exploracao

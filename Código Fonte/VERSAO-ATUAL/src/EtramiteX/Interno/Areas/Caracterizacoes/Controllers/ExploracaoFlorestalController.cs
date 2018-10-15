@@ -281,7 +281,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao = paginacao;
 			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-			vm.SetListItens(_listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
 			if (resultados == null)
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);

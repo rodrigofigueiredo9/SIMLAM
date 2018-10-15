@@ -28,7 +28,7 @@
 		</div>
 
 		<div class="coluna24 append2">
-			<label for="ExploracaoFlorestal_Finalidade">Finalidade *</label>
+			<label for="ExploracaoFlorestal_Finalidade">Finalidade da Exploração *</label>
 			<%= Html.DropDownList("ExploracaoFlorestal.Finalidade", Model.Finalidades, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlFinalidade" }))%>
 		</div>
 		<div class="coluna24 divEspecificarFinalidade hide">
@@ -64,7 +64,7 @@
 					<label for="ExploracaoFlorestal_Exploracoes_ArvoresRequeridas<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores requeridas *</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "8" }))%>
 				</div>
-				<div class="coluna24 append2">
+				<div class="coluna24 append2 divNumArvores">
 					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores">N° de árvores</label>
 					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "6" }))%>
 				</div>
@@ -97,7 +97,7 @@
 				</div>
 
 				<div class="coluna26 append2">
-					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material Lenhoso</label>
+					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material</label>
 					<%= Html.DropDownList("DestinacaoMaterial" + Model.ExploracaoFlorestal.Identificacao, Model.DestinacaoMaterial, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlDestinacaoMaterial" }))%>
 				</div>
 
@@ -114,7 +114,7 @@
 							<th>Produto </th>
 							<th>Espécie</th>
 							<th width="10%">Quantidade</th>
-							<th>Destinação do Material Lenhoso </th>
+							<th>Destinação do Material</th>
 							<%if (!Model.IsVisualizar){%><th width="9%">Ação</th><%} %>
 						</tr>
 					</thead>

@@ -30,3 +30,5 @@ begin
 end;
 
 update idafgeo.TAB_SERVICO_FEICAO set IS_EDITAVEL = 0 where FEICAO in (32, 33);
+
+update idafgeo.LOV_TIPO_EXPLORACAO set CHAVE = 'UAS', TEXTO = replace(TEXTO, 'AUS -', 'UAS -') where CHAVE = 'AUS';
