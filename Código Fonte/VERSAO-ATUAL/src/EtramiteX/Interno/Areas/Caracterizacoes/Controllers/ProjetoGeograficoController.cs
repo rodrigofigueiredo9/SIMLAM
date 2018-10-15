@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			#region Verificar o Redirecionamento
 
-			if (tipo == eCaracterizacao.ExploracaoFlorestal)
+			if (tipo == eCaracterizacao.ExploracaoFlorestal && !vm.isCadastrarCaracterizacao)
 				vm.isCadastrarCaracterizacao = _exploracaoFlorestalBus.ExisteExploracaoGeoNaoCadastrada(vm.Projeto.Id);
 			vm.UrlAvancar = CaracterizacaoVM.GerarUrl(vm.Projeto.EmpreendimentoId, vm.isCadastrarCaracterizacao, (eCaracterizacao)tipo);
 
