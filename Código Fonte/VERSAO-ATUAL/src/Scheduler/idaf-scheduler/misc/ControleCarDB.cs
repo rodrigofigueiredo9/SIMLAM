@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
+using Tecnomapas.EtramiteX.Scheduler.jobs.Class;
 
 namespace Tecnomapas.EtramiteX.Scheduler.misc
 {
@@ -512,6 +513,95 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			return item;
 		}
 
+		public static  CARSolicita ObterCarSolicitacaoInst(OracleConnection conn, int id)
+		{
+			var schema = CarUtils.GetEsquemaInstitucional();
+			var item = new CARSolicita();
+			var tabela = ("a" == RequisicaoJobCar.INSTITUCIONAL)
+				? "HST_CAR_SOLICITACAO"
+				: "HST_CAR_SOLICITACAO_CRED";
+
+			var sqlBuilder = new StringBuilder();
+			sqlBuilder.Append(@"SELECT S.ID, S.TID, s.SITUACAO_DATA, s.DATA_EMISSAO, F.ID AUTOR_ID, F.TID AUTOR_TID, S.SITUACAO, LV.TEXTO SITUACAO_TEXTO, s.MOTIVO
+								FROM IDAF.TAB_CAR_SOLICITACAO					s
+								INNER JOIN IDAF.TAB_FUNCIONARIO					F	ON s.AUTOR = F.ID
+								INNER JOIN LOV_CAR_SOLICITACAO_SITUACAO		LV  ON s.SITUACAO = LV.ID   
+								WHERE S.ID = :id ");
+			
+			try
+			{
+				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", id));
+
+					using (var dr = cmd.ExecuteReader())
+					{
+						if (dr.Read())
+						{
+							item.Id = dr.GetValue<Int32>("id");
+							item.Tid = dr.GetValue<string>("tid");
+							item.DataSituacao = dr.GetValue<DateTecno>("SITUACAO_DATA");
+							item.DataEmissao = dr.GetValue<DateTecno>("DATA_EMISSAO");
+							item.AutorId = dr.GetValue<Int32>("AUTOR_ID");
+							item.AutorTid = dr.GetValue<string>("AUTOR_TID");
+							item.SituacaoId = dr.GetValue<int>("SITUACAO");
+							item.SituacaoTexto = dr.GetValue<string>("SITUACAO_TEXTO");
+							item.Motivo = dr.GetValue<string>("MOTIVO");
+						} else
+							return null;
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+
+			return item;
+		}
+
+		public static  CARSolicita ObterCarSolicitacaoCred(OracleConnection conn, int id)
+		{
+			var item = new CARSolicita();
+
+			var sqlBuilder = new StringBuilder();
+			sqlBuilder.Append(@"SELECT S.ID, S.TID, S.DATA_EMISSAO, S.SITUACAO_DATA, C.ID CREDENCIADO, C.TID CREDENCIADO_TID, S.MOTIVO, S.SITUACAO, LV.TEXTO SITUACAO_TEXTO
+								FROM TAB_CAR_SOLICITACAO S
+								INNER JOIN TAB_CREDENCIADO C  ON S.CREDENCIADO = C.ID
+								WHERE S.ID = :id");
+			
+			try
+			{
+				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", id));
+
+					using (var dr = cmd.ExecuteReader())
+					{
+						if (dr.Read())
+						{
+							item.Id = dr.GetValue<Int32>("id");
+							item.Tid = dr.GetValue<string>("tid");
+							item.DataEmissao = dr.GetValue<DateTecno>("DATA_EMISSAO");
+							item.DataEmissao = dr.GetValue<DateTecno>("SITUACAO_DATA");
+							item.AutorId = dr.GetValue<Int32>("CREDENCIADO");
+							item.AutorTid = dr.GetValue<string>("CREDENCIADO_TID");
+							item.AutorTid = dr.GetValue<string>("MOTIVO");
+							item.SituacaoId = dr.GetValue<int>("SITUACAO");
+							item.SituacaoTexto = dr.GetValue<string>("SITUACAO_TEXTO");
+						} else
+							return null;
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+
+			return item;
+		}
+
 		internal static void AtualizarSolicitacaoCar(OracleConnection conn, RequisicaoJobCar requisicao, int situacao, string tid)
 		{
 			//var controleCAR = ObterItemControleCar(conn, requisicao);
@@ -619,11 +709,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
-			var schema = (origem == 1)
-				? "institucional"
-				: "credenciado";
-			//Inserir no Histórico
-			InserirHistoricoSolicitacaoCar(conn, schema, solicitacaoId);
+
+			if (origem == 1)
+				InserirHistoricoSolicitacaoCarRetificacaoInst(conn, solicitacaoId);
+			else
+				InserirHistoricoSolicitacaoCarRetificacaoCred(conn, solicitacaoId);
 		}
 
 		private static void InserirHistoricoSolicitacaoCar(OracleConnection conn, string origem, int solicitacaoId)
@@ -650,6 +740,114 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("executor_tid", assembly.ManifestModule.ModuleVersionId.ToString()));
 
 					cmd.ExecuteNonQuery();
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+		}
+
+		private static void InserirHistoricoSolicitacaoCarRetificacaoInst(OracleConnection conn, int solicitacaoId)
+		{
+			CARSolicita car = ObterCarSolicitacaoInst(conn, solicitacaoId);
+
+			var sqlBuilder = new StringBuilder();
+			sqlBuilder.Append(@"insert into hst_car_solicitacao
+			( id, solicitacao_id, tid, numero, data_emissao, situacao_id,	situacao_texto, protocolo_id,	protocolo_tid,	requerimento_id, requerimento_tid,	
+			protocolo_selecionado_id, protocolo_selecionado_tid,	atividade_id,	atividade_tid, empreendimento_id,	empreendimento_tid, declarante_id, declarante_tid, 
+			autor_id, autor_tid, situacao_data, situacao_anterior_data, situacao_anterior_id, situacao_anterior_texto,	motivo,	dominialidade_id, dominialidade_tid,	projeto_geo_id, projeto_geo_tid,
+			executor_id, executor_tid,	executor_nome, executor_login,	executor_tipo_id, executor_tipo_texto, acao_executada, data_execucao)
+			(
+			SELECT seq_hst_car_solicitacao.nextval, SOLICITACAO_ID, TID, NUMERO, :data_emissao, :situacao, :situacao_texto, PROTOCOLO_ID, PROTOCOLO_TID, REQUERIMENTO_ID, REQUERIMENTO_TID,
+			PROTOCOLO_SELECIONADO_ID, PROTOCOLO_SELECIONADO_TID, ATIVIDADE_ID, ATIVIDADE_TID, EMPREENDIMENTO_ID, EMPREENDIMENTO_TID, DECLARANTE_ID, DECLARANTE_TID, 
+			:autor_id, :autor_tid, :situacao_data, SITUACAO_DATA, SITUACAO_ID, SITUACAO_TEXTO, :motivo, DOMINIALIDADE_ID, DOMINIALIDADE_TID, PROJETO_GEO_ID, PROJETO_GEO_TID, 
+			:executor_id, :executor_tid, :executor_nome, :executor_login, :executor_tipo_id, executor_tipo_texto, :acao_executada, systimestamp
+			FROM HST_CAR_SOLICITACAO WHERE ID IN (
+			SELECT MAX(ID) FROM HST_CAR_SOLICITACAO WHERE SOLICITACAO_ID = :id_solicitacao AND SITUACAO_ID = 2 ))");
+
+			try
+			{
+				using (var cmd = new OracleCommand(sqlBuilder.ToString(), conn))
+				{
+					var assembly = Assembly.GetExecutingAssembly();
+
+					cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao));
+					cmd.Parameters.Add(new OracleParameter("situacao", car.SituacaoId));
+					cmd.Parameters.Add(new OracleParameter("situacao_texto", car.SituacaoTexto));
+					cmd.Parameters.Add(new OracleParameter("autor_id", car.AutorId));
+					cmd.Parameters.Add(new OracleParameter("autor_tid", car.AutorTid));
+					cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao));
+					cmd.Parameters.Add(new OracleParameter("motivo", car.Motivo));
+					cmd.Parameters.Add(new OracleParameter("executor_id", 1/*sistema*/));
+					cmd.Parameters.Add(new OracleParameter("executor_tid", assembly.ManifestModule.ModuleVersionId.ToString()));
+					cmd.Parameters.Add(new OracleParameter("executor_nome", assembly.ManifestModule.Name));
+					cmd.Parameters.Add(new OracleParameter("executor_login", "IDAF_Scheduler"));
+					cmd.Parameters.Add(new OracleParameter("executor_tipo_id", 1/*interno*/));
+					cmd.Parameters.Add(new OracleParameter("acao", 17));//alterarsituacao
+
+					cmd.Parameters.Add(new OracleParameter("id_solicitacao", solicitacaoId));
+
+					cmd.ExecuteNonQuery();
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+			}
+		}
+
+		private static void InserirHistoricoSolicitacaoCarRetificacaoCred(OracleConnection conn, int solicitacaoId)
+		{
+			try
+			{
+				using (var connection = new OracleConnection(CarUtils.GetBancoCredenciado()))
+				{
+					connection.Open();
+
+					CARSolicita car = ObterCarSolicitacaoCred(connection, solicitacaoId);
+
+					var sqlBuilder = new StringBuilder();
+					sqlBuilder.Append(@"insert into hst_car_solicitacao r
+							  (id, solicitacao_id, tid, credenciado_id, credenciado_tid, numero, data_emissao, situacao_id, situacao_texto,
+							   projeto_digital_id, projeto_digital_tid, requerimento_id, requerimento_tid, atividade_id, atividade_tid,
+							   empreendimento_id, empreendimento_tid, declarante_id, declarante_tid, situacao_data, situacao_anterior_data,
+							   situacao_anterior_id, situacao_anterior_texto, motivo, dominialidade_id, dominialidade_tid,
+							   projeto_geo_id, projeto_geo_tid, executor_id, executor_tid, executor_nome, executor_login,
+							   executor_tipo_id, executor_tipo_texto, acao_executada, data_execucao)
+
+							SELECT seq_hst_car_solicitacao.nextval, TID, :credenciado, :credenciado_tid, NUMERO, :data_emissao, :situacao_id, :situacao_texto,
+							PROJETO_DIGITAL_ID, PROJETO_DIGITAL_TID, REQUERIMENTO_ID, REQUERIMENTO_TID, ATIVIDADE_ID, ATIVIDADE_TID, 
+							EMPREENDIMENTO_ID, EMPREENDIMENTO_TID, DECLARANTE_ID, DECLARANTE_TID, :situacao_data, SITUACAO_DATA,
+							SITUACAO_ID, SITUACAO_TEXTO, :motivo, DOMINIALIDADE_ID, DOMINIALIDADE_TID,
+							PROJETO_GEO_ID, PROJETO_GEO_TID, :executor_id, :executor_tid, :executor_nome, :executor_login,
+							:executor_tipo_id, executor_tipo_texto, :acao_executada, systimestamp
+
+							FROM HST_CAR_SOLICITACAO WHERE ID IN (
+								SELECT MAX(ID) FROM HST_CAR_SOLICITACAO WHERE SOLICITACAO_ID = :id_solicitacao AND SITUACAO_ID = 2 )");
+
+					using (var cmd = new OracleCommand(sqlBuilder.ToString(), connection))
+					{
+						var assembly = Assembly.GetExecutingAssembly();
+
+						cmd.Parameters.Add(new OracleParameter("credenciado", car.AutorId));
+						cmd.Parameters.Add(new OracleParameter("credenciado_tid", car.AutorTid));
+						cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao));
+						cmd.Parameters.Add(new OracleParameter("situacao_id", car.SituacaoId));
+						cmd.Parameters.Add(new OracleParameter("situacao_texto", car.SituacaoTexto));
+						cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao));
+						cmd.Parameters.Add(new OracleParameter("motivo", car.Motivo));
+						cmd.Parameters.Add(new OracleParameter("executor_id", 1/*sistema*/));
+						cmd.Parameters.Add(new OracleParameter("executor_tid", assembly.ManifestModule.ModuleVersionId.ToString()));
+						cmd.Parameters.Add(new OracleParameter("executor_nome", assembly.ManifestModule.Name));
+						cmd.Parameters.Add(new OracleParameter("executor_login", "IDAF_Scheduler"));
+						cmd.Parameters.Add(new OracleParameter("executor_tipo_id", 1/*interno*/));
+						cmd.Parameters.Add(new OracleParameter("acao", 17));//alterarsituacao
+
+						cmd.Parameters.Add(new OracleParameter("id_solicitacao", solicitacaoId));
+
+						cmd.ExecuteNonQuery();
+					}
 				}
 			}
 			catch (Exception exception)

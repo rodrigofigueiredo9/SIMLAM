@@ -253,6 +253,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCarac
 
 					reader.Close();
 				}
+				caracterizacao.ATPCroqui = (caracterizacao.ATPCroqui <= 0) ? caracterizacao.AreaCroqui: caracterizacao.ATPCroqui;
 
 				#endregion
 			}
@@ -440,6 +441,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCarac
 				#endregion
 			}
 
+			caracterizacao.ATPCroqui = (caracterizacao.ATPCroqui <= 0) ? caracterizacao.AreaCroqui : caracterizacao.ATPCroqui;
 			return caracterizacao;
 		}
 	}
