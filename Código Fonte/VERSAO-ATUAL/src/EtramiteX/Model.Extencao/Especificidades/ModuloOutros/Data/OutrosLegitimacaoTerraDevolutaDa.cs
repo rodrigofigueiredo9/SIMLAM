@@ -396,25 +396,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 				#endregion
 
-				//#region Destinatarios
+				#region Destinatarios
 
-				//comando = bancoDeDados.CriarComando(@" select d.destinatario from {0}esp_out_legitima_destinatario d, {0}esp_out_legitima_terr_devolut e 
-				//where d.especificidade = e.id and e.titulo = :tituloId ", EsquemaBanco);
-				//comando.AdicionarParametroEntrada("tituloId", titulo, DbType.Int32);
+				comando = bancoDeDados.CriarComando(@" select d.destinatario from {0}esp_out_legitima_destinatario d, {0}esp_out_legitima_terr_devolut e 
+				where d.especificidade = e.id and e.titulo = :tituloId ", EsquemaBanco);
+				comando.AdicionarParametroEntrada("tituloId", titulo, DbType.Int32);
 
-				//using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				//{
-				//	while (reader.Read())
-				//	{
-				//		var pessoa = DaEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), banco: bancoDeDados);
-				//		outros.Destinatarios.Add(pessoa);
-				//		outros.Titulo.AssinanteSource.Add(new AssinanteDefault { Cargo = "Titulado", Nome = pessoa.NomeRazaoSocial });
-				//	}
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var pessoa = DaEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), banco: bancoDeDados);
+						outros.Destinatarios.Add(pessoa);
+						//outros.Titulo.AssinanteSource.Add(new AssinanteDefault { Cargo = "Titulado", Nome = pessoa.NomeRazaoSocial });
+					}
 
-				//	reader.Close();
-				//}
+					reader.Close();
+				}
 
-				//#endregion
+				#endregion
 
 				#region Dominialidade
 
