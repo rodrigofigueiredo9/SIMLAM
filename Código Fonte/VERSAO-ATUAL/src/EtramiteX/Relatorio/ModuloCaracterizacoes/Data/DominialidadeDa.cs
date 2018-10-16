@@ -192,6 +192,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCaracteri
 
 				#endregion
 			}
+			caracterizacao.ATPCroquiHa = (caracterizacao.ATPCroquiHa == null) ? caracterizacao.TotalCroquiHa : caracterizacao.ATPCroquiHa;
 
 			return caracterizacao;
 		}
@@ -316,6 +317,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCaracteri
 
 				#endregion
 			}
+			caracterizacao.ATPCroquiHa = (caracterizacao.ATPCroquiHa == null) ? caracterizacao.TotalCroquiHa : caracterizacao.ATPCroquiHa;
 
 			return caracterizacao;
 		}

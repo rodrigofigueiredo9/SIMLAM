@@ -52,8 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				s.data_emissao,
 				lss.texto situacao_texto,
 				s.situacao_data,
-				(select count(*) from tab_empreendimento_responsavel er where er.empreendimento = e.id and er.responsavel != s.declarante) +
-				(select count(*) from tab_protocolo pt where pt.id = s.protocolo and pt.interessado != s.declarante) possui_outros,
+				(select count(*) from tab_empreendimento_responsavel er where er.empreendimento = e.id and er.responsavel != s.declarante) possui_outros,
 				p.tipo declarante_tipo,
 				(select lert.texto tipo_texto from tab_empreendimento_responsavel er, lov_empreendimento_tipo_resp lert 
 				where er.tipo = lert.id and er.empreendimento = e.id and er.responsavel = s.declarante) declarante_tipo_texto,
@@ -188,12 +187,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 						   (select count(*)
 							  from hst_empreendimento_responsavel her
 							 where her.id_hst = he.id
-							   and her.responsavel_id != hcs.declarante_id) +
-						   (select count(*)
-							  from hst_protocolo hp
-							 where hp.id_protocolo = hcs.protocolo_id
-							   and hp.tid = hcs.protocolo_tid
-							   and hp.interessado_id != hcs.declarante_id) possui_outros,
+							   and her.responsavel_id != hcs.declarante_id)  possui_outros,
 						   hp.tipo declarante_tipo,
 						   (select her.tipo_texto
 							  from hst_empreendimento_responsavel her
