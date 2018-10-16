@@ -143,9 +143,8 @@
     <Compile Include="jobs\Class\Atividade.cs" />
     <Compile Include="jobs\Class\BancoDeDados.cs" />
     <Compile Include="jobs\Class\Cargo.cs" />
-    <Compile Include="jobs\Class\CarSolicita.cs" />
+    <Compile Include="jobs\Class\CarSolicitaca.cs" />
     <Compile Include="jobs\Class\CARSolicitacaoMsg.cs" />
-    <Compile Include="jobs\Class\CarUtils.cs" />
     <Compile Include="jobs\Class\Comando.cs" />
     <Compile Include="jobs\Class\ComplementacaoDados.cs" />
     <Compile Include="jobs\Class\ConfiguracaoBase.cs" />
