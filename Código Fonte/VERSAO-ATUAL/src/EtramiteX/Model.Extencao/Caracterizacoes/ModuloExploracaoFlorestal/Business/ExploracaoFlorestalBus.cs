@@ -354,11 +354,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
-		public IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, BancoDeDados banco = null)
+		public IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, int modelo, BancoDeDados banco = null)
 		{
 			try
 			{
-				return _da.ObterExploracoes(tituloId);
+				return _da.ObterExploracoes(tituloId, modelo, banco);
 			}
 			catch (Exception exc)
 			{

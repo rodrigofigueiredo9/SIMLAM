@@ -84,6 +84,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				comando.AdicionarParametroEntClob("consideracao", laudo.Consideracao);
 				comando.AdicionarParametroEntClob("descricao_parecer", laudo.ParecerDescricao);
+				comando.AdicionarParametroEntClob("parecer_desfavoravel", laudo.ParecerDescricaoDesfavoravel);
 				
 
 				if (laudo.Responsavel <= 0)
@@ -163,7 +164,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				#region Dados da Especificidade
 
 				Comando comando = bancoDeDados.CriarComando(@"select e.id, e.tid, e.protocolo, e.responsavel, e.caracterizacao, e.conclusao, e.data_vistoria,
-				e.objetivo, e.consideracao, e.restricao, e.descricao_parecer, n.numero, n.ano, p.requerimento, p.protocolo protocolo_tipo, e.destinatario, 
+				e.objetivo, e.consideracao, e.restricao, e.descricao_parecer, e.parecer_desfavoravel, n.numero, n.ano, p.requerimento, p.protocolo protocolo_tipo, e.destinatario, 
 				(select distinct nvl(pe.nome, pe.razao_social) from {0}hst_esp_laudo_visto_florestal he, {0}hst_pessoa pe where he.destinatario_id = pe.pessoa_id and he.destinatario_tid = pe.tid
 				and pe.data_execucao = (select max(h.data_execucao) from {0}hst_pessoa h where h.pessoa_id = pe.pessoa_id and h.tid = pe.tid) and he.especificidade_id = e.id
 				and not exists(select 1 from {0}lov_historico_artefatos_acoes l where l.id = he.acao_executada and l.acao = 3) 
@@ -184,6 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 						especificidade.Consideracao = reader["consideracao"].ToString();
 						especificidade.Restricao = reader["restricao"].ToString();
 						especificidade.ParecerDescricao = reader["descricao_parecer"].ToString();
+						especificidade.ParecerDescricaoDesfavoravel = reader["parecer_desfavoravel"].ToString();
 
 						if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"]))
 						{
@@ -256,7 +258,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				#region Dados da Especificidade
 
 				Comando comando = bancoDeDados.CriarComando(@"select e.destinatario, e.responsavel, e.caracterizacao, lp.texto conclusao, e.data_vistoria, e.objetivo, e.consideracao, 
-				e.restricao, e.descricao_parecer from {0}esp_laudo_vistoria_florestal e, {0}lov_esp_conclusao lp where e.conclusao = lp.id and e.titulo = :id", EsquemaBanco);
+				e.restricao, e.descricao_parecer, e.parecer_desfavoravel from {0}esp_laudo_vistoria_florestal e, {0}lov_esp_conclusao lp where e.conclusao = lp.id and e.titulo = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
 
@@ -271,6 +273,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 						laudo.Consideracao = reader["consideracao"].ToString();
 						laudo.Restricao = reader["restricao"].ToString();
 						laudo.DescricaoParecer = reader["descricao_parecer"].ToString();
+						laudo.DescricaoParecerDesfavoravel = reader["parecer_desfavoravel"].ToString();
 
 						if (reader["data_vistoria"] != null && !Convert.IsDBNull(reader["data_vistoria"]))
 						{

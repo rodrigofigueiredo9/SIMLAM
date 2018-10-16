@@ -19,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public Int32? FinalidadeExploracao { get; set; }
 		public String FinalidadeEspecificar { get; set; }
 		public bool? ParecerFavoravel { get; set; }
+		public String FinalidadeExploracaoTexto { get; set; }
 
 		public ExploracaoFlorestalGeo ExploracaoFlorestalGeo { get; set; }
 

@@ -1120,7 +1120,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
-		internal IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, BancoDeDados banco = null, bool simplificado = false)
+		internal IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, int modelo, BancoDeDados banco = null)
 		{
 			var exploracoes = new List<ExploracaoFlorestal>();
 
@@ -1129,7 +1129,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				#region Exploração Florestal
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
-						c.data_cadastro, c.data_conclusao, c.tid, lv.texto tipo_exploracao_texto,
+						c.data_cadastro, c.data_conclusao, c.tid, lv.texto tipo_exploracao_texto, lv.chave chave_tipo_exploracao,
 						nvl(c.localizador, concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy'))) localizador
 						from {0}crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
@@ -1155,27 +1155,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
 						if (!Convert.IsDBNull(reader["data_conclusao"]))
 							exploracao.DataConclusao = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
-						if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
-							exploracao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
+						else
+							exploracao.DataConclusao = new DateTecno();
+						if (!Convert.IsDBNull(reader["chave_tipo_exploracao"]))
+							exploracao.CodigoExploracaoTexto = reader["chave_tipo_exploracao"].ToString() + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
 						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
 							exploracao.Localizador = reader["localizador"].ToString();
+						exploracao.TipoExploracaoTexto = reader["tipo_exploracao_texto"].ToString();
 						exploracao.Tid = reader["tid"].ToString();
 
 						#region Explorações
 
 						comando = bancoDeDados.CriarComando(@"select c.id, c.identificacao, c.geometria, lg.texto geometria_texto, c.area_croqui, c.area_requerida,
 						c.arvores_requeridas, c.classificacao_vegetacao, lc.texto classificacao_vegetacao_texto,
-						c.quantidade_arvores, c.tid, c.finalidade, c.finalidade_outros, c.parecer_favoravel
-						from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc
-						where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.exploracao_florestal = :id
+						c.quantidade_arvores, c.tid, c.finalidade, c.finalidade_outros, c.parecer_favoravel, lf.texto finalidade_texto
+						from {0}crt_exp_florestal_exploracao c, {0}lov_crt_geometria_tipo lg, {0}lov_crt_exp_flores_classif lc, {0}lov_crt_exp_flores_finalidade lf
+						where c.geometria = lg.id and c.classificacao_vegetacao = lc.id and c.finalidade = lf.id(+)
+						and c.exploracao_florestal = :exploracao_florestal " +
+						(modelo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal ? @"
 						and exists(select 1 from tab_titulo_exp_flor_exp t
 							where t.exp_florestal_exploracao = c.id
 							and exists (select 1 from tab_titulo_exp_florestal tt
 								where tt.titulo = :titulo_id
-								and tt.id = t.titulo_exploracao_florestal))
+								and tt.id = t.titulo_exploracao_florestal))" : "") + @"
 						order by c.identificacao", EsquemaBanco);
 
-						comando.AdicionarParametroEntrada("id", tituloId, DbType.Int32);
+						comando.AdicionarParametroEntrada("exploracao_florestal", exploracao.Id, DbType.Int32);
+						if(modelo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+							comando.AdicionarParametroEntrada("titulo_id", tituloId, DbType.Int32);
 
 						using (IDataReader readerChild = bancoDeDados.ExecutarReader(comando))
 						{
@@ -1189,6 +1196,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 									exploracaoChild.ParecerFavoravel = Convert.ToBoolean(readerChild["parecer_favoravel"]);
 								exploracaoChild.FinalidadeExploracao = Convert.IsDBNull(readerChild["finalidade"]) ? 0 : Convert.ToInt32(readerChild["finalidade"]);
 								exploracaoChild.FinalidadeEspecificar = readerChild["finalidade_outros"].ToString();
+								exploracaoChild.FinalidadeExploracaoTexto = readerChild["finalidade_texto"].ToString();
 								exploracaoChild.Tid = readerChild["tid"].ToString();
 								exploracaoChild.Identificacao = readerChild["identificacao"].ToString();
 								exploracaoChild.ArvoresRequeridas = readerChild["arvores_requeridas"].ToString();
@@ -1255,6 +1263,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 									readerAux.Close();
 								}
+
+								exploracao.Exploracoes.Add(exploracaoChild);
 
 								#endregion
 							}
