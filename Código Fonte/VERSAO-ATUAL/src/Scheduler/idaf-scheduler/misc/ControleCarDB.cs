@@ -540,8 +540,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						{
 							item.Id = dr.GetValue<Int32>("id");
 							item.Tid = dr.GetValue<string>("tid");
-							item.DataSituacao = dr.GetValue<DateTecno>("SITUACAO_DATA");
-							item.DataEmissao = dr.GetValue<DateTecno>("DATA_EMISSAO");
+							item.DataEmissao.Data = dr.GetValue<DateTime>("DATA_EMISSAO");
+							item.DataSituacao.Data = dr.GetValue<DateTime>("SITUACAO_DATA");
 							item.AutorId = dr.GetValue<Int32>("AUTOR_ID");
 							item.AutorTid = dr.GetValue<string>("AUTOR_TID");
 							item.SituacaoId = dr.GetValue<int>("SITUACAO");
@@ -568,6 +568,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append(@"SELECT S.ID, S.TID, S.DATA_EMISSAO, S.SITUACAO_DATA, C.ID CREDENCIADO, C.TID CREDENCIADO_TID, S.MOTIVO, S.SITUACAO, LV.TEXTO SITUACAO_TEXTO
 								FROM TAB_CAR_SOLICITACAO S
 								INNER JOIN TAB_CREDENCIADO C  ON S.CREDENCIADO = C.ID
+								INNER JOIN IDAF.LOV_CAR_SOLICITACAO_SITUACAO LV ON S.SITUACAO = LV.ID
 								WHERE S.ID = :id");
 			
 			try
@@ -582,11 +583,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						{
 							item.Id = dr.GetValue<Int32>("id");
 							item.Tid = dr.GetValue<string>("tid");
-							item.DataEmissao = dr.GetValue<DateTecno>("DATA_EMISSAO");
-							item.DataEmissao = dr.GetValue<DateTecno>("SITUACAO_DATA");
+							item.DataEmissao.Data = dr.GetValue<DateTime>("DATA_EMISSAO");
+							item.DataSituacao.Data = dr.GetValue<DateTime>("SITUACAO_DATA");
 							item.AutorId = dr.GetValue<Int32>("CREDENCIADO");
 							item.AutorTid = dr.GetValue<string>("CREDENCIADO_TID");
-							item.AutorTid = dr.GetValue<string>("MOTIVO");
+							item.Motivo = dr.GetValue<string>("MOTIVO");
 							item.SituacaoId = dr.GetValue<int>("SITUACAO");
 							item.SituacaoTexto = dr.GetValue<string>("SITUACAO_TEXTO");
 						} else
@@ -772,19 +773,19 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					var assembly = Assembly.GetExecutingAssembly();
 
-					cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao));
+					cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao.Data));
 					cmd.Parameters.Add(new OracleParameter("situacao", car.SituacaoId));
 					cmd.Parameters.Add(new OracleParameter("situacao_texto", car.SituacaoTexto));
 					cmd.Parameters.Add(new OracleParameter("autor_id", car.AutorId));
 					cmd.Parameters.Add(new OracleParameter("autor_tid", car.AutorTid));
-					cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao));
+					cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao.Data));
 					cmd.Parameters.Add(new OracleParameter("motivo", car.Motivo));
 					cmd.Parameters.Add(new OracleParameter("executor_id", 1/*sistema*/));
 					cmd.Parameters.Add(new OracleParameter("executor_tid", assembly.ManifestModule.ModuleVersionId.ToString()));
 					cmd.Parameters.Add(new OracleParameter("executor_nome", assembly.ManifestModule.Name));
 					cmd.Parameters.Add(new OracleParameter("executor_login", "IDAF_Scheduler"));
 					cmd.Parameters.Add(new OracleParameter("executor_tipo_id", 1/*interno*/));
-					cmd.Parameters.Add(new OracleParameter("acao", 17));//alterarsituacao
+					cmd.Parameters.Add(new OracleParameter("acao_executada", 17));//alterarsituacao
 
 					cmd.Parameters.Add(new OracleParameter("id_solicitacao", solicitacaoId));
 
@@ -816,7 +817,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							   projeto_geo_id, projeto_geo_tid, executor_id, executor_tid, executor_nome, executor_login,
 							   executor_tipo_id, executor_tipo_texto, acao_executada, data_execucao)
 
-							SELECT seq_hst_car_solicitacao.nextval, TID, :credenciado, :credenciado_tid, NUMERO, :data_emissao, :situacao_id, :situacao_texto,
+							SELECT seq_hst_car_solicitacao.nextval, SOLICITACAO_ID, TID, :credenciado, :credenciado_tid, NUMERO, :data_emissao, :situacao_id, :situacao_texto,
 							PROJETO_DIGITAL_ID, PROJETO_DIGITAL_TID, REQUERIMENTO_ID, REQUERIMENTO_TID, ATIVIDADE_ID, ATIVIDADE_TID, 
 							EMPREENDIMENTO_ID, EMPREENDIMENTO_TID, DECLARANTE_ID, DECLARANTE_TID, :situacao_data, SITUACAO_DATA,
 							SITUACAO_ID, SITUACAO_TEXTO, :motivo, DOMINIALIDADE_ID, DOMINIALIDADE_TID,
@@ -832,17 +833,17 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 						cmd.Parameters.Add(new OracleParameter("credenciado", car.AutorId));
 						cmd.Parameters.Add(new OracleParameter("credenciado_tid", car.AutorTid));
-						cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao));
+						cmd.Parameters.Add(new OracleParameter("data_emissao", car.DataEmissao.Data));
 						cmd.Parameters.Add(new OracleParameter("situacao_id", car.SituacaoId));
 						cmd.Parameters.Add(new OracleParameter("situacao_texto", car.SituacaoTexto));
-						cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao));
+						cmd.Parameters.Add(new OracleParameter("situacao_data", car.DataSituacao.Data));
 						cmd.Parameters.Add(new OracleParameter("motivo", car.Motivo));
 						cmd.Parameters.Add(new OracleParameter("executor_id", 1/*sistema*/));
 						cmd.Parameters.Add(new OracleParameter("executor_tid", assembly.ManifestModule.ModuleVersionId.ToString()));
 						cmd.Parameters.Add(new OracleParameter("executor_nome", assembly.ManifestModule.Name));
 						cmd.Parameters.Add(new OracleParameter("executor_login", "IDAF_Scheduler"));
 						cmd.Parameters.Add(new OracleParameter("executor_tipo_id", 1/*interno*/));
-						cmd.Parameters.Add(new OracleParameter("acao", 17));//alterarsituacao
+						cmd.Parameters.Add(new OracleParameter("acao_executada", 17));//alterarsituacao
 
 						cmd.Parameters.Add(new OracleParameter("id_solicitacao", solicitacaoId));
 
