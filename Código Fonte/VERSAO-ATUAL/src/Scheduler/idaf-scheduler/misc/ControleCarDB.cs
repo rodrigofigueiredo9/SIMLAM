@@ -149,7 +149,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("pendencias = :pendencias,");
 			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
-			sqlBuilder.Append("url_recibo = :url_recibo,");
+			if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+				sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
 			if(!String.IsNullOrWhiteSpace(codigoProtocolo))
@@ -177,7 +178,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
-					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
+					if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+						cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
 					if (!String.IsNullOrWhiteSpace(codigoProtocolo))
@@ -233,7 +235,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("pendencias = :pendencias,");
 			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
-			sqlBuilder.Append("url_recibo = :url_recibo,");
+			if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+				sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
 
@@ -252,7 +255,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
 					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
-					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
+					if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+						cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
 
