@@ -163,7 +163,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     cmd.ExecuteNonQuery();
                 }
 				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL", conn))
+                                                WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL AND DATA_CRIACAO < SYSDATE", conn))
                 {
                     cmd.ExecuteNonQuery();
                 }
