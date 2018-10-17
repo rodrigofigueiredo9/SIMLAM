@@ -922,6 +922,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				#region Apaga os dados da titulo
 				List<String> lista = new List<string>();
+				lista.Add(@"delete from {0}tab_integracao_sinaflor f where exists
+					(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo and f.titulo_exp_florestal = e.id);");
+				lista.Add(@"delete from {0}tab_titulo_exp_flor_exp f where exists
+					(select 1 from {0}tab_titulo_exp_florestal e where e.titulo = :titulo and f.titulo_exploracao_florestal = e.id);");
+				lista.Add("delete from {0}tab_titulo_exp_florestal e where e.titulo = :titulo;");
 				lista.Add("delete from {0}tab_titulo_dependencia e where e.titulo = :titulo;");
 				lista.Add("delete from {0}tab_titulo_associados e where e.titulo = :titulo;");
 				lista.Add("delete from {0}tab_titulo_assinantes e where e.titulo = :titulo;");

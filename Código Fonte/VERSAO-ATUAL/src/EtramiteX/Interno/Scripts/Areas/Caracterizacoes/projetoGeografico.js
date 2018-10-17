@@ -1,4 +1,4 @@
-﻿/// <reference path="../../Lib/JQuery/jquery.json - 2.2.min.js" />
+/// <reference path="../../Lib/JQuery/jquery.json - 2.2.min.js" />
 /// <reference path="../../Lib/JQuery/jquery-1.4.3.min.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
@@ -21,6 +21,7 @@ ProjetoGeografico = {
 			alterarAreaAbrangencia: null,
 			cancelarProcessamentoArquivosVet: null,
 			refazer: null,
+			atualizar: null,
 			recarregar: null,
 			finalizar: null,
 			salvar: null,
@@ -50,6 +51,7 @@ ProjetoGeografico = {
 		$(ProjetoGeografico.container).delegate('.btnObterCoordenadaAuto', 'click', ProjetoGeografico.onGerarCoordenadaAutomatico);
 
 		$(ProjetoGeografico.container).delegate('.btnRefazer', 'click', ProjetoGeografico.onRefazer);
+		$(ProjetoGeografico.container).delegate('.btnAtualizar', 'click', ProjetoGeografico.onAtualizar);
 		$(ProjetoGeografico.container).delegate('.btnRecarregar', 'click', ProjetoGeografico.onRecarregar);
 		$(ProjetoGeografico.container).delegate('.btnExluir', 'click', ProjetoGeografico.onExcluir);
 		$(ProjetoGeografico.container).delegate('.btnFinalizar', 'click', ProjetoGeografico.onFinalizar);
@@ -134,8 +136,9 @@ ProjetoGeografico = {
 	},
 
 	onSalvar: function (option) {
-		var data = { projeto: ProjetoGeografico.montarObjeto() };
-		var settings = { url: ProjetoGeografico.settings.urls.salvar, data: data, callBack: ProjetoGeografico.callBackSalvar };
+		var data = { projeto: ProjetoGeografico.montarObjeto(), url: ProjetoGeografico.settings.urls.avancar };
+		var caracterizacaoTipo = $('.hdnCaracterizacaoTipo', ProjetoGeografico.container).val();
+		var settings = { url: ProjetoGeografico.settings.urls.salvar, data: data, callBack: (caracterizacaoTipo == 4 ? ProjetoGeografico.callBackPost : ProjetoGeografico.callBackSalvar) };
 		$.extend(settings, option);
 		if (ProjetoGeografico.validarProjeto(data.projeto)) {
 
@@ -372,6 +375,33 @@ ProjetoGeografico = {
 		var dados = { projeto: ProjetoGeografico.montarObjeto(), isCadastrarCaracterizacao: ProjetoGeografico.isCadastrarCaracterizacao };
 		ProjetoGeografico.postGet({
 			url: ProjetoGeografico.settings.urls.refazer,
+			data: dados,
+			callBack: function (resultado, container) {
+				if ($('.radioTiPoMecanismo:checked', ProjetoGeografico.container).val() == 1) {
+					EnviarProjeto.onCancelarProcessamento();
+				} else {
+					Desenhador.onCancelarProcessamento();
+				}
+				ProjetoGeografico.callBackPost(resultado, container);
+			},
+			container: container,
+			async: false
+		});
+	},
+
+	onAtualizar: function () {
+		Modal.confirma({
+			btnOkCallback: function (container) { ProjetoGeografico.callBackAtualizar(MasterPage.getContent(container)); },
+			titulo: "Atualizar projeto geográfico",
+			conteudo: ProjetoGeografico.mensagens.ConfirmacaoRefazer.Texto,
+			tamanhoModal: Modal.tamanhoModalMedia
+		});
+	},
+
+	callBackAtualizar: function (container) {
+		var dados = { projeto: ProjetoGeografico.montarObjeto(), isCadastrarCaracterizacao: ProjetoGeografico.isCadastrarCaracterizacao };
+		ProjetoGeografico.postGet({
+			url: ProjetoGeografico.settings.urls.atualizar,
 			data: dados,
 			callBack: function (resultado, container) {
 				if ($('.radioTiPoMecanismo:checked', ProjetoGeografico.container).val() == 1) {

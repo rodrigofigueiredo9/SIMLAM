@@ -134,44 +134,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
 					bancoDeDados.IniciarTransacao();
+				
+					var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+					if (idProjetoGeo == 0)
+						throw new Exception("Projeto Geográfico não encontrado");
 
-					if (_da.ExisteExploracaoDesfavoravel(empreendimento, banco))
-					{
-						var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
-						if (idProjetoGeo == 0)
-							throw new Exception("Projeto Geográfico não encontrado");
+					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
+					foreach (var exploracao in exploracoes)
+						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
 
-						var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
-						foreach (var exploracao in exploracoes)
-							_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
-
-						var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-						_projetoGeoBus.Refazer(projeto, bancoDeDados);
-						foreach (var arquivo in projeto.Arquivos)
-						{
-							if (arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosIDAF || arquivo.Tipo == (int)eProjetoGeograficoArquivoTipo.DadosGEOBASES)
-								_projetoGeoBus.ReprocessarBaseReferencia(arquivo);
-							else
-								_projetoGeoBus.Reprocessar(arquivo);
-						}
-
-						projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
-						_projetoGeoBus.SalvarSobreposicoes(new ProjetoGeografico() { Id = idProjetoGeo, Sobreposicoes = projeto.Sobreposicoes });
-						_projetoGeoBus.Finalizar(projeto);
-
-						foreach (var exploracao in exploracoes)
-						{
-							exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
-							_busCaracterizacao.Dependencias(new Caracterizacao()
-							{
-								Id = exploracao.Id,
-								Tipo = eCaracterizacao.ExploracaoFlorestal,
-								DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
-								Dependencias = exploracao.Dependencias
-							}, bancoDeDados);
-							_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
-						}
-					}
+					var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+						
+					_projetoGeoBus.Finalizar(projeto);
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 

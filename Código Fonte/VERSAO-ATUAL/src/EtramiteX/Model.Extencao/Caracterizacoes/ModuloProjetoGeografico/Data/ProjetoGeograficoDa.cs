@@ -363,7 +363,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 						--Importa as tabelas do da temporária para as tabelas oficiais
 						{0}geo_operacoesprocessamentogeo.ExportarParaTabelasGEO(i.id, i.tid);
-                  
+
+						--Atualiza relacionamento com exploracoes
+						update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
+							where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = i.id);
+						update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
+							where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = i.id);
+	
 						--Apaga o rascunho
 						delete {0}tmp_projeto_geo_arquivos g where g.projeto = i.id;
 						delete {0}tmp_projeto_geo_ortofoto g where g.projeto = i.id;
@@ -438,6 +444,60 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 					if v_mecanismo = :mecDesenhador then 
 						{0}geo_operacoesprocessamentogeo.ImportarParaDesenhFinalizada(:projeto, v_fila_tipo);
+					end if;
+
+				end; ", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("mecDesenhador", (int)eProjetoGeograficoMecanismo.Desenhador, DbType.Int32);
+				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
+		internal void Atualizar(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Atualizar o projeto geográfico
+
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				declare 
+					v_fila_tipo number:=0;
+					v_caract_tipo number:=0;
+					v_mecanismo number:=0;
+				begin 
+					delete from {0}tmp_projeto_geo_ortofoto t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_sobrepos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_arquivos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo t where t.id = :projeto; 
+
+					insert into {0}tmp_projeto_geo (id, empreendimento, caracterizacao, situacao, nivel_precisao, mecanismo_elaboracao, sobreposicoes_data, menor_x, menor_y, 
+					maior_x, maior_y, tid) (select g.id, g.empreendimento, g.caracterizacao, 4, g.nivel_precisao, g.mecanismo_elaboracao, g.sobreposicoes_data, g.menor_x, 
+					g.menor_y, g.maior_x, g.maior_y, g.tid from {0}crt_projeto_geo g where g.id = :projeto); 
+
+					insert into {0}tmp_projeto_geo_arquivos (id, projeto, tipo, arquivo, valido, tid) 
+					(select g.id, g.projeto, g.tipo, g.arquivo, g.valido, g.tid from {0}crt_projeto_geo_arquivos g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_ortofoto (id, projeto, caminho, tid) 
+					(select g.id, g.projeto, g.caminho, g.tid from {0}crt_projeto_geo_ortofoto g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_sobrepos (id, projeto, base, tipo, identificacao, tid) 
+					(select g.id, g.projeto, g.base, g.tipo, g.identificacao, g.tid from {0}crt_projeto_geo_sobrepos g where g.projeto = :projeto); 
+
+					select c.mecanismo_elaboracao, c.caracterizacao into v_mecanismo, v_caract_tipo from {0}crt_projeto_geo c where c.id = :projeto;
+
+					v_fila_tipo := :filaTipoAtividade;
+					if v_caract_tipo = :dominialidadeTipo then 
+						v_fila_tipo := :filaTipoDominialidade;
 					end if;
 
 				end; ", EsquemaBanco, EsquemaBancoGeo);
@@ -648,22 +708,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComandoPlSql(@"begin
-						delete from {1}geo_pativ g where exists
+						delete from {1}tmp_pativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
 							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
-								and cg.geo_pativ_id = g.id));
-						delete from {1}geo_aativ g where exists
+								and cg.tmp_pativ_id = g.id));
+						delete from {1}tmp_aativ g where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = :exploracao_id
 							and cp.parecer_favoravel = :parecer_favoravel
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo cg
 								where cg.exp_florestal_exploracao = cp.id
-								and cg.geo_aativ_id = g.id));
+								and cg.tmp_aativ_id = g.id));
+						delete from {1}des_pativ g where exists
+						(select 1 from {0}crt_exp_florestal_exploracao cp
+							where cp.exploracao_florestal = :exploracao_id
+							and cp.parecer_favoravel = :parecer_favoravel
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo cg
+								where cg.exp_florestal_exploracao = cp.id
+								and cg.des_pativ_id = g.id));
+						delete from {1}des_aativ g where exists
+						(select 1 from {0}crt_exp_florestal_exploracao cp
+							where cp.exploracao_florestal = :exploracao_id
+							and cp.parecer_favoravel = :parecer_favoravel
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo cg
+								where cg.exp_florestal_exploracao = cp.id
+								and cg.des_aativ_id = g.id));
 						delete from {0}crt_exp_florestal_geo cg where exists
 						(select 1 from {0}crt_exp_florestal_exploracao cp
 							where cp.id = cg.exp_florestal_exploracao

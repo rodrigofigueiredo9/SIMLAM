@@ -37,6 +37,7 @@
 
 			ProjetoGeografico.settings.urls.excluir = '<%: Url.Action("ExcluirRascunho","ProjetoGeografico") %>';
 			ProjetoGeografico.settings.urls.refazer = '<%: Url.Action("Refazer","ProjetoGeografico") %>';
+			ProjetoGeografico.settings.urls.atualizar = '<%: Url.Action("Atualizar","ProjetoGeografico") %>';
 			ProjetoGeografico.settings.urls.recarregar = '<%: Url.Action("Recarregar","ProjetoGeografico") %>';
 			ProjetoGeografico.settings.urls.finalizar = '<%: Url.Action("Finalizar", "ProjetoGeografico") %>';
 			ProjetoGeografico.settings.urls.salvar = '<%: Url.Action("Salvar", "ProjetoGeografico") %>';
@@ -231,7 +232,7 @@
 				<a class="linkCancelar" title="Cancelar" href="<%= Model.UrlVoltar%>">Cancelar</a>
 			</span>
 			
-			<span class="spanBotoes floatRight spanFinalizar <%:( Model.IsEditar && !Model.IsFinalizado) && !Model.IsVisualizar ? "" : "hide" %>">
+			<span class="spanBotoes floatRight spanFinalizar <%:( Model.IsEditar && !Model.IsFinalizado && Model.CaracterizacaoTipo != (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao.eCaracterizacao.ExploracaoFlorestal) && !Model.IsVisualizar ? "" : "hide" %>">
 				<input class="floatLeft btnFinalizar" type="button" value="Finalizar" />
 			</span>
 			
@@ -241,6 +242,10 @@
 
 			<span class="spanBotoes floatRight spanRefazer">
 				<input class="btnRefazer <%: Model.IsFinalizado && !Model.IsVisualizar ? "" : "hide" %>" type="button" value="Refazer" />
+			</span>
+
+			<span class="spanBotoes floatRight spanAtualizar">
+				<input class="btnAtualizar <%: Model.IsFinalizado && !Model.IsVisualizar ? "" : "hide" %>" type="button" value="Novo" />
 			</span>
 
 			<span class="spanBotoes floatRight spanRecaregar <%: Model.Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmRascunho && !Model.IsVisualizar ? "" : "hide" %>">

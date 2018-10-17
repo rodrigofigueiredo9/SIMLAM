@@ -256,6 +256,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Filtros.IsVisualizar = true;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 			return PartialView(vm);
 		}
 
@@ -265,6 +266,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Filtros.IsVisualizar = false;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
 			return PartialView(vm);
 		}
 

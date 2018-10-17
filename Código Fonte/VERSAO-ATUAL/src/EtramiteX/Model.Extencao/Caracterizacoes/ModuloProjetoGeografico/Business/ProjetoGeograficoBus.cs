@@ -382,6 +382,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		public void Atualizar(ProjetoGeografico projeto, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Refazer(projeto))
+				{
+					_da.Atualizar(projeto.Id, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		public void Recarregar(ProjetoGeografico projeto)
 		{
 			try

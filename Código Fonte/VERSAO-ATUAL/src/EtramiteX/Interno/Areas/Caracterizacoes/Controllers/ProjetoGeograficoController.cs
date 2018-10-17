@@ -427,6 +427,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
+		public ActionResult Atualizar(ProjetoGeografico projeto, bool isCadastrarCaracterizacao)
+		{
+			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
+				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
+
+			_bus.Atualizar(projeto);
+
+			return Json(new
+			{
+				EhValido = Validacao.EhValido,
+				Msg = Validacao.Erros,
+				Url = Url.Action("Editar", "ProjetoGeografico", Validacao.QueryParamSerializer(
+					new { id = projeto.Id, empreendimento = projeto.EmpreendimentoId, tipo = projeto.CaracterizacaoId, isCadastrarCaracterizacao = isCadastrarCaracterizacao, mostrarModalDependencias = false }))
+			});
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
 		public ActionResult Recarregar(ProjetoGeografico projeto, bool isCadastrarCaracterizacao)
 		{
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
@@ -489,7 +507,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
-		public ActionResult Salvar(ProjetoGeografico projeto)
+		public ActionResult Salvar(ProjetoGeografico projeto, string url)
 		{
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
 			{
@@ -497,7 +515,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			_bus.Salvar(projeto);
-			return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros });
+			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = url });
 		}
 
 		[HttpPost]
