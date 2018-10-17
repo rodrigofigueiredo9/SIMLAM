@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
 Solicitacao = {
@@ -172,8 +172,10 @@ Solicitacao = {
 	},
 
 	salvar: function () {
-	    Mensagem.limpar(Solicitacao.container);
+		Mensagem.limpar(Solicitacao.container);
 
+		console.log("ENTREI");
+		$(this.currentTarget).attr('disabled', 'disabled');
 		MasterPage.carregando(true);
 		$.ajax({
 			url: Solicitacao.settings.urls.salvar,
@@ -199,6 +201,10 @@ Solicitacao = {
 				}
 			}
 		});
+
+		setTimeout(function () {
+			$(this.currentTarget).removeAttr('disabled');
+		}, 2000);
 		MasterPage.carregando(false);
 	}
 }
