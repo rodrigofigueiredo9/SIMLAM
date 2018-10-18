@@ -176,7 +176,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 			}
 		}
 
-		internal void AtualizarDependentes(int dependenciaID, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo eCaracterizacaoDependenciaTipo, string dependenciaTID, BancoDeDados banco)
+		public void AtualizarDependentes(int dependenciaID, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo eCaracterizacaoDependenciaTipo, string dependenciaTID, BancoDeDados banco = null)
 		{
 			_da.AtualizarDependentes(dependenciaID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo, dependenciaTID, banco);
 		}

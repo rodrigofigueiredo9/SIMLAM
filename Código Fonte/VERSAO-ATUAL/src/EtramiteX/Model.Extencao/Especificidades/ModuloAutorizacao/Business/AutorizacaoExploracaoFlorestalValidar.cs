@@ -26,7 +26,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 			String caracterizacoesAlteradas = String.Empty;
 			int idCaracterizacao;
 
-			RequerimentoAtividade(esp, false, true);
+			RequerimentoAtividade(esp, solicitado: false, jaAssociado: false, atividadeAndamento: false);
 
 			if (String.IsNullOrWhiteSpace(esp.Observacao))
 			{

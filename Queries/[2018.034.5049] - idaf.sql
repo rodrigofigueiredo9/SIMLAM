@@ -72,3 +72,5 @@ begin
 	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Maderia para uso dentro da propriedade');
 	insert into idaf.lov_dest_material_lenhoso (id, texto) values (seq_dest_material_lenhoso.nextval, 'Outro produto florestal');
 end;
+
+insert into idaf.lov_esp_conclusao (id, texto) values (3, 'Parcialmente Favorável');

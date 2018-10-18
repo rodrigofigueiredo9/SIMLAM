@@ -90,7 +90,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caracterizacoes\ModuloExploracaoFlorestal\Business\ExploracaoFlorestalBusTests.cs" />
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
     <Compile Include="TestClass\EPTVTest.cs" />
     <Compile Include="TestClass\CobrancaTest.cs" />

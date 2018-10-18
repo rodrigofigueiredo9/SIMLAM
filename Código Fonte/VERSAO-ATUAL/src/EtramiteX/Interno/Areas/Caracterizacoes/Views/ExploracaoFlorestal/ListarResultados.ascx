@@ -13,7 +13,7 @@
 			<tr>
 				<th width="17%">Tipo de Exploração</th>
 				<th width="17%">Código Exploração</th>
-				<th width="17%">Data Exploração</th>
+				<th width="17%">Data Cadastro da Exploração</th>
 				<th>Geometria</th>
 				<th width="15%">Ações</th>
 			</tr>

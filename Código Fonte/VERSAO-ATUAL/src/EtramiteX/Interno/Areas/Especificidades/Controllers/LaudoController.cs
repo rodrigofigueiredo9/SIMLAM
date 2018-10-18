@@ -664,7 +664,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			var laudoBus = new LaudoVistoriaFlorestalBus();
 			var busExploracao = new ExploracaoFlorestalBus();
-			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(empreendimento);
+			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(empreendimento)?.Where(x => x.DataConclusao.IsEmpty);
 			var caracterizacaoLst = exploracoesLst.Select(x => new CaracterizacaoLst {
 				Id = x.Id,
 				Texto = x.CodigoExploracaoTexto ?? "",

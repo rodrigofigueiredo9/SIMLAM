@@ -9,7 +9,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 	public class ExploracaoFlorestalPDF
 	{
 		public List<String> Finalidades { set; get; }
+		public String CodigoExploracao { set; get; }
 		public String TipoExploracao { set; get; }
+		public String DataCadastro { set; get; }
 		public String FinalidadesStragg 
 		{
 			get{ return String.Join(",", Finalidades.ToArray());}
@@ -147,6 +149,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			var exploracoesFirst = exploracaoFlorestal.Exploracoes.FirstOrDefault() ?? new ExploracaoFlorestalExploracao();
 			int auxFinalidades = (exploracoesFirst.FinalidadeExploracao.HasValue) ? exploracoesFirst.FinalidadeExploracao.Value : 0;
 			Finalidades = EntitiesBus.ObterFinalidades(auxFinalidades);
+			CodigoExploracao = exploracaoFlorestal.CodigoExploracaoTexto;
+			TipoExploracao = exploracaoFlorestal.TipoExploracaoTexto;
+			DataCadastro = exploracaoFlorestal.DataCadastro.DataTexto;
 		}
 	}
 }
