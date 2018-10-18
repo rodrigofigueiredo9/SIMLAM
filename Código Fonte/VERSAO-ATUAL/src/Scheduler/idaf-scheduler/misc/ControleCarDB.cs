@@ -110,6 +110,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							 resultado.codigoResposta == 400 ||
 							 resultado.codigoResposta == 500)
 						{
+							resultado.mensagensResposta = TratandoMensagens(conn, resultado.mensagensResposta);
 							pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
 							situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
 						}
@@ -830,6 +831,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				Log.Error("Erro ao conectar ao Banco de dados - INSERIR:" + exception.Message, exception);
 			}
+		}
+
+		private static List<string> TratandoMensagens(OracleConnection conn, List<string> mensagens)
+		{
+			for (int i =0; i < mensagens.Count; i++)
+			{
+				if(mensagens[i].Contains("Ocorreu um erro ao processar"))
+				{
+					mensagens[i] = "Mensagem retornada do SICAR: " + mensagens[i];
+				}
+			}
+
+			return mensagens;
+			//Ocorreu um erro ao processar 
 		}
 	}
 }
