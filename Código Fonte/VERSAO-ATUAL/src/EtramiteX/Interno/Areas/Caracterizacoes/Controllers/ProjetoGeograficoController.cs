@@ -515,6 +515,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			_bus.Salvar(projeto);
+			if (projeto.CaracterizacaoId == (int)eCaracterizacao.ExploracaoFlorestal)
+				_caracterizacaoBus.AtualizarDependentes(projeto.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, projeto.Tid);
+
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = url });
 		}
 

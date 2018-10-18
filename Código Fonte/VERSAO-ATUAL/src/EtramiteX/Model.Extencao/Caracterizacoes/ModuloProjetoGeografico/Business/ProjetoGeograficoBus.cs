@@ -489,7 +489,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void Finalizar(ProjetoGeografico projeto)
+		public void Finalizar(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -497,7 +497,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
 						bancoDeDados.IniciarTransacao();
 
@@ -771,11 +771,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return null;
 		}
 
-		public int ExisteProjetoGeografico(int empreedimentoId, int caracterizacaoTipo)
+		public int ExisteProjetoGeografico(int empreedimentoId, int caracterizacaoTipo, bool finalizado = false)
 		{
 			try
 			{
-				return _da.ExisteProjetoGeografico(empreedimentoId, caracterizacaoTipo);
+				return _da.ExisteProjetoGeografico(empreedimentoId, caracterizacaoTipo, finalizado: finalizado);
 			}
 			catch (Exception exc)
 			{

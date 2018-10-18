@@ -393,7 +393,7 @@ ProjetoGeografico = {
 		Modal.confirma({
 			btnOkCallback: function (container) { ProjetoGeografico.callBackAtualizar(MasterPage.getContent(container)); },
 			titulo: "Atualizar projeto geográfico",
-			conteudo: ProjetoGeografico.mensagens.ConfirmacaoRefazer.Texto,
+			conteudo: ProjetoGeografico.mensagens.ConfirmacaoAtualizar.Texto,
 			tamanhoModal: Modal.tamanhoModalMedia
 		});
 	},

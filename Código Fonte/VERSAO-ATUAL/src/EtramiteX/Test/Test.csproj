@@ -87,7 +87,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caracterizacoes\ModuloExploracaoFlorestal\Business\ExploracaoFlorestalBusTests.cs" />
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
     <Compile Include="TestClass\CobrancaTest.cs" />
     <Compile Include="TestClass\VrteTest.cs" />

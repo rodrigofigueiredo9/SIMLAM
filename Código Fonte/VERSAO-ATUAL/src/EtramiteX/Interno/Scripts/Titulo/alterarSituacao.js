@@ -26,6 +26,7 @@ TituloAlterarSituacao = {
 	},
 
 	onAbrirPdfTitulo: function () {
+		MasterPage.carregando(true);
 		TituloAlterarSituacao.settings.gerouPdf = true;
 		MasterPage.redireciona(TituloAlterarSituacao.settings.urls.pdfTitulo + "?id=" + $('.hdnTituloId', TituloAlterarSituacao.container).val());
 		MasterPage.carregando(false);
@@ -41,6 +42,7 @@ TituloAlterarSituacao = {
 	},
 
 	onSituacaoChange: function () {
+		MasterPage.carregando(true);
 		$('.btnSalvar', TituloAlterarSituacao.container).button({ disabled: false });
 		$('.btnSalvar', TituloAlterarSituacao.container).unbind('click');
 		$(".btnSalvar", TituloAlterarSituacao.container).click(TituloAlterarSituacao.onSalvar);
@@ -86,9 +88,11 @@ TituloAlterarSituacao = {
 			data: { id: $('.hdnTituloId', TituloAlterarSituacao.container).val(), acao: $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val() },
 			cache: false, async: true,
 			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				MasterPage.carregando(false);
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
+				MasterPage.carregando(false);
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);
 				} else {

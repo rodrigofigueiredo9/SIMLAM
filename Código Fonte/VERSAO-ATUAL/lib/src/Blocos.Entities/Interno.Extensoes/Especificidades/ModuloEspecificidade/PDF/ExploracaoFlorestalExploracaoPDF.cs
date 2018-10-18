@@ -143,7 +143,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			
 			QuantidadeArvores = exploracao.QuantidadeArvores;
 			Produtos = exploracao.Produtos.Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
-
+			if(Produtos.Count == 0)
+				Produtos.Add(new ExploracaoFlorestalExploracaoProdutoPDF());
 			IdentificacaoGeo = exploracao.Identificacao;
 			Geometria = exploracao.GeometriaTipoTexto;
 			FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;

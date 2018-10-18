@@ -57,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 					comando = bancoDeDados.CriarComando(@"update {0}esp_laudo_vistoria_florestal e set e.titulo = :titulo, e.protocolo = :protocolo, 
 					e.destinatario = :destinatario, e.responsavel = :responsavel, e.conclusao = :conclusao, e.caracterizacao = :caracterizacao, 
 					e.data_vistoria = :data_vistoria, e.objetivo = :objetivo, e.consideracao = :consideracao, e.restricao = :restricao, 
-					e.descricao_parecer = :descricao_parecer, e.tid = :tid where e.titulo = :titulo", EsquemaBanco);
+					e.descricao_parecer = :descricao_parecer, e.parecer_desfavoravel = :parecer_desfavoravel, e.tid = :tid where e.titulo = :titulo", EsquemaBanco);
 
 					acao = eHistoricoAcao.atualizar;
 					laudo.Id = Convert.ToInt32(id);
@@ -65,8 +65,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				else
 				{
 					comando = bancoDeDados.CriarComando(@"insert into {0}esp_laudo_vistoria_florestal(id, titulo, protocolo, destinatario, responsavel, conclusao, caracterizacao, 
-					data_vistoria, objetivo, consideracao, restricao, descricao_parecer, tid) values ({0}seq_esp_laudo_visto_florestal.nextval, :titulo, :protocolo, :destinatario, 
-					:responsavel, :conclusao, :caracterizacao, :data_vistoria, :objetivo, :consideracao, :restricao, :descricao_parecer, :tid) returning id into :id", EsquemaBanco);
+					data_vistoria, objetivo, consideracao, restricao, descricao_parecer, parecer_desfavoravel, tid) values ({0}seq_esp_laudo_visto_florestal.nextval, :titulo, :protocolo, :destinatario, 
+					:responsavel, :conclusao, :caracterizacao, :data_vistoria, :objetivo, :consideracao, :restricao, :descricao_parecer, :parecer_desfavoravel, :tid) returning id into :id", EsquemaBanco);
 
 					acao = eHistoricoAcao.criar;
 					comando.AdicionarParametroSaida("id", DbType.Int32);
