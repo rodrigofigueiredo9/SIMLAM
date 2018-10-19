@@ -97,7 +97,7 @@
 				</div>
 
 				<div class="coluna26 append2">
-					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material</label>
+					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material *</label>
 					<%= Html.DropDownList("DestinacaoMaterial" + Model.ExploracaoFlorestal.Identificacao, Model.DestinacaoMaterial, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlDestinacaoMaterial" }))%>
 				</div>
 
