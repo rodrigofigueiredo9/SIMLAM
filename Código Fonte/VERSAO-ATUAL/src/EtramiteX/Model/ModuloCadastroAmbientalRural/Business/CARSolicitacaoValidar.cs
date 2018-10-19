@@ -330,7 +330,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
             //Verificar se existe solicitação para o empreendimento
             solicitacao = _da.ObterPorEmpreendimentoCod(entidade.Empreendimento.Codigo ?? 0);
-            if (solicitacao != null)
+            if (solicitacao.Id > 0)
             {
                 if (solicitacao.SituacaoId != 2 && solicitacao.SituacaoId != 5)
                 {
