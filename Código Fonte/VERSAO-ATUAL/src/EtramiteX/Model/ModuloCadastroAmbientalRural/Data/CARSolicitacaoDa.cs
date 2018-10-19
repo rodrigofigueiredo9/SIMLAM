@@ -294,6 +294,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
             CARSolicitacao retificado = new CARSolicitacao();
             String codigoImovelTxt = String.Empty;
 
+			// Se o campo para retificar já está preenchido, não preenche novamente
 			if (!ValidarRetificado(solicitacao))
 				retificado = ObterPorEmpreendimentoCod(solicitacao.Empreendimento.Codigo ?? 0, solicitacao.Id);
 
@@ -675,7 +676,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
                 #endregion
             }
 
-            return null;
+            return solicitacao;
         }
 
 		internal CARSolicitacao ObterPorRequerimento(CARSolicitacao car, BancoDeDados banco = null)
