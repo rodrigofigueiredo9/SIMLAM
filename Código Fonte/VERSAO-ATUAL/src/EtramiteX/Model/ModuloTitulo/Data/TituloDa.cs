@@ -444,6 +444,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Exploracoes
+				comando = bancoDeDados.CriarComando(@"delete {0}tab_integracao_sinaflor a
+							where exists(select 1 from {0}tab_titulo_exp_florestal e
+								where e.titulo = :titulo and e.id = a.titulo_exp_florestal)", EsquemaBanco);
+				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a
 							where exists(select 1 from {0}tab_titulo_exp_florestal e
 								where e.titulo = :titulo and e.id = a.titulo_exploracao_florestal)", EsquemaBanco);
@@ -1232,7 +1238,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Título
 
 				Comando comando = bancoDeDados.CriarComando(@"
-                    select t.*, ta.*
+                    select t.*, ta.*,
+					  (select s.autorizacao_sinaflor from tab_integracao_sinaflor s where rownum = 1
+						and exists
+						(select 1 from tab_titulo_exp_florestal tt
+							where tt.titulo = t.id
+							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
                       from (select t.titulo_id id,
                                    t.titulo_tid tid,
                                    t.numero,
@@ -1416,6 +1427,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 						titulo.RequerimetoId = reader.GetValue<int?>("requerimento_titulo");
 						titulo.CredenciadoId = reader.GetValue<int?>("credenciado");
+						titulo.CodigoSinaflor = reader["codigo_sinaflor"].ToString();
 
 						#endregion
 					}

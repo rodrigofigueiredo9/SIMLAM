@@ -120,6 +120,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 
 		public int? CredenciadoId { get; set; }
 
+		public string CodigoSinaflor { get; set; }
+
 		public Titulo()
 		{
 			this.Protocolo = new Protocolo();
