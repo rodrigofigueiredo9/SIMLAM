@@ -29,12 +29,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			{
 				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId)) return false;
 
-				if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true, caracterizacao.TipoExploracao) ?? new ExploracaoFlorestal()).Id > 0)
-				{
-					Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-					return false;
-				}
-
 				if (!Acessar(caracterizacao.EmpreendimentoId)) return false;
 
 				if (caracterizacao.TipoExploracao <= 0)

@@ -138,10 +138,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
 				if (projeto.SituacaoId != (int)eProjetoGeograficoSituacao.Finalizado)
 				{
-					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: banco);
-					foreach (var exploracao in exploracoes)
-						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, banco);
-
 					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
 					_projetoGeoBus.SalvarSobreposicoes(projeto);
 					_projetoGeoBus.Finalizar(projeto, banco);
