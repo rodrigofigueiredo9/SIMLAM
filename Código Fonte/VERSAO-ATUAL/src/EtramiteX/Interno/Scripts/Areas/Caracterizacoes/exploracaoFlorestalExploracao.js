@@ -155,7 +155,7 @@ ExploracaoFlorestalExploracao = {
 			var obj = String($(this).val());
 			if (obj != '') {
 				var prod = (JSON.parse(obj));
-				if (prod.ProdutoId == produto.ProdutoId && prod.EspecieId == produto.EspecieId && prod.DestinacaoMaterialId == produto.DestinacaoMaterialId) {
+				if (prod.ProdutoId == produto.ProdutoId && prod.EspeciePopularId == produto.EspeciePopularId && prod.DestinacaoMaterialId == produto.DestinacaoMaterialId) {
 					mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoDuplicado));
 				}
 			}
@@ -172,7 +172,7 @@ ExploracaoFlorestalExploracao = {
 		if (produto.Quantidade == '' && produto.ProdutoId != ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.QuantidadeObrigatoria));
 		}
-		debugger;
+		
 		if (produto.DestinacaoMaterialId == 0 || produto.DestinacaoMaterialId == null) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.DestinacaoMateriallObrigatoria));
 		}

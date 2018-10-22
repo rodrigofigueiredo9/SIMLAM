@@ -11,7 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String VegetacaoTipo { get; set; }
 		public Int32 VegetacaoTipoId { get; set; }
 		public String ArvoresRequeridas { set; get; }
-		
+
 		public String QuantidadeArvores { set; get; }
 
 		public String UnidadeMedida
@@ -59,90 +59,19 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			}
 		}
 
-		private List<ExploracaoFlorestalExploracaoProdutoPDF> _produtos = new List<ExploracaoFlorestalExploracaoProdutoPDF>();
-		public List<ExploracaoFlorestalExploracaoProdutoPDF> Produtos
+		public ExploracaoFlorestalAutorizacaoDetalhePDF() { }
+
+		public ExploracaoFlorestalAutorizacaoDetalhePDF(ExploracaoFlorestalExploracao exploracao)
 		{
-			get { return _produtos; }
-			set { _produtos = value; }
+			GeometriaTipoId = exploracao.GeometriaTipoId;
+			VegetacaoTipo = exploracao.ClassificacaoVegetacaoTexto;
+			VegetacaoTipoId = exploracao.ClassificacaoVegetacaoId;
+			ArvoresRequeridas = exploracao.ArvoresRequeridas;
+
+			AreaCroquiDecimal = exploracao.AreaCroqui;
+			AreaRequeridaDecimal = exploracao.AreaRequerida;
+
+			QuantidadeArvores = exploracao.QuantidadeArvores;
 		}
-
-		#region Valores em Hectares
-
-		public String UnidadeMedidaHa
-		{
-			get
-			{
-				if (this.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono &&
-					!string.IsNullOrWhiteSpace(this.AreaCroquiHa))
-				{
-					return "ha";
-				}
-				else
-				{
-					return "un";
-				}
-			}
-		}
-
-		public String AreaRequeridaHa
-		{
-			get
-			{
-				if (UnidadeMedida == "un") 
-				{
-					return AreaRequerida;
-				}
-
-				if (AreaRequeridaDecimal > 0)
-				{
-					return AreaRequeridaDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
-				}
-
-				return String.Empty;
-			}
-		}
-
-		public String AreaCroquiHa
-		{
-			get
-			{
-				if (UnidadeMedida == "un")
-				{
-					return AreaCroqui;
-				}
-
-				if (AreaCroquiDecimal > 0)
-				{
-					return AreaCroquiDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
-				}
-
-				return String.Empty;
-			}
-		}
-
-		#endregion
-
-		//public ExploracaoFlorestalExploracaoPDF() { }
-
-		//public ExploracaoFlorestalExploracaoPDF(ExploracaoFlorestalExploracao exploracao)
-		//{
-		//	GeometriaTipoId = exploracao.GeometriaTipoId;
-		//	VegetacaoTipo = exploracao.ClassificacaoVegetacaoTexto;
-		//	VegetacaoTipoId = exploracao.ClassificacaoVegetacaoId;
-		//	ArvoresRequeridas = exploracao.ArvoresRequeridas;
-
-		//	AreaCroquiDecimal = exploracao.AreaCroqui;
-		//	AreaRequeridaDecimal = exploracao.AreaRequerida;
-			
-		//	QuantidadeArvores = exploracao.QuantidadeArvores;
-		//	Produtos = exploracao.Produtos.Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
-		//	if(Produtos.Count == 0)
-		//		Produtos.Add(new ExploracaoFlorestalExploracaoProdutoPDF());
-		//	IdentificacaoGeo = exploracao.Identificacao;
-		//	Geometria = exploracao.GeometriaTipoTexto;
-		//	FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;
-		//	ParecerFavoravel = Convert.ToBoolean(exploracao.ParecerFavoravel) ? "Sim" : "Não";
-		//	ClassificacaoVegetal = exploracao.ClassificacaoVegetacaoTexto;
-		//}
 	}
 }

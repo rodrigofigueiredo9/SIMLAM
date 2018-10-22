@@ -9,6 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 	public class ExploracaoFlorestalAutorizacaoPDF
 	{
 		public String TipoExploracao { set; get; }
+		public String TotalPoligono { set; get; }
 
 		private List<ExploracaoFlorestalAutorizacaoDetalhePDF> _detalhe = new List<ExploracaoFlorestalAutorizacaoDetalhePDF>();
 		public List<ExploracaoFlorestalAutorizacaoDetalhePDF> Detalhe
@@ -21,10 +22,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		public ExploracaoFlorestalAutorizacaoPDF(ExploracaoFlorestal exploracaoFlorestal)
 		{
-			//_exploracoes = exploracaoFlorestal.Exploracoes.Select(x => new ExploracaoFlorestalExploracaoPDF(x)).ToList();
 			var exploracoesFirst = exploracaoFlorestal.Exploracoes.FirstOrDefault() ?? new ExploracaoFlorestalExploracao();
 			int auxFinalidades = (exploracoesFirst.FinalidadeExploracao.HasValue) ? exploracoesFirst.FinalidadeExploracao.Value : 0;
 			TipoExploracao = exploracaoFlorestal.TipoExploracaoTexto;
+			TotalPoligono = exploracaoFlorestal.Exploracoes.Sum(x => x.AreaCroqui).ToString();
 		}
 	}
 }

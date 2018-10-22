@@ -1239,8 +1239,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				}
 
 				#endregion
-
-
 			}
 
 			return exploracoes;

@@ -134,7 +134,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Dados do Título
-				Comando comando = bancoDeDados.CriarComando(@"select t.*, ta.*
+				Comando comando = bancoDeDados.CriarComando(@"select t.*, ta.*,
+				(select s.autorizacao_sinaflor from tab_integracao_sinaflor s where rownum = 1
+						and s.autorizacao_sinaflor is not null and exists
+						(select 1 from tab_titulo_exp_florestal tt
+							where tt.titulo = t.id
+							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
 				from  (select t.titulo_id id, t.modelo_nome, t.modelo_sigla, t.requerimento, 
 				(select tms.hierarquia from tab_titulo_modelo_setores tms, tab_titulo t where t.id = :id and tms.modelo = t.modelo and tms.setor = t.setor) modelo_hierarquia,
 				t.setor_id, t.setor_nome, t.autor_nome, t.situacao_id, t.situacao_texto, nvl(t.protocolo_id, t.protocolo_id) protocolo_id, 
@@ -189,6 +194,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 						dados.Titulo.SituacaoId = Convert.ToInt32(reader["situacao_id"]);
 						dados.Titulo.Situacao = reader["situacao_texto"].ToString();
 						dados.Titulo.Requerimento.Numero = reader.GetValue<int>("requerimento");
+						dados.Titulo.NumeroSinaflor = reader["codigo_sinaflor"].ToString();
 					}
 
 					reader.Close();

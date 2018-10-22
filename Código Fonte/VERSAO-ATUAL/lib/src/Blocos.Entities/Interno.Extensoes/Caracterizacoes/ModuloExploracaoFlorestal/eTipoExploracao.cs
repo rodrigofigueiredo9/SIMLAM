@@ -2,8 +2,8 @@
 {
 	public enum eTipoExploracao
 	{
-		AUS = 1,
-		CAI = 2,
-		EFP = 3
+		UAS = 370,
+		CAI = 374,
+		EFP = 929
 	}
 }
