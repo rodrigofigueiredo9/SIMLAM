@@ -7,6 +7,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPro
 		public Int32 IdRelacionamento { get; set; }
 		public Int32 ProjetoId { get; set; }
 		public Int32 Tipo { get; set; }
+		public Int32? TituloId { get; set; }
 
 		/*Remover Propriedades ao fazer refactor do projeto do institucional*/
 		public Int32 Mecanismo { get; set; }

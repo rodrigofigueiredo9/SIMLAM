@@ -127,8 +127,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 				autorizacao.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, Convert.ToInt32(especificidade.Titulo.Modelo));
 				autorizacao.ExploracaoFlorestal = exploracoes.Where(x => x.TipoExploracao != (int)eTipoExploracao.CAI).Select(x => new ExploracaoFlorestalAutorizacaoPDF(x)).ToList();
-				if (autorizacao.ExploracaoFlorestal.Count == 0)
-					autorizacao.ExploracaoFlorestal.Add(new ExploracaoFlorestalAutorizacaoPDF() { Detalhe = new List<ExploracaoFlorestalAutorizacaoDetalhePDF>() { new ExploracaoFlorestalAutorizacaoDetalhePDF() } });
 				autorizacao.ExploracaoFlorestalPonto = exploracoes.Where(x => x.TipoExploracao == (int)eTipoExploracao.CAI).SelectMany(y => y.Exploracoes).Select(x => new ExploracaoFlorestalAutorizacaoDetalhePDF(x)).ToList();
 				autorizacao.TotalPonto = autorizacao.ExploracaoFlorestalPonto.Sum(x => Convert.ToDouble(string.IsNullOrWhiteSpace(x.QuantidadeArvores) ? "0" : x.QuantidadeArvores)).ToString("N2");
 				var produtos = exploracoes.SelectMany(x => x.Exploracoes).SelectMany(x => x.Produtos).Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
@@ -156,6 +154,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 				Autorizacao autorizacao = dataSource as Autorizacao;
 				List<Table> itenRemover = new List<Table>();
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
+
+				if (autorizacao.ExploracaoFlorestal.Count <= 0)
+				{
+					itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal»"));
+				}
+
+				if (autorizacao.ExploracaoFlorestalPonto.Count <= 0)
+				{
+					itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestalPonto»"));
+				}
 
 				AsposeExtensoes.RemoveTables(itenRemover);
 			});
