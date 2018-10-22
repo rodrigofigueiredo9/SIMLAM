@@ -133,6 +133,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, Convert.ToInt32(especificidade.Titulo.Modelo));
 				laudo.ExploracaoFlorestal = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
+				var parecerFavoravel = String.Join(", ", exploracoes.SelectMany(x => x.Exploracoes).Where(w => w.ParecerFavoravel == true).Select(y => y.Identificacao)?.ToList());
+				laudo.ParecerFavoravel = string.IsNullOrWhiteSpace(parecerFavoravel) ? "" : String.Concat("(", parecerFavoravel, ")");
+				var parecerDesfavoravel = String.Join(", ", exploracoes.SelectMany(x => x.Exploracoes).Where(w => w.ParecerFavoravel == false).Select(y => y.Identificacao)?.ToList());
+				laudo.ParecerDesfavoravel = string.IsNullOrWhiteSpace(parecerDesfavoravel) ? "" : String.Concat("(", parecerDesfavoravel, ")");
 				laudo.QueimaControlada = new QueimaControladaPDF(new QueimaControladaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
 				laudo.Silvicultura = new SilviculturaPDF(new SilviculturaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
