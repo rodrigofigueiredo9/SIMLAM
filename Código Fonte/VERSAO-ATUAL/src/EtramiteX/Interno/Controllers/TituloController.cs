@@ -1007,9 +1007,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			tituloAtual.DiasProrrogados = titulo.DiasProrrogados.HasValue ? titulo.DiasProrrogados : tituloAtual.DiasProrrogados;
 			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId.HasValue ? titulo.MotivoEncerramentoId : tituloAtual.MotivoEncerramentoId;
 
-			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty) ? tituloAtual.DataEmissao : titulo.DataEmissao;
 			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
-			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
+			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
 
 			_tituloSituacaoBus.AlterarSituacao(tituloAtual, acao, gerouPdf);
 

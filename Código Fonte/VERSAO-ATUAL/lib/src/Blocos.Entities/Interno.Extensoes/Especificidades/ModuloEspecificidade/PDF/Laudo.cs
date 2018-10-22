@@ -30,6 +30,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String Restricao { get; set; }
 		public String Objetivo { get; set; }
 		public String Observacao { get; set; }
+		public String ParecerFavoravel { get; set; }
+		public String ParecerDesfavoravel { get; set; }
 		public String DescricaoParecer { get; set; }
 		public String DescricaoParecerDesfavoravel { get; set; }
 		public String DataVistoria { get; set; }
