@@ -1240,7 +1240,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				Comando comando = bancoDeDados.CriarComando(@"
                     select t.*, ta.*,
 					  (select s.autorizacao_sinaflor from tab_integracao_sinaflor s where rownum = 1
-						and exists
+						and s.autorizacao_sinaflor is not null and exists
 						(select 1 from tab_titulo_exp_florestal tt
 							where tt.titulo = t.id
 							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
