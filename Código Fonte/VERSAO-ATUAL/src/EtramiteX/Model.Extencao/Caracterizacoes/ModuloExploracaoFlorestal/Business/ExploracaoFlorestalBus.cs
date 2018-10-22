@@ -141,6 +141,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
 					_projetoGeoBus.SalvarSobreposicoes(projeto);
 					_projetoGeoBus.Finalizar(projeto, banco);
+					_projetoGeoBus.ExcluirRascunho(projeto, banco);
 				}
 
 				if(!Validacao.EhValido) return;

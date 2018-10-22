@@ -476,11 +476,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void ExcluirRascunho(ProjetoGeografico projeto)
+		public void ExcluirRascunho(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
-				_da.ExcluirRascunho(projeto.Id);
+				_da.ExcluirRascunho(projeto.Id, banco);
 				Validacao.Add(Mensagem.ProjetoGeografico.RascunhoExcluidoSucesso);
 			}
 			catch (Exception exc)
@@ -619,18 +619,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 					bancoDeDados.Commit();
 				}
-			}
-		}
-
-		public void ApagarGeometriaDeExploracao(int exploracaoId, BancoDeDados banco = null)
-		{
-			try
-			{
-				_da.ApagarGeometriaDeExploracao(exploracaoId, banco);
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
 			}
 		}
 

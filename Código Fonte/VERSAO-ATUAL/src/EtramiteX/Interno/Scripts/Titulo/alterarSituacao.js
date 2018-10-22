@@ -118,7 +118,7 @@ TituloAlterarSituacao = {
 		if (situacao == 4)
 			situacao = 6;
 
-		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6)) {
+		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6) && TituloAlterarSituacao.settings.gerouPdf == true) {
 			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
 			MasterPage.carregando(true);
 			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
