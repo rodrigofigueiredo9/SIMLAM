@@ -6,8 +6,9 @@
 		CancelarEmissao,
 		Assinar,
 		Prorrogar,
-		Encerrar,
+		Cancelar,
 		Concluir,
-		Entregar
+		Entregar,
+		Suspender
 	}
 }

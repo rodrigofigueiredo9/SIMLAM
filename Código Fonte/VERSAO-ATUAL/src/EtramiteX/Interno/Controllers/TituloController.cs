@@ -1009,7 +1009,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
 			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
-			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Cancelar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
 
 			_tituloSituacaoBus.AlterarSituacao(tituloAtual, acao, gerouPdf);
 

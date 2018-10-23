@@ -472,6 +472,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
 			}
 
+			_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+			if (Validacao.EhValido) Validacao.Erros.Clear();
 			_bus.ExcluirRascunho(projeto);
 
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = Url.Action("Index", "Caracterizacao", Validacao.QueryParamSerializer(new { id = projeto.EmpreendimentoId })) });
@@ -512,6 +514,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
 			{
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
+			}
+
+			var urlCriar = CaracterizacaoVM.GerarUrl(projeto.EmpreendimentoId, true, eCaracterizacao.ExploracaoFlorestal);
+			var urlEditar = CaracterizacaoVM.GerarUrl(projeto.EmpreendimentoId, false, eCaracterizacao.ExploracaoFlorestal);
+			if (url.Contains(urlCriar) || url.Contains(urlEditar)) {
+				if(!_validar.Finalizar(projeto))
+					return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = url });
 			}
 
 			_bus.Salvar(projeto);

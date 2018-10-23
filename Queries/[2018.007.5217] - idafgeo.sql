@@ -32,3 +32,6 @@ end;
 update idafgeo.TAB_SERVICO_FEICAO set IS_EDITAVEL = 0 where FEICAO in (32, 33);
 
 update idafgeo.LOV_TIPO_EXPLORACAO set CHAVE = 'UAS', TEXTO = replace(TEXTO, 'AUS -', 'UAS -') where CHAVE = 'AUS';
+
+alter table idafgeo.tab_fila add TITULO NUMBER(38,0);
+COMMENT ON COLUMN "IDAFGEO"."TAB_FILA"."TITULO" IS 'Referencia o ID do titulo na tabela tab_titulo no esquema oficial.';
