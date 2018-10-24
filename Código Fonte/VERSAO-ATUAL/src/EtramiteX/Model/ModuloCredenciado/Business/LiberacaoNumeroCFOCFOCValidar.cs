@@ -112,9 +112,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 
                 float ValorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
 
-                int totalPagos = (int)((float)dua.ValorTotal / (float)ValorUnitario);
+				int totalPagos = (int)(Math.Round(dua.ValorTotal, 2) / Math.Round(ValorUnitario, 2));
 
-                long totalCfo = liberacao.NumeroFinalCFO - liberacao.NumeroInicialCFO;
+				long totalCfo = liberacao.NumeroFinalCFO - liberacao.NumeroInicialCFO;
                 long totalCfoc = liberacao.NumeroFinalCFOC - liberacao.NumeroInicialCFOC;
 
                 totalCfo += liberacao.QuantidadeDigitalCFO + liberacao.QuantidadeDigitalCFOC;
