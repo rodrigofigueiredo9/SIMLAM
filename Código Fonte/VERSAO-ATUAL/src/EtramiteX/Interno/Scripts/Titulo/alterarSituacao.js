@@ -50,6 +50,7 @@ TituloAlterarSituacao = {
 		$('.divCamposSituacao', TituloAlterarSituacao.container).addClass('hide');
 		TituloAlterarSituacao.limparCampos($('.divCamposSituacao', TituloAlterarSituacao.container));
 		var container = null;
+		var dataEncerramento = $("label[for='DataEncerramento']", TituloAlterarSituacao.container);
 
 		switch (parseInt($('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val())) {
 			case 1:
@@ -73,12 +74,19 @@ TituloAlterarSituacao = {
 				break;
 
 			case 5:
+				dataEncerramento[0].textContent = 'Data do encerramento *';
 				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 
 			case 6:
 				container = $('.divConcluir', TituloAlterarSituacao.container);
+				container.removeClass('hide');
+				break;
+
+			case 8:
+				dataEncerramento[0].textContent = 'Data da suspensão *';
+				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
 				break;
 		}
@@ -118,10 +126,12 @@ TituloAlterarSituacao = {
 		if (situacao == 4)
 			situacao = 6;
 
-		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6) && TituloAlterarSituacao.settings.gerouPdf == true) {
+		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8) && TituloAlterarSituacao.settings.gerouPdf == true) {
 			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
 			MasterPage.carregando(true);
 			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
+			if (situacao == 5 || situacao == 8) //Cancelar ou Suspender
+				data = $('.txtDataEncerramento', TituloAlterarSituacao.container).val();
 			var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
 			var prazo = objeto.Prazo;
 			if (situacao == 6)
@@ -157,6 +167,7 @@ TituloAlterarSituacao = {
 				}
 			});
 		} else {
+			MasterPage.carregando(true);
 			TituloAlterarSituacao.alterarSituacao(objeto);
 		}
 	},

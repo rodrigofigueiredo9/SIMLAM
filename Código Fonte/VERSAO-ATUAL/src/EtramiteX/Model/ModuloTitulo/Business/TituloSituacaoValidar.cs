@@ -99,9 +99,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				#endregion
 
-				#region Encerrado
+				#region Cancelado
 
 				case 5:
+					acaoPermissao.Add(ePermissao.TituloEncerrar);
+					acaoPermissao.Add(ePermissao.DocumentoEncerrarOficioPendencia);
+					break;
+
+				#endregion
+
+				#region Suspenso
+
+				case 11:
 					acaoPermissao.Add(ePermissao.TituloEncerrar);
 					acaoPermissao.Add(ePermissao.DocumentoEncerrarOficioPendencia);
 					break;
@@ -326,6 +335,54 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoEncerramentoObrigatorio);
+					}
+
+					break;
+
+				#endregion
+
+				#region Suspenso
+
+				case 11:
+					if (tituloAux.Situacao.Id != 3 && tituloAux.Situacao.Id != 6)
+					{
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Concluído ou Prorrogado"));
+					}
+
+					if (ValidarDatas(titulo.DataEncerramento, "DataEncerramento", "suspensão"))
+					{
+						if (titulo.Modelo.Regra(eRegra.Prazo))
+						{
+							switch (Convert.ToInt32(titulo.Modelo.Resposta(eRegra.Prazo, eResposta.InicioPrazo).Valor))
+							{
+								case 1:
+									if (titulo.DataEncerramento.Data < tituloAux.DataEmissao.Data)
+									{
+										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "suspensão", "emissão"));
+									}
+									break;
+
+								case 2:
+									if (titulo.DataEncerramento.Data < tituloAux.DataAssinatura.Data)
+									{
+										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "suspensão", "assinatura"));
+									}
+									break;
+
+								case 3:
+									if (titulo.DataEncerramento.Data < tituloAux.DataEntrega.Data)
+									{
+										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "suspensão", "entrega"));
+									}
+									break;
+							}
+
+						}
+					}
+
+					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
+					{
+						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoSuspensaoObrigatorio);
 					}
 
 					break;

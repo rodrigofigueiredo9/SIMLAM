@@ -472,6 +472,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
 			}
 
+			_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+			if (Validacao.EhValido) Validacao.Erros.Clear();
 			_bus.ExcluirRascunho(projeto);
 
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = Url.Action("Index", "Caracterizacao", Validacao.QueryParamSerializer(new { id = projeto.EmpreendimentoId })) });
@@ -512,6 +514,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
 			{
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
+			}
+
+			var urlCriar = CaracterizacaoVM.GerarUrl(projeto.EmpreendimentoId, true, eCaracterizacao.ExploracaoFlorestal);
+			var urlEditar = CaracterizacaoVM.GerarUrl(projeto.EmpreendimentoId, false, eCaracterizacao.ExploracaoFlorestal);
+			if (url.Contains(urlCriar) || url.Contains(urlEditar)) {
+				if(!_validar.Finalizar(projeto))
+					return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = url });
+				if (_exploracaoFlorestalBus.ExisteExploracaoGeoNaoCadastrada(projeto.Id))
+					url = urlCriar;
 			}
 
 			_bus.Salvar(projeto);
@@ -608,6 +619,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
 		public ActionResult ProcessarDesenhador(ProjetoGeografico projeto)
 		{
+			if (projeto.CaracterizacaoId == (int)eCaracterizacao.ExploracaoFlorestal)
+			{
+				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+				if (Validacao.EhValido) Validacao.Erros.Clear();
+			}
+
 			ArquivoProcessamentoVM arquivo = new ArquivoProcessamentoVM();
 
 			arquivo.ArquivoProcessamento = _bus.ProcessarDesenhador(projeto);

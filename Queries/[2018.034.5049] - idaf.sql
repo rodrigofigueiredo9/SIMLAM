@@ -74,3 +74,6 @@ begin
 end;
 
 insert into idaf.lov_esp_conclusao (id, texto) values (3, 'Parcialmente Favorável');
+
+GRANT SELECT ON IDAF.TAB_TITULO_EXP_FLORESTAL TO IDAFGEO;
+GRANT SELECT ON IDAF.TAB_TITULO_EXP_FLOR_EXP TO IDAFGEO;

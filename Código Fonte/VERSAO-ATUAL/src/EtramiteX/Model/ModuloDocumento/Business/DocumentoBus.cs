@@ -185,7 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 									titulo.DataEncerramento.Data = DateTime.Now;
 									titulo.MotivoEncerramentoId = 7;//Encerrado
 									TituloSituacaoBus tituloSituacaoBus = new TituloSituacaoBus();
-									tituloSituacaoBus.AlterarSituacao(titulo, (int)eAlterarSituacaoAcao.Encerrar, bancoDeDados);
+									tituloSituacaoBus.AlterarSituacao(titulo, (int)eAlterarSituacaoAcao.Cancelar, bancoDeDados);
 
 									if (Validacao.EhValido)
 									{

@@ -110,8 +110,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					foreach(var exploracao in exploracoesEmAberto)
 						_da.Excluir(exploracao.Id, bancoDeDados);
 
-					if(exploracoesEmAberto?.Count() == exploracoes?.Count())
-						_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal, bancoDeDados);
+					if (exploracoesEmAberto?.Count() == exploracoes?.Count())
+					{
+						var projetoId = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal, finalizado: false);
+						var projeto = _projetoGeoBus.ObterProjeto(projetoId, simplificado: false);
+						_projetoGeoBus.ExcluirRascunho(projeto, bancoDeDados);
+					}
 
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 
@@ -141,6 +145,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
 					_projetoGeoBus.SalvarSobreposicoes(projeto);
 					_projetoGeoBus.Finalizar(projeto, banco);
+					if (!Validacao.EhValido) return;
 					_projetoGeoBus.ExcluirRascunho(projeto, banco);
 				}
 
@@ -149,6 +154,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
 					bancoDeDados.IniciarTransacao();
+
+					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
+					foreach (var exploracao in exploracoes)
+					{
+						exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = exploracao.Id,
+							Tipo = eCaracterizacao.ExploracaoFlorestal,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = exploracao.Dependencias
+						}, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+					}
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 

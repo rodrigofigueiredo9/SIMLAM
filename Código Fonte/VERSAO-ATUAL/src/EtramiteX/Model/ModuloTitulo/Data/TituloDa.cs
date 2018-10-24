@@ -1174,11 +1174,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, 
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is null " + comandtxt +
 				@" union all 
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, 
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
@@ -1202,6 +1202,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						titulo.Modelo.Id = reader.GetValue<int>("modelo_id");
 						titulo.Modelo.Sigla = reader.GetValue<string>("modelo_sigla");
 						titulo.Modelo.Nome = reader.GetValue<string>("modelo_nome");
+						titulo.Situacao.Id = reader.GetValue<int>("situacao_id");
 						titulo.Situacao.Nome = reader.GetValue<string>("situacao_texto");
 						titulo.EmpreendimentoCodigo = reader.GetValue<long>("empreendimento_codigo");
 						titulo.EmpreendimentoTexto = reader.GetValue<string>("empreendimento_denominador");
@@ -1216,7 +1217,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							titulo.Protocolo.NumeroProtocolo = prot.Numero;
 							titulo.Protocolo.Ano = prot.Ano;
 						}
-
+						if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido && titulo.DataVencimento?.Data < DateTime.Now.Date)
+							titulo.Situacao.Nome = "Vencido";
 						retorno.Itens.Add(titulo);
 					}
 
