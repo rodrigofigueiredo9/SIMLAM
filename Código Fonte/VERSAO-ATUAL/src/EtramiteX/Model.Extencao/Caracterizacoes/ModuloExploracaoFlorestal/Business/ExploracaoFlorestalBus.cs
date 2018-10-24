@@ -155,6 +155,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				{
 					bancoDeDados.IniciarTransacao();
 
+					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
+					foreach (var exploracao in exploracoes)
+					{
+						exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = exploracao.Id,
+							Tipo = eCaracterizacao.ExploracaoFlorestal,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = exploracao.Dependencias
+						}, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+					}
+
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 
 					if (Validacao.EhValido)

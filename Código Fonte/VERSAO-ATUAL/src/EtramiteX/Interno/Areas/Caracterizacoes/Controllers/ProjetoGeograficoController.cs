@@ -521,6 +521,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (url.Contains(urlCriar) || url.Contains(urlEditar)) {
 				if(!_validar.Finalizar(projeto))
 					return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = url });
+				if (_exploracaoFlorestalBus.ExisteExploracaoGeoNaoCadastrada(projeto.Id))
+					url = urlCriar;
 			}
 
 			_bus.Salvar(projeto);
@@ -617,6 +619,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
 		public ActionResult ProcessarDesenhador(ProjetoGeografico projeto)
 		{
+			if (projeto.CaracterizacaoId == (int)eCaracterizacao.ExploracaoFlorestal)
+			{
+				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+				if (Validacao.EhValido) Validacao.Erros.Clear();
+			}
+
 			ArquivoProcessamentoVM arquivo = new ArquivoProcessamentoVM();
 
 			arquivo.ArquivoProcessamento = _bus.ProcessarDesenhador(projeto);

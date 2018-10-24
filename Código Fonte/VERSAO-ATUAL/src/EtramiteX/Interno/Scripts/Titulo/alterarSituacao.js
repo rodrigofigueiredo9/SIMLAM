@@ -167,6 +167,7 @@ TituloAlterarSituacao = {
 				}
 			});
 		} else {
+			MasterPage.carregando(true);
 			TituloAlterarSituacao.alterarSituacao(objeto);
 		}
 	},
