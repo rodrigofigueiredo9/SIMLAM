@@ -163,7 +163,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 										ValidacoesGenericasBus.DataMensagem(r.Licenca.ProtocoloRenovacaoData, "ProtocoloRenovacaoData_DataTexto" + count, "renovação");
 									}
 
-									if (!r.Licenca.ProtocoloRenovacaoData.IsEmpty && r.Licenca.TituloValidadeData.Data.GetValueOrDefault() < r.Licenca.ProtocoloRenovacaoData.Data)
+									if (!r.Licenca.ProtocoloRenovacaoData.IsEmpty && ( r.Licenca.TituloValidadeData.Data.GetValueOrDefault().AddDays(-120)) < r.Licenca.ProtocoloRenovacaoData.Data)
 									{
 										Validacao.Add(Mensagem.RegistroAtividadeFlorestal.RenovacaoDataMaiorValidade(count));
 									}
