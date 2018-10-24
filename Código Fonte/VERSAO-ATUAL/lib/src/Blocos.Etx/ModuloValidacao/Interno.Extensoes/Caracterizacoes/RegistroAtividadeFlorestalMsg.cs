@@ -137,7 +137,7 @@
 
 		public Mensagem RenovacaoDataMaiorValidade(int indice)
 		{
-			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ProtocoloRenovacaoData_DataTexto" + indice, Texto = @"A data de renovação da licença ambiental deve ser menor ou igual à data de validade da licença." };
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "ProtocoloRenovacaoData_DataTexto" + indice, Texto = @"A data de renovação da licença ambiental deve ser menor ou igual à 120 dias antes da data de validade da licença." };
 		}
 
 		public Mensagem OrgaoExpedidoObrigatorio(int indice)
