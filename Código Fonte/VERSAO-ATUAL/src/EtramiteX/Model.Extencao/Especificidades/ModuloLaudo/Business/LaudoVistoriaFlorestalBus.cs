@@ -24,6 +24,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.D
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using System.Collections;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.Business
 {
@@ -133,10 +134,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, Convert.ToInt32(especificidade.Titulo.Modelo));
 				laudo.ExploracaoFlorestal = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
-				var parecerFavoravel = String.Join(", ", exploracoes.SelectMany(x => x.Exploracoes).Where(w => w.ParecerFavoravel == true).Select(y => y.Identificacao)?.ToList());
-				laudo.ParecerFavoravel = string.IsNullOrWhiteSpace(parecerFavoravel) ? "" : String.Concat("(", parecerFavoravel, ")");
-				var parecerDesfavoravel = String.Join(", ", exploracoes.SelectMany(x => x.Exploracoes).Where(w => w.ParecerFavoravel == false).Select(y => y.Identificacao)?.ToList());
-				laudo.ParecerDesfavoravel = string.IsNullOrWhiteSpace(parecerDesfavoravel) ? "" : String.Concat("(", parecerDesfavoravel, ")");
+				var parecerFavoravel = new ArrayList();
+				var parecerDesfavoravel = new ArrayList();
+				foreach(var exploracao in exploracoes)
+				{
+					if(exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true)?.ToList().Count > 0)
+						parecerFavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true).Select(x => x.Identificacao)?.ToList()), ")"));
+					if(exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false)?.ToList().Count > 0)
+						parecerDesfavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false).Select(x => x.Identificacao)?.ToList()), ")"));
+				}
+				laudo.ParecerFavoravel = parecerFavoravel.Count > 0 ? String.Join(", ", parecerFavoravel?.ToArray()) : "";
+				laudo.ParecerDesfavoravel = parecerDesfavoravel.Count > 0 ? String.Join(", ", parecerDesfavoravel?.ToArray()) : "";
 				laudo.QueimaControlada = new QueimaControladaPDF(new QueimaControladaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
 				laudo.Silvicultura = new SilviculturaPDF(new SilviculturaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
