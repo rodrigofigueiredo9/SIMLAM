@@ -584,7 +584,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						#region Produtos
 
 						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
-						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
+						c.especie_popular_id, e.id especie_cientifico_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
 						c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
 						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
 						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = lv.id(+)
@@ -613,6 +613,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
+									produto.EspecieCientificoId = Convert.ToInt32(readerAux["especie_cientifico_id"]);
 								}
 
 								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
@@ -741,7 +742,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								if (readerAux["especie_popular_id"] != null && !Convert.IsDBNull(readerAux["especie_popular_id"]))
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
-									produto.ProdutoTexto = readerAux["especie_popular_texto"].ToString();
+									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
 								}
 
 								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
@@ -1179,7 +1180,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								#region Produtos
 
 								comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
-								c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
+								c.especie_popular_id, e.id especie_cientifico_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
 								c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
 								from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
 								where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = lv.id(+)
@@ -1208,6 +1209,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 										{
 											produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 											produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
+											produto.EspecieCientificoId = Convert.ToInt32(readerAux["especie_cientifico_id"]);
 										}
 
 										if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))

@@ -138,6 +138,7 @@ ExploracaoFlorestalExploracao = {
 			Quantidade: $('.txtQuantidade', container).val(),
 			EspeciePopularId: $('.hdnEspecieId', container).val(),
 			EspeciePopularTexto: $('.txtEspecie', container).val(),
+			EspecieCientificoId: $('.hdnEspecieCientificoId', container).val(),
 			DestinacaoMaterialId: destinacao > 0 ? destinacao : null,
 			DestinacaoMaterialTexto: destinacao > 0 ? $('.ddlDestinacaoMaterial :selected', container).text() : ""
 		};
@@ -155,7 +156,7 @@ ExploracaoFlorestalExploracao = {
 			var obj = String($(this).val());
 			if (obj != '') {
 				var prod = (JSON.parse(obj));
-				if (prod.ProdutoId == produto.ProdutoId && prod.EspeciePopularId == produto.EspeciePopularId && prod.DestinacaoMaterialId == produto.DestinacaoMaterialId) {
+				if (prod.ProdutoId == produto.ProdutoId && prod.EspecieCientificoId == produto.EspecieCientificoId && prod.DestinacaoMaterialId == produto.DestinacaoMaterialId) {
 					mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.ProdutoDuplicado));
 				}
 			}
@@ -285,7 +286,7 @@ ExploracaoFlorestalExploracao = {
 					contentType: 'application/json;charset=UTF-8',
 					success: function (result) {
 						if (result.data != null) {
-							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId +'\" }'));
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId +'\" }'));
 						}
 						response(tags);
 					},
@@ -293,6 +294,7 @@ ExploracaoFlorestalExploracao = {
 			},
 			select: function (event, ui) {
 				$(".hdnEspecieId").val(ui.item.id);
+				$(".hdnEspecieCientificoId").val(ui.item.cientifico);
 			}
 		});
 	},
