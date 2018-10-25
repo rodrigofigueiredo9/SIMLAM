@@ -72,6 +72,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Texto = "Ao refazer o projeto geográfico os arquivos processados serão apagados e o sistema irá carregar os arquivos utilizados na finalização. Deseja realmente refazer o projeto?", Tipo = eTipoMensagem.Informacao };
 		}
 
+		public Mensagem ConfirmacaoAtualizar()
+		{
+			return new Mensagem() { Texto = "Ao atualizar o projeto geográfico os arquivos processados serão apagados e o sistema irá carregar os arquivos utilizados na finalização. Deseja realmente atualizar o projeto?", Tipo = eTipoMensagem.Informacao };
+		}
+
 		public Mensagem ConfirmacaoRecarregar()
 		{
 			return new Mensagem() { Texto = "Ao recarregar o projeto geográfico irá perder os arquivos enviados, Deseja realmente recarregar o projeto?", Tipo = eTipoMensagem.Informacao };

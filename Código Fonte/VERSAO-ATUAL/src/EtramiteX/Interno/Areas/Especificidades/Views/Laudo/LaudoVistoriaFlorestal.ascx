@@ -52,14 +52,14 @@
 		</div>
 	</div>
 
-	<div class="block descricaoFavoravel hide">
+	<div class="block descricaoFavoravel <%= !Model.IsVisualizar && !string.IsNullOrWhiteSpace(Model.Laudo.ParecerDescricao) ? "hide" : "" %>">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico Favorável a Exploração *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
 		</div>
 	</div>
 
-	<div class="block descricaoDesfavoravel hide">
+	<div class="block descricaoDesfavoravel <%= !Model.IsVisualizar && !string.IsNullOrWhiteSpace(Model.Laudo.ParecerDescricaoDesfavoravel) ? "hide" : "" %>">
 		<div class="ultima">
 			<label for="Laudo_ParecerDescricaoDesfavoravel">Descrição do Parecer Técnico Desfavorável a Exploração *</label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricaoDesfavoravel", Model.Laudo.ParecerDescricaoDesfavoravel, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricaoDesfavoravel" }))%>

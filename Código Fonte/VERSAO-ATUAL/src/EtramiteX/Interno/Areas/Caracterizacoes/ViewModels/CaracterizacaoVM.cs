@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 
 			ePermissao ePermCriar = (ePermissao)Enum.Parse(typeof(ePermissao), String.Format("{0}Criar", tipo.ToString()));
 			ePermissao ePermEditar = (ePermissao)Enum.Parse(typeof(ePermissao), String.Format("{0}Editar", tipo.ToString()));
-			//ePermissao ePermVisualizar = (ePermissao)Enum.Parse(typeof(ePermissao), String.Format("{0}Visualizar", tipo.ToString()));
+			ePermissao ePermVisualizar = (ePermissao)Enum.Parse(typeof(ePermissao), String.Format("{0}Visualizar", tipo.ToString()));
 
 
 			if (isCadastrarCaracterizacao && permissaoValidar.ValidarAny(new[] { ePermCriar }, false))
@@ -90,10 +90,10 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				url = "Editar";
 			}
 
-			/*if (permissaoValidar.ValidarAny(new[] { ePermVisualizar }, false))
+			if (!isCadastrarCaracterizacao && permissaoValidar.ValidarAny(new[] { ePermVisualizar }, false) && tipo == eCaracterizacao.ExploracaoFlorestal)
 			{
 				url = "Visualizar";
-			}*/
+			}
 
 			UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
 

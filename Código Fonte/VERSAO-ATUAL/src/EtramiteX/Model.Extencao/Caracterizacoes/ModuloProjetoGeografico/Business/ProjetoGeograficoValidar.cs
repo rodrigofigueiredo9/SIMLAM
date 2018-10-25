@@ -69,7 +69,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return Validacao.EhValido;
 		}
 
-		internal bool Finalizar(ProjetoGeografico projeto)
+		public bool Finalizar(ProjetoGeografico projeto)
 		{
 			CaracterizacaoBus _busCaracterizacao = new CaracterizacaoBus();
 			if (!_busCaracterizacao.ExisteEmpreendimento(projeto.EmpreendimentoId))

@@ -110,8 +110,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					foreach(var exploracao in exploracoesEmAberto)
 						_da.Excluir(exploracao.Id, bancoDeDados);
 
-					if(exploracoesEmAberto?.Count() == exploracoes?.Count())
-						_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal, bancoDeDados);
+					if (exploracoesEmAberto?.Count() == exploracoes?.Count())
+					{
+						var projetoId = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal, finalizado: false);
+						var projeto = _projetoGeoBus.ObterProjeto(projetoId, simplificado: false);
+						_projetoGeoBus.ExcluirRascunho(projeto, bancoDeDados);
+					}
 
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 
@@ -127,30 +131,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
-		public void FinalizarExploracao(int empreendimento, BancoDeDados banco = null)
+		public void FinalizarExploracao(int empreendimento, int titulo, BancoDeDados banco = null)
 		{
 			try
 			{
+				var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+				if (idProjetoGeo == 0)
+					throw new Exception("Projeto Geográfico não encontrado");
+
+				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+				if (projeto.SituacaoId != (int)eProjetoGeograficoSituacao.Finalizado)
+				{
+					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
+					_projetoGeoBus.SalvarSobreposicoes(projeto);
+					_projetoGeoBus.Finalizar(projeto, banco);
+					if (!Validacao.EhValido) return;
+					_projetoGeoBus.ExcluirRascunho(projeto, banco);
+				}
+
+				if(!Validacao.EhValido) return;
+
+				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+				if(croqui?.Id > 0)
+					_projetoGeoBus.AnexarCroqui(titulo, croqui.Id.GetValueOrDefault(0), banco);
+
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
 					bancoDeDados.IniciarTransacao();
-				
-					var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
-					if (idProjetoGeo == 0)
-						throw new Exception("Projeto Geográfico não encontrado");
 
 					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
 					foreach (var exploracao in exploracoes)
-						_projetoGeoBus.ApagarGeometriaDeExploracao(exploracao.Id, bancoDeDados);
-
-					var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-						
-					_projetoGeoBus.Finalizar(projeto);
+					{
+						exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = exploracao.Id,
+							Tipo = eCaracterizacao.ExploracaoFlorestal,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = exploracao.Dependencias
+						}, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+					}
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
 
 					if (Validacao.EhValido)
 						Validacao.Erros.Clear();
+					else
+					{
+						bancoDeDados.Rollback();
+						return;
+					}
 
 					bancoDeDados.Commit();
 				}

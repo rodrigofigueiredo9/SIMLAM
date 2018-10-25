@@ -138,12 +138,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			VegetacaoTipoId = exploracao.ClassificacaoVegetacaoId;
 			ArvoresRequeridas = exploracao.ArvoresRequeridas;
 
-			AreaCroquiDecimal = exploracao.AreaCroqui;
-			AreaRequeridaDecimal = exploracao.AreaRequerida;
+			AreaCroquiDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto && exploracao.ParecerFavoravel == true) ? Convert.ToDecimal(exploracao.QuantidadeArvores) : exploracao.AreaCroqui;
+			AreaRequeridaDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto) ? Convert.ToDecimal(exploracao.ArvoresRequeridas) : exploracao.AreaRequerida;
 			
 			QuantidadeArvores = exploracao.QuantidadeArvores;
 			Produtos = exploracao.Produtos.Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
-
+			if(Produtos.Count == 0)
+				Produtos.Add(new ExploracaoFlorestalExploracaoProdutoPDF());
 			IdentificacaoGeo = exploracao.Identificacao;
 			Geometria = exploracao.GeometriaTipoTexto;
 			FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;

@@ -503,7 +503,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("mecDesenhador", (int)eProjetoGeograficoMecanismo.Desenhador, DbType.Int32);
 				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
@@ -618,6 +617,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		internal void AnexarCroqui(int titulo, int arquivo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				#region Alterar situação do Título
+
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_arquivo a (id, titulo, arquivo, ordem, descricao, tid) 
+							values ({0}seq_titulo_arquivo.nextval, :titulo, :arquivo, nvl((select count(*) from {0}tab_titulo_arquivo t where t.titulo = :titulo), 0), 'Croqui', :tid)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", arquivo, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				#endregion
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion
 
 		#region Ações de DML da base GEO
@@ -628,8 +650,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {1}tab_fila f (id, empreendimento, projeto, tipo, mecanismo_elaboracao, etapa, situacao, data_fila)
-				(select {1}seq_fila.nextval, t.empreendimento, t.id, :tipo, :mecanismo_elaboracao, :etapa, :situacao, sysdate from {0}tmp_projeto_geo t where t.id = :projeto)",
+				Comando comando = bancoDeDados.CriarComando(@"insert into {1}tab_fila f (id, empreendimento, projeto, tipo, mecanismo_elaboracao, etapa, situacao, data_fila, titulo)
+				(select {1}seq_fila.nextval, t.empreendimento, t.id, :tipo, :mecanismo_elaboracao, :etapa, :situacao, sysdate, :titulo from {0}" +
+				(arquivo.TituloId > 0 ? "crt_projeto_geo" : "tmp_projeto_geo") + @" t where t.id = :projeto)",
 					EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", arquivo.ProjetoId, DbType.Int32);
@@ -637,6 +660,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				comando.AdicionarParametroEntrada("mecanismo_elaboracao", arquivo.Mecanismo, DbType.Int32);
 				comando.AdicionarParametroEntrada("etapa", arquivo.Etapa, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", arquivo.Situacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", arquivo.TituloId, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -695,60 +719,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				comando = bancoDeDados.CriarComando(@"update {0}tab_fila f set f.situacao = 5 where f.projeto = :projeto", EsquemaBancoGeo);
 				comando.DbCommand.CommandText += comando.AdicionarIn("and", "f.tipo", DbType.Int32, arquivos);
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				bancoDeDados.Commit();
-			}
-		}
-
-		internal void ApagarGeometriaDeExploracao(int exploracaoId, BancoDeDados banco = null)
-		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				bancoDeDados.IniciarTransacao();
-
-				Comando comando = bancoDeDados.CriarComandoPlSql(@"begin
-						delete from {1}tmp_pativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.tmp_pativ_id = g.id));
-						delete from {1}tmp_aativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.tmp_aativ_id = g.id));
-						delete from {1}des_pativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.des_pativ_id = g.id));
-						delete from {1}des_aativ g where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel
-							and exists
-							(select 1 from {0}crt_exp_florestal_geo cg
-								where cg.exp_florestal_exploracao = cp.id
-								and cg.des_aativ_id = g.id));
-						delete from {0}crt_exp_florestal_geo cg where exists
-						(select 1 from {0}crt_exp_florestal_exploracao cp
-							where cp.id = cg.exp_florestal_exploracao
-							and cp.exploracao_florestal = :exploracao_id
-							and cp.parecer_favoravel = :parecer_favoravel);
-						end;", EsquemaBanco, EsquemaBancoGeo);
-				comando.AdicionarParametroEntrada("exploracao_id", exploracaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("parecer_favoravel", false, DbType.Boolean);
-
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				bancoDeDados.Commit();

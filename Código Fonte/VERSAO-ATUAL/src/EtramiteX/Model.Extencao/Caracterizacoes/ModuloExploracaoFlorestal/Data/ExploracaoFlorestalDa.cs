@@ -126,9 +126,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (item.ExploracaoFlorestalGeo != null)
 						{
 							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_geo c (id, exp_florestal_exploracao, geo_pativ_id,
-							geo_lativ_id, geo_aativ_id, geo_aiativ_id, des_pativ_id, des_aativ_id, tmp_pativ_id, tmp_aativ_id)
-							values ({0}seq_exp_florestal_geo.nextval, :exp_florestal_exploracao, :geo_pativ_id, 
-							:geo_lativ_id, :geo_aativ_id, :geo_aiativ_id, :des_pativ_id, :des_aativ_id, :tmp_pativ_id, :tmp_aativ_id)", EsquemaBanco);
+							geo_aativ_id, tmp_pativ_id, tmp_aativ_id)
+							values ({0}seq_exp_florestal_geo.nextval, :exp_florestal_exploracao, :geo_pativ_id, :geo_aativ_id,
+							:tmp_pativ_id, :tmp_aativ_id)", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("geo_pativ_id", item.ExploracaoFlorestalGeo.GeoPativId, DbType.Int32);
@@ -203,17 +203,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				#region Limpar os dados do banco
 
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_exp_florestal_produto c where c.exp_florestal_exploracao in 
-				(select a.id from {0}crt_exp_florestal_exploracao a where a.exploracao_florestal = :exploracao_florestal ", EsquemaBanco);
-
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "a.id", DbType.Int32, caracterizacao.Exploracoes.Select(x => x.Id).ToList());
-
-				comando.DbCommand.CommandText += ")";
-
-				comando.AdicionarParametroEntrada("exploracao_florestal", caracterizacao.Id, DbType.Int32);
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
 				foreach (ExploracaoFlorestalExploracao item in caracterizacao.Exploracoes)
 				{
 					comando = bancoDeDados.CriarComando(@"delete from {0}crt_exp_florestal_produto c 
@@ -287,9 +276,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								if (itemAux.Id > 0)
 								{
 									comando = bancoDeDados.CriarComando(@"update {0}crt_exp_florestal_produto c set c.produto = :produto, c.quantidade = :quantidade,
-									c.especie_popular_id = :especie_popular_id, c.tid = :tid where c.id = :id", EsquemaBanco);
+									c.especie_popular_id = :especie_popular_id, c.destinacao_material_id = :destinacao_material_id, c.tid = :tid where c.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", itemAux.ProdutoId, DbType.Int32);
+									comando.AdicionarParametroEntrada("id", itemAux.Id, DbType.Int32);
 								}
 								else
 								{
@@ -369,7 +358,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				update {0}crt_exploracao_florestal e
 					set e.data_conclusao = sysdate
 					where e.empreendimento = :empreendimento
-					and e.data_conclusao is null;
+					and e.data_conclusao is null
+					and exists
+					(select 1 from tab_titulo_exp_florestal t
+					where t.exploracao_florestal = e.id);
 				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_pativ_id)
 					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_pativ g 
 					inner join crt_exp_florestal_exploracao cp
@@ -382,10 +374,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						and c.empreendimento = :empreendimento
 						and exists
 						(
-							select * from crt_projeto_geo p
+							select 1 from crt_projeto_geo p
 							where p.id = g.projeto
 							and p.empreendimento = c.empreendimento
 						)
+						and exists
+						(select 1 from tab_titulo_exp_florestal t
+						where t.exploracao_florestal = c.id)
 					)
 					and not exists
 					(select 1 from crt_exp_florestal_geo gp 
@@ -406,6 +401,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							where p.id = g.projeto
 							and p.empreendimento = c.empreendimento
 						)
+						and exists
+						(select 1 from tab_titulo_exp_florestal t
+						where t.exploracao_florestal = c.id)
 					)
 					and not exists
 					(select 1 from crt_exp_florestal_geo gp 
@@ -586,7 +584,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						#region Produtos
 
 						comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
-						c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
+						c.especie_popular_id, e.id especie_cientifico_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
 						c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
 						from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
 						where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = lv.id(+)
@@ -615,6 +613,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
+									produto.EspecieCientificoId = Convert.ToInt32(readerAux["especie_cientifico_id"]);
 								}
 
 								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
@@ -743,7 +742,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								if (readerAux["especie_popular_id"] != null && !Convert.IsDBNull(readerAux["especie_popular_id"]))
 								{
 									produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
-									produto.ProdutoTexto = readerAux["especie_popular_texto"].ToString();
+									produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
 								}
 
 								if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
@@ -801,10 +800,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   a.data, " +
+								   sysdate data, " +
 								   (int)eTabelaRelacionamento.tmp_aativ + @" tabela
 							  from {1}tmp_aativ       a,
-								   {0}crt_projeto_geo         g,
+								   {0}tmp_projeto_geo         g,
 								   {0}lov_caracterizacao_tipo lc,
 								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
@@ -824,10 +823,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,
-								   a.data, " +
+								   sysdate data, " +
 								   (int)eTabelaRelacionamento.tmp_pativ + @" tabela
 							  from {1}tmp_pativ       a,
-								   {0}crt_projeto_geo         g,
+								   {0}tmp_projeto_geo         g,
 								   {0}lov_caracterizacao_tipo lc,
 								   {1}lov_tipo_exploracao lv
 							 where a.atividade = lc.texto
@@ -1067,11 +1066,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				Comando comando = bancoDeDados.CriarComando(@"
 								select sum(soma) from 
 								(
-									select count(*) soma from idafgeo.geo_pativ g where g.projeto = :projeto
-									and not exists (select 1 from crt_exp_florestal_geo eg where eg.geo_pativ_id = g.id )
+									select count(*) soma from idafgeo.tmp_pativ g where g.projeto = :projeto
+									and not exists (select 1 from crt_exp_florestal_geo eg where eg.tmp_pativ_id = g.id )
 									union all 
-									select count(*) soma from idafgeo.geo_aativ g where g.projeto = :projeto
-									and not exists (select 1 from crt_exp_florestal_geo eg where eg.geo_aativ_id = g.id )
+									select count(*) soma from idafgeo.tmp_aativ g where g.projeto = :projeto
+									and not exists (select 1 from crt_exp_florestal_geo eg where eg.tmp_aativ_id = g.id )
 								)", EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", projeto, DbType.Int32);
@@ -1181,7 +1180,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								#region Produtos
 
 								comando = bancoDeDados.CriarComando(@"select c.id, c.produto, lp.texto produto_texto, c.quantidade,
-								c.especie_popular_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
+								c.especie_popular_id, e.id especie_cientifico_id, concat(concat(e.nome_cientifico, '/'), ep.nome_popular) especie_popular_texto,
 								c.destinacao_material_id, lv.texto destinacao_material_texto, c.tid 
 								from {0}crt_exp_florestal_produto c, {0}lov_crt_produto lp, {0}tab_especie_popular ep, {0}tab_especie e, {0}lov_dest_material_lenhoso lv
 								where c.produto = lp.id and c.especie_popular_id = ep.id(+) and ep.especie = e.id(+) and c.destinacao_material_id = lv.id(+)
@@ -1210,6 +1209,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 										{
 											produto.EspeciePopularId = Convert.ToInt32(readerAux["especie_popular_id"]);
 											produto.EspeciePopularTexto = readerAux["especie_popular_texto"].ToString();
+											produto.EspecieCientificoId = Convert.ToInt32(readerAux["especie_cientifico_id"]);
 										}
 
 										if (readerAux["destinacao_material_id"] != null && !Convert.IsDBNull(readerAux["destinacao_material_id"]))
@@ -1241,8 +1241,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				}
 
 				#endregion
-
-
 			}
 
 			return exploracoes;

@@ -36,6 +36,16 @@
 				<label for="SituacaoAtual">Situação</label>
 				<%= Html.TextBox("SituacaoAtual", Model.Situacao, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
+			<% if (Model.ModeloCodigo == (int)Tecnomapas.Blocos.Entities.Etx.ModuloCore.eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) { %>
+				<div class="coluna20 append2">
+					<label for="SituacaoIntegracao">Situação Integração</label>
+					<%= Html.TextBox("SituacaoIntegracao", (string.IsNullOrWhiteSpace(Model.CodigoSinaflor) ? "Em Cadastro" : "Integrado"), new { @class = "text disabled", @disabled = "disabled" })%>
+				</div>
+				<div class="coluna20 append2">
+					<label for="CodigoSinaflor">Código Integração</label>
+					<%= Html.TextBox("CodigoSinaflor", Model.CodigoSinaflor, new { @class = "text disabled", @disabled = "disabled" })%>
+				</div>
+			<%} %>
 		</div>
 	</fieldset>
 

@@ -67,7 +67,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@QuantidadeMaiorZero = Mensagem.ExploracaoFlorestal.QuantidadeMaiorZero,
 					@QuantidadeInvalida = Mensagem.ExploracaoFlorestal.QuantidadeInvalida,
 					@ProdutoDuplicado = Mensagem.ExploracaoFlorestal.ProdutoDuplicado,
-					@EspecieObrigatoria = Mensagem.ExploracaoFlorestal.EspecieObrigatoria
+					@EspecieObrigatoria = Mensagem.ExploracaoFlorestal.EspecieObrigatoria,
+					@DestinacaoMateriallObrigatoria = Mensagem.ExploracaoFlorestal.DestinacaoMateriallObrigatoria
 				});
 			}
 		}

@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public String Quantidade { get; set; }
 		public Int32? EspeciePopularId { get; set; }
 		public String EspeciePopularTexto { get; set; }
+		public Int32? EspecieCientificoId { get; set; }
 		public Int32? DestinacaoMaterialId { get; set; }
 		public String DestinacaoMaterialTexto { get; set; }
 	}

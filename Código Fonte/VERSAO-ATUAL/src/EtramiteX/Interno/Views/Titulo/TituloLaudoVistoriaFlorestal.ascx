@@ -19,7 +19,9 @@
                 <thead>
                     <tr>
                         <th>Caracterização selecionada</th>
-                        <th class="semOrdenacao" width="12%">Ações</th>
+						<% if (!Model.IsVisualizar){%>
+							<th class="semOrdenacao" width="12%">Ações</th>
+						<%} %>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,23 +30,23 @@
                         <td>
                             <span class="descricao" title="<%:exploracao.ExploracaoFlorestalTexto%>"><%:exploracao.ExploracaoFlorestalTexto%></span>
                         </td>
-                        <td>
+                        <td <%= Model.IsVisualizar ? "class='hide'": "" %>>
                             <input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(exploracao)%>' />
                             <input type="hidden" value="<%= exploracao.Id %>" class="exploracaoId" />
                             <input type="hidden" class="parecerFavoravel" value="" />
                             <input type="hidden" class="parecerDesfavoravel" value="" />
-                            <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
+							<input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
                         </td>
                     </tr>
                     <% } %>
                     <tr class="trTemplateRow hide">
                         <td><span class="descricao" title=""></span></td>
-                        <td>
+                        <td <%= Model.IsVisualizar ? "class='hide'": "" %>>
                             <input type="hidden" class="hdnItemJSon" value="" />
                             <input type="hidden" class="exploracaoId" value="" />
                             <input type="hidden" class="parecerFavoravel" value="" />
                             <input type="hidden" class="parecerDesfavoravel" value="" />
-                            <input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
+							<input type="button" title="Excluir" class="icone excluir inlineBotao btnExcluirExploracao" />
                         </td>
                     </tr>
                 </tbody>

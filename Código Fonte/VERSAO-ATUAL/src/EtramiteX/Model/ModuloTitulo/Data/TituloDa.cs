@@ -444,6 +444,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Exploracoes
+				comando = bancoDeDados.CriarComando(@"delete {0}tab_integracao_sinaflor a
+							where exists(select 1 from {0}tab_titulo_exp_florestal e
+								where e.titulo = :titulo and e.id = a.titulo_exp_florestal)", EsquemaBanco);
+				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				comando = bancoDeDados.CriarComando(@"delete {0}tab_titulo_exp_flor_exp a
 							where exists(select 1 from {0}tab_titulo_exp_florestal e
 								where e.titulo = :titulo and e.id = a.titulo_exploracao_florestal)", EsquemaBanco);
@@ -1168,11 +1174,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, 
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is null " + comandtxt +
 				@" union all 
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, 
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
@@ -1196,6 +1202,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						titulo.Modelo.Id = reader.GetValue<int>("modelo_id");
 						titulo.Modelo.Sigla = reader.GetValue<string>("modelo_sigla");
 						titulo.Modelo.Nome = reader.GetValue<string>("modelo_nome");
+						titulo.Situacao.Id = reader.GetValue<int>("situacao_id");
 						titulo.Situacao.Nome = reader.GetValue<string>("situacao_texto");
 						titulo.EmpreendimentoCodigo = reader.GetValue<long>("empreendimento_codigo");
 						titulo.EmpreendimentoTexto = reader.GetValue<string>("empreendimento_denominador");
@@ -1210,7 +1217,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							titulo.Protocolo.NumeroProtocolo = prot.Numero;
 							titulo.Protocolo.Ano = prot.Ano;
 						}
-
+						if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido && titulo.DataVencimento?.Data < DateTime.Now.Date)
+							titulo.Situacao.Nome = "Vencido";
 						retorno.Itens.Add(titulo);
 					}
 
@@ -1232,7 +1240,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Título
 
 				Comando comando = bancoDeDados.CriarComando(@"
-                    select t.*, ta.*
+                    select t.*, ta.*,
+					  (select s.autorizacao_sinaflor from tab_integracao_sinaflor s where rownum = 1
+						and s.autorizacao_sinaflor is not null and exists
+						(select 1 from tab_titulo_exp_florestal tt
+							where tt.titulo = t.id
+							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
                       from (select t.titulo_id id,
                                    t.titulo_tid tid,
                                    t.numero,
@@ -1416,6 +1429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 						titulo.RequerimetoId = reader.GetValue<int?>("requerimento_titulo");
 						titulo.CredenciadoId = reader.GetValue<int?>("credenciado");
+						titulo.CodigoSinaflor = reader["codigo_sinaflor"].ToString();
 
 						#endregion
 					}

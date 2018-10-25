@@ -151,6 +151,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMProjet
 					ConfirmacaoFinalizar = Mensagem.ProjetoGeografico.ConfirmacaoFinalizar(Dependentes.Select(x => x.Nome).ToList(), Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmElaboracao || Dependentes.Count <= 0),
 					ConfirmacaoRecarregar = Mensagem.ProjetoGeografico.ConfirmacaoRecarregar(),
 					ConfirmacaoRefazer = Mensagem.ProjetoGeografico.ConfirmacaoRefazer(),
+					ConfirmacaoAtualizar = Mensagem.ProjetoGeografico.ConfirmacaoAtualizar(),
 					ConfirmacaoReenviar = Mensagem.ProjetoGeografico.ConfirmacaoReenviar,
 					EmpreendimentoForaAbrangencia = Mensagem.ProjetoGeografico.EmpreendimentoForaAbrangencia,
 					AlterarMecanismo = Mensagem.ProjetoGeografico.AlterarMecanismo

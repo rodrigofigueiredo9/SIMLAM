@@ -241,11 +241,11 @@
 			</span>
 
 			<span class="spanBotoes floatRight spanRefazer">
-				<input class="btnRefazer <%: Model.IsFinalizado && !Model.IsVisualizar ? "" : "hide" %>" type="button" value="Refazer" />
+				<input class="btnRefazer <%: Model.IsFinalizado && !Model.IsVisualizar && (Model.isCadastrarCaracterizacao || Model.CaracterizacaoTipo != (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao.eCaracterizacao.ExploracaoFlorestal) ? "" : "hide" %>" type="button" value="Refazer" />
 			</span>
 
 			<span class="spanBotoes floatRight spanAtualizar">
-				<input class="btnAtualizar <%: Model.IsFinalizado && !Model.IsVisualizar ? "" : "hide" %>" type="button" value="Novo" />
+				<input class="btnAtualizar <%: Model.IsFinalizado && !Model.IsVisualizar && Model.CaracterizacaoTipo == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao.eCaracterizacao.ExploracaoFlorestal ? "" : "hide" %>" type="button" value="Novo" />
 			</span>
 
 			<span class="spanBotoes floatRight spanRecaregar <%: Model.Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmRascunho && !Model.IsVisualizar ? "" : "hide" %>">

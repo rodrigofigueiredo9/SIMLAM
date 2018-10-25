@@ -87,6 +87,7 @@
 
 				<div class="coluna24 append2">
 					<input type="hidden" class="hdnEspecieId" />
+					<input type="hidden" class="hdnEspecieCientificoId" />
 					<label for="Especie<%= Model.ExploracaoFlorestal.Identificacao%>" class="lblEspecie">Nome cientifíco/comum *</label>
 					<%= Html.TextBox("Especie" + Model.ExploracaoFlorestal.Identificacao, String.Empty, ViewModelHelper.SetaDisabled(Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text txtEspecie ui-autocomplete-input" }))%>
                 </div>
@@ -97,7 +98,7 @@
 				</div>
 
 				<div class="coluna26 append2">
-					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material</label>
+					<label for="DestinacaoMaterial<%= Model.ExploracaoFlorestal.Identificacao%>">Destinação do Material *</label>
 					<%= Html.DropDownList("DestinacaoMaterial" + Model.ExploracaoFlorestal.Identificacao, Model.DestinacaoMaterial, ViewModelHelper.SetaDisabled( Model.ExploracaoFlorestal.Produtos.Count(x=> x.ProdutoId == 7) > 0, new { @class = "text ddlDestinacaoMaterial" }))%>
 				</div>
 
