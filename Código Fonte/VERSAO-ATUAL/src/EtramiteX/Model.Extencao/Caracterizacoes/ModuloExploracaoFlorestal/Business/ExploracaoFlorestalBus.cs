@@ -131,7 +131,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
-		public void FinalizarExploracao(int empreendimento, BancoDeDados banco = null)
+		public void FinalizarExploracao(int empreendimento, int titulo, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -150,6 +150,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				}
 
 				if(!Validacao.EhValido) return;
+
+				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+				if(croqui?.Id > 0)
+					_projetoGeoBus.AnexarCroqui(titulo, croqui.Id.GetValueOrDefault(0), banco);
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{

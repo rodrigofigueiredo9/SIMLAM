@@ -250,6 +250,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return arquivoEnviado;
 		}
 
+		public ArquivoProjeto GerarCroquiTitulo(int projetoId, int tituloId, BancoDeDados banco = null)
+		{
+			var arquivoEnviado = new ArquivoProjeto() {
+				ProjetoId = projetoId,
+				FilaTipo = (int)eFilaTipoGeo.AtividadeTitulo,
+				Mecanismo = (int)eProjetoGeograficoMecanismo.Desenhador,
+				Etapa = (int)eFilaEtapaGeo.GeracaoDePDF,
+				Situacao = (int)eFilaSituacaoGeo.Aguardando,
+				TituloId = tituloId
+			};
+
+			try
+			{
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					arquivoEnviado.IdRelacionamento = _da.ExisteArquivoFila(arquivoEnviado);
+
+					if (arquivoEnviado.IdRelacionamento == 0)
+						_da.InserirFila(arquivoEnviado, bancoDeDados);
+					else
+						_da.AlterarSituacaoFila(arquivoEnviado, bancoDeDados);
+
+					ObterSituacao(arquivoEnviado);
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return arquivoEnviado;
+		}
+
 		public void ReprocessarBaseReferencia(ArquivoProjeto arquivo)
 		{
 			try
@@ -621,6 +657,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				}
 			}
 		}
+
+		public void AnexarCroqui(int titulo, int arquivo, BancoDeDados banco = null) => _da.AnexarCroqui(titulo, arquivo, banco);
 
 		#endregion
 

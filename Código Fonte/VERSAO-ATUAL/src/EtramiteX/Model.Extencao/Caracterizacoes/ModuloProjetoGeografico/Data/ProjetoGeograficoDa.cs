@@ -617,6 +617,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		internal void AnexarCroqui(int titulo, int arquivo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				#region Alterar situação do Título
+
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_arquivo a (id, titulo, arquivo, ordem, descricao, tid) 
+							values ({0}seq_titulo_arquivo.nextval, :titulo, :arquivo, nvl((select count(*) from {0}tab_titulo_arquivo t where t.titulo = :titulo), 0), 'Croqui', :tid)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", arquivo, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				#endregion
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion
 
 		#region Ações de DML da base GEO
@@ -628,7 +651,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {1}tab_fila f (id, empreendimento, projeto, tipo, mecanismo_elaboracao, etapa, situacao, data_fila, titulo)
-				(select {1}seq_fila.nextval, t.empreendimento, t.id, :tipo, :mecanismo_elaboracao, :etapa, :situacao, sysdate, :titulo from {0}tmp_projeto_geo t where t.id = :projeto)",
+				(select {1}seq_fila.nextval, t.empreendimento, t.id, :tipo, :mecanismo_elaboracao, :etapa, :situacao, sysdate, :titulo from {0}" +
+				(arquivo.TituloId > 0 ? "crt_projeto_geo" : "tmp_projeto_geo") + @" t where t.id = :projeto)",
 					EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", arquivo.ProjetoId, DbType.Int32);

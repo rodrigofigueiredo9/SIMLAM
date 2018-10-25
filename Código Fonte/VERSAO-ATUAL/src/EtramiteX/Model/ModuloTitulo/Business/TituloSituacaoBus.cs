@@ -761,7 +761,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
 				{
 					if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido)
-						_busExploracao.FinalizarExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), banco);
+						_busExploracao.FinalizarExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), titulo.Id, banco);
 				}
 
 				#endregion Explorações

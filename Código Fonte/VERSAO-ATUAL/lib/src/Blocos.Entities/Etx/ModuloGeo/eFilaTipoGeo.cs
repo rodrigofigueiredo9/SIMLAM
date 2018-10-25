@@ -8,6 +8,7 @@
 		Atividade,
 		Fiscalizacao,
 		BaseReferenciaFiscalizacao,
-		CAR
+		CAR,
+		AtividadeTitulo
 	}
 }
