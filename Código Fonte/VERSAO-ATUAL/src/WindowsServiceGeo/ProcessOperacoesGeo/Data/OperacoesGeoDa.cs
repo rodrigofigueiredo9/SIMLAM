@@ -26,6 +26,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 		internal const int OPERACAO_FISCALIZACAO = 5;
 		internal const int OPERACAO_BASEREF_FISCAL = 6;
 		internal const int OPERACAO_CAR = 7;
+		internal const int OPERACAO_ATIVIDADE_TITULO = 8;
 
 		private string _esquemaOficial = "";
 		private Dictionary<Int32, String> _lstDiretorio;
@@ -249,6 +250,32 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 				comando.AdicionarParametroEntrada("tipo", fileType, DbType.Int32);
 				comando.AdicionarParametroEntrada("arquivo", arquivoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("arquivo_fila_tipo", ticketType, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				this.banco.ExecutarNonQuery(comando);
+			}
+		}
+
+		internal void SetArquivoTitulo(int arquivoId, int? titulo, int ticketType, int fileType)
+		{
+			string strSQL = String.Format(@"begin 
+                       for i in (select count(*) qtd from {0}tab_titulo_arquivo t where t.titulo=:titulo and t.ordem=:ordem) loop
+                          if (i.qtd>0) then
+                             update {0}tab_titulo_arquivo t set t.tid = :tid, t.croqui = 1 where t.titulo=:titulo and t.ordem=:ordem;
+                          else
+                             insert into {0}tab_titulo_arquivo(id, titulo, arquivo, ordem, descricao, tid, croqui) values ({0}seq_titulo_arquivo.nextval, :titulo, :arquivo, :ordem, :descricao, :tid, 1);
+                          end if;
+                       end loop;
+                    end;", this.EsquemaOficialComPonto);
+
+			strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+
+			using (Comando comando = this.banco.CriarComando(strSQL))
+			{
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("ordem", fileType, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", arquivoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("descricao", "Croqui da Atividade", DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				this.banco.ExecutarNonQuery(comando);

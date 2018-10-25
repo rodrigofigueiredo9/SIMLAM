@@ -40,6 +40,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 		private const int OPERACAO_FISCALIZACAO = 5;
 		private const int OPERACAO_BASEREF_FISCAL = 6;
 		private const int OPERACAO_CAR = 7;
+		private const int OPERACAO_TITULO = 8;
 
 		private const int ETAPA_VALIDACAO = 1;
 		private const int ETAPA_PROCESSAMENTO = 2;
@@ -80,7 +81,6 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 						case OPERACAO_BASEREF_FISCAL:
 							ExecutarBaseRef();
 							break;
-
 						default:
 							switch (Project.Step)
 							{
@@ -461,12 +461,14 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 						mxd.AbrirMxdLayout(ArquivoMxd.MAPA_ATIVIDADE, PageSize.A4);
 
 						#region Salvar arquivo
+						int? idArquivo;
+
 						using (MemoryStream ms = _pdfCroqui.GerarPdfAtividade(mxd))
 						{
 							//PDF com mapa = 7
 							file = _bus.ObterArquivo(Project.Id, 7);
 							file.Buffer = new MemoryStream(ms.ToArray());
-							_bus.SalvarArquivo(file, Project.Id, Project.Type, 7);
+							idArquivo = _bus.SalvarArquivo(file, Project.Id, Project.Type, 7);
 						}
 						#endregion
 
@@ -517,6 +519,33 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							file = _bus.ObterArquivo(Project.Id, 7);
 							file.Buffer = new MemoryStream(ms.ToArray());
 							_bus.SalvarArquivo(file, Project.Id, Project.Type, 7);
+						}
+						#endregion
+
+						#region Alterar situação
+						log.IniciarTime("Alterar situação para PDF gerado");
+
+						_bus.SetConcluidoNaFila(Project.Id, Project.Type, Project.Step);
+						//_bus.SetProcessado(Project.Id);
+
+						log.FinalizarTime();
+						#endregion
+
+						break;
+
+					case OPERACAO_TITULO:
+						mxd = new MxdLayout();
+						mxd.AbrirMxdLayout(ArquivoMxd.MAPA_ATIVIDADE_TITULO, PageSize.A4);
+
+						#region Salvar arquivo
+
+						int titulo;
+						using (MemoryStream ms = _pdfCroqui.GerarPdfAtividadePorTitulo(mxd, out titulo))
+						{
+							//PDF com mapa = 7
+							file = _bus.ObterArquivo(Project.Id, 7);
+							file.Buffer = new MemoryStream(ms.ToArray());
+							_bus.SalvarArquivo(file, Project.Id, Project.Type, 7, titulo);
 						}
 						#endregion
 
