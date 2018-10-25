@@ -25,6 +25,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominia
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using System.Collections;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.Business
 {
@@ -118,6 +119,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				#region Anexos
 
+				laudo.AnexosPdfs = laudo.Anexos
+					.Select(x => x.Arquivo)
+					.Where(x => (!String.IsNullOrEmpty(x.Nome) && new FileInfo(x.Nome).Extension.ToLower().IndexOf("pdf") > -1)).ToList();
+
+				laudo.Anexos.RemoveAll(anexo =>
+					String.IsNullOrEmpty(anexo.Arquivo.Extensao) ||
+					!((new[] { ".jpg", ".gif", ".png", ".bmp" }).Any(x => anexo.Arquivo.Extensao.ToLower() == x)));
+
 				if (laudo.Anexos != null && laudo.Anexos.Count>0)
 				{
 					foreach (AnexoPDF anexo in laudo.Anexos)
@@ -132,7 +141,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				laudo.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
-				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, Convert.ToInt32(especificidade.Titulo.Modelo));
+				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, (int)eTituloModeloCodigo.LaudoVistoriaFlorestal);
 				laudo.ExploracaoFlorestal = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
 				var parecerFavoravel = new ArrayList();
 				var parecerDesfavoravel = new ArrayList();

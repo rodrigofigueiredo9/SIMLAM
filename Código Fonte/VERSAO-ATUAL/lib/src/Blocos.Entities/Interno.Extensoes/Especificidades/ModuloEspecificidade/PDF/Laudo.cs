@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
 {
-	public class Laudo
+	public class Laudo : IAnexoPdf
 	{
 		public Int32 Id { get; set; }
 		public Int32 RegularizacaoDominio { get; set; }
@@ -59,6 +60,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			get { return _analiseItens; }
 			set { _analiseItens = value; }
 		}
+
+		public List<Arquivo.Arquivo> AnexosPdfs { get; set; }
 
 		public Laudo()
 		{

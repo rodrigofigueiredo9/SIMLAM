@@ -19,6 +19,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominia
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloAutorizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAutorizacao.Business
 {
@@ -106,7 +107,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 
 				autorizacao.AnexosPdfs = autorizacao.Anexos
 					.Select(x => x.Arquivo)
-					.Where(x => (!String.IsNullOrEmpty(x.Extensao) && x.Extensao.ToLower().IndexOf("pdf") > -1)).ToList();
+					.Where(x => (!String.IsNullOrEmpty(x.Nome) && new FileInfo(x.Nome).Extension.ToLower().IndexOf("pdf") > -1)).ToList();
 
 				autorizacao.Anexos.RemoveAll(anexo =>
 					String.IsNullOrEmpty(anexo.Arquivo.Extensao) ||
@@ -125,7 +126,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 				#endregion
 
 				autorizacao.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, Convert.ToInt32(especificidade.Titulo.Modelo));
+				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal);
 				autorizacao.ExploracaoFlorestal = exploracoes.Where(x => x.TipoExploracao != (int)eTipoExploracao.CAI).Select(x => new ExploracaoFlorestalAutorizacaoPDF(x)).ToList();
 				autorizacao.ExploracaoFlorestalPonto = exploracoes.Where(x => x.TipoExploracao == (int)eTipoExploracao.CAI).SelectMany(y => y.Exploracoes).Select(x => new ExploracaoFlorestalAutorizacaoDetalhePDF(x)).ToList();
 				autorizacao.TotalPonto = autorizacao.ExploracaoFlorestalPonto.Sum(x => Convert.ToDouble(string.IsNullOrWhiteSpace(x.QuantidadeArvores) ? "0" : x.QuantidadeArvores)).ToString("N2");

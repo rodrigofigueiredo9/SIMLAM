@@ -26,6 +26,8 @@ using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloTitulo.Pdf;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -43,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		TituloSituacaoBus _tituloSituacaoBus = new TituloSituacaoBus(new TituloSituacaoValidar());
 		AtividadeBus _busAtividade = new AtividadeBus();
 		CARSolicitacaoBus _busCar = new CARSolicitacaoBus();
+		ProjetoGeograficoBus _busProjetoGeografico = new ProjetoGeograficoBus();
 
 		CondicionanteBus _busCondicionante = new CondicionanteBus(new CondicionanteValidar());
 
@@ -372,6 +375,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			_bus.Salvar(titulo);
+
+			if (Validacao.EhValido && titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
+				_busProjetoGeografico.GerarCroquiTitulo(projetoId, titulo.Id);
+			}
 
 			urlSucesso = Url.Action(acao, "Titulo", Validacao.QueryParamSerializer(new { acaoId = titulo.Id }));
 
