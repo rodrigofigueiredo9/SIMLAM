@@ -52,16 +52,16 @@
 		</div>
 	</div>
 
-	<div class="block descricaoFavoravel <%= !Model.IsVisualizar && !string.IsNullOrWhiteSpace(Model.Laudo.ParecerDescricao) ? "hide" : "" %>">
+	<div class="block descricaoFavoravel <%= string.IsNullOrWhiteSpace(Model.ParecerFavoravelLabel) ? "hide" : "" %>">
 		<div class="ultima">
-			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico Favorável a Exploração *</label><br />
+			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico Favorável a Exploração * <%= Model.ParecerFavoravelLabel %></label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
 		</div>
 	</div>
 
-	<div class="block descricaoDesfavoravel <%= !Model.IsVisualizar && !string.IsNullOrWhiteSpace(Model.Laudo.ParecerDescricaoDesfavoravel) ? "hide" : "" %>">
+	<div class="block descricaoDesfavoravel <%= string.IsNullOrWhiteSpace(Model.ParecerDesfavoravelLabel) ? "hide" : "" %>">
 		<div class="ultima">
-			<label for="Laudo_ParecerDescricaoDesfavoravel">Descrição do Parecer Técnico Desfavorável a Exploração *</label><br />
+			<label for="Laudo_ParecerDescricaoDesfavoravel">Descrição do Parecer Técnico Desfavorável a Exploração * <%= Model.ParecerDesfavoravelLabel %></label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricaoDesfavoravel", Model.Laudo.ParecerDescricaoDesfavoravel, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricaoDesfavoravel" }))%>
 		</div>
 	</div>

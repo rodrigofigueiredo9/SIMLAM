@@ -131,9 +131,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 				autorizacao.ExploracaoFlorestalPonto = exploracoes.Where(x => x.TipoExploracao == (int)eTipoExploracao.CAI).SelectMany(y => y.Exploracoes).Select(x => new ExploracaoFlorestalAutorizacaoDetalhePDF(x)).ToList();
 				autorizacao.TotalPonto = autorizacao.ExploracaoFlorestalPonto.Sum(x => Convert.ToDouble(string.IsNullOrWhiteSpace(x.QuantidadeArvores) ? "0" : x.QuantidadeArvores)).ToString("N2");
 				var produtos = exploracoes.SelectMany(x => x.Exploracoes).SelectMany(x => x.Produtos).Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
-				autorizacao.Produtos = produtos.GroupBy(x => new { x.Nome, x.Especie }, x => x.Quantidade, (key, g) => new ExploracaoFlorestalAutorizacaoProdutoPDF() {
+				autorizacao.Produtos = produtos.GroupBy(x => new { x.Nome, x.Especie, x.UnidadeMedida }, x => x.Quantidade, (key, g) => new ExploracaoFlorestalAutorizacaoProdutoPDF() {
 					Nome = key.Nome,
 					Especie = key.Especie,
+					UnidadeMedida = string.IsNullOrWhiteSpace(key.UnidadeMedida) ? "" : String.Concat("(", key.UnidadeMedida, ")"),
 					Quantidade = g.Sum(x => x)
 				}).ToList();
 
