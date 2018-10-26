@@ -22,10 +22,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		public ExploracaoFlorestalAutorizacaoPDF(ExploracaoFlorestal exploracaoFlorestal)
 		{
-			var exploracoesFirst = exploracaoFlorestal.Exploracoes.FirstOrDefault() ?? new ExploracaoFlorestalExploracao();
-			int auxFinalidades = (exploracoesFirst.FinalidadeExploracao.HasValue) ? exploracoesFirst.FinalidadeExploracao.Value : 0;
 			TipoExploracao = exploracaoFlorestal.TipoExploracaoTexto;
-			TotalPoligono = exploracaoFlorestal.Exploracoes.Sum(x => x.AreaCroqui).ToString();
+			TotalPoligono = exploracaoFlorestal.Exploracoes.Sum(x => x.AreaCroqui).ToString("N2");
+			Detalhe = exploracaoFlorestal.Exploracoes.Select(x => new ExploracaoFlorestalAutorizacaoDetalhePDF(x)).ToList();
 		}
 	}
 }

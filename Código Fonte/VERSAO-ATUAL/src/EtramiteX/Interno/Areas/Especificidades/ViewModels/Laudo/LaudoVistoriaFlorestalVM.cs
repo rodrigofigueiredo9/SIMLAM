@@ -95,6 +95,9 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo
 		private List<TituloExploracaoFlorestal> _exploracoes = new List<TituloExploracaoFlorestal>();
 		public List<TituloExploracaoFlorestal> Exploracoes { get { return _exploracoes; } set { _exploracoes = value; } }
 
+		public string ParecerFavoravelLabel { get; set; }
+		public string ParecerDesfavoravelLabel { get; set; }
+
 		public String Mensagens
 		{
 			get

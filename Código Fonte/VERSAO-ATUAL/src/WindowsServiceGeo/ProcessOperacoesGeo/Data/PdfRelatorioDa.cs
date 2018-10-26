@@ -100,7 +100,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			return result;
 		}
 
-		internal Hashtable BuscarDadosPDF(int ticketID, int ticketType)
+		internal Hashtable BuscarDadosPDF(int ticketID, int ticketType, int ticketStep)
 		{
 			Hashtable result = new Hashtable();
 			string strSQL;
@@ -445,7 +445,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
-
+				
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
@@ -813,6 +813,309 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 					}
 
 				}
+				#endregion
+			}
+			else if (ticketType == OperacoesGeoDa.OPERACAO_ATIVIDADE_TITULO)
+			{
+				#region Atividade por título
+				
+				int titulo;
+
+				strSQL = @"select titulo from tab_fila where projeto = :projeto and tipo = :tipo and etapa = :etapa and data_fim is null and rownum = 1";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo", ticketType, DbType.Int32);
+					comando.AdicionarParametroEntrada("etapa", ticketStep, DbType.Int32);
+
+					titulo = int.Parse(this.banco.ExecutarScalar(comando).ToString());
+				}
+
+				result["TITULO"] = titulo;
+
+				strSQL = @"	select t.nome apmp_nome,
+							(case t.tipo when 'M' then 'Matrícula'	when 'P' then 'Posse' else 'Desconhecido' end) apmp_tipo,
+							(select count(id) from geo_pativ g
+											inner join {0}CRT_EXP_FLORESTAL_GEO ge
+												on ge.GEO_PATIV_ID = g.id
+											inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
+												on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+											inner join {0}TAB_TITULO_EXP_FLORESTAL te
+												on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+										where g.projeto = :projeto and g.cod_apmp=t.id) pativ_quantidade,
+							(select	nvl(sum(p.comprimento), 0) from	geo_lativ p	where p.projeto =:projeto and p.cod_apmp = t.id) lativ_comprimento,
+							(select nvl(sum(g.area_m2), 0) from	geo_aativ g	
+											inner join {0}CRT_EXP_FLORESTAL_GEO ge
+												on ge.GEO_AATIV_ID = g.id 
+												inner join IDAF.TAB_TITULO_EXP_FLOR_EXP ted
+												on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+											inner join {0}TAB_TITULO_EXP_FLORESTAL te
+												on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+											where g.projeto =:projeto and g.cod_apmp=t.id) aativ_area_m2,
+							(select	nvl(sum(p.area_m2), 0) from	geo_aiativ p where	p.projeto =:projeto	and p.cod_apmp = t.id) aiativ_area_m2
+						from geo_apmp t,{0}crt_projeto_geo a,	{0}crt_projeto_geo b
+						where t.projeto = a.id and a.empreendimento = b.empreendimento	and b.id = :projeto
+						order by 1";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["QUADRO_TOTAL"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//----------------------------------------------------------------------
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.rocha, t.massa_dagua, 
+							t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app 
+							from geo_pativ t 
+							inner join {0}CRT_EXP_FLORESTAL_GEO ge
+									on ge.GEO_PATIV_ID = t.id
+							inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
+									on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+							inner join {0}TAB_TITULO_EXP_FLORESTAL te
+									on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+							where t.projeto=:projeto and te.titulo = :titulo order by 1";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					result["QUADRO_PATIV"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//coordenadas
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_pativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_PATIV"])
+					{
+						comando.SetarValorParametro("codigo", hs["CODIGO"]);
+						hs["ORDENADAS"] = this.banco.ExecutarList<Decimal>(comando);
+					}
+				}
+				//----------------------------------------------------------------------
+
+
+				//----------------------------------------------------------------------
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.comprimento, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from geo_lativ t where t.projeto=:projeto order by 1";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["QUADRO_LATIV"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//coordenadas
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_lativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_LATIV"])
+					{
+						comando.SetarValorParametro("codigo", hs["CODIGO"]);
+						hs["ORDENADAS"] = this.banco.ExecutarList<Decimal>(comando);
+					}
+				}
+				//----------------------------------------------------------------------
+
+
+				//----------------------------------------------------------------------
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.area_m2, t.rocha, 
+								t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app 
+								from geo_aativ t
+								inner join {0}CRT_EXP_FLORESTAL_GEO ge
+									on ge.GEO_AATIV_ID = t.id 
+								inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
+									on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+								inner join {0}TAB_TITULO_EXP_FLORESTAL te
+									on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+							   where t.projeto= :projeto and te.titulo = :titulo order by 1";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					result["QUADRO_AATIV"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//coordenadas
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_aativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_AATIV"])
+					{
+						comando.SetarValorParametro("codigo", hs["CODIGO"]);
+						hs["ORDENADAS"] = this.banco.ExecutarList<Decimal>(comando);
+					}
+				}
+				//----------------------------------------------------------------------
+
+
+				//----------------------------------------------------------------------
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from geo_aiativ t where t.projeto=:projeto order by 1";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["QUADRO_AIATIV"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//coordenadas
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_aiativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_AIATIV"])
+					{
+						comando.SetarValorParametro("codigo", hs["CODIGO"]);
+						hs["ORDENADAS"] = this.banco.ExecutarList<Decimal>(comando);
+					}
+				}
+				//----------------------------------------------------------------------
+
+
+				strSQL = @"select 
+                                p.empreendimento, 
+                                (select a.texto from {0}lov_crt_projeto_geo_nivel a where a.id = p.nivel_precisao) precisao, 
+                                (select a.sigla from {0}lov_estado a where a.id=t.estado) uf, 
+                                (select a.texto from {0}lov_municipio a where a.id=t.municipio) municipio,
+                                (select a.texto from {0}lov_caracterizacao_tipo a where a.id=p.caracterizacao) atividade,
+                                (select a.id from {0}crt_projeto_geo a where a.empreendimento=p.empreendimento and a.caracterizacao=1) dominialidade,
+                                (select round(a.geometry.sdo_point.x) ||';'|| round(a.geometry.sdo_point.y) from geo_emp_localizacao a where a.empreendimento=p.empreendimento) coordenada,
+								(select sdo_geom.sdo_length(a.geometry, 0.0001) from tmp_atp a where a.projeto=p.id) atp_perimetro  
+                            from 
+                                {0}crt_projeto_geo p, 
+                                {0}tab_empreendimento_endereco t 
+                            where 
+                                p.id=:projeto and 
+                                p.empreendimento=t.empreendimento(+) and
+                                t.correspondencia(+)=0";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					using (IDataReader reader = banco.ExecutarReader(comando))
+					{
+						while (reader.Read())
+						{
+							result["EMPREENDIMENTO"] = reader["empreendimento"];
+							result["PRECISAO"] = reader["precisao"];
+							result["MUNICIPIO"] = (reader["municipio"] is DBNull) ? "" : reader["municipio"].ToString();
+							result["ATIVIDADE"] = (reader["atividade"] is DBNull) ? "" : reader["atividade"].ToString();
+							result["DOMINIALIDADE"] = reader["dominialidade"];
+							result["UF"] = (reader["uf"] is DBNull) ? "" : reader["uf"].ToString();
+							result["COORDENADA"] = reader["coordenada"];
+							result["ATP_PERIMETRO"] = reader["ATP_PERIMETRO"];
+						}
+
+						reader.Close();
+					}
+
+				}
+
+				strSQL = @"select id from idafgeo.geo_pativ g where exists
+							(
+								select 1 from idaf.CRT_EXP_FLORESTAL_GEO ge
+								where ge.GEO_PATIV_ID = g.id
+								and exists
+								(
+									select 1 from idaf.TAB_TITULO_EXP_FLOR_EXP ted
+									where ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+									and exists
+									(
+										select 1 from idaf.TAB_TITULO_EXP_FLORESTAL te
+										where te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+										and te.TITULO = :titulo
+									)
+								)
+							)";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				ArrayList idsList = new ArrayList();
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					using (IDataReader reader = banco.ExecutarReader(comando))
+					{
+						while (reader.Read())
+						{
+							idsList.Add(reader["id"]);
+						}
+
+						if (idsList.Count > 0)
+							result["PATIV"] = string.Join(",", idsList.ToArray());
+
+						reader.Close();
+					}
+				}
+
+				strSQL = @"select id from idafgeo.geo_aativ g where exists
+							(
+								select 1 from idaf.CRT_EXP_FLORESTAL_GEO ge
+								where ge.GEO_AATIV_ID = g.id
+								and exists
+								(
+									select 1 from idaf.TAB_TITULO_EXP_FLOR_EXP ted
+									where ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+									and exists
+									(
+										select 1 from idaf.TAB_TITULO_EXP_FLORESTAL te
+										where te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+										and te.TITULO = :titulo
+									)
+								)
+							)";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				idsList = new ArrayList();
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					using (IDataReader reader = banco.ExecutarReader(comando))
+					{
+						while (reader.Read())
+						{
+							idsList.Add(reader["id"]);
+						}
+
+						if(idsList.Count > 0)
+							result["AATIV"] = string.Join(",", idsList.ToArray());
+
+						reader.Close();
+					}
+				}
+
 				#endregion
 			}
 

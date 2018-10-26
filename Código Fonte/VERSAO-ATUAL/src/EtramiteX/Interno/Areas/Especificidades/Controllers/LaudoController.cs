@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -212,6 +213,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				vm.Atividades.Atividades = titulo.Atividades;
 				vm.Exploracoes = titulo.Exploracoes;
+
+				var parecerFavoravel = new ArrayList();
+				var parecerDesfavoravel = new ArrayList();
+				foreach (var exploracao in exploracoesLst)
+				{
+					if (exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true)?.ToList().Count > 0)
+						parecerFavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true).Select(x => x.Identificacao)?.ToList()), ")"));
+					if (exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false)?.ToList().Count > 0)
+						parecerDesfavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false).Select(x => x.Identificacao)?.ToList()), ")"));
+				}
+				vm.ParecerFavoravelLabel = parecerFavoravel.Count > 0 ? String.Join(", ", parecerFavoravel?.ToArray()) : "";
+				vm.ParecerDesfavoravelLabel = parecerDesfavoravel.Count > 0 ? String.Join(", ", parecerDesfavoravel?.ToArray()) : "";
 			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
