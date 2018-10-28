@@ -153,15 +153,16 @@ TituloAlterarSituacao = {
 						var data = JSON.parse(XMLHttpRequest.response);
 						console.log(data);
 						var msg = "";
-						if (data.message.length > 0) {
+						if (typeof (data.message) == "string") {
+							msg = data.message;
+						}
+						else {
 							if (data.message[0].description) {
 								msg = data.message[0].description[0];
 							} else {
 								msg = data.message[0];
 							}
 						}
-						else
-							msg = data.message;
 						ExibirMensagemValidacao(msg);
 					}
 				}

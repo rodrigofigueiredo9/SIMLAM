@@ -1012,7 +1012,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (!Convert.IsDBNull(reader["data_cadastro"]))
 							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_cadastro"]) };
 						if (!Convert.IsDBNull(reader["data_conclusao"]))
-							caracterizacao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
+							caracterizacao.DataConclusao = new DateTecno() { Data = Convert.ToDateTime(reader["data_conclusao"]) };
 
 						lista.Itens.Add(caracterizacao);
 					}

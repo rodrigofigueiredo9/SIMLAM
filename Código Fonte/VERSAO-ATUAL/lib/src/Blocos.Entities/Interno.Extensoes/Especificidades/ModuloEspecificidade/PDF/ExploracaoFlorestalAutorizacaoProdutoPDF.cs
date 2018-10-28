@@ -16,7 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			get
 			{
-				return (Quantidade <= 0) ? " - " : Quantidade.ToString();
+				return (Quantidade <= 0) ? " - " : Quantidade.ToString("N2");
 			}
 		}
 
