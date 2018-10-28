@@ -132,7 +132,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 		{
 			get
 			{
-				return ReservasLegais.Sum(y => y.ARLCroquiDecimal);
+				return ReservasLegais
+					.Where(x => x.SituacaoVegetalId == (int)eReservaLegalSituacaoVegetal.EmUso)
+					.Sum(y => y.ARLCroquiDecimal);
 			}
 		}
 
