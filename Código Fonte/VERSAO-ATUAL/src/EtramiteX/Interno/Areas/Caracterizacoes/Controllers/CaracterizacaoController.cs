@@ -132,6 +132,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
                 Caracterizacao cadastrada = cadastradas.FirstOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
 				x.ProjetoGeograficoId = cadastrada.ProjetoId;
+				if(cadastrada.ProjetoId == 0 && cadastrada.Tipo == eCaracterizacao.ExploracaoFlorestal)
+					x.ProjetoGeograficoId = cadastrada.ProjetoRascunhoId;
 				x.DscLicAtividadeId = cadastrada.DscLicAtividadeId;
 
 				x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());

@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys;
 		DocumentoValidar _validar = new DocumentoValidar();
 		ProtocoloDa _da = new ProtocoloDa();
-		PessoaBus _busPessoa = new PessoaBus(new PessoaValidar());		
+		PessoaBus _busPessoa = new PessoaBus(new PessoaValidar());
 		ChecagemRoteiroBus _busCheckList = new ChecagemRoteiroBus();
 		RequerimentoBus _busRequerimento = new RequerimentoBus(new RequerimentoValidar());
 		FiscalizacaoBus _busFiscalizacao;
@@ -185,7 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 									titulo.DataEncerramento.Data = DateTime.Now;
 									titulo.MotivoEncerramentoId = 7;//Encerrado
 									TituloSituacaoBus tituloSituacaoBus = new TituloSituacaoBus();
-									tituloSituacaoBus.AlterarSituacao(titulo, (int)eAlterarSituacaoAcao.Cancelar, bancoDeDados);
+									tituloSituacaoBus.AlterarSituacao(titulo, (int)eAlterarSituacaoAcao.Encerrar, bancoDeDados);
 
 									if (Validacao.EhValido)
 									{
@@ -762,7 +762,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 		}
 
 		public string VerificarDocumentoJuntadoNumero(int protocolo)
-		{			
+		{
 			ProtocoloNumero retorno = _da.VerificarProtocoloAssociado(protocolo);
 			if (retorno != null)
 			{

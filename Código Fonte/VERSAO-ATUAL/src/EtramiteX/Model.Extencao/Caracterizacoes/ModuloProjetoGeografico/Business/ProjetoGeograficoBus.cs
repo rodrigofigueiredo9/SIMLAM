@@ -252,7 +252,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 		public ArquivoProjeto GerarCroquiTitulo(int projetoId, int tituloId, BancoDeDados banco = null)
 		{
-			var arquivoEnviado = new ArquivoProjeto() {
+			var arquivoEnviado = new ArquivoProjeto()
+			{
 				ProjetoId = projetoId,
 				FilaTipo = (int)eFilaTipoGeo.AtividadeTitulo,
 				Mecanismo = (int)eProjetoGeograficoMecanismo.Desenhador,
@@ -270,13 +271,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					arquivoEnviado.IdRelacionamento = _da.ExisteArquivoFila(arquivoEnviado);
 
 					if (arquivoEnviado.IdRelacionamento == 0)
+					{
 						_da.InserirFila(arquivoEnviado, bancoDeDados);
-					else
-						_da.AlterarSituacaoFila(arquivoEnviado, bancoDeDados);
 
-					ObterSituacao(arquivoEnviado);
+						ObterSituacao(arquivoEnviado);
 
-					bancoDeDados.Commit();
+						bancoDeDados.Commit();
+					}
 				}
 			}
 			catch (Exception exc)
@@ -1040,7 +1041,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				//teste
 				//urlGeoBasesWebService = "http://localhost:33716/Topologia/Relacao";
 
-				List<string> feicoes = new List<string>(){			
+				List<string> feicoes = new List<string>(){
 					"HID_BACIA_HIDROGRAFICA","LIM_TERRA_INDIGENA","LIM_UNIDADE_PROTECAO_INTEGRAL","LIM_UNIDADE_CONSERV_NAO_SNUC","LIM_OUTRAS_UNID_PROTEGIDAS","LIM_UNIDADE_USO_SUSTENTAVEL"
 				};
 
@@ -1111,5 +1112,5 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 			return false;
 		}
-    }
+	}
 }
