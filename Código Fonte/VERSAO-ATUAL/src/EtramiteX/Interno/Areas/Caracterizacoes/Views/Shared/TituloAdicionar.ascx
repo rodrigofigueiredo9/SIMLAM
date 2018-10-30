@@ -54,11 +54,11 @@
 			<% } %>
 
 			<div class="coluna19 append1">
-				<label for="ProtocoloRenovacaoData_DataTexto">Data da renovação</label>
+				<label for="ProtocoloRenovacaoData_DataTexto">Data do protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoData.DataTexto" + indice, Model.Finalidade.ProtocoloRenovacaoData.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtProtocoloRenovacaoData" }))%>
 			</div>
 			<div class="coluna22">
-				<label for="ProtocoloRenovacaoNumero">Nº protocolo renovação</label>
+				<label for="ProtocoloRenovacaoNumero">Nº protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoNumero" + indice, Model.Finalidade.ProtocoloRenovacaoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "12", @class = "text txtProtocoloRenovacaoNumero" }))%>
 			</div>
 		</div>
