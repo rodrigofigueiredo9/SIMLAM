@@ -160,9 +160,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 					itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal»"));
 				}
 
-				if (autorizacao.ExploracaoFlorestalPonto.Count <= 0)
+				if (autorizacao.Anexos.Count <= 0)
 				{
-					itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestalPonto»"));
+					doc.FindTable("«TableStart:Anexos»").RemovePageBreakAnterior();
+					itenRemover.Add(doc.FindTable("«TableStart:Anexos»"));
 				}
 
 				AsposeExtensoes.RemoveTables(itenRemover);

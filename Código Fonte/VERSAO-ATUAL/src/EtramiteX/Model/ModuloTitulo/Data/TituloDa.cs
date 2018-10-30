@@ -1175,11 +1175,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				comandtxt = String.Format(@"
 				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
-					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
+					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is null " + comandtxt +
 				@" union all 
 				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
-					modelo_id, modelo_nome, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
+					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a " + DaHelper.Ordenar(colunas, ordenar) + ") where rnum <= :maior and rnum >= :menor";
@@ -1202,6 +1202,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						titulo.Modelo.Id = reader.GetValue<int>("modelo_id");
 						titulo.Modelo.Sigla = reader.GetValue<string>("modelo_sigla");
 						titulo.Modelo.Nome = reader.GetValue<string>("modelo_nome");
+						titulo.Modelo.Codigo = reader.GetValue<int>("modelo_codigo");
 						titulo.Situacao.Id = reader.GetValue<int>("situacao_id");
 						titulo.Situacao.Nome = reader.GetValue<string>("situacao_texto");
 						titulo.EmpreendimentoCodigo = reader.GetValue<long>("empreendimento_codigo");
@@ -1218,7 +1219,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							titulo.Protocolo.Ano = prot.Ano;
 						}
 						if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido && titulo.DataVencimento?.Data < DateTime.Now.Date)
-							titulo.Situacao.Nome = "Vencido";
+						{
+							if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+								titulo.Situacao.Nome = "Vencido";
+						}
 						retorno.Itens.Add(titulo);
 					}
 
@@ -2378,7 +2382,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, b.nome, b.extensao, b.id arquivo_id, b.caminho,
+				Comando comando = bancoDeDados.CriarComando(@"select a.id, a.ordem, a.descricao, a.croqui, b.nome, b.extensao, b.id arquivo_id, b.caminho,
 				a.tid from {0}tab_titulo_arquivo a, {0}tab_arquivo b where a.arquivo = b.id and a.titulo = :titulo order by a.ordem", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo);
@@ -2394,6 +2398,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						anexo.Id = Convert.ToInt32(reader["id"]);
 						anexo.Ordem = Convert.ToInt32(reader["ordem"]);
 						anexo.Descricao = reader["descricao"].ToString();
+						anexo.Croqui = Convert.ToBoolean(Convert.IsDBNull(reader["croqui"]) ? false : reader["croqui"]);
 
 						anexo.Arquivo.Id = Convert.ToInt32(reader["arquivo_id"]);
 						anexo.Arquivo.Caminho = reader["caminho"].ToString();

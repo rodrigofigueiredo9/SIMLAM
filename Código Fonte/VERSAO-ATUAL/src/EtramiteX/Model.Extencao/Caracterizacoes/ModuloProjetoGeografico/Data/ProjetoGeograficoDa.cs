@@ -625,11 +625,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				#region Alterar situação do Título
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_arquivo a (id, titulo, arquivo, ordem, descricao, tid) 
-							values ({0}seq_titulo_arquivo.nextval, :titulo, :arquivo, nvl((select count(*) from {0}tab_titulo_arquivo t where t.titulo = :titulo), 0), 'Croqui', :tid)", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_arquivo a (id, titulo, arquivo, ordem, descricao, croqui, tid) 
+							select {0}seq_titulo_arquivo.nextval, :titulo, :arquivo, nvl((select count(*) from {0}tab_titulo_arquivo t where t.titulo = :titulo), 0), 'Croqui', :croqui, :tid from dual
+							where not exists (select 1 from {0}tab_titulo_arquivo t where t.titulo = :titulo and t.croqui = :croqui)", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("arquivo", arquivo, DbType.Int32);
+				comando.AdicionarParametroEntrada("croqui", true, DbType.Boolean);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -1665,10 +1667,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}tab_fila t where t.projeto = :projeto and t.tipo = :tipo", EsquemaBancoGeo);
+				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}tab_fila t where t.projeto = :projeto and t.tipo = :tipo and t.titulo = :titulo", EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", arquivo.ProjetoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo", arquivo.FilaTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", arquivo.TituloId, DbType.Int32);
 
 				object valor = bancoDeDados.ExecutarScalar(comando);
 

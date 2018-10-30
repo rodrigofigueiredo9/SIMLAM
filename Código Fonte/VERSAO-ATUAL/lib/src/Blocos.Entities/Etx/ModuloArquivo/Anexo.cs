@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Etx.ModuloArquivo
 		public int Ordem { get; set; }
 		public int SituacaoId { get; set; }
 		public String SituacaoTexto { get; set; }
+		public bool Croqui { get; set; }
 
 		private Arquivo.Arquivo _arquivo = new Arquivo.Arquivo();
 		public Arquivo.Arquivo Arquivo

@@ -284,7 +284,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+					#endregion
 			}
 
 			#endregion
@@ -816,7 +816,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						eAcao = eHistoricoAcao.prorrogar;
 						break;
 
-					case eAlterarSituacaoAcao.Cancelar:
+					case eAlterarSituacaoAcao.Encerrar:
 						eAcao = eHistoricoAcao.encerrar;
 						break;
 
@@ -900,7 +900,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					situacao.Id = 6;//Prorrogado
 					break;
 
-				case eAlterarSituacaoAcao.Cancelar:
+				case eAlterarSituacaoAcao.Encerrar:
 					situacao.Id = 5;//Encerrado
 					break;
 
@@ -942,8 +942,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.CancelarEmissao).Mostrar = User.IsInRole(ePermissao.TituloCancelarEmissao.ToString());
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Assinar).Mostrar = User.IsInRole(ePermissao.TituloAssinar.ToString());
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Prorrogar).Mostrar = User.IsInRole(ePermissao.TituloProrrogar.ToString());
-			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Cancelar).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString());
-			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString());
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Encerrar).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString());
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString()) &&
+				(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Mostrar = permicaoAcaoConcluir;
 
 			//Habilitar Radio
@@ -951,8 +952,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.CancelarEmissao).Habilitado = (titulo.Situacao.Id == 2);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Assinar).Habilitado = !concluir && (titulo.Situacao.Id == 2);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Prorrogar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id) && titulo.Modelo.Regra(eRegra.Prazo);
-			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Cancelar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id);
-			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id);
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Encerrar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id);
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id) &&
+				(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Habilitado = concluir;
 
 			return acoes;

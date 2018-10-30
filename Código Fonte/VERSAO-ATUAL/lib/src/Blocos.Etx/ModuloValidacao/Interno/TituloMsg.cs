@@ -151,7 +151,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() {  Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não é possivel excluir o título pois o "+ (isProcesso?"processo":"documento")+" número: {0} não está em sua posse.", numero) };
 		}
 
-
+		public Mensagem CroquiNaoGerado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O croqui das caracterizações relacionadas a este título ainda não foi gerado. Por favor aguarde alguns minutos e tente novamente." }; } }
 
 
 		public Mensagem RequerimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Requerimento", Texto = "Requerimento do título é obrigatório." }; } }

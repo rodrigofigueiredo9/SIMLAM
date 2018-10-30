@@ -12,6 +12,8 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -28,6 +30,7 @@ using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
@@ -49,6 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		TituloDa _da = new TituloDa();
 		CondicionanteDa _daCond = new CondicionanteDa();
 		TituloModeloBus _busModelo = new TituloModeloBus(null);
+		ProjetoGeograficoBus _busProjetoGeografico = new ProjetoGeograficoBus();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 
 		ProtocoloBus _busProtocolo = new ProtocoloBus();
@@ -281,6 +285,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				return null;
 			}
 
+			if((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
+				titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) &&
+				!titulo.Anexos.Exists(x => x.Croqui == true))
+			{
+				this.AnexarCroqui(titulo);
+				Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+				return null;
+			}
+
 			if (titulo.ArquivoPdf.Id > 0)
 			{
 				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
@@ -431,6 +444,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return msPdf;
 		}
 
+		public void AnexarCroqui(Titulo titulo, BancoDeDados banco = null)
+		{
+			var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+				_busProjetoGeografico.GerarCroquiTitulo(projetoId, titulo.Id, banco);
+			else if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+			{
+				var projeto = _busProjetoGeografico.ObterProjeto(projetoId);
+				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+				if (croqui?.Id > 0)
+					_busProjetoGeografico.AnexarCroqui(titulo.Id, croqui.Id.GetValueOrDefault(0), banco);
+			}
+		}
 		#endregion
 
 		#region Obter / Filtrar

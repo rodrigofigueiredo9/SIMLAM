@@ -145,15 +145,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
 					_projetoGeoBus.SalvarSobreposicoes(projeto);
 					_projetoGeoBus.Finalizar(projeto, banco);
-					if (!Validacao.EhValido) return;
-					_projetoGeoBus.ExcluirRascunho(projeto, banco);
+					if (Validacao.EhValido)
+						_projetoGeoBus.ExcluirRascunho(projeto, banco);
 				}
 
 				if(!Validacao.EhValido) return;
-
-				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
-				if(croqui?.Id > 0)
-					_projetoGeoBus.AnexarCroqui(titulo, croqui.Id.GetValueOrDefault(0), banco);
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{

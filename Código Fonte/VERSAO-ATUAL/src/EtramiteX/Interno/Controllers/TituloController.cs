@@ -28,6 +28,7 @@ using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -368,19 +369,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				{
 					TituloCondicionante condicionante = ViewModelHelper.JsSerializer.Deserialize<TituloCondicionante>(condicionanteJson);
 					if (condicionante != null)
-					{
 						titulo.Condicionantes.Add(condicionante);
-					}
 				}
 			}
 
 			_bus.Salvar(titulo);
 
-			if (Validacao.EhValido && titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
-			{
-				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
-				_busProjetoGeografico.GerarCroquiTitulo(projetoId, titulo.Id);
-			}
+			if (Validacao.EhValido)
+				_bus.AnexarCroqui(titulo);
 
 			urlSucesso = Url.Action(acao, "Titulo", Validacao.QueryParamSerializer(new { acaoId = titulo.Id }));
 
@@ -1018,7 +1014,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
 			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
-			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Cancelar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
 
 			_tituloSituacaoBus.AlterarSituacao(tituloAtual, acao, gerouPdf);
 
@@ -1316,20 +1312,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			try
 			{
 				Arquivo arquivo = _bus.GerarPdf(id);
-				arquivo.Nome = arquivo.Nome.RemoverAcentos() + ".pdf";
+				if(arquivo != null)
+					arquivo.Nome = arquivo.Nome.RemoverAcentos() + ".pdf";
 
 				Titulo titulo = _bus.ObterSimplificado(id);
 				titulo.Modelo = _bus.ObterModelo(titulo.Modelo.Id);
 
 				if (titulo.Modelo.Codigo == 19 || titulo.Modelo.Codigo == 20)
-				{
 					return GerarPDF(titulo.Modelo.Codigo.GetValueOrDefault(0), arquivo);
-				}
 
 				if (arquivo != null && Validacao.EhValido)
-				{
 					return ViewModelHelper.GerarArquivo(arquivo, dataHoraControleAcesso: true);
-				}
 			}
 			catch (Exception exc)
 			{

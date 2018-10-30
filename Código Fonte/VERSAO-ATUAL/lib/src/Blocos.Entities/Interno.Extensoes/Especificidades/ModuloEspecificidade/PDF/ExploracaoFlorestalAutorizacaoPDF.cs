@@ -10,6 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 	{
 		public String TipoExploracao { set; get; }
 		public String TotalPoligono { set; get; }
+		public String UnidadeMedida { set; get; }
 
 		private List<ExploracaoFlorestalAutorizacaoDetalhePDF> _detalhe = new List<ExploracaoFlorestalAutorizacaoDetalhePDF>();
 		public List<ExploracaoFlorestalAutorizacaoDetalhePDF> Detalhe
@@ -45,6 +46,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 						AreaCroquiDecimal = g.Sum(x => x)
 					}).ToList();
 			}
+			UnidadeMedida = Detalhe?.FirstOrDefault().UnidadeMedida;
 		}
 	}
 }
