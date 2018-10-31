@@ -1667,11 +1667,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}tab_fila t where t.projeto = :projeto and t.tipo = :tipo and t.titulo = :titulo", EsquemaBancoGeo);
+				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}tab_fila t where t.projeto = :projeto and t.tipo = :tipo and rownum = 1" + (arquivo.TituloId > 0 ? " and t.titulo = :titulo" : ""),
+					EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", arquivo.ProjetoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo", arquivo.FilaTipo, DbType.Int32);
-				comando.AdicionarParametroEntrada("titulo", arquivo.TituloId, DbType.Int32);
+				if(arquivo.TituloId > 0)
+					comando.AdicionarParametroEntrada("titulo", arquivo.TituloId, DbType.Int32);
 
 				object valor = bancoDeDados.ExecutarScalar(comando);
 
