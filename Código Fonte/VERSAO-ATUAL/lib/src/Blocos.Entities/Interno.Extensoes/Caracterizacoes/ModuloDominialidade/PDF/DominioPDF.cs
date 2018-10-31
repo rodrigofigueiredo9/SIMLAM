@@ -116,6 +116,28 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 			}
 		}
 
+		public String ReservasAreaRLUCroqui { get { return ReservasAreaRLUCroquiDecimal.ToStringTrunc(); } }
+		public String ReservasAreaRLUCroquiHa
+		{
+			get
+			{
+				if (ReservasAreaRLUCroquiDecimal == 0)
+				{
+					return "0";
+				}
+				return ReservasAreaRLUCroquiDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
+			}
+		}
+		public Decimal ReservasAreaRLUCroquiDecimal
+		{
+			get
+			{
+				return ReservasLegais
+					.Where(x => x.SituacaoVegetalId == (int)eReservaLegalSituacaoVegetal.EmUso)
+					.Sum(y => y.ARLCroquiDecimal);
+			}
+		}
+
 		#region Valores em Hectares
 
 		public String AreaCroquiHa

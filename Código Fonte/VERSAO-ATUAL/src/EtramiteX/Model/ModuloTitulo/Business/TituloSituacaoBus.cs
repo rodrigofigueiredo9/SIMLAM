@@ -25,6 +25,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAnaliseItens.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
@@ -48,6 +49,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		TituloModeloBus _busModelo = new TituloModeloBus(new TituloModeloValidacao());
 		CondicionanteDa _daCondicionante = new CondicionanteDa();
 		CARSolicitacaoBus _busCARSolicitacao = new CARSolicitacaoBus();
+		ExploracaoFlorestalBus _busExploracao = new ExploracaoFlorestalBus();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 
@@ -272,6 +274,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					break;
 
 				#endregion
+
+				#region 11 - Suspenso
+
+				case eTituloSituacao.Suspenso:
+					if (titulo.Modelo.Regra(eRegra.Condicionantes))
+					{
+						novaSituacaoCondicionante = 11;
+					}
+					break;
+
+					#endregion
 			}
 
 			#endregion
@@ -744,6 +757,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				#endregion
 
+				#region Explorações
+				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+				{
+					if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido)
+						_busExploracao.FinalizarExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), titulo.Id, banco);
+				}
+
+				#endregion Explorações
+
 				if (!Validacao.EhValido)
 				{
 					bancoDeDados.Rollback();
@@ -886,6 +908,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				case eAlterarSituacaoAcao.Concluir:
 					situacao.Id = 3;//Concluido
 					break;
+				case eAlterarSituacaoAcao.Suspender:
+					situacao.Id = 11; //Suspenso
+					break;
 			}
 
 			situacao.Nome = _busLista.TituloSituacoes.SingleOrDefault(x => x.Id == situacao.Id).Texto;
@@ -918,6 +943,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Assinar).Mostrar = User.IsInRole(ePermissao.TituloAssinar.ToString());
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Prorrogar).Mostrar = User.IsInRole(ePermissao.TituloProrrogar.ToString());
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Encerrar).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString());
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Mostrar = User.IsInRole(ePermissao.TituloEncerrar.ToString()) &&
+				(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Mostrar = permicaoAcaoConcluir;
 
 			//Habilitar Radio
@@ -926,6 +953,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Assinar).Habilitado = !concluir && (titulo.Situacao.Id == 2);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Prorrogar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id) && titulo.Modelo.Regra(eRegra.Prazo);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Encerrar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id);
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Suspender).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id) &&
+				(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Habilitado = concluir;
 
 			return acoes;

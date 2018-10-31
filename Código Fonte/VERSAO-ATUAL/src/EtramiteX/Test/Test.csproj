@@ -130,6 +130,10 @@
       <Project>{7f61f31e-9dc8-4b3e-b372-3a7d4ab889b2}</Project>
       <Name>Interno</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Model.Extencao\Interno.Model.Extensoes.csproj">
+      <Project>{F7BAF119-128E-4151-89B3-35F1367ADD15}</Project>
+      <Name>Interno.Model.Extensoes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
       <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>
       <Name>Interno.Model</Name>

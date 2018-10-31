@@ -24,6 +24,8 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.D
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using System.Collections;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.Business
 {
@@ -117,6 +119,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				#region Anexos
 
+				laudo.AnexosPdfs = laudo.Anexos
+					.Select(x => x.Arquivo)
+					.Where(x => (!String.IsNullOrEmpty(x.Nome) && new FileInfo(x.Nome).Extension.ToLower().IndexOf("pdf") > -1)).ToList();
+
+				laudo.Anexos.RemoveAll(anexo =>
+					String.IsNullOrEmpty(anexo.Arquivo.Extensao) ||
+					!((new[] { ".jpg", ".gif", ".png", ".bmp" }).Any(x => anexo.Arquivo.Extensao.ToLower() == x)));
+
 				if (laudo.Anexos != null && laudo.Anexos.Count>0)
 				{
 					foreach (AnexoPDF anexo in laudo.Anexos)
@@ -131,8 +141,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				laudo.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
-				laudo.ExploracaoFlorestal = new ExploracaoFlorestalPDF(new ExploracaoFlorestalBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-				
+				var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, (int)eTituloModeloCodigo.LaudoVistoriaFlorestal);
+				laudo.ExploracaoFlorestal = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
+				var parecerFavoravel = new ArrayList();
+				var parecerDesfavoravel = new ArrayList();
+				foreach(var exploracao in exploracoes)
+				{
+					if(exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true)?.ToList().Count > 0)
+						parecerFavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true).Select(x => x.Identificacao)?.ToList()), ")"));
+					if(exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false)?.ToList().Count > 0)
+						parecerDesfavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false).Select(x => x.Identificacao)?.ToList()), ")"));
+				}
+				laudo.ParecerFavoravel = parecerFavoravel.Count > 0 ? String.Join(", ", parecerFavoravel?.ToArray()) : "";
+				laudo.ParecerDesfavoravel = parecerDesfavoravel.Count > 0 ? String.Join(", ", parecerDesfavoravel?.ToArray()) : "";
 				laudo.QueimaControlada = new QueimaControladaPDF(new QueimaControladaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
 				laudo.Silvicultura = new SilviculturaPDF(new SilviculturaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
@@ -176,14 +197,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
 				{
-					if (laudo.ExploracaoFlorestal.CorteRasoExploracoes.Count <= 0)
+					if (laudo.ExploracaoFlorestal.Count <= 0)
 					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteRaso"));
-					}
-
-					if (laudo.ExploracaoFlorestal.CorteSeletivoExploracoes.Count <= 0)
-					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteSele"));
+						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal"));
 					}
 
 					itenRemover.Add(doc.LastTable("«TableStart:QueimaControlada.QueimasContr"));
@@ -264,39 +280,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			}
 
 			return null;
-		}
-
-		public List<CaracterizacaoLst> ObterCaracterizacoes(int empreendimento)
-		{
-			List<CaracterizacaoLst> caracterizacoesRetorno = new List<CaracterizacaoLst>();
-			List<CaracterizacaoLst> caracterizacoes = _caracterizacaoConfig.Obter<List<CaracterizacaoLst>>(ConfiguracaoCaracterizacao.KeyCaracterizacoes);
-			caracterizacoes = caracterizacoes.Where(x => x.Id == (int)eCaracterizacao.ExploracaoFlorestal || x.Id == (int)eCaracterizacao.QueimaControlada || x.Id == (int)eCaracterizacao.Silvicultura).ToList();
-			int caracterizacao = 0;
-
-			CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-			CaracterizacaoValidar caracterizacaoValidar = new CaracterizacaoValidar();
-
-			foreach (CaracterizacaoLst item in caracterizacoes)
-			{
-				caracterizacao = caracterizacaoBus.Existe(empreendimento, (eCaracterizacao)item.Id);
-
-				if (caracterizacao <= 0)
-				{
-					continue;
-				}
-
-				List<Dependencia> dependencias = caracterizacaoBus.ObterDependencias(caracterizacao, (eCaracterizacao)item.Id, eCaracterizacaoDependenciaTipo.Caracterizacao);
-				string retorno = caracterizacaoValidar.DependenciasAlteradas(empreendimento, item.Id, eCaracterizacaoDependenciaTipo.Caracterizacao, dependencias);
-
-				if (!string.IsNullOrEmpty(retorno))
-				{
-					continue;
-				}
-
-				caracterizacoesRetorno.Add(item);
-			}
-
-			return caracterizacoesRetorno;
 		}
 
 		public static List<string> ObterFinalidades(int? finalidades)

@@ -176,7 +176,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 			}
 		}
 
-		internal void AtualizarDependentes(int dependenciaID, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo eCaracterizacaoDependenciaTipo, string dependenciaTID, BancoDeDados banco)
+		public void AtualizarDependentes(int dependenciaID, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo eCaracterizacaoDependenciaTipo, string dependenciaTID, BancoDeDados banco = null)
 		{
 			_da.AtualizarDependentes(dependenciaID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo, dependenciaTID, banco);
 		}
@@ -461,7 +461,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 		{
 			List<Caracterizacao> caracterizacoes = ObterCaracterizacoesEmpreendimento(empreendimento);
 
-			return (caracterizacoes.SingleOrDefault(x => x.Tipo == caracterizacaoTipo) ?? new Caracterizacao()).Id;
+			return (caracterizacoes.OrderByDescending(x => x.Id).FirstOrDefault(x => x.Tipo == caracterizacaoTipo) ?? new Caracterizacao()).Id;
 		}
 
 		public List<CaracterizacaoLst> ObterCaracterizacoes(int projetoDigitalId)

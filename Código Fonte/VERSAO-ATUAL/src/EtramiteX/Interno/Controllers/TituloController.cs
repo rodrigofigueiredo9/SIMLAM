@@ -26,6 +26,9 @@ using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloTitulo.Pdf;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -43,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		TituloSituacaoBus _tituloSituacaoBus = new TituloSituacaoBus(new TituloSituacaoValidar());
 		AtividadeBus _busAtividade = new AtividadeBus();
 		CARSolicitacaoBus _busCar = new CARSolicitacaoBus();
+		ProjetoGeograficoBus _busProjetoGeografico = new ProjetoGeograficoBus();
 
 		CondicionanteBus _busCondicionante = new CondicionanteBus(new CondicionanteValidar());
 
@@ -365,13 +369,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				{
 					TituloCondicionante condicionante = ViewModelHelper.JsSerializer.Deserialize<TituloCondicionante>(condicionanteJson);
 					if (condicionante != null)
-					{
 						titulo.Condicionantes.Add(condicionante);
-					}
 				}
 			}
 
 			_bus.Salvar(titulo);
+
+			if (Validacao.EhValido)
+				_bus.AnexarCroqui(titulo);
 
 			urlSucesso = Url.Action(acao, "Titulo", Validacao.QueryParamSerializer(new { acaoId = titulo.Id }));
 
@@ -964,7 +969,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			titulo.Modelo = _busModelo.Obter(titulo.Modelo.Id);
 
-			AlterarSituacaoVM vm = new AlterarSituacaoVM(_busLista.MotivosEncerramento, titulo);
+			var busCar = new CARSolicitacaoBus();
+			var codigoSicar = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal ? busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0)) : "";
+			AlterarSituacaoVM vm = new AlterarSituacaoVM(_busLista.MotivosEncerramento, titulo, codigoSicar: codigoSicar);
 			vm.AcoesAlterar = _busLista.TituloAlterarSituacaoAcoes;
 			vm.AcoesAlterar = _tituloSituacaoBus.SetarAcoesTela(vm.AcoesAlterar, titulo);
 			vm.MostrarPrazo = titulo.Modelo.Regra(eRegra.Prazo);
@@ -1005,9 +1012,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			tituloAtual.DiasProrrogados = titulo.DiasProrrogados.HasValue ? titulo.DiasProrrogados : tituloAtual.DiasProrrogados;
 			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId.HasValue ? titulo.MotivoEncerramentoId : tituloAtual.MotivoEncerramentoId;
 
-			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty) ? tituloAtual.DataEmissao : titulo.DataEmissao;
 			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
-			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
+			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
 
 			_tituloSituacaoBus.AlterarSituacao(tituloAtual, acao, gerouPdf);
 
@@ -1305,20 +1312,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			try
 			{
 				Arquivo arquivo = _bus.GerarPdf(id);
-				arquivo.Nome = arquivo.Nome.RemoverAcentos() + ".pdf";
+				if(arquivo != null)
+					arquivo.Nome = arquivo.Nome.RemoverAcentos() + ".pdf";
 
 				Titulo titulo = _bus.ObterSimplificado(id);
 				titulo.Modelo = _bus.ObterModelo(titulo.Modelo.Id);
 
 				if (titulo.Modelo.Codigo == 19 || titulo.Modelo.Codigo == 20)
-				{
 					return GerarPDF(titulo.Modelo.Codigo.GetValueOrDefault(0), arquivo);
-				}
 
 				if (arquivo != null && Validacao.EhValido)
-				{
 					return ViewModelHelper.GerarArquivo(arquivo, dataHoraControleAcesso: true);
-				}
 			}
 			catch (Exception exc)
 			{

@@ -29,6 +29,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem DocumentoPosseAltSituacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,   Texto = "É preciso ter a posse do processo ao qual o documento do título está juntado para alterar sua situação." }; } }
 
 		public Mensagem MotivoEncerramentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Motivo", Texto = "Motivo do encerramento é obrigatório." }; } }
+		public Mensagem MotivoSuspensaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Motivo", Texto = "Motivo da suspensão é obrigatório." }; } }
 		public Mensagem PrazoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Prazo", Texto = "Prazo é obrigatório." }; } }
 		public Mensagem PrazoInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Prazo", Texto = "Prazo é inválido." }; } }
 		public Mensagem DiasProrrogadosObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DiasProrrogados", Texto = "Dias prorrogados é obrigatório." }; } }

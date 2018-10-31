@@ -40,6 +40,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 			set { _mostrarBotoes = value; }
 		}
 
+		private List<SelectListItem> _destinatarios = new List<SelectListItem>();
+		public List<SelectListItem> Destinatarios
+		{
+			get { return _destinatarios; }
+			set { _destinatarios = value; }
+		}
+
+		public eEspecificidade Especificidade { get; set; }
 		public eEspecificidadeTipo EspecificidadeTipo { get; set; }
 
 		public String Mensagens

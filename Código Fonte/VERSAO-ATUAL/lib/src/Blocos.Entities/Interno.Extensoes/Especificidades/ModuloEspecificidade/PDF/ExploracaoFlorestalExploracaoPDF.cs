@@ -7,6 +7,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 {
 	public class ExploracaoFlorestalExploracaoPDF
 	{
+		public String IdentificacaoGeo { set; get; }
+		public String Geometria { set; get; }
+		public String FinalidadeExploracao { set; get; }
+		public String ParecerFavoravel { set; get; }
+		public String ClassificacaoVegetal { set; get; }
+
 		public Int32 GeometriaTipoId { set; get; }
 		public String TipoExploracao { set; get; }
 		public String VegetacaoTipo { get; set; }
@@ -128,16 +134,24 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public ExploracaoFlorestalExploracaoPDF(ExploracaoFlorestalExploracao exploracao)
 		{
 			GeometriaTipoId = exploracao.GeometriaTipoId;
-			TipoExploracao = exploracao.ExploracaoTipoTexto;
 			VegetacaoTipo = exploracao.ClassificacaoVegetacaoTexto;
 			VegetacaoTipoId = exploracao.ClassificacaoVegetacaoId;
 			ArvoresRequeridas = exploracao.ArvoresRequeridas;
 
-			AreaCroquiDecimal = exploracao.AreaCroqui;
-			AreaRequeridaDecimal = exploracao.AreaRequerida;
+			AreaCroquiDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto && exploracao.ParecerFavoravel == true) ? Convert.ToDecimal(exploracao.QuantidadeArvores) : exploracao.AreaCroqui;
+			if (exploracao.ParecerFavoravel == false)
+				AreaCroquiDecimal = 0;
+			AreaRequeridaDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto) ? Convert.ToDecimal(exploracao.ArvoresRequeridas) : exploracao.AreaRequerida;
 			
 			QuantidadeArvores = exploracao.QuantidadeArvores;
 			Produtos = exploracao.Produtos.Select(x => new ExploracaoFlorestalExploracaoProdutoPDF(x)).ToList();
+			if(Produtos.Count == 0)
+				Produtos.Add(new ExploracaoFlorestalExploracaoProdutoPDF());
+			IdentificacaoGeo = exploracao.Identificacao;
+			Geometria = exploracao.GeometriaTipoTexto;
+			FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;
+			ParecerFavoravel = Convert.ToBoolean(exploracao.ParecerFavoravel) ? "Favorável" : "Não Favorável";
+			ClassificacaoVegetal = exploracao.ClassificacaoVegetacaoTexto;
 		}
 	}
 }

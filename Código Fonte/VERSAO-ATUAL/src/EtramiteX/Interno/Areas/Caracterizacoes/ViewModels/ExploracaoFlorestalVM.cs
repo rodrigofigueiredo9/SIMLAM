@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -13,10 +14,36 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 	public class ExploracaoFlorestalVM
 	{
 		public Boolean IsVisualizar { get; set; }
-		public String TextoAbrirModal { get; set; }
-		public String TextoMerge { get; set; }
-		public String AtualizarDependenciasModalTitulo { get; set; }
+
 		public Int32? FinalidadeExploracao { get; set; }
+
+		private ExploracaoFlorestal _caracterizacao = new ExploracaoFlorestal();
+		public ExploracaoFlorestal Caracterizacao
+		{
+			get { return _caracterizacao; }
+			set { _caracterizacao = value; }
+		}
+
+		private List<ExploracaoFlorestalExploracaoVM> _exploracaoFlorestalExploracaoVM = new List<ExploracaoFlorestalExploracaoVM>();
+		public List<ExploracaoFlorestalExploracaoVM> ExploracaoFlorestalExploracaoVM
+		{
+			get { return _exploracaoFlorestalExploracaoVM; }
+			set { _exploracaoFlorestalExploracaoVM = value; }
+		}
+
+		private List<SelectListItem> _tipoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> TipoExploracao
+		{
+			get { return _tipoExploracao; }
+			set { _tipoExploracao = value; }
+		}
+
+		private List<SelectListItem> _codigoExploracao = new List<SelectListItem>();
+		public List<SelectListItem> CodigoExploracao
+		{
+			get { return _codigoExploracao; }
+			set { _codigoExploracao = value; }
+		}
 
 		public String IdsTela
 		{
@@ -36,55 +63,27 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 		}
 
-		private ExploracaoFlorestal _caracterizacao = new ExploracaoFlorestal();
-		public ExploracaoFlorestal Caracterizacao
+		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais,
+			List<Lista> exploracaoTipos, List<Lista> produtos, List<Lista> destinacao, List<Lista> tipoExploracao, bool isVisualizar = false)
 		{
-			get { return _caracterizacao; }
-			set { _caracterizacao = value; }
-		}
-
-		private List<ExploracaoFlorestalExploracaoVM> _exploracaoFlorestalExploracaoVM = new List<ExploracaoFlorestalExploracaoVM>();
-		public List<ExploracaoFlorestalExploracaoVM> ExploracaoFlorestalExploracaoVM
-		{
-			get { return _exploracaoFlorestalExploracaoVM; }
-			set { _exploracaoFlorestalExploracaoVM = value; }
-		}
-
-		private List<FinalidadeExploracao> _finalidades = new List<FinalidadeExploracao>();
-		public List<FinalidadeExploracao> Finalidades
-		{
-			get { return _finalidades; }
-			set { _finalidades = value; }
-		}
-
-		public String Mensagens
-		{
-			get
-			{
-				return ViewModelHelper.Json(new
-				{
-					@FinalidadeExploracaoEspecificarObrigatorio = Mensagem.ExploracaoFlorestal.FinalidadeExploracaoEspecificarObrigatorio
-				});
-			}
-		}
-
-		public ExploracaoFlorestalVM(ExploracaoFlorestal caracterizacao, List<FinalidadeExploracao> finalidades, List<Lista> classificacoesVegetais, List<Lista> exploracaoTipos, List<Lista> produtos, bool isVisualizar = false)
-		{
-			// passa o item "Outros" para a ultiam posição
-			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Texto == "Outros");
-			if (finalidade != null)
-			{
-				finalidades.Remove(finalidade);
-				finalidades.Add(finalidade);
-			}
-
-			Finalidades = finalidades;
 			Caracterizacao = caracterizacao;
 			IsVisualizar = isVisualizar;
+			TipoExploracao = ViewModelHelper.CriarSelectList(tipoExploracao, selecionado: caracterizacao.TipoExploracao.ToString());
+
+			var codigoExploracao = new List<Lista>();
+			if (caracterizacao.CodigoExploracao > 0)
+			{
+				codigoExploracao = new List<Lista>() {
+				new Lista(){
+					Id = caracterizacao.CodigoExploracao.ToString(),
+					Texto = tipoExploracao.FirstOrDefault(x => x.Id == caracterizacao.TipoExploracao.ToString()).Texto.Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0') }
+				};
+			}
+			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{
-				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(exploracaoTipos, classificacoesVegetais, produtos, exploracao, isVisualizar);
+				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(finalidades, exploracaoTipos, classificacoesVegetais, produtos, destinacao, exploracao, isVisualizar);
 				ExploracaoFlorestalExploracaoVM.Add(exploracaoVM);
 			}
 		}

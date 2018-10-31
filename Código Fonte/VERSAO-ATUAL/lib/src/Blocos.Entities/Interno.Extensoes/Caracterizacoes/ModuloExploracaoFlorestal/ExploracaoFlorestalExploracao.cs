@@ -10,14 +10,18 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public String Identificacao { get; set; }
 		public String GeometriaTipoTexto { get; set; }
 		public String ClassificacaoVegetacaoTexto { get; set; }
-		public String ExploracaoTipoTexto { get; set; }
 		public Decimal AreaCroqui { get; set; }
 		public String QuantidadeArvores { get; set; }
 		public Decimal AreaRequerida { get; set; }
 		public String AreaRequeridaTexto { get; set; }
 		public String ArvoresRequeridas { get; set; }
-		public Int32 ExploracaoTipoId { get; set; }
 		public Int32 ClassificacaoVegetacaoId { get; set; }
+		public Int32? FinalidadeExploracao { get; set; }
+		public String FinalidadeEspecificar { get; set; }
+		public bool? ParecerFavoravel { get; set; }
+		public String FinalidadeExploracaoTexto { get; set; }
+
+		public ExploracaoFlorestalGeo ExploracaoFlorestalGeo { get; set; }
 
 		private Int32 _geometriaTipGeo = 0;
 		public Int32 GeometriaTipoId
