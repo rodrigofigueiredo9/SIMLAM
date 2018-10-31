@@ -28,14 +28,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 
 			RequerimentoAtividade(esp, solicitado: false, jaAssociado: false, atividadeAndamento: false);
 
-			if (String.IsNullOrWhiteSpace(esp.Observacao))
-			{
-				Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.ObservacaoObrigatorio);
-			}
-			else if (esp.Observacao.Length > 500)
-			{
+			if (!String.IsNullOrWhiteSpace(esp.Observacao) && esp.Observacao.Length > 500)
 				Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.ObservacaoMuitoGrande);
-			}
 
 			Destinatario(especificidade.ProtocoloReq.Id, esp.Destinatario, "Autorizacao_Destinatario");
 
