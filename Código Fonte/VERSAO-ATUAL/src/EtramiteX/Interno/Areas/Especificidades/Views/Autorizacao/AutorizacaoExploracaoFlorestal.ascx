@@ -37,7 +37,7 @@
 
 	<div class="block">
 		<div class="coluna75">
-			<label>Observações *</label>
+			<label>Observações</label>
 			<%= Html.TextArea("ExploracaoFlorestal.Observacoes", Model.Autorizacao.Observacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "500", @class = "text media txtObservacoes" }))%>
 		</div>
 	</div>
