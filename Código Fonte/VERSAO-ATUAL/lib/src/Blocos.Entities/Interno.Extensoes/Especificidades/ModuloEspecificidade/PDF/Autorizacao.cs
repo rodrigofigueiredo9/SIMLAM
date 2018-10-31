@@ -16,6 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public List<ExploracaoFlorestalAutorizacaoPDF> ExploracaoFlorestal { set; get; }
 		public QueimaControladaPDF QueimaControlada { get; set; }
 		public DominialidadePDF Dominialidade { get; set; }
+		public String VegetacaoNativaRemanescente { get; set; }
 
 		private List<ExploracaoFlorestalAutorizacaoProdutoPDF> _produtos = new List<ExploracaoFlorestalAutorizacaoProdutoPDF>();
 		public List<ExploracaoFlorestalAutorizacaoProdutoPDF> Produtos

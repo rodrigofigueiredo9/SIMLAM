@@ -139,6 +139,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			ArvoresRequeridas = exploracao.ArvoresRequeridas;
 
 			AreaCroquiDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto && exploracao.ParecerFavoravel == true) ? Convert.ToDecimal(exploracao.QuantidadeArvores) : exploracao.AreaCroqui;
+			if (exploracao.ParecerFavoravel == false)
+				AreaCroquiDecimal = 0;
 			AreaRequeridaDecimal = (exploracao.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Ponto) ? Convert.ToDecimal(exploracao.ArvoresRequeridas) : exploracao.AreaRequerida;
 			
 			QuantidadeArvores = exploracao.QuantidadeArvores;
@@ -148,7 +150,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			IdentificacaoGeo = exploracao.Identificacao;
 			Geometria = exploracao.GeometriaTipoTexto;
 			FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;
-			ParecerFavoravel = Convert.ToBoolean(exploracao.ParecerFavoravel) ? "Sim" : "Não";
+			ParecerFavoravel = Convert.ToBoolean(exploracao.ParecerFavoravel) ? "Favorável" : "Não Favorável";
 			ClassificacaoVegetal = exploracao.ClassificacaoVegetacaoTexto;
 		}
 	}
