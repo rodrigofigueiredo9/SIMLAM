@@ -285,15 +285,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				return null;
 			}
 
-			if((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
-				titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) &&
-				!titulo.Anexos.Exists(x => x.Croqui == true))
-			{
-				this.AnexarCroqui(titulo);
-				Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
-				return null;
-			}
-
 			if (titulo.ArquivoPdf.Id > 0)
 			{
 				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
@@ -326,6 +317,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
                 return titulo.ArquivoPdf;
+			}
+
+			if ((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
+				titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) &&
+				!titulo.Anexos.Exists(x => x.Croqui == true))
+			{
+				this.AnexarCroqui(titulo);
+				Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+				return null;
 			}
 
 			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
