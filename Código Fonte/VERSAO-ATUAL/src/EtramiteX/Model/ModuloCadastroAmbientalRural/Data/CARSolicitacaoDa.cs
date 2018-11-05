@@ -550,6 +550,65 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			return solicitacao;
 		}
 
+		internal CARSolicitacao ObterSimplificado(int id, BancoDeDados banco = null)
+		{
+			CARSolicitacao solicitacao = new CARSolicitacao();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Solicitação
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT 	CAR.TID,
+						CAR.NUMERO,
+						CAR.DATA_EMISSAO,
+						CAR.SITUACAO_DATA,
+						CAR.REQUERIMENTO,
+						CAR.PROTOCOLO PROTOCOLO_ID,
+						CAR.PROTOCOLO_SELECIONADO PROTOCOLO_SELECIONADO_ID,
+						LVC.ID SITUACAO,
+						LVC.TEXTO SITUACAO_TEXTO,
+						EMP.ID EMPREENDIMENTO_ID,
+						EMP.DENOMINADOR EMPREENDIMENTO_NOME,
+						EMP.CODIGO EMPREENDIMENTO_CODIGO
+					FROM TAB_CAR_SOLICITACAO					CAR 
+					INNER JOIN TAB_EMPREENDIMENTO				EMP ON EMP.ID = CAR.EMPREENDIMENTO
+					INNER JOIN LOV_CAR_SOLICITACAO_SITUACAO		LVC ON LVC.ID = CAR.SITUACAO    
+					WHERE CAR.ID = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						solicitacao.Id = id;
+						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Numero = reader.GetValue<String>("numero");
+						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
+						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
+						solicitacao.SituacaoTexto = reader.GetValue<String>("situacao_texto");
+						solicitacao.DataSituacao.DataTexto = reader.GetValue<String>("situacao_data");
+
+						solicitacao.Protocolo.Id = reader.GetValue<Int32>("protocolo_id");
+						solicitacao.ProtocoloSelecionado.Id = reader.GetValue<Int32>("protocolo_selecionado_id");
+
+						solicitacao.Requerimento.Id = reader.GetValue<Int32>("requerimento");
+						solicitacao.Empreendimento.Id = reader.GetValue<Int32>("empreendimento_id");
+						solicitacao.Empreendimento.NomeRazao = reader.GetValue<String>("empreendimento_nome");
+						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return solicitacao;
+		}
+	
+
 		internal CARSolicitacao ObterPorEmpreendimento(int empreendimentoId, List<int> situacoes = null, bool simplificado = false, BancoDeDados banco = null)
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
@@ -632,13 +691,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					{
 						BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-						solicitacao = _daCred.Obter(solicitacaoId, banco: bd);
+						solicitacao = _daCred.ObterSimplificado(solicitacaoId, banco: bd);
 						solicitacao.Esquema = esquema;
 						return solicitacao;
 					}
 					else if (solicitacao.Esquema == 1)
 					{
-						solicitacao = Obter(solicitacaoId, banco: bancoDeDados);
+						solicitacao = ObterSimplificado(solicitacaoId, banco: bancoDeDados);
 						solicitacao.Esquema = esquema;
 						return solicitacao;
 					}
