@@ -227,8 +227,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
             retificado = ObterPorEmpreendimento(solicitacao.Empreendimento.Codigo ?? 0, false);
             String codigoRetificacao = String.Empty;
 
-            if (retificado != null)
-            {
+			if (retificado.Id > 0)
+			{
                 using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			    {
 				    bancoDeDados.IniciarTransacao();
@@ -1026,7 +1026,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-							solicitacao = Obter(solicitacaoId, banco: bd);
+							solicitacao = ObterSimplificado(solicitacaoId, banco: bd);
 							return solicitacao;
 						}
 						else if (solicitacao.Esquema == 1)
@@ -1073,7 +1073,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-							solicitacao = Obter(solicitacaoId, banco: bd);
+							solicitacao = ObterSimplificado(solicitacaoId, banco: bd);
 							solicitacao.Esquema = esquema;
 							return solicitacao;
 						}
@@ -1093,7 +1093,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                 #endregion
             }
 
-            return null;
+            return solicitacao;
         }
 
         internal ControleArquivoSICAR ObterControleArquivoSicar(int empreendimentoId, BancoDeDados banco = null)
