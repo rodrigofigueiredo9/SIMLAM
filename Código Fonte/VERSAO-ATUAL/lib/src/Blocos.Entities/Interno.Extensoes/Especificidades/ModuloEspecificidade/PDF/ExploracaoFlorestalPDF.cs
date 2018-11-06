@@ -14,7 +14,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String DataCadastro { set; get; }
 		public String FinalidadesStragg 
 		{
-			get{ return String.Join(",", Finalidades.ToArray());}
+			get{ return (Finalidades is null ? "" : String.Join(",", Finalidades?.ToArray()));}
 		}
 
 		private List<ExploracaoFlorestalExploracaoPDF> _exploracoes = new List<ExploracaoFlorestalExploracaoPDF>();

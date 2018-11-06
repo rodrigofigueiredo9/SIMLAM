@@ -23,7 +23,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			LaudoVistoriaFlorestal esp = especificidade as LaudoVistoriaFlorestal;
-			RequerimentoAtividade(esp, jaAssociado: true, apenasObrigatoriedade: true);
+			if(esp.Titulo.Modelo == "91") //Laudo de Vistoria de Exploração Florestal
+				RequerimentoAtividade(esp, jaAssociado: true, apenasObrigatoriedade: true);
+			else
+				RequerimentoAtividade(esp, apenasObrigatoriedade: true);
 
 			Destinatario(especificidade.ProtocoloReq.Id, esp.Destinatario, "Laudo_Destinatario");
 
@@ -70,11 +73,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			if (String.IsNullOrWhiteSpace(esp.Consideracao))
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConsideracoesObrigatorio);
 
-			if (esp.FavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricao))
-				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
+			if (esp.Titulo.Modelo == "91") //Laudo de Vistoria de Exploração Florestal
+			{
+				if (esp.FavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricao))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
 
-			if (esp.DesfavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricaoDesfavoravel))
-				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoDesfavoravelObrigatorio);
+				if (esp.DesfavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricaoDesfavoravel))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoDesfavoravelObrigatorio);
+			}
+			else if (String.IsNullOrWhiteSpace(esp.ParecerDescricao))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
 
 			if (esp.Conclusao <= 0)
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConclusaoObrigatoria);

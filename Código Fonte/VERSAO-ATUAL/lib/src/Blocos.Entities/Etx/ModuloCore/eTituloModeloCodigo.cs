@@ -4,6 +4,7 @@
 	{
 		LaudoVistoriaFlorestal = 4,
 		AutorizacaoExploracaoFlorestal = 5,
-		CertificadoRegistroAtividadeFlorestal = 19
+		CertificadoRegistroAtividadeFlorestal = 19,
+		LaudoVistoriaQueimaControlada = 60
 	}
 }
