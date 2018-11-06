@@ -484,6 +484,8 @@
     <Content Include="Areas\Especificidades\Views\Certificado\CertificadoRegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
@@ -491,7 +493,7 @@
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoConstatacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoFundiarioSimplificado.ascx" />
-    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaQueimaControlada.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFundiaria.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaLicenciamento.ascx" />
@@ -1430,7 +1432,7 @@
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaCompraVenda.js" />
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaDoacao.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoConstatacao.js" />
-    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaQueimaControlada.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFundiaria.js" />
     <Content Include="Scripts\Areas\Especificidades\Licenca\licencaPorteUsoMotosserra.js" />
     <Content Include="Scripts\Areas\Especificidades\Notificacao\notificacaoIndeferimento.js" />
