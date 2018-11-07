@@ -46,7 +46,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				TituloValidar tituloValidar = new TituloValidar();
 
-				if (!tituloValidar.VerificarEhModeloCodigo(tituloAssociadoId, (int)eEspecificidade.LaudoVistoriaFlorestal))
+				if (!(tituloValidar.VerificarEhModeloCodigo(tituloAssociadoId, (int)eEspecificidade.LaudoVistoriaFlorestal) ||
+					tituloValidar.VerificarEhModeloCodigo(tituloAssociadoId, (int)eEspecificidade.LaudoVistoriaQueimaControlada)))
 				{
 					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVistoriaModelo);
 				}
