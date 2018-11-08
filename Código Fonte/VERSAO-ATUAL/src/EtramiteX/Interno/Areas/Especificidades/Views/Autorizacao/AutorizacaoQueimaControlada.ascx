@@ -19,7 +19,7 @@
 
 	<div class="block">
 		<div class="coluna31">
-			<label>Laudo de Vistoria de Queima Controlada *</label>
+			<label>Laudo de Vistoria para Queima Controlada *</label>
 			<input type="hidden" name="Autorizacao.LaudoVistoriaFlorestalIdRelacionamento" class="hdnLaudoVistoriaFlorestalIdRelacionamento" value="<%= Model.TituloAssociado.IdRelacionamento %>" />
 			<input type="hidden" name="Autorizacao.LaudoVistoriaFlorestal" class="hdnLaudoVistoriaFlorestalId" value="<%= Model.TituloAssociado.Id %>" />
 			<%= Html.TextBox("Autorizacao.LaudoVistoriaFlorestalTexto", Model.LaudoVistoriaTextoTela, new { @class = "text txtLaudoVistoriaFlorestal disabled", @disabled = "disabled" })%>
