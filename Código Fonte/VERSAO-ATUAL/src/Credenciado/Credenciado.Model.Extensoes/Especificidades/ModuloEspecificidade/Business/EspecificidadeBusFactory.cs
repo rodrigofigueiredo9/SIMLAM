@@ -1,6 +1,7 @@
 ﻿using System;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloOutros.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business
 {
@@ -24,6 +25,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			{
 				case eEspecificidade.CertidaoDispensaLicenciamentoAmbiental:
 					return new CertidaoDispensaLicenciamentoAmbientalBus();
+
+				case eEspecificidade.OutrosInformacaoCorte:
+					return new OutrosInformacaoCorteBus();
 
 				default:
 					return new EspecificidadeBusDefault();

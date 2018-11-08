@@ -113,11 +113,13 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMUnidadeProducao\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMUnidadeProducao\UnidadeProducaoVM.cs" />
+    <Compile Include="Areas\Especificidades\Controllers\OutrosController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\CertidaoController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\EspecificidadeController.cs" />
     <Compile Include="Areas\Especificidades\EspecificidadesAreaRegistration.cs" />
     <Compile Include="Areas\Especificidades\ViewModels\Certidao\CertidaoDispensaLicenciamentoAmbientalVM.cs" />
     <Compile Include="Areas\Especificidades\ViewModels\Especificidade\EspecificidadeVME.cs" />
+    <Compile Include="Areas\Especificidades\ViewModels\Outros\OutrosInformacaoCorteVM.cs" />
     <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
     <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
     <Compile Include="Areas\GeoProcessamento\ViewModels\VMMapa\CoordenadaVM.cs" />
@@ -260,6 +262,7 @@
     <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\UnidadeProducaoPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\UnidadeProducao\Criar.aspx" />
     <Content Include="Areas\Especificidades\Views\Certidao\CertidaoDispensaLicenciamentoAmbiental.ascx" />
+    <Content Include="Areas\Especificidades\Views\Outros\OutrosInformacaoCorte.ascx" />
     <Content Include="Areas\GeoProcessamento\Views\Mapa\AreaAbrangenciaFiscPartial.ascx" />
     <Content Include="Areas\GeoProcessamento\Views\Mapa\AreaAbrangenciaPartial.ascx" />
     <Content Include="Areas\GeoProcessamento\Views\Mapa\CoordenadaPartial.ascx" />
@@ -940,6 +943,7 @@
     <Content Include="Scripts\Areas\Caracterizacoes\dominialidade.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\projetoGeografico.js" />
     <Content Include="Scripts\Areas\Especificidades\Certidao\certidaoDispensaLicenciamentoAmbiental.js" />
+    <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorte.js" />
     <Content Include="Scripts\Areas\GeoProcessamento\coordenada.js" />
     <Content Include="Scripts\Areas\GeoProcessamento\navegador.js" />
     <Content Include="Scripts\arquivo.js" />
