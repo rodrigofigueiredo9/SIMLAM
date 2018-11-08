@@ -257,5 +257,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("O requerimento não pode ser editado, pois está associado a um cadastro de Título Declaratório na situação {0}.", situacao) };
 		}
+
+		public Mensagem AtividadeInformacaoCorte { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não pode ser feito requerimento com mais de uma atividade se uma dessas atividades for Informação de Corte") }; } }
 	}
 }

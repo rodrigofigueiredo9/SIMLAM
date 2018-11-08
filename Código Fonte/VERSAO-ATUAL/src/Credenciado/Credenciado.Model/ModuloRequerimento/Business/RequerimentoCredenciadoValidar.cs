@@ -112,6 +112,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				}
 			}
 
+			if(requerimento.Atividades.Count() > 1 && requerimento.Atividades.Any(item => item.Id == 209))/*Informação de Corte*/
+				Validacao.Add(Msg.AtividadeInformacaoCorte);
+
 			ValidarAtividade(requerimento.Atividades);
 
 			return Validacao.EhValido;
