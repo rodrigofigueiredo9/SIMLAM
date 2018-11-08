@@ -811,6 +811,15 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							leitorFeicao.Atual.Atributos.Adicionar(atributo);
 						}
 
+						if (leitorFeicao.Atual.Atributos.IndiceDe("TIPOEXP") == -1)
+						{
+							Atributo atributo = new Atributo();
+							atributo.Nome = "TIPOEXP";
+							atributo.Valor = "";
+							leitorFeicao.Atual.Atributos.Adicionar(atributo);
+
+						}
+
 						Feicao otherFeicao = adpt.Transformar(leitorFeicao.Atual);
 
 						escritorFeicao.Inserir(otherFeicao);
