@@ -495,6 +495,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return resposta;
 		}
 
+		public List<Empreendimento> ObterEmpreendimentoResponsavel (int pessoa)
+		{
+			List<Empreendimento> retorno = new List<Empreendimento>();
+
+			try
+			{
+				foreach(int emp in _da.ObterEmpreendimentoResponsavel(pessoa))
+				{
+					Empreendimento empreendimento = new Empreendimento();
+					empreendimento = ObterEmpreendimento(0, emp);
+
+					retorno.Add(empreendimento);
+				}
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return retorno;
+		}
+
 		#endregion
 
 		#region Verificar / Validar
@@ -612,6 +633,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			}
 
 			return new Mensagem();
+		}
+
+		public bool ExisteEmpreendimentoResponsavel(int pessoa)
+		{
+			try
+			{
+				return _da.ObterEmpreendimentoResponsavel(pessoa).Count > 0 ? true : false;
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
 		}
 
 		#endregion

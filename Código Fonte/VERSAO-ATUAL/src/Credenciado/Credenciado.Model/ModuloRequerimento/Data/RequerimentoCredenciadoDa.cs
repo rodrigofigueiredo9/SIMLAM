@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
+using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
@@ -1083,6 +1084,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				return responsaveis;
 			}
 		}
+
 		public List<String> ObterAtividadesEmpreendimentoObrigatorio(int requerimentoId)
 		{
 			List<String> atividades = new List<String>();
@@ -1106,7 +1108,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				return atividades;
 			}
 		}
-
+		
 		#endregion
 
 		#region Validações

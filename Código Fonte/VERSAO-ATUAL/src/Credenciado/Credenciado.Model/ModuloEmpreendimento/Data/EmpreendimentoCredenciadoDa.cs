@@ -1121,6 +1121,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data
 			return retorno;
 		}
 
+		public List<int> ObterEmpreendimentoResponsavel(int pessoa, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT E.ID FROM TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R ON R.RESPONSAVEL = PE.INTERNO
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO				E ON E.ID = R.EMPREENDIMENTO
+					WHERE PE.ID = :pessoa", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<int>(comando);
+			}
+		}
 		#endregion
 
 		#region Validações

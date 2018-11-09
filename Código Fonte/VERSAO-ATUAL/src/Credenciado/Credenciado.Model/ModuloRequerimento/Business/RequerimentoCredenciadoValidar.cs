@@ -19,6 +19,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloChecagemRoteiro.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRoteiro.Business;
@@ -40,6 +41,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 		AtividadeInternoBus _atividadeBus;
 		TituloModeloInternoBus _tituloModeloBus;
 		ChecagemRoteiroInternoBus _checkListRoteiroBus;
+		EmpreendimentoCredenciadoBus _busEmpreendimento;
 
 		public String UsuarioCredenciado
 		{
@@ -64,6 +66,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			_atividadeBus = new AtividadeInternoBus();
 			_tituloModeloBus = new TituloModeloInternoBus();
 			_checkListRoteiroBus = new ChecagemRoteiroInternoBus();
+			_busEmpreendimento = new EmpreendimentoCredenciadoBus();
 		}
 
 		public bool InteressadoValidar(Requerimento requerimento)
@@ -79,6 +82,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				Validacao.Add(Msg.InteressadoSemEndereco);
 				return Validacao.EhValido;
 			}
+
+			if (!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id)) 
+				Validacao.Add(Msg.NaoExisteEmpreendimentoAssociadoResponsavel);
 
 			return Validacao.EhValido;
 		}

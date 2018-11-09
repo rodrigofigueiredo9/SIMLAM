@@ -259,5 +259,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		public Mensagem AtividadeInformacaoCorte { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não pode ser feito requerimento com mais de uma atividade se uma dessas atividades for Informação de Corte") }; } }
+		public Mensagem NaoExisteEmpreendimentoAssociadoResponsavel { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Não existe empreendimento associado a esse interessado. \n Favor procurar o IDAF.") }; } }
 	}
 }
