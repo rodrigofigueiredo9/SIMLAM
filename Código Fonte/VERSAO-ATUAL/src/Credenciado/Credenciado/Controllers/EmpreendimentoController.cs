@@ -655,11 +655,72 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return PartialView("EmpreendimentoInline", vm);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
+		public ActionResult EmpreendimentoInlineInteressado(int id, int requerimentoId)
+		{
+			EmpreendimentoVM vm = new EmpreendimentoVM();
+
+			if (id > 0)
+			{
+				Empreendimento emp = _bus.Obter(id);
+
+				if (emp.Enderecos.Count == 0)
+				{
+					emp.Enderecos.Add(new Endereco());
+					emp.Enderecos.Add(new Endereco());
+				}
+				else if (emp.Enderecos.Count == 1)
+				{
+					emp.Enderecos.Add(new Endereco());
+				}
+
+				SalvarVM salvarVM = new SalvarVM(
+					ListaCredenciadoBus.Estados,
+					ListaCredenciadoBus.Municipios(emp.Enderecos[0].EstadoId),
+					ListaCredenciadoBus.Municipios(emp.Enderecos[1].EstadoId),
+					ListaCredenciadoBus.Segmentos,
+					ListaCredenciadoBus.TiposCoordenada,
+					ListaCredenciadoBus.Datuns,
+					ListaCredenciadoBus.Fusos,
+					ListaCredenciadoBus.Hemisferios,
+					ListaCredenciadoBus.TiposResponsavel,
+					ListaCredenciadoBus.LocalColetaPonto,
+					ListaCredenciadoBus.FormaColetaPonto,
+					emp.Enderecos[0].EstadoId,
+					emp.Enderecos[0].MunicipioId,
+					emp.Enderecos[1].EstadoId,
+					emp.Enderecos[1].MunicipioId,
+					emp.Coordenada.LocalColeta.GetValueOrDefault(),
+					emp.Coordenada.FormaColeta.GetValueOrDefault());
+
+				vm.SalvarVM = salvarVM;
+				vm.SalvarVM.Empreendimento = emp;
+				vm.SalvarVM.MostrarTituloTela = false;
+				vm.SalvarVM.IsVisualizar = true;
+				PreencherSalvar(vm.SalvarVM);
+			}
+			else
+			{
+				_bus.Obter(id);
+				vm = new EmpreendimentoVM(
+					ListaCredenciadoBus.Estados,
+					ListaCredenciadoBus.Municipios(ListaCredenciadoBus.EstadoDefault),
+					ListaCredenciadoBus.Segmentos,
+					ListaCredenciadoBus.TiposCoordenada,
+					ListaCredenciadoBus.Datuns,
+					ListaCredenciadoBus.Fusos,
+					ListaCredenciadoBus.Hemisferios,
+					ListaCredenciadoBus.TiposResponsavel);
+			}
+
+			return PartialView("EmpreendimentoInline", vm);
+		}
+
 		#endregion
 
 		#region Validações
 
-		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar, ePermissao.EmpreendimentoEditar })]
+	   [Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar, ePermissao.EmpreendimentoEditar })]
 		public ActionResult VerificarCnpj(string cnpj, int id)
 		{
 			return Json(new { @Msg = _bus.ExisteCnpj(cnpj, id), EhValido = Validacao.EhValido }, JsonRequestBehavior.AllowGet);

@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Pessoa/inline.js" />
 /// <reference path="../Empreendimento/inline.js" />
 /// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
@@ -114,7 +114,13 @@ Requerimento = {
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
 				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
-				Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+				debugger;
+				if (onRequerimentoAtividadeCorte) {
+					objeto.params.requerimentoId = Requerimento.ReqInterEmp.empreendimentoId;
+					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+				}
+				else
+					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 
 				break;
 
@@ -1157,6 +1163,8 @@ RequerimentoEmpreendimento = {
 
 	urlObterEmpreendimento: null,
 	urlAssociarEmpreendimento: null,
+	urlIsAtividadeCorte: null,
+	urlObterEmpreendimentosInteressado: null,
 	salvarEmpreendimento: false,
 	desassociarEmp: false,
 	filtros: {},
@@ -1325,6 +1333,33 @@ RequerimentoEmpreendimento = {
 		var objeto = { params: {} };
 		objeto.params.id = 0;
 		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+	},
+
+	onRequerimentoAtividadeCorte: function () {
+		debugger;
+		var param = {
+			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
+		};
+
+		$.ajax({
+			url: RequerimentoEmpreendimento.urlIsAtividadeCorte,
+			type: "POST",
+			data: JSON.stringify(param),
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			cache: false,
+			async: false,
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+					return false;
+				} else 
+					return response.reqAssociado;
+			}
+		});
 	}
 }
 

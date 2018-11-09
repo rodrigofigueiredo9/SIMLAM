@@ -381,6 +381,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			});
 		}
 
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.RequerimentoCriar, ePermissao.RequerimentoEditar })]
+		public ActionResult IsAtividadeCorte(int requerimentoId)
+		{
+			Requerimento requerimento = new Requerimento() { Id = requerimentoId };
+			//requerimento.Empreendimento = _busEmpreendimento.Obter(empreendimentoId, true);
+
+			bool isAssociado = _busRequerimento.AssociarEmpreendimento(requerimento);
+
+
+			return Json(new
+			{
+				empAssociado = isAssociado,
+				Msg = Validacao.Erros,
+				RedirecionarListar = Validacao.Erros.Exists(x => x.Tipo == eTipoMensagem.Erro),
+				urlRedirecionar = Url.Action("Index", "ProjetoDigital", Validacao.QueryParamSerializer())
+			});
+		}
+
 		#endregion
 
 		#region Finalizar
