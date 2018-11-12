@@ -23,7 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			LaudoVistoriaFlorestal esp = especificidade as LaudoVistoriaFlorestal;
-			if(esp.Titulo.Modelo == "91") //Laudo de Vistoria de Exploração Florestal
+			if(esp.Titulo.Modelo == "12") //Laudo de Vistoria de Exploração Florestal
 				RequerimentoAtividade(esp, jaAssociado: true, apenasObrigatoriedade: true);
 			else
 				RequerimentoAtividade(esp, apenasObrigatoriedade: true);
@@ -73,7 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			if (String.IsNullOrWhiteSpace(esp.Consideracao))
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConsideracoesObrigatorio);
 
-			if (esp.Titulo.Modelo == "91") //Laudo de Vistoria de Exploração Florestal
+			if (esp.Titulo.Modelo == "12") //Laudo de Vistoria de Exploração Florestal
 			{
 				if (esp.FavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricao))
 					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
