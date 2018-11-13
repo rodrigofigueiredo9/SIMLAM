@@ -324,8 +324,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				!titulo.Anexos.Exists(x => x.Croqui == true))
 			{
 				this.AnexarCroqui(titulo);
-				Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
-				return null;
+				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+				{
+					titulo.Anexos = _da.ObterAnexos(id);
+					if (!titulo.Anexos.Exists(x => x.Croqui == true))
+					{
+						Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+						return null;
+					}
+				}
+				else
+				{
+					Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+					return null;
+				}
 			}
 
 			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
@@ -446,11 +458,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public void AnexarCroqui(Titulo titulo, BancoDeDados banco = null)
 		{
-			var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
 			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
 				_busProjetoGeografico.GerarCroquiTitulo(projetoId, titulo.Id, banco);
+			}
 			else if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
 			{
+				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: false);
 				var projeto = _busProjetoGeografico.ObterProjeto(projetoId);
 				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
 				if (croqui?.Id > 0)
