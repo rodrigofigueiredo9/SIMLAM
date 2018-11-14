@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
+using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Entities;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -495,13 +496,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return resposta;
 		}
 
-		public List<Empreendimento> ObterEmpreendimentoResponsavel (int pessoa)
+		public List<Empreendimento> ObterEmpreendimentoResponsavel(int interessado)
 		{
+			
 			List<Empreendimento> retorno = new List<Empreendimento>();
 
 			try
 			{
-				foreach(int emp in _da.ObterEmpreendimentoResponsavel(pessoa))
+				foreach(int emp in _da.ObterEmpreendimentoResponsavel(interessado))
 				{
 					Empreendimento empreendimento = new Empreendimento();
 					empreendimento = ObterEmpreendimento(0, emp);
