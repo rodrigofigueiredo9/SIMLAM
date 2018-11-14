@@ -294,8 +294,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 
 			log.IniciarTime("Importar zip dos Shapes do Trackmaker");
 
-			//string fileURL = _bus.ObterCaminhoDoArquivoEnviado(Project.Id);
-			string fileURL = @"C:\Users\jhonny.correa\Documents\Shape\Shape.zip";
+			string fileURL = _bus.ObterCaminhoDoArquivoEnviado(Project.Id);
+
 			_bus.ApagarGeometriasTemporariasTrackmaker(Project.Id, Project.Type);
 
 			using (FileStream fs = File.OpenRead(fileURL))
