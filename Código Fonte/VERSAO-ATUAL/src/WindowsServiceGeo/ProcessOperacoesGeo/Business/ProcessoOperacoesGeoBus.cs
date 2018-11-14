@@ -294,8 +294,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 
 			log.IniciarTime("Importar zip dos Shapes do Trackmaker");
 
-			string fileURL = _bus.ObterCaminhoDoArquivoEnviado(Project.Id);
-
+			//string fileURL = _bus.ObterCaminhoDoArquivoEnviado(Project.Id);
+			string fileURL = @"C:\Users\jhonny.correa\Documents\Shape\Shape.zip";
 			_bus.ApagarGeometriasTemporariasTrackmaker(Project.Id, Project.Type);
 
 			using (FileStream fs = File.OpenRead(fileURL))
@@ -809,15 +809,6 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							leitorFeicao.Atual.Atributos.RemoveAt(leitorFeicao.Atual.Atributos.IndiceDe("NAME"));
 							atributo.Nome = "NOME";
 							leitorFeicao.Atual.Atributos.Adicionar(atributo);
-						}
-
-						if (leitorFeicao.Atual.Atributos.IndiceDe("TIPOEXP") == -1)
-						{
-							Atributo atributo = new Atributo();
-							atributo.Nome = "TIPOEXP";
-							atributo.Valor = "";
-							leitorFeicao.Atual.Atributos.Adicionar(atributo);
-
 						}
 
 						Feicao otherFeicao = adpt.Transformar(leitorFeicao.Atual);
