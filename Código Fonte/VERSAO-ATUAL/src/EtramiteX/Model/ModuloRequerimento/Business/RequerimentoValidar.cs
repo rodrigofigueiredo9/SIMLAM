@@ -69,6 +69,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 					Validacao.Add(Msg.RoteiroDesativoAoCadastrar(item.Numero));
 				}
 			}
+			if(requerimento.Atividades.Count() > 1 && requerimento.Atividades.Any(item => item.Id == 209))//informação de corte
+			{
+				Validacao.Add(Msg.AtividadeInformacaoCorte);
+			}
 
 			ValidarAtividade(requerimento.Atividades);
 
