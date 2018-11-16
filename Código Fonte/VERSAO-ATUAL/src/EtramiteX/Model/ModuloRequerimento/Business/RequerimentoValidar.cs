@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloChecagemRoteiro.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRoteiro.Business;
@@ -33,7 +34,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 		RequerimentoDa _requerimentoDa = new RequerimentoDa();
 		TituloModeloBus _tituloModeloBus = new TituloModeloBus(new TituloModeloValidacao());
 		ChecagemRoteiroBus _checkListRoteiroBus = new ChecagemRoteiroBus();
-
+		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 		#endregion
 
 		public bool ObjetivoPedidoValidar(Requerimento requerimento)
@@ -69,7 +70,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 					Validacao.Add(Msg.RoteiroDesativoAoCadastrar(item.Numero));
 				}
 			}
-			if(requerimento.Atividades.Count() > 1 && requerimento.Atividades.Any(item => item.Id == 209))//informação de corte
+			//informação de corte
+			if(requerimento.Atividades.Count() > 1 && requerimento.Atividades.Any(item => item.Id == 209))
 			{
 				Validacao.Add(Msg.AtividadeInformacaoCorte);
 			}
@@ -92,6 +94,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 				Validacao.Add(Msg.InteressadoSemEndereco);
 				return Validacao.EhValido;
 			}
+			// empreedimento responsavel
+			if (!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id))
+				Validacao.Add(Msg.NaoExisteEmpreedimentoAssociadoResponsavelInstitucional);
 
 			return Validacao.EhValido;
 		}

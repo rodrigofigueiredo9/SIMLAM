@@ -1246,6 +1246,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			return empreendimento;
 		}
 
+		public List<int> ObterEmpreendimentoResponsavel(int pessoa, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT E.ID FROM TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL R ON R.RESPONSAVEL = PE.ID
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO	E ON E.ID = R.EMPREENDIMENTO
+					WHERE PE.ID = :pessoa");
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<int>(comando);
+			}
+		}
+
 		public Empreendimento ObterSimplificado(int id, BancoDeDados banco = null)
 		{
 			Empreendimento empreendimento = new Empreendimento();

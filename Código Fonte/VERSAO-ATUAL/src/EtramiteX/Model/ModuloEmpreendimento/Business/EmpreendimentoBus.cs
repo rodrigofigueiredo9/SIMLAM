@@ -506,7 +506,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 
 			return null;
 		}
-
 		public List<PessoaLst> ObterListaInteressadoEmpreendimento(int empreendimento, int requerimento)
 		{
 			try
@@ -597,6 +596,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			}
 
 			return resposta;
+		}
+
+		public List<Empreendimento> ObterEmpreedimentoResponsavel(int pessoa)
+		{
+			List<Empreendimento> retorno = new List<Empreendimento>();
+			try
+			{
+				foreach(int emp in _da.ObterEmpreendimentoResponsavel(pessoa))//ainda não existe, só no credenciado 
+				{
+					Empreendimento empreendimento = new Empreendimento();
+					empreendimento = Obter(emp);
+
+					retorno.Add(empreendimento);
+				}
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
 		}
 
 
@@ -758,6 +777,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			}
 
 			return new Mensagem();
+		}
+
+		public bool ExisteEmpreendimentoResponsavel(int pessoa)
+		{
+			try
+			{
+				return _da.ObterEmpreendimentoResponsavel(pessoa).Count > 0 ? true : false;
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
 		}
 
 		#endregion
