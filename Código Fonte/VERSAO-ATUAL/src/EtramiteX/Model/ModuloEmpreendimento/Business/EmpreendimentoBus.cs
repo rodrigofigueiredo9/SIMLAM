@@ -598,12 +598,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return resposta;
 		}
 
-		public List<Empreendimento> ObterEmpreedimentoResponsavel(int pessoa)
+		public List<Empreendimento> ObterEmpreedimentoResponsavel(int interessado)
 		{
 			List<Empreendimento> retorno = new List<Empreendimento>();
 			try
 			{
-				foreach(int emp in _da.ObterEmpreendimentoResponsavel(pessoa))//ainda não existe, só no credenciado 
+				foreach(int emp in _da.ObterEmpreendimentoResponsavel(interessado))
 				{
 					Empreendimento empreendimento = new Empreendimento();
 					empreendimento = Obter(emp);

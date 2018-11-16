@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Pessoa/inline.js" />
 /// <reference path="../Empreendimento/inline.js" />
 
@@ -26,6 +26,8 @@ Requerimento = {
 		container.delegate('.btnFinalizar', 'click', RequerimentoFinalizar.onFinalizarRequerimento);
 
 		container.delegate('.btnRoteiroPdf', 'click', RequerimentoObjetivoPedido.onBaixarPdfClick);
+
+		container.delegate('.btnVisualizarEmpreendimento', 'click', RequerimentoEmpreendimento.onVisualizarEmpreendimentoToCorte);
 
 		container.delegate('.btnCarregarRoteiro', 'click', RequerimentoObjetivoPedido.onCarregarRoteiro);
 		Listar.atualizarEstiloTable($('.tabRoteiros', Requerimento.container));
@@ -93,6 +95,16 @@ Requerimento = {
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
 				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
+
+				if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
+					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+					MasterPage.grid();
+					Requerimento.botoes({ btnEmpAssNovo: true });
+					$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+					$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+				}
+				else
 				Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 
 				break;
@@ -1050,6 +1062,8 @@ RequerimentoEmpreendimento = {
 	urlAssociarEmpreendimento: null,
 	salvarEmpreendimento: false,
 	desassociarEmp: false,
+	urlIsAtividadeCorte: null,
+	urlObterEmpreendimentosInteressado: null,
 	filtros: {},
 
 	callBackObterEmpreendimento: function () {
@@ -1158,6 +1172,7 @@ RequerimentoEmpreendimento = {
 		});
 
 		Requerimento.ReqInterEmp['empreendimentoId'] = param.empreendimentoId;
+		$(".btnEditar", Requerimento.container).removeClass('hide');
 		return retorno;
 	},
 
@@ -1196,6 +1211,39 @@ RequerimentoEmpreendimento = {
 		Requerimento.salvarEdicao = false;
 		RequerimentoEmpreendimento.salvarEmpreendimento = false;
 		Requerimento.configurarBtnCancelarStep(4);
+	},
+
+	onVisualizarEmpreendimentoToCorte: function () {
+		var container = $(this).closest('tr');
+
+		var id = $('.hdnEmpreendimentoId', container).val();
+
+		Empreendimento.abrirVisualizar({id});
+		Requerimento.botoes({ btnEmpAssNovo: true, btnSalvar: true });
+		Requerimento.salvarEdicao = true;
+		RequerimentoEmpreendimento.salvarEmpreendimento = true;
+		$('.btnSalvar', Requerimento.container).val('Associar');
+		$(".btnEditar", Requerimento.container).bind('click').addClass('hide');
+
+		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+
+		//$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.teste);
+
+	},
+
+	onBuscarNovoToCorte: function () {
+
+		var params = {
+			id: 0,
+			requerimentoId: Requerimento.requerimentoId
+		};
+
+		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+		Requerimento.botoes({});
+		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+		MasterPage.grid();
 	},
 
 	onEditarEnterEmpreendimento: function () {
@@ -1244,6 +1292,35 @@ RequerimentoEmpreendimento = {
 		var objeto = { params: {} };
 		objeto.params.id = 0;
 		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+	},
+
+	onRequerimentoAtividadeCorte: function () {
+		var param = {
+			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
+		};
+		var retorno = false;
+
+		$.ajax({
+			url: RequerimentoEmpreendimento.urlIsAtividadeCorte,
+			type: "POST",
+			data: JSON.stringify(param),
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			cache: false,
+			async: false,
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+					retorno = false;
+				} else 
+					retorno = response.reqAssociado;
+			}
+		});
+
+		return retorno;
 	}
 }
 

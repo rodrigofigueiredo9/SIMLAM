@@ -482,6 +482,9 @@
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\Empreendimento\EmpreendimentoInlineCorte.ascx" />
+    <Content Include="Views\Empreendimento\EmpreendimentoPartialCorte.ascx" />
+    <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
@@ -2804,6 +2807,7 @@
     <Folder Include="Areas\Especificidades\ViewModels\Parecer\" />
     <Folder Include="Areas\Especificidades\Views\Parecer\" />
     <Folder Include="Areas\GeoProcessamento\Views\Shared\" />
+    <Folder Include="DynamicData\FieldTemplates\" />
     <Folder Include="Scripts\Areas\Especificidades\Parecer\" />
     <Folder Include="ViewModels\VMPassivo\" />
   </ItemGroup>

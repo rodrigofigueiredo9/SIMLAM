@@ -2264,7 +2264,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 
 			return retorno;
 		}
-
 		#endregion
 	}
 }

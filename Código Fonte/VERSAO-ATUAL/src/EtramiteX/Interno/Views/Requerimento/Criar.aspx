@@ -73,6 +73,9 @@
 
 	AtividadeSolicitadaAssociar.urlAbriModalAtividade = '<%= Url.Action("ObterFinalidade", "Atividade") %>';
 
+	RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado = '<%= Url.Action("EmpreendimentoInlineInteressado", "Empreendimento") %>';
+	RequerimentoEmpreendimento.urlIsAtividadeCorte = '<%= Url.Action("IsAtividadeCorte", "Requerimento") %>';
+
 	RequerimentoFinalizar.urlObterFinalizar = '<%= Url.Action("ObterFinalizar", "Requerimento") %>';
 	RequerimentoFinalizar.urlFinalizar = '<%= Url.Action("Finalizar", "Requerimento") %>';
 

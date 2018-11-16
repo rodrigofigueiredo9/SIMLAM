@@ -390,6 +390,23 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @Msg = Validacao.Erros, @empAssociado = isAssociado });
 		}
 
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.RequerimentoCriar, ePermissao.RequerimentoEditar })]
+		public ActionResult IsAtividadeCorte(int requerimentoId)
+		{
+			Requerimento requerimento = new Requerimento() { Id = requerimentoId };
+
+			bool isAssociado = _bus.IsRequerimentoAtividadeCorte(requerimentoId);
+			
+			return Json(new
+			{
+				reqAssociado = isAssociado,
+				Msg = Validacao.Erros,
+				RedirecionarListar = Validacao.Erros.Exists(x => x.Tipo == eTipoMensagem.Erro),
+				urlRedirecionar = Url.Action("Index", "Requerimento", Validacao.QueryParamSerializer())
+			});
+		}
+
 		#endregion
 
 		#region Finalizar

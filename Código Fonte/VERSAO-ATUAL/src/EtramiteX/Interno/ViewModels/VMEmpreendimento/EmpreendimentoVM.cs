@@ -14,7 +14,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento
 		public String UrlObterMunicipioCoordenada { get { return _configCoordenada.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada); } }
 		public SalvarVM SalvarVM { get; set; }
 		public LocalizarVM LocalizarVM { get; set; }
-
+		public ListarVM ListarVM { get; set; }
 		public String Mensagens
 		{
 			get
@@ -50,6 +50,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento
 		{
 			SalvarVM = new SalvarVM();
 			LocalizarVM = new LocalizarVM();
+			ListarVM = new ListarVM();
 		}
 
 		public EmpreendimentoVM(List<Estado> lstEstados, List<Municipio> lstMunicipio, List<Segmento> lstSegmentos, List<CoordenadaTipo> lstTiposCoordenada,
@@ -57,7 +58,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento
 		{
 			LocalizarVM = new LocalizarVM(lstEstados, lstMunicipio, lstSegmentos, lstTiposCoordenada, lstDatuns, lstFusos, lstHemisferios);
 			SalvarVM = new SalvarVM();
-
+			ListarVM = new ListarVM();
 			SalvarVM.SetarDenominadores(lstSegmentos);
 		}
 	}
