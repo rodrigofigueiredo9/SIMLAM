@@ -453,7 +453,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.ActivateMap("MAPA_PRINCIPAL");
 				//----------------------------------------
 				//Mapa Tematico
-				_mxd.SetLayerVisibility("IMAGEM/Aerolevantamento", false);
+				_mxd.SetLayerVisibility("IMAGEM", false);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
 				_mxd.SetElementText("nome_croqui", "Croqui da Atividade");
@@ -467,7 +467,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 
 				//----------------------------------------
 				//Mapa Imagem
-				_mxd.SetLayerVisibility("IMAGEM/Aerolevantamento", true);
+				_mxd.SetLayerVisibility("IMAGEM", true);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
 				_mxd.SetElementText("nome_croqui", "Croqui com Imagem");
