@@ -27,7 +27,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento
 					ResponsavelBloqueado = Mensagem.Empreendimento.ResponsavelBloqueado,
 					Posse = Mensagem.Empreendimento.Posse,
 					CnpjNaoCadastrado = Mensagem.Empreendimento.CnpjNaoCadastrado,
-					@ResponsavelObrigatorio = Mensagem.ResponsavelTecnico.ResponsavelObrigatorio
+					@ResponsavelObrigatorio = Mensagem.ResponsavelTecnico.ResponsavelObrigatorio,
+					@CodigoObrigatorio = Mensagem.Empreendimento.CodigoObrigatorio,
+					@CodigoNaoEncontradoCorte  = Mensagem.Empreendimento.CodigoNaoEncontradoCorte,
 				});
 			}
 		}

@@ -28,7 +28,7 @@ Requerimento = {
 		container.delegate('.btnRoteiroPdf', 'click', RequerimentoObjetivoPedido.onBaixarPdfClick);
 
 		container.delegate('.btnVisualizarEmpreendimento', 'click', RequerimentoEmpreendimento.onVisualizarEmpreendimentoToCorte);
-
+		
 		container.delegate('.btnCarregarRoteiro', 'click', RequerimentoObjetivoPedido.onCarregarRoteiro);
 		Listar.atualizarEstiloTable($('.tabRoteiros', Requerimento.container));
 
@@ -100,12 +100,12 @@ Requerimento = {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 					MasterPage.grid();
-					Requerimento.botoes({ btnEmpAssNovo: true });
+					Requerimento.botoes({ btnEmpAvancar:true, btnEmpAssNovo: true });
 					$(".btnEmpAssNovo", Requerimento.container).unbind('click');
 					$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
 				}
 				else
-				Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 
 				break;
 
@@ -1091,7 +1091,15 @@ RequerimentoEmpreendimento = {
 		$('.btnEmpAvancar', Requerimento.container).click(EmpreendimentoInline.onAvancarEnter);
 
 		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
-		$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+			$(".btnVerificarCodigo", Requerimento.container).unbind('click');
+			$('.btnVerificarCodigo', Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
+			$(".rbCodigoSim", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+		} else {
+			$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
+			
+		}
 
 		MasterPage.carregando(false);
 	},
@@ -1206,8 +1214,6 @@ RequerimentoEmpreendimento = {
 		$(".btnEditar", Requerimento.container).unbind('click');
 		$(".btnEditar", Requerimento.container).click(EmpreendimentoInline.onBtnEditarClick);
 
-		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
-		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
 		Requerimento.salvarEdicao = false;
 		RequerimentoEmpreendimento.salvarEmpreendimento = false;
 		Requerimento.configurarBtnCancelarStep(4);
@@ -1218,32 +1224,42 @@ RequerimentoEmpreendimento = {
 
 		var id = $('.hdnEmpreendimentoId', container).val();
 
-		Empreendimento.abrirVisualizar({id});
-		Requerimento.botoes({ btnEmpAssNovo: true, btnSalvar: true });
+		Empreendimento.abrirVisualizar(id);
+		if (Requerimento.ReqInterEmp && parseInt(Requerimento.ReqInterEmp.empreendimentoId) > 0) {
+			Requerimento.botoes({ btnEmpAssNovo: true, spnCancelarCadastro: true });
+		} else {
+			Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
+			$('.btnSalvar', Requerimento.container).val('Associar');
+		}
+
 		Requerimento.salvarEdicao = true;
-		RequerimentoEmpreendimento.salvarEmpreendimento = true;
-		$('.btnSalvar', Requerimento.container).val('Associar');
-		$(".btnEditar", Requerimento.container).bind('click').addClass('hide');
-
-		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
-		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
-
-		//$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.teste);
-
+		RequerimentoEmpreendimento.salvarEmpreendimento = false;
+		Requerimento.configurarBtnCancelarStep(4);
 	},
 
 	onBuscarNovoToCorte: function () {
-
 		var params = {
 			id: 0,
-			requerimentoId: Requerimento.requerimentoId
+			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
 		};
 
 		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
-		Requerimento.botoes({});
-		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
-		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+		Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true });
 		MasterPage.grid();
+	},
+
+	buscarPorCodigo: function () {
+		Mensagem.limpar(Requerimento.container);
+		if ($('.txtCodigo', Requerimento.container).val() == "") {
+			Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoObrigatorio]);
+		} else {
+			$('tbody > tr', Requerimento.container).toArray().filter(x => Array.from(x.children).filter(y => y.className == 'itemCodigo')[0].innerText != $('.txtCodigo', Requerimento.container).val()).map(x => x.remove());
+			if ($('tbody > tr', Requerimento.container).toArray().length == 0)
+			{
+				Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoNaoEncontradoCorte]);
+				RequerimentoEmpreendimento.onBuscarNovoToCorte();
+			}
+		}
 	},
 
 	onEditarEnterEmpreendimento: function () {
@@ -1295,6 +1311,8 @@ RequerimentoEmpreendimento = {
 	},
 
 	onRequerimentoAtividadeCorte: function () {
+		if (!Requerimento.ReqInterEmp) return false;
+
 		var param = {
 			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
 		};

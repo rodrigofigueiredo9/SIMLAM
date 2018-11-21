@@ -287,10 +287,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
 		public ActionResult LocalizarMontar(LocalizarVM localizarVm)
 		{
-			LocalizarVM vm = new LocalizarVM(_busLista.Estados, _busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
-				_busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios);
+			EmpreendimentoVM vm = new EmpreendimentoVM(
+						_busLista.Estados,
+						_busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
+						_busLista.Segmentos,
+						_busLista.TiposCoordenada,
+						_busLista.Datuns,
+						_busLista.Fusos,
+						_busLista.Hemisferios,
+						_busLista.TiposResponsavel);
 
-			vm.Filtros = localizarVm.Filtros;
+			vm.LocalizarVM = new LocalizarVM(_busLista.Estados, _busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
+				_busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios);
+			vm.LocalizarVM.Filtros = localizarVm.Filtros;
 
 			if (Request.IsAjaxRequest())
 			{
@@ -559,12 +568,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
 		public ActionResult EmpreendimentoInlineInteressado(int id, int requerimentoId)
 		{
-			EmpreendimentoVM vm = new EmpreendimentoVM();
+			EmpreendimentoVM vm = new EmpreendimentoVM(
+						_busLista.Estados,
+						_busLista.Municipios(_busLista.EstadoDefault),
+						_busLista.Segmentos,
+						_busLista.TiposCoordenada,
+						_busLista.Datuns,
+						_busLista.Fusos,
+						_busLista.Hemisferios,
+						_busLista.TiposResponsavel);
 
 			if (requerimentoId > 0 && id <= 0)
 			{
 				var interessado = _busRequerimento.ObterSimplificado(requerimentoId).Interessado.Id;
 				vm.ListarVM.Resultados = _bus.ObterEmpreedimentoResponsavel(interessado);
+				if (vm.ListarVM.Resultados.Count > 0)
+					vm.ListarVM.Paginacao.QuantidadeRegistros = vm.ListarVM.Resultados.Count;
 			}
 			else
 			{
@@ -578,9 +597,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 						emp.Enderecos.Add(new Endereco());
 					}
 					else if (emp.Enderecos.Count == 1)
-					{
 						emp.Enderecos.Add(new Endereco());
-					}
 
 					SalvarVM salvarVM = new SalvarVM(
 						_busLista.Estados,
@@ -608,21 +625,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					PreencherSalvar(vm.SalvarVM);
 				}
 				else
-				{
 					_bus.Obter(id);
-					vm = new EmpreendimentoVM(
-						_busLista.Estados,
-						_busLista.Municipios(_busLista.EstadoDefault),
-						_busLista.Segmentos,
-						_busLista.TiposCoordenada,
-						_busLista.Datuns,
-						_busLista.Fusos,
-						_busLista.Hemisferios,
-						_busLista.TiposResponsavel);
-				}
 			}
-
-			return PartialView("EmpreendimentoInlineCorte", vm);
+			vm.LocalizarVM.IsInformacaoCorte = true;
+			return PartialView("EmpreendimentoInline", vm);
 		}
 
 		#endregion
