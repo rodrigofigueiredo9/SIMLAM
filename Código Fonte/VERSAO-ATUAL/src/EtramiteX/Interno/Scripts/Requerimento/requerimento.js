@@ -1096,6 +1096,7 @@ RequerimentoEmpreendimento = {
 			$(".btnVerificarCodigo", Requerimento.container).unbind('click');
 			$('.btnVerificarCodigo', Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
 			$(".rbCodigoSim", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+			$('.btnBuscar', Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
 		} else {
 			$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
 			
@@ -1226,7 +1227,8 @@ RequerimentoEmpreendimento = {
 
 		Empreendimento.abrirVisualizar(id);
 		if (Requerimento.ReqInterEmp && parseInt(Requerimento.ReqInterEmp.empreendimentoId) > 0) {
-			Requerimento.botoes({ btnEmpAssNovo: true, spnCancelarCadastro: true });
+			Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
+			$('.btnSalvar', Requerimento.container).val('Associar');
 		} else {
 			Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 			$('.btnSalvar', Requerimento.container).val('Associar');

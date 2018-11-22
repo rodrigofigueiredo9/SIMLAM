@@ -1,4 +1,4 @@
-﻿/// <reference path="JQuery/jquery-1.4.3.js"/>
+/// <reference path="JQuery/jquery-1.4.3.js"/>
 
 // Uso:
 // ('.Container').listarAjax()
