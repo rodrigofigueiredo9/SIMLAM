@@ -1214,6 +1214,7 @@ RequerimentoEmpreendimento = {
 
 		$(".btnEditar", Requerimento.container).unbind('click');
 		$(".btnEditar", Requerimento.container).click(EmpreendimentoInline.onBtnEditarClick);
+		$('.btnEmpAvancar', MasterPage.getContent(Empreendimento.settings.container)).button({ disabled: true });
 
 		Requerimento.salvarEdicao = false;
 		RequerimentoEmpreendimento.salvarEmpreendimento = false;
