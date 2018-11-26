@@ -1096,7 +1096,11 @@ RequerimentoEmpreendimento = {
 			$(".btnVerificarCodigo", Requerimento.container).unbind('click');
 			$('.btnVerificarCodigo', Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
 			$(".rbCodigoSim", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
-			$('.btnBuscar', Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
+			$('.btnBuscarCorte', Requerimento.container).removeClass('btnBuscar');
+			$(".btnBuscarCorte", Requerimento.container).click(RequerimentoEmpreendimento.buscarPorCodigo);
+			Requerimento.container.delegate('.filtroSerializarAjax', 'keyup', function (e) {
+				if (e.keyCode == 13) $('.btnBuscarCorte', Requerimento.container).click();
+			});
 		} else {
 			$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
 			

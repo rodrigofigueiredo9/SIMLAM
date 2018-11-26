@@ -114,7 +114,7 @@
 		</div>
 
 		<div class="block">
-			<button style="float:right" class="inlineBotao btnBuscar">Verificar Empreendimento</button>
+			<button style="float:right" class="inlineBotao btnBuscar btnBuscarCorte">Verificar Empreendimento</button>
 		</div>
 	</div>
 </div>
