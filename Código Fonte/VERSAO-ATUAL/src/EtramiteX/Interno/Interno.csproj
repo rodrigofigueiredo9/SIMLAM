@@ -97,7 +97,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.Helpers" />
     <Reference Include="Tecnomapas.Blocos.Arquivo">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
     </Reference>
