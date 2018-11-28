@@ -379,6 +379,8 @@
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Licenca.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Empreendimento.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorteInformacao.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorte.ascx" />

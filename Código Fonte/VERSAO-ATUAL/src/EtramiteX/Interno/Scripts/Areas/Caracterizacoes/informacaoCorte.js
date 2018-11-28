@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../jquery.ddl.js" />
 
@@ -218,37 +218,46 @@ InformacoesCortesInformacoes = {
 	},
 
 	adicionar: function () {
-		$(this).closest('fieldset').find('.dataGridTable tbody tr').removeClass('editando');
 
-		MasterPage.carregando(true);
-		$.ajax({ url: InformacoesCortesInformacoes.settings.urls.salvar,
-			data: null,
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
+		$('.divInfCorte').removeClass('hide');
+		$('.divCaracterizacao').addClass('hide');
 
-				if (response.Html) {
+		//debugger;
+		//var empreendimento = $('.hdnEmpreendimentoId').val();
+		////MasterPage.redireciona(InformacaoCorte.settings.urls.salvar"/" + empreendimento);
+		//MasterPage.redireciona("InformacaoCorteInformacaoCriar/" + empreendimento);
 
-					$('.divInformacao', InformacaoCorte.container).empty();
-					$('.divInformacao', InformacaoCorte.container).html(response.Html);
-					$('.divLinkVoltar', InformacaoCorte.container).hide()
-					InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
+		//$(this).closest('fieldset').find('.dataGridTable tbody tr').removeClass('editando');
 
-					MasterPage.botoes(InformacaoCorte.container);
-				}
+		//MasterPage.carregando(true);
+		//$.ajax({ url: InformacoesCortesInformacoes.settings.urls.salvar,
+		//	data: null,
+		//	cache: false,
+		//	async: false,
+		//	type: 'POST',
+		//	dataType: 'json',
+		//	contentType: 'application/json; charset=utf-8',
+		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
+		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
+		//	},
+		//	success: function (response, textStatus, XMLHttpRequest) {
 
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(InformacaoCorte.container, response.Msg);
-				}
-			}
-		});
-		MasterPage.carregando(false);
+		//		if (response.Html) {
+
+		//			$('.divInformacao', InformacaoCorte.container).empty();
+		//			$('.divInformacao', InformacaoCorte.container).html(response.Html);
+		//			$('.divLinkVoltar', InformacaoCorte.container).hide()
+		//			InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
+
+		//			MasterPage.botoes(InformacaoCorte.container);
+		//		}
+
+		//		if (response.Msg && response.Msg.length > 0) {
+		//			Mensagem.gerar(InformacaoCorte.container, response.Msg);
+		//		}
+		//	}
+		//});
+		//MasterPage.carregando(false);
 	},
 
 	editar: function () {

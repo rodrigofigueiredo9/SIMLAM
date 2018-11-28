@@ -1,18 +1,20 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<InformacaoCorteInformacaoVM>" %>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<InformacaoCorteVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="divInformacaoCorteInformacao">
-	<input type="hidden" class="hdnInformacaoCorteInformacaoId" value="<%: Model.Entidade.Id %>" />
+	<input type="hidden" class="hdnInformacaoCorteInformacaoId" value="<%: Model.Caracterizacao.InformacaoCorteInformacao.Id%>" />
 
 	<fieldset class="box" id="fsInformacaoCorte">
 		<legend>Objeto declarado</legend>
 
-		<%Html.RenderPartial("Especie", Model); %>
+		<%Html.RenderPartial("Empreendimento", Model); %>
 
-		<%Html.RenderPartial("Produto", Model); %>
+		<%--<%Html.RenderPartial("Especie", Model); %>
 
-		<div class="block">
+		<%Html.RenderPartial("Produto", Model); %>--%>
+
+		<%--<div class="block">
 			<div class="coluna17 append6">
 				<label for="InformacaoCorteInformacao_DataInformacao_DataTexto">Data da informação *</label>
 				<%= Html.TextBox("InformacaoCorteInformacao.DataInformacao.DataTexto", Model.Entidade.DataInformacao.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataInformacao" }))%>
@@ -27,7 +29,7 @@
 				<label for="InformacaoCorteInformacao_AreaCorteRestante">Área de corte restante (ha)</label>
 				<%= Html.TextBox("InformacaoCorteInformacao.AreaCorteRestante", Model.Entidade.AreaCorteRestante, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCorteRestante maskDecimalPonto4", @maxlength = "14" }))%>
 			</div>
-		</div>
+		</div>--%>
 	</fieldset>
 
 	<div class="block box">

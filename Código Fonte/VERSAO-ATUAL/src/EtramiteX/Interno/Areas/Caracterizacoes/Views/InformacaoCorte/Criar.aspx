@@ -27,6 +27,9 @@
 		<div class="divCaracterizacao">
 			<%Html.RenderPartial("InformacaoCorte", Model);%>
 		</div>
+		<div class="divInfCorte hide">
+			<%Html.RenderPartial("InformacaoCorteInformacao", Model);%>
+		</div>
 
 		<div class="block box divLinkVoltar">
 			<span><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoId}) %>">Voltar</a></span>
