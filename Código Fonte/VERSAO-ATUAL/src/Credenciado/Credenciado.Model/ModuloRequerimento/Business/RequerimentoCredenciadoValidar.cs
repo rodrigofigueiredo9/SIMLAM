@@ -18,6 +18,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloChecagemRoteiro.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
@@ -391,6 +392,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				}
 			}
 
+			if (requerimento.Atividades.Any(x => x.Id == 209)) /* Informação de Corte */
+				ValidacoesEmpreendimentoAtividadeCorte(requerimento);
+
 			return Validacao.EhValido;
 		}
 
@@ -526,6 +530,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			//}
 
 			return Validacao.EhValido;
+		}
+
+		public void ValidacoesEmpreendimentoAtividadeCorte(Requerimento requerimento) {
+
+			if (!_busEmpreendimento.EmpreendimentoPossuiCodigoSicar(requerimento.Empreendimento.Codigo ?? 0))
+				Validacao.Add(Msg.EmpreendimentoNaoIntegradoAoSicar);
+
+			if(!_busEmpreendimento.EmpreendimentoAssociadoResponsavel(requerimento.Interessado.Id, requerimento.Empreendimento.Id))
+				Validacao.Add(Msg.EmpreendimentoNaoAssociadoAoResponsavel);
 		}
 	}
 }

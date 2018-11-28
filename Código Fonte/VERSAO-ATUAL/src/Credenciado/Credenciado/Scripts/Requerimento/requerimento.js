@@ -34,6 +34,8 @@ Requerimento = {
 
 		container.delegate('.btnRoteiroPdf', 'click', RequerimentoObjetivoPedido.onBaixarPdfClick);
 
+		container.delegate('.btnVisualizarEmpreendimento', 'click', RequerimentoEmpreendimento.onVisualizarEmpreendimentoToCorte);
+
 		container.delegate('.btnCarregarRoteiro', 'click', RequerimentoObjetivoPedido.onCarregarRoteiro);
 		Listar.atualizarEstiloTable($('.tabRoteiros', Requerimento.container));
 
@@ -55,7 +57,7 @@ Requerimento = {
 			});
 		}
 	},
-
+	
 	editarProjetoDigital: function (modalContent) {
 		Modal.fechar(modalContent);
 	},
@@ -106,7 +108,7 @@ Requerimento = {
 
 				break;
 
-		    case 3:
+			case 3:
 				Requerimento.onObterStep(RequerimentoResponsavel.urlObterResponsavelVisualizar, objeto.params, RequerimentoResponsavel.callBackObterResponsavelVisualizar);
 
 				break;
@@ -114,10 +116,14 @@ Requerimento = {
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
 				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
-				debugger;
-				if (onRequerimentoAtividadeCorte) {
-					objeto.params.requerimentoId = Requerimento.ReqInterEmp.empreendimentoId;
+				
+				if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+					MasterPage.grid();
+					Requerimento.botoes({ btnEmpAssNovo: true });
+					$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+					$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
 				}
 				else
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimento, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
@@ -1170,7 +1176,7 @@ RequerimentoEmpreendimento = {
 	filtros: {},
 
 	callBackObterEmpreendimento: function () {
-
+		
 		EmpreendimentoInline.load(Requerimento.container, {
 			onIdentificacaoEnter: RequerimentoEmpreendimento.onIdentificacaoEnterEmpreendimento,
 			onVisualizarEnter: RequerimentoEmpreendimento.onVisualizarEnterEmpreendimento,
@@ -1200,7 +1206,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	onSalvarEmpreendimento: function (partialContent, responseJson, isEditar) {
-
+		
 		var retorno = false;
 		var param = { requerimentoId: null, empreendimentoId: null };
 
@@ -1246,6 +1252,7 @@ RequerimentoEmpreendimento = {
 		});
 
 		Requerimento.ReqInterEmp['empreendimentoId'] = param.empreendimentoId;
+		$(".btnEditar", Requerimento.container).removeClass('hide');
 		return retorno;
 	},
 
@@ -1268,6 +1275,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	onVisualizarEnterEmpreendimento: function () {
+		
 		if (Requerimento.ReqInterEmp && parseInt(Requerimento.ReqInterEmp.empreendimentoId) > 0) {
 			Requerimento.botoes({ btnEditar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 			RequerimentoEmpreendimento.salvarEmpreendimento = false;
@@ -1285,6 +1293,40 @@ RequerimentoEmpreendimento = {
 		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
 		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onNovoEmpreendimentoClick);
 		Requerimento.configurarBtnCancelarStep(4);
+	},
+
+	onVisualizarEmpreendimentoToCorte: function () {
+		var container = $(this).closest('tr');
+
+		var id = 0;//$('.hdnEmpreendimentoId', container).val();
+		var internoId = $('.hdnEmpreendimentoInternoId', container).val();
+
+		Empreendimento.abrirVisualizar({ id, internoId });
+		Requerimento.botoes({ btnEmpAssNovo: true, btnSalvar: true });
+		Requerimento.salvarEdicao = true;
+		RequerimentoEmpreendimento.salvarEmpreendimento = true;
+		$('.btnSalvar', Requerimento.container).val('Associar');
+		$(".btnEditar", Requerimento.container).bind('click').addClass('hide');
+
+		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+
+		//$('.btnEmpAssNovo', Requerimento.container).click(RequerimentoEmpreendimento.teste);
+		
+	},
+
+	onBuscarNovoToCorte: function () {
+
+		var params = {
+			id : 0,
+			requerimentoId : Requerimento.ReqInterEmp.requerimentoId
+		};
+		
+		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
+		Requerimento.botoes({ });
+		$(".btnEmpAssNovo", Requerimento.container).unbind('click');
+		$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
+		MasterPage.grid();
 	},
 
 	onEditarEnterEmpreendimento: function () {
@@ -1336,10 +1378,10 @@ RequerimentoEmpreendimento = {
 	},
 
 	onRequerimentoAtividadeCorte: function () {
-		debugger;
 		var param = {
 			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
 		};
+		var retorno = false;
 
 		$.ajax({
 			url: RequerimentoEmpreendimento.urlIsAtividadeCorte,
@@ -1355,11 +1397,13 @@ RequerimentoEmpreendimento = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
-					return false;
+					retorno = false;
 				} else 
-					return response.reqAssociado;
+					retorno = response.reqAssociado;
 			}
 		});
+
+		return retorno;
 	}
 }
 

@@ -15,6 +15,7 @@ using Tecnomapas.EtramiteX.Configuracao.Interno.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento;
@@ -30,6 +31,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		EmpreendimentoCredenciadoValidar _validar;
 		EmpreendimentoCredenciadoBus _bus;
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
+		RequerimentoCredenciadoBus _busRequerimento;
 		public String EstadoDefault
 		{
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyEstadoDefault); }
@@ -43,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			_busInterno = new EmpreendimentoInternoBus();
 			_validar = new EmpreendimentoCredenciadoValidar();
 			_bus = new EmpreendimentoCredenciadoBus();
+			_busRequerimento = new RequerimentoCredenciadoBus();
 		} 
 
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
@@ -660,60 +663,67 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			EmpreendimentoVM vm = new EmpreendimentoVM();
 
-			if (id > 0)
+			if(requerimentoId > 0 && id <= 0)
 			{
-				Empreendimento emp = _bus.Obter(id);
-
-				if (emp.Enderecos.Count == 0)
-				{
-					emp.Enderecos.Add(new Endereco());
-					emp.Enderecos.Add(new Endereco());
-				}
-				else if (emp.Enderecos.Count == 1)
-				{
-					emp.Enderecos.Add(new Endereco());
-				}
-
-				SalvarVM salvarVM = new SalvarVM(
-					ListaCredenciadoBus.Estados,
-					ListaCredenciadoBus.Municipios(emp.Enderecos[0].EstadoId),
-					ListaCredenciadoBus.Municipios(emp.Enderecos[1].EstadoId),
-					ListaCredenciadoBus.Segmentos,
-					ListaCredenciadoBus.TiposCoordenada,
-					ListaCredenciadoBus.Datuns,
-					ListaCredenciadoBus.Fusos,
-					ListaCredenciadoBus.Hemisferios,
-					ListaCredenciadoBus.TiposResponsavel,
-					ListaCredenciadoBus.LocalColetaPonto,
-					ListaCredenciadoBus.FormaColetaPonto,
-					emp.Enderecos[0].EstadoId,
-					emp.Enderecos[0].MunicipioId,
-					emp.Enderecos[1].EstadoId,
-					emp.Enderecos[1].MunicipioId,
-					emp.Coordenada.LocalColeta.GetValueOrDefault(),
-					emp.Coordenada.FormaColeta.GetValueOrDefault());
-
-				vm.SalvarVM = salvarVM;
-				vm.SalvarVM.Empreendimento = emp;
-				vm.SalvarVM.MostrarTituloTela = false;
-				vm.SalvarVM.IsVisualizar = true;
-				PreencherSalvar(vm.SalvarVM);
-			}
-			else
+				var interessado = _busRequerimento.ObterSimplificado(requerimentoId).Interessado.Id;
+				vm.ListarVM.Resultados = _bus.ObterEmpreendimentoResponsavel(interessado);
+			}else
 			{
-				_bus.Obter(id);
-				vm = new EmpreendimentoVM(
-					ListaCredenciadoBus.Estados,
-					ListaCredenciadoBus.Municipios(ListaCredenciadoBus.EstadoDefault),
-					ListaCredenciadoBus.Segmentos,
-					ListaCredenciadoBus.TiposCoordenada,
-					ListaCredenciadoBus.Datuns,
-					ListaCredenciadoBus.Fusos,
-					ListaCredenciadoBus.Hemisferios,
-					ListaCredenciadoBus.TiposResponsavel);
+				if (id > 0)
+				{
+					Empreendimento emp = _bus.Obter(id);
+
+					if (emp.Enderecos.Count == 0)
+					{
+						emp.Enderecos.Add(new Endereco());
+						emp.Enderecos.Add(new Endereco());
+					}
+					else if (emp.Enderecos.Count == 1)
+					{
+						emp.Enderecos.Add(new Endereco());
+					}
+
+					SalvarVM salvarVM = new SalvarVM(
+						ListaCredenciadoBus.Estados,
+						ListaCredenciadoBus.Municipios(emp.Enderecos[0].EstadoId),
+						ListaCredenciadoBus.Municipios(emp.Enderecos[1].EstadoId),
+						ListaCredenciadoBus.Segmentos,
+						ListaCredenciadoBus.TiposCoordenada,
+						ListaCredenciadoBus.Datuns,
+						ListaCredenciadoBus.Fusos,
+						ListaCredenciadoBus.Hemisferios,
+						ListaCredenciadoBus.TiposResponsavel,
+						ListaCredenciadoBus.LocalColetaPonto,
+						ListaCredenciadoBus.FormaColetaPonto,
+						emp.Enderecos[0].EstadoId,
+						emp.Enderecos[0].MunicipioId,
+						emp.Enderecos[1].EstadoId,
+						emp.Enderecos[1].MunicipioId,
+						emp.Coordenada.LocalColeta.GetValueOrDefault(),
+						emp.Coordenada.FormaColeta.GetValueOrDefault());
+
+					vm.SalvarVM = salvarVM;
+					vm.SalvarVM.Empreendimento = emp;
+					vm.SalvarVM.MostrarTituloTela = false;
+					vm.SalvarVM.IsVisualizar = true;
+					PreencherSalvar(vm.SalvarVM);
+				}
+				else
+				{
+					_bus.Obter(id);
+					vm = new EmpreendimentoVM(
+						ListaCredenciadoBus.Estados,
+						ListaCredenciadoBus.Municipios(ListaCredenciadoBus.EstadoDefault),
+						ListaCredenciadoBus.Segmentos,
+						ListaCredenciadoBus.TiposCoordenada,
+						ListaCredenciadoBus.Datuns,
+						ListaCredenciadoBus.Fusos,
+						ListaCredenciadoBus.Hemisferios,
+						ListaCredenciadoBus.TiposResponsavel);
+				}
 			}
 
-			return PartialView("EmpreendimentoInline", vm);
+			return PartialView("EmpreendimentoInlineCorte", vm);
 		}
 
 		#endregion

@@ -1104,6 +1104,9 @@
     <Content Include="Views\CFO\Index.aspx" />
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
+    <Content Include="Views\Empreendimento\EmpreendimentoInlineCorte.ascx" />
+    <Content Include="Views\Empreendimento\EmpreendimentoPartialCorte.ascx" />
+    <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
     <Content Include="Views\Empreendimento\ListarResultados.ascx" />
     <Content Include="Views\Empreendimento\ListarFiltros.ascx" />
     <Content Include="Views\Empreendimento\AsmResponsavel.ascx" />

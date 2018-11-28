@@ -388,12 +388,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			Requerimento requerimento = new Requerimento() { Id = requerimentoId };
 			//requerimento.Empreendimento = _busEmpreendimento.Obter(empreendimentoId, true);
 
-			bool isAssociado = _busRequerimento.AssociarEmpreendimento(requerimento);
+			bool isAssociado = _busRequerimento.IsRequerimentoAtividadeCorte(requerimentoId);
 
 
 			return Json(new
 			{
-				empAssociado = isAssociado,
+				reqAssociado = isAssociado,
 				Msg = Validacao.Erros,
 				RedirecionarListar = Validacao.Erros.Exists(x => x.Tipo == eTipoMensagem.Erro),
 				urlRedirecionar = Url.Action("Index", "ProjetoDigital", Validacao.QueryParamSerializer())
