@@ -11,7 +11,6 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
-using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Entities;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -22,7 +21,6 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Busine
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
-using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 {
@@ -37,7 +35,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 		GerenciadorConfiguracao<ConfiguracaoCoordenada> _configCoordenada;
 		GerenciadorConfiguracao<ConfiguracaoEmpreendimento> _configEmpreendimento;
 		GerenciadorConfiguracao<ConfiguracaoEndereco> _configEnd;
-		RequerimentoCredenciadoBus _busRequerimento;
 
 		public String UsuarioCredenciado
 		{
@@ -62,7 +59,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			_configEmpreendimento = new GerenciadorConfiguracao<ConfiguracaoEmpreendimento>(new ConfiguracaoEmpreendimento());
 			_configEnd = new GerenciadorConfiguracao<ConfiguracaoEndereco>(new ConfiguracaoEndereco());
 			_da = new EmpreendimentoCredenciadoDa();
-			_busRequerimento = new RequerimentoCredenciadoBus();
 		}
 
 		#region Ações de DML
@@ -503,7 +499,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 		{
 			
 			List<Empreendimento> retorno = new List<Empreendimento>();
-			Requerimento requerimento = _busRequerimento.ObterSimplificado(requerimentoId);
 
 			try
 			{
