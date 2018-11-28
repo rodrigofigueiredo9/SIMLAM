@@ -167,7 +167,7 @@
 								<% var temModeloCarac = (item.ProjetoGeograficoId > 0); %>
 								<% if (item.PodeCopiar) { %><input title="Copiar do Institucional" class="icone comparar btnCopiar" type="button" /><% } %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0 && !item.PodeCopiar) { %><input title="Projeto geográfico" class="icone projetoGeografico btnAdicionar" type="button"/><% } %>
-								<% if (item.PodeCadastrar && !temModeloCarac && !item.PodeCopiar) { %><input title="Cadastrar" class="icone criarNovo btnAdicionar" type="button" /><% } %>
+								<% if (!item.PodeCadastrar && !temModeloCarac && !item.PodeCopiar) { %><input title="Cadastrar" class="icone criarNovo btnAdicionar" type="button" /><% } %>
 							</td>
 						</tr>
 						<% } %>
