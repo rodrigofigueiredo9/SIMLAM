@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tecnomapas.Blocos.Entities.WebService;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 {
@@ -16,6 +17,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int numeroCaixas { get; set; }
 		public int tipoCaixaId { get; set; }
 		public string tipoCaixaTexto { get; set; }
+
+
+		public eTipoPessoa PessoaAssociadaTipo { get; set; }
+		public string PessoaAssociadaCpfCnpj { get; set; }
 
 		public NotaFiscalCaixa()
 		{
