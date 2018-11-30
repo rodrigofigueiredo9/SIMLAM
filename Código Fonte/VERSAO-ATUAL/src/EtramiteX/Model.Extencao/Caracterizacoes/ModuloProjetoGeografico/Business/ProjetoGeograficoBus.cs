@@ -435,6 +435,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		public void Reabrir(ProjetoGeografico projeto, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Refazer(projeto))
+				{
+					_da.Reabrir(projeto.Id, titulo, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		public void Recarregar(ProjetoGeografico projeto)
 		{
 			try

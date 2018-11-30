@@ -2238,6 +2238,51 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 			return lst;
 		}
 
+		internal List<Titulo> ObterAssociados(int id, BancoDeDados banco = null)
+		{
+			var lst = new List<Titulo>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				var comando = bancoDeDados.CriarComando(@"select s.id, s.associado_id, s.associado_tid, s.tid, ttn.numero || '/' || ttn.ano numeroAno, ttm.nome modelo_nome,
+				ttm.id modelo_id, ttm.sigla from {0}tab_titulo_associados s, {0}tab_titulo_numero ttn, {0}tab_titulo_modelo ttm where s.associado_id = ttn.titulo 
+				and ttn.modelo = ttm.id and s.titulo = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					Titulo item;
+					while (reader.Read())
+					{
+						item = new Titulo();
+
+						item.IdRelacionamento = Convert.ToInt32(reader["id"]);
+
+						item.Tid = reader["tid"].ToString();
+
+						item.Numero.Texto = reader["numeroAno"].ToString();
+
+						item.Modelo.Nome = reader["modelo_nome"].ToString();
+						item.Modelo.Id = Convert.ToInt32(reader["modelo_id"]);
+						item.Modelo.Sigla = reader["sigla"].ToString();
+
+						if (reader["associado_id"] != null && !Convert.IsDBNull(reader["associado_id"]))
+						{
+							item.Id = Convert.ToInt32(reader["associado_id"]);
+						}
+
+						item.Tid = reader["associado_tid"].ToString();
+
+						lst.Add(item);
+					}
+					reader.Close();
+				}
+			}
+
+			return lst;
+		}
+
 		public List<AtividadeSolicitada> ObterAtividadesSimples(int tituloId, BancoDeDados banco = null)
 		{
 			List<AtividadeSolicitada> lst = new List<AtividadeSolicitada>();
@@ -2503,6 +2548,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
             return retorno;
         }
 
+		internal bool ExistsTituloAssociadoNaoEncerrado(int laudoId)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(s.*) from {0}tab_titulo_associados s
+				left join tab_titulo t
+				on (t.id = s.titulo)
+				where s.associado_id = :laudo_id
+				and t.situacao <> :situacao", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("laudo_id", laudoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.Encerrado, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
 		#endregion
 
 		#region Validações
