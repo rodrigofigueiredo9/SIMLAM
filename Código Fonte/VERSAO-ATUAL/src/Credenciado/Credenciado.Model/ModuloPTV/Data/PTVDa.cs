@@ -2430,11 +2430,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
 					SELECT ID,
-					(NF.SALDO_INICIAL - (nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0)
-					+ nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0))) SALDO_ATUAL          
-					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
+						(NF.SALDO_INICIAL - (nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0)
+						+ nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0))) SALDO_ATUAL          
+						FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND NF.TIPO_PESSOA = :tipo_pessoa 
+						AND NF.CPF_CNPJ_ASSOCIADO = :cpfcnpj AND ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
+				comando.AdicionarParametroEntrada("tipo_pessoa", (int)notaFiscal.PessoaAssociadaTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("cpfcnpj", notaFiscal.PessoaAssociadaCpfCnpj, DbType.String);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
