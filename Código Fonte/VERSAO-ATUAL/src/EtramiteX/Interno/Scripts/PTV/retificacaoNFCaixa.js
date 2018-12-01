@@ -25,33 +25,34 @@ NFCaixa = {
 		//container.delegate('.btnEditar', 'click', NFCaixa.editar);
 		//container.delegate('.btnVisualizar', 'click', NFCaixa.visualizar)
 		//container.delegate('.btnPDF', 'click', NFCaixa.gerarPDF);
-		//container.delegate('.btnExcluir', 'click', NFCaixa.excluir);
+		container.delegate('.btnExcluir', 'click', NFCaixa.excluir);
 		//container.delegate('.btnAtivar', 'click', NFCaixa.ativar);
 		//container.delegate('.btnCancelar', 'click', NFCaixa.cancelar);
 		//container.delegate('.ddlTipoDocumento', 'change', NFCaixa.onChangeTipoDocumento);
 		
 		Aux.setarFoco(container);
 		NFCaixa.container = container;
-	}
+	},
 
-	//obter: function (container) {		
-	//	return JSON.parse($(container).closest('tr').find('.itemJson:first').val());
-	//},
+	obter: function (container) {		
+		return JSON.parse($(container).closest('tr').find('.itemJson:first').val());
+	},
 
 	//editar: function () {
 	//	var objeto = NFCaixa.obter(this);
 	//	MasterPage.redireciona(NFCaixa.settings.urls.urlEditar + '/' + objeto.Id);
 	//},
 
-	//excluir: function () {
-	//	var objeto = NFCaixa.obter(this);
-	//	Modal.excluir({
-	//		'urlConfirm': NFCaixa.settings.urls.urlExcluirConfirm,
-	//		'urlAcao': NFCaixa.settings.urls.urlExcluir,
-	//		'id': objeto.Id,
-	//		'btnExcluir': this
-	//	});
-	//},
+	excluir: function () {
+		var objeto = NFCaixa.obter(this);
+		Modal.excluir({
+			'urlConfirm': NFCaixa.settings.urls.urlExcluirConfirm,
+			'urlAcao': NFCaixa.settings.urls.urlExcluir,
+			'id': objeto.id,
+			'tamanho': Modal.tamanhoModalPequena,
+			'btnExcluir': this
+		});
+	},
 
 	//visualizar: function () {		
 	//	var objeto = NFCaixa.obter(this);

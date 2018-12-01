@@ -13,7 +13,7 @@
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th width="10%">N° do Documento</th>
+				<th width="30%">N° do Documento</th>
 				<th>CPF/CNPJ</th>
 				<th width="20%">Tipo de Caixa</th>
 				<th width="18%">Saldo Inicial</th>

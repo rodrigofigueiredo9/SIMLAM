@@ -3157,7 +3157,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				}
 				if (!String.IsNullOrWhiteSpace(filtro.Dados.NumeroPTV))
 				{
-					comandtxt += comando.FiltroAnd("PNF.PTV", "PTV", filtro.Dados.NumeroPTV);
+					comandtxt += comando.FiltroAnd("(select ptv.numero from tab_ptv ptv where ptv.id = pnf.ptv)", "PTV", filtro.Dados.NumeroPTV);
 				}
 				if ((int)filtro.Dados.tipoDeCaixa > 0)
 				{
@@ -3199,7 +3199,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													NF.TIPO_CAIXA,
 													LVC.TEXTO TIPO_CAIXA_TEXTO,
 													NF.SALDO_INICIAL,
-													NF.SALDO_INICIAL - NVL((SELECT SUM(PN.SALDO_ATUAL) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID),0) SALDO_ATUAL
+													NF.SALDO_INICIAL - 
+													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) SALDO_ATUAL
 												FROM  TAB_NF_CAIXA NF
 												LEFT JOIN TAB_PTV_NF_CAIXA PNF ON NF.ID = PNF.NF_CAIXA
 												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
@@ -3228,6 +3230,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				}
 			}
 			return retorno;
+		}
+
+		internal bool VerificarExcluirNFCaixa(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				//Atualiza o tid da tabela tab_ptv
+				Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(1) FROM (                        
+																	SELECT ID FROM TAB_PTV_NF_CAIXA WHERE NF_CAIXA = :nf
+																	union all
+																	SELECT ID FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA WHERE NF_CAIXA = :nf
+																)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("nf", id, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
+		internal void ExcluirNFCaixa(int id, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"DELETE TAB_NF_CAIXA WHERE ID = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.Commit();
+			}
 		}
 
 		#endregion

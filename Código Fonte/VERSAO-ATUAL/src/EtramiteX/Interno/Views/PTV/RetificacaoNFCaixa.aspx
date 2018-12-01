@@ -13,16 +13,16 @@
 	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 	<script>
 		$(function () {
-			NFCaixa.load($("#central"), {
-				urls: {
-					urlSalvar: '<%= Url.Action("Salvar", "PTV") %>'
-					
-				}
-			});
+			NFCaixa.settings.urls = {
+				urlExcluirConfirm: '<%= Url.Action("RetificacaoNFCaixaExcluirConfirm", "PTV")%>',
+				urlExcluir: '<%= Url.Action("RetificacaoNFCaixaExcluir", "PTV") %>'
+			}
+			NFCaixa.load($("#central"));
 
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>
 				ContainerAcoes.load($(".containerAcoes"), {
 					urls:{
+						
 						urlGerarPdf: '<%= Url.Action("GerarPdf", "PTV", new { id = Request.Params["acaoId"].ToString() }) %>',
 						urlAtivar: '<%= Url.Action("Ativar", "PTV", new { id = Request.Params["acaoId"].ToString() }) %>',
 						urlNovo: '<%= Url.Action("Criar", "PTV") %>'

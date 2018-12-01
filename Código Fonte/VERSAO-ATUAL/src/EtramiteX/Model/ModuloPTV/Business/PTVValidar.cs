@@ -869,5 +869,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			return habilitado;
 		}
+
+		#region Retificação NotaFiscalDeCaixa
+		internal bool ExcluirNFCaixa(int id)
+		{
+			if (_da.VerificarExcluirNFCaixa(id))
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.NaoPodeExcluir);
+
+			return Validacao.EhValido;
+		}
+		#endregion
 	}
 }

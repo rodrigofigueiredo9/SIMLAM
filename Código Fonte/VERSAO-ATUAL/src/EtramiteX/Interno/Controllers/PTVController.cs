@@ -990,6 +990,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		public ActionResult RetificacaoNFCaixaExcluirConfirm(int id)
+		{
+			ConfirmarVM vm = new ConfirmarVM();
+
+			vm.Id = id;
+			vm.Mensagem = Mensagem.RetificacaoNFCaixa.MensagemExcluirConfirm;
+			vm.Titulo = "Excluir Nota Fiscal de Caixa";
+
+			return PartialView("Confirmar", vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		public ActionResult RetificacaoNFCaixaExcluir(int id)
+		{
+			_busPTV.ExcluirNFCaixa(id);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+		}
+
 		#endregion
 
 		public ActionResult AlertaEPTV()

@@ -1213,6 +1213,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public bool ExcluirNFCaixa(int id)
+		{
+			try
+			{
+				if (!_validar.ExcluirNFCaixa(id))
+				{
+					return false;
+				}
+
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ExcluirNFCaixa(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.RetificacaoNFCaixa.Excluido);
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		#endregion
 	}
 }
