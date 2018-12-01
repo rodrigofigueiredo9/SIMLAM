@@ -345,6 +345,8 @@
     <Compile Include="Interno\ModuloPTV\PTVConversa.cs" />
     <Compile Include="Interno\ModuloPTV\PTVHistorico.cs" />
     <Compile Include="Interno\ModuloPTV\PTVItemHistorico.cs" />
+    <Compile Include="Interno\ModuloPTV\RetificacaoNFCaixaListarResultado.cs" />
+    <Compile Include="Interno\ModuloPTV\RetificacaoNFCaixaListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\PTVListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTVOutro\PTVOutroListarResultado.cs" />
     <Compile Include="Interno\ModuloPTV\PTVListarResultado.cs" />

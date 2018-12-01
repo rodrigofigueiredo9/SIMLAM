@@ -939,6 +939,59 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
+		#region Retificação NF Caixa
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar })]
+		public ActionResult RetificacaoNotaFiscalDeCaixa()
+		{
+			RetificacaoNFCaixaVM vm = new RetificacaoNFCaixaVM();
+
+			return View("RetificacaoNFCaixa", vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
+		public ActionResult FiltrarNFCaixa(RetificacaoNFCaixaVM vm, Paginacao paginacao)
+		{
+			if (!String.IsNullOrEmpty(vm.UltimaBusca))
+			{
+				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<RetificacaoNFCaixaVM>(vm.UltimaBusca).Filtros;
+			}
+
+			vm.Paginacao = paginacao;
+			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			//vm.SetListItens(new ListaBus().QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			Resultados<RetificacaoNFCaixaListarResultado> resultados = _busPTV.FiltrarNFCaixa(vm.Filtros, vm.Paginacao);
+			if (resultados == null)
+			{
+				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+			}
+
+			//vm.PodeVisualizar = User.IsInRole(ePermissao.PTVVisualizar.ToString());
+			//vm.PodeEditar = User.IsInRole(ePermissao.PTVEditar.ToString());
+			//vm.PodeExcluir = User.IsInRole(ePermissao.PTVExcluir.ToString());
+			//vm.PodeGerarPDF = User.IsInRole(ePermissao.PTVListar.ToString());
+			//vm.PodeAtivar = User.IsInRole(ePermissao.PTVAtivar.ToString());
+			//vm.PodeCancelar = User.IsInRole(ePermissao.PTVCancelar.ToString());
+
+
+			EtramiteIdentity func = User.Identity as EtramiteIdentity ?? new EtramiteIdentity("", "", "", null, "", 0, 0, "", "", 0, 0);
+			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { vm.RT = x.Id; });
+
+			vm.Paginacao.QuantidadeRegistros = resultados.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.Resultados = resultados.Itens;
+
+			return Json(new
+			{
+				@Msg = Validacao.Erros,
+				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "RetificacaoNFCaixaListarResultados", vm)
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
 		public ActionResult AlertaEPTV()
 		{
 			_busPTV.VerificarAlertaChegadaMensagemEPTV();

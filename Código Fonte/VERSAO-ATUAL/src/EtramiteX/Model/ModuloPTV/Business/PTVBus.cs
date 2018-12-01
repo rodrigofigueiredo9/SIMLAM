@@ -1188,5 +1188,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 
 		#endregion Alerta de E-PTV
+
+		#region Retificação Nota fiscal de caixa
+
+		public Resultados<RetificacaoNFCaixaListarResultado> FiltrarNFCaixa(RetificacaoNFCaixaListarFiltro ptvListarFiltro, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<RetificacaoNFCaixaListarFiltro> filtro = new Filtro<RetificacaoNFCaixaListarFiltro>(ptvListarFiltro, paginacao);
+				Resultados<RetificacaoNFCaixaListarResultado> resultados = _da.FiltrarNFCaixa(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		#endregion
 	}
 }

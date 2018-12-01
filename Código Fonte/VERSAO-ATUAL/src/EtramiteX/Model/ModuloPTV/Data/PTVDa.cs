@@ -3130,6 +3130,107 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		#endregion Alerta EPTV
 
+		#region Retificação Nota fiscal de caixa
+
+		internal Resultados<RetificacaoNFCaixaListarResultado> FiltrarNFCaixa(Filtro<RetificacaoNFCaixaListarFiltro> filtro)
+		{
+			Resultados<RetificacaoNFCaixaListarResultado> retorno = new Resultados<RetificacaoNFCaixaListarResultado>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				string comandtxt = string.Empty;
+				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
+				Comando comando = bancoDeDados.CriarComando("");
+				string tabelaTipoDoc = String.Empty;
+				string amarracaoTipoDoc = String.Empty;
+
+				#region Adicionando Filtros
+
+				
+				comandtxt += comando.FiltroAnd("NF.NUMERO", "NUMERO", filtro.Dados.NumeroNFCaixa);
+
+				if (!String.IsNullOrEmpty(filtro.Dados.NFCaixaCPFCNPJ))
+				{
+					var tipoPessoa = filtro.Dados.NFCaixaIsCPF ? 1 : 2;
+					comandtxt += comando.FiltroAnd("NF.TIPO_PESSOA", "TIPO_PESSOA", tipoPessoa);
+					comandtxt += comando.FiltroAnd("NF.CPF_CNPJ_ASSOCIADO", "CPF_CNPJ_ASSOCIADO", filtro.Dados.NFCaixaCPFCNPJ);
+				}
+				if (!String.IsNullOrWhiteSpace(filtro.Dados.NumeroPTV))
+				{
+					comandtxt += comando.FiltroAnd("PNF.PTV", "PTV", filtro.Dados.NumeroPTV);
+				}
+				if ((int)filtro.Dados.tipoDeCaixa > 0)
+				{
+					comandtxt += comando.FiltroAnd("NF.TIPO_CAIXA", "TIPO_CAIXA", (int)filtro.Dados.tipoDeCaixa);
+				}
+				
+
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "NUMERO", "CPF_CNPJ_ASSOCIADO", "TIPO_CAIXA", "SALDO_INICIAL", "SALDO_ATUAL" };
+
+				if (filtro.OdenarPor > 0)
+				{
+					ordenar.Add(colunas.ElementAtOrDefault(filtro.OdenarPor - 1));
+				}
+				else
+				{
+					ordenar.Add("NUMERO");
+				}
+
+				#endregion
+
+				#region Quantidade de registro do resultado
+
+				comando.DbCommand.CommandText =
+				"select count(*) from (" + String.Format(@"select	NF.ID
+																FROM  TAB_NF_CAIXA NF
+																LEFT JOIN TAB_PTV_NF_CAIXA PNF ON NF.ID = PNF.NF_CAIXA
+																LEFT JOIN TAB_PTV PTV ON PTV.ID = PNF.PTV  " + comandtxt + " group by NF.ID) a ", esquemaBanco);
+
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtro.Menor);
+				comando.AdicionarParametroEntrada("maior", filtro.Maior);
+
+				comandtxt = String.Format(@"SELECT	NF.ID,
+													NF.NUMERO,
+													NF.TIPO_PESSOA,
+													NF.CPF_CNPJ_ASSOCIADO,
+													NF.TIPO_CAIXA,
+													LVC.TEXTO TIPO_CAIXA_TEXTO,
+													NF.SALDO_INICIAL,
+													NF.SALDO_INICIAL - NVL((SELECT SUM(PN.SALDO_ATUAL) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID),0) SALDO_ATUAL
+												FROM  TAB_NF_CAIXA NF
+												LEFT JOIN TAB_PTV_NF_CAIXA PNF ON NF.ID = PNF.NF_CAIXA
+												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					RetificacaoNFCaixaListarResultado item;
+					while (reader.Read())
+					{
+						item = new RetificacaoNFCaixaListarResultado();
+						item.Id = reader.GetValue<int>("ID");
+						item.NumeroNFCaixa = reader.GetValue<string>("NUMERO");
+						item.TipoPessoa = reader.GetValue<int>("TIPO_PESSOA");
+						item.CPFCNPJ = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
+						item.TipoCaixa = reader.GetValue<int>("TIPO_CAIXA");
+						item.TipoCaixaTexto = reader.GetValue<string>("TIPO_CAIXA_TEXTO");
+						item.SaldoInicial = reader.GetValue<int>("SALDO_INICIAL");
+						item.SaldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+
+						retorno.Itens.Add(item);
+					}
+					reader.Close();
+				}
+			}
+			return retorno;
+		}
+
+		#endregion
 		internal bool ExisteAssinaturaDigital(int funcionarioId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
