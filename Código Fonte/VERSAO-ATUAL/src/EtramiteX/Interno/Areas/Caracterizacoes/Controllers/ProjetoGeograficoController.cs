@@ -93,7 +93,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			vm.CaracterizacaoTipo = vm.Projeto.CaracterizacaoId;
 			vm.ArquivoEnviadoTipo = (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado;
-			vm.ArquivoEnviadoFilaTipo = (tipo == eCaracterizacao.Dominialidade) ? (int)eFilaTipoGeo.Dominialidade : (int)eFilaTipoGeo.Atividade;
+
+			if (tipo == eCaracterizacao.Dominialidade)
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.Dominialidade;
+			else if (tipo == eCaracterizacao.RegularizacaoFundiaria)
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.RegularizacaoFundiaria;
+			else
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.Atividade;
 
 			vm.NiveisPrecisao = ViewModelHelper.CriarSelectList(_bus.ObterNiveisPrecisao());
 			vm.SistemaCoordenada = ViewModelHelper.CriarSelectList(_bus.ObterSistemaCoordenada());

@@ -235,7 +235,17 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 					new LayerItem(){ Grupo=1, Name="Faixa de domínio", Query="PROJETO={0}"}
 				};
 			}
-
+			else if (_tipo == ArquivoMxd.MAPA_REGULARIZACAO)
+			{
+				return new List<LayerItem>()
+				{
+					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de servidão", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Área de matrícula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Área total da propriedade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de domínio", Query="PROJETO={0}"}
+				};
+			}
 			return null;
 		}
 
@@ -283,7 +293,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.ZoomPercentage(1.1);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
-				
+
 				_mxd.ActivateMap("MINI_MAPA");
 				string[] coord = hashData["COORDENADA"].ToString().Split(';');
 				int centerX = Convert.ToInt32(coord[0]);
@@ -339,7 +349,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 					}
 					else
 					{
-						if(layer.Name == "Ponto da atividade" && hashData["PATIV"] != null)
+						if (layer.Name == "Ponto da atividade" && hashData["PATIV"] != null)
 						{
 							_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, hashData["PATIV"]));
 							_mxd.SetLayerVisibility(layer.Name, true);
@@ -685,6 +695,79 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.RefreshLegends(scaleSymbols: true);
 
 				_mxd.SetElementText("nome_croqui", "Croqui do CAR");
+				_mxd.SetElementText("imagem", String.Empty);
+				_mxd.ExportToPDF(tempFile1, 300);
+
+				loadPdfToDocument(doc, wrt, tempFile1, isUsePageEvent);
+
+				doc.NewPage();
+				//----------------------------------------
+
+				//----------------------------------------
+				//Mapa Imagem
+				_mxd.SetLayerVisibility("IMAGEM", true);
+				_mxd.RefreshLegends(scaleSymbols: true);
+
+				_mxd.SetElementText("nome_croqui", "Croqui com Imagem");
+				_mxd.SetElementText("imagem", "Aerolevantamento: ano 2007/2008");
+				_mxd.ExportToPDF(tempFile2, 300);
+
+				loadPdfToDocument(doc, wrt, tempFile2, isUsePageEvent);
+
+				doc.NewPage();
+				//----------------------------------------
+			}
+			else if (_tipo == ArquivoMxd.MAPA_REGULARIZACAO)
+			{
+				//Aplicando filtros
+				_mxd.ActivateMap("MAPA_PRINCIPAL");
+
+				foreach (var layer in ObterLayers())
+				{
+					_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, projetoId));
+					layer.Source = _mxd.GetDataSource(layer.Name);
+
+					if (String.IsNullOrEmpty(layer.Query))
+					{
+						_mxd.SetLayerVisibility(layer.Name, true);
+					}
+					else
+					{
+						_mxd.SetLayerVisibility(layer.Name, _da.ObterQuantidade(layer, projetoId) > 0);
+					}
+				}
+
+				_mxd.ActivateMap("MINI_MAPA");
+				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
+				_mxd.ActivateMap("MAPA_PRINCIPAL");
+
+				//Setar as informações no mxd
+				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
+				_mxd.SetElementText("uf", hashData["UF"].ToString());
+				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
+				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
+
+				//Definir Zoom
+				_mxd.ZoomToFeature("Área total da propriedade", "PROJETO", projetoId.ToString());
+				_mxd.ZoomPercentage(1.1);
+				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
+				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
+
+				_mxd.ActivateMap("MINI_MAPA");
+				string[] coord = hashData["COORDENADA"].ToString().Split(';');
+				int centerX = Convert.ToInt32(coord[0]);
+				int centerY = Convert.ToInt32(coord[1]);
+				_mxd.ZoomToEnvelope(new Envelope(centerX - 2000, centerX + 2000, centerY - 2000, centerY + 2000));
+				_mxd.ZoomToBestScale("MINI_MAPA", 800000D);
+
+				_mxd.ActivateMap("MAPA_PRINCIPAL");
+
+				//----------------------------------------
+				//Mapa Tematico
+				_mxd.SetLayerVisibility("IMAGEM", false);
+				_mxd.RefreshLegends(scaleSymbols: true);
+
+				_mxd.SetElementText("nome_croqui", "Croqui da Regularização Fundiária");
 				_mxd.SetElementText("imagem", String.Empty);
 				_mxd.ExportToPDF(tempFile1, 300);
 
