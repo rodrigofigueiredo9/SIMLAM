@@ -619,6 +619,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 		}
 
 
+
+
 		#endregion
 
 		#region Verificar / Validar
@@ -786,6 +788,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 				return _da.ObterEmpreendimentoResponsavel(pessoa).Count > 0 ? true : false;
 			}
 			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
+		}
+
+		public bool EmpreendimentoPossuiCodigoSicar(Int64? empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (empreendimento == null || empreendimento <= 0) return true;
+				return _da.ObterCodigoSicarPorEmpreendimento(empreendimento, banco).Count > 0 ? true : false;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return true;
+		}
+
+		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.EmpreendimentoAssociadoResponsavel(pessoa, empreendimento, banco);
+			}
+			catch (Exception ex)
 			{
 				Validacao.AddErro(ex);
 			}
