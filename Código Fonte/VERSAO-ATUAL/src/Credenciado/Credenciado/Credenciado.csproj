@@ -46,6 +46,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
@@ -90,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Areas\Caracterizacoes\CaracterizacoesAreaRegistration.cs" />
     <Compile Include="Areas\Caracterizacoes\Controllers\BarragemDispensaLicencaController.cs" />
+    <Compile Include="Areas\Caracterizacoes\Controllers\InformacaoCorteController.cs" />
     <Compile Include="Areas\Caracterizacoes\Controllers\ControleAcesso.cs" />
     <Compile Include="Areas\Caracterizacoes\Controllers\UnidadeConsolidacaoController.cs" />
     <Compile Include="Areas\Caracterizacoes\Controllers\UnidadeProducaoController.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\BarragemDispensaLicencaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\ReservaLegalVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\DominialidadeVM.cs" />
@@ -247,6 +252,8 @@
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\BaseReferenciaPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ImportadorShapePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\DesenhadorPartial.ascx" />
