@@ -21,5 +21,7 @@
 		public int projeto_geografico_id { get; set; }
 
 		public string projeto_geografico_tid { get; set; }
+
+		public int carac_origem { get; set; }
 	}
 }
