@@ -61,16 +61,22 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
+
                     if (item.Requisicao == null)
                     {
                         nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
 						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
 						continue;
                     }
-
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
+					if(ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
+					{
+						nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+						Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
+						continue;
+					}
 					string resultado = "";
 					try
 					{
