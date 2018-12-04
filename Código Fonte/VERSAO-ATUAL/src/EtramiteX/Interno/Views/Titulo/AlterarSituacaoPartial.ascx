@@ -43,7 +43,7 @@
 				</div>
 				<div class="coluna20 append2">
 					<label for="CodigoSinaflor">Código Integração</label>
-					<%= Html.TextBox("CodigoSinaflor", Model.CodigoSinaflor, new { @class = "text disabled", @disabled = "disabled" })%>
+					<%= Html.TextBox("CodigoSinaflor", Model.CodigoSinaflor, new { @class = "text disabled txtCodigoSinaflor", @disabled = "disabled" })%>
 				</div>
 			<%} %>
 		</div>
