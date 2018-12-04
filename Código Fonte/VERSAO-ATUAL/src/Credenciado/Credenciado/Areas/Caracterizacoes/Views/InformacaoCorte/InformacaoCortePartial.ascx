@@ -62,7 +62,7 @@
 
             <div class="coluna10">
                 <br />
-                <input class="btnAdicioinar" type="button" value="Adicionar" />
+                <input class="icone adicionar btnAdicioinar" type="button" />
             </div>
         </div>
 
@@ -90,10 +90,8 @@
                         <td>
                             <input type="hidden" class="itemJson" value="<%= Model.ObterJSon(item) %>" />
 
-
                             <%if (Model.IsPodeExcluir)
 								{%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
-                            
                         </td>
                     </tr>
                     <% } %>
@@ -103,4 +101,42 @@
 
     </fieldset>
 
+    <fieldset class="block box">
+        <legend>Objeto Declarado</legend>
+        <div class="block">
+            <div class="coluna20 append1">
+                <label>Código</label>
+                <%= Html.TextBox("codigoObjetoDeclarado", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text codigoObjetoDeclarado"}))%>
+            </div>
+
+            <div class="coluna10">
+                <label>Data Informação *</label>
+                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
+            </div>
+        </div>
+        <div class="block">
+            <div class="coluna20 append1">
+                <label>Tipo de Corte</label>
+                <%= Html.DropDownList("tipoCorteList", Model.EmpreendimentoZonaLocalizacao, ViewModelHelper.SetaDisabled(false, new { @class = "text tipoCorteList"}))%>
+            </div>
+			<div class="coluna20 append1">
+                <label>Espécie Informada</label>
+                <%= Html.DropDownList("especieInformadaList", Model.EmpreendimentoZonaLocalizacao, ViewModelHelper.SetaDisabled(false, new { @class = "text especieInformadaList"}))%>
+            </div>
+			<div class="coluna20">
+                <label>Área Corte(ha) / N.º Árvore</label>
+                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
+            </div>
+
+			<div class="coluna10">
+                <label>Idade Plantio (anos)</label>
+                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
+            </div>
+
+			<div class="coluna10">
+                <br />
+                <input class="icone adicionar btnAdicioinar" type="button" />
+            </div>
+        </div>
+    </fieldset>
 </div>
