@@ -996,6 +996,8 @@
     <Content Include="Content\_pdfAspose\CFO.doc" />
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Areas\Especificidades\Views\Web.config" />
+    <None Include="Properties\PublishProfiles\Desenvolvimento.pubxml" />
+    <None Include="Properties\PublishProfiles\Homologacao.pubxml" />
     <None Include="Properties\PublishProfiles\Publish-Profile.pubxml" />
     <None Include="Properties\PublishProfiles\PublishLocal.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-DDSIV.pubxml" />

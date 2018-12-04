@@ -534,8 +534,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 		public void ValidacoesEmpreendimentoAtividadeCorte(Requerimento requerimento) {
 
-			if (!_busEmpreendimento.EmpreendimentoPossuiCodigoSicar(requerimento.Empreendimento.Codigo ?? 0))
-				Validacao.Add(Msg.EmpreendimentoNaoIntegradoAoSicar);
+			//if (!_busEmpreendimento.EmpreendimentoPossuiCodigoSicar(requerimento.Empreendimento.Codigo ?? 0))
+			//	Validacao.Add(Msg.EmpreendimentoNaoIntegradoAoSicar);
 
 			if(!_busEmpreendimento.EmpreendimentoAssociadoResponsavel(requerimento.Interessado.Id, requerimento.Empreendimento.Id))
 				Validacao.Add(Msg.EmpreendimentoNaoAssociadoAoResponsavel);
