@@ -4,7 +4,38 @@
 
 <h2 class="titTela"><%= Model.Filtros.IsVisualizar ? "Visualizar ": "Editar " %>Exploração Florestal</h2>
 <br />
+<fieldset class="block box">
+	<legend>Empreendimento</legend>
+	<div class="block">
+        <div class="coluna20 append1">
+			<label>Código</label>
+			<%= Html.TextBox("EmpreendimentoId", Model.Caracterizacao.Codigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
+		</div>
+		<div class="coluna77">
+			<label><%=Model.DenominadorTexto%> *</label>
+			<%= Html.TextBox("DenominadorValor", Model.Caracterizacao.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
+		</div>
+	</div>
 
+	<div class="block">
+		<div class="coluna20 append1">
+			<label>Zona de localização *</label>
+			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
+		</div>
+		<div class="coluna7 append1">
+			<label>UF</label>
+			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.Uf, new { disabled = "disabled", @class = "text disabled" })%>
+		</div>
+		<div class="coluna45 append1">
+			<label>Município</label>
+			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.Municipio, new { disabled = "disabled", @class = "text disabled" })%>
+		</div>
+        <div class="coluna20 ">
+			<label>CNPJ</label>
+			<%= Html.TextBox("CNPJ", Model.Caracterizacao.CNPJ, new { @maxlength = "100", @class = "text cnpj disabled", @disabled = "disabled" })%>
+		</div>
+	</div>
+</fieldset>
 <div class="filtroExpansivo">
 	<span class="titFiltro">Filtros</span>
 	<div class="filtroCorpo filtroSerializarAjax block">
