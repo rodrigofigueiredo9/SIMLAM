@@ -220,6 +220,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				{
 					if (laudo.ExploracaoFlorestalList.Count <= 0)
 						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestalList"));
+
+					if (string.IsNullOrWhiteSpace(laudo.ParecerFavoravel))
+					{
+						laudo.ParecerFavoravel = "«remover»";
+						laudo.DescricaoParecer = "«remover»";
+					}
+
+					if (string.IsNullOrWhiteSpace(laudo.ParecerDesfavoravel))
+					{
+						laudo.ParecerDesfavoravel = "«remover»";
+						laudo.DescricaoParecerDesfavoravel = "«remover»";
+					}
 				}
 
 				#endregion
