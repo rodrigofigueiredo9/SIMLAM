@@ -123,10 +123,14 @@ TituloAlterarSituacao = {
 		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 		var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
-		if (situacao == 4)
-			situacao = 6;
+		if (situacao == 4) situacao = 6;
+		var realizarIntegracao = modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8) && TituloAlterarSituacao.settings.gerouPdf == true;
+		if (situacao != 1 && realizarIntegracao) {
+			var codigoIntegracao = $('.txtCodigoSinaflor', TituloAlterarSituacao.container).val();
+			if (codigoIntegracao == "") realizarIntegracao = false;
+		}
 
-		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8) && TituloAlterarSituacao.settings.gerouPdf == true) {
+		if (realizarIntegracao) {
 			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
 			MasterPage.carregando(true);
 			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();

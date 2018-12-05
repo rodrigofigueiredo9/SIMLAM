@@ -149,7 +149,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 				Produtos.Add(new ExploracaoFlorestalExploracaoProdutoPDF());
 			IdentificacaoGeo = exploracao.Identificacao;
 			Geometria = exploracao.GeometriaTipoTexto;
-			FinalidadeExploracao = String.IsNullOrWhiteSpace(exploracao.FinalidadeExploracaoTexto) ? exploracao.FinalidadeEspecificar : exploracao.FinalidadeExploracaoTexto;
+			FinalidadeExploracao = exploracao.FinalidadeExploracao == (int)eExploracaoFlorestalFinalidade.Outros ? String.Concat(exploracao.FinalidadeExploracaoTexto, " (", exploracao.FinalidadeEspecificar, ")") : exploracao.FinalidadeExploracaoTexto;
 			ParecerFavoravel = Convert.ToBoolean(exploracao.ParecerFavoravel) ? "Favorável" : "Não Favorável";
 			ClassificacaoVegetal = exploracao.ClassificacaoVegetacaoTexto;
 		}

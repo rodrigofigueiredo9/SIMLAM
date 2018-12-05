@@ -52,7 +52,7 @@
 		<%if(Model.ExploracaoFlorestal.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono) {%>
 				<div class="coluna22 append2">
 					<label for="ExploracaoFlorestal_Exploracoes_AreaRequerida<%: Model.ExploracaoFlorestal.Identificacao%>">Área requerida (m²) *</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaRequerida" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.AreaRequerida, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "12" }))%>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.AreaRequerida" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.AreaRequerida.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "13" }))%>
 				</div>
 				<div class="coluna24 append2">
 					<label for="ExploracaoFlorestal_Exploracoes_AreaCroqui">Área da atividade croqui (m²)</label>
@@ -130,7 +130,7 @@
 								<input type="hidden" class="especieId" value='<%: produto.EspeciePopularId%>' />
 							</td>
 							<td>
-								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToString("N2")); %>
+								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToStringTrunc()); %>
 								<span class="quantidade" title="<%:qtd%>"><%: qtd %></span>
 							</td>
 							<td>

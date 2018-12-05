@@ -188,6 +188,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
+		public void ReabrirExploracao(int empreendimento, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+				if (idProjetoGeo == 0)
+					throw new Exception("Projeto Geográfico não encontrado");
+
+				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+				if (projeto.SituacaoId == (int)eProjetoGeograficoSituacao.Finalizado)
+					_projetoGeoBus.Reabrir(projeto, titulo, banco);
+
+				if (!Validacao.EhValido) return;
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ReabrirExploracao(empreendimento, titulo, bancoDeDados);
+
+					if (Validacao.EhValido)
+						Validacao.Erros.Clear();
+					else
+					{
+						bancoDeDados.Rollback();
+						return;
+					}
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		#endregion
 
 		#region Obter

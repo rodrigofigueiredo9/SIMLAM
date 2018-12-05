@@ -416,6 +416,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
+		internal void ReabrirExploracao(int empreendimento, int titulo, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComandoPlSql(@" begin
+				update {0}crt_exploracao_florestal e
+					set e.data_conclusao = null
+					where e.empreendimento = :empreendimento
+					and exists
+					(select 1 from tab_titulo_exp_florestal t
+					where t.exploracao_florestal = e.id
+					and t.titulo = :titulo);
+				end;", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+			}
+		}
+
 		#endregion
 
 		#region Obter / Filtrar
@@ -982,7 +1003,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						(select lg.texto from lov_crt_geometria_tipo lg
 							where lg.id = (select cp.geometria from crt_exp_florestal_exploracao cp
 							where cp.exploracao_florestal = c.id
-							and rownum = 1)) geometria_texto
+							and rownum = 1)) geometria_texto,
+						(select sum(case when cp.area_requerida > 0 then cp.area_requerida else cp.arvores_requeridas end) from crt_exp_florestal_exploracao cp
+							where cp.exploracao_florestal = c.id) quantidade
 						from crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade) where 1=1 " + comandtxt +
 						Blocos.Etx.ModuloCore.Data.DaHelper.Ordenar(colunas, ordenar, filtros.OdenarPor == 0), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
@@ -1002,7 +1025,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							CodigoExploracaoTexto = reader.GetValue<string>("codigo_exploracao_texto"),
 							TipoExploracaoTexto = reader.GetValue<string>("tipo_exploracao_texto"),
 							Localizador = reader.GetValue<string>("localizador"),
-							GeometriaPredominanteTexto = reader.GetValue<string>("geometria_texto")
+							GeometriaPredominanteTexto = reader.GetValue<string>("geometria_texto"),
+							Quantidade = (reader.GetValue<decimal>("quantidade")).ToString("N2")
 						};
 
 						if (!Convert.IsDBNull(reader["codigo_exploracao"]))
