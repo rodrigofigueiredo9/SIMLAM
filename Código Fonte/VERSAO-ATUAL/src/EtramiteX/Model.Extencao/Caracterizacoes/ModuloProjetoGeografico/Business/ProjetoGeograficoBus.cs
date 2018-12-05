@@ -273,10 +273,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					if (arquivoEnviado.IdRelacionamento == 0)
 					{
 						_da.InserirFila(arquivoEnviado, bancoDeDados);
-
 						ObterSituacao(arquivoEnviado);
-
 						bancoDeDados.Commit();
+					}
+					else
+					{
+						ObterSituacao(arquivoEnviado);
+						if (arquivoEnviado.Situacao == (int)eFilaSituacaoGeo.Erro)
+						{
+							_da.AlterarSituacaoFila(arquivoEnviado, bancoDeDados);
+							bancoDeDados.Commit();
+						}
 					}
 				}
 			}

@@ -688,7 +688,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando("begin update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;" +
+				Comando comando = bancoDeDados.CriarComando("begin " + (arquivo.TituloId > 0 ? "" : "update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;") +
 				"update {0}tab_fila t set t.etapa = :etapa, t.situacao = :situacao, t.data_fila = sysdate, t.data_inicio = null, t.data_fim = null, t.mecanismo_elaboracao = :mecanismo " +
 				"where t.projeto = :projeto and t.tipo = :tipo returning t.id into :id; end;", EsquemaBancoGeo, EsquemaBanco);
 
