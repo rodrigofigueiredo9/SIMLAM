@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPulverizacaoProduto;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
@@ -158,7 +159,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				}
 			}
 
-			if (ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0)
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0) ||
+				(!ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana && ptv.NotaFiscalDeCaixas.Count() <= 0)))
 			{
 				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}

@@ -1398,14 +1398,14 @@ PTVEmitir = {
 		$('.txtNotaFiscalCaixaNumero').val('');
 		$('.txtNFCaixaSaldoAtual').val('');
 		$('.txtNFCaixaNumeroDeCaixas').val('');
-		$('.txtNFCaixaSaldoAtual').removeClass('disabled')
+		$('.pessoaAssociadaNfCaixa').val('');
+		$('.txtNFCaixaSaldoAtual').removeClass('disabled');
 		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
-		$('.txtNotaFiscalCaixaNumero').removeClass('disabled')
+		$('.txtNotaFiscalCaixaNumero').removeClass('disabled');
 		$('.txtNotaFiscalCaixaNumero').removeAttr('disabled');
 		$('.isNFCaixaVerificado').addClass('hide');
 		$('.btnLimparNotaCaixaCaixa').addClass('hide');
 		$('.btnVerificarNotaCaixaCaixa').removeClass('hide');
-		$('.pessoaAssociadaNfCaixa').removeClass('hide');
 	},
 
 	onVerificarNotaFiscalCaixa: function () {
@@ -1453,7 +1453,6 @@ PTVEmitir = {
 					$('.isNFCaixaVerificado').removeClass('hide');
 					$('.btnLimparNotaCaixaCaixa').removeClass('hide');
 					$('.btnVerificarNotaCaixaCaixa').addClass('hide');
-					$('.pessoaAssociadaNfCaixa').addClass('hide');
 				}
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 			}

@@ -18,6 +18,7 @@ using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPulverizacaoProduto;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -173,6 +174,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual);
 					}
 				}
+			}
+
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0) ||
+				(!ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana && ptv.NotaFiscalDeCaixas.Count() <= 0)))
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}
 
 			return Validacao.EhValido;

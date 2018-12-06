@@ -517,7 +517,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
 							comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
 							comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
-							comando.AdicionarParametroEntrada("cpf_cnpj", item.PessoaAssociadaCpfCnpj, DbType.Int32);
+							comando.AdicionarParametroEntrada("cpf_cnpj", item.PessoaAssociadaCpfCnpj, DbType.String);
 							comando.AdicionarParametroEntrada("tipo_pessoa", (int)item.PessoaAssociadaTipo, DbType.Int32);
 
 							comando.AdicionarParametroSaida("id", DbType.Int32);
