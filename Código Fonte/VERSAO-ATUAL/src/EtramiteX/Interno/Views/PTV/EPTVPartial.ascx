@@ -385,7 +385,10 @@
 			<label for="SituacaoData">Data</label>
 			<%= Html.TextBox("SituacaoData", Model.PTV.SituacaoData.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class="text" })) %>
 		</div>
+
+		<input type="button" title="" class="icone pdf btnPDF" style="margin-top:2%" />
 	</div>
+
 
 	<div class="block">
 		<div class="coluna90">
@@ -407,6 +410,7 @@
 			<% } %>
 		</div>
 	</div>
+
 
 	<div class="block divCamposSituacao divMotivo <%= (Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Rejeitado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado) ? "hide":""%>">
 		<div class="block ultima">
