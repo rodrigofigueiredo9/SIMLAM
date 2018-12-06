@@ -339,6 +339,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\FiscalizacaoAssinanteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
     <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
@@ -2427,6 +2428,8 @@
     <Content Include="Views\PTVOutro\ListarResultados.ascx" />
     <Content Include="Views\PTVOutro\PTVOutroPartial.ascx" />
     <Content Include="Views\PTVOutro\Visualizar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarListar.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarPartial.ascx" />
     <Content Include="Views\PTV\ComunicadorPTVPartial.ascx" />
     <Content Include="Views\PTV\AtivarPartial.ascx" />
     <Content Include="Views\PTV\CancelarPartial.ascx" />

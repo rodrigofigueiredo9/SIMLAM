@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public int? notaFiscalCaixaApresentacao { get; set; }
 		public string notaFiscalCaixaNumero { get; set; }
 
+		public int saldoInicial { get; set; }
 		public int saldoAtual { get; set; }
 		public int numeroCaixas { get; set; }
 		public int tipoCaixaId { get; set; }

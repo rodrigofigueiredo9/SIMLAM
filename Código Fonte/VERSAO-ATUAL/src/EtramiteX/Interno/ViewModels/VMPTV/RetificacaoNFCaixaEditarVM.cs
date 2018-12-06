@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
-using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 {
-	public class RetificacaoNFCaixaVM
+	public class RetificacaoNFCaixaEditarVM
 	{
 		public String UltimaBusca { get; set; }
 		public Boolean IsVisualizar { get; set; }
@@ -20,7 +20,6 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 		public Boolean PodeAnalisar { get; set; }
 
 		public Boolean PodeCancelar { get; set; }
-		public int RT { get; set; }
 
 		private Paginacao _paginacao = new Paginacao();
 		public Paginacao Paginacao
@@ -29,25 +28,18 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 			set { _paginacao = value; }
 		}
 
-		private RetificacaoNFCaixaListarFiltro _filtros = new RetificacaoNFCaixaListarFiltro();
-		public RetificacaoNFCaixaListarFiltro Filtros
+		private int _filtros = new int();
+		public int Filtros
 		{
 			get { return _filtros; }
 			set { _filtros = value; }
 		}
 
-		private List<RetificacaoNFCaixaListarResultado> _resultados = new List<RetificacaoNFCaixaListarResultado>();
-		public List<RetificacaoNFCaixaListarResultado> Resultados
-		{
-			get { return _resultados; }
-			set { _resultados = value; }
-		}
-
-		private List<PTVNFCaixaResultado> _resultadosPTV = new List<PTVNFCaixaResultado>();
+		private List<PTVNFCaixaResultado> _listaPTV = new List<PTVNFCaixaResultado>();
 		public List<PTVNFCaixaResultado> ResultadosPTV
 		{
-			get { return _resultadosPTV; }
-			set { _resultadosPTV = value; }
+			get { return _listaPTV; }
+			set { _listaPTV = value; }
 		}
 
 		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
@@ -57,6 +49,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV
 
 		public NotaFiscalCaixa NotaFiscalDeCaixa { get; set; }
 
-		public RetificacaoNFCaixaVM() { }
+		public int Id { get; set; }
+
+		public RetificacaoNFCaixaEditarVM() { }
 	}
 }

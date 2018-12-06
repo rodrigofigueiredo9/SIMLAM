@@ -15,7 +15,10 @@
 		$(function () {
 			NFCaixa.settings.urls = {
 				urlExcluirConfirm: '<%= Url.Action("RetificacaoNFCaixaExcluirConfirm", "PTV")%>',
-				urlExcluir: '<%= Url.Action("RetificacaoNFCaixaExcluir", "PTV") %>'
+				urlExcluir: '<%= Url.Action("RetificacaoNFCaixaExcluir", "PTV") %>',
+				urlEditar: '<%= Url.Action("RetificacaoNFCaixaEditar", "PTV") %>',
+				urlSalvar: '<%= Url.Action("RetificacaoNFCaixaSalvar", "PTV") %>',
+				urlPTVNFCaixaPag: '<%= Url.Action("PTVNFCaixaPaginacao", "PTV") %>',
 			}
 			NFCaixa.load($("#central"));
 

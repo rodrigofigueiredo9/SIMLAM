@@ -15,10 +15,10 @@
 			<tr>
 				<th width="30%">N° do Documento</th>
 				<th>CPF/CNPJ</th>
-				<th width="20%">Tipo de Caixa</th>
-				<th width="18%">Saldo Inicial</th>
-				<th width="18%">Saldo Atual</th>
-				<th class="semOrdenacao" width="23%">Ações</th>
+				<th>Tipo de Caixa</th>
+				<th>Saldo Inicial</th>
+				<th>Saldo Atual</th>
+				<th class="semOrdenacao" width="10%">Ações</th>
 			</tr>
 		</thead>
 

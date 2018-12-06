@@ -1243,6 +1243,44 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return Validacao.EhValido;
 		}
 
+		public NotaFiscalCaixa ObterNFCaixa(int id)
+		{
+			try
+			{
+				return _da.ObterNFCaixa(id);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new NotaFiscalCaixa();
+		}
+
+		public Resultados<PTVNFCaixaResultado> ObterPTVNFCaixa(Filtro<int> filtro)
+		{
+			try
+			{
+				return _da.ObterPTVNFCaixa(filtro);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new Resultados<PTVNFCaixaResultado>();
+		}
+
+		public void SalvarNFCaixa(int id, int novoSaldo)
+		{
+			try
+			{
+				_da.SalvarNFCaixa(id, novoSaldo);
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.Salvar);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+		}
+
 		#endregion
 	}
 }

@@ -960,7 +960,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao = paginacao;
 			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-			//vm.SetListItens(new ListaBus().QuantPaginacao, vm.Paginacao.QuantPaginacao);
+			vm.SetListItens(new ListaBus().QuantPaginacao, vm.Paginacao.QuantPaginacao);
 
 			Resultados<RetificacaoNFCaixaListarResultado> resultados = _busPTV.FiltrarNFCaixa(vm.Filtros, vm.Paginacao);
 			if (resultados == null)
@@ -968,14 +968,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
 			}
 
-			//vm.PodeVisualizar = User.IsInRole(ePermissao.PTVVisualizar.ToString());
-			//vm.PodeEditar = User.IsInRole(ePermissao.PTVEditar.ToString());
-			//vm.PodeExcluir = User.IsInRole(ePermissao.PTVExcluir.ToString());
-			//vm.PodeGerarPDF = User.IsInRole(ePermissao.PTVListar.ToString());
-			//vm.PodeAtivar = User.IsInRole(ePermissao.PTVAtivar.ToString());
-			//vm.PodeCancelar = User.IsInRole(ePermissao.PTVCancelar.ToString());
-
-
+			
 			EtramiteIdentity func = User.Identity as EtramiteIdentity ?? new EtramiteIdentity("", "", "", null, "", 0, 0, "", "", 0, 0);
 			_busPTV.ObterResponsavelTecnico(func.FuncionarioId).ForEach(x => { vm.RT = x.Id; });
 
@@ -1007,6 +1000,64 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			_busPTV.ExcluirNFCaixa(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		public ActionResult RetificacaoNFCaixaEditar(int id)
+		{
+			RetificacaoNFCaixaEditarVM vm = new RetificacaoNFCaixaEditarVM();
+			Filtro<int> filtro = new Filtro<int>(id);
+			filtro.Menor = 1;
+			filtro.Maior = 5;
+
+			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
+			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
+			vm.SetListItens(new ListaBus().QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			Resultados<PTVNFCaixaResultado> resultadoPTVList = _busPTV.ObterPTVNFCaixa(filtro);
+			vm.NotaFiscalDeCaixa = _busPTV.ObterNFCaixa(id);
+			
+			vm.Paginacao.QuantidadeRegistros = resultadoPTVList.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.ResultadosPTV = resultadoPTVList.Itens;
+
+
+			return PartialView("RetificacaoNFCaixaEditarPartial", vm);
+		}
+
+
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		public ActionResult PTVNFCaixaPaginacao(RetificacaoNFCaixaEditarVM vm, Paginacao paginacao)
+		{
+			//Filtro<int> filtro = new Filtro<int>(id);
+			//filtro.Menor = 1;
+			//filtro.Maior = 5;
+			//vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<RetificacaoNFCaixaEditarVM>(vm.UltimaBusca).Filtros;
+			Filtro<int> filtro = new Filtro<int>(832);
+			//vm.Filtros = filtro;
+			Resultados<PTVNFCaixaResultado> resultadoPTVList = _busPTV.ObterPTVNFCaixa(filtro);
+			//vm.NotaFiscalDeCaixa = _busPTV.ObterNFCaixa(id);
+
+			vm.Paginacao.QuantidadeRegistros = resultadoPTVList.Quantidade;
+			vm.Paginacao.EfetuarPaginacao();
+			vm.ResultadosPTV = resultadoPTVList.Itens;
+
+			return Json(new
+			{
+				@Msg = Validacao.Erros,
+				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "RetificacaoNFCaixaEditarListar", vm)
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		public ActionResult RetificacaoNFCaixaSalvar(int id, int novoSaldo)
+		{
+			_busPTV.SalvarNFCaixa(id, novoSaldo);
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion

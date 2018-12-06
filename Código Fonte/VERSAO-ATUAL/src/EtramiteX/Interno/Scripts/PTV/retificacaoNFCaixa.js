@@ -11,7 +11,8 @@ NFCaixa = {
 			urlConfirmarAtivar: null,
 			urlAtivar: null,
 			urlPDF: null,
-			urlCancelar:null
+			urlCancelar: null,
+			urlPTVNFCaixaPag: null
 		}
 	},
 	
@@ -22,7 +23,7 @@ NFCaixa = {
 		if (options) { $.extend(NFCaixa.settings, options); }
 
 		container.listarAjax();
-		//container.delegate('.btnEditar', 'click', NFCaixa.editar);
+		container.delegate('.btnEditar', 'click', NFCaixa.editar);
 		//container.delegate('.btnVisualizar', 'click', NFCaixa.visualizar)
 		//container.delegate('.btnPDF', 'click', NFCaixa.gerarPDF);
 		container.delegate('.btnExcluir', 'click', NFCaixa.excluir);
@@ -51,6 +52,44 @@ NFCaixa = {
 			'id': objeto.id,
 			'tamanho': Modal.tamanhoModalPequena,
 			'btnExcluir': this
+		});
+	},
+
+	editar: function () {
+		Mensagem.limpar(NFCaixa.container);
+
+		var item = NFCaixa.obter(this);
+		Modal.abrir(NFCaixa.settings.urls.urlEditar + '/' + item.id, null, function (container) {
+			Modal.defaultButtons(container, function (container) {
+				
+				var objeto = {
+					id: $('.hdnNFCaixaId').val(),
+					novoSaldo: $('.novoSaldo').val()
+				};
+
+				MasterPage.carregando(true);
+				$.ajax({
+					url: NFCaixa.settings.urls.urlSalvar,
+					data: JSON.stringify(objeto),
+					cache: false,
+					async: false,
+					type: 'POST',
+					dataType: 'json',
+					contentType: 'application/json; charset=utf-8',
+					error: Aux.error,
+					success: function (response, textStatus, XMLHttpRequest) {
+						if (response.EhValido) {
+							Modal.fechar(container);
+							NFCaixa.container.listarAjax('ultimaBusca');
+						}
+
+						if (response.Msg && response.Msg.length > 0) {
+							Mensagem.gerar(container, response.Msg);
+						}
+					}
+				});
+				MasterPage.carregando(false);
+			}, 'Salvar');
 		});
 	},
 
