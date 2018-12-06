@@ -683,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			}
 
 			if (!String.IsNullOrEmpty(empreendimento.cep))
-				empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
+				empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "").Trim();
 
 			//Buscar código do IBGE
 			using (var cmd = new OracleCommand("SELECT ibge FROM " + schema + ".LOV_MUNICIPIO t WHERE t.id = :id", conn))
@@ -760,7 +760,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						empreendimento.zona = dr.GetValue<Int32>("zona");
 						empreendimento.cep = dr.GetValue<string>("cep") ?? string.Empty;
 						if (!String.IsNullOrWhiteSpace(empreendimento.cep))
-							empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
+							empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "").Trim();
 						empreendimento.logradouro = dr.GetValue<string>("logradouro") ?? string.Empty;
 						empreendimento.bairro = dr.GetValue<string>("bairro") ?? string.Empty;
 						empreendimento.municipio = dr.GetValue<Int32>("municipio");
