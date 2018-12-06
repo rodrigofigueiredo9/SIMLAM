@@ -510,13 +510,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						{
 							banco.IniciarTransacao();
 
-							comando = banco.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
-												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
+							comando = banco.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL, CPF_CNPJ_ASSOCIADO, TIPO_PESSOA)
+												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial, cpf_cnpj, tipo_pessoa) returning id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 							comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
 							comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
 							comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+							comando.AdicionarParametroEntrada("cpf_cnpj", item.PessoaAssociadaCpfCnpj, DbType.Int32);
+							comando.AdicionarParametroEntrada("tipo_pessoa", (int)item.PessoaAssociadaTipo, DbType.Int32);
 
 							comando.AdicionarParametroSaida("id", DbType.Int32);
 
