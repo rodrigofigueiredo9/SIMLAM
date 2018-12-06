@@ -2807,7 +2807,9 @@
     <Folder Include="ViewModels\VMPassivo\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Caracterizacoes\Views\Web.config" />
+    <Content Include="Areas\Caracterizacoes\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.sitemap">
@@ -2818,7 +2820,9 @@
     <Content Include="Views\Shared\Login.Master" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Relatorios\Views\Web.config" />
+    <Content Include="Areas\Relatorios\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\GeoProcessamento\Views\Web.config" />

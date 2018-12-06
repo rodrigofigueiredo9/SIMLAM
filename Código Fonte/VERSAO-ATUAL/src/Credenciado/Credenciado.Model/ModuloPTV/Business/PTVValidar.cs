@@ -252,13 +252,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.OrigemObrigatorio);
 			}
 
-            //var loteBus = new LoteBus();
-            //if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
-            //{
-            //    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
-            //    return false;
-            //}
-
 			#region Saldo
 
 			//TODO
@@ -277,16 +270,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.PTV.OrigemSituacaoInvalida(item.OrigemTipoTexto));
 					}
 
-					DateTime dataVencimentoCFO = cfo.DataEmissao.Data.GetValueOrDefault().AddDays(cfo.ValidadeCertificado);
+					DateTime dataVencimentoCFO = cfo.DataAtivacao.Data.GetValueOrDefault().AddDays(cfo.ValidadeCertificado);
 					if (dataVencimentoCFO < DateTime.Today)
 					{
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
-
-                    //if (cfo.DataAtivacao.Data < ptvData.Data)
-                    //{
-                    //    Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
-                    //}
 					break;
 
 				case eDocumentoFitossanitarioTipo.CFOC:
@@ -299,7 +287,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						Validacao.Add(Mensagem.PTV.OrigemSituacaoInvalida(item.OrigemTipoTexto));
 					}
 
-					DateTime dataVencimentoCFOC = cfoc.DataEmissao.Data.GetValueOrDefault().AddDays(cfoc.ValidadeCertificado);
+					DateTime dataVencimentoCFOC = cfoc.DataAtivacao.Data.GetValueOrDefault().AddDays(cfoc.ValidadeCertificado);
 					if (dataVencimentoCFOC < DateTime.Today)
 					{
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
