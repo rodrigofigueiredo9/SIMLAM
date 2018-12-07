@@ -31,5 +31,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Texto = string.Format("PTV Nº {0} salvo com sucesso.", numero), Tipo = eTipoMensagem.Sucesso };
 		}
 
+		public Mensagem CNPJObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CNPJ é obrigatório.", Campo = "CPFCNPJ" }; } }
+
+		public Mensagem CNPJInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CNPJ é inválido.", Campo = "CPFCNPJ" }; } }
+
+		public Mensagem CPFObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CPF é obrigatório.", Campo = "CPFCNPJ" }; } }
+
+		public Mensagem CPFInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CPF é inválido.", Campo = "CPFCNPJ" }; } }
+
 	}
 }

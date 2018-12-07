@@ -387,7 +387,7 @@
 	</div>
 	<div class="block">
 		<div class="isTipoCaixaChecked hide">
-			<div class="coluna36">
+			<div class="coluna25">
 				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
 				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
 			</div>
@@ -415,6 +415,8 @@
 				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
 			</div>
 		</div>
+	</div>
+	<div class="block">
 		<div class="isNFCaixaVerificado hide">
 			<div class="coluna15">
 				<label>Total de caixas*</label>

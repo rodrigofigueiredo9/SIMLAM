@@ -1313,7 +1313,7 @@ PTVEmitir = {
 			Produtos: [],
 			Anexos: [],
 			DataVistoria: $('#DataVistoria', PTVEmitir.container).val(),
-			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscal:checked', PTVEmitir.container).val() },
+			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscalCaixa:checked', PTVEmitir.container).val() },
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
@@ -1399,6 +1399,8 @@ PTVEmitir = {
 		$('.txtNFCaixaSaldoAtual').val('');
 		$('.txtNFCaixaNumeroDeCaixas').val('');
 		$('.pessoaAssociadaNfCaixa').val('');
+		$('.txtCPFCaixa').val('');
+		$('.txtCNPJCaixa').val('');
 		$('.txtNFCaixaSaldoAtual').removeClass('disabled');
 		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
 		$('.txtNotaFiscalCaixaNumero').removeClass('disabled');

@@ -26,6 +26,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 		public NotaFiscalCaixa()
 		{
 			notaFiscalCaixaApresentacao = 0;
+			saldoInicial = 0;
+			saldoAtual = 0;
+			numeroCaixas = 0;
 		}
 	}
 }

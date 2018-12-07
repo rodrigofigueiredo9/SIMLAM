@@ -176,11 +176,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				}
 			}
 
-			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0) ||
-				(!ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana && ptv.NotaFiscalDeCaixas.Count() <= 0)))
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0))
 			{
 				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}
+
+			if (ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana && ptv.NotaFiscalDeCaixas.Count() <= 0))
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionadaECulturaBanana);
 
 			return Validacao.EhValido;
 		}
