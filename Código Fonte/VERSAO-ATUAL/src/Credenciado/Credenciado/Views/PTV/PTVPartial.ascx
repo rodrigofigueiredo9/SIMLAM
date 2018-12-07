@@ -436,6 +436,7 @@
 				<thead>
 					<tr>
 						<th style="width: 30%">Nº do documento</th>
+						<th>CPF/CNPJ</th>
 						<th>Tipo da caixa</th>
 						<th style="width: 10%">Saldo atual</th>
 						<th style="width: 16%">N° de caixas</th>
@@ -449,6 +450,7 @@
 					%>
 						<tr>
 							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%=item.PessoaAssociadaCpfCnpj %>"><%= item.PessoaAssociadaCpfCnpj %></td>
 							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
 							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
 							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
@@ -465,6 +467,9 @@
 					<tr class="trTemplate hide">
 						<td class="">
 							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lvlCPFCNPJ"></label>
 						</td>
 						<td class="">
 							<label class="lblTipoCaixa"></label>

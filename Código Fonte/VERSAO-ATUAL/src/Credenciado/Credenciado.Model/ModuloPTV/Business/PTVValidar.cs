@@ -164,7 +164,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
 			}
 
-			if(ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana && ptv.NotaFiscalDeCaixas.Count() <= 0))
+			if(ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana) && ptv.NotaFiscalDeCaixas.Count() <= 0)
 				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionadaECulturaBanana);
 
 			return Validacao.EhValido;

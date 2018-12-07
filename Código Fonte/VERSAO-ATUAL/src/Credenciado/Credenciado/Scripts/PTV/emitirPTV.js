@@ -1502,10 +1502,17 @@ PTVEmitir = {
 
 		//adicionar na grid
 		$('.hdnItemJson', linha).val(JSON.stringify(PTVEmitir.nfCaixaTemp));
-		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero)//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
-		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto)//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
-		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual)//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
-		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas)//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
+		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto);//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
+		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual);//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
+		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		} else {
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		}
 
 		$('tbody', tabela).append(linha);
 

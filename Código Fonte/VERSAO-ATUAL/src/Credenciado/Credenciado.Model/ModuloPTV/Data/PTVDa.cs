@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
+using Tecnomapas.Blocos.Entities.WebService;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
@@ -511,7 +512,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 							banco.IniciarTransacao();
 
 							comando = banco.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL, CPF_CNPJ_ASSOCIADO, TIPO_PESSOA)
-												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial, cpf_cnpj, tipo_pessoa) returning id into :id", EsquemaBanco);
+												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial, :cpf_cnpj, :tipo_pessoa) returning id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 							comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
@@ -2467,7 +2468,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
-								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID, LC.TEXTO TIPO_TEXTO
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID,
+									LC.TEXTO TIPO_TEXTO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO 
 									FROM TAB_NF_CAIXA NF 
 										INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
 										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
@@ -2485,6 +2487,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
 						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
 						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						nf.PessoaAssociadaTipo = (eTipoPessoa)reader.GetValue<int>("TIPO_PESSOA");
+						nf.PessoaAssociadaCpfCnpj = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
 						lstNotaFiscalDeCaixa.Add(nf);
 					}
 
