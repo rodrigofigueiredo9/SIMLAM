@@ -64,7 +64,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
                     var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
-
+					if (controleSicar == null)
+					{
+						nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
+						Log.Error($" CONTROLE SICAR (GERAR) IS NULL ::: {requisicao}");
+						continue;
+					}
 					ObterDadosRequisicao(conn, requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
                     
@@ -72,7 +77,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					{
                         CAR car;	
                         //REQUISIÇÃO CAR
-						if (requisicao.tem_titulo || requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+						//throw new Exception("THROW TESTE");
+						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
 						{
 							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
 						}
@@ -128,7 +134,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Atualizar o Controle do SICAR
 						//var idControleSicar = ControleCarDB.InserirControleSICAR(conn, nextItem, arquivoCar);
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
-                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, tipo: "gerar-car");
+                        var idControleSicar = ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_GERADO, tid, codigoProtocolo: car.origem.codigoProtocolo, tipo: "gerar-car");
 
 						//Adicionar na fila pedido para Enviar Arquivo SICAR
 						LocalDB.AdicionarItemFila(conn, "enviar-car", nextItem.Id, arquivoCar, requisicao.empreendimento);
@@ -138,14 +144,14 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, ex.Message);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
-						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, tipo: "gerar-car");
+						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString() } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, tipo: "gerar-car");
 					}
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 				}
-                
-                //UPDATE NA COLUNA DATA_CRIACAO DA TAB_SCHEDULER_FILA quando der erro no receptor, para gera-los de novo                
-                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+
+				//UPDATE NA COLUNA DATA_CRIACAO DA TAB_SCHEDULER_FILA quando der erro no receptor, para gera-los de novo                
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE soundex(resultado) = soundex('O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;
                                                 ')", conn))
                         {
@@ -153,6 +159,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE resultado = '%Transporte de Rede%'", conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL AND (DATA_CRIACAO + 1 < SYSDATE)", conn))
                 {
                     cmd.ExecuteNonQuery();
                 }
@@ -166,10 +177,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			StringBuilder mensagens = new StringBuilder();
 
 			if (String.IsNullOrWhiteSpace(car.imovel.cep))
-
-
+			{
 				if (String.IsNullOrWhiteSpace(car.imovel.enderecoCorrespondencia.cep))
 					mensagens.AppendLine("Campo CEP do endereço de correspondência deve ser preenchido;");
+			}
 
 			#region [ DOCUMENTO.RESERVALEGAL.DADOSRESERVA ]
 
@@ -204,7 +215,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                 //CASO ELE SEJA UM RECEPTOR E SEM O NUMERO CAR DO CEDENTE, ELE NÃO GERARÁ O .CAR
                                 //OU SE A RESPOSTA FOR NÃO MAS ELE NÃO TIVER UM CEDENTE, QUER DIZER QUE ELE NÃO ENTRA NA VALIDAÇÃO
                                 */
-                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) )//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
+                                if (dadosReserva.reservaDentroImovel == "Não" && String.IsNullOrWhiteSpace(dadosReserva.numeroCAR) && dadosReserva.getCedentePossuiCodEmpreendimento() == "Sim")//&& !String.IsNullOrWhiteSpace(empreendimentoCedente))
                                     mensagens.AppendLine("O Empreendimento possui reserva legal compensada, é necessário enviar o CAR do empreendimento cedente primeiro;");
                             //}
 							
@@ -434,13 +445,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					}
 			}
 
-			requisicao.tem_titulo = tituloId > 0;
-            requisicao.tem_titulo = false; // PARA PEGAR SEMPRE O VALOR ANTIGO E NUNCA O DO TITULO (TALVEZ REMOVER ISSO MAIS TARDE)
-
-			if (requisicao.tem_titulo)
-				query = @" select ttd.dependencia_id caract_id, ttd.dependencia_tid caract_tid, ttd.dependencia_projeto_id projeto_id, ttd.dependencia_projeto_tid projeto_tid
-					from tab_titulo_dependencia ttd where ttd.titulo=:id and ttd.dependencia_caracterizacao=1";
-			else if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
+			if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
             {
                 query = @" select /*c.dominialidade_id*/ D.ID caract_id, /*c.dominialidade_tid*/ D.TID caract_tid, /*c.projeto_geo_id*/ PG.ID projeto_id, /*c.projeto_geo_tid*/ PG.TID projeto_tid   
                             from hst_car_solicitacao c   
@@ -451,16 +456,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
                 using (var cmd = new OracleCommand(query, conn))
                 {
-                    if (requisicao.tem_titulo)
-                    {
-                        cmd.Parameters.Add(new OracleParameter("id", tituloId));
-                        //cmd.Parameters.Add(new OracleParameter("tid", tituloTid));
-                    }
-                    else
-                    {
                         cmd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
                         cmd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
-                    }
 
                     using (var dr = cmd.ExecuteReader())
                         if (dr.Read())
@@ -499,92 +496,94 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		{
 			var car = new CAR();
 
-			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
-            var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
+			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento);
+            var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento);
 
-			var builder = new StringBuilder();
-			builder.Append(imovel.logradouro);
-			builder.Append(",");
-			builder.Append(imovel.numero);
-			builder.Append(",");
-			builder.Append(imovel.complemento);
-			builder.Append(" - ");
-			builder.Append(imovel.bairro);
-			builder.Append(",");
-			builder.Append(imovel.distrito);
-			builder.Append(",");
-			builder.Append(imovel.corrego);
-
-			var descricaoAcesso = builder.ToString();
-
-			var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
-			var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
-            var eCorrespondencia = new EnderecoCorrespondencia();
-
-            if (endCorrespondencia != null)
-            {
-                
-                
-                eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
-                eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
-                eCorrespondencia.complemento =
-                    (complementoCorrespondencia.Length > 100
-                        ? complementoCorrespondencia.Substring(0, 100)
-                        : complementoCorrespondencia);
-                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
-                eCorrespondencia.cep = endCorrespondencia.cep;
-                eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
-                
-            }
-            else
-            {
-
-                eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
-                eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
-                eCorrespondencia.complemento =
-                    (complementoCorrespondencia.Length > 100
-                        ? complementoCorrespondencia.Substring(0, 100)
-                        : complementoCorrespondencia);
-                eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
-                eCorrespondencia.cep = imovel.cep;
-                eCorrespondencia.codigoMunicipio = imovel.municipio;
-                
-            }
-
-			car.imovel = new Imovel()
+			var complementoCorrespondencia = String.Empty;
+			var bairroCorrespondencia = String.Empty;
+			var eCorrespondencia = new EnderecoCorrespondencia();
+			try
 			{
-				nome = imovel.denominador ?? string.Empty,
-				codigoMunicipio = imovel.municipio,
-				cep = imovel.cep,
-				descricaoAcesso = (descricaoAcesso.Length > 1000 ? descricaoAcesso.Substring(0, 1000) : descricaoAcesso),
-				zonaLocalizacao = (imovel.zona == 1 ? Imovel.ZonaUrbana : Imovel.ZonaRural),
-				email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
-				telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
-				modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
-                enderecoCorrespondencia = eCorrespondencia				
-			};
+				var builder = new StringBuilder();
+				builder.Append(imovel.logradouro);
+				builder.Append(",");
+				builder.Append(imovel.numero);
+				builder.Append(",");
+				builder.Append(imovel.complemento);
+				builder.Append(" - ");
+				builder.Append(imovel.bairro);
+				builder.Append(",");
+				builder.Append(imovel.distrito);
+				builder.Append(",");
+				builder.Append(imovel.corrego);
 
-            car = ObterDadosRetificacao(conn, schema, car, requisicao);
+				var descricaoAcesso = builder.ToString();
 
-			var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
-			car.proprietariosPosseirosConcessionarios = proprietarios;
+				if (endCorrespondencia?.id > 0)
+				{
+					complementoCorrespondencia = endCorrespondencia.complemento + " C.P.:" + endCorrespondencia.caixaPostal;
+					bairroCorrespondencia = endCorrespondencia.bairro + ", " + endCorrespondencia.distrito + ", " + endCorrespondencia.corrego;
+					eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
+					eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
+					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+					eCorrespondencia.cep = endCorrespondencia.cep;
+					eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
+				}
+				else
+				{
+					complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
+					bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
+					eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
+					eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
+					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
+					eCorrespondencia.cep = imovel.cep;
+					eCorrespondencia.codigoMunicipio = imovel.municipio;
+				}
 
-			car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid);
+				car.imovel = new Imovel()
+				{
+					nome = imovel.denominador ?? string.Empty,
+					codigoMunicipio = imovel.municipio,
+					cep = imovel.cep,
+					descricaoAcesso = (descricaoAcesso.Length > 1000 ? descricaoAcesso.Substring(0, 1000) : descricaoAcesso),
+					zonaLocalizacao = (imovel.zona == 1 ? Imovel.ZonaUrbana : Imovel.ZonaRural),
+					email = (imovel.email.Length > 100 ? imovel.email.Substring(0, 100) : imovel.email),
+					telefone = (imovel.telefone.Length > 14 ? imovel.telefone.Substring(0, 14) : imovel.telefone),
+					modulosFiscais = ObterModuloFiscal(conn, imovel.id, schema),
+					enderecoCorrespondencia = eCorrespondencia
+				};
 
-			var cpfCpnjProprietarios = proprietarios.Select(proprietario => proprietario.cpfCnpj).ToList();
-			foreach (var documento in car.documentos)
-			{
-				documento.proprietariosPosseirosConcessionarios = cpfCpnjProprietarios;
+				car = ObterDadosRetificacao(conn, schema, car, requisicao);
+
+				var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
+				car.proprietariosPosseirosConcessionarios = proprietarios;
+
+				car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid);
+
+				var cpfCpnjProprietarios = proprietarios.Select(proprietario => proprietario.cpfCnpj).ToList();
+				foreach (var documento in car.documentos)
+				{
+					documento.proprietariosPosseirosConcessionarios = cpfCpnjProprietarios;
+				}
+
+				//car.Informações já auto-geradas ao instanciar um objeto CAR
+
+				car.geo = ObterGeometriasImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.caracterizacao_id, requisicao.caracterizacao_tid, requisicao.projeto_geografico_id, requisicao.projeto_geografico_tid);
+
+				//Atualizar código do protocolo com as informações do código do município do empreendimento
+				car.origem.codigoProtocolo = string.Format("{0}-{1}-{2}", CarUtils.ObterCodigoUF(car.imovel.codigoMunicipio), car.imovel.codigoMunicipio, car.origem.codigoProtocolo);
+
+				return car;
 			}
-
-			//car.Informações já auto-geradas ao instanciar um objeto CAR
-
-			car.geo = ObterGeometriasImovel(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid, requisicao.caracterizacao_id, requisicao.caracterizacao_tid, requisicao.projeto_geografico_id, requisicao.projeto_geografico_tid);
-
-			//Atualizar código do protocolo com as informações do código do município do empreendimento
-			car.origem.codigoProtocolo = string.Format("{0}-{1}-{2}", CarUtils.ObterCodigoUF(car.imovel.codigoMunicipio), car.imovel.codigoMunicipio, car.origem.codigoProtocolo);
-
-			return car;
+			catch (Exception erro)
+			{
+				Log.Error(String.Concat("\n car: ", JsonConvert.SerializeObject(car), " \n imovel: ",
+					(imovel != null ? JsonConvert.SerializeObject(imovel) : " is null"), "\n endereco",
+					(endCorrespondencia != null ? JsonConvert.SerializeObject(endCorrespondencia) : " is null"), "\n\n"), erro);
+				throw erro;
+			}
 		}
 
 		/// <summary>
@@ -595,18 +594,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <param name="empreendimentoId">The empreendimento identifier.</param>
 		/// <param name="empreendimentoTid">The empreendimento tid.</param>
 		/// <returns></returns>
-		private static Empreendimento ObterDadosImovel(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid)
+		private static Empreendimento ObterDadosImovel(OracleConnection conn, string schema, int empreendimentoId)
 		{
 			var empreendimento = new Empreendimento();
+			var idsHst = "";
 
 			using (
 				var cmd =
 					new OracleCommand(
 						"SELECT * FROM " + schema +
-						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id AND tid = :empreendimento_tid", conn))
+						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id ORDER BY ID", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
-				cmd.Parameters.Add(new OracleParameter("empreendimento_tid", empreendimentoTid));
 
 				using (var dr = cmd.ExecuteReader())
 				{
@@ -616,6 +615,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						empreendimento.cnpj = Convert.ToString(dr["cnpj"]);
 						empreendimento.denominador = Convert.ToString(dr["denominador"]);
 						empreendimento.nomeFantasia = Convert.ToString(dr["nome_fantasia"]);
+						idsHst += String.Concat(string.IsNullOrWhiteSpace(idsHst) ? "" : ",", Convert.ToInt32(dr["id"]));
 					}
 				}
 			}
@@ -623,36 +623,37 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			//Endereço do Empreendimento - Se existir, usar o de localizacao do empreendimento (correspondencia = 0), senao, usar um dos de correspondencia (correspondencia = 1)
 			var enderecos = new List<EnderecoEmpreendimento>();
 
-			using (
-				var cmd =
-					new OracleCommand(
-						"SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
-						schema +
-						".HST_EMPREENDIMENTO_ENDERECO t WHERE t.tid = :tid AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
-						conn))
+			if (!string.IsNullOrWhiteSpace(idsHst))
 			{
-				cmd.Parameters.Add(new OracleParameter("tid", empreendimentoTid));
-
-				using (var dr = cmd.ExecuteReader())
+				using (
+					var cmd =
+						new OracleCommand(
+							"SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
+							schema +
+							$".HST_EMPREENDIMENTO_ENDERECO t WHERE t.id_hst in ({idsHst}) AND correspondencia IN (0,1) ORDER BY ID DESC",
+							conn))
 				{
-					while (dr.Read())
+					using (var dr = cmd.ExecuteReader())
 					{
-						var empTemporario = new EnderecoEmpreendimento
+						while (dr.Read())
 						{
-							correspondencia = dr.GetValue<Int32>("correspondencia"),
-							zona = dr.GetValue<Int32>("zona"),
-                            logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
-                            bairro = dr.GetValue<string>("bairro") ?? string.Empty,
-							municipio = dr.GetValue<Int32>("municipio_id"),
-                            cep = dr.GetValue<string>("cep") ?? string.Empty,
-                            numero = dr.GetValue<string>("numero") ?? string.Empty,
-                            caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
-                            distrito = dr.GetValue<string>("distrito") ?? string.Empty,
-                            corrego = dr.GetValue<string>("corrego") ?? string.Empty,
-                            complemento = dr.GetValue<string>("complemento") ?? string.Empty
-						};
+							var empTemporario = new EnderecoEmpreendimento
+							{
+								correspondencia = dr.GetValue<Int32>("correspondencia"),
+								zona = dr.GetValue<Int32>("zona"),
+								logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
+								bairro = dr.GetValue<string>("bairro") ?? string.Empty,
+								municipio = dr.GetValue<Int32>("municipio_id"),
+								cep = dr.GetValue<string>("cep") ?? string.Empty,
+								numero = dr.GetValue<string>("numero") ?? string.Empty,
+								caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
+								distrito = dr.GetValue<string>("distrito") ?? string.Empty,
+								corrego = dr.GetValue<string>("corrego") ?? string.Empty,
+								complemento = dr.GetValue<string>("complemento") ?? string.Empty
+							};
 
-						enderecos.Add(empTemporario);
+							enderecos.Add(empTemporario);
+						}
 					}
 				}
 			}
@@ -681,19 +682,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				empreendimento.complemento = enderecos[enderecoEscolhido].complemento;
 			}
 
-			/*if (empreendimento.logradouro == null)
-			{
-				throw new Exception("Logradouro do endereço é um valor obrigatório!");
-			}
-			if (empreendimento.numero == null)
-			{
-				throw new Exception("Número do endereço é um valor obrigatório!");
-			}
-			if (empreendimento.bairro == null)
-			{
-				throw new Exception("Nome do bairro é um valor obrigatório!");
-			}*/
-
 			if (!String.IsNullOrEmpty(empreendimento.cep))
 				empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
 
@@ -715,24 +703,23 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT meio_contato_id,valor FROM " + schema +
-						".HST_EMPREENDIMENTO_CONTATO t WHERE t.emp_contato_id = :emp_contato_id AND t.tid = :tid", conn))
+						"SELECT meio_contato, valor FROM " + schema +
+						$".TAB_EMPREENDIMENTO_CONTATO t WHERE empreendimento = :empreendimento", conn))
 			{
-				cmd.Parameters.Add(new OracleParameter("emp_contato_id", empreendimentoId));
-				cmd.Parameters.Add(new OracleParameter("tid", empreendimentoTid));
+				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
 					{
-						var meioContato = Convert.ToInt32(dr["meio_contato_id"]);
+						var meioContato = Convert.ToInt32(dr["meio_contato"]);
 						if (meioContato == 5)
 						{
-							empreendimento.email += dr.GetValue<string>("valor") + " ";
+							empreendimento.email = dr.GetValue<string>("valor") + " ";
 						}
-						else
+						else if(meioContato == 1)
 						{
-							empreendimento.telefone += dr.GetValue<string>("valor") + " ";
+							empreendimento.telefone = dr.GetValue<string>("valor") + " ";
 						}
 					}
 				}
@@ -751,70 +738,41 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			return empreendimento;
 		}
 
-        private static Empreendimento ObterDadosImovelCorrespondencia(OracleConnection conn, string schema, int empreendimentoId, string empreendimentoTid)
+        private static Empreendimento ObterDadosImovelCorrespondencia(OracleConnection conn, string schema, int empreendimentoId)
         {
             var empreendimento = new Empreendimento();            
-            var enderecos = new List<EnderecoEmpreendimento>();
 
             using (
                 var cmd =
                     new OracleCommand(
-                        "SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
+                        "SELECT id,correspondencia,zona,cep,logradouro,bairro,municipio,numero,caixa_postal,distrito,corrego,complemento FROM " +
                         schema +
-                        ".HST_EMPREENDIMENTO_ENDERECO t WHERE t.tid = :tid AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
+						".TAB_EMPREENDIMENTO_ENDERECO t WHERE t.empreendimento = :empreendimento AND correspondencia = 1 AND rownum = 1 ORDER BY cep DESC",
                         conn))
             {
-                cmd.Parameters.Add(new OracleParameter("tid", empreendimentoTid));
+                cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
 
                 using (var dr = cmd.ExecuteReader())
                 {
-                    while (dr.Read())
+                    if (dr.Read())
                     {
-                        var empTemporario = new EnderecoEmpreendimento
-                        {
-                            correspondencia = dr.GetValue<Int32>("correspondencia"),
-                            zona = dr.GetValue<Int32>("zona"),
-                            cep = dr.GetValue<string>("cep") ?? string.Empty,
-                            logradouro = dr.GetValue<string>("logradouro") ?? string.Empty,
-                            bairro = dr.GetValue<string>("bairro") ?? string.Empty,
-                            municipio = dr.GetValue<Int32>("municipio_id"),                            
-                            numero = dr.GetValue<string>("numero") ?? string.Empty,
-                            caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty,
-                            distrito = dr.GetValue<string>("distrito") ?? string.Empty,
-                            corrego = dr.GetValue<string>("corrego") ?? string.Empty,
-                            complemento = dr.GetValue<string>("complemento") ?? string.Empty
-                        };
-
-                        enderecos.Add(empTemporario);
-                    }
+						empreendimento.id = dr.GetValue<Int32>("id");
+						empreendimento.zona = dr.GetValue<Int32>("zona");
+						empreendimento.cep = dr.GetValue<string>("cep") ?? string.Empty;
+						if (!String.IsNullOrWhiteSpace(empreendimento.cep))
+							empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
+						empreendimento.logradouro = dr.GetValue<string>("logradouro") ?? string.Empty;
+						empreendimento.bairro = dr.GetValue<string>("bairro") ?? string.Empty;
+						empreendimento.municipio = dr.GetValue<Int32>("municipio");
+						empreendimento.numero = dr.GetValue<string>("numero") ?? string.Empty;
+						empreendimento.caixaPostal = dr.GetValue<string>("caixa_postal") ?? string.Empty;
+						empreendimento.distrito = dr.GetValue<string>("distrito") ?? string.Empty;
+						empreendimento.corrego = dr.GetValue<string>("corrego") ?? string.Empty;
+						empreendimento.complemento = dr.GetValue<string>("complemento") ?? string.Empty;
+					}
                 }
             }
-
-            if (enderecos.Count > 0)
-            {
-                var enderecoEscolhido = 0;
-                for (var i = 0; i < enderecos.Count; i++)
-                {
-                    if (enderecos[i].correspondencia == 1)
-                    {
-                        enderecoEscolhido = i;
-                        break;
-                    }
-                }
-
-                empreendimento.zona = enderecos[enderecoEscolhido].zona;
-                empreendimento.cep = enderecos[enderecoEscolhido].cep;
-                if (empreendimento.cep != null) empreendimento.cep = Regex.Replace(empreendimento.cep, @"[^0-9a-zA-Z]+", "");
-                empreendimento.logradouro = enderecos[enderecoEscolhido].logradouro;
-                empreendimento.bairro = enderecos[enderecoEscolhido].bairro;
-                empreendimento.municipio = enderecos[enderecoEscolhido].municipio;
-                empreendimento.numero = enderecos[enderecoEscolhido].numero;
-                empreendimento.caixaPostal = enderecos[enderecoEscolhido].caixaPostal;
-                empreendimento.distrito = enderecos[enderecoEscolhido].distrito;
-                empreendimento.corrego = enderecos[enderecoEscolhido].corrego;
-                empreendimento.complemento = enderecos[enderecoEscolhido].complemento;
-            }
-
+         
             //Buscar código do IBGE
             using (var cmd = new OracleCommand("SELECT IBGE FROM " + schema + ".LOV_MUNICIPIO t WHERE t.id = :id", conn))
             {
@@ -830,7 +788,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
             }
 
             return empreendimento;
-
         }
 
         private static RequisicaoJobCar ObterDadosRequisicaoCredenciado(OracleConnection conn, RequisicaoJobCar requisicao)
@@ -993,8 +950,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                         else
                         {
-                            //throw new Exception("Erro ao buscar os dados - Imóvel sem caracterização.");
-                        }
+							using (var cmdd = new OracleCommand(q3, conn))
+							{
+
+								cmdd.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
+								cmdd.Parameters.Add(new OracleParameter("tid", requisicao.solicitacao_car_tid));
+
+								using (var drr = cmdd.ExecuteReader())
+									if (drr.Read())
+									{
+										requisicao.caracterizacao_id = Convert.ToInt32(drr["caract_id"]);
+										requisicao.caracterizacao_tid = Convert.ToString(drr["caract_tid"]);
+										requisicao.projeto_geografico_id = Convert.ToInt32(drr["projeto_id"]);
+										requisicao.projeto_geografico_tid = Convert.ToString(drr["projeto_tid"]);
+
+										GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
+
+										drr.Close();
+										return requisicao;
+									}
+							}
+						}
                 }
 
                 
@@ -1712,12 +1688,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
 						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
                          */
-                        
-                        @"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao
+
+						@"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
                           FROM CRT_DOMINIALIDADE_RESERVA t
                               INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
                               INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ",conn))
+                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ", conn))
                 {
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
@@ -1737,24 +1713,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 							var dados = new DadosReserva()
 							{
-                                numero = dr.GetValue<string>("averbacao_numero"),//numero = dr.GetValue<string>("numero_termo"),
+								numero = dr.GetValue<string>("averbacao_numero"),
 								data = new DateTime(1900, 01, 01),
-                                //reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
-                                reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
+								//reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
+								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não")//"Não" : "Sim") compensada = 0 - cedente								
 							};
+							dados.setCedentePossuiCodEmpreendimento((Convert.ToInt32(dr["cedente_possui_emp"] == DBNull.Value ? 0 : dr["cedente_possui_emp"]) > 0 ? "Sim" : "Não"));
+
 							if (string.IsNullOrEmpty(dados.numero))
 							{
 								dados.numero = "Não informado";
 							}
 
-                            var area = Convert.ToDouble(dr["ARL_DOCUMENTO"]);//var area = dr.GetValue<double>("ARL_DOCUMENTO");
+                            var area = Convert.ToDouble(dr["ARL_DOCUMENTO"]);
 							dados.area = area > 0 ? Convert.ToString(Math.Round(area / 10000, 2), CultureInfo.InvariantCulture) : "0";
                             
 							var empreendimentoCedente = dr["emp_compensacao"];
                             if (dados.reservaDentroImovel == "Não" && !Convert.IsDBNull(empreendimentoCedente) && empreendimentoCedente != null) // && (dr.GetValue<double>("arl_croqui") > 0))
 							{
 								
-								//dados.numeroCAR = "ES-0000001-00000000000000000000000000000001";
                                 dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
                                                                                                                          
                                 dadosReceptor = dados;

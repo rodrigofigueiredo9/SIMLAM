@@ -206,7 +206,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 															i.existe_atv_area_degrad_especif, i.fundament_infracao, i.uso_solo_area_danif, i.declividade_media_area,
 															i.infracao_result_erosao, i.caract_solo_area_danif, i.arquivo, a.nome arquivo_nome, i.tid, i.infr_result_er_especifique,
                                                             i.interditado, i.numero_lacre,
-                                                            i.iuf_digital, i.iuf_numero, i.iuf_data, i.serie, lfs.texto serie_texto
+                                                            i.iuf_digital, i.iuf_numero, i.iuf_data, i.serie, lfs.texto serie_texto, t.autos
 															from tab_fisc_obj_infracao i, tab_fiscalizacao t, tab_arquivo a, lov_fiscalizacao_serie lfs
                                                             where i.fiscalizacao = :fiscalizacao 
 															and i.arquivo = a.id(+) and t.id = i.fiscalizacao
@@ -232,14 +232,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						
 						objetoInfracao.Tid = reader["tid"].ToString();
 
-                        //fiscalizações antigas
-                        if (objetoInfracao.FiscalizacaoSituacaoId != 1 && objetoInfracao.IsDigital == null)
-                        {
-                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist");
-                            objetoInfracao.SerieId = reader.GetValue<int?>("tei_gerado_pelo_sist_serie");
-                            objetoInfracao.NumeroIUF = reader.GetValue<string>("num_tei_bloco");
-                        }
-
                         if (reader["interditado"] != null && !Convert.IsDBNull(reader["interditado"]))
                         {
                             objetoInfracao.Interditado = Convert.ToBoolean(reader["interditado"]);
@@ -259,11 +251,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
                             objetoInfracao.DataLavraturaTermo.Data = reader.GetValue<DateTime>("iuf_data");
                         }
 
-                        //if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
-                        //{
-                        //    objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
-                        //}
-
 						if (reader["opniao_area_danificada"] != null && !Convert.IsDBNull(reader["opniao_area_danificada"]))
 						{
 							objetoInfracao.OpniaoAreaDanificada = reader["opniao_area_danificada"].ToString();
@@ -281,6 +268,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data
 						}
 
                         objetoInfracao.InfracaoResultouErosaoTipoTexto = reader.GetValue<string>("infr_result_er_especifique");
+
+                        //fiscalizações antigas
+                        if (objetoInfracao.FiscalizacaoSituacaoId != 1 && objetoInfracao.IsDigital == null)
+                        {
+                            objetoInfracao.IsDigital = reader.GetValue<bool?>("tei_gerado_pelo_sist") ?? false;
+                            objetoInfracao.SerieId = reader.GetValue<int?>("tei_gerado_pelo_sist_serie");
+                            objetoInfracao.NumeroIUF = objetoInfracao.IsDigital != true ? reader.GetValue<string>("num_tei_bloco") : reader.GetValue<string>("autos");
+
+                            if (reader["data_lavratura_termo"] != null && !Convert.IsDBNull(reader["data_lavratura_termo"]))
+                            {
+                                objetoInfracao.DataLavraturaTermo.Data = Convert.ToDateTime(reader["data_lavratura_termo"]);
+                            }
+                            else
+                            {
+								if (reader.GetValue<bool?>("tei_gerado_pelo_sist") != null)
+								{
+									FiscalizacaoDa _fiscDA = new FiscalizacaoDa();
+									objetoInfracao.DataLavraturaTermo = _fiscDA.ObterDataConclusao(objetoInfracao.FiscalizacaoId);
+								}
+								else
+								{
+									objetoInfracao.DataLavraturaTermo.Data = null;
+								}
+                            }
+
+                            comando = bancoDeDados.CriarComando(@"select texto from {0}lov_fisc_obj_infra_serie where id = :idserie", EsquemaBanco);
+                            comando.AdicionarParametroEntrada("idserie", objetoInfracao.SerieId, DbType.Int32);
+
+                            using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+                            {
+                                if (readerAux.Read())
+                                {
+                                    objetoInfracao.SerieTexto = readerAux.GetValue<string>("texto");
+                                }
+                                readerAux.Close();
+                            }
+                        }
 					}
 					reader.Close();
 				}

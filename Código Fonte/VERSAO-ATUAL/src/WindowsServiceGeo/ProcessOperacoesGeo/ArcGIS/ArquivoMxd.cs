@@ -1,4 +1,4 @@
-
+﻿
 namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 {
 	enum ArquivoMxd
@@ -7,6 +7,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 		MAPA_ATIVIDADE,
 		MAPA_PECA_TECNICA,
 		MAPA_FISCALIZACAO,
-		MAPA_CAR
+		MAPA_CAR,
+		MAPA_ATIVIDADE_TITULO
 	}
 }

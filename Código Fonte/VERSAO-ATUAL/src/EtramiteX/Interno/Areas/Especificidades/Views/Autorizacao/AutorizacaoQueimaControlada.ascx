@@ -9,7 +9,7 @@
 	AutorizacaoQueimaControlada.settings.urls.obterDadosAutorizacaoQueimaControlada = '<%= Url.Action("ObterDadosAutorizacaoDestinatarios", "Autorizacao", new {area="Especificidades"}) %>';
 	AutorizacaoQueimaControlada.settings.urls.obterLaudoVistoria = '<%= Url.Action("Associar","Titulo", new {area=""}) %>';
 	AutorizacaoQueimaControlada.settings.urls.validarAssociarVistoria = '<%= Url.Action("ValidarAssociarLaudoVistoria","Autorizacao", new {area="Especificidades"}) %>';
-	AutorizacaoQueimaControlada.settings.modelos.LaudoVistoriaFlorestal = <%: (int)eEspecificidade.LaudoVistoriaFlorestal %>;
+	AutorizacaoQueimaControlada.settings.modelos.LaudoVistoriaFlorestal = <%: (int)eEspecificidade.LaudoVistoriaQueimaControlada %>;
 </script>
 
 <fieldset class="block box">
@@ -19,7 +19,7 @@
 
 	<div class="block">
 		<div class="coluna31">
-			<label>Laudo de Vistoria Florestal *</label>
+			<label>Laudo de Vistoria para Queima Controlada *</label>
 			<input type="hidden" name="Autorizacao.LaudoVistoriaFlorestalIdRelacionamento" class="hdnLaudoVistoriaFlorestalIdRelacionamento" value="<%= Model.TituloAssociado.IdRelacionamento %>" />
 			<input type="hidden" name="Autorizacao.LaudoVistoriaFlorestal" class="hdnLaudoVistoriaFlorestalId" value="<%= Model.TituloAssociado.Id %>" />
 			<%= Html.TextBox("Autorizacao.LaudoVistoriaFlorestalTexto", Model.LaudoVistoriaTextoTela, new { @class = "text txtLaudoVistoriaFlorestal disabled", @disabled = "disabled" })%>

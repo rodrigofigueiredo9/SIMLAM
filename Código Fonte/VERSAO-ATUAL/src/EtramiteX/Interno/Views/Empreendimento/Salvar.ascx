@@ -25,7 +25,8 @@
 			obterEnderecoResponsavel: '<%= Url.Action("ObterEnderecoResponsavel", "Empreendimento") %>',
 			obterListaResponsaveis: '<%= Url.Action("ObterListaResponsaveis", "Empreendimento") %>',
 			obterListaPessoasAssociada: '<%= Url.Action("ObterListaPessoasAssociada", "Empreendimento") %>',
-			verificarLocalizaoEmpreendimento: '<%= Url.Action("VerificarLocalizacaoEmpreendimento", "Empreendimento") %>'
+			verificarLocalizaoEmpreendimento: '<%= Url.Action("VerificarLocalizacaoEmpreendimento", "Empreendimento") %>',
+			obterListaResponsaveisCnpj: '<%= Url.Action("ObterListaResponsaveisCnpj", "Empreendimento") %>'
 		},
 		msgs: <%= Model.Mensagens %>,
 		idsTela: <%= Model.IdsTela%>,
@@ -130,7 +131,7 @@
 
 			<div class="block">
 				<div class="coluna20">
-					<label for="Empreendimento.Enderecos[0].Cep">CEP</label>
+					<label for="Empreendimento.Enderecos[0].Cep">CEP *</label>
 					<%= Html.TextBox("Empreendimento.Enderecos[0].Cep", Model.Empreendimento.Enderecos[0].Cep, new { @class = "txtCep text maskCep" })%>
 				</div>
 

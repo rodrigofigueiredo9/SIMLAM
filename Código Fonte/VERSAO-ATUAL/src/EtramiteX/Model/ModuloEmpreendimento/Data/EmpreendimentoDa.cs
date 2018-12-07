@@ -958,6 +958,55 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			}
 		}
 
+		public Empreendimento ObterPorCodigo(long codigo, BancoDeDados banco = null)
+		{
+			Empreendimento empreendimento = new Empreendimento();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Empreendimento
+
+				Comando comando = bancoDeDados.CriarComando(@"select e.id, e.codigo, e.segmento, ls.texto segmento_texto, ls.denominador segmento_denominador, e.cnpj, e.denominador, 
+				e.nome_fantasia, e.atividade, a.atividade atividade_texto, e.tid from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls 
+				where e.atividade = a.id(+) and e.segmento = ls.id and e.codigo = :codigo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.Int64);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						empreendimento.Id = reader.GetValue<int>("id");
+						empreendimento.Tid = reader.GetValue<string>("tid");
+						empreendimento.Codigo = codigo;
+
+						if (reader["segmento"] != null && !Convert.IsDBNull(reader["segmento"]))
+						{
+							empreendimento.Segmento = Convert.ToInt32(reader["segmento"]);
+							empreendimento.SegmentoTexto = reader["segmento_texto"].ToString();
+							empreendimento.SegmentoDenominador = reader["segmento_denominador"].ToString();
+						}
+
+						empreendimento.CNPJ = reader["cnpj"].ToString();
+						empreendimento.Denominador = reader["denominador"].ToString();
+						empreendimento.NomeFantasia = reader["nome_fantasia"].ToString();
+
+						if (reader["atividade"] != null && !Convert.IsDBNull(reader["atividade"]))
+						{
+							empreendimento.Atividade.Id = Convert.ToInt32(reader["atividade"]);
+							empreendimento.Atividade.Atividade = reader["atividade_texto"].ToString();
+						}
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return empreendimento;
+		}
+
 		public Empreendimento Obter(int id, BancoDeDados banco = null)
 		{
 			Empreendimento empreendimento = new Empreendimento();
@@ -1195,6 +1244,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			}
 
 			return empreendimento;
+		}
+
+		public List<int> ObterEmpreendimentoResponsavel(int pessoa, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT E.ID FROM TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL R ON R.RESPONSAVEL = PE.ID
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO	E ON E.ID = R.EMPREENDIMENTO
+					WHERE PE.ID = :pessoa");
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<int>(comando);
+			}
 		}
 
 		public Empreendimento ObterSimplificado(int id, BancoDeDados banco = null)
@@ -1629,6 +1694,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 
 			return responsaveis;
 		}
+
+		public List<Pessoa> ObterResponsaveis(string cnpj, BancoDeDados banco = null)
+		{
+			List<Pessoa> responsaveis = new List<Pessoa>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select 
+				p.id, nvl(p.nome, p.razao_social) nome_razao_social, nvl(p.cpf, p.cnpj) cpfCnpj
+				from tab_pessoa p
+				where p.cnpj = :cnpj
+				or exists
+				(select 1 from tab_pessoa_representante pr, tab_pessoa pc
+				  where pr.pessoa = pc.id
+				  and pc.cnpj = :cnpj
+				  and pr.representante = p.id)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("cnpj", cnpj, DbType.String);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					Pessoa pessoa = null;
+
+					while (reader.Read())
+					{
+						pessoa = new Pessoa();
+						pessoa.Id = Convert.ToInt32(reader["id"]);
+						pessoa.NomeRazaoSocial = reader["nome_razao_social"].ToString();
+						pessoa.CPFCNPJ = reader["cpfCnpj"].ToString();
+						responsaveis.Add(pessoa);
+					}
+
+					reader.Close();
+				}
+
+			}
+
+			return responsaveis;
+		}
+
 
 		public List<PessoaLst> ObterResponsaveisComTipo(int id, BancoDeDados banco = null)
 		{
@@ -2161,6 +2265,44 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Data
 			return retorno;
 		}
 
+		public List<String> ObterCodigoSicarPorEmpreendimento(Int64? codigo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@" select * from (
+						  select cs.codigo_imovel from tab_car_solicitacao c 
+							  inner join tab_empreendimento ec on ec.id = c.empreendimento 
+							  inner join tab_controle_sicar cs on cs.solicitacao_car = c.id and cs.solicitacao_car_esquema = 1
+							where ec.codigo = :codigo 
+							union
+							select cs.codigo_imovel from idafcredenciado.tab_car_solicitacao c 
+							  inner join idafcredenciado.tab_empreendimento ec on ec.id = c.empreendimento 
+							  inner join tab_controle_sicar cs on cs.solicitacao_car = c.id and cs.solicitacao_car_esquema = 2
+							where ec.codigo = :codigo )");
+
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<String>(comando);
+			}
+		}
+
+		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT count(1) FROM TAB_PESSOA PE
+						INNER JOIN TAB_EMPREENDIMENTO_RESPONSAVEL	R   ON R.RESPONSAVEL = PE.ID
+						INNER JOIN TAB_EMPREENDIMENTO				EI  ON EI.ID = R.EMPREENDIMENTO
+						INNER JOIN TAB_EMPREENDIMENTO               EC  ON EC.CODIGO = EI.CODIGO
+					WHERE PE.ID = :pessoa AND EC.ID = :empreendimento");
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
 		#endregion
 	}
 }

@@ -221,6 +221,7 @@
     <Compile Include="ModuloValidacao\Interno\ChecagemPendenciaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\CaracterizacaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ClasseUsoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CobrancaDUAMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ComplementacaoDadosMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\CondiconanteMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ConfiguracaoDocumentoFitossanitarioMsg.cs" />
@@ -232,6 +233,8 @@
     <Compile Include="ModuloValidacao\Interno\DestinatarioPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitacaoEmissaoPTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\HabilitarEmissaoCFOCFOCMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\CobrancaMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\NotificacaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\OutrasPenalidadesMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\MultaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\LocalVistoriaMsg.cs" />

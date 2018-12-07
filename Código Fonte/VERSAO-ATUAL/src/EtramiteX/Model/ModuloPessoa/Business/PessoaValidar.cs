@@ -77,11 +77,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business
 				Validacao.Add(Msg.ObrigatorioRazaoSocial);
 			}
 
-			if (pessoa.Juridica.Representantes == null || pessoa.Juridica.Representantes.Count <= 0)
-			{
-				Validacao.Add(Msg.RepresentanteObrigatorio);
-			}
-
 			return Validacao.EhValido;
 		}
 

@@ -313,3 +313,8 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
+*.xml
+
+Código Fonte/VERSAO-ATUAL/src/Credenciado/Credenciado/Web\.config
+
+*.config

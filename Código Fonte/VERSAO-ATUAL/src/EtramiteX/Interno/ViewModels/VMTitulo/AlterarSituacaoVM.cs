@@ -11,6 +11,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 		public Int32 Id { get; set; }
 		public String Numero { get; set; }
 		public String Modelo { get; set; }
+		public Int32? ModeloId { get; set; }
+		public Int32? ModeloCodigo { get; set; }
+		public String CodigoSicar { get; set; }
 		public Int32 SituacaoId { get; set; }
 		public String Situacao { get; set; }
 		public String DataSituacaoAtual { get; set; }
@@ -19,6 +22,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 		public String LabelPrazo { get; set; }
 		public Boolean MostrarPrazo { get; set; }
 		public Boolean PrazoAutomatico { get; set; }
+		public String CodigoSinaflor { get; set; }
 
 		private List<SelectListItem> _situacoes = new List<SelectListItem>();
 		public List<SelectListItem> Situacoes
@@ -43,7 +47,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 
 		public AlterarSituacaoVM() { }
 
-		public AlterarSituacaoVM(List<Motivo> motivosEncerramento, Titulo titulo, List<Situacao> situacoes = null) 
+		public AlterarSituacaoVM(List<Motivo> motivosEncerramento, Titulo titulo, List<Situacao> situacoes = null, string codigoSicar = null) 
 		{
 			MotivosEncerramento = ViewModelHelper.CriarSelectList(motivosEncerramento, true);
 
@@ -55,10 +59,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 			this.Id = titulo.Id;
 			this.Numero = titulo.Numero.Texto;
 			this.Modelo = titulo.Modelo.Nome;
+			this.ModeloId = titulo.Modelo.Id;
+			this.ModeloCodigo = titulo.Modelo.Codigo;
 			this.SituacaoId = titulo.Situacao.Id;
 			this.Situacao = titulo.Situacao.Texto;
 			this.DataVencimento = titulo.DataVencimento.DataTexto;
 			this.DataSituacaoAtual = titulo.DataSituacao.DataTexto;
+			this.CodigoSinaflor = titulo.CodigoSinaflor;
+			this.CodigoSicar = codigoSicar;
 		}
 	}
 }

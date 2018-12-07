@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <configuration>		
-	<webserviceURL>http://WEBIDAFH/WEBSERVICES/DESENHADORWEBSERVICESCREDENCIADO</webserviceURL>	
+	<webserviceURL>http://local.pentago.com.br:8090/WEBSERVICES/DESENHADORWEBSERVICESCREDENCIADO</webserviceURL>	
 </configuration>

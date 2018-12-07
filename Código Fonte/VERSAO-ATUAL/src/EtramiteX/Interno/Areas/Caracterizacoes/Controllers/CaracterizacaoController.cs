@@ -12,6 +12,7 @@ using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 
@@ -24,6 +25,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		ListaBus _busLista = new ListaBus();
 		CaracterizacaoBus _bus = new CaracterizacaoBus(new CaracterizacaoValidar());
 		CaracterizacaoValidar _validar = new CaracterizacaoValidar();
+		ExploracaoFlorestalBus _exploracaoFlorestalBus = new ExploracaoFlorestalBus();
 
 		#endregion
 
@@ -109,15 +111,29 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeCriar.ToString()) &&
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeEditar.ToString());
 
-				x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+				if (x.Tipo == eCaracterizacao.ExploracaoFlorestal)
+				{
+					var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
+					if(exploracao.Id > 0)
+					{
+						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
+					}
+				}
+				else
+				{
+					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
+				}
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
-				x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
 
                 // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
 				//Caracterizacao cadastrada = cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
 
                 Caracterizacao cadastrada = cadastradas.FirstOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
 				x.ProjetoGeograficoId = cadastrada.ProjetoId;
+				if(cadastrada.ProjetoId == 0 && cadastrada.Tipo == eCaracterizacao.ExploracaoFlorestal)
+					x.ProjetoGeograficoId = cadastrada.ProjetoRascunhoId;
 				x.DscLicAtividadeId = cadastrada.DscLicAtividadeId;
 
 				x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());

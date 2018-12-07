@@ -29,6 +29,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento
 
 		public Boolean PodeEditar { get; set; }
 		public Boolean PodeVisualizar { get; set; }
+		public Boolean IsInformacaoCorte { get; set; }
 
 		public LocalizarVM()
 		{

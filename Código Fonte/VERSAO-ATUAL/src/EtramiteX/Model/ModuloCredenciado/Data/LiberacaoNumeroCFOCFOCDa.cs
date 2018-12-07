@@ -42,14 +42,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
 		}
 
-        internal float ObterValorUnitarioDua()
+        internal float ObterValorUnitarioDua(string dataReferencia)
         {
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
             {
                 Comando comando = bancoDeDados.CriarComando(@"
-                    select valor from cnf_valor_dua t where t.tipo = 2", EsquemaBanco);
+                    select valor from cnf_valor_dua t where t.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') 
+                        and t.tipo = 2 and t.id = (select max(tt.id) from cnf_valor_dua tt where tt.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') and tt.tipo = 2)", EsquemaBanco);
 
-                return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia, DbType.String);
+				return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
             }
         }
 
@@ -77,25 +79,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Data
                 Criar(liberacao, banco);
 			}
 		}
-
-        public DUARequisicao BuscarRespostaConsultaDUA(int filaID)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
-            {
-                var comando = bancoDeDados.CriarComando(@"select tsf.resultado, tsf.sucesso from {0}TAB_SCHEDULER_FILA tsf where tsf.id = :id", UsuarioInterno);
-
-                comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                    if (reader.Read())
-                        return new DUARequisicao
-                        {
-                            Sucesso = reader.GetValue<string>("sucesso") == "verdadeiro",
-                            Resultado = reader.GetValue<string>("resultado"),
-                        };
-
-                return null;
-            }
-        }
 
 		private void Criar_old(LiberaracaoNumeroCFOCFOC liberacao, BancoDeDados banco = null)
 		{

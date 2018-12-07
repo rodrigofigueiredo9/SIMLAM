@@ -47,8 +47,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}tab_tramitacao a (id, protocolo, tipo, objetivo, situacao, despacho,
-				executor, remetente, remetente_setor, destinatario, destinatario_setor, tid, data_envio) values ({0}seq_tramitacao.nextval, :protocolo, :tipo, :objetivo, 
-				:situacao, :despacho, :executor, :remetente, :remetente_setor, :destinatario, :destinatario_setor, :tid, sysdate) returning a.id into :id", EsquemaBanco);
+				executor, remetente, remetente_setor, destinatario, destinatario_setor, tid, data_envio, destino_externo, codigo_rastreio, forma_envio, numero_autuacao)
+				values ({0}seq_tramitacao.nextval, :protocolo, :tipo, :objetivo, 
+				:situacao, :despacho, :executor, :remetente, :remetente_setor, :destinatario, :destinatario_setor, :tid, sysdate,
+				:destino_externo, :codigo_rastreio, :forma_envio, :numero_autuacao) returning a.id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("protocolo", tramitacao.Protocolo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo", tramitacao.Tipo, DbType.Int32);
@@ -60,6 +62,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				comando.AdicionarParametroEntrada("remetente_setor", tramitacao.RemetenteSetor.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("destinatario", tramitacao.Destinatario.Id > 0 ? (int?)tramitacao.Destinatario.Id : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("destinatario_setor", tramitacao.DestinatarioSetor.Id > 0 ? (int?)tramitacao.DestinatarioSetor.Id : null, DbType.Int32);
+				comando.AdicionarParametroEntrada("destino_externo", tramitacao.DestinoExterno, DbType.String);
+				comando.AdicionarParametroEntrada("codigo_rastreio", tramitacao.CodigoRastreio, DbType.String);
+				comando.AdicionarParametroEntrada("forma_envio", tramitacao.FormaEnvio, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_autuacao", tramitacao.NumeroAutuacao, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -547,7 +553,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 				comando.DbCommand.CommandText = String.Format(@"select t.tramitacao_hst_id, t.tramitacao_id, t.protocolo, t.protocolo_id, t.protocolo_tid, 
 				t.protocolo_numero, t.protocolo_ano, t.protocolo_numero_completo, t.protocolo_numero_autuacao, t.protocolo_tipo_id, t.protocolo_tipo_texto, 
 				t.remetente_id, t.remetente_tid, t.remetente_nome, t.remetente_setor_id, t.remetente_setor_sigla, t.remetente_setor_nome, t.destinatario_id, 
-				t.destinatario_tid, t.destinatario_nome, t.destinatario_setor_id, t.destinatario_setor_sigla, t.destinatario_setor_nome, t.objetivo_id, t.objetivo_texto, 
+				t.destinatario_tid, coalesce(t.destinatario_nome, a.destino_externo) destinatario_nome, t.destinatario_setor_id, t.destinatario_setor_sigla, t.destinatario_setor_nome, t.objetivo_id, t.objetivo_texto, 
 				t.situacao_id, t.situacao_texto, t.data_execucao data_recebimento, t.data_envio, t.data_execucao, t.tid from {0}tab_tramitacao a, {0}lst_hst_tramitacao t 
 				where a.tid = t.tid and a.id = t.tramitacao_id and t.situacao_id = :situacao_tramitacao "
 					+ comandtxt + DaHelper.Ordenar(colunas, ordenar), esquema);
@@ -1294,6 +1300,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Data
 
 				comando.AdicionarParametroEntrada("motivoId", motivo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivoTexto", motivo.Nome.ToLower(), DbType.String);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
+		internal bool NotificacaoIsValida(int protocolo)
+		{
+			return true;
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(*) from tab_protocolo p
+															where p.id = :protocolo
+															and
+															(
+																p.fiscalizacao is null
+																or exists
+																(
+																	select 1 from tab_fiscalizacao f
+																	where f.id = p.fiscalizacao
+																	and 
+																	(
+																		not exists
+																		(
+																			select 1 from tab_fisc_multa m
+																			where f.id = m.fiscalizacao
+																		)
+																		or exists
+																		(
+																			select 1 from tab_fisc_notificacao n
+																			where f.id = n.fiscalizacao
+																		)
+																	)  
+																)
+															)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("protocolo", protocolo, DbType.Int32);
 
 				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}

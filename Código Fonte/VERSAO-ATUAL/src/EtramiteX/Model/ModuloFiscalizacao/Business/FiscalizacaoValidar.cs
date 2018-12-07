@@ -51,8 +51,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 				Validacao.Add(Mensagem.Fiscalizacao.SetorNaoPertenceFuncionario);
 			}
 
-            bool contemProjGeo = !(lstCadastroVazio.Contains("Projeto Geográfico"));
-            lstCadastroVazio.Remove("Projeto Geográfico");
+			//bool contemProjGeo = !lstCadastroVazio.Contains("Projeto Geografico");
+			bool contemProjGeo = _da.PossuiProjetoGeo(id);
+			if (!contemProjGeo)
+				lstCadastroVazio.Remove(lstCadastroVazio.First(x => x.Contains("Projeto Geografico")));
+
 			if (lstCadastroVazio.Count > 0)
 			{
 				Validacao.Add(Mensagem.Fiscalizacao.CadastroObrigatorio(Mensagem.Concatenar(lstCadastroVazio)));
@@ -158,7 +161,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 			ProtocoloDa protocoloDA = new ProtocoloDa();
 			if (situacaoAtual == eFiscalizacaoSituacao.Protocolado ||
-				situacaoAtual == eFiscalizacaoSituacao.AIPago ||
+				situacaoAtual == eFiscalizacaoSituacao.MultaPaga ||
 				situacaoAtual == eFiscalizacaoSituacao.ComDecisaoManutencaoMulta ||
 				situacaoAtual == eFiscalizacaoSituacao.ComDecisaoMultaCancelada ||
 				situacaoAtual == eFiscalizacaoSituacao.DefesaApresentada ||

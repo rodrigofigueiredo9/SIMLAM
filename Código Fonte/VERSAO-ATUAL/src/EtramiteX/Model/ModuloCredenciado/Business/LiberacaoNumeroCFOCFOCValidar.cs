@@ -110,11 +110,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
             {
                 int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj);
 
-                float ValorUnitario = _da.ObterValorUnitarioDua();
+                float ValorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
 
-                int totalPagos = (int)((float)dua.ValorTotal / (float)ValorUnitario);
+				int totalPagos = (int)(Math.Round(dua.ValorTotal, 2) / Math.Round(ValorUnitario, 2));
 
-                long totalCfo = liberacao.NumeroFinalCFO - liberacao.NumeroInicialCFO;
+				long totalCfo = liberacao.NumeroFinalCFO - liberacao.NumeroInicialCFO;
                 long totalCfoc = liberacao.NumeroFinalCFOC - liberacao.NumeroInicialCFOC;
 
                 totalCfo += liberacao.QuantidadeDigitalCFO + liberacao.QuantidadeDigitalCFOC;
@@ -139,55 +139,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				return false;
 			}
 
-
             try
             {
-                DUA dua = new DUA();
+				var wSDUA = new WSDUA();
+				var dua = wSDUA.ObterDUA(liberacao.NumeroDua, liberacao.CPF);
 
-                var duaRequisicao = _da.BuscarRespostaConsultaDUA(liberacao.FilaID);
-
-                if (duaRequisicao == null)
-                    return false;
-
-                if (!duaRequisicao.Sucesso)
-                {
-                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-                    return false;
-                }
-
-                var xser = new XmlSerializer(typeof(RespostaConsultaDua));
-
-                RespostaConsultaDua xml = null;
-
-                try
-                {
-                    xml = (RespostaConsultaDua)xser.Deserialize(new StringReader(duaRequisicao.Resultado));
-                }
-                catch
-                {
-                    Validacao.Add(Mensagem.PTV.ErroAoConsultarDua);
-                    return false;
-                }
-
-                if (xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua == null)
-                {
-                    Validacao.Add(Mensagem.PTV.ErroSefaz(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.XMotivo));
-                    return false;
-                }
-
-                dua.OrgaoSigla = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Orgao.XSigla;
-                dua.ServicoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Area.CArea;
-
-                dua.ReferenciaData = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Data.DRef;
-                dua.CPF = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cpf;
-                dua.CNPJ = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Contri.Cnpj;
-
-                dua.ReceitaValor = (float)xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Rece.VRece;
-                dua.PagamentoCodigo = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Pgto.CPgto;
-                dua.ValorTotal = float.Parse(xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Valor.VTot.Replace(".", ","));
-                dua.CodigoServicoRef = xml.Body.DuaConsultaResponse.DuaConsultaResult.RetConsDua.Dua.InfDUAe.Serv.CServ;
-
-                ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
+				ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
             }
             catch (Exception exc)
             {

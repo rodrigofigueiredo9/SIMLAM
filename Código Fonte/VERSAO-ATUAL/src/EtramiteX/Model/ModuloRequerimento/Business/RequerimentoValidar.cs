@@ -13,7 +13,9 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloChecagemRoteiro.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRoteiro.Business;
@@ -33,7 +35,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 		RequerimentoDa _requerimentoDa = new RequerimentoDa();
 		TituloModeloBus _tituloModeloBus = new TituloModeloBus(new TituloModeloValidacao());
 		ChecagemRoteiroBus _checkListRoteiroBus = new ChecagemRoteiroBus();
-
+		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 		#endregion
 
 		public bool ObjetivoPedidoValidar(Requerimento requerimento)
@@ -69,6 +71,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 					Validacao.Add(Msg.RoteiroDesativoAoCadastrar(item.Numero));
 				}
 			}
+			//informação de corte
+			if(requerimento.Atividades.Count() > 1 && requerimento.Atividades.Any(item => item.Id == 209))
+			{
+				Validacao.Add(Msg.AtividadeInformacaoCorte);
+			}
 
 			ValidarAtividade(requerimento.Atividades);
 
@@ -88,6 +95,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 				Validacao.Add(Msg.InteressadoSemEndereco);
 				return Validacao.EhValido;
 			}
+			// empreedimento responsavel
+			if (!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id))
+				Validacao.Add(Msg.NaoExisteEmpreedimentoAssociadoResponsavelInstitucional);
 
 			return Validacao.EhValido;
 		}
@@ -475,7 +485,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 
 			PodeEditar(requerimento);
 
+			if (requerimento.Atividades.Any(x => x.Id == 209)) /* Informação de Corte */
+				ValidacoesEmpreendimentoAtividadeCorte(requerimento);
+
 			return Validacao.EhValido;
+		}
+
+		public void ValidacoesEmpreendimentoAtividadeCorte(Requerimento requerimento)
+		{
+
+			//if (!_busEmpreendimento.EmpreendimentoPossuiCodigoSicar(requerimento.Empreendimento.Codigo ?? 0))
+			//	Validacao.Add(Msg.EmpreendimentoNaoIntegradoAoSicar);
+
+			if (!_busEmpreendimento.EmpreendimentoAssociadoResponsavel(requerimento.Interessado.Id, requerimento.Empreendimento.Id))
+				Validacao.Add(Msg.EmpreendimentoNaoAssociadoAoResponsavel);
 		}
 
 		public bool RequerimentoDeclaratorio(int requerimentoId)

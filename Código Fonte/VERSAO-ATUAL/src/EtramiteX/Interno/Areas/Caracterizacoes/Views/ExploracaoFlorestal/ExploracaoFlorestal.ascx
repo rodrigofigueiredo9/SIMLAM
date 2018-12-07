@@ -1,45 +1,43 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalVM>" %>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalListVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script>
-	ExploracaoFlorestal.settings.dependencias = '<%= ViewModelHelper.Json(Model.Caracterizacao.Dependencias) %>';
+	ExploracaoFlorestal.settings.dependencias = <%= ViewModelHelper.Json(Model.Dependencias) %>;
 	ExploracaoFlorestal.settings.textoAbrirModal = '<%= Model.TextoAbrirModal %>';
 	ExploracaoFlorestal.settings.textoMerge = '<%= Model.TextoMerge %>';
-	ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo = '<%= Model.AtualizarDependenciasModalTitulo %>';	
+	ExploracaoFlorestal.settings.atualizarDependenciasModalTitulo = '<%= Model.AtualizarDependenciasModalTitulo %>';
 	ExploracaoFlorestal.settings.mensagens = <%=Model.Mensagens%>;
 </script>
 
-<input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoId%>" />
-<input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
+<%foreach (var exploracao in Model.ExploracaoFlorestalVM) { %>
+<div class="block box exp<%= exploracao.CodigoExploracao %>">
+    <fieldset class="block boxBranca localizador">
+        <legend class="titLocalizador">Localizador</legend>
+		<input type="hidden" class="hdnEmpreendimentoId" value="<%: exploracao.Caracterizacao.EmpreendimentoId%>" />
+		<input type="hidden" class="hdnCaracterizacaoId" value="<%: exploracao.Caracterizacao.Id %>" />
+		<input type="hidden" class="hdnCodigoExploracao" value="<%: exploracao.Caracterizacao.CodigoExploracao %>" />
+        <div class="block">
+            <div class="coluna22 append2">
+                <label for="CodigoExploracao">Código Exploração</label>
+                <%= Html.TextBox("CodigoExploracao", exploracao.Caracterizacao.CodigoExploracaoTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtCodigoExploracao" }))%>
+            </div>
+            <div class="coluna22 append2">
+                <label for="TipoExploracao">Tipo de Exploração *</label>
+                <%= Html.DropDownList("TipoExploracao1", exploracao.TipoExploracao, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlTipoExploracao" }))%>
+            </div>
+            <div class="coluna22">
+                <label>Data Cadastro</label>
+                <%= Html.TextBox("DataCadastro", exploracao.Caracterizacao.DataCadastro.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text txtDataCadastro maskData" }))%>
+            </div>
+        </div>
 
-<fieldset class="block box" id="exploracaoFlorestalFinalidade">
-	<div class="block">
-		<label for="FinalidadeExploracao">Finalidade da Exploração *</label>
-	</div>
-	<div class="block">
-		<% 
-		foreach (var finalidade in Model.Finalidades){
-			bool selecionado = ((Model.Caracterizacao.FinalidadeExploracao != null) && (Model.Caracterizacao.FinalidadeExploracao.Value & finalidade.Codigo) > 0); %>
-			<label class="coluna32 <%= Model.IsVisualizar ? "" : "labelCheckBox" %>">
-				<input class="checkboxFinalidadeExploracao <%= Model.IsVisualizar ? "disabled" : "" %> checkbox<%= finalidade.Texto %>" type="checkbox" title="<%= finalidade.Texto %>" value="<%= finalidade.Codigo %>" <%= selecionado ? "checked=\"checked\"" : "" %> <%= Model.IsVisualizar ? "disabled=\"disabled\"" : "" %> />
-				<%= finalidade.Texto%>
-			</label>
-		<% } %>
-	</div>
-	<br />
-	<div class="block">
-		<div class="coluna30 divEspecificarFinalidade hide">
-			<label for="FinalidadeEspecificar">Especificar *</label>
-			<%= Html.TextBox("FinalidadeEspecificar", Model.Caracterizacao.FinalidadeEspecificar, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFinalidadeEspecificar ", @maxlength = "50" }))%>
-		</div>
-	</div>
-</fieldset>
-
-
-<%foreach (var item in Model.ExploracaoFlorestalExploracaoVM){ %>
-<fieldset class="block box exploracoesFlorestais" id="exploracao<%: item.ExploracaoFlorestal.Identificacao%>">
-	<legend class="titFiltros">Exploração Florestal</legend>
-	<%Html.RenderPartial("ExploracaoFlorestalExploracao", item); %>
-</fieldset>
+        <%foreach (var item in exploracao.ExploracaoFlorestalExploracaoVM) { %>
+			<fieldset class="block box exploracoesFlorestais" id="exploracao<%: item.ExploracaoFlorestal.Identificacao%>">
+				<legend class="titFiltros">Exploração Florestal</legend>
+				<%Html.RenderPartial("ExploracaoFlorestalExploracao", item); %>
+			</fieldset>
+		<%} %>
+    </fieldset>
+</div>
 <%} %>

@@ -20,5 +20,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCar
 		public string Municipio { get; set; }
 		public int ModuloFiscalId { get; set; }
 		public decimal ModuloFiscalHA { get; set; }
+		public decimal AreaImovelHA { get; set; }
+		public decimal AreaFlorestaPlantadaHA { get; set; }
 	}
 }

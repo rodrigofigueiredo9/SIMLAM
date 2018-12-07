@@ -27,7 +27,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MunicipioObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_MunicipioId", Texto = "Município é obrigatório." }; } }
 		public Mensagem LocalObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LocalInfracao_Local", Texto = "Local é obrigatório." }; } }
 		public Mensagem PessoaEmpreendimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pessoa ou empreendimento é obrigatório." }; } }
-        public Mensagem AutuadoDiferenteEmpreendimento { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O autuado/fiscalizado deve ser a mesma pessoa selecionada como autuada no empreendimento. Selecione outro autuado, ou edite o empreendimento para adicionar a pessoa como autuado." }; } }
+        public Mensagem AutuadoDiferenteEmpreendimento { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O autuado/fiscalizado deve estar associado como um dos responsáveis pelo empreendimento. Selecione outro autuado, ou edite o empreendimento para adicionar a pessoa como responsável pelo empreendimento." }; } }
 
         public Mensagem EmpreendimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento é obrigatório." }; } }
         public Mensagem PessoaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pessoa é obrigatório." }; } }

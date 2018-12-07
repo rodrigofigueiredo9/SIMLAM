@@ -332,12 +332,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCad
 
 		#endregion
 
-		internal SicarPDF ObterSICARInterno(int empreendimentoId, BancoDeDados banco)
+		internal SicarPDF ObterNumeroSICAR(int empreendimentoId, BancoDeDados banco)
 		{
 			SicarPDF sicar = null;
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select c.codigo_imovel from tab_controle_sicar c where c.solicitacao_car_esquema=1 and c.empreendimento = :empreendimento", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT CODIGO_IMOVEL FROM (
+					SELECT  CS.CODIGO_IMOVEL FROM TAB_CONTROLE_SICAR CS 
+						WHERE CS.SOLICITACAO_CAR_ESQUEMA = 1 AND CS.EMPREENDIMENTO = :empreendimento
+					UNION ALL 
+					SELECT CS.CODIGO_IMOVEL FROM TAB_CONTROLE_SICAR CS 
+							WHERE  CS.SOLICITACAO_CAR_ESQUEMA = 2 AND 
+							CS.EMPREENDIMENTO IN (select e.id from IDAFCREDENCIADO.TAB_EMPREENDIMENTO e 
+							where e.codigo IN (select ec.codigo from IDAF.TAB_EMPREENDIMENTO ec where ec.id = :empreendimento))
+				)	WHERE ROWNUM <= 1", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 

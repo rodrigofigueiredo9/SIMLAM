@@ -154,5 +154,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		}
 
 		public String AtividadeCodigoCategoria { get; set; }
+
+		public String NumeroSinaflor { get; set; }
 	}
 }

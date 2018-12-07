@@ -68,7 +68,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
@@ -232,6 +232,7 @@
     <Compile Include="models\misc\DateTimeDMYHMS.cs" />
     <Compile Include="models\misc\MensagemRetorno.cs" />
     <Compile Include="misc\ControleCarDB.cs" />
+    <Compile Include="models\sicar-v17\DadosReserva.cs" />
     <Compile Include="models\simlam\EnderecoEmpreendimento.cs" />
     <Compile Include="models\simlam\Empreendimento.cs" />
     <Compile Include="misc\ItemControleCar.cs" />
@@ -239,7 +240,6 @@
     <Compile Include="models\simlam\Pessoa.cs" />
     <Compile Include="models\sicar-v17\Cadastrante.cs" />
     <Compile Include="models\sicar-v17\CAR.cs" />
-    <Compile Include="models\sicar-v17\DadosReserva.cs" />
     <Compile Include="models\sicar-v17\DetalheDocumentoPosse.cs" />
     <Compile Include="models\sicar-v17\DetalheDocumentoPropriedade.cs" />
     <Compile Include="models\sicar-v17\Documento.cs" />

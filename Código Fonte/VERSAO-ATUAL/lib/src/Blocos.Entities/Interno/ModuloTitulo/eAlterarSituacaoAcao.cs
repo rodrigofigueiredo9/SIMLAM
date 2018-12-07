@@ -8,6 +8,7 @@
 		Prorrogar,
 		Encerrar,
 		Concluir,
-		Entregar
+		Entregar,
+		Suspender
 	}
 }

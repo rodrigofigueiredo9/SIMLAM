@@ -282,18 +282,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult AlterarSituacao(int id)
 		{
 			CARSolicitacao solicitacao = _bus.Obter(id);
-
+			EtramiteIdentity func = User.Identity as EtramiteIdentity;
+			
 			if (solicitacao.Id == 0)
 			{
 				solicitacao = _busCredenciado.Obter(id);
 			}
-
+			
 			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
 			{
 				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
 			}
 
 			CARSolicitacaoAlterarSituacaoVM vm = new CARSolicitacaoAlterarSituacaoVM(solicitacao, _bus.ObterSituacoes(solicitacao.SituacaoId));
+			vm.isVisualizar = _bus.ValidarVisualizarAlterarSituacao(solicitacao, func.FuncionarioId);
 			return View(vm);
 		}
 
@@ -301,7 +303,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoAlterarSituacao })]
 		public ActionResult AlterarSituacao(CARSolicitacao solicitacao)
 		{
-			_bus.AlterarSituacao(solicitacao);
+			EtramiteIdentity func = User.Identity as EtramiteIdentity;
+
+			_bus.AlterarSituacao(solicitacao, funcionarioId: func.FuncionarioId);
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + solicitacao.Id + "&situacaoId=" + solicitacao.SituacaoId;
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @UrlRedirecionar = urlRetorno }, JsonRequestBehavior.AllowGet);
@@ -453,11 +457,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @UrlPdfReciboSICAR = url }, JsonRequestBehavior.AllowGet);
 		}
 
-        public ActionResult BaixarDemonstrativoCar(int id)
+        public ActionResult BaixarDemonstrativoCar(int id, bool isTitulo)
         {
-            var schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+			var schemaSolicitacao = 0;
 
-            var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao);
+			if(!isTitulo)
+				schemaSolicitacao = _bus.ExisteCredenciado(id) ? 2 : 1;
+
+            var url = _bus.ObterUrlDemonstrativo(id, schemaSolicitacao, isTitulo);
 
             return Json(new { @UrlPdfDemonstrativo = url }, JsonRequestBehavior.AllowGet);
         } 

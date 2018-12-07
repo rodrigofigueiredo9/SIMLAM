@@ -43,7 +43,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
@@ -52,10 +55,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 
 						default:
 							itensRemover.Add(doc.Last<Row>("Nome:"));
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 					}
 
@@ -68,15 +74,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 					switch ((eProtocoloTipoRelatorio)dataSource.ProtocoloTipo)
 					{
 						case eProtocoloTipoRelatorio.Complementacao:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Oficio:
 						case eProtocoloTipoRelatorio.CartaConsulta:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
@@ -84,45 +95,86 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloProtocolo
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.OficioUsucapiao:
 						case eProtocoloTipoRelatorio.Requerimento:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Condicionante:
 						case eProtocoloTipoRelatorio.DefesaAdministrativa:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.Declaracao:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
 							itensRemover.Add(doc.Last<Row>("Autuado:"));
 							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							break;
 
 						case eProtocoloTipoRelatorio.FiscalizacaoSem_AI_TEI_TAD:
 							dataSource.Titulo = "Registro de Fiscalização";
-
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
 							itensRemover.Add(doc.Last<Row>("Objetivo:"));
 							itensRemover.Add(doc.Last<Row>("Nome:"));
 							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
 							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
 							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
 							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+							break;
+
+						case eProtocoloTipoRelatorio.DocumentoAvulso:
+							itensRemover.Add(doc.Last<Row>("Assunto:"));
+							itensRemover.Add(doc.Last<Row>("Destinatário:"));
+							itensRemover.Add(doc.Last<Row>("Objetivo:"));
+							itensRemover.Add(doc.Last<Row>("Autuado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
+							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
+							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+
+							break;
+
+						case eProtocoloTipoRelatorio.ComunicacaoInterna:
+						case eProtocoloTipoRelatorio.OficioAdministrativo:
+							itensRemover.Add(doc.Last<Row>("Nome:"));
+							itensRemover.Add(doc.Last<Row>("Objetivo:"));
+							itensRemover.Add(doc.Last<Row>("Autuado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado:"));
+							itensRemover.Add(doc.Last<Row>("Interessado.:"));
+							itensRemover.Add(doc.Last<Row>("Nº Fiscalização"));
+							itensRemover.Add(doc.Last<Row>("Empreendimento:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Itens:"));
+							itensRemover.Add(doc.Last<Row>("Checagem de Pendência:"));
+							itensRemover.Add(doc.Last<Row>("Nº de registro de"));
+
 							break;
 
 						default:

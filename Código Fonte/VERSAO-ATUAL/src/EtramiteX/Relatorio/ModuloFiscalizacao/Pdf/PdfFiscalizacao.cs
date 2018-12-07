@@ -17,6 +17,7 @@ using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscalizacao.Pdf
 {
@@ -49,6 +50,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 			dataSource.LogoBrasao = File.ReadAllBytes(pathImg);
 
 			dataSource.LogoBrasao = AsposeImage.RedimensionarImagem(dataSource.LogoBrasao, 1);
+
+			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpg");
+			dataSource.LogoNovo = File.ReadAllBytes(pathImgLogo);
+
+			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 1.8f);
 
 			ConfigurarCabecarioRodape(dataSource.SetorId);
 
@@ -105,7 +111,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
 
             dataSource.Logomarca = AsposeImage.RedimensionarImagem(dataSource.Logomarca, 2);
 
-            ConfigurarCabecarioRodape(dataSource.SetorId);
+			string pathImgLogo = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpg");
+			dataSource.LogoNovo = File.ReadAllBytes(pathImgLogo);
+
+			dataSource.LogoNovo = AsposeImage.RedimensionarImagem(dataSource.LogoNovo, 1.8f);
+
+			ConfigurarCabecarioRodape(dataSource.SetorId);
 
             ConfiguracaoDefault.ExibirSimplesConferencia = gerarTarja;
 
@@ -258,10 +269,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloFiscaliza
                 List<Table> itenRemover = new List<Table>();
                 FiscalizacaoRelatorioNovo fiscalizacao = (FiscalizacaoRelatorioNovo)dataSource;
 
-                fiscalizacao.OrgaoMunicipio = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoMunicipio);
-                fiscalizacao.OrgaoUF = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoUf);
 
-                if (fiscalizacao.Infracao.Campos.Count == 0)
+				CabecalhoRodapeDa _daCabecalho = new CabecalhoRodapeDa();
+				SetorEndereco endereco = _daCabecalho.ObterEndSetor(fiscalizacao.LocalInfracao.SetorId);
+				fiscalizacao.OrgaoMunicipio = endereco.MunicipioTexto;
+				fiscalizacao.OrgaoUF = endereco.EstadoTexto;
+
+				//fiscalizacao.OrgaoMunicipio = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoMunicipio);
+				//fiscalizacao.OrgaoUF = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoUf);
+
+				if (fiscalizacao.Infracao.Campos.Count == 0)
                 {
                     doc.Find<Row>("«TableStart:Infracao.Campos»").Remove();
                 }

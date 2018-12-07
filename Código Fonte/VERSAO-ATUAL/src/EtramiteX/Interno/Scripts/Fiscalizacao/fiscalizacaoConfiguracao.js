@@ -1,4 +1,4 @@
-﻿/// <reference path="../masterpage.js" />
+/// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
 
@@ -1163,6 +1163,256 @@ Item = {
 
 	callBackExcluir: function (data) {
 		MasterPage.redireciona(data.urlRedireciona);
+	}
+}
+
+ConfigurarParametrizacao = {
+	settings: {
+		urls: {
+			salvar: '',
+			excluirDetalhe: ''
+		},
+
+		mensagens: null
+	},
+
+	container: null,
+
+	load: function (container, options) {
+		if (options) { $.extend(ConfigurarParametrizacao.settings, options); }
+		ConfigurarParametrizacao.container = container;
+
+		container.delegate('.btnSalvar', 'click', ConfigurarParametrizacao.salvar);
+		container.delegate('.btnAdicionarDetalhe', 'click', ConfigurarParametrizacao.adicionarDetalhe);
+		container.delegate('.btnEditarDetalhe', 'click', ConfigurarParametrizacao.editarDetalhe);
+		container.delegate('.btnExcluirDetalhe', 'click', ConfigurarParametrizacao.excluirDetalhe);
+
+		$('.ddlCodigoReceita', container).focus();
+	},
+
+	obterListaDetalhe: function () {
+		var lista = [];
+
+		$($('.tabDetalhe tbody tr:not(.trTemplateRow) .hdnDetalheJSon', ConfigurarParametrizacao.container)).each(function () {
+			lista.push(JSON.parse($(this).val()));
+		});
+
+		return lista;
+	},
+
+	obter: function () {
+		var container = ConfigurarParametrizacao.container;
+
+		var obj = {
+			Id: $('.hdnParametrizacaoId', container).val(),
+			CodigoReceitaId: $('.ddlCodigoReceita :selected', container).val(),
+			InicioVigencia: { DataTexto: $('.txtInicioVigencia', container).val() },
+			FimVigencia: { DataTexto: $('.txtFimVigencia', container).val() },
+			ValorMinimoPF: $('.txtValorMinimoPF', container).val(),
+			ValorMinimoPJ: $('.txtValorMinimoPJ', container).val(),
+			MultaPercentual: $('.txtMulta', container).val(),
+			JurosPercentual: $('.txtJuros', container).val(),
+			DescontoPercentual: $('.txtDesconto', container).val(),
+			PrazoDescontoUnidade: $('.txtPrazoDescontoUnidade', container).val(),
+			PrazoDescontoDecorrencia: $('.ddlPrazoDescontoDecorrencia :selected', container).val(),
+			ParametrizacaoDetalhes: ConfigurarParametrizacao.obterListaDetalhe()
+		}
+
+		return obj;
+	},
+
+	editarDetalhe: function () {
+		//Pega os campos que serão editados, e o id 
+		var container = $(this).closest('tr');
+		var valorInicial = container.find('.valorInicial').text();
+		var valorFinal = container.find('.valorFinal').text();
+		var maximoParcelas = container.find('.maximoParcelas').text();
+		var id = container.find('.DetalheId').val();
+
+		//preenche os textbox 
+		container = $(this).closest('fieldset');
+		container.find('.txtValorInicial').val(valorInicial);
+		container.find('.txtValorFinal').val(valorFinal);
+		container.find('.txtMaximoParcelas').val(maximoParcelas);
+		container.find('.hdnDetalheId').val(id);
+	},
+
+	excluirDetalhe: function () {
+		//recria o objeto 
+		var objeto = {
+			Id: $(this).closest('tr').find('.DetalheId').val(),
+			Tid: '',
+			ValorInicial: '',
+			ValorFinal: '',
+			MaximoParcelas: '',
+			Excluir: true
+		};
+
+		if (objeto.Id != 0) {
+			$(this).closest('tr').addClass('excluirLinha');
+
+			Mensagem.limpar(ConfigurarParametrizacao.container);
+			MasterPage.carregando(true);
+
+			$.ajax({
+				url: ConfigurarParametrizacao.settings.urls.excluirDetalhe,
+				data: JSON.stringify({
+					codigoExcluido: objeto
+				}),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: Aux.error,
+				success: function (response, textStatus, XMLHttpRequest) {
+					if (response.EhValido) {
+						$('.excluirLinha').find('.hdnDetalheJSon').val(JSON.stringify(objeto));
+						$('.excluirLinha').hide();
+					} else if (response.Msg && response.Msg.length > 0) {
+						Mensagem.gerar(ConfigurarParametrizacao.container, response.Msg);
+					}
+				}
+			});
+
+			$(this).closest('tr').removeClass('excluirLinha');
+
+			MasterPage.carregando(false);
+		} else {
+			$(this).closest('tr').remove();
+		}
+	},
+
+	adicionarDetalhe: function () {
+		Mensagem.limpar(ConfigurarParametrizacao.container);
+		var msgs = new Array();
+
+		//Pega os campos para adicionar na tabela 
+		var container = $(this).closest('fieldset');
+		var valorInicial = container.find('.txtValorInicial').val().toString().trim();
+		var valorFinal = container.find('.txtValorFinal').val().toString().trim();
+		var maximoParcelas = container.find('.txtMaximoParcelas').val().toString().trim();
+		var id = container.find('.hdnDetalheId').val();
+
+		//Verifica se os campos foram preenchidos 
+		if (valorInicial.length == 0) {
+			$('.txtValorInicial', container).addClass('erroValorInicial');
+			msgs.push(ConfigurarParametrizacao.settings.mensagens.ValorInicialObrigatorio);
+		}
+		if (maximoParcelas.length == 0) {
+			$('.txtMaximoParcelas', container).addClass('erroMaximoParcelas');
+			msgs.push(ConfigurarParametrizacao.settings.mensagens.MaximoParcelasObrigatorio);
+		}
+		if (ConfigurarParametrizacao.publicarMensagem(msgs)) {
+			return false;
+		}
+
+		//Verifica se o detalhe já existe na tabela 
+		var tabelaDetalhe = $('.tabDetalhe tbody tr', container);
+		$(tabelaDetalhe).each(function (i, cod) {
+
+            /*Aqui, além de comparar valorinicial, valor final e maximo parcelas, ele verifica se o id do Detalhe na linha 
+            é igual ao que está sendo adicionado, porque pode se tratar de um Detalhe editado*/
+			if ($('.valorInicial', cod).text().toLowerCase() == valorInicial.toLowerCase()
+				&& $('.valorFinal', cod).text().toLowerCase() == valorFinal.toLowerCase()
+				&& $('.maximoParcelas', cod).text().toLowerCase() == maximoParcelas.toLowerCase()
+				&& ((id != 0 && $('.DetalheId', cod).val() != id)
+					|| id == 0)) {
+				msgs.push(ConfigurarParametrizacao.settings.mensagens.ParametrizacaoDetalheDuplicada);
+			}
+		});
+		if (ConfigurarParametrizacao.publicarMensagem(msgs)) {
+			return false;
+		}
+
+		//monta o objeto 
+		var objeto = {
+			Id: id,
+			Tid: '',
+			ValorInicial: valorInicial,
+			ValorFinal: valorFinal,
+			MaximoParcelas: maximoParcelas,
+			Excluir: false,
+			Editado: false
+		};
+
+		var linha = '';
+		if (objeto.Id == 0) {   //Vrte novo 
+			linha = $('.trTemplateRow', container).clone();
+
+			//Monta a nova linha e insere na tabela 
+			linha.find('.hdnDetalheJSon').val(JSON.stringify(objeto));
+			linha.find('.valorInicial').text(valorInicial);
+			linha.find('.valorInicial').attr('title', valorInicial);
+			linha.find('.valorFinal').text(valorFinal);
+			linha.find('.valorFinal').attr('title', valorFinal);
+			linha.find('.maximoParcelas').text(maximoParcelas);
+			linha.find('.maximoParcelas').attr('title', maximoParcelas);
+			linha.find('.DetalheId').val(id);
+
+			linha.removeClass('trTemplateRow hide');
+			$('.tabDetalhe > tbody:last', container).append(linha);
+
+		} else {    //Vrte editado 
+			objeto.Editado = true;
+			$(tabelaDetalhe).each(function (i, cod) {
+
+				//Procura a linha que tem o mesmo id do Vrte 
+				if ($('.DetalheId', cod).val() == id) {
+
+					//Edita a linha 
+					$('.hdnDetalheJSon', cod).val(JSON.stringify(objeto));
+					$('.valorInicial', cod).text(valorInicial);
+					$('.valorInicial', cod).attr('title', valorInicial);
+					$('.valorFinal', cod).text(valorFinal);
+					$('.valorFinal', cod).attr('title', valorFinal);
+					$('.maximoParcelas', cod).text(maximoParcelas);
+					$('.maximoParcelas', cod).attr('title', maximoParcelas);
+					$('.DetalheId', cod).val(id);
+				}
+			});
+		}
+
+		Listar.atualizarEstiloTable($('.tabDetalhe', container));
+
+		//limpa os campos de texto 
+		$('.txtValorInicial', container).val('');
+		$('.txtValorFinal', container).val('');
+		$('.txtMaximoParcelas', container).val('');
+		$('.hdnDetalheId', container).val('0');
+	},
+
+	publicarMensagem: function (msgs) {
+		if (msgs.length > 0) {
+			Mensagem.gerar(ConfigurarParametrizacao.container, msgs)
+			return true;
+		}
+		return false;
+	}, 
+
+	salvar: function () {
+		MasterPage.carregando(true);
+		$.ajax({
+			url: ConfigurarParametrizacao.settings.urls.salvar,
+			data: JSON.stringify(ConfigurarParametrizacao.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, ConfigurarParametrizacao.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(ConfigurarParametrizacao.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
 	}
 }
 

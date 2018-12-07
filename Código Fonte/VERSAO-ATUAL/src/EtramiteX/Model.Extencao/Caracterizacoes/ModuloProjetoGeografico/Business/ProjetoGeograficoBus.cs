@@ -250,6 +250,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return arquivoEnviado;
 		}
 
+		public ArquivoProjeto GerarCroquiTitulo(int projetoId, int tituloId, BancoDeDados banco = null)
+		{
+			var arquivoEnviado = new ArquivoProjeto()
+			{
+				ProjetoId = projetoId,
+				FilaTipo = (int)eFilaTipoGeo.AtividadeTitulo,
+				Mecanismo = (int)eProjetoGeograficoMecanismo.Desenhador,
+				Etapa = (int)eFilaEtapaGeo.GeracaoDePDF,
+				Situacao = (int)eFilaSituacaoGeo.Aguardando,
+				TituloId = tituloId
+			};
+
+			try
+			{
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					arquivoEnviado.IdRelacionamento = _da.ExisteArquivoFila(arquivoEnviado);
+
+					if (arquivoEnviado.IdRelacionamento == 0)
+					{
+						_da.InserirFila(arquivoEnviado, bancoDeDados);
+
+						ObterSituacao(arquivoEnviado);
+
+						bancoDeDados.Commit();
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return arquivoEnviado;
+		}
+
 		public void ReprocessarBaseReferencia(ArquivoProjeto arquivo)
 		{
 			try
@@ -348,6 +385,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 				{
+					bancoDeDados.IniciarTransacao();
+
 					arquivo.Etapa = (int)eFilaEtapaGeo.Validacao;//1;
 					arquivo.Situacao = (int)eFilaSituacaoGeo.Aguardando;//1;
 
@@ -364,14 +403,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void Refazer(ProjetoGeografico projeto)
+		public void Refazer(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
 				if (_validar.Refazer(projeto))
 				{
-					_da.Refazer(projeto.Id);
+					_da.Refazer(projeto.Id, banco);
 					Validacao.Add(Mensagem.ProjetoGeografico.RefeitoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
+		public void Atualizar(ProjetoGeografico projeto, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Refazer(projeto))
+				{
+					_da.Atualizar(projeto.Id, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
 				}
 			}
 			catch (Exception exc)
@@ -458,11 +513,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void ExcluirRascunho(ProjetoGeografico projeto)
+		public void ExcluirRascunho(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
-				_da.ExcluirRascunho(projeto.Id);
+				_da.ExcluirRascunho(projeto.Id, banco);
 				Validacao.Add(Mensagem.ProjetoGeografico.RascunhoExcluidoSucesso);
 			}
 			catch (Exception exc)
@@ -471,7 +526,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
-		public void Finalizar(ProjetoGeografico projeto)
+		public void Finalizar(ProjetoGeografico projeto, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -479,7 +534,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
 						bancoDeDados.IniciarTransacao();
 
@@ -507,102 +562,108 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 		public void CopiarDadosCredenciado(Dependencia dependencia, int empreendimentoInternoID, BancoDeDados banco, BancoDeDados bancoCredenciado)
 		{
-			if (banco == null)
+			if (banco == null) return;
+
+			try
 			{
-				return;
-			}
+				#region Configurar Projeto
 
-			#region Configurar Projeto
+				//Obter do Credenciado
+				Cred.ModuloProjetoGeografico.Bussiness.ProjetoGeograficoBus projetoGeoCredBus = new Cred.ModuloProjetoGeografico.Bussiness.ProjetoGeograficoBus();
+				ProjetoGeografico projetoGeo = projetoGeoCredBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
+				eCaracterizacao caracterizacaoTipo = (eCaracterizacao)dependencia.DependenciaCaracterizacao;
 
-			//Obter do Credenciado
-			Cred.ModuloProjetoGeografico.Bussiness.ProjetoGeograficoBus projetoGeoCredBus = new Cred.ModuloProjetoGeografico.Bussiness.ProjetoGeograficoBus();
-			ProjetoGeografico projetoGeo = projetoGeoCredBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
-			eCaracterizacao caracterizacaoTipo = (eCaracterizacao)dependencia.DependenciaCaracterizacao;
-			
-			int projetoGeoCredenciadoId = projetoGeo.Id;
-			int empreendimentoCredenciadoId = projetoGeo.EmpreendimentoId;
+				int projetoGeoCredenciadoId = projetoGeo.Id;
+				int empreendimentoCredenciadoId = projetoGeo.EmpreendimentoId;
 
-			bool atualizarDependencias = (!Desatualizado(projetoGeo.InternoID, projetoGeo.InternoTID) && !projetoGeo.AlteradoCopiar);
-			
-			#endregion
+				bool atualizarDependencias = (!Desatualizado(projetoGeo.InternoID, projetoGeo.InternoTID) && !projetoGeo.AlteradoCopiar);
 
-			if (_validar.CopiarDadosCredenciado(projetoGeo))
-			{
-				GerenciadorTransacao.ObterIDAtual();
+				#endregion
 
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				if (_validar.CopiarDadosCredenciado(projetoGeo))
 				{
-					bancoDeDados.IniciarTransacao();
+					GerenciadorTransacao.ObterIDAtual();
 
-					_da.CopiarDadosCredenciado(projetoGeo, empreendimentoInternoID, bancoDeDados);
-
-					projetoGeoCredBus.AtualizarInternoIdTid(
-						empreendimentoCredenciadoId, 
-						projetoGeoCredenciadoId, 
-						(eCaracterizacao)projetoGeo.CaracterizacaoId, 
-						projetoGeo.Id, 
-						GerenciadorTransacao.ObterIDAtual(), 
-						bancoCredenciado);
-
-					#region Arquivo
-
-					ArquivoBus _busArquivoInterno = new ArquivoBus(eExecutorTipo.Interno);
-					ArquivoBus _busArquivoCredenciado = new ArquivoBus(eExecutorTipo.Credenciado);
-
-					foreach (var item in projetoGeo.Arquivos)
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
-						Arquivo aux = _busArquivoCredenciado.Obter(item.Id.Value);//Obtém o arquivo completo do diretorio do credenciado(nome, buffer, etc)
+						bancoDeDados.IniciarTransacao();
 
-						aux.Id = 0;//Zera o ID
-						aux = _busArquivoInterno.SalvarTemp(aux);//salva no diretório temporário
-						aux = _busArquivoInterno.Copiar(aux);//Copia para o diretório oficial
+						_da.CopiarDadosCredenciado(projetoGeo, empreendimentoInternoID, bancoDeDados);
 
-						//Salvar na Oficial
-						ArquivoDa arquivoDa = new ArquivoDa();
-						arquivoDa.Salvar(aux, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+						projetoGeoCredBus.AtualizarInternoIdTid(
+							empreendimentoCredenciadoId,
+							projetoGeoCredenciadoId,
+							(eCaracterizacao)projetoGeo.CaracterizacaoId,
+							projetoGeo.Id,
+							GerenciadorTransacao.ObterIDAtual(),
+							bancoCredenciado);
 
-						item.Id = aux.Id;
-					}
+						#region Arquivo
 
-					_da.SalvarArquivosCredenciado(projetoGeo, bancoDeDados);
+						ArquivoBus _busArquivoInterno = new ArquivoBus(eExecutorTipo.Interno);
+						ArquivoBus _busArquivoCredenciado = new ArquivoBus(eExecutorTipo.Credenciado);
 
-					#endregion
-
-					#region Histórico
-
-					HistCaract.Historico historico = new HistCaract.Historico();
-					historico.Gerar(projetoGeo.Id, eHistoricoArtefatoCaracterizacao.projetogeografico, eHistoricoAcao.importar, bancoDeDados);
-					historico.GerarGeo(projetoGeo.Id, eHistoricoArtefatoCaracterizacao.projetogeografico, eHistoricoAcao.importar, bancoDeDados);
-
-					#endregion
-
-					#region Dependencias
-
-					//Gerencia as dependências
-					projetoGeo.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(empreendimentoInternoID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
-					_caracterizacaoBus.Dependencias(new Caracterizacao()
-					{
-						Id = projetoGeo.Id,
-						Tipo = caracterizacaoTipo,
-						DependenteTipo = eCaracterizacaoDependenciaTipo.ProjetoGeografico,
-						Dependencias = projetoGeo.Dependencias
-					}, bancoDeDados);
-
-					if (projetoGeo.InternoID > 0)
-					{
-						if (atualizarDependencias)
+						foreach (var item in projetoGeo.Arquivos)
 						{
-							CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-							caracterizacaoBus.AtualizarDependentes(projetoGeo.InternoID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico, projetoGeo.Tid, bancoDeDados);
+							Arquivo aux = _busArquivoCredenciado.Obter(item.Id.Value);//Obtém o arquivo completo do diretorio do credenciado(nome, buffer, etc)
+
+							aux.Id = 0;//Zera o ID
+							aux = _busArquivoInterno.SalvarTemp(aux);//salva no diretório temporário
+							aux = _busArquivoInterno.Copiar(aux);//Copia para o diretório oficial
+
+							//Salvar na Oficial
+							ArquivoDa arquivoDa = new ArquivoDa();
+							arquivoDa.Salvar(aux, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+
+							item.Id = aux.Id;
 						}
+
+						_da.SalvarArquivosCredenciado(projetoGeo, bancoDeDados);
+
+						#endregion
+
+						#region Histórico
+
+						HistCaract.Historico historico = new HistCaract.Historico();
+						historico.Gerar(projetoGeo.Id, eHistoricoArtefatoCaracterizacao.projetogeografico, eHistoricoAcao.importar, bancoDeDados);
+						historico.GerarGeo(projetoGeo.Id, eHistoricoArtefatoCaracterizacao.projetogeografico, eHistoricoAcao.importar, bancoDeDados);
+
+						#endregion
+
+						#region Dependencias
+
+						//Gerencia as dependências
+						projetoGeo.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(empreendimentoInternoID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
+						_caracterizacaoBus.Dependencias(new Caracterizacao()
+						{
+							Id = projetoGeo.Id,
+							Tipo = caracterizacaoTipo,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.ProjetoGeografico,
+							Dependencias = projetoGeo.Dependencias
+						}, bancoDeDados);
+
+						if (projetoGeo.InternoID > 0)
+						{
+							if (atualizarDependencias)
+							{
+								CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
+								caracterizacaoBus.AtualizarDependentes(projetoGeo.InternoID, caracterizacaoTipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico, projetoGeo.Tid, bancoDeDados);
+							}
+						}
+
+						#endregion
+
+						bancoDeDados.Commit();
 					}
-
-					#endregion
-
-					bancoDeDados.Commit();
 				}
 			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 		}
+
+		public void AnexarCroqui(int titulo, int arquivo, BancoDeDados banco = null) => _da.AnexarCroqui(titulo, arquivo, banco);
 
 		#endregion
 
@@ -741,11 +802,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return null;
 		}
 
-		public int ExisteProjetoGeografico(int empreedimentoId, int caracterizacaoTipo)
+		public int ExisteProjetoGeografico(int empreedimentoId, int caracterizacaoTipo, bool finalizado = false)
 		{
 			try
 			{
-				return _da.ExisteProjetoGeografico(empreedimentoId, caracterizacaoTipo);
+				return _da.ExisteProjetoGeografico(empreedimentoId, caracterizacaoTipo, finalizado: finalizado);
 			}
 			catch (Exception exc)
 			{
@@ -980,7 +1041,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				//teste
 				//urlGeoBasesWebService = "http://localhost:33716/Topologia/Relacao";
 
-				List<string> feicoes = new List<string>(){			
+				List<string> feicoes = new List<string>(){
 					"HID_BACIA_HIDROGRAFICA","LIM_TERRA_INDIGENA","LIM_UNIDADE_PROTECAO_INTEGRAL","LIM_UNIDADE_CONSERV_NAO_SNUC","LIM_OUTRAS_UNID_PROTEGIDAS","LIM_UNIDADE_USO_SUSTENTAVEL"
 				};
 
@@ -1051,5 +1112,5 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 			return false;
 		}
-    }
+	}
 }

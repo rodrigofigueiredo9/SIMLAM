@@ -92,6 +92,17 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao
 		}
 		private List<SelectListItem> _orgaosExterno = new List<SelectListItem>();
 
+		public String DestinoExterno { get; set; }
+
+		public List<SelectListItem> FormaEnvio
+		{
+			get { return _formaEnvio; }
+			set { _formaEnvio = value; }
+		}
+		private List<SelectListItem> _formaEnvio = new List<SelectListItem>();
+
+		public String CodigoRastreio { get; set; }
+		public String NumeroAutuacao { get; set; }
 		#endregion
 
 		private Enviar _enviar = new Enviar();
@@ -133,6 +144,12 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao
 			}
 
 			Enviar.DataEnvio = new DateTecno() { Data = DateTime.Now };
+
+			FormaEnvio = ViewModelHelper.CriarSelectList(new List<Lista>() {
+				new Lista() { Texto="Mensageria", Id = "1", IsAtivo = true},
+				new Lista() { Texto="Correios", Id = "2", IsAtivo = true },
+				new Lista() { Texto="Em Mãos", Id = "3", IsAtivo = true }
+			}, true);
 		}
 
 		public void CarregarSetoresRemetente(List<Setor> setoresOrigem)
@@ -148,6 +165,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTramitacao
 		public void CarregarRemetentesFuncionarios(List<FuncionarioLst> setoresDestinario)
 		{
 			RemetenteFuncionarios = ViewModelHelper.CriarSelectList(setoresDestinario, true);
+		}
+
+		public string Asterisco(bool exibir)
+		{
+			return exibir ? " *" : string.Empty;
 		}
 	}
 }

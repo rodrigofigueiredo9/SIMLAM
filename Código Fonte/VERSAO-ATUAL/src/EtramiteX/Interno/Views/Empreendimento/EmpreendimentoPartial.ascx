@@ -8,7 +8,7 @@
 	<% } else if (Model.SalvarVM.IsVisualizar) { %>
 			<% Html.RenderPartial("VisualizarPartial", Model.SalvarVM); %>
 	<% } else { %>
-			<% Html.RenderPartial("Localizar", Model.LocalizarVM); %>
+			<% Html.RenderPartial("Localizar", Model); %>
 	<% } %>
 
 </div>

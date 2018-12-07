@@ -1,9 +1,10 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
 CARSolicitacaoListar = {
 	container: null,
+	urlBaixarDemonstrativoCAR: null,
 	settings: {
 		associarFuncao: null
 	},
@@ -22,6 +23,7 @@ CARSolicitacaoListar = {
 		container.delegate('.btnPDFTitulo', 'click', CARSolicitacaoListar.gerarPDFTitulo);
 		container.delegate('.radioDeclaranteCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		container.delegate('.radioSolicitacaoTituloNumero', 'change', CARSolicitacaoListar.onChangeRadioSolicitacaoTituloNumero);
+		container.delegate('.btnDemonstrativoCar', 'click', CARSolicitacaoListar.baixarDemonstrativoCar);
 		Aux.onChangeRadioCpfCnpjMask($('.radioDeclaranteCpfCnpj', container));
 
 		Aux.setarFoco(container);
@@ -69,5 +71,43 @@ CARSolicitacaoListar = {
 	gerarPDFTitulo: function () {
 		var tituloId = $('.itemId', $(this).closest('tr')).val();
 		MasterPage.redireciona($('.urlPdfTitulo', CARSolicitacaoListar.container).val() + "/" + tituloId);
+	},
+
+	obter: function (container) {
+		return JSON.parse($(container).closest('tr').find('.itemJson:first').val());
+	},
+
+	baixarDemonstrativoCar: function () {
+		var objeto = CARSolicitacaoListar.obter(this);
+		var isTitulo = $('.radioSolicitacaoTituloNumero')[1].checked;
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: CARSolicitacaoListar.urlBaixarDemonstrativoCAR,
+			data: JSON.stringify({ id: objeto.Id, isTitulo: isTitulo }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, CARSolicitacaoListar.container);
+				MasterPage.carregando(false);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				MasterPage.carregando(false);
+				if (response.UrlPdfDemonstrativo) {
+					window.open(response.UrlPdfDemonstrativo);
+				}
+				else {
+					Mensagem.limpar(CARSolicitacaoListar.container);
+					Mensagem.gerar(CARSolicitacaoListar.container, [CARSolicitacaoListar.mensagens.GerarPdfSICARUrlNaoEncontrada]);
+				}
+
+
+				//CARSolicitacaoListar.callBackPost(response, CARSolicitacaoListar.container);
+			}
+		});
+		MasterPage.carregando(false);
 	}
 }

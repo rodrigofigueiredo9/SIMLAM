@@ -26,6 +26,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +48,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Interno.Model.WebService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -66,9 +76,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages.Razor">
+      <HintPath>..\..\..\lib\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Credenciado\Credenciado\bin\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions">
@@ -87,9 +103,12 @@
     <Reference Include="Tecnomapas.Blocos.Autenticacao">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Autenticacao.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Data, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
@@ -141,6 +160,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CoordenadaAtividadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ConsumoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\ExploracaoFlorestalListVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoVM.cs" />
@@ -170,6 +190,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\SilviculturaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\SuinoculturaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\TerraplanagemVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMExploracaoFlorestal\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AtividadeEspecificidadeController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AutorizacaoController.cs" />
@@ -265,6 +286,8 @@
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
+    <Compile Include="Lib\Export\ExcelColumnDefinition.cs" />
+    <Compile Include="Lib\Export\ExcelFileResult.cs" />
     <Compile Include="Servicos\FormsAuthenticationService.cs" />
     <Compile Include="Interfaces\IFormsAuthenticationService.cs" />
     <Compile Include="ViewModels\VMCFOCFOC\CFOC\CFOCVM.cs" />
@@ -278,9 +301,12 @@
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
     <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
@@ -347,8 +373,14 @@
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarFiltros.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Licenca.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Empreendimento.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorteInformacao.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorte.ascx" />
@@ -384,8 +416,8 @@
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\DespolpamentoCafe.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Visualizar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\EditarExploracaoFlorestal.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\VisualizarExploracaoFlorestal.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ProcessamentoPartial.ascx" />
@@ -448,10 +480,17 @@
     <Content Include="Areas\Especificidades\Views\Certificado\CertificadoRegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
+    <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
+    <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
+    <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoConstatacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoFundiarioSimplificado.ascx" />
-    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaQueimaControlada.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFundiaria.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaLicenciamento.ascx" />
@@ -659,6 +698,9 @@
     <Content Include="Content\_imgLogo\logomarca_simlam_credenciado_pb.png" />
     <Content Include="Content\_imgLogo\logomarca_simlam_idaf.jpg" />
     <Content Include="Content\_imgLogo\logomarca_simlam_idaf.png" />
+    <Content Include="Content\_imgLogo\logo_novo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\_img\alerta.png" />
     <Content Include="Content\_img\bt-fechar-large.png" />
     <Content Include="Content\_img\document-text.png" />
@@ -669,8 +711,10 @@
     <Content Include="Content\_img\projdigital_03.gif" />
     <Content Include="Content\_img\projdigital_04.gif" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\exploracaoFlorestalListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Certidao\CertidaoDispensaLicenciamentoAmbiental.js" />
     <Content Include="Scripts\arquivoFiscalizacao.js" />
+    <Content Include="Scripts\bignumber.js" />
     <Content Include="Scripts\CFOC\emitir.js" />
     <Content Include="Scripts\CFOC\listar.js" />
     <Content Include="Scripts\CFOC\lote.js" />
@@ -680,8 +724,13 @@
     <Content Include="Scripts\ConfiguracaoVegetal\Cultura\declaracaoAdicional.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\listar.js" />
     <Content Include="Scripts\ConfiguracaoVegetal\DeclaracaoAdicional\declaracao.js" />
+    <Content Include="Scripts\Fiscalizacao\cobranca.js" />
+    <Content Include="Scripts\Fiscalizacao\cobrancaListar.js" />
+    <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarParametrizacao.js" />
+    <Content Include="Scripts\Fiscalizacao\fiscalizacaoVrte.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoProdutosDestinos.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoCodigosReceita.js" />
+    <Content Include="Scripts\Fiscalizacao\notificacao.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\habilitacaoEmissaoPTV.js" />
     <Content Include="Scripts\HabilitacaoEmissaoPTV\listar.js" />
     <Content Include="Scripts\Agrotoxico\listar.js" />
@@ -1142,6 +1191,7 @@
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarPergunta.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoDocumentosGerados.js" />
     <Content Include="Scripts\jquery.tablesorter.js" />
+    <Content Include="Scripts\json-bigint.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\consultarNumeroCFOCFOCLiberado.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\liberarNumeroCFOCFOC.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\listar.js" />
@@ -1378,7 +1428,7 @@
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaCompraVenda.js" />
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaDoacao.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoConstatacao.js" />
-    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaQueimaControlada.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFundiaria.js" />
     <Content Include="Scripts\Areas\Especificidades\Licenca\licencaPorteUsoMotosserra.js" />
     <Content Include="Scripts\Areas\Especificidades\Notificacao\notificacaoIndeferimento.js" />
@@ -1704,6 +1754,26 @@
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarFiltros.ascx" />
     <Content Include="Views\ConfiguracaoVegetal\DeclaracaoAdicional\ListarResultados.ascx" />
     <Content Include="Views\Credenciado\HabilitacaoCFOHistorico.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\Cobranca.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListar.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListarFiltros.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaListarResultados.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacao.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaPartial.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoPartial.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarFiltros.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoListarResultados.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaVisualizar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoVisualizar.aspx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarVrte.aspx" />
+    <Content Include="Views\FiscalizacaoCobranca\CobrancaParcelamento.ascx" />
+    <Content Include="Views\Fiscalizacao\ConfigurarParametrizacaoDetalhe.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoVisualizar.aspx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoCobranca.ascx" />
+    <Content Include="Views\Fiscalizacao\FiscalizacaoVrte.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\NotificacaoPartial.ascx" />
+    <Content Include="Views\FiscalizacaoNotificacao\Notificacao.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarPenalidade.aspx" />
     <Content Include="Views\Fiscalizacao\ConfigurarProdutosDestinacao.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoPenalidade.ascx" />
@@ -1713,6 +1783,7 @@
     <Content Include="Views\Fiscalizacao\Multa.ascx" />
     <Content Include="Views\Fiscalizacao\ConfigurarCodigosReceita.aspx" />
     <Content Include="Views\Fiscalizacao\FiscalizacaoCodigosReceita.ascx" />
+    <Content Include="Views\FiscalizacaoCobranca\FiscalizacaoPessoaModal.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVPartial.ascx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Criar.aspx" />
     <Content Include="Views\HabilitacaoEmissaoPTV\Editar.aspx" />
@@ -2125,6 +2196,11 @@
     <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <Content Include="Content\_pdfAspose\Laudo_de_Fiscalizacao_Novo.docx" />
     <Content Include="Content\_pdfAspose\Instrumento_Unico_Fiscalizacao.docx" />
+    <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
+    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />
@@ -2716,7 +2792,7 @@
       <Name>Interno.Model.Extensoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
-      <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>
+      <Project>{1a2007a6-9c00-4169-930c-fc338a1aada5}</Project>
       <Name>Interno.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorio\Interno.Model.RelatorioIndividual.csproj">
@@ -2731,6 +2807,7 @@
     <Folder Include="Areas\Especificidades\ViewModels\Parecer\" />
     <Folder Include="Areas\Especificidades\Views\Parecer\" />
     <Folder Include="Areas\GeoProcessamento\Views\Shared\" />
+    <Folder Include="DynamicData\FieldTemplates\" />
     <Folder Include="Scripts\Areas\Especificidades\Parecer\" />
     <Folder Include="ViewModels\VMPassivo\" />
   </ItemGroup>
@@ -2787,7 +2864,13 @@
     <Content Include="Content\_pdfAspose\CFO.doc" />
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
+    <None Include="Properties\PublishProfiles\Desenvolvimento.pubxml" />
+    <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\Homologacao.pubxml" />
+    <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\Simlam_DEV.pubxml" />
     <None Include="Properties\PublishProfiles\versao 2.pubxml" />
     <None Include="Properties\PublishProfiles\versao-ddsiv.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />

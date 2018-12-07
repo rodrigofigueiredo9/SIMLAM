@@ -19,7 +19,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem DominialidadeInexistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterizacao Dominialidade deve estar cadastrada." }; } }
 		public Mensagem QueimaInexistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterizacao Queima Controlada deve estar cadastrada." }; } }
 
-		public Mensagem LaudoVistoriaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria Florestal é obrigatório" }; } }
+		public Mensagem LaudoVistoriaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria de Queima Controlada é obrigatório" }; } }
 		public Mensagem LaudoVIstoriaDeveEstarConcluiddo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria deve estar com a situação concluido" }; } }
 
 		public Mensagem CaracterizacaoDeveEstarValida(String caracterizacao)

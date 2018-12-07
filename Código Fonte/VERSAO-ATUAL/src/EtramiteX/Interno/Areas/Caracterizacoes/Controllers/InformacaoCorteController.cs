@@ -39,6 +39,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			InformacaoCorte caracterizacao = _bus.ObterPorEmpreendimento(id) ?? new InformacaoCorte();
 			caracterizacao.EmpreendimentoId = id;
+			caracterizacao.Emprendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(id);
 
 			if (caracterizacao.Id > 0) 
 			{
@@ -195,13 +196,31 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
 		public ActionResult InformacaoCorteInformacaoCriar()
 		{
-			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(new InformacaoCorteInformacao(), _listaBus.SilviculturaCulturasFlorestais,_listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial);
-			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
+			InformacaoCorteVM vm = new InformacaoCorteVM(new InformacaoCorte(), false);
+			//InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(new InformacaoCorteInformacao(), _listaBus.SilviculturaCulturasFlorestais,_listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial);
+			//String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
+			vm.Caracterizacao.Emprendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(26190);
 
-			return Json(new
-			{
-				@Html = html, @Msg = Validacao.Erros
-			}, JsonRequestBehavior.AllowGet);
+			return View("InformacaoCorteInformacao", vm);
+
+			//if (Request.IsAjaxRequest())
+			//{
+			//	return PartialView("VisualizarPartial", vm);
+			//}
+			//else
+			//{
+			//	return View("Visualizar", vm);
+			//}
+
+			//return RedirectToAction("Index", Validacao.QueryParamSerializer());
+
+
+			//return Json(new
+			//{
+			//	@Html = html,
+			//	@Msg = Validacao.Erros
+			//}, JsonRequestBehavior.AllowGet);
+
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]

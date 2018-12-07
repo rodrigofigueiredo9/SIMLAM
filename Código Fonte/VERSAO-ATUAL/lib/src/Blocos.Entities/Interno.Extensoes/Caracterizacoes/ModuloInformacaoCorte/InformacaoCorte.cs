@@ -8,6 +8,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	{
 		public Int32 Id { get; set; }
 		public Int32 EmpreendimentoId { get; set; }
+		public EmpreendimentoCaracterizacao Emprendimento { get; set; }
 		public String Tid { get; set; }
 
 		public List<Dependencia> Dependencias { get; set; }

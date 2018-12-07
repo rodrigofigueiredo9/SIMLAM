@@ -24,6 +24,8 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.D
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using System.Collections;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLaudo.Business
 {
@@ -117,6 +119,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				#region Anexos
 
+				laudo.AnexosPdfs = laudo.Anexos
+					.Select(x => x.Arquivo)
+					.Where(x => (!String.IsNullOrEmpty(x.Nome) && new FileInfo(x.Nome).Extension.ToLower().IndexOf("pdf") > -1)).ToList();
+
+				laudo.Anexos.RemoveAll(anexo =>
+					String.IsNullOrEmpty(anexo.Arquivo.Extensao) ||
+					!((new[] { ".jpg", ".gif", ".png", ".bmp" }).Any(x => anexo.Arquivo.Extensao.ToLower() == x)));
+
 				if (laudo.Anexos != null && laudo.Anexos.Count>0)
 				{
 					foreach (AnexoPDF anexo in laudo.Anexos)
@@ -131,8 +141,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				laudo.Dominialidade = new DominialidadePDF(new DominialidadeBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
-				laudo.ExploracaoFlorestal = new ExploracaoFlorestalPDF(new ExploracaoFlorestalBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-				
+				if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
+				{
+					var exploracoes = new ExploracaoFlorestalBus().ObterExploracoes(especificidade.Titulo.Id, (int)eTituloModeloCodigo.LaudoVistoriaFlorestal);
+					laudo.ExploracaoFlorestalList = exploracoes.Select(x => new ExploracaoFlorestalPDF(x)).ToList();
+					var parecerFavoravel = new ArrayList();
+					var parecerDesfavoravel = new ArrayList();
+					foreach (var exploracao in exploracoes)
+					{
+						if (exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true)?.ToList().Count > 0)
+							parecerFavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == true).Select(x => x.Identificacao)?.ToList()), ")"));
+						if (exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false)?.ToList().Count > 0)
+							parecerDesfavoravel.Add(String.Concat(exploracao.CodigoExploracaoTexto, " (", String.Join(", ", exploracao.Exploracoes.Where(x => x.ParecerFavoravel == false).Select(x => x.Identificacao)?.ToList()), ")"));
+					}
+					laudo.ParecerFavoravel = parecerFavoravel.Count > 0 ? String.Join(", ", parecerFavoravel?.ToArray()) : "";
+					laudo.ParecerDesfavoravel = parecerDesfavoravel.Count > 0 ? String.Join(", ", parecerDesfavoravel?.ToArray()) : "";
+				}
+				else
+					laudo.ExploracaoFlorestal = new ExploracaoFlorestalPDF(new ExploracaoFlorestalBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 				laudo.QueimaControlada = new QueimaControladaPDF(new QueimaControladaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
 				laudo.Silvicultura = new SilviculturaPDF(new SilviculturaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
@@ -172,28 +198,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 						break;
 				}
 
-				#region Exploração Florestal
-
-				if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
-				{
-					if (laudo.ExploracaoFlorestal.CorteRasoExploracoes.Count <= 0)
-					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteRaso"));
-					}
-
-					if (laudo.ExploracaoFlorestal.CorteSeletivoExploracoes.Count <= 0)
-					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteSele"));
-					}
-
-					itenRemover.Add(doc.LastTable("«TableStart:QueimaControlada.QueimasContr"));
-				}
-
-				#endregion
-
 				#region Queima Controlada
 
-				else if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.QueimaControlada)
+				if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.QueimaControlada ||
+				(laudo.Titulo.ModeloSigla == "LVQC" && laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal))
 				{
 					if (laudo.QueimaControlada.QueimasControladas.Count <= 0)
 					{
@@ -204,6 +212,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 					itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal.CorteSele"));
 					itenRemover.Add(doc.FindTable("FINALIDADE DA EXPLORAÇÃO"));
 				}
+				#endregion
+
+				#region Exploração Florestal
+
+				else if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
+				{
+					if (laudo.ExploracaoFlorestalList.Count <= 0)
+					{
+						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal"));
+						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestalList"));
+					}
+
+					itenRemover.Add(doc.LastTable("«TableStart:QueimaControlada.QueimasContr"));
+				}
+
 				#endregion
 
 				#region Silvicultura

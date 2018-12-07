@@ -39,6 +39,7 @@
 					<%if (Model.PodeExcluir) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
 					<%if (Model.PodeAlterarSituacao){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
 					<%if (Model.PodeAlterarSituacaoCondicionante) {%><input type="button" title="Alterar situação de condicionante" class="icone sitCondicionante btnAlterarSituacaoCondicionante" /><% } %>
+					<%if (item.Modelo.Sigla == "CAR") {%><input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" /> <% } %>
 				</td>
 			</tr>
 		<% } %>

@@ -382,7 +382,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 						t.nome Texto,
 						case when t.situacao = 1 then 1 else 0 end IsAtivo
 					from tab_titulo_modelo t
-					where t.documento = 2 /*Título Declaratório*/";
+					where t.documento = 2 /*Título Declaratório, Informação de corte*/";
 
 				using (var command = bancoDeDados.CriarComando(sql))
 				{

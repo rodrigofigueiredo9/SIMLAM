@@ -9,7 +9,7 @@
 		CancelarConclusao,
 		ComDecisaoManutencaoMulta,
 		ComDecisaoMultaCancelada,
-		AIPago,
+		MultaPaga,
 		EmParcelamento,
 		ParceladopagamentoEmDia,
 		ParceladoPagamentoAtrasado,

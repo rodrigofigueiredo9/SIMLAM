@@ -88,11 +88,21 @@
     <Compile Include="ModuloFichaFundiaria\Pdf\FichaFundiariaPDF.cs" />
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoBus.cs" />
     <Compile Include="ModuloFiscalizacao\Business\AcompanhamentoValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaDUAValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaBus.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaParcelamentoValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\NotificacaoBus.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\CobrancaValidar.cs" />
+    <Compile Include="ModuloFiscalizacao\Business\NotificacaoValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\OutrasPenalidadesValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\OutrasPenalidadesBus.cs" />
     <Compile Include="ModuloFiscalizacao\Business\MultaValidar.cs" />
     <Compile Include="ModuloFiscalizacao\Business\MultaBus.cs" />
     <Compile Include="ModuloFiscalizacao\Data\AcompanhamentoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\CobrancaParcelamentoDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\CobrancaDUADa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\CobrancaDa.cs" />
+    <Compile Include="ModuloFiscalizacao\Data\NotificacaoDa.cs" />
     <Compile Include="ModuloFiscalizacao\Data\OutrasPenalidadesDa.cs" />
     <Compile Include="ModuloFiscalizacao\Data\MultaDa.cs" />
     <Compile Include="ModuloLocalVistoria\Business\LocalVistoriaBus.cs" />
@@ -290,7 +300,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
-      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
       <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">

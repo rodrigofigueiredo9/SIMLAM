@@ -44,6 +44,7 @@
 		PatioLavagem = 100, //97
 		CadastroAmbientalRural = 149, //151
 		FabricanteMotosserra = 180, // 222
-        BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado = 190 //232
+        BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado = 190, //232
+		ExploracaoFlorestal = 50
 	}
 }

@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -26,6 +26,7 @@ ProtocoloListar = {
 		ProtocoloListar.container.delegate('.btnVisualizar', 'click', ProtocoloListar.visualizar);
 		ProtocoloListar.container.delegate('.btnAtividadesSolicitadas', 'click', ProtocoloListar.atividadesSolicitadas);
 		ProtocoloListar.container.delegate('.btnHistoricoTramitacao', 'click', ProtocoloListar.historicoTramitacao);
+		ProtocoloListar.container.delegate('.btnSep', 'click', ProtocoloListar.consultarSep);
 		
 
 		ProtocoloListar.container.delegate('.radioInteressadoCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
@@ -66,5 +67,10 @@ ProtocoloListar = {
 		Modal.abrir(ProtocoloListar.urlHistoricoTramitacao, { id: id, tipo: 1 }, function (context) {
 			Modal.defaultButtons(context);
 		});
+	},
+
+	consultarSep: function () {
+		var numero_autuacao = parseInt($(this).closest('tr').find('.itemNumeroAutuacao:first').val());
+		window.open('https://sistemas.es.gov.br/prodest/consultaprocesso/ConsultaProcesso/Consultar?id=' + numero_autuacao);
 	}
 }

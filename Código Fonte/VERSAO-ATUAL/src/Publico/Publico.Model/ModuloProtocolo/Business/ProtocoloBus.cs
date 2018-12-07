@@ -3,7 +3,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
-using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
+using Tecnomapas.EtramiteX.Publico.Model.ModuloProtocolo.Data;
 
 namespace Tecnomapas.EtramiteX.Publico.Model.ModuloProtocolo.Business
 {

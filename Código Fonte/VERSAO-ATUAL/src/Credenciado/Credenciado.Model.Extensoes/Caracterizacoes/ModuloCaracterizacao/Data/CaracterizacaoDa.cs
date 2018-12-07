@@ -46,16 +46,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		private string EsquemaBancoCredenciado
 		{
-			get
-			{
+			get {
 				return _config.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado);
 			}
 		}
 
 		private string EsquemaBancoCredenciadoGeo
 		{
-			get
-			{
+			get {
 				return _config.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciadoGeo);
 			}
 		}
@@ -284,7 +282,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Lista das caracterizações
 
 				List<CaracterizacaoLst> caracterizacoesPermitidas = ObterCaracterizacoesPorProjetoDigital(projetoDigitalId, banco: banco)
-                    .Where(x => x.IsExibirCredenciado || x.Id == (int)eCaracterizacao.UnidadeProducao || x.Id == (int)eCaracterizacao.UnidadeConsolidacao || x.Id == (int)eCaracterizacao.BarragemDispensaLicenca).ToList();
+					.Where(x => x.IsExibirCredenciado || x.Id == (int)eCaracterizacao.UnidadeProducao || x.Id == (int)eCaracterizacao.UnidadeConsolidacao || x.Id == (int)eCaracterizacao.BarragemDispensaLicenca).ToList();
 				if (caracterizacoesPermitidas.Count <= 0)
 				{
 					return null;
@@ -371,9 +369,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return lista;
 		}
 
-        public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod, BancoDeDados banco = null)
-        {
-            List<Caracterizacao> lista = new List<Caracterizacao>();
+		public List<Caracterizacao> ObterCaracterizacoesCAR(Int64 empreendimentoCod, BancoDeDados banco = null)
+		{
+			List<Caracterizacao> lista = new List<Caracterizacao>();
 			String select = String.Empty;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -384,37 +382,37 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                                 INNER JOIN CRT_CAD_AMBIENTAL_RURAL CR ON CR.EMPREENDIMENTO = E.ID 
                             WHERE E.CODIGO = :empreendimento");
 
-					comando.AdicionarParametroEntrada("empreendimento", empreendimentoCod, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoCod, DbType.Int32);
 
-					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					Caracterizacao caracterizacao = null;
+
+					while (reader.Read())
 					{
-						Caracterizacao caracterizacao = null;
+						caracterizacao = new Caracterizacao();
 
-						while (reader.Read())
+						if (reader["tipo"] != null && !Convert.IsDBNull(reader["tipo"]))
 						{
-							caracterizacao = new Caracterizacao();
-
-							if (reader["tipo"] != null && !Convert.IsDBNull(reader["tipo"]))
-							{
-								caracterizacao.Tipo = (eCaracterizacao)Convert.ToInt32(reader["tipo"]);
-								caracterizacao.Nome = reader["tipo_texto"].ToString();
-							}
-
-							if (reader["caracterizacao_id"] != null && !Convert.IsDBNull(reader["caracterizacao_id"]))
-							{
-								caracterizacao.Id = Convert.ToInt32(reader["caracterizacao_id"]);
-								caracterizacao.Tid = reader["caracterizacao_tid"].ToString();
-							}
-
-							lista.Add(caracterizacao);
+							caracterizacao.Tipo = (eCaracterizacao)Convert.ToInt32(reader["tipo"]);
+							caracterizacao.Nome = reader["tipo_texto"].ToString();
 						}
 
-						reader.Close();
+						if (reader["caracterizacao_id"] != null && !Convert.IsDBNull(reader["caracterizacao_id"]))
+						{
+							caracterizacao.Id = Convert.ToInt32(reader["caracterizacao_id"]);
+							caracterizacao.Tid = reader["caracterizacao_tid"].ToString();
+						}
+
+						lista.Add(caracterizacao);
 					}
+
+					reader.Close();
+				}
 			}
 
 			return lista;
-        }
+		}
 
 		public List<Dependencia> ObterDependenciasAtual(int empreendimentoId, eCaracterizacao caracterizacaoTipo, eCaracterizacaoDependenciaTipo tipo, BancoDeDados banco = null)
 		{
@@ -1132,6 +1130,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				foreach (var item in cadastradas)
 				{
+					if (!string.IsNullOrWhiteSpace(query)) query += " union all ";
 					switch (item.Tipo)
 					{
 						case eCaracterizacao.Dominialidade:
@@ -1163,19 +1162,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							comando.AdicionarParametroEntrada("unidade_consolidacao", item.Id, DbType.Int32);
 
 							break;
-                        case eCaracterizacao.BarragemDispensaLicenca:
-                            query += @"
+						case eCaracterizacao.BarragemDispensaLicenca:
+							query += @"
 								select :tipo caracterizacao from hst_crt_barragem_dispe_lic u where u.caracterizacao_id = :barragem_id and u.acao_executada not in (75, 76)
                                 and u.data_execucao = (select max(c.data_execucao) from hst_crt_barragem_dispe_lic c where c.caracterizacao_id = :barragem_id)";
 
-                            comando.AdicionarParametroEntrada("barragem_id", item.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("barragem_id", item.Id, DbType.Int32);
 
-                            break;
+							break;
 						default:
 							break;
 					}
 
-					query += " union all ";
+
 					comando.AdicionarParametroEntrada("tipo", (int)item.Tipo, DbType.Int32);
 				}
 

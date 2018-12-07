@@ -126,7 +126,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 				gerouCertidaoNegativa = Fiscalizacoes.Where(x => x.SituacaoId == ((int)eFiscalizacaoSituacao.EmAndamento) ||
 																 x.SituacaoId == ((int)eFiscalizacaoSituacao.CadastroConcluido) ||
 																 x.SituacaoId == ((int)eFiscalizacaoSituacao.ComDecisaoMultaCancelada) ||
-																 x.SituacaoId == ((int)eFiscalizacaoSituacao.AIPago)).ToList().Count > 0;
+																 x.SituacaoId == ((int)eFiscalizacaoSituacao.MultaPaga)).ToList().Count > 0;
 
 				if (gerouCertidaoNegativa)
 				{

@@ -50,5 +50,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento
 		}
 
         public int EmpreendimentoCompensacao { get; set; }
+
+		public Boolean IsInformacaoCorte { get; set; }
 	}
 }

@@ -223,9 +223,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			ControleArquivoSICAR controleArquivoSICAR = new ControleArquivoSICAR();
 			controleArquivoSICAR.SolicitacaoCarId = solicitacao.Id;
             CARSolicitacao retificado = new CARSolicitacao();
+			String codigoImovelTxt = String.Empty;
+            String codigoRetificacao = String.Empty;
 
             retificado = ObterPorEmpreendimento(solicitacao.Empreendimento.Codigo ?? 0, false);
-            String codigoRetificacao = String.Empty;
 
             if (retificado != null)
             {
@@ -319,9 +320,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				else
 				{
 					#region Editar controle arquivo SICAR
+					if (!String.IsNullOrWhiteSpace(codigoRetificacao))
+						codigoImovelTxt = " codigo_imovel = :codigo_imovel, ";
 
 					comando = bancoDeDados.CriarComando(@"
-				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio, 
+				    update tab_controle_sicar r set r.empreendimento_tid = :empreendimento_tid, r.solicitacao_car_tid = :solicitacao_car_tid, r.situacao_envio = :situacao_envio,
+					solicitacao_car_anterior = :solicitacao_car_anterior, solicitacao_car_anterior_tid = :solicitacao_car_anterior_tid, solicitacao_car_ant_esquema = :solicitacao_car_ant_esquema,
+					" + codigoImovelTxt + @"
                     r.tid = :tid, r.arquivo = null where r.id = :id", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("empreendimento_tid", controleArquivoSICAR.EmpreendimentoTid, DbType.String);
@@ -329,6 +334,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					comando.AdicionarParametroEntrada("situacao_envio", (int)statusArquivoSICAR, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("id", controleArquivoSICAR.Id, DbType.Int32);
+					if (retificado == null)
+					{
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior", null, DbType.Int32);
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", null, DbType.String);
+						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", null, DbType.Int32);
+					}
+					else
+					{
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior", retificado.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("solicitacao_car_anterior_tid", retificado.Tid, DbType.String);
+						comando.AdicionarParametroEntrada("solicitacao_car_ant_esquema", retificado.Esquema, DbType.Int32);
+					}
+					if(!String.IsNullOrWhiteSpace(codigoRetificacao))
+						comando.AdicionarParametroEntrada("codigo_imovel", codigoRetificacao, DbType.String);
 
 					bancoDeDados.ExecutarNonQuery(comando);
 
@@ -1287,7 +1306,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 			return retorno;
 		}
-
 
 		public Tuple<eStatusArquivoSICAR, string> BuscaSituacaoAtualArquivoSICAR(int solicitacaoId, BancoDeDados banco = null)
 		{

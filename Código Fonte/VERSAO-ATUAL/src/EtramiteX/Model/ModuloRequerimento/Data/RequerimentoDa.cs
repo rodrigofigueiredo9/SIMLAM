@@ -1160,6 +1160,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data
 			return (objeto == null ? string.Empty : objeto.ToString());
 		}
 
+		internal bool IsRequerimentoAtividadeCorte(int requerimento, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT COUNT(1) FROM TAB_REQUERIMENTO_ATIVIDADE WHERE ATIVIDADE = 209 /* Informação de Corte */AND REQUERIMENTO = :requerimento");
+
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
+			}
+		}
+
 		#endregion
 	}
 }

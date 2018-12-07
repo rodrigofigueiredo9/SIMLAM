@@ -16,6 +16,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracte
 using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento;
@@ -30,7 +31,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		ListaBus _busLista = new ListaBus();
 		EmpreendimentoBus _bus = new EmpreendimentoBus(new EmpreendimentoValidar());
 		CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-
+		RequerimentoBus _busRequerimento = new RequerimentoBus();
 		#endregion
 
 		#region Ações
@@ -216,6 +217,41 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         }
 
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
+		public ActionResult LocalizarFiscalizacaoCodigo(LocalizarVM vm)
+		{
+			_bus.ValidarLocalizarFiscalizacaoCodigo(vm.Filtros);
+
+			if (!Validacao.EhValido)
+			{
+				return Json(new { @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+			}
+			else
+			{
+				vm.Paginacao = new Paginacao();
+				vm.Paginacao.QuantPaginacao = Convert.ToInt32(Int32.MaxValue);
+				vm.Paginacao.OrdenarPor = 1;
+
+				Resultados<Empreendimento> retorno = new Resultados<Empreendimento>();
+				var empreendimento = _bus.ObterPorCodigo(vm.Filtros.Codigo.GetValueOrDefault(0));
+				if (empreendimento == null)
+				{
+					return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+				}
+
+				retorno.Itens.Add(empreendimento);
+				retorno.Quantidade = 1;
+
+				vm.PodeEditar = User.IsInRole(ePermissao.EmpreendimentoEditar.ToString());
+				vm.PodeVisualizar = User.IsInRole(ePermissao.EmpreendimentoVisualizar.ToString());
+
+				vm.Paginacao.EfetuarPaginacao();
+				vm.SetResultados(retorno.Itens);
+
+				return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultadosLocalizar", vm) }, JsonRequestBehavior.AllowGet);
+			}
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
 		public ActionResult Localizar(LocalizarVM vm)
 		{
 			_bus.ValidarLocalizar(vm.Filtros);
@@ -251,10 +287,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
 		public ActionResult LocalizarMontar(LocalizarVM localizarVm)
 		{
-			LocalizarVM vm = new LocalizarVM(_busLista.Estados, _busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
-				_busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios);
+			EmpreendimentoVM vm = new EmpreendimentoVM(
+						_busLista.Estados,
+						_busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
+						_busLista.Segmentos,
+						_busLista.TiposCoordenada,
+						_busLista.Datuns,
+						_busLista.Fusos,
+						_busLista.Hemisferios,
+						_busLista.TiposResponsavel);
 
-			vm.Filtros = localizarVm.Filtros;
+			vm.LocalizarVM = new LocalizarVM(_busLista.Estados, _busLista.Municipios(localizarVm.Filtros.EstadoId.GetValueOrDefault()),
+				_busLista.Segmentos, _busLista.TiposCoordenada, _busLista.Datuns, _busLista.Fusos, _busLista.Hemisferios);
+			vm.LocalizarVM.Filtros = localizarVm.Filtros;
 
 			if (Request.IsAjaxRequest())
 			{
@@ -518,6 +563,72 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				Validacao.Add(Mensagem.Empreendimento.NaoEncontrouRegistros);
 				return RedirectToAction("Index", Validacao.QueryParamSerializer());
 			}
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
+		public ActionResult EmpreendimentoInlineInteressado(int id, int requerimentoId)
+		{
+			EmpreendimentoVM vm = new EmpreendimentoVM(
+						_busLista.Estados,
+						_busLista.Municipios(_busLista.EstadoDefault),
+						_busLista.Segmentos,
+						_busLista.TiposCoordenada,
+						_busLista.Datuns,
+						_busLista.Fusos,
+						_busLista.Hemisferios,
+						_busLista.TiposResponsavel);
+
+			if (requerimentoId > 0 && id <= 0)
+			{
+				var interessado = _busRequerimento.ObterSimplificado(requerimentoId).Interessado.Id;
+				vm.ListarVM.Resultados = _bus.ObterEmpreedimentoResponsavel(interessado);
+				if (vm.ListarVM.Resultados.Count > 0)
+					vm.ListarVM.Paginacao.QuantidadeRegistros = vm.ListarVM.Resultados.Count;
+			}
+			else
+			{
+				if (id > 0)
+				{
+					Empreendimento emp = _bus.Obter(id);
+
+					if (emp.Enderecos.Count == 0)
+					{
+						emp.Enderecos.Add(new Endereco());
+						emp.Enderecos.Add(new Endereco());
+					}
+					else if (emp.Enderecos.Count == 1)
+						emp.Enderecos.Add(new Endereco());
+
+					SalvarVM salvarVM = new SalvarVM(
+						_busLista.Estados,
+						_busLista.Municipios(emp.Enderecos[0].EstadoId),
+						_busLista.Municipios(emp.Enderecos[1].EstadoId),
+						_busLista.Segmentos,
+						_busLista.TiposCoordenada,
+						_busLista.Datuns,
+						_busLista.Fusos,
+						_busLista.Hemisferios,
+						_busLista.TiposResponsavel,
+						_busLista.LocalColetaPonto,
+						_busLista.FormaColetaPonto,
+						emp.Enderecos[0].EstadoId,
+						emp.Enderecos[0].MunicipioId,
+						emp.Enderecos[1].EstadoId,
+						emp.Enderecos[1].MunicipioId,
+						emp.Coordenada.LocalColeta.GetValueOrDefault(),
+						emp.Coordenada.FormaColeta.GetValueOrDefault());
+
+					vm.SalvarVM = salvarVM;
+					vm.SalvarVM.Empreendimento = emp;
+					vm.SalvarVM.MostrarTituloTela = false;
+					vm.SalvarVM.IsVisualizar = true;
+					PreencherSalvar(vm.SalvarVM);
+				}
+				else
+					_bus.Obter(id);
+			}
+			vm.LocalizarVM.IsInformacaoCorte = true;
+			return PartialView("EmpreendimentoInline", vm);
 		}
 
 		#endregion
@@ -809,6 +920,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@Msg = Validacao.Erros,
 				@EhValido = Validacao.EhValido,
 				@Lista = lista
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar, ePermissao.EmpreendimentoEditar })]
+		public ActionResult ObterListaResponsaveisCnpj(string cnpj)
+		{
+			var listResponsaveis = _bus.ObterResponsaveis(cnpj);
+
+			return Json(new
+			{
+				Msg = Validacao.Erros,
+				EhValido = Validacao.EhValido,
+				@Responsaveis = listResponsaveis
 			}, JsonRequestBehavior.AllowGet);
 		}
 

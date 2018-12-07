@@ -9,6 +9,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFuncionario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 {
@@ -28,6 +29,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		public Boolean IsProcesso { get; set; }
 		public Int32 SetorId { get; set; }
 		public Int32 SetorCriacaoId { get; set; }
+		public String InteressadoLivre { get; set; }
+		public String InteressadoLivreTelefone { get; set; }
+		public Int32 Folhas { get; set; }
 
 		//Número completo
 		public String Numero
@@ -130,6 +134,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		}
 
 		public bool PossuiPendencia { get; set; }
+
+		private List<TituloAssinante> _assinantes = new List<TituloAssinante>();
+		public List<TituloAssinante> Assinantes { get { return _assinantes; } set { _assinantes = value; } }
+
 
 		public Protocolo() { }
 

@@ -14,7 +14,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento
 		public SalvarVM SalvarVM { get; set; }
 		public LocalizarVM LocalizarVM { get; set; }
 		public string EmpreendimentoHtmlCopiar { get; set; }
-		
+		public ListarVM ListarVM { get; set; }
+
 		public String Mensagens
 		{
 			get
@@ -36,6 +37,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento
 		{
 			SalvarVM = new SalvarVM();
 			LocalizarVM = new LocalizarVM();
+			ListarVM = new ListarVM();
 		}
 
 		public EmpreendimentoVM(List<Estado> lstEstados, List<Municipio> lstMunicipio, List<Segmento> lstSegmentos, List<CoordenadaTipo> lstTiposCoordenada,
@@ -43,6 +45,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento
 		{
 			LocalizarVM = new LocalizarVM(lstEstados, lstMunicipio, lstSegmentos, lstTiposCoordenada, lstDatuns, lstFusos, lstHemisferios);
 			SalvarVM = new SalvarVM();
+			ListarVM = new ListarVM();
 
 			SalvarVM.SetarDenominadores(lstSegmentos);
 		}

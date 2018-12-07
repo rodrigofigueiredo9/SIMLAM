@@ -53,10 +53,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
                     Validacao.Add(Mensagem.LocalInfracaoMsg.MunicipioObrigatorio);
                 }
 
-                if (string.IsNullOrWhiteSpace(localInfracao.Local))
-                {
-                    Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
-                }
+				if (string.IsNullOrWhiteSpace(localInfracao.Local))
+				{
+					Validacao.Add(Mensagem.LocalInfracaoMsg.LocalObrigatorio);
+				}
             }
             else
             {

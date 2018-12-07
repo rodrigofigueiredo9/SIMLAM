@@ -388,6 +388,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
             return null;
         }
 
+		public Empreendimento ObterPorCodigo(long codigo)
+		{
+			try
+			{
+				Empreendimento emp = _da.ObterPorCodigo(codigo);
+
+				if (emp.Id == 0)
+				{
+					Validacao.Add(Mensagem.Empreendimento.Inexistente);
+				}
+
+				return emp;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public Empreendimento Obter(int id)
 		{
 			try
@@ -458,6 +479,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return null;
 		}
 
+		public List<Pessoa> ObterResponsaveis(string cnpj)
+		{
+			try
+			{
+				return _da.ObterResponsaveis(cnpj);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public List<PessoaLst> ObterResponsaveisComTipo(int id)
 		{
 			try
@@ -471,7 +506,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 
 			return null;
 		}
-
 		public List<PessoaLst> ObterListaInteressadoEmpreendimento(int empreendimento, int requerimento)
 		{
 			try
@@ -564,6 +598,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			return resposta;
 		}
 
+		public List<Empreendimento> ObterEmpreedimentoResponsavel(int interessado)
+		{
+			List<Empreendimento> retorno = new List<Empreendimento>();
+			try
+			{
+				foreach(int emp in _da.ObterEmpreendimentoResponsavel(interessado))
+				{
+					Empreendimento empreendimento = new Empreendimento();
+					empreendimento = Obter(emp);
+
+					retorno.Add(empreendimento);
+				}
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
+
+
 
 		#endregion
 
@@ -641,6 +697,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
             }
         }
 
+		public void ValidarLocalizarFiscalizacaoCodigo(ListarEmpreendimentoFiltro filtros)
+		{
+			try
+			{
+				_validar.ValidarLocalizarFiscalizacaoCodigo(filtros);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		public bool ValidarEmPosse(int id)
 		{
 			try
@@ -711,6 +779,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			}
 
 			return new Mensagem();
+		}
+
+		public bool ExisteEmpreendimentoResponsavel(int pessoa)
+		{
+			try
+			{
+				return _da.ObterEmpreendimentoResponsavel(pessoa).Count > 0 ? true : false;
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
+		}
+
+		public bool EmpreendimentoPossuiCodigoSicar(Int64? empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (empreendimento == null || empreendimento <= 0) return true;
+				return _da.ObterCodigoSicarPorEmpreendimento(empreendimento, banco).Count > 0 ? true : false;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return true;
+		}
+
+		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.EmpreendimentoAssociadoResponsavel(pessoa, empreendimento, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
 		}
 
 		#endregion

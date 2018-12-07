@@ -107,6 +107,16 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem ArquivoNaoEncontrado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Arquivo inválido ou inexistente." }; } }
 
+		public Mensagem DestinoExternoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Destinatario_DestinoExterno", Texto = "O Destino Externo é obrigatório." }; } }
+
+		public Mensagem FormaEnvioObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Destinatario_FormaEnvio", Texto = "A Forma de Envio é obrigatória." }; } }
+
+		public Mensagem CodigoRastreioObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Destinatario_CodigoRastreio", Texto = "O Código de Rastreio é obrigatório." }; } }
+
+		public Mensagem NumeroAutuacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Destinatario_NumeroAutuacao", Texto = "O Nº de Autuação (SEP) é obrigatório." }; } }
+
+		public Mensagem DespachoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Enviar_Despacho", Texto = "O Despacho é obrigatório." }; } }
+
 		public Mensagem ArquivoEditarSetorNaoEhPossivelPorPossuirProtocolo(eTipoMensagem tipoMensagem)
 		{
 			return new Mensagem() { Tipo = tipoMensagem, Texto = "Não é possível editar o setor do arquivo com processo(s) e(ou) documento(s)." };
@@ -136,7 +146,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MotivoAtivado { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Motivo ativado com sucesso." }; } }
 		public Mensagem MotivoDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Motivo desativado com sucesso." }; } }
 		public Mensagem NomeJaAdicionado { get { return new Mensagem() { Campo = "#Inexistente, .txtMotivo", Tipo = eTipoMensagem.Advertencia, Texto = "Nome já adicionado." }; } }
-		
+
 		#endregion
+
+		public Mensagem NaoExisteNotificacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível tramitar o processo/documento, pois não existe notificação do autuado para esta fiscalização." }; } }
 	}
 }

@@ -7,6 +7,8 @@
 
 <div class="divAlterarSitucao">
 	<input type="hidden" class="hdnTituloId" value="<%= Model.Id %>" />
+	<input type="hidden" class="hdnModeloId" value="<%= Model.ModeloId %>" />
+	<input type="hidden" class="hdnCodigoSicar" value="<%= Model.CodigoSicar %>" />
 
 	<fieldset class="block box">
 		<legend>Título</legend>
@@ -34,6 +36,16 @@
 				<label for="SituacaoAtual">Situação</label>
 				<%= Html.TextBox("SituacaoAtual", Model.Situacao, new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
+			<% if (Model.ModeloCodigo == (int)Tecnomapas.Blocos.Entities.Etx.ModuloCore.eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) { %>
+				<div class="coluna20 append2">
+					<label for="SituacaoIntegracao">Situação Integração</label>
+					<%= Html.TextBox("SituacaoIntegracao", (string.IsNullOrWhiteSpace(Model.CodigoSinaflor) ? "Em Cadastro" : "Integrado"), new { @class = "text disabled", @disabled = "disabled" })%>
+				</div>
+				<div class="coluna20 append2">
+					<label for="CodigoSinaflor">Código Integração</label>
+					<%= Html.TextBox("CodigoSinaflor", Model.CodigoSinaflor, new { @class = "text disabled", @disabled = "disabled" })%>
+				</div>
+			<%} %>
 		</div>
 	</fieldset>
 
@@ -65,7 +77,7 @@
 
 			<div class="coluna20 append2">
 				<label for="DataEmissao">Data de emissão *</label>
-				<%= Html.TextBox("DataEmissao", string.Empty, new { @class = "text txtDataEmissao maskData" })%>
+				<%= Html.TextBox("DataEmissao", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "text txtDataEmissao maskData disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna20">
@@ -119,7 +131,7 @@
 			<div class="block">
 				<div class="coluna20 append2">
 					<label for="DataEncerramento">Data do encerramento *</label>
-					<%= Html.TextBox("DataEncerramento", string.Empty, new { @class = "text txtDataEncerramento maskData" })%>
+					<%= Html.TextBox("DataEncerramento", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "text disabled txtDataEncerramento maskData", @disabled = "disabled" })%>
 				</div>
 
 				<div class="coluna20">

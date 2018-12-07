@@ -32,15 +32,17 @@
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td title="<%= Html.Encode(item.SituacaoArquivoCarTexto)%>"><%= Html.Encode(item.SituacaoArquivoCarTexto)%></td>
 				<td>
-					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, InternoId = item.InternoId, SituacaoSolicitacaoId = item.SituacaoID, SituacaoSolicitacaoTexto = item.SituacaoTexto, SituacaoArquivoCarId = item.SituacaoArquivoCarID, SituacaoArquivoCarTexto = item.SituacaoArquivoCarTexto, UrlPdfReciboSICAR = item.UrlPdfReciboSICAR, Origem = item.Origem, ArquivoSICAR=item.ArquivoSICAR }) %>" />
+					<input type="hidden" class="itemJson" value="<%: ViewModelHelper.Json(new { Id = item.Id, InternoId = item.InternoId, SituacaoSolicitacaoId = item.SituacaoID, SituacaoSolicitacaoTexto = item.SituacaoTexto, SituacaoArquivoCarId = item.SituacaoArquivoCarID, SituacaoArquivoCarTexto = item.SituacaoArquivoCarTexto, UrlPdfReciboSICAR = item.UrlPdfReciboSICAR, Origem = item.Origem, ArquivoSICAR=item.ArquivoSICAR, isTitulo = item.IsTitulo }) %>" />
 					<%if (item.IsTitulo) { %>
-						<%if (Model.PodeVisualizar) {%><input type="button" title="PDF do Título" class="icone pdf btnPDFTitulo" /><% } %>
+						<%if (Model.PodeVisualizar) {%>
+						<input type="button" title="PDF do Título" class="icone pdf btnPDFTitulo" />
+						<input type="button" title="Baixar Demonstrativo do CAR" class="icone documento btnDemonstrativoCar" />
+						<% } %>
 					<% } else { %>
 						<%if (Model.PodeAssociar) {%><input type="button" title="Associar" class="icone associar btnAssociar" /><% } %>
 						<%if (Model.PodeVisualizar) {%><input type="button" title="PDF da Solicitação" class="icone pdf btnPDF" /><% } %>
 						<%if (!Model.PodeAssociar && Model.PodeVisualizar) {%><input type="button" title="Visualizar" class="icone visualizar btnVisualizar" /><% } %>
 						<%if (Model.PodeEditar && !item.IsCredenciado) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
-						<%if (Model.PodeExcluir && !item.IsCredenciado) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
 						<%if (Model.PodeAlterarSituacao) {%><input type="button" title="Alterar Situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
 						<% if (Model.PodeVisualizar) { %><input type="button" title="Enviar para o SICAR" class="icone enviar btnEnviar" /><% } %>
 						<% if (Model.PodeVisualizar && (item.SituacaoID == (int)eCARSolicitacaoSituacao.Pendente || item.SituacaoID == (int)eCARSolicitacaoSituacao.Suspenso || item.SituacaoID == (int)eCARSolicitacaoSituacao.Invalido) && (item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoReprovado || item.SituacaoArquivoCarID == (int)eStatusArquivoSICAR.ArquivoRetificado)) 

@@ -174,24 +174,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 					{
-						bancoDeDados.IniciarTransacao();
-
-						List<CARSolicitacao> resultados = _da.ObterCARSolicitacoes(filtro, bancoDeDados);
+						_da.AlterarSituacao(new CARSolicitacao() { Id = carSolicitacao.Id, SituacaoId = (int)carSolicitacao.SituacaoId, Motivo = carSolicitacao.Motivo }, bancoDeDados);
+						ConsultaCredenciado.Gerar(carSolicitacao.Id, eHistoricoArtefato.carsolicitacao, bancoDeDados);
 						
-						if (resultados != null && resultados.Count > 0)
-						{
-							foreach (var item in resultados.Where(x => x.SituacaoId == (int)eCARSolicitacaoSituacao.Valido || x.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso))
-							{
-								if (item.SituacaoId == (int)carSolicitacao.SituacaoId)
-								{
-									continue;
-								}
-
-								_da.AlterarSituacao(new CARSolicitacao() { Id = item.Id, SituacaoId = (int)carSolicitacao.SituacaoId, Motivo = carSolicitacao.Motivo }, bancoDeDados);
-								ConsultaCredenciado.Gerar(item.Id, eHistoricoArtefato.carsolicitacao, bancoDeDados);
-							}
-						}
-
 						bancoDeDados.Commit();
 					}
 				}				
@@ -279,7 +264,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		public void DesassociarProtocolo(CARSolicitacao carSolicitacao, BancoDeDados banco = null)
 		{
-			try
+			/*
+			 * Regra removida. Regra na qual alterava a situação para SUSPENSO
+			 * try
 			{
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -323,7 +310,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
-			}
+			}*/
 		}
         
         public void EnviarReenviarArquivoSICAR(CARSolicitacao solicitacao, bool isEnviar, BancoDeDados banco = null)

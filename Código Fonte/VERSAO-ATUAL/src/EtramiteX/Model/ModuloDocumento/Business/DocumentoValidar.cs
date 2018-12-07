@@ -68,14 +68,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 				Validacao.Add(Mensagem.Documento.DocumentoTipoObrigatorio);
 			}
 
-			if (documento.Volume.GetValueOrDefault() <= 0)
+			if (documento.Volume.GetValueOrDefault() <= 0 && documento.Tipo.QuantidadeDocumentoObrigatorio) //Documento Avulso
 			{
 				Validacao.Add(Mensagem.Documento.QuantidadeDocumentoObrigatoria);
 			}
 
-			if (string.IsNullOrEmpty(documento.Nome))
+			if (string.IsNullOrEmpty(documento.Nome) && documento.Tipo.NomeObrigatorio)
 			{
 				Validacao.Add(Mensagem.Documento.NomeObrigatorio);
+			}
+
+			if (string.IsNullOrEmpty(documento.Assunto) && documento.Tipo.AssuntoObrigatorio)
+			{
+				Validacao.Add(Mensagem.Documento.AssuntoObrigatorio);
+			}
+
+			if (string.IsNullOrEmpty(documento.Descricao) && documento.Tipo.DescricaoObrigatoria)
+			{
+				Validacao.Add(Mensagem.Documento.DescricaoObrigatoria);
+			}
+
+			if (documento.Tipo.DestinatarioLivreObrigatorio)
+			{
+				if(string.IsNullOrWhiteSpace(documento.Descricao))
+					Validacao.Add(Mensagem.Documento.ConteudoOficioObrigatorio);
+
+				if (string.IsNullOrWhiteSpace(documento.OrgaoDestino))
+					Validacao.Add(Mensagem.Documento.OrgaoDestinoObrigatorio);
+
+				if (string.IsNullOrWhiteSpace(documento.CargoFuncaoDestinatario))
+					Validacao.Add(Mensagem.Documento.CargoFuncaoDestinatarioObrigatorio);
+
+				if (string.IsNullOrWhiteSpace(documento.NomeDestinatario))
+					Validacao.Add(Mensagem.Documento.NomeDestinatarioObrigatorio);
+
+				if (string.IsNullOrWhiteSpace(documento.EnderecoDestinatario))
+					Validacao.Add(Mensagem.Documento.EnderecoDestinatarioObrigatorio);
 			}
 
 			if (documento.Tipo.Id == (int)eProtocoloTipo.FiscalizacaoSemAI_TEI_TAD)
