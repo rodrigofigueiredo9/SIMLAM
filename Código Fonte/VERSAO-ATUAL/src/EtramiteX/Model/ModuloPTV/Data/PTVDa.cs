@@ -3204,8 +3204,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													LVC.TEXTO TIPO_CAIXA_TEXTO,
 													NF.SALDO_INICIAL,
 													(NF.SALDO_INICIAL - 
-													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
-													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+													  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+													  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
 													  NVL(NF.SALDO_RETIFICADO,0)
 													)SALDO_ATUAL
 												FROM  TAB_NF_CAIXA NF
@@ -3281,8 +3281,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				Comando comando = bancoDeDados.CriarComando(@"
 					SELECT NF.NUMERO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO, NF.TIPO_CAIXA, NF.SALDO_INICIAL, 
 					  (NF.SALDO_INICIAL - 
-						  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
-						  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+						  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+						  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
 						  NVL(NF.SALDO_RETIFICADO,0)
 						)SALDO_ATUAL
 					FROM TAB_NF_CAIXA NF 
@@ -3335,7 +3335,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					FROM TAB_NF_CAIXA                               NF
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
-						INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
 						INNER JOIN LOV_PTV_SITUACAO                   LVP   ON PTV.SITUACAO = LVP.ID
 					WHERE NF.ID = :id) a ", esquemaBanco);
 				comando.AdicionarParametroEntrada("id", filtro.Dados, DbType.Int32);
@@ -3363,7 +3363,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					FROM TAB_NF_CAIXA                               NF
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
-						INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
 						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO       LVP   ON PTV.SITUACAO = LVP.ID
 						INNER JOIN IDAFCREDENCIADO.TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID	
 					WHERE NF.ID = :id)" + comandtxt, esquemaBanco);
@@ -3373,7 +3373,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					if (reader.Read())
+					while (reader.Read())
 					{
 						PTVNFCaixaResultado item = new PTVNFCaixaResultado();
 						item.NumeroPTV = reader.GetValue<string>("NUMERO");
