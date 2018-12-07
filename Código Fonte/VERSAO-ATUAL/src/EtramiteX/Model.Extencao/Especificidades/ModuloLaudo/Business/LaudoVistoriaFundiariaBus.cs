@@ -139,7 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				Dominialidade dominialidade = new DominialidadeBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
 				RegularizacaoFundiaria regularizacao = new RegularizacaoFundiariaBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
 				regularizacao.Posses = regularizacao.Posses.Where(x => esp.RegularizacaoDominios.Exists(y => y.DominioId == x.Id)).ToList();
-
+				
 				laudo.RegularizacaoFundiaria = new RegularizacaoFundiariaPDF(regularizacao);
 
 				foreach (var item in laudo.RegularizacaoFundiaria.Posses)
@@ -176,7 +176,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				{
 					itenRemover.Add(doc.LastTable("Não realizada"));
 				}
-
 				foreach (var item in laudo.RegularizacaoFundiaria.Posses)
 				{
 					if (item.Matriculas.Count <= 0)
@@ -215,7 +214,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 					{
 						item.BanhadoPorRioCorrego = "«remover»";
 					}
-
+					//if (laudo.RegularizacaoFundiaria.Posses.Count <= 1)
+					//{
+					//	new DominioPDF() { TipoTexto = "«remover»" };
+					//}
 				}
 
 				doc.RemovePageBreak();
