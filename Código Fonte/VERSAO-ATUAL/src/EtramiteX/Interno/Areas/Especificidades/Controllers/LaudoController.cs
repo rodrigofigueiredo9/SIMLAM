@@ -292,7 +292,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				lstAtividades,
 				caracterizacaoLst,
 				destinatarios,
-				_protocoloBus.ObterResponsaveisTecnicos(especificidade.ProtocoloId),
+				_protocoloBus.ObterResponsaveisTecnicosPorRequerimento(especificidade.AtividadeProcDocReq.RequerimentoId),
 				_busLista.ObterEspecificidadeConclusoes,
 				titulo.Condicionantes,
 				especificidade.AtividadeProcDocReqKey,

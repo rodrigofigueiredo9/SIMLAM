@@ -6,6 +6,7 @@
 	AtividadeEspecificidade.settings.urls.obterProcessosDocumentos = '<%= Url.Action("ObterProcessosDocumentos", "Titulo", new {area=""}) %>';
 	AtividadeEspecificidade.settings.urls.obterAtividades = '<%= Url.Action("ObterAtividades", "Titulo", new {area=""}) %>';
 	AtividadeEspecificidade.settings.urls.pdfRequerimento = '<%= Url.Action("GerarPdf", "Requerimento", new {area=""}) %>';
+	AtividadeEspecificidade.settings.urls.obterResponsaveis = '<%= Url.Action("ObterResponsaveis", "Requerimento") %>';
 	AtividadeEspecificidade.settings.Mensagens = <%= Model.Mensagens %>;
 	AtividadeEspecificidade.TextoDropDownDefault = '<%= ViewModelHelper.SelecionePadrao.Text %>';
 </script>

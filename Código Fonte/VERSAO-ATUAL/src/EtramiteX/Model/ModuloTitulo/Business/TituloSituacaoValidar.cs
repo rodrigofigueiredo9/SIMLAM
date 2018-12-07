@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return Validacao.EhValido;
 		}
 
-		internal bool AlterarSituacao(Titulo titulo, int acao, bool gerouPdf = true)
+		public bool AlterarSituacao(Titulo titulo, int acao, bool gerouPdf = true)
 		{
 			Titulo tituloAux = _da.ObterSimplificado(titulo.Id);
 

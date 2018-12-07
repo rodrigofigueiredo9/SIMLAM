@@ -252,7 +252,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		private ActionResult CarregarListarVM(int id, bool isVisualizar = false)
 		{
 			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
-			vm.Filtros.IsVisualizar = true;
+			vm.Filtros.IsVisualizar = isVisualizar;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
