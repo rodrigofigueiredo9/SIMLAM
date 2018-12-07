@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -9,6 +9,7 @@ using Tecnomapas.EtramiteX.Interno.Interfaces;
 using Tecnomapas.EtramiteX.Interno.Servicos;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMAutenticacao;
 using Tecnomapas.EtramiteX.Perfil.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -21,6 +22,23 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public AutenticacaoController(IFormsAuthenticationService formsAuthenticationService)
 		{
 			this.formsAuthenticationService = formsAuthenticationService;
+		}
+
+		public bool InsereCookieEPTV()
+		{
+			bool inseriu = false;
+
+			HttpCookie cookieEPTV = new HttpCookie("eptv");
+			cookieEPTV.Value = DateTime.Now.ToString();
+			cookieEPTV.Expires = DateTime.Now.AddDays(1);
+			Response.Cookies.Add(cookieEPTV);
+
+			if (Request.Cookies["eptv"] != null)
+			{
+				inseriu = true;
+			}
+
+			return inseriu;
 		}
 
 		public String getAlterarSenhaMsg(String login)
@@ -106,9 +124,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					cookie.Value = this.formsAuthenticationService.Encrypt(ticket);
 				}
 
+				//Cria o cookie que é usado para a verificação periódica de E-PTVs aguardando análise.
+				#region Insere cookie EPTV
+
+				InsereCookieEPTV();
+
+				#endregion Insere cookie EPTV
+
 				GerenciarAutenticacao.CarregarUser(login);
 
 				BusMenu.Menu = null;
+
+				//Gera a mensagem de alerta de E-PTV (se houver)
+				#region Alerta de E-PTV
+
+				PTVBus _busPTV = new PTVBus();
+				_busPTV.VerificaAlertaEPTV();
+
+				#endregion Alerta de E-PTV
 
 				if (Request.IsAjaxRequest())
 				{

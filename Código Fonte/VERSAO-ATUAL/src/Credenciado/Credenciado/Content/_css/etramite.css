@@ -799,6 +799,14 @@ input[type=button].icone, .icone {
 	background: url(../_img/sprite_bt_lista.png) no-repeat left top;
 }
 
+/*input[type=button].icone.comunicador, .icone.comunicador { background-position: left top; background: url(../_img/bt_mensagens-2px.png) no-repeat left top; }
+input[type=button].icone.comunicador:hover, .icone.comunicador:hover { background-position: left center; background: url(../_img/bt_mensagens-2px.png) no-repeat left bottom; }
+input[type=button].icone.comunicador.desativado, .icone.comunicador.desativado { background-position: left bottom; background: url(../_img/bt_mensagens-2px.png) no-repeat left bottom; }
+*/
+input[type=button].icone.visualizar, .icone.visualizar { background-position: left top; }
+input[type=button].icone.visualizar:hover, .icone.visualizar:hover { background-position: left center; }
+input[type=button].icone.visualizar.desativado, .icone.visualizar.desativado { background-position: left bottom; }
+
 	input[type=button].icone.adicionar, .icone.adicionar {
 		height: 20px;
 		width: 25px;
@@ -995,9 +1003,13 @@ input[type=button].icone, .icone {
 			background-position: -414px bottom;
 		}
 
-	input[type=button].icone.selecEmpreendimento, .icone.selecEmpreendimento {
-		background-position: -437px top;
-	}
+input[type=button].icone.comunicador, .icone.comunicador { background-position: -1240px top; }
+input[type=button].icone.comunicador:hover, .icone.comunicador:hover { background-position: -1240px center; }
+input[type=button].icone.comunicador.desativado, .icone.comunicador.desativado { background-position: -1240px bottom; }
+
+input[type=button].icone.documentText, .icone.documentText { background-position: -575px top; }
+input[type=button].icone.documentText:hover, .icone.documentText:hover { background-position: -575px center; }
+input[type=button].icone.documentText.desativado, .icone.documentText.desativado { background-position: -575px bottom; }
 
 		input[type=button].icone.selecEmpreendimento:hover, .icone.selecEmpreendimento:hover {
 			background-position: -437px center;

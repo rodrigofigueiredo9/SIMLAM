@@ -18,6 +18,7 @@ using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPulverizacaoProduto;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -32,7 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 		internal bool Salvar(PTV ptv)
 		{
-			if(!FuncionarioHabilitadoValido())
+			if (!FuncionarioHabilitadoValido())
 			{
 				return false;
 			}
@@ -60,19 +61,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			}
 
 
-            if (ptv.Produtos.Count > 0 && ( (!ptv.Produtos[0].SemDoc) && 
-                (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado) ) )
-            {
-                if (ptv.Empreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-                }
+			if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
+				(ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+			{
+				if (ptv.Empreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+				}
 
-                if (ptv.ResponsavelEmpreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-                }
-            }
+				if (ptv.ResponsavelEmpreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+				}
+			}
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -155,7 +156,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			if (ptv.LocalEmissaoId <= 0)
 			{
 				Validacao.Add(Mensagem.PTV.LocalDeEmissaoObrigatorio);
+
 			}
+
+			if (ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0)
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
+			}
+			else
+			{
+				foreach (var nf in ptv.NotaFiscalDeCaixas)
+				{
+					NotaFiscalCaixa nfDa = _da.VerificarNumeroNFCaixa(nf);
+
+					if (nfDa.id > 0 && nf.numeroCaixas > nfDa.saldoAtual)
+					{
+						Validacao.Add(Mensagem.PTV.NumeroDeCaixasMaiorQueSaldoAtual);
+					}
+				}
+			}
+
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0))
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
+			}
+
+			if (ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana) && ptv.NotaFiscalDeCaixas.Count() <= 0)
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionadaECulturaBanana);
 
 			return Validacao.EhValido;
 		}
@@ -184,19 +211,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
-            if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
-            (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
-            {
-                if (ptv.Empreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-                }
+			if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
+			(ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+			{
+				if (ptv.Empreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+				}
 
-                if (ptv.ResponsavelEmpreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-                }
-            }
+				if (ptv.ResponsavelEmpreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+				}
+			}
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -313,10 +340,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					return "";
 				}
 
-                if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
-                {
-                    Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
-                }
+				if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+				{
+					Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
+				}
 
 			}
 
@@ -341,8 +368,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			lista = lista ?? new List<PTVProduto>();
 
-            if (item.SemDoc)
-                return true;
+			if (item.SemDoc)
+				return true;
 
 			if (item.OrigemTipo <= 0)
 			{
@@ -355,8 +382,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.OrigemObrigatorio);
 				return false;
 			}
-			
-			
+
+
 			#region Saldo
 
 			//TODO
@@ -390,7 +417,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.CFOC:
 					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
 					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(item.Origem);
-                    saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade );
+					saldo = cfoc.Produtos.Where(x => x.CultivarId == item.Cultivar && x.UnidadeMedidaId == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 					if (cfoc.SituacaoId != (int)eDocumentoFitossanitarioSituacao.Valido)
 					{
@@ -412,7 +439,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
 					PTVOutroBus ptvOutroBus = new PTVOutroBus();
 					PTVOutro ptvOutro = ptvOutroBus.Obter(item.Origem);
-                    saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+					saldo = ptvOutro.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 
 					if (ptvOutro.Situacao != (int)ePTVOutroSituacao.Valido)
 					{
@@ -433,7 +460,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				case eDocumentoFitossanitarioTipo.PTV:
 					PTVBus ptvBus = new PTVBus();
 					PTV ptv = ptvBus.Obter(item.Origem);
-                    saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
+					saldo = ptv.Produtos.Where(x => x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida).Sum(x => x.Quantidade);
 					produtorItem = ptv.ResponsavelEmpreendimento;
 					break;
 			}
@@ -509,21 +536,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			if (Validacao.EhValido)
 			{
-				if (_da.EmpreendimentoPossuiEPTVBloqueado(item.EmpreendimentoId))
+				if (item.EmpreendimentoId > 0)
 				{
-					Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
+					if (_da.EmpreendimentoPossuiEPTVBloqueado(item.EmpreendimentoId))
+					{
+						Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
+					}
 				}
 			}
 
 			if (Validacao.EhValido)
 			{
-				if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF)
+				if (item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF && item.OrigemTipo != (int)eDocumentoFitossanitarioTipo.SemDocOrigem)
 				{
-					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvData.Data.GetValueOrDefault().Year, ptvID);
+					decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)item.OrigemTipo, item.Origem, item.OrigemNumero, item.Cultivar, item.UnidadeMedida, ptvID);
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
-					if ((saldoOutrosDoc + quantidadeAdicionada + (item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade) ) > saldo)
+					if ((saldoOutrosDoc + quantidadeAdicionada + (item.ExibeQtdKg ? item.Quantidade / 1000 : item.Quantidade)) > saldo)
 					{
 						Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);
 					}
@@ -732,8 +762,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				return false;
 			}
 
-			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
-                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado &&
+				eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao &&
+				eptv.Situacao != (int)eSolicitarPTVSituacao.Rejeitado)
+			{
+				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool ValidarAcessoAnalisarDesbloqueioPTV(int idPTV)
+		{
+			if (!FuncionarioHabilitadoValido())
+			{
+				return false;
+			}
+
+			Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus ptvCredenciadoBus = new Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business.PTVBus();
+			PTV eptv = ptvCredenciadoBus.Obter(idPTV, true);
+
+			if (!_da.PossuiAcessoComunicadorPTV(Executor.Current.Id, eptv.LocalVistoriaId))
+			{
+				Validacao.Add(Mensagem.PTV.AcessoNaoPermitido);
+				return false;
+			}
+
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
 				return false;
@@ -756,9 +812,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			if ((comunicador.ArquivoInterno != null) && (!String.IsNullOrEmpty(comunicador.ArquivoInterno.TemporarioNome) || !String.IsNullOrEmpty(comunicador.ArquivoInterno.Nome)))
 			{
-				if (!(comunicador.ArquivoInterno.Extensao == ".zip" || comunicador.ArquivoInterno.Extensao == ".rar"))
+				if (!(comunicador.ArquivoInterno.Extensao.ToLower() == ".zip" || comunicador.ArquivoInterno.Extensao.ToLower() == ".rar" || comunicador.ArquivoInterno.Extensao.ToLower() == ".pdf" || comunicador.ArquivoInterno.Extensao.ToLower() == ".jpeg" || comunicador.ArquivoInterno.Extensao.ToLower() == ".jpg"))
 				{
-					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" })));
+					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".jpeg", ".pdf" })));
 				}
 			}
 
@@ -769,19 +825,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			foreach (PTVConversa conversa in comunicador.Conversas)
 			{
-				if (String.IsNullOrEmpty(conversa.Texto))
+				if (comunicador.IsDesbloqueio)
 				{
-					Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+					if (String.IsNullOrEmpty(conversa.Texto))
+						Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+				}
+				else
+				{
 				}
 			}
 
 			return Validacao.EhValido;
 		}
 
+		/// <summary>
+		/// Verifica se o funcionário possui habilitação para emitir PTV.
+		/// Caso não possua, é exibida uma mensagem de erro.
+		/// Esse método é utilizado nas telas de emissão de PTV e análise de E-PTV.
+		/// </summary>
+		/// <returns>
+		/// Retorna um booleano: true para funcionário habilitado, e false para funcionário não habilitado.
+		/// Caso o retorno seja false, também é exibida uma mensagem de erro.
+		/// </returns>
 		public bool FuncionarioHabilitadoValido()
 		{
 			HabilitacaoEmissaoPTVDa habilitacaoEmissaoPTVDa = new HabilitacaoEmissaoPTVDa();
-			if(!habilitacaoEmissaoPTVDa.FuncionarioHabilitadoValido((HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId))
+			if (!habilitacaoEmissaoPTVDa.FuncionarioHabilitadoValido((HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId))
 			{
 				Validacao.Add(Mensagem.PTV.ResponsavelTecnicoObrigatorio);
 				return false;
@@ -789,5 +858,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			return true;
 		}
+
+		/// <summary>
+		/// Verifica se o funcionário possui habilitação para emitir PTV.
+		/// Esse método não gera mensagens de erro, e foi criado para o sistema de alerta de E-PTV.
+		/// </summary>
+		/// <returns>
+		/// Retorna um booleano: true para funcionário habilitado, e false para funcionário não habilitado.
+		/// </returns>
+		public bool FuncionarioHabilitadoValido(int funcionarioId)
+		{
+			bool habilitado = false;
+
+			HabilitacaoEmissaoPTVDa habilitacaoEmissaoPTVDa = new HabilitacaoEmissaoPTVDa();
+			if (habilitacaoEmissaoPTVDa.FuncionarioHabilitadoValido(funcionarioId))
+			{
+				habilitado = true;
+			}
+
+			return habilitado;
+		}
+
+		#region Retificação NotaFiscalDeCaixa
+		internal bool ExcluirNFCaixa(int id)
+		{
+			if (_da.VerificarExcluirNFCaixa(id))
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.NaoPodeExcluir);
+
+			return Validacao.EhValido;
+		}
+		#endregion
 	}
 }

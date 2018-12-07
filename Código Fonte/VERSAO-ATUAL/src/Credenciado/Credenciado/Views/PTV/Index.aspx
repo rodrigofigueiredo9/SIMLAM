@@ -14,7 +14,6 @@
 		$(function () {
 			EPTVListar.load($('#central'), {
 				urls: {
-					urlHistorico: '<%= Url.Action("Historico", "PTV") %>',
 					urlVisualizar: '<%= Url.Action("Visualizar", "PTV") %>',
 					urlEditar: '<%= Url.Action("Editar", "PTV") %>',
 					urlExcluirConfirm: '<%= Url.Action("ExcluirConfirm", "PTV") %>',
@@ -23,7 +22,11 @@
 					urlEnviarConfirm: '<%= Url.Action("EnviarConfirm", "PTV") %>',
 					urlEnviar: '<%= Url.Action("Enviar", "PTV") %>',
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
-					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>'
+					urlValidarAcessoSolicitarDesbloqueio: '<%= Url.Action("ValidarAcessoSolicitarDesbloqueio", "PTV") %>',
+					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+					urlSolicitarDesbloqueio: '<%= Url.Action("SolicitarDesbloqueio", "PTV") %>',
+					urlConfirmarCancelarEnvio: '<%= Url.Action("CancelarEnvioConfirm", "PTV") %>',
+					urlCancelarEnvio: '<%= Url.Action("CancelarEnvio", "PTV") %>'
 				}
 			});
 

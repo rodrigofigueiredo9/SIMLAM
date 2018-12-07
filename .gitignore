@@ -314,7 +314,5 @@ __pycache__/
 # tools/
 
 *.xml
-
-Código Fonte/VERSAO-ATUAL/src/Credenciado/Credenciado/Web\.config
-
-*.config
+*.Net.Http.dll
+Código Fonte/VERSAO-ATUAL/src/Credenciado/Credenciado/logs/

@@ -801,6 +801,7 @@
     <Content Include="Content\_img\bt_lista_salvar.png" />
     <Content Include="Content\_img\bt_lista_selecionar_empreendimento.png" />
     <Content Include="Content\_img\bt_lista_visualizar.png" />
+    <Content Include="Content\_img\bt_mensagens-2px.png" />
     <Content Include="Content\_img\bt_mensagens.png" />
     <Content Include="Content\_img\bt_principal.png" />
     <Content Include="Content\_img\cancel.png" />
@@ -1185,7 +1186,6 @@
     <Content Include="Views\PTV\Editar.aspx" />
     <Content Include="Views\PTV\Index.aspx" />
     <Content Include="Views\PTV\ListarFiltros.ascx" />
-    <Content Include="Views\PTV\PTVHistoricoPartial.ascx" />
     <Content Include="Views\PTV\ListarResultados.ascx" />
     <Content Include="Views\PTV\PTVPartial.ascx" />
     <Content Include="Views\PTV\Visualizar.aspx" />

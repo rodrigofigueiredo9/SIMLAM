@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="masterpage.js" />
 /// <reference path="mensagem.js" />
 
@@ -31,14 +31,14 @@ ContainerAcoes = {
 		var divAcoesContainer = $(".divAcoesContainer .containerBotoes", ContainerAcoes.container);
 
 		$.each(ContainerAcoes.settings.botoes, function (idx, item) {
-		    botaoAcao = ContainerAcoes.clone();
-		    var settings = null;          
-		    if (item.abrirModal){
-		        settings = { label: '', url: '', callBack: item.abrirModal, adicionarId: false };
-		    }
-		    else{
-		        settings = { label: '', url: '', callBack: ContainerAcoes.onAcaoClick, adicionarId: false };
-		    }			
+			botaoAcao = ContainerAcoes.clone();
+			var settings = null;
+			if (item.abrirModal) {
+				settings = { label: '', url: '', callBack: item.abrirModal, adicionarId: false };
+			}
+			else {
+				settings = { label: '', url: '', callBack: ContainerAcoes.onAcaoClick, adicionarId: false };
+			}
 
 			$.extend(settings, item);
 
@@ -70,6 +70,20 @@ ContainerAcoes = {
 	onAcaoClick: function () {
 		var url = $(this).data("url");
 		MasterPage.redireciona(url);
+	},
+
+	onAbrirModal: function (url, idPTV) {
+		Modal.abrir(
+			url,
+			{ id: idPTV },
+			function (container) {
+				ComunicadorPTV.load(container, {
+					callBackSalvar: ContainerAcoes.onAbrirModal
+				});
+			},
+			Modal.tamanhoModalMedia);
+		$('.mensagemSistema').addClass("hide");
+		ContainerAcoes.onFecharDaMensagemClick();
 	},
 
 	onAcaoClickAbrirModal: function () {

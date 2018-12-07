@@ -42,7 +42,9 @@
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
 					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
 				    urlObterDiasHorasVistoria: '<%= Url.Action("ObterDiasHorasVistoria","PTV") %>',
-				    urlObterDeclaracaoAdicional: '<%=Url.Action("ObterDeclaracaoAdicional", "PTV")%>'
+					urlObterDeclaracaoAdicional: '<%=Url.Action("ObterDeclaracaoAdicional", "PTV")%>',
+					urlVerificarNotaFiscalCaixa: '<%= Url.Action("VerificarNotaFiscalCaixa", "PTV") %>',
+				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>'
 				},
 			});
 

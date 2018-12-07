@@ -14,7 +14,11 @@
 				urls: {
 					urlAnalisar: '<%= Url.Action("EPTVAnalisar", "PTV") %>',
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
-					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>'
+					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+					urlAnalisarDesbloqueio: '<%= Url.Action("AnalisarDesbloqueio", "PTV") %>',
+					urlVisualizar: '<%= Url.Action("EPTVVisualizar", "PTV") %>',
+					urlPDFEPTV: '<%= Url.Action("GerarPdfEPTV", "PTV") %>',
+					urlValidarAcessoAnalisarDesbloqueio: '<%= Url.Action("ValidarAcessoAnalisarDesbloqueio", "PTV") %>',
 				}
 			});
 		});

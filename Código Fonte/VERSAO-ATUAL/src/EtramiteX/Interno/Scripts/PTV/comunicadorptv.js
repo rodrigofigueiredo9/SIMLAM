@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Lib/jquery.json-2.2.min.js" />
 
@@ -35,13 +35,19 @@ ComunicadorPTV = {
 			return;
 		}
 
-		if (nomeArquivo !== '') {
-			var tam = nomeArquivo.length - 4;
-			if (nomeArquivo.toLowerCase().substr(tam) !== ".zip" && nomeArquivo.toLowerCase().substr(tam) !== ".rar") {
-				Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoTipoInvalido]);
-				return;
-			}
-		}
+		var tam = nomeArquivo.length - 4;
+		//var tipoArquivo = nomeArquivo.toLowerCase().substr(tam); 
+		var temp = nomeArquivo.toLowerCase().split('.');
+		var tipoArquivo = temp[temp.length - 1];
+		if (tipoArquivo !== "zip"
+			&& tipoArquivo !== "rar"
+			&& tipoArquivo !== "pdf"
+			&& tipoArquivo !== "jpeg"
+			&& tipoArquivo !== "jpg") {
+			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoTipoInvalido]);
+			return;
+		} 
+
 
 		var inputFile = $('.inputFileDiv input[type="file"]');
 
@@ -89,10 +95,14 @@ ComunicadorPTV = {
 	//----------ANEXOS - ENVIAR ARQUIVO---------------
 
 	enviar: function () {
-		if ($('.txtJustificativa', ComunicadorPTV.container).val() == '') {
-			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.JustificativaObrigatoria]);
-			return false;
-		}
+
+		//Pelo menos um dos campos deve estar preenchido
+		/*if ($('.hdnDesbloqueio', ComunicadorPTV.container).val() != "True") {
+			if ($('.txtJustificativa', ComunicadorPTV.container).val() == '' && $('.txtArquivoNome', ComunicadorPTV.container).val() == '') {
+				Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.UmDosCamposDeveEstarPreenchido]);
+				return false;
+			}
+		}*/
 
 		var ptvComunicador = {
 			Id: $('.hdnId', ComunicadorPTV.container).val(),
@@ -101,6 +111,7 @@ ComunicadorPTV = {
 			ArquivoInternoId: $('.hdnArqInternoId', ComunicadorPTV.container).val(),
 			ArquivoCredenciadoId: $('.hdnArqCredenciadoId', ComunicadorPTV.container).val(),
 			ArquivoInterno: $.parseJSON($('.hdnAnexoArquivoJson', ComunicadorPTV.container).val()),
+			IsDesbloqueio: $('.hdnDesbloqueio', ComunicadorPTV.container).val(),
 			Conversas: new Array()
 		}
 

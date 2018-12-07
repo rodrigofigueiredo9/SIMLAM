@@ -27,6 +27,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
         public List<PTVConversa> Conversas { get; set; }
 
+		public bool IsDesbloqueio { get; set; } = false;
+
         public PTVComunicador()
         {
             ArquivoInterno = new Arquivo.Arquivo();

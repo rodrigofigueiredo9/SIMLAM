@@ -37,9 +37,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
         public Mensagem JaExisteConfiguragacaoLocal { get { return new Mensagem() { Texto = "Já existe configuração para o local selecionado.’", Tipo = eTipoMensagem.Advertencia }; } }
 
-        public Mensagem HoraInicialMenorHoraFinal(string diaSemana)
+        public Mensagem DataInicialMenorDataFinal { get { return new Mensagem() { Texto = "A Data Final não pode ser anterior a Data Inicial", Tipo = eTipoMensagem.Advertencia }; } }
+
+		public Mensagem HoraInicialMenorHoraFinal(string diaSemana)
         {
-            return new Mensagem() { Texto = string.Format("A Hora Inicial não pode ser menor ou igual a Hora Final como na {0}.", diaSemana), Tipo = eTipoMensagem.Advertencia };
+			if(string.IsNullOrWhiteSpace(diaSemana))
+				return new Mensagem() { Texto = string.Format("A Hora Final não pode ser anterior ou igual a Hora Inicial.", diaSemana), Tipo = eTipoMensagem.Advertencia };
+            return new Mensagem() { Texto = string.Format("A Hora Final não pode ser anterior ou igual a Hora Inicial como na {0}.", diaSemana), Tipo = eTipoMensagem.Advertencia };
         }
 
         public Mensagem PossuiHorarioAssociado(string diaSemana, string horaInicio, string horaFim)
