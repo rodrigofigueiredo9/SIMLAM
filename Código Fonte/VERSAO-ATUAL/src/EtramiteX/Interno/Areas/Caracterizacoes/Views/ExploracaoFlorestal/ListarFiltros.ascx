@@ -12,7 +12,7 @@
 			<%= Html.TextBox("EmpreendimentoId", Model.Caracterizacao.Codigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
 		</div>
 		<div class="coluna77">
-			<label><%=Model.DenominadorTexto%> *</label>
+			<label><%=Model.Caracterizacao.DenominadorTexto%> *</label>
 			<%= Html.TextBox("DenominadorValor", Model.Caracterizacao.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
 		</div>
 	</div>
@@ -20,15 +20,15 @@
 	<div class="block">
 		<div class="coluna20 append1">
 			<label>Zona de localização *</label>
-			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
+			<%= Html.DropDownList("Caracterizacao.SelecionarPrimeiroItem", Model.Caracterizacao.ZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
 		</div>
 		<div class="coluna7 append1">
 			<label>UF</label>
-			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.Uf, new { disabled = "disabled", @class = "text disabled" })%>
+			<%= Html.DropDownList("Caracterizacao.SelecionarPrimeiroItem", Model.Caracterizacao.Uf, new { disabled = "disabled", @class = "text disabled" })%>
 		</div>
 		<div class="coluna45 append1">
 			<label>Município</label>
-			<%= Html.DropDownList("SelecionarPrimeiroItem", Model.Caracterizacao.Municipio, new { disabled = "disabled", @class = "text disabled" })%>
+			<%= Html.DropDownList("Caracterizacao.SelecionarPrimeiroItem", Model.Caracterizacao.Municipio, new { disabled = "disabled", @class = "text disabled" })%>
 		</div>
         <div class="coluna20 ">
 			<label>CNPJ</label>

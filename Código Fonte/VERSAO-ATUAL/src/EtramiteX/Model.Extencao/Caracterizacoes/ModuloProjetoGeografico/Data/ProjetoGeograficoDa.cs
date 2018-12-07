@@ -563,7 +563,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 								where ep.id = g.exp_florestal_exploracao
 								and exists(select 1 from {0}tab_titulo_exp_florestal t
 								where t.titulo = :titulo
-								and t.exploracao_florestal = ep.exploracao_florestal)));
+								and t.exploracao_florestal = ep.exploracao_florestal))));
 					insert into {1}TMP_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
 						(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
 							from {1}GEO_AATIV a where a.projeto = :projeto
@@ -574,7 +574,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 								where ep.id = g.exp_florestal_exploracao
 								and exists(select 1 from {0}tab_titulo_exp_florestal t
 								where t.titulo = :titulo
-								and t.exploracao_florestal = ep.exploracao_florestal)));
+								and t.exploracao_florestal = ep.exploracao_florestal))));
 
 					delete from {1}GEO_PATIV a where a.projeto = :projeto
 						and exists
@@ -584,7 +584,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							where ep.id = g.exp_florestal_exploracao
 							and exists(select 1 from {0}tab_titulo_exp_florestal t
 							where t.titulo = :titulo
-							and t.exploracao_florestal = ep.exploracao_florestal));
+							and t.exploracao_florestal = ep.exploracao_florestal)));
 
 					delete from {1}GEO_AATIV a where a.projeto = :projeto
 						and exists
@@ -594,7 +594,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							where ep.id = g.exp_florestal_exploracao
 							and exists(select 1 from {0}tab_titulo_exp_florestal t
 							where t.titulo = :titulo
-							and t.exploracao_florestal = ep.exploracao_florestal));
+							and t.exploracao_florestal = ep.exploracao_florestal)));
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);

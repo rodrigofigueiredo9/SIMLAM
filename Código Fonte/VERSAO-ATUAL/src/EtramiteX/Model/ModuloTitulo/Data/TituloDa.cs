@@ -2552,8 +2552,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(s.*) from {0}tab_titulo_associados s
-				left join tab_titulo t
+				Comando comando = bancoDeDados.CriarComando(@"select count(1) from {0}tab_titulo_associados s
+				left join {0}tab_titulo t
 				on (t.id = s.titulo)
 				where s.associado_id = :laudo_id
 				and t.situacao <> :situacao", EsquemaBanco);

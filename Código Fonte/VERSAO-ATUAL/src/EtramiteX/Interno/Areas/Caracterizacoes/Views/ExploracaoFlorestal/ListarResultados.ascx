@@ -14,8 +14,8 @@
 				<th width="17%">Tipo de Exploração</th>
 				<th width="17%">Código Exploração</th>
 				<th width="17%">Data Cadastro da Exploração</th>
-				<th>Geometria</th>
-				<th width="17%">Área/N° Árvores Requeridas</th>
+				<th width="7%">Geometria</th>
+				<th width="17%">Área da atividade croqui/N° de Árvores</th>
 				<th width="15%">Ações</th>
 			</tr>
 		</thead>

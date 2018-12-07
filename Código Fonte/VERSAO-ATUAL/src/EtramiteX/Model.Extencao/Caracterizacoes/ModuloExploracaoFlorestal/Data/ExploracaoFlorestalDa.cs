@@ -1119,7 +1119,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						where exists
 						(select 1 from tab_titulo_exp_florestal t
 							where t.exploracao_florestal = c.id
-							and t.titulo = :titulo_id)", EsquemaBanco);
+							and t.titulo = :titulo_id)
+						order by c.tipo_exploracao, c.codigo_exploracao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo_id", tituloId, DbType.Int32);
 
