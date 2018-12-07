@@ -2628,8 +2628,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
 					SELECT ID,
-					(NF.SALDO_INICIAL - (nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0)
-					+ nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0))) SALDO_ATUAL          
+					(NF.SALDO_INICIAL - 
+						(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+						(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+						NVL(NF.SALDO_RETIFICADO,0)
+					)SALDO_ATUAL
 					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
@@ -3161,7 +3164,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				}
 				if (!String.IsNullOrWhiteSpace(filtro.Dados.NumeroPTV))
 				{
-					comandtxt += comando.FiltroAnd("(select ptv.numero from tab_ptv ptv where ptv.id = pnf.ptv)", "PTV", filtro.Dados.NumeroPTV);
+					comandtxt += @"AND (select ptv.numero from tab_ptv ptv inner join tab_ptv_nf_caixa pnf on pnf.PTV = ptv.id
+									   where pnf.nf_caixa = nf.id and ptv.numero = :PTV
+									   union 
+									   select ptv.numero from idafcredenciado.tab_ptv ptv inner join idafcredenciado.tab_ptv_nf_caixa pnf
+									on pnf.PTV = ptv.id where pnf.nf_caixa = nf.id
+										and ptv.numero = :PTV) is not null";
+					comando.AdicionarParametroEntrada("PTV", filtro.Dados.NumeroPTV);
 				}
 				if ((int)filtro.Dados.tipoDeCaixa > 0)
 				{
@@ -3187,9 +3196,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				comando.DbCommand.CommandText =
 				"select count(*) from (" + String.Format(@"select	NF.ID
-																FROM  TAB_NF_CAIXA NF
-																LEFT JOIN TAB_PTV_NF_CAIXA PNF ON NF.ID = PNF.NF_CAIXA
-																LEFT JOIN TAB_PTV PTV ON PTV.ID = PNF.PTV  " + comandtxt + " group by NF.ID) a ", esquemaBanco);
+																FROM  TAB_NF_CAIXA NF where 1=1 " + comandtxt + " group by NF.ID) a ", esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
@@ -3209,7 +3216,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													  NVL(NF.SALDO_RETIFICADO,0)
 													)SALDO_ATUAL
 												FROM  TAB_NF_CAIXA NF
-												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA WHERE 1=1 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
 				#endregion

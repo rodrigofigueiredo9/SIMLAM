@@ -456,7 +456,6 @@ PTVEmitir = {
 
 	onChangeCultura: function () {
 		Mensagem.limpar(PTVEmitir.container);
-		MasterPage.carregando(true);
 		var origemID = 0;
 		var origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
 		var culturaID = $('.ddlProdutoCultura', PTVEmitir.container).val();
@@ -603,7 +602,7 @@ PTVEmitir = {
 
 		if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 			Mensagem.limpar(PTVEmitir.container);
-			MasterPage.carregando(true);
+			//MasterPage.carregando(true);
 
 			var origemTipo = '0';
 			if ($('.rdbIsDocumentoOrigem  ', PTVEmitir.container)[0].checked) {
@@ -733,7 +732,6 @@ PTVEmitir = {
 	},
 
 	onObterUnidadeMedida: function () {
-		MasterPage.carregando(true);
 		var origemID = 0;
 
 		var origemTipo = '0';
@@ -775,7 +773,7 @@ PTVEmitir = {
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
 				}
 
-				PTVEmitir.saldoDocOrigem()
+				PTVEmitir.saldoDocOrigem();
 			}
 		});
 

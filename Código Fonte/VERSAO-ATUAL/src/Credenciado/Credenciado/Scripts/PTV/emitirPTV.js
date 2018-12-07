@@ -75,7 +75,9 @@ PTVEmitir = {
 	
 	cidadeID: null,
 
-	nfCaixaTemp: null, 
+	nfCaixaTemp: null,
+
+	first: true,
 
 	load: function (container, options) {
 		
@@ -204,6 +206,11 @@ PTVEmitir = {
 	},
 
 	onChangeLocalVistoria: function () {
+		if (PTVEmitir.first == true) {
+			PTVEmitir.first = false;
+			return;
+		}
+
 		var ddl = PTVEmitir.container.find('.ddlLocalVistoria');
 		var ddlSelecionado = ddl.ddlSelecionado();
 
