@@ -395,8 +395,8 @@
 			<div class="pessoaAssociadaNfCaixa">
 				<div class="coluna15 prepend1">
 					<label for="PessoaTipo">Tipo *</label><br />
-					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
-					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
+					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
+					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
 				</div>
 				<div class="coluna20">
 					<div class="CpfPessoaFisicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA ? "" : "hide" %> ">

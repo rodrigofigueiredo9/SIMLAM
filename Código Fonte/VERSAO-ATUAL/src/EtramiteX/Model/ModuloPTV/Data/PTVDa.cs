@@ -2659,7 +2659,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
-								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID, LC.TEXTO TIPO_TEXTO
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID,
+									LC.TEXTO TIPO_TEXTO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO 
 									FROM TAB_NF_CAIXA NF 
 										INNER JOIN TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
 										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
@@ -2677,6 +2678,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
 						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
 						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						nf.PessoaAssociadaTipo = (eTipoPessoa)reader.GetValue<int>("TIPO_PESSOA");
+						nf.PessoaAssociadaCpfCnpj = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
 						lstNotaFiscalDeCaixa.Add(nf);
 					}
 
@@ -3200,11 +3203,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													NF.TIPO_CAIXA,
 													LVC.TEXTO TIPO_CAIXA_TEXTO,
 													NF.SALDO_INICIAL,
-													NF.SALDO_INICIAL - 
+													(NF.SALDO_INICIAL - 
 													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
-													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) SALDO_ATUAL
+													  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+													  NVL(NF.SALDO_RETIFICADO,0)
+													)SALDO_ATUAL
 												FROM  TAB_NF_CAIXA NF
-												LEFT JOIN TAB_PTV_NF_CAIXA PNF ON NF.ID = PNF.NF_CAIXA
 												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
@@ -3276,9 +3280,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 					SELECT NF.NUMERO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO, NF.TIPO_CAIXA, NF.SALDO_INICIAL, 
-					  NF.SALDO_INICIAL - 
-					  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
-					  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) SALDO_ATUAL
+					  (NF.SALDO_INICIAL - 
+						  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+						  (SELECT NVL(SUM(PN.SALDO_ATUAL),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+						  NVL(NF.SALDO_RETIFICADO,0)
+						)SALDO_ATUAL
 					FROM TAB_NF_CAIXA NF 
 					WHERE NF.ID =: id", EsquemaBanco);
 
@@ -3358,7 +3364,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
 						INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
-						INNER JOIN LOV_PTV_SITUACAO                   LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO       LVP   ON PTV.SITUACAO = LVP.ID
 						INNER JOIN IDAFCREDENCIADO.TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID	
 					WHERE NF.ID = :id)" + comandtxt, esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
@@ -3390,7 +3396,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaBanco))
 			{
 				bancoDeDados.IniciarTransacao();
-				Comando comando = bancoDeDados.CriarComando(@"UPDATE TAB_NF_CAIXA SET SALDO_INICIAL = :saldo_novo WHERE ID = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"UPDATE TAB_NF_CAIXA SET SALDO_RETIFICADO = :saldo_novo WHERE ID = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("saldo_novo", novoSalvo, DbType.Int32);

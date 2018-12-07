@@ -1466,6 +1466,16 @@ PTVEmitir = {
 		// #region Validações
 		var valido = true;
 		var mensagensValidacao = [];
+		var cpfCnpj;
+		var tipoPessoa;
+
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCPFCaixa').val();
+		} else {
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCNPJCaixa').val();
+		}
 		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
 			return;
@@ -1484,7 +1494,8 @@ PTVEmitir = {
 		}
 		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero
-				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto) {
+				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto
+				&& (JSON.parse($('.hdnItemJson', this).val())).PessoaAssociadaCpfCnpj == PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj) {
 				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
 				valido = false;
 			}

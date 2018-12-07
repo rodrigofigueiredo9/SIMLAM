@@ -15,6 +15,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV
 
 		public int saldoInicial { get; set; }
 		public int saldoAtual { get; set; }
+		public int saldoRetificado { get; set; }
 		public int numeroCaixas { get; set; }
 		public int tipoCaixaId { get; set; }
 		public string tipoCaixaTexto { get; set; }
