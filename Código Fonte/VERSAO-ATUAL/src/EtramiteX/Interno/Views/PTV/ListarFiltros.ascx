@@ -56,7 +56,7 @@
 				</div>
 				<div class="block">
 					<div class="coluna60">
-						<label>Tipo do documento de origem</label>
+						<label>Documento de origem</label>
 						<%=Html.DropDownList("Filtros.TipoDocumento", Model.TiposDocumentoOrigem, new { @class="text ddlTipoDocumento" }) %>
 					</div>
 					<div class="coluna20  txtNumeroDocumento hide">
