@@ -389,7 +389,7 @@
 		<div class="isTipoCaixaChecked hide">
 			<div class="coluna25">
 				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
-				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="35" })) %>
 			</div>
 
 			<div class="pessoaAssociadaNfCaixa">
@@ -439,7 +439,7 @@
 						<th>CPF/CNPJ</th>
 						<th>Tipo da caixa</th>
 						<th style="width: 10%">Saldo atual</th>
-						<th style="width: 16%">N° de caixas</th>
+						<th style="width: 16%">N° de caixas utilizadas</th>
 						<% if (!Model.IsVisualizar)
 				 { %><th style="width: 7%">Ação</th><% } %>
 					</tr>
