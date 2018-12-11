@@ -149,10 +149,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					catch (Exception ex)
 					{
 						//Marcar como processado registrando a mensagem de erro
-						var msg = ex.Message +
+						var msg = " +++---+++ RESULTADO  :::: " +
+							(resultado ?? "noMessage ++++   00----000  " + ex.Message +
 							Environment.NewLine +
-							Environment.NewLine + " <><><> RESULTADO  :::: " + 
-							(resultado ?? "noMessage");
+							Environment.NewLine  );
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
