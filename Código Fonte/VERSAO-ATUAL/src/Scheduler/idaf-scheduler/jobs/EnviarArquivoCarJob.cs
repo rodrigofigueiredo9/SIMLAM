@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						var msg = ex.Message +
 							Environment.NewLine +
-							Environment.NewLine +
+							Environment.NewLine + " <><><> RESULTADO  :::: " + 
 							(resultado ?? "noMessage");
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
