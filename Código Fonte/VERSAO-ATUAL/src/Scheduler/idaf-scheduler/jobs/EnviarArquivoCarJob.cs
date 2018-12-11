@@ -62,7 +62,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
 
-                    if (item.Requisicao == null)
+                    if (String.IsNullOrEmpty(item.Requisicao))
                     {
                         nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
 						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
@@ -71,15 +71,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
-					if(ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
-					{
-						nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-						Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
-						continue;
-					}
 					string resultado = "";
 					try
 					{
+						if(ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
+						{
+							nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+							Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
+							continue;
+						}
 						//Atualizar controle de envio do SICAR
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						//Marcar como processado registrando a mensagem de erro
 						var msg = ex.Message +
 							Environment.NewLine +
-							Environment.NewLine +
+							Environment.NewLine + " <><><> RESULTADO  :::: " + 
 							(resultado ?? "noMessage");
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
