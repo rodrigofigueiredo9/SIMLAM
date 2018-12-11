@@ -724,13 +724,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			try
 			{
-				return _da.VerificarNumeroNFCaixa(notaFiscal);
+				if(_validar.VerificarCPFCNPJ((int)notaFiscal.PessoaAssociadaTipo, notaFiscal.PessoaAssociadaCpfCnpj))
+					return _da.VerificarNumeroNFCaixa(notaFiscal);
 			}
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
 			}
-			return null;
+			return new NotaFiscalCaixa();
 		}
 
 		public List<NotaFiscalCaixa> ObterNotasFiscalDeCaixas(int idPTV)

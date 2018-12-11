@@ -228,11 +228,11 @@
 			<div class="coluna25">
 				<label>Partida lacrada na Origem ?</label><br />
 				<label>
-					<%=Html.RadioButton("PartidaLacradaOrigem", (int)ePartidaLacradaOrigem.Sim, Model.PTV.PartidaLacradaOrigem == (int)ePartidaLacradaOrigem.Sim, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPartidaLacradaOrigem rbLacradaOrigemSim"}))%>
+					<%=Html.RadioButton("PartidaLacradaOrigem", (int)ePartidaLacradaOrigem.Sim, Model.PTV.PartidaLacradaOrigem == (int)ePartidaLacradaOrigem.Sim, ViewModelHelper.SetaDisabled(true, new { @class="rbPartidaLacradaOrigem rbLacradaOrigemSim"}))%>
 					Sim
 				</label>
 				<label>
-					<%=Html.RadioButton("PartidaLacradaOrigem", (int)ePartidaLacradaOrigem.Nao, Model.PTV.PartidaLacradaOrigem.GetValueOrDefault() == (int)ePartidaLacradaOrigem.Nao , ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rbPartidaLacradaOrigem rbLacradaOrigemNao"}))%>
+					<%=Html.RadioButton("PartidaLacradaOrigem", (int)ePartidaLacradaOrigem.Nao, Model.PTV.PartidaLacradaOrigem.GetValueOrDefault() == (int)ePartidaLacradaOrigem.Nao , ViewModelHelper.SetaDisabled(true, new { @class="rbPartidaLacradaOrigem rbLacradaOrigemNao"}))%>
 					Não
 				</label>
 			</div>
@@ -240,15 +240,15 @@
 			<div class="partida_lacrada <%= Model.PTV.PartidaLacradaOrigem.GetValueOrDefault() == (int)ePartidaLacradaOrigem.Sim ?"":"hide" %>">
 				<div class="coluna15">
 					<label for="LacreNumero">Nº do lacre</label>
-					<%=Html.TextBox("LacreNumero", Model.PTV.LacreNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroLacre", @maxlength="15"}))%>
+					<%=Html.TextBox("LacreNumero", Model.PTV.LacreNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNumeroLacre", @maxlength="15"}))%>
 				</div>
 				<div class="coluna15 ">
 					<label for="PoraoNumero">Nº do porão</label>
-					<%=Html.TextBox("PoraoNumero", Model.PTV.PoraoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroPorao", @maxlength="15"}))%>
+					<%=Html.TextBox("PoraoNumero", Model.PTV.PoraoNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNumeroPorao", @maxlength="15"}))%>
 				</div>
 				<div class="coluna15">
 					<label for="ContainerNumero">Nº do contêiner</label>
-					<%=Html.TextBox("ContainerNumero", Model.PTV.ContainerNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtNumeroContainer", @maxlength="15"}))%>
+					<%=Html.TextBox("ContainerNumero", Model.PTV.ContainerNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNumeroContainer", @maxlength="15"}))%>
 				</div>
 			</div>
 		</div>
@@ -387,15 +387,36 @@
 	</div>
 	<div class="block">
 		<div class="isTipoCaixaChecked hide">
-			<div class="coluna36">
+			<div class="coluna25">
 				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
-				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="35" })) %>
 			</div>
+
+			<div class="pessoaAssociadaNfCaixa">
+				<div class="coluna15 prepend1">
+					<label for="PessoaTipo">Tipo *</label><br />
+					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
+					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
+				</div>
+				<div class="coluna20">
+					<div class="CpfPessoaFisicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CPF *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCpf txtCPFCaixa" }))%>
+					</div>
+					<div class="CnpjPessoaJuridicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CNPJ *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCnpj txtCNPJCaixa" }))%>
+					</div>
+				</div>
+			</div>
+
 			<div class="coluna10">
 				<button class="inlineBotao btnVerificarNotaCaixaCaixa">Verificar</button>
 				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
 			</div>
 		</div>
+	</div>
+	<div class="block">
 		<div class="isNFCaixaVerificado hide">
 			<div class="coluna15">
 				<label>Total de caixas*</label>
@@ -414,10 +435,11 @@
 			<table class="dataGridTable gridCaixa">
 				<thead>
 					<tr>
-						<th style="width: 30%">N° da nota fiscal de caixa </th>
+						<th style="width: 30%">Nº do documento</th>
+						<th>CPF/CNPJ</th>
 						<th>Tipo da caixa</th>
 						<th style="width: 10%">Saldo atual</th>
-						<th style="width: 16%">N° de caixas</th>
+						<th style="width: 16%">N° de caixas utilizadas</th>
 						<% if (!Model.IsVisualizar)
 				 { %><th style="width: 7%">Ação</th><% } %>
 					</tr>
@@ -428,6 +450,7 @@
 					%>
 						<tr>
 							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%=item.PessoaAssociadaCpfCnpj %>"><%= item.PessoaAssociadaCpfCnpj %></td>
 							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
 							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
 							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
@@ -444,6 +467,9 @@
 					<tr class="trTemplate hide">
 						<td class="">
 							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lvlCPFCNPJ"></label>
 						</td>
 						<td class="">
 							<label class="lblTipoCaixa"></label>

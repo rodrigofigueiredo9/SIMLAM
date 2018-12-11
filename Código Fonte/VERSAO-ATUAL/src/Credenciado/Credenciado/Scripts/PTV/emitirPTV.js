@@ -75,7 +75,9 @@ PTVEmitir = {
 	
 	cidadeID: null,
 
-	nfCaixaTemp: null, 
+	nfCaixaTemp: null,
+
+	first: true,
 
 	load: function (container, options) {
 		
@@ -165,6 +167,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscalCaixa', 'change', PTVEmitir.onPossuiNFCaixa);
 		PTVEmitir.container.delegate('.btnExcluirCaixa', 'click', PTVEmitir.onExcluirCaixa);
 		PTVEmitir.container.delegate('.btnLimparNotaCaixaCaixa', 'click', PTVEmitir.onlimparCamposCaixa);
+		PTVEmitir.container.delegate('.rdbPessaoNfCaixa', 'change', PTVEmitir.onTipoPessoaCaixaChange);
 
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
 			PTVEmitir.habilitarCampos(false);
@@ -203,6 +206,11 @@ PTVEmitir = {
 	},
 
 	onChangeLocalVistoria: function () {
+		if (PTVEmitir.first == true) {
+			PTVEmitir.first = false;
+			return;
+		}
+
 		var ddl = PTVEmitir.container.find('.ddlLocalVistoria');
 		var ddlSelecionado = ddl.ddlSelecionado();
 
@@ -1312,7 +1320,7 @@ PTVEmitir = {
 			Produtos: [],
 			Anexos: [],
 			DataVistoria: $('#DataVistoria', PTVEmitir.container).val(),
-			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscal:checked', PTVEmitir.container).val() },
+			NFCaixa: { notaFiscalCaixaApresentacao: $('.rdbApresentacaoNotaFiscalCaixa:checked', PTVEmitir.container).val() },
 			Produtos: [],
 			NotaFiscalDeCaixas: []
 		}
@@ -1397,9 +1405,12 @@ PTVEmitir = {
 		$('.txtNotaFiscalCaixaNumero').val('');
 		$('.txtNFCaixaSaldoAtual').val('');
 		$('.txtNFCaixaNumeroDeCaixas').val('');
-		$('.txtNFCaixaSaldoAtual').removeClass('disabled')
+		$('.pessoaAssociadaNfCaixa').val('');
+		$('.txtCPFCaixa').val('');
+		$('.txtCNPJCaixa').val('');
+		$('.txtNFCaixaSaldoAtual').removeClass('disabled');
 		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
-		$('.txtNotaFiscalCaixaNumero').removeClass('disabled')
+		$('.txtNotaFiscalCaixaNumero').removeClass('disabled');
 		$('.txtNotaFiscalCaixaNumero').removeAttr('disabled');
 		$('.isNFCaixaVerificado').addClass('hide');
 		$('.btnLimparNotaCaixaCaixa').addClass('hide');
@@ -1408,11 +1419,23 @@ PTVEmitir = {
 
 	onVerificarNotaFiscalCaixa: function () {
 		var nfCaixaNumero = $('.txtNotaFiscalCaixaNumero').val();
-		if (nfCaixaNumero == "") {
+		var tipoPessoaCaixa = $('.rdbPessaoNfCaixa:checked').val();
+		var cpfCnpjCaixa = (tipoPessoaCaixa === '1') ? $('.txtCPFCaixa').val() : $('.txtCNPJCaixa').val();
+		
+		// #region Validações
+		if (nfCaixaNumero.isNullOrWhitespace()) {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NotaFiscalDeCaixaNumeroVazio]);
 			return;
 		}
-		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero
+		if (cpfCnpjCaixa.isNullOrWhitespace()) {
+			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.CpfCnpjNotaFiscalDeCaixaVazio]);
+			return;
+		}
+		// #endregion
+
+		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;
+		PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo = tipoPessoaCaixa;
+		PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj = cpfCnpjCaixa;
 
 		MasterPage.carregando(true);
 		$.ajax({
@@ -1450,6 +1473,16 @@ PTVEmitir = {
 		// #region Validações
 		var valido = true;
 		var mensagensValidacao = [];
+		var cpfCnpj;
+		var tipoPessoa;
+
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCPFCaixa').val();
+		} else {
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCNPJCaixa').val();
+		}
 		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
 			return;
@@ -1468,7 +1501,8 @@ PTVEmitir = {
 		}
 		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
 			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero
-				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto) {
+				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto
+				&& (JSON.parse($('.hdnItemJson', this).val())).PessoaAssociadaCpfCnpj == PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj) {
 				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
 				valido = false;
 			}
@@ -1486,10 +1520,17 @@ PTVEmitir = {
 
 		//adicionar na grid
 		$('.hdnItemJson', linha).val(JSON.stringify(PTVEmitir.nfCaixaTemp));
-		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero)//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
-		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto)//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
-		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual)//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
-		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas)//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		$('.lblNFCaixaNumero', linha).html(PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);//.attr('title', PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero);
+		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto);//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
+		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual);//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
+		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		} else {
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		}
 
 		$('tbody', tabela).append(linha);
 
@@ -1543,7 +1584,21 @@ PTVEmitir = {
 		if (cont <= 0)
 			$('.identificacaoDaCaixa').addClass('hide');
 
-	}
+	},
+
+	onTipoPessoaCaixaChange: function () {
+
+		$('.txtCPFCaixa', PTVEmitir.container).val('');
+		$('.txtCNPJCaixa', PTVEmitir.container).val('');
+
+		if ($('.rdbPessaoNfCaixa:checked', PTVEmitir.container).val() == '1') {
+			$('.CnpjPessoaJuridicaNfCaixaContainer', PTVEmitir.container).addClass('hide');
+			$('.CpfPessoaFisicaNfCaixaContainer', PTVEmitir.container).removeClass('hide');
+		} else {
+			$('.CpfPessoaFisicaNfCaixaContainer', PTVEmitir.container).addClass('hide');
+			$('.CnpjPessoaJuridicaNfCaixaContainer', PTVEmitir.container).removeClass('hide');
+		}
+	},
 
 	// #endregion
 }

@@ -240,13 +240,33 @@
 		<div class="isTipoCaixaChecked hide">
 			<div class="coluna36">
 				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
-				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNotaFiscalCaixaNumero", @maxlength="35" })) %>
+			</div>
+			<div class="pessoaAssociadaNfCaixa">
+				<div class="coluna15 prepend1">
+					<label for="PessoaTipo">Tipo *</label><br />
+					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
+					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
+				</div>
+				<div class="coluna20">
+					<div class="CpfPessoaFisicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CPF *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCpf txtCPFCaixa" }))%>
+					</div>
+					<div class="CnpjPessoaJuridicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CNPJ *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCnpj txtCNPJCaixa" }))%>
+					</div>
+				</div>
 			</div>
 			<div class="coluna10">
 				<button class="inlineBotao btnVerificarNotaCaixaCaixa">Verificar</button>
 				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
 			</div>
 		</div>
+		
+	</div>
+	<div class="block">
 		<div class="isNFCaixaVerificado hide">
 			<div class="coluna15">
 				<label class="lblSaldoAtualInicial">Saldo atual</label>
@@ -266,9 +286,10 @@
 			<thead>
 				<tr>
 					<th style="width: 30%">N° da nota fiscal de caixa </th>
+					<th>CPF/CNPJ</th>
 					<th>Tipo da caixa</th>
 					<th style="width: 10%">Saldo atual</th>
-					<th style="width: 16%">N° de caixas</th>
+					<th style="width: 16%">N° de caixas utilizadas</th>
 					<% if (!Model.IsVisualizar)
 						{ %><th style="width: 7%">Ação</th>
 					<% } %>
@@ -280,6 +301,7 @@
 				%>
 				<tr>
 					<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+					<td class="" title="<%=item.PessoaAssociadaCpfCnpj %>"><%= item.PessoaAssociadaCpfCnpj %></td>
 					<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
 					<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
 					<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
@@ -296,6 +318,9 @@
 				<tr class="trTemplate hide">
 					<td class="">
 						<label class="lblNFCaixaNumero"></label>
+					</td>
+					<td class="">
+						<label class="lvlCPFCNPJ"></label>
 					</td>
 					<td class="">
 						<label class="lblTipoCaixa"></label>
@@ -385,7 +410,10 @@
 			<label for="SituacaoData">Data</label>
 			<%= Html.TextBox("SituacaoData", Model.PTV.SituacaoData.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class="text" })) %>
 		</div>
+
+		<input type="button" title="" class="icone pdf btnPDF" style="margin-top:2%" />
 	</div>
+
 
 	<div class="block">
 		<div class="coluna90">
@@ -407,6 +435,7 @@
 			<% } %>
 		</div>
 	</div>
+
 
 	<div class="block divCamposSituacao divMotivo <%= (Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Rejeitado || Model.PTV.Situacao != (int)eSolicitarPTVSituacao.Bloqueado) ? "hide":""%>">
 		<div class="block ultima">

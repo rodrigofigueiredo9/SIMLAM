@@ -13,7 +13,8 @@
 		$(function () {
 			EPTVAnalisar.load($('#central'), {
 				urls:{
-					salvar: '<%=Url.Action("EPTVAnalisar", "PTV")%>'
+					salvar: '<%=Url.Action("EPTVAnalisar", "PTV")%>',
+					urlPDF: '<%= Url.Action("GerarPdfEPTV", "PTV") %>'
 				},
 			});
 		});

@@ -340,6 +340,8 @@
     <Compile Include="ViewModels\VMFiscalizacao\FiscalizacaoAssinanteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1464,6 +1466,7 @@
     <Content Include="Scripts\PTVOutro\listar.js" />
     <Content Include="Scripts\PTV\listarEPTV.js" />
     <Content Include="Scripts\PTV\listar.js" />
+    <Content Include="Scripts\PTV\retificacaoNFCaixa.js" />
     <Content Include="Scripts\RelatorioEspecifico\relatorioMapa.js" />
     <Content Include="Scripts\Setor\listar.js" />
     <Content Include="Scripts\Setor\listarItem.js" />
@@ -2439,10 +2442,15 @@
     <Content Include="Views\PTVOutro\ListarResultados.ascx" />
     <Content Include="Views\PTVOutro\PTVOutroPartial.ascx" />
     <Content Include="Views\PTVOutro\Visualizar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarListar.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarPartial.ascx" />
     <Content Include="Views\PTV\ComunicadorPTVPartial.ascx" />
     <Content Include="Views\PTV\AtivarPartial.ascx" />
     <Content Include="Views\PTV\CancelarPartial.ascx" />
     <Content Include="Views\PTV\Ativar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarResultados.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarFiltros.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixa.aspx" />
     <Content Include="Views\PTV\EPTVPartialCredenciado.ascx" />
     <Content Include="Views\PTV\EPTVVisualizar.aspx" />
     <Content Include="Views\PTV\EPTVAnalisar.aspx" />

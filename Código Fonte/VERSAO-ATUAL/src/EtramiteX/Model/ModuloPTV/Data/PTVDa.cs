@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTVOutro;
+using Tecnomapas.Blocos.Entities.WebService;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
@@ -2627,8 +2628,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
 					SELECT ID,
-					(NF.SALDO_INICIAL - (nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAF.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0)
-					+ nvl((SELECT SUM(PNF.NUMERO_CAIXAS) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF WHERE PNF.NF_CAIXA = NF.ID),0))) SALDO_ATUAL          
+					(NF.SALDO_INICIAL - 
+						(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+						(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+						NVL(NF.SALDO_RETIFICADO,0)
+					)SALDO_ATUAL
 					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
@@ -2658,7 +2662,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
 				Comando comando = null;
 				comando = bancoDeDados.CriarComando(@"
-								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID, LC.TEXTO TIPO_TEXTO
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID,
+									LC.TEXTO TIPO_TEXTO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO 
 									FROM TAB_NF_CAIXA NF 
 										INNER JOIN TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
 										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
@@ -2676,6 +2681,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
 						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
 						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						nf.PessoaAssociadaTipo = (eTipoPessoa)reader.GetValue<int>("TIPO_PESSOA");
+						nf.PessoaAssociadaCpfCnpj = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
 						lstNotaFiscalDeCaixa.Add(nf);
 					}
 
@@ -3130,6 +3137,285 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		#endregion Alerta EPTV
 
+		#region Retificação Nota fiscal de caixa
+
+		internal Resultados<RetificacaoNFCaixaListarResultado> FiltrarNFCaixa(Filtro<RetificacaoNFCaixaListarFiltro> filtro)
+		{
+			Resultados<RetificacaoNFCaixaListarResultado> retorno = new Resultados<RetificacaoNFCaixaListarResultado>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				string comandtxt = string.Empty;
+				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
+				Comando comando = bancoDeDados.CriarComando("");
+				string tabelaTipoDoc = String.Empty;
+				string amarracaoTipoDoc = String.Empty;
+
+				#region Adicionando Filtros
+
+				
+				comandtxt += comando.FiltroAnd("NF.NUMERO", "NUMERO", filtro.Dados.NumeroNFCaixa);
+
+				if (!String.IsNullOrEmpty(filtro.Dados.NFCaixaCPFCNPJ))
+				{
+					var tipoPessoa = filtro.Dados.NFCaixaIsCPF ? 1 : 2;
+					comandtxt += comando.FiltroAnd("NF.TIPO_PESSOA", "TIPO_PESSOA", tipoPessoa);
+					comandtxt += comando.FiltroAnd("NF.CPF_CNPJ_ASSOCIADO", "CPF_CNPJ_ASSOCIADO", filtro.Dados.NFCaixaCPFCNPJ);
+				}
+				if (!String.IsNullOrWhiteSpace(filtro.Dados.NumeroPTV))
+				{
+					comandtxt += @"AND (select ptv.numero from tab_ptv ptv inner join tab_ptv_nf_caixa pnf on pnf.PTV = ptv.id
+									   where pnf.nf_caixa = nf.id and ptv.numero = :PTV
+									   union 
+									   select ptv.numero from idafcredenciado.tab_ptv ptv inner join idafcredenciado.tab_ptv_nf_caixa pnf
+									on pnf.PTV = ptv.id where pnf.nf_caixa = nf.id
+										and ptv.numero = :PTV) is not null";
+					comando.AdicionarParametroEntrada("PTV", filtro.Dados.NumeroPTV);
+				}
+				if ((int)filtro.Dados.tipoDeCaixa > 0)
+				{
+					comandtxt += comando.FiltroAnd("NF.TIPO_CAIXA", "TIPO_CAIXA", (int)filtro.Dados.tipoDeCaixa);
+				}
+				
+
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "NUMERO", "CPF_CNPJ_ASSOCIADO", "TIPO_CAIXA", "SALDO_INICIAL", "SALDO_ATUAL" };
+
+				if (filtro.OdenarPor > 0)
+				{
+					ordenar.Add(colunas.ElementAtOrDefault(filtro.OdenarPor - 1));
+				}
+				else
+				{
+					ordenar.Add("NUMERO");
+				}
+
+				#endregion
+
+				#region Quantidade de registro do resultado
+
+				comando.DbCommand.CommandText =
+				"select count(*) from (" + String.Format(@"select	NF.ID
+																FROM  TAB_NF_CAIXA NF where 1=1 " + comandtxt + " group by NF.ID) a ", esquemaBanco);
+
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtro.Menor);
+				comando.AdicionarParametroEntrada("maior", filtro.Maior);
+
+				comandtxt = String.Format(@"SELECT	NF.ID,
+													NF.NUMERO,
+													NF.TIPO_PESSOA,
+													NF.CPF_CNPJ_ASSOCIADO,
+													NF.TIPO_CAIXA,
+													LVC.TEXTO TIPO_CAIXA_TEXTO,
+													NF.SALDO_INICIAL,
+													(NF.SALDO_INICIAL - 
+													  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+													  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+													  NVL(NF.SALDO_RETIFICADO,0)
+													)SALDO_ATUAL
+												FROM  TAB_NF_CAIXA NF
+												INNER JOIN LOV_TIPO_CAIXA LVC ON LVC.ID = NF.TIPO_CAIXA WHERE 1=1 " + comandtxt + DaHelper.Ordenar(colunas, ordenar), esquemaBanco);
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					RetificacaoNFCaixaListarResultado item;
+					while (reader.Read())
+					{
+						item = new RetificacaoNFCaixaListarResultado();
+						item.Id = reader.GetValue<int>("ID");
+						item.NumeroNFCaixa = reader.GetValue<string>("NUMERO");
+						item.TipoPessoa = reader.GetValue<int>("TIPO_PESSOA");
+						item.CPFCNPJ = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
+						item.TipoCaixa = reader.GetValue<int>("TIPO_CAIXA");
+						item.TipoCaixaTexto = reader.GetValue<string>("TIPO_CAIXA_TEXTO");
+						item.SaldoInicial = reader.GetValue<int>("SALDO_INICIAL");
+						item.SaldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+
+						retorno.Itens.Add(item);
+					}
+					reader.Close();
+				}
+			}
+			return retorno;
+		}
+
+		internal bool VerificarExcluirNFCaixa(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				//Atualiza o tid da tabela tab_ptv
+				Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(1) FROM (                        
+																	SELECT ID FROM TAB_PTV_NF_CAIXA WHERE NF_CAIXA = :nf
+																	union all
+																	SELECT ID FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA WHERE NF_CAIXA = :nf
+																)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("nf", id, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
+		internal void ExcluirNFCaixa(int id, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"DELETE TAB_NF_CAIXA WHERE ID = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.Commit();
+			}
+		}
+
+		internal NotaFiscalCaixa ObterNFCaixa(int id, BancoDeDados banco= null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+				NotaFiscalCaixa nFCaixa = new NotaFiscalCaixa();
+
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT NF.NUMERO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO, NF.TIPO_CAIXA, NF.SALDO_INICIAL, 
+					  (NF.SALDO_INICIAL - 
+						  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+						  (SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+						  NVL(NF.SALDO_RETIFICADO,0)
+						)SALDO_ATUAL
+					FROM TAB_NF_CAIXA NF 
+					WHERE NF.ID =: id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						nFCaixa.id = id;
+						nFCaixa.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
+						nFCaixa.PessoaAssociadaTipo = (eTipoPessoa)reader.GetValue<int>("TIPO_PESSOA");
+						nFCaixa.PessoaAssociadaCpfCnpj = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
+						nFCaixa.tipoCaixaId = reader.GetValue<int>("TIPO_CAIXA");
+						nFCaixa.saldoInicial = reader.GetValue<int>("SALDO_INICIAL");
+						nFCaixa.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+					}
+					reader.Close();
+				}
+				bancoDeDados.Commit();
+				return nFCaixa;
+			}
+		}
+
+		internal Resultados<PTVNFCaixaResultado> ObterPTVNFCaixa(Filtro<int> filtro)
+		{
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Resultados<PTVNFCaixaResultado> retorno = new Resultados<PTVNFCaixaResultado>();
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComando("");
+				string comandtxt = string.Empty;
+				string esquemaBanco = (string.IsNullOrEmpty(EsquemaBanco) ? "" : EsquemaBanco + ".");
+
+
+				comando.DbCommand.CommandText =
+				"select count(*) from (" + String.Format(@"SELECT NF.ID
+					FROM TAB_NF_CAIXA               NF
+						INNER JOIN TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
+						INNER JOIN TAB_PTV            PTV   ON PNF.PTV = PTV.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN LOV_PTV_SITUACAO   LVP   ON PTV.SITUACAO = LVP.ID
+					WHERE NF.ID = :id  
+					UNION
+    
+					SELECT NF.ID
+					FROM TAB_NF_CAIXA                               NF
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN LOV_PTV_SITUACAO                   LVP   ON PTV.SITUACAO = LVP.ID
+					WHERE NF.ID = :id) a ", esquemaBanco);
+				comando.AdicionarParametroEntrada("id", filtro.Dados, DbType.Int32);
+
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				comando.AdicionarParametroEntrada("menor", filtro.Menor);
+				comando.AdicionarParametroEntrada("maior", filtro.Maior);
+
+				comandtxt = String.Format(@"SELECT * FROM (
+					SELECT PTV.NUMERO, E.DENOMINADOR, 'Institucional' ORIGEM, LVP.TEXTO SITUACAO, P.NOME INTERESSADO,
+						PNF.NUMERO_CAIXAS, PTV.DATA_EMISSAO
+					FROM TAB_NF_CAIXA               NF
+						INNER JOIN TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
+						INNER JOIN TAB_PTV            PTV   ON PNF.PTV = PTV.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN LOV_PTV_SITUACAO   LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID
+					WHERE NF.ID = :id
+
+					UNION
+    
+					SELECT PTV.NUMERO, E.DENOMINADOR, 'Credenciado' ORIGEM, LVP.TEXTO SITUACAO, P.NOME INTERESSADO,
+						PNF.NUMERO_CAIXAS, PTV.DATA_EMISSAO
+					FROM TAB_NF_CAIXA                               NF
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
+						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO       LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN IDAFCREDENCIADO.TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID	
+					WHERE NF.ID = :id)" + comandtxt, esquemaBanco);
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
+
+				comando.AdicionarParametroEntrada("id", filtro.Dados, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						PTVNFCaixaResultado item = new PTVNFCaixaResultado();
+						item.NumeroPTV = reader.GetValue<string>("NUMERO");
+						item.Empreendimento = reader.GetValue<string>("DENOMINADOR");
+						item.Origem = reader.GetValue<string>("ORIGEM");
+						item.Situacao = reader.GetValue<string>("SITUACAO");
+						item.Interessado = reader.GetValue<string>("INTERESSADO");
+						item.QtdCaixa = reader.GetValue<int>("NUMERO_CAIXAS");
+						item.DataEmissao = reader.GetValue<DateTime>("DATA_EMISSAO");
+						retorno.Itens.Add(item);
+					}
+					reader.Close();
+				}
+				return retorno;
+			}
+		}
+
+		internal void SalvarNFCaixa(int id, int novoSalvo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComando(@"UPDATE TAB_NF_CAIXA SET SALDO_RETIFICADO = :saldo_novo WHERE ID = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("saldo_novo", novoSalvo, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(id, eHistoricoArtefato.notafiscalcaixa, eHistoricoAcao.criar, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+		#endregion
 		internal bool ExisteAssinaturaDigital(int funcionarioId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
