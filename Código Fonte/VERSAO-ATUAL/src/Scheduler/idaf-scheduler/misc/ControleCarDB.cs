@@ -864,8 +864,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			catch (Exception exception)
 			{
 				Log.Error("Erro VerificarCarValido:  - " + id + " ID -- " + exception + " + exception.Message, exception");
-				return false;
 			}
+			return false;
 		}
 	}
 }
