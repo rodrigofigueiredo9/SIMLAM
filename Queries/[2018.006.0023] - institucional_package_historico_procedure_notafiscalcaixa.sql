@@ -1,4 +1,4 @@
---ATENÇÃO!!!!
+﻿--ATENÇÃO!!!!
 --Lembrar de inserir a procedure no cabeçalho e no body.
 
 	---------------------------------------------------------
@@ -19,7 +19,10 @@
 						 p.numero,
 						 p.tipo_caixa tipo_caixa_id,
 						 ltc.texto tipo_caixa_texto,
-						 p.saldo_inicial
+						 p.saldo_inicial,
+             p.tipo_pessoa,
+             p.cpf_cnpj_associado,
+             p.saldo_retificado
 				  from tab_nf_caixa p,
 					   lov_tipo_caixa ltc
 				  where p.id = p_id
@@ -32,8 +35,11 @@
 				 nf_caixa_id,
 				 numero,
 				 tipo_caixa_id,
-				 tipo_caixa_texto,
+				 tipo_caixa_texto,         
 				 saldo_inicial,
+         tipo_pessoa,
+         cpf_cnpj_associado,
+         saldo_retificado,
 				 executor_id,
 				 executor_tid,
 				 executor_nome,
@@ -51,6 +57,9 @@
 				 i.tipo_caixa_id,
 				 i.tipo_caixa_texto,
 				 i.saldo_inicial,
+         i.tipo_pessoa,
+         i.cpf_cnpj_associado,
+         i.saldo_retificado,
 				 p_executor_id,
 				 p_executor_tid,
 				 p_executor_nome,

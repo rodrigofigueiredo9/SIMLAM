@@ -219,12 +219,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				else if (laudo.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal)
 				{
 					if (laudo.ExploracaoFlorestalList.Count <= 0)
-					{
-						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestal"));
 						itenRemover.Add(doc.LastTable("«TableStart:ExploracaoFlorestalList"));
-					}
-
-					itenRemover.Add(doc.LastTable("«TableStart:QueimaControlada.QueimasContr"));
 				}
 
 				#endregion

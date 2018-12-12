@@ -74,8 +74,8 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 		private static void ScheduleJobs()
 		{
-            _scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 60 SEGUNDOS"));   //("A cada 15 Segundos"));
-            _scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 60 SEGUNDOS"));
+            _scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   //("A cada 15 Segundos"));
+            _scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));
             //_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
             //_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}

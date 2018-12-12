@@ -336,6 +336,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
+							eptvBanco.LacreNumero = eptv.LacreNumero;
+							eptvBanco.ContainerNumero = eptv.ContainerNumero;
+							eptvBanco.PoraoNumero = eptv.PoraoNumero;
+							eptvBanco.PartidaLacradaOrigem = eptv.PartidaLacradaOrigem;
 							eptvBanco.ValidoAte = eptv.ValidoAte;
 							eptvBanco.ResponsavelTecnicoId = eptv.ResponsavelTecnicoId;
 							eptvBanco.ResponsavelTecnicoNome = eptv.ResponsavelTecnicoNome;
