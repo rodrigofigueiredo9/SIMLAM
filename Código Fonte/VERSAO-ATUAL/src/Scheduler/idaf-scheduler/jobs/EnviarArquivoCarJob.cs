@@ -251,9 +251,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             content.Add(new StreamContent(stream), "car", fileName);
                             content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-                            var response = await client.PostAsync("/sincronia/quick", content);
+                            HttpResponseMessage response = await client.PostAsync("/sincronia/quick", content);
 
-                            return await response.Content.ReadAsStringAsync();
+							if (!response.IsSuccessStatusCode)
+							{
+								Log.Error("ERRO RESPONSE::::?? //  " + response);
+								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+							}
+
+							return await response.Content.ReadAsStringAsync();
                         }
                     }
                     catch (Exception ex) 
