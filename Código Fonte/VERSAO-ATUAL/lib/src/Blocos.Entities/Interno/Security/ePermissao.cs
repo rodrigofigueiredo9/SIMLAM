@@ -293,7 +293,6 @@
 		CadastroAmbientalRuralSolicitacaoVisualizar,
 		CadastroAmbientalRuralSolicitacaoEditar,
 		CadastroAmbientalRuralSolicitacaoExcluir,
-		CadastroAmbientalRuralSolicitacaoAlterarSituacao,
 
 		CadastroAmbientalRuralVisualizar,
 		CadastroAmbientalRuralExcluir,
@@ -390,5 +389,14 @@
         DeclaracaoAdicional,
         ConfigurarCodigoReceita,
         ConfigurarPenalidade,
+
+
+
+
+
+
+		CadastroAmbientalRuralSolicitacaoAlterarSituacao = 262,
+		CadastroAmbientalRuralSolicitacaoInvalida = 385,
+
 	}
 }

@@ -17,8 +17,8 @@
 		<!-- URL do Servico das Imagens-->
 		<mapaImagemURL>http://mapas.geobases.es.gov.br/ArcGIS/rest/services/IMAGEM/Aerolevantamento/MapServer</mapaImagemURL>
 
-		<mapaLoteURL>http://webidafh/ArcGIS/rest/services/IDAF/EMPREENDIMENTO/MapServer</mapaLoteURL>
+		<mapaLoteURL>http://local.pentago.com.br:8090/ArcGIS/rest/services/IDAF/EMPREENDIMENTO/MapServer</mapaLoteURL>
 
-		<webserviceURL>http://webidafh/webservices/GeobasesWebServices/Municipio</webserviceURL>
+		<webserviceURL>http://local.pentago.com.br:8090/webservices/GeobasesWebServices/Municipio</webserviceURL>
 	</service>
 </configuration>

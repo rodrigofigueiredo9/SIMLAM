@@ -10,6 +10,7 @@
         Enviando = 5,
         ArquivoEntregue = 6,
 		Erro = 7,
-		ArquivoRetificado = 8
+		ArquivoRetificado = 8,
+		Cancelado = 9
     }
 }

@@ -35,6 +35,9 @@
 					visualizarCheckList: '<%= Url.Action("ChecagemRoteiroVisualizar", "ChecagemRoteiro") %>',
 				    visualizarChecagemPendencia: '<%= Url.Action("Visualizar", "ChecagemPendencia") %>',
 				    visualizarFiscalizacao: '<%= Url.Action("VisualizarFiscalizacaoModal", "Fiscalizacao") %>',
+					funcionariosDestinatario: '<%= Url.Action("ObterFuncionariosDoSetor", "Tramitacao") %>',
+					obterAssinanteCargos: '<%= Url.Action("ObterAssinanteCargos", "Documento") %>',
+					obterAssinanteFuncionarios: '<%= Url.Action("ObterAssinanteFuncionarios", "Documento") %>',
 					pdfRequerimento: '<%= Url.Action("GerarPdf", "Requerimento") %>'
 				},
 				Mensagens: <%= Model.Mensagens %>,

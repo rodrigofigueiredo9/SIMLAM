@@ -3,11 +3,13 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <script src="<%= Url.Content("~/Scripts/Areas/Especificidades/Laudo/laudoVistoriaFlorestal.js") %>"></script>
+<script src="<%= Url.Content("~/Scripts/Titulo/tituloLaudoExploracaoFlorestal.js") %>" ></script>
 
 <script>
 	LaudoVistoriaFlorestal.urlEspecificidade = '<%= Url.Action("LaudoVistoriaFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFlorestal.urlObterDadosLaudoVistoriaFlorestal = '<%= Url.Action("ObterDadosLaudoVistoriaFlorestal", "Laudo", new {area="Especificidades"}) %>';
 	LaudoVistoriaFlorestal.idsTela = <%= Model.IdsTela %>;
+	LaudoVistoriaFlorestal.Mensagens = <%= Model.Mensagens %>;
 </script>
 
 <fieldset class="block box divEspecificidade">
@@ -40,12 +42,8 @@
 		</div>
 	</div>
 
-	<div class="block">
-		<div class="coluna75">
-			<label for="Laudo_Caracterizacao">Caracterização *</label><br />
-			<%= Html.DropDownList("Laudo.Caracterizacao", Model.Caracterizacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacoes.Count <= 1, new { @class = "text ddlCaracterizacoes" }))%>
-		</div>
-	</div>
+	<% Html.RenderPartial("~/Views/Titulo/TituloLaudoVistoriaFlorestal.ascx", Model); %>
+	<br />
 
 	<div class="block">
 		<div class="ultima">
@@ -54,10 +52,17 @@
 		</div>
 	</div>
 
-	<div class="block">
+	<div class="block descricaoFavoravel <%= string.IsNullOrWhiteSpace(Model.ParecerFavoravelLabel) ? "hide" : "" %>">
 		<div class="ultima">
-			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico *</label><br />
+			<label for="Laudo_ParecerDescricao">Descrição do Parecer Técnico Favorável a Exploração * <%= Model.ParecerFavoravelLabel %></label><br />
 			<%= Html.TextArea("Laudo.ParecerDescricao", Model.Laudo.ParecerDescricao, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricao" }))%>
+		</div>
+	</div>
+
+	<div class="block descricaoDesfavoravel <%= string.IsNullOrWhiteSpace(Model.ParecerDesfavoravelLabel) ? "hide" : "" %>">
+		<div class="ultima">
+			<label for="Laudo_ParecerDescricaoDesfavoravel">Descrição do Parecer Técnico Desfavorável a Exploração * <%= Model.ParecerDesfavoravelLabel %></label><br />
+			<%= Html.TextArea("Laudo.ParecerDescricaoDesfavoravel", Model.Laudo.ParecerDescricaoDesfavoravel, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "textarea media text txtDescricaoDesfavoravel" }))%>
 		</div>
 	</div>
 

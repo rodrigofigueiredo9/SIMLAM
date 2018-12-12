@@ -351,7 +351,7 @@ background: linear-gradient(top, #f4f4f4 0%,#bebdbd 100%); border-bottom: 1px so
  *
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
-.ui-autocomplete { position: absolute; cursor: default; }	
+.ui-autocomplete { position: absolute; cursor: default; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-right: 20px;}	
 
 /* workarounds */
 * html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */

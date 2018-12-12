@@ -100,6 +100,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		private List<Atividade> _atividades = new List<Atividade>();
 		public List<Atividade> Atividades { get { return _atividades; } set { _atividades = value; } }
 
+		private List<TituloExploracaoFlorestal> _exploracoes = new List<TituloExploracaoFlorestal>();
+		public List<TituloExploracaoFlorestal> Exploracoes { get { return _exploracoes; } set { _exploracoes = value; } }
+
 		private Especificidade _especificidade = new Especificidade();
 		public Especificidade Especificidade { get { return _especificidade; } set { _especificidade = value; } }
 
@@ -116,6 +119,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		public int? RequerimetoId { get; set; }
 
 		public int? CredenciadoId { get; set; }
+
+		public string CodigoSinaflor { get; set; }
 
 		public Titulo()
 		{

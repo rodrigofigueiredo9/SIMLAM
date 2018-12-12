@@ -110,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
 				#region Cultura
 
-				Comando comando = comando = bancoDeDados.CriarComando(@"update tab_cultura set texto = :cultura, tid = :tid where id = :id", EsquemaBanco);
+				Comando comando =  bancoDeDados.CriarComando(@"update tab_cultura set texto = :cultura, tid = :tid where id = :id", EsquemaBanco);
 				Comando cmdConfiguracao = null;
 
 				comando.AdicionarParametroEntrada("cultura", cultura.Nome, DbType.String);
@@ -153,6 +153,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 						{
 							idCultivar = comando.ObterValorParametro<int>("id");
 						}
+						else
+							cultura.Cultivar.Id = comando.ObterValorParametro<int>("id");
 
 						//Cultura_Cultivar_Configuracões
 						comando = bancoDeDados.CriarComando(@"delete from {0}tab_cultivar_configuracao t where t.cultivar = :cultivar", EsquemaBanco);
@@ -184,7 +186,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 									}
 									else
 									{
-										cmdConfiguracao.AdicionarParametroEntrada("cultivar", x.Cultivar, DbType.Int32);
+										cmdConfiguracao.AdicionarParametroEntrada("cultivar", cultura.Cultivar.Id, DbType.Int32);
 									}
 								}
 

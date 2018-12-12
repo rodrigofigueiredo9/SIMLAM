@@ -566,7 +566,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			float valorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
 
-			int quantidadeDuaPagos = (int)(dua.ReceitaValor / valorUnitario);
+			int quantidadeDuaPagos = (int)(Math.Round(dua.ReceitaValor, 2) / Math.Round(valorUnitario, 2));
 
 			int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj, ptvId);
 

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
 {
-	public class Laudo
+	public class Laudo : IAnexoPdf
 	{
 		public Int32 Id { get; set; }
 		public Int32 RegularizacaoDominio { get; set; }
@@ -18,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public DominioPDF Dominio { get; set; }
 		public DominialidadePDF Dominialidade { get; set; }
 		public ExploracaoFlorestalPDF ExploracaoFlorestal { get; set; }
+		public List<ExploracaoFlorestalPDF> ExploracaoFlorestalList { get; set; }
 		public RegularizacaoFundiariaPDF RegularizacaoFundiaria { get; set; }
 		public SilviculturaPDF Silvicultura { get; set; }
 		public QueimaControladaPDF QueimaControlada { get; set; }
@@ -30,7 +32,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String Restricao { get; set; }
 		public String Objetivo { get; set; }
 		public String Observacao { get; set; }
+		public String ParecerFavoravel { get; set; }
+		public String ParecerDesfavoravel { get; set; }
 		public String DescricaoParecer { get; set; }
+		public String DescricaoParecerDesfavoravel { get; set; }
 		public String DataVistoria { get; set; }
 
 		public String ResultadoTipoTexto { get; set; }
@@ -57,6 +62,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			set { _analiseItens = value; }
 		}
 
+		public List<Arquivo.Arquivo> AnexosPdfs { get; set; }
+
 		public Laudo()
 		{
 			Titulo = new TituloPDF();
@@ -68,6 +75,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Dominio = new DominioPDF();
 			Dominialidade = new DominialidadePDF();
 			ExploracaoFlorestal = new ExploracaoFlorestalPDF();
+			ExploracaoFlorestalList = new List<ExploracaoFlorestalPDF>();
 			RegularizacaoFundiaria = new RegularizacaoFundiariaPDF();
 			Silvicultura = new SilviculturaPDF();
 			QueimaControlada = new QueimaControladaPDF();

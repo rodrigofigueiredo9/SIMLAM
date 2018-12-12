@@ -163,7 +163,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("sucesso", ((sucesso) ? "verdadeiro" : "falso")));
-					cmd.Parameters.Add(new OracleParameter("resultado", resultado));
+					cmd.Parameters.Add(new OracleParameter("resultado", resultado.Substring(0, 4000)));
 					cmd.Parameters.Add(new OracleParameter("id", id));
 
 
@@ -172,7 +172,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 			catch (Exception exception)
 			{
-				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				Log.Error("MarcarItemFilaTerminado  <> -- <> RESULTADO ::: " + resultado + "  <<>>  Erro ao conectar ao Banco de dados:" + exception.Message, exception);
 			}
 		}
 

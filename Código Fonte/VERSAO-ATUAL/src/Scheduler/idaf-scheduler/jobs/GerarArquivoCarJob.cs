@@ -70,7 +70,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						Log.Error($" CONTROLE SICAR (GERAR) IS NULL ::: {requisicao}");
 						continue;
 					}
-
 					ObterDadosRequisicao(conn, requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
                     
@@ -78,6 +77,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					{
                         CAR car;	
                         //REQUISIÇÃO CAR
+						//throw new Exception("THROW TESTE");
 						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
 						{
 							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
@@ -159,6 +159,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         }
                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE resultado = '%Transporte de Rede%'", conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                                                WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL AND (DATA_CRIACAO + 1 < SYSDATE)", conn))
                 {
                     cmd.ExecuteNonQuery();
                 }
@@ -494,6 +499,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var imovel = ObterDadosImovel(conn, schema, requisicao.empreendimento);
             var endCorrespondencia = ObterDadosImovelCorrespondencia(conn, schema, requisicao.empreendimento);
 
+			var complementoCorrespondencia = String.Empty;
+			var bairroCorrespondencia = String.Empty;
+			var eCorrespondencia = new EnderecoCorrespondencia();
 			try
 			{
 				var builder = new StringBuilder();
@@ -511,30 +519,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 				var descricaoAcesso = builder.ToString();
 
-				var complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
-				var bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
-				var eCorrespondencia = new EnderecoCorrespondencia();
-
 				if (endCorrespondencia?.id > 0)
 				{
+					complementoCorrespondencia = endCorrespondencia.complemento + " C.P.:" + endCorrespondencia.caixaPostal;
+					bairroCorrespondencia = endCorrespondencia.bairro + ", " + endCorrespondencia.distrito + ", " + endCorrespondencia.corrego;
 					eCorrespondencia.logradouro = (endCorrespondencia.logradouro.Length > 100 ? endCorrespondencia.logradouro.Substring(0, 100) : endCorrespondencia.logradouro);
 					eCorrespondencia.numero = (String.IsNullOrEmpty(endCorrespondencia.numero) ? "S/N" : endCorrespondencia.numero);
-					eCorrespondencia.complemento =
-						(complementoCorrespondencia.Length > 100
-							? complementoCorrespondencia.Substring(0, 100)
-							: complementoCorrespondencia);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
 					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
 					eCorrespondencia.cep = endCorrespondencia.cep;
 					eCorrespondencia.codigoMunicipio = endCorrespondencia.municipio;
 				}
 				else
 				{
+					complementoCorrespondencia = imovel.complemento + " C.P.:" + imovel.caixaPostal;
+					bairroCorrespondencia = imovel.bairro + ", " + imovel.distrito + ", " + imovel.corrego;
 					eCorrespondencia.logradouro = (imovel.logradouro.Length > 100 ? imovel.logradouro.Substring(0, 100) : imovel.logradouro);
 					eCorrespondencia.numero = (String.IsNullOrEmpty(imovel.numero) ? "S/N" : imovel.numero);
-					eCorrespondencia.complemento =
-						(complementoCorrespondencia.Length > 100
-							? complementoCorrespondencia.Substring(0, 100)
-							: complementoCorrespondencia);
+					eCorrespondencia.complemento = (complementoCorrespondencia.Length > 100	? complementoCorrespondencia.Substring(0, 100) : complementoCorrespondencia);
 					eCorrespondencia.bairro = (bairroCorrespondencia.Length > 100 ? bairroCorrespondencia.Substring(0, 100) : bairroCorrespondencia);
 					eCorrespondencia.cep = imovel.cep;
 					eCorrespondencia.codigoMunicipio = imovel.municipio;
@@ -558,7 +560,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				var proprietarios = ObterProprietariosPosseirosConcessionarios(conn, schema, requisicao.empreendimento, requisicao.empreendimento_tid);
 				car.proprietariosPosseirosConcessionarios = proprietarios;
 
-				car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid);
+				car.documentos = ObterDocumentos(conn, schema, requisicao.origem, requisicao.empreendimento, requisicao.empreendimento_tid, imovel.municipio, requisicao.caracterizacao_id, requisicao.caracterizacao_tid, requisicao.carac_origem);
 
 				var cpfCpnjProprietarios = proprietarios.Select(proprietario => proprietario.cpfCnpj).ToList();
 				foreach (var documento in car.documentos)
@@ -601,7 +603,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				var cmd =
 					new OracleCommand(
 						"SELECT * FROM " + schema +
-						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id", conn))
+						".HST_EMPREENDIMENTO t WHERE t.empreendimento_id = :empreendimento_id ORDER BY ID", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("empreendimento_id", empreendimentoId));
 
@@ -628,7 +630,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						new OracleCommand(
 							"SELECT correspondencia,zona,cep,logradouro,bairro,municipio_id,numero,caixa_postal,distrito,corrego,complemento FROM " +
 							schema +
-							$".HST_EMPREENDIMENTO_ENDERECO t WHERE t.id_hst in ({idsHst}) AND correspondencia IN (0,1) ORDER BY correspondencia ASC",
+							$".HST_EMPREENDIMENTO_ENDERECO t WHERE t.id_hst in ({idsHst}) AND correspondencia IN (0,1) ORDER BY ID DESC",
 							conn))
 				{
 					using (var dr = cmd.ExecuteReader())
@@ -681,7 +683,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			}
 
 			if (!String.IsNullOrEmpty(empreendimento.cep))
-				empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
+				empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "").Trim();
 
 			//Buscar código do IBGE
 			using (var cmd = new OracleCommand("SELECT ibge FROM " + schema + ".LOV_MUNICIPIO t WHERE t.id = :id", conn))
@@ -701,23 +703,23 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			using (
 				var cmd =
 					new OracleCommand(
-						"SELECT meio_contato_id,valor FROM " + schema +
-						".HST_EMPREENDIMENTO_CONTATO t WHERE t.emp_contato_id = :emp_contato_id", conn))
+						"SELECT meio_contato, valor FROM " + schema +
+						$".TAB_EMPREENDIMENTO_CONTATO t WHERE empreendimento = :empreendimento", conn))
 			{
-				cmd.Parameters.Add(new OracleParameter("emp_contato_id", empreendimentoId));
+				cmd.Parameters.Add(new OracleParameter("empreendimento", empreendimentoId));
 
 				using (var dr = cmd.ExecuteReader())
 				{
 					while (dr.Read())
 					{
-						var meioContato = Convert.ToInt32(dr["meio_contato_id"]);
+						var meioContato = Convert.ToInt32(dr["meio_contato"]);
 						if (meioContato == 5)
 						{
-							empreendimento.email += dr.GetValue<string>("valor") + " ";
+							empreendimento.email = dr.GetValue<string>("valor") + " ";
 						}
-						else
+						else if(meioContato == 1)
 						{
-							empreendimento.telefone += dr.GetValue<string>("valor") + " ";
+							empreendimento.telefone = dr.GetValue<string>("valor") + " ";
 						}
 					}
 				}
@@ -758,7 +760,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						empreendimento.zona = dr.GetValue<Int32>("zona");
 						empreendimento.cep = dr.GetValue<string>("cep") ?? string.Empty;
 						if (!String.IsNullOrWhiteSpace(empreendimento.cep))
-							empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "");
+							empreendimento.cep = empreendimento.cep.Replace(".", "").Replace("-", "").Trim();
 						empreendimento.logradouro = dr.GetValue<string>("logradouro") ?? string.Empty;
 						empreendimento.bairro = dr.GetValue<string>("bairro") ?? string.Empty;
 						empreendimento.municipio = dr.GetValue<Int32>("municipio");
@@ -876,6 +878,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     requisicao.caracterizacao_tid = Convert.ToString(dra["caract_tid"]);
                                     requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
                                     requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
+									requisicao.carac_origem = 1; 
                                     dra.Close();
                                 }
                                 else
@@ -893,7 +896,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                                 requisicao.caracterizacao_tid = Convert.ToString(draa["caract_tid"]);
                                                 requisicao.projeto_geografico_id = Convert.ToInt32(draa["projeto_id"]);
                                                 requisicao.projeto_geografico_tid = Convert.ToString(draa["projeto_tid"]);
-                                                draa.Close();
+												requisicao.carac_origem = 2;
+												draa.Close();
                                             }
                                             
                                     }
@@ -941,7 +945,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
                             requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
 
-                            GlobalControleCredenciado = 1;  // ATRIBUIDO 1 NA GLOBAL PARA PESQUISAR NA TABELA "IDAFGEO.GEO_ATP", EM VEZ DE "IDAFCREDENCIADOGEO.GEO_ATP"
+							requisicao.carac_origem = 1;
+							GlobalControleCredenciado = 1;  // ATRIBUIDO 1 NA GLOBAL PARA PESQUISAR NA TABELA "IDAFGEO.GEO_ATP", EM VEZ DE "IDAFCREDENCIADOGEO.GEO_ATP"
 
                             dr.Close();
                             return requisicao;
@@ -962,6 +967,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 										requisicao.projeto_geografico_id = Convert.ToInt32(drr["projeto_id"]);
 										requisicao.projeto_geografico_tid = Convert.ToString(drr["projeto_tid"]);
 
+										requisicao.carac_origem = 2;
 										GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
 
 										drr.Close();
@@ -989,7 +995,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                             requisicao.projeto_geografico_id = Convert.ToInt32(dr["projeto_id"]);
                             requisicao.projeto_geografico_tid = Convert.ToString(dr["projeto_tid"]);
 
-                            GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
+							requisicao.carac_origem = 2;
+							GlobalControleCredenciado = 2;  // ATRIBUIDO 2 NESSA GLOBAL PARA BUSCAR DA TABELA "TMP.ATP" EM VEZ DE "GEO_ATP"
 
                             dr.Close();
                             return requisicao;
@@ -1512,158 +1519,172 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <param name="empreendimentoMunicipio">The empreendimento municipio.</param>
 		/// <returns></returns>
 		/// <exception cref="System.Exception">Empreendimento não possui Dominialidade. Faça o cadastro e envie novamente.</exception>
-		private static List<Documento> ObterDocumentos(OracleConnection conn, string schema, string requisicaoOrigem, int empreendimentoId, string empreendimentoTid, int empreendimentoMunicipio, int dominialidadeId, string dominialidadeTid)
+		private static List<Documento> ObterDocumentos(OracleConnection conn, string schema, string requisicaoOrigem, int empreendimentoId, string empreendimentoTid, int empreendimentoMunicipio, int dominialidadeId, string dominialidadeTid, int dominialidadeOrigem )
 		{
 			var resultado = new List<Documento>();
-
-			//Se não encontrar a dominialidade no banco
-			if (dominialidadeId == 0)
+			
+			try
 			{
-				throw new Exception("Empreendimento não possui Dominialidade. Faça o cadastro e envie novamente.");
-			}
 
-			using (
-				var cmd =
-					new OracleCommand(
-						"SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
-						schema +
-						".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
-						conn))
-			{
-				cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-				//cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+				//Se não encontrar a dominialidade no banco
+				if (dominialidadeId == 0)
+					throw new Exception("Empreendimento não possui Dominialidade. Faça o cadastro e envie novamente.");
 
-				using (var dr = cmd.ExecuteReader())
+				var connDominialidade = dominialidadeOrigem == 2 ?  CarUtils.GetBancoCredenciado() : CarUtils.GetBancoInstitucional();
+				var schemaDominialidade = dominialidadeOrigem == 2 ? "IDAFCREDENCIADO" : "IDAF";
+				using (var connAux = new OracleConnection(connDominialidade))
 				{
-					while (dr.Read())
+					connAux.Open();
+					using (
+					var cmd =
+						new OracleCommand(
+							"SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+							schemaDominialidade +
+							".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+							connAux))
 					{
-						var doc = new Documento
+						cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+						//cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+						using (var dr = cmd.ExecuteReader())
 						{
-							detalheDocumentoPosse = new DetalheDocumentoPosse
+							while (dr.Read())
 							{
-								enderecoDeclarante = new EnderecoDeclarante()
-							},
-							detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
-						};
+								var doc = new Documento
+								{
+									detalheDocumentoPosse = new DetalheDocumentoPosse
+									{
+										enderecoDeclarante = new EnderecoDeclarante()
+									},
+									detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+								};
 
 
-						var tipo = Convert.ToInt32(dr["tipo"]);
-						doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+								var tipo = Convert.ToInt32(dr["tipo"]);
+								doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
 
-						if ((tipo == 1) || (tipo == 2))
-						{
-							doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+								if ((tipo == 1) || (tipo == 2))
+								{
+									doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+								}
+
+								if (tipo == 1)
+								{
+									doc.tipo = Documento.TipoPropriedade;
+
+									doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+									doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+									{
+										numeroMatricula = Convert.ToString(dr["matricula"]),
+										livro = Convert.ToString(dr["livro"]),
+										folha = Convert.ToString(dr["folha"]),
+										dataRegistro = new DateTime(1900, 01, 01),
+										municipioCartorio = empreendimentoMunicipio
+									};
+								}
+								else
+								{
+									doc.tipo = Documento.TipoPosse;
+
+									doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+									doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+									var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+									doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+										? emissorDocumento.Substring(0, 100)
+										: emissorDocumento);
+									doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+								}
+
+								doc.ccir = Convert.ToString(dr["numero_ccri"]);
+								doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+									Convert.ToString(dr["tid"]));
+
+								resultado.Add(doc);
+							}
 						}
+					}
+					connAux.Close();
+				}
 
-						if (tipo == 1)
+				if (resultado.Count == 0)
+				{
+					using (
+					var cmd =
+						new OracleCommand(
+							"SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
+							"IDAF" +
+							".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
+							conn))
+					{
+						cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
+						//cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
+
+						using (var dr = cmd.ExecuteReader())
 						{
-							doc.tipo = Documento.TipoPropriedade;
-
-							doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
-							doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+							while (dr.Read())
 							{
-								numeroMatricula = Convert.ToString(dr["matricula"]),
-								livro = Convert.ToString(dr["livro"]),
-								folha = Convert.ToString(dr["folha"]),
-								dataRegistro = new DateTime(1900, 01, 01),
-								municipioCartorio = empreendimentoMunicipio
-							};
+								var doc = new Documento
+								{
+									detalheDocumentoPosse = new DetalheDocumentoPosse
+									{
+										enderecoDeclarante = new EnderecoDeclarante()
+									},
+									detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
+								};
+
+
+								var tipo = Convert.ToInt32(dr["tipo"]);
+								doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
+
+								if ((tipo == 1) || (tipo == 2))
+								{
+									doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
+								}
+
+								if (tipo == 1)
+								{
+									doc.tipo = Documento.TipoPropriedade;
+
+									doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
+									doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
+									{
+										numeroMatricula = Convert.ToString(dr["matricula"]),
+										livro = Convert.ToString(dr["livro"]),
+										folha = Convert.ToString(dr["folha"]),
+										dataRegistro = new DateTime(1900, 01, 01),
+										municipioCartorio = empreendimentoMunicipio
+									};
+								}
+								else
+								{
+									doc.tipo = Documento.TipoPosse;
+
+									doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
+									doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
+
+									var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
+									doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
+										? emissorDocumento.Substring(0, 100)
+										: emissorDocumento);
+									doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
+								}
+
+								doc.ccir = Convert.ToString(dr["numero_ccri"]);
+								doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
+									Convert.ToString(dr["tid"]));
+
+								resultado.Add(doc);
+							}
 						}
-						else
-						{
-							doc.tipo = Documento.TipoPosse;
-
-							doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
-							doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
-
-							var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
-							doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
-								? emissorDocumento.Substring(0, 100)
-								: emissorDocumento);
-							doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
-						}
-
-						doc.ccir = Convert.ToString(dr["numero_ccri"]);
-						doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
-							Convert.ToString(dr["tid"]));
-
-						resultado.Add(doc);
 					}
 				}
+
 			}
-
-            if(resultado.Count == 0)
-            {
-                using (
-                var cmd =
-                    new OracleCommand(
-                        "SELECT id,tid,tipo,identificacao,area_documento,matricula,folha,livro,numero_ccri,registro,comprovacao FROM " +
-                        "IDAF" +
-                        ".CRT_DOMINIALIDADE_DOMINIO t WHERE t.dominialidade = :dominialidade_id /*AND dominialidade_tid = :dominialidade_tid*/",
-                        conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("dominialidade_id", dominialidadeId));
-                    //cmd.Parameters.Add(new OracleParameter("dominialidade_tid", dominialidadeTid));
-
-                    using (var dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            var doc = new Documento
-                            {
-                                detalheDocumentoPosse = new DetalheDocumentoPosse
-                                {
-                                    enderecoDeclarante = new EnderecoDeclarante()
-                                },
-                                detalheDocumentoPropriedade = new DetalheDocumentoPropriedade()
-                            };
-
-
-                            var tipo = Convert.ToInt32(dr["tipo"]);
-                            doc.area = Math.Round(Convert.ToDouble(dr["area_documento"]) / 10000, 2); //Converter de m2 para ha
-
-                            if ((tipo == 1) || (tipo == 2))
-                            {
-                                doc.denominacao = Convert.ToString(dr["identificacao"]); // E SE FOR OUTRO TIPO?
-                            }
-
-                            if (tipo == 1)
-                            {
-                                doc.tipo = Documento.TipoPropriedade;
-
-                                doc.tipoDocumentoPropriedade = Documento.TipoDocPropCertidaoRegistro;
-                                doc.detalheDocumentoPropriedade = new DetalheDocumentoPropriedade
-                                {
-                                    numeroMatricula = Convert.ToString(dr["matricula"]),
-                                    livro = Convert.ToString(dr["livro"]),
-                                    folha = Convert.ToString(dr["folha"]),
-                                    dataRegistro = new DateTime(1900, 01, 01),
-                                    municipioCartorio = empreendimentoMunicipio
-                                };
-                            }
-                            else
-                            {
-                                doc.tipo = Documento.TipoPosse;
-
-                                doc.tipoDocumentoPosse = Documento.TipoDocPosseTituloDominio;
-                                doc.detalheDocumentoPosse = new DetalheDocumentoPosse();
-
-                                var emissorDocumento = Convert.ToString(dr["comprovacao"]) + " " + Convert.ToString(dr["registro"]);
-                                doc.detalheDocumentoPosse.emissorDocumento = (emissorDocumento.Length > 100
-                                    ? emissorDocumento.Substring(0, 100)
-                                    : emissorDocumento);
-                                doc.detalheDocumentoPosse.dataDocumento = new DateTime(1900, 01, 01);
-                            }
-
-                            doc.ccir = Convert.ToString(dr["numero_ccri"]);
-                            doc.reservaLegal = ObterDadosReservaLegal(conn, schema, requisicaoOrigem, Convert.ToInt32(dr["id"]),
-                                Convert.ToString(dr["tid"]));
-
-                            resultado.Add(doc);
-                        }
-                    }
-                }
-            }
+			catch(Exception ex)
+			{
+				Log.Error($" Obter Documentos ::: Empreendimento - {empreendimentoId} * Dominilidade - {dominialidadeId} * Schema {schema} * DominialidadeOrigem {dominialidadeOrigem}");
+			}
 
 			return resultado;
 		}

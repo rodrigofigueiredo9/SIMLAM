@@ -277,7 +277,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 
 		private void VerificarDadosEndereco(Endereco endereco, string objPaiNome, string lstEndNome, int index, string nomeEndereco, bool localizacao = false)
 		{
-			if (!localizacao && String.IsNullOrWhiteSpace(endereco.Cep))
+			if (String.IsNullOrWhiteSpace(endereco.Cep))
 			{
 				Validacao.Add(endMsg.EnderecoCepObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
 			}

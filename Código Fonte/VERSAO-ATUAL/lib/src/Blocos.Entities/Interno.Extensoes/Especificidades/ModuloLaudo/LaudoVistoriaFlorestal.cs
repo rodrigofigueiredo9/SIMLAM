@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo
 {
@@ -13,12 +14,16 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLau
 		public Int32 Destinatario { get; set; }
 		public String DestinatarioNomeRazao { get; set; }
 		public Int32 Responsavel { get; set; }
-		public Int32 Caracterizacao { get; set; }
 		public Int32 Conclusao { get; set; }
 		public String Objetivo { get; set; }
 		public String Consideracao { get; set; }
 		public String Restricao { get; set; }
 		public String ParecerDescricao { get; set; }
+		public String ParecerDescricaoDesfavoravel { get; set; }
+		public Boolean FavoravelObrigatorio { get; set; }
+		public Boolean DesfavoravelObrigatorio { get; set; }
+		public Int32 Caracterizacao { get; set; }
+		public IEnumerable<TituloExploracaoFlorestal> Exploracoes { get; set; }
 
 		private DateTecno _dataVistoria = new DateTecno();
 		public DateTecno DataVistoria

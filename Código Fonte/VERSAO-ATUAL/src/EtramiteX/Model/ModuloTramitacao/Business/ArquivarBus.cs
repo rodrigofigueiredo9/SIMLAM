@@ -46,6 +46,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 		{
 			try
 			{
+				arquivar.DataArquivamento.Data = DateTime.Today;
+				arquivar.Funcionario.Id = User.FuncionarioId;
+
 				foreach (Tramitacao tramitacao in tramitacoes)
 				{
 					tramitacao.Arquivamento = arquivar;
@@ -233,6 +236,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTramitacao.Business
 			}
 			return null;
 		}
+
+		public Arquivar ObterArquivamentoAutomatico(string despacho, int objetivoId)
+		{
+			try
+			{
+				return _da.ObterArquivamentoAutomatico(despacho, objetivoId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 
 		#endregion
 

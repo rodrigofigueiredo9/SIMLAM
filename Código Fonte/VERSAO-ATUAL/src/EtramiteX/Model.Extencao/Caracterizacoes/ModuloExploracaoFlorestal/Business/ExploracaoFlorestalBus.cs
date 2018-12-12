@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
@@ -47,11 +49,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		#region Comandos DML
 
-		public bool Salvar(ExploracaoFlorestal caracterizacao)
+		public bool Salvar(IEnumerable<ExploracaoFlorestal> exploracoes)
 		{
 			try
 			{
-				if (_validar.Salvar(caracterizacao))
+				if (_validar.Salvar(exploracoes))
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
@@ -59,16 +61,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						bancoDeDados.IniciarTransacao();
 
-						_da.Salvar(caracterizacao, bancoDeDados);
-
-						//Gerencia as dependências da caracterização
-						_busCaracterizacao.Dependencias(new Caracterizacao()
+						foreach (var caracterizacao in exploracoes)
 						{
-							Id = caracterizacao.Id,
-							Tipo = eCaracterizacao.ExploracaoFlorestal,
-							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
-							Dependencias = caracterizacao.Dependencias
-						}, bancoDeDados);
+							_da.Salvar(caracterizacao, bancoDeDados);
+
+							//Gerencia as dependências da caracterização
+							_busCaracterizacao.Dependencias(new Caracterizacao()
+							{
+								Id = caracterizacao.Id,
+								Tipo = eCaracterizacao.ExploracaoFlorestal,
+								DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+								Dependencias = caracterizacao.Dependencias
+							}, bancoDeDados);
+						}
 
 						Validacao.Add(Mensagem.ExploracaoFlorestal.Salvar);
 
@@ -89,14 +94,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			try
 			{
 				if (!_caracterizacaoValidar.Basicas(empreendimento))
-				{
 					return Validacao.EhValido;
-				}
 
 				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(empreendimento, eCaracterizacao.ExploracaoFlorestal))
-				{
 					return Validacao.EhValido;
-				}
 
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -104,9 +105,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				{
 					bancoDeDados.IniciarTransacao();
 
-					_da.Excluir(empreendimento, bancoDeDados);
+					var exploracoes = _da.ObterPorEmpreendimentoList(empreendimento, true);
+					var exploracoesEmAberto = exploracoes?.Where(x => x.DataConclusao.IsValido == false);
+					foreach(var exploracao in exploracoesEmAberto)
+						_da.Excluir(exploracao.Id, bancoDeDados);
 
-					_projetoGeoBus.Excluir(empreendimento, eCaracterizacao.ExploracaoFlorestal);
+					if (exploracoesEmAberto?.Count() == exploracoes?.Count())
+					{
+						var projetoId = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal, finalizado: false);
+						var projeto = _projetoGeoBus.ObterProjeto(projetoId, simplificado: false);
+						_projetoGeoBus.ExcluirRascunho(projeto, bancoDeDados);
+					}
 
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 
@@ -122,9 +131,83 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return Validacao.EhValido;
 		}
 
+		public void FinalizarExploracao(int empreendimento, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				var idProjetoGeo = _projetoGeoBus.ExisteProjetoGeografico(empreendimento, (int)eCaracterizacao.ExploracaoFlorestal);
+				if (idProjetoGeo == 0)
+					throw new Exception("Projeto Geográfico não encontrado");
+
+				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
+				if (projeto.SituacaoId != (int)eProjetoGeograficoSituacao.Finalizado)
+				{
+					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
+					_projetoGeoBus.SalvarSobreposicoes(projeto);
+					_projetoGeoBus.Finalizar(projeto, banco);
+					if (Validacao.EhValido)
+						_projetoGeoBus.ExcluirRascunho(projeto, banco);
+				}
+
+				if(!Validacao.EhValido) return;
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					var exploracoes = this.ObterPorEmpreendimentoList(empreendimento, simplificado: true, banco: bancoDeDados);
+					foreach (var exploracao in exploracoes)
+					{
+						exploracao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = exploracao.Id,
+							Tipo = eCaracterizacao.ExploracaoFlorestal,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = exploracao.Dependencias
+						}, bancoDeDados);
+						_busCaracterizacao.AtualizarDependentes(exploracao.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao, exploracao.Tid, bancoDeDados);
+					}
+
+					_da.FinalizarExploracao(empreendimento, bancoDeDados);
+
+					if (Validacao.EhValido)
+						Validacao.Erros.Clear();
+					else
+					{
+						bancoDeDados.Rollback();
+						return;
+					}
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		#endregion
 
 		#region Obter
+
+		public ExploracaoFlorestal ObterPorId(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+			ExploracaoFlorestal caracterizacao = null;
+
+			try
+			{
+				caracterizacao = _da.Obter(id, banco, simplificado);
+				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
 
 		public ExploracaoFlorestal ObterPorEmpreendimento(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
 		{
@@ -143,7 +226,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			return caracterizacao;
 		}
 
-		public ExploracaoFlorestal ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
+		public IEnumerable<ExploracaoFlorestal> ObterPorEmpreendimentoList(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		{
+			IEnumerable<ExploracaoFlorestal> exploracaoFlorestalList = null;
+
+			try
+			{
+				exploracaoFlorestalList = _da.ObterPorEmpreendimentoList(empreendimento, simplificado: simplificado);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return exploracaoFlorestalList;
+		}
+
+		public IEnumerable<ExploracaoFlorestal> ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -159,32 +258,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		public ExploracaoFlorestal MergiarGeo(ExploracaoFlorestal caracterizacaoAtual)
 		{
-			ExploracaoFlorestal dadosGeo = ObterDadosGeo(caracterizacaoAtual.EmpreendimentoId);
-			caracterizacaoAtual.Dependencias = _busCaracterizacao.ObterDependenciasAtual(caracterizacaoAtual.EmpreendimentoId, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			var dadosGeo = ObterDadosGeo(caracterizacaoAtual.EmpreendimentoId);
 
-			foreach (ExploracaoFlorestalExploracao exploracao in dadosGeo.Exploracoes)
+			foreach (var dado in dadosGeo)
 			{
-				if (!caracterizacaoAtual.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+				foreach (ExploracaoFlorestalExploracao exploracao in dado.Exploracoes)
 				{
-					caracterizacaoAtual.Exploracoes.Add(exploracao);
+					if (!caracterizacaoAtual.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+						caracterizacaoAtual.Exploracoes.Add(exploracao);
 				}
 			}
 
 			List<ExploracaoFlorestalExploracao> exploracoesRemover = new List<ExploracaoFlorestalExploracao>();
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacaoAtual.Exploracoes)
 			{
-				if (!dadosGeo.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+				foreach (var dado in dadosGeo)
 				{
-					exploracoesRemover.Add(exploracao);
-					continue;
-				}
-				else
-				{
-					ExploracaoFlorestalExploracao exploracaoAux = dadosGeo.Exploracoes.SingleOrDefault(x => x.Identificacao == exploracao.Identificacao) ?? new ExploracaoFlorestalExploracao();
-					exploracao.Identificacao = exploracaoAux.Identificacao;
-					exploracao.GeometriaTipoId = exploracaoAux.GeometriaTipoId;
-					exploracao.GeometriaTipoTexto = exploracaoAux.GeometriaTipoTexto;
-					exploracao.AreaCroqui = exploracaoAux.AreaCroqui;
+					if (!dado.Exploracoes.Exists(x => x.Identificacao == exploracao.Identificacao))
+					{
+						exploracoesRemover.Add(exploracao);
+						continue;
+					}
+					else
+					{
+						ExploracaoFlorestalExploracao exploracaoAux = dado.Exploracoes.SingleOrDefault(x => x.Identificacao == exploracao.Identificacao) ?? new ExploracaoFlorestalExploracao();
+						exploracao.Identificacao = exploracaoAux.Identificacao;
+						exploracao.GeometriaTipoId = exploracaoAux.GeometriaTipoId;
+						exploracao.GeometriaTipoTexto = exploracaoAux.GeometriaTipoTexto;
+						exploracao.AreaCroqui = exploracaoAux.AreaCroqui;
+					}
 				}
 			}
 
@@ -205,6 +307,66 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 		{
 			//Caso a coluna das atividades NÃO esteja na tabela Principal
 			throw new NotImplementedException();
+		}
+
+		public Resultados<ExploracaoFlorestal> Filtrar(ListarExploracaoFlorestalFiltro filtrosListar, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<ListarExploracaoFlorestalFiltro> filtro = new Filtro<ListarExploracaoFlorestalFiltro>(filtrosListar, paginacao);
+				Resultados<ExploracaoFlorestal> resultados = _da.Filtrar(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		public bool ExisteExploracaoEmAndamento(int empreendimento, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ExisteExploracaoEmAndamento(empreendimento, banco);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public bool ExisteExploracaoGeoNaoCadastrada(int projeto, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ExisteExploracaoGeoNaoCadastrada(projeto, banco);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, int modelo, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ObterExploracoes(tituloId, modelo, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
 		}
 
 		#endregion

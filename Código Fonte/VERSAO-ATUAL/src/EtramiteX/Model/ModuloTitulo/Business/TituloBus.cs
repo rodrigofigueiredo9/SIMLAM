@@ -12,6 +12,8 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -28,6 +30,7 @@ using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
@@ -49,6 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		TituloDa _da = new TituloDa();
 		CondicionanteDa _daCond = new CondicionanteDa();
 		TituloModeloBus _busModelo = new TituloModeloBus(null);
+		ProjetoGeograficoBus _busProjetoGeografico = new ProjetoGeograficoBus();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 
 		ProtocoloBus _busProtocolo = new ProtocoloBus();
@@ -315,6 +319,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
                 return titulo.ArquivoPdf;
 			}
 
+			if ((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
+				titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) &&
+				!titulo.Anexos.Exists(x => x.Croqui == true))
+			{
+				this.AnexarCroqui(titulo);
+				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+				{
+					titulo.Anexos = _da.ObterAnexos(id);
+					if (!titulo.Anexos.Exists(x => x.Croqui == true))
+					{
+						Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+						return null;
+					}
+				}
+				else
+				{
+					Validacao.Add(Mensagem.Titulo.CroquiNaoGerado);
+					return null;
+				}
+			}
+
 			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
 			titulo.ArquivoPdf.Extensao = "";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
@@ -431,6 +456,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return msPdf;
 		}
 
+		public void AnexarCroqui(Titulo titulo, BancoDeDados banco = null)
+		{
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: true);
+				_busProjetoGeografico.GerarCroquiTitulo(projetoId, titulo.Id, banco);
+			}
+			else if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+			{
+				var projetoId = _busProjetoGeografico.ExisteProjetoGeografico(titulo.EmpreendimentoId.GetValueOrDefault(0), (int)eCaracterizacao.ExploracaoFlorestal, finalizado: false);
+				var projeto = _busProjetoGeografico.ObterProjeto(projetoId);
+				var croqui = projeto.Arquivos?.FirstOrDefault(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.Croqui);
+				if (croqui?.Id > 0)
+					_busProjetoGeografico.AnexarCroqui(titulo.Id, croqui.Id.GetValueOrDefault(0), banco);
+			}
+		}
 		#endregion
 
 		#region Obter / Filtrar
@@ -601,6 +642,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			return new List<TituloCondicionante>();
 		}
+
+		public List<TituloExploracaoFlorestal> ObterExploracoes(int id)
+		{
+			try
+			{
+				return _da.ObterExploracoes(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return new List<TituloExploracaoFlorestal>();
+		}
+
+		public List<TituloExploracaoFlorestal> ObterExploracoesTituloAssociado(int id)
+		{
+			try
+			{
+				return _da.ObterExploracoesTituloAssociado(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return new List<TituloExploracaoFlorestal>();
+		}
+
 
 		public List<Municipio> ObterLocais()
 		{

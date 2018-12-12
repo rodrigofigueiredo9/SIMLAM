@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <configuration>
-	<webserviceURL>http://WEBIDAFH/WEBSERVICES/DESENHADORWEBSERVICES</webserviceURL>
+	<webserviceURL>http://local.pentago.com.br:8090/WEBSERVICES/DESENHADORWEBSERVICES</webserviceURL>
 	<!-- <webserviceURL>http://devap6/projetos/es/IDAF/Desenvolvimento/DesenhadorWebServices</webserviceURL> -->
 </configuration>

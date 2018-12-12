@@ -371,6 +371,32 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 		}
 
+		public ActionResult GerarPdfDocComunicacaoInterna(int id)
+		{
+			try
+			{
+				return ViewModelHelper.GerarArquivoPdf(new PdfComunicacaoInterna().Gerar(id), "Comunicação Interna");
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+				return RedirectToAction("Index", Validacao.QueryParamSerializer());
+			}
+		}
+
+		public ActionResult GerarPdfDocOficioAdministrativo(int id)
+		{
+			try
+			{
+				return ViewModelHelper.GerarArquivoPdf(new PdfOficioAdministrativo().Gerar(id), "Ofício (Administrativo)");
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+				return RedirectToAction("Index", Validacao.QueryParamSerializer());
+			}
+		}
+
 		#endregion
 
 		#region Editar Apensados/Juntados (Requerimento Padrão)

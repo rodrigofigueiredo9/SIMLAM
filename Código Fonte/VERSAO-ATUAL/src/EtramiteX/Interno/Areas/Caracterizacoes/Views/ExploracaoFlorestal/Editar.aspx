@@ -1,36 +1,24 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ExploracaoFlorestalVM>" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExploracaoFlorestal" %>
+
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Editar Exploração Florestal</asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/exploracaoFlorestal.js") %>"></script>
-	<script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/exploracaoFlorestalExploracao.js") %>"></script>
-	
-	<script>
+    <script src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/exploracaoFlorestalListar.js") %>"></script>
+    <script>
 		$(function () {
-			ExploracaoFlorestal.load($('#central'), {
-				urls: {
-					salvar: '<%= Url.Action("Editar", "ExploracaoFlorestal") %>'
-				},
-				idsTela: <%= Model.IdsTela %>
-			});
+			ExploracaoFlorestalListar.load($('#central'));
 		});
-	</script>
+    </script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-	<div id="central">
-		<h1 class="titTela">Editar Exploração Florestal</h1>
-		<br />
-
-		<div class="divCaracterizacao">
-			<%Html.RenderPartial("ExploracaoFlorestal", Model);%>
-		</div>
+    <div id="central">
+        <% Html.RenderPartial("ListarFiltros"); %>
 
 		<div class="block box">
-			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
-			<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoId}) %>">Cancelar</a></span>
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Filtros.EmpreendimentoId }) %>">Cancelar</a></span>
 		</div>
-	</div>
+    </div>
 </asp:Content>
