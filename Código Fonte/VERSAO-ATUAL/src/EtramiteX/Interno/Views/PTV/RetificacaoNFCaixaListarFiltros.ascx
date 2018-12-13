@@ -32,7 +32,7 @@
             <div class="block hide">
                 <div class="coluna50">
                     <label for="Filtros_NumeroPTV">Número PTV</label>
-                    <%= Html.TextBox("Filtros.NumeroPTV", string.Empty, new { @class = "text", @maxlength="100" })%>
+                    <%= Html.TextBox("Filtros.NumeroPTV", string.Empty, new { @class = "text maskNum15", @maxlength="100" })%>
                 </div>
 				<div class="coluna40 isPossuiNFCaixa">
 					<label for="NotaFiscalApresentacao">Tipo da caixa</label><br />

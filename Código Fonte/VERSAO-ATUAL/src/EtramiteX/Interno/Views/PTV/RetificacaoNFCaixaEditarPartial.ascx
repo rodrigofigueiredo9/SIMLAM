@@ -53,7 +53,7 @@
             </div>
             <div class="coluna40">
                 <label for="Filtros_Nome">Valor a retificar (<i>para diminuir o saldo, use número negativos</i>)</label>
-				<%=Html.TextBox("SaldoRetificado", string.Empty , ViewModelHelper.SetaDisabled(false , new { @class="text novoSaldo setarFoco maskNumNegative8"}))%>
+				<%= Html.TextBox("SaldoRetificado", null, new { @class = "text novoSaldo setarFoco maskNumNegative" , @maxlength = "8" })%>
             </div>
 			
         </div>
