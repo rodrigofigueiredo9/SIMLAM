@@ -149,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			}
 		}
 
-		internal static void MarcarItemFilaTerminado(OracleConnection conn, int id, bool sucesso, string resultado)
+		internal static void MarcarItemFilaTerminado(OracleConnection conn, int id, bool sucesso, String resultado)
 		{
 			var schema = CarUtils.GetEsquemaInstitucional();
 
@@ -163,7 +163,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("sucesso", ((sucesso) ? "verdadeiro" : "falso")));
-					cmd.Parameters.Add(new OracleParameter("resultado", resultado.Substring(0, 4000)));
+					cmd.Parameters.Add(new OracleParameter("resultado", String.IsNullOrWhiteSpace(resultado) ? "" : resultado.Substring(0, 4000)));
 					cmd.Parameters.Add(new OracleParameter("id", id));
 
 
