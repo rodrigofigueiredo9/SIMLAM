@@ -81,11 +81,6 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			{
 				classificacoesVegetais = classificacoesVegetais.Where(x => x.Id != ((int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas).ToString()).ToList();
 			}
-			else
-			{
-				classificacoesVegetais = classificacoesVegetais.Where(x => x.Id == ((int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas).ToString()).ToList();
-				classifSelecionada = (int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas;
-			}
 
 			ClassificacoesVegetais = ViewModelHelper.CriarSelectList(classificacoesVegetais, true, true, classifSelecionada.ToString());
 			Produtos = ViewModelHelper.CriarSelectList(produtos, true, true);

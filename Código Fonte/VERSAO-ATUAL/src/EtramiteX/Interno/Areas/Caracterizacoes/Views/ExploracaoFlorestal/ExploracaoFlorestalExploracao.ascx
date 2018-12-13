@@ -66,7 +66,7 @@
 				</div>
 				<div class="coluna24 append2 divNumArvores">
 					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores">N° de árvores</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "6" }))%>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "8" }))%>
 				</div>
 		<%}%>
 
