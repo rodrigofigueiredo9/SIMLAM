@@ -840,7 +840,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								   a.codigo             identificacao,
 								   1 geometria_tipo,
 								   null                 area_croqui,
-								   '[x]' avn,
+								   a.avn,
 								   a.aa,
 								   lv.tipo_atividade tipo_exploracao,
 								   lv.chave tipo_exploracao_texto,

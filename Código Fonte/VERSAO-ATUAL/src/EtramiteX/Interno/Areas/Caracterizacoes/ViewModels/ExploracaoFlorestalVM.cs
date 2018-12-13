@@ -81,12 +81,15 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			}
 			CodigoExploracao = ViewModelHelper.CriarSelectList(codigoExploracao, selecionado: caracterizacao.CodigoExploracao.ToString());
 
-			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Codigo == (int)eExploracaoFlorestalFinalidade.AproveitamentoMadeira && caracterizacao.TipoExploracao == (int)eTipoExploracao.UAS);
-			if (finalidade != null) finalidades.Remove(finalidade);
+			var finalidadesFiltradas = new List<FinalidadeExploracao>();
+			if (caracterizacao.TipoExploracao == (int)eTipoExploracao.UAS)
+				finalidadesFiltradas = finalidades.Where(x => x.Codigo != (int)eExploracaoFlorestalFinalidade.AproveitamentoMadeira).ToList();
+			else
+				finalidadesFiltradas = finalidades;
 
 			foreach (ExploracaoFlorestalExploracao exploracao in caracterizacao.Exploracoes)
 			{
-				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(finalidades, exploracaoTipos, classificacoesVegetais, produtos, destinacao, exploracao, isVisualizar);
+				ExploracaoFlorestalExploracaoVM exploracaoVM = new ExploracaoFlorestalExploracaoVM(finalidadesFiltradas, exploracaoTipos, classificacoesVegetais, produtos, destinacao, exploracao, isVisualizar);
 				ExploracaoFlorestalExploracaoVM.Add(exploracaoVM);
 			}
 		}
