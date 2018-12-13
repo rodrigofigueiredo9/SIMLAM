@@ -628,13 +628,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						item.id = notaFiscal.id;
 					else
 					{
-						comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL)
-												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial) returning id into :id", EsquemaBanco);
+						comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL,
+													TIPO_PESSOA, CPF_CNPJ_ASSOCIADO)
+												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial,
+													:tipoPessoa, :cpfCnpj) returning id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
 						comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
 						comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+						comando.AdicionarParametroEntrada("tipoPessoa", (int)item.PessoaAssociadaTipo, DbType.Int32);
+						comando.AdicionarParametroEntrada("cpfCnpj", item.PessoaAssociadaCpfCnpj, DbType.String);
 
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -2633,9 +2637,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
 						NVL(NF.SALDO_RETIFICADO,0)
 					)SALDO_ATUAL
-					FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND ROWNUM <= 1 ORDER BY ID");
+					FROM TAB_NF_CAIXA NF
+						WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND NF.CPF_CNPJ_ASSOCIADO = :cpfCnpj AND
+						ROWNUM <= 1 ORDER BY ID");
 				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
 				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
+				comando.AdicionarParametroEntrada("cpfCnpj", notaFiscal.PessoaAssociadaCpfCnpj, DbType.String);
 				
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
