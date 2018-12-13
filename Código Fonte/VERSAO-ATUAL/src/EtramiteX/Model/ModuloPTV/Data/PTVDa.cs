@@ -3334,6 +3334,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						INNER JOIN TAB_PTV            PTV   ON PNF.PTV = PTV.ID
 						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
 						INNER JOIN LOV_PTV_SITUACAO   LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID
 					WHERE NF.ID = :id  
 					UNION
     
@@ -3343,6 +3344,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						INNER JOIN IDAFCREDENCIADO.TAB_PTV							PTV   ON PNF.PTV = PTV.ID
 						INNER JOIN TAB_EMPREENDIMENTO								E     ON PTV.EMPREENDIMENTO = E.ID
 						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO     LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN TAB_PESSOA										P     ON PTV.RESPONSAVEL_EMP = P.ID	
 					WHERE NF.ID = :id) a ", esquemaBanco);
 				comando.AdicionarParametroEntrada("id", filtro.Dados, DbType.Int32);
 
@@ -3366,12 +3368,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
     
 					SELECT PTV.NUMERO, E.DENOMINADOR, 'Credenciado' ORIGEM, LVP.TEXTO SITUACAO, P.NOME INTERESSADO,
 						PNF.NUMERO_CAIXAS, PTV.DATA_EMISSAO
-					FROM TAB_NF_CAIXA                               NF
-						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA   PNF   ON NF.ID = PNF.NF_CAIXA
-						INNER JOIN IDAFCREDENCIADO.TAB_PTV            PTV   ON PNF.PTV = PTV.ID
-						INNER JOIN TAB_EMPREENDIMENTO E     ON PTV.EMPREENDIMENTO = E.ID
-						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO       LVP   ON PTV.SITUACAO = LVP.ID
-						INNER JOIN IDAFCREDENCIADO.TAB_PESSOA         P     ON PTV.RESPONSAVEL_EMP = P.ID	
+					FROM TAB_NF_CAIXA												NF
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA					PNF   ON NF.ID = PNF.NF_CAIXA
+						INNER JOIN IDAFCREDENCIADO.TAB_PTV							PTV   ON PNF.PTV = PTV.ID
+						INNER JOIN TAB_EMPREENDIMENTO								E     ON PTV.EMPREENDIMENTO = E.ID
+						INNER JOIN IDAFCREDENCIADO.LOV_SOLICITACAO_PTV_SITUACAO     LVP   ON PTV.SITUACAO = LVP.ID
+						INNER JOIN TAB_PESSOA										P     ON PTV.RESPONSAVEL_EMP = P.ID	
 					WHERE NF.ID = :id)" + comandtxt, esquemaBanco);
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor";
 
