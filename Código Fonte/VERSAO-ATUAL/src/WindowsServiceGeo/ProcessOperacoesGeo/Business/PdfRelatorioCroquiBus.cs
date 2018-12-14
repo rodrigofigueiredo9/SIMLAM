@@ -1263,18 +1263,17 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 
 		private void GerarVersaoRegularizacao(Document doc, PdfWriter wrt, Hashtable hashData)
 		{
+
+			BaseColor corCinzaEscuro = new BaseColor(102, 102, 102);
 			BaseColor corCinzaClaro = new BaseColor(220, 220, 220);
+
+			Font arial8BoldBlue = PdfMetodosAuxiliares.GerarFonte(tipoFonte.Arial, 8, iTextSharp.text.Font.BOLD, BaseColor.BLUE);
+			Font arial8BoldRed = PdfMetodosAuxiliares.GerarFonte(tipoFonte.Arial, 8, iTextSharp.text.Font.BOLD, BaseColor.RED);
 
 			PdfPTable tabelaDocumento;
 			PdfPTable tabelaLinha;
+
 			List<Hashtable> hashList = null;
-
-			#region Quadros de Áreas
-
-			if ((hashData["QUADRO_TOTAL"] != null) && (hashData["QUADRO_TOTAL"] != DBNull.Value))
-				hashList = hashData["QUADRO_TOTAL"] as List<Hashtable>;
-			else
-				hashList = new List<Hashtable>();
 
 			tabelaDocumento = new PdfPTable(1);
 			tabelaDocumento.WidthPercentage = 100;
@@ -1288,656 +1287,191 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 			tabelaDocumento.DefaultCell.PaddingBottom = 2;
 			tabelaDocumento.DefaultCell.PaddingTop = 2;
 			tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-			tabelaDocumento.HeaderRows = 1;
+			//tabelaDocumento.HeaderRows = 0;
 
 			//Titulo
 			tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-			tabelaDocumento.AddCell(new Phrase(new Chunk("QUADROS DE ÁREAS", PdfMetodosAuxiliares.arial16Negrito)));
+			tabelaDocumento.AddCell(new Phrase(new Chunk("Quadros de medidas da atividade", PdfMetodosAuxiliares.arial16Negrito)));
 			tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
 
-			List<Hashtable> matriculas = null;
-			if ((hashData["QUADRO_DE_AREAS"] != null) && (hashData["QUADRO_DE_AREAS"] != DBNull.Value))
-				matriculas = hashData["QUADRO_DE_AREAS"] as List<Hashtable>;
+
+			if ((hashData["QUADRO_TOTAL"] != null) && (hashData["QUADRO_TOTAL"] != DBNull.Value))
+				hashList = hashData["QUADRO_TOTAL"] as List<Hashtable>;
 			else
-				matriculas = new List<Hashtable>();
+				hashList = new List<Hashtable>();
 
-			if (matriculas.Count == 1)
+			//Áreas e Perímetros de Matrícula/Posse
+			//tabelaDocumento.AddCell("\n");
+			//tabelaDocumento.DefaultCell.PaddingBottom = 10;
+			//tabelaDocumento.AddCell(new Phrase(new Chunk("Informações por Matrícula/Posse", PdfMetodosAuxiliares.arial10Negrito)));
+			//tabelaDocumento.DefaultCell.PaddingBottom = 2;
+
+			decimal totalAATIV = 0;
+
+			foreach (Hashtable ht in hashList)
 			{
-				//Quadro da Matricula
-				tabelaDocumento.AddCell("\n");
-				tabelaLinha = new PdfPTable(new float[] { 19, 52, 16, 13 });
-				tabelaLinha.DefaultCell.PaddingLeft = 3;
-				tabelaLinha.DefaultCell.PaddingRight = 3;
-				tabelaLinha.DefaultCell.PaddingBottom = 3;
-				tabelaLinha.DefaultCell.PaddingTop = 3;
+				totalAATIV += Convert.ToDecimal(ht["AATIV_AREA_M2"]);
+			}		
 
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(matriculas[0], "APMP_TIPO") + ':', PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(matriculas[0], "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Perímetro (m):", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(matriculas[0], "APMP_PERIMETER", 3), PdfMetodosAuxiliares.arial8)));
+			//------------------------------------------------------------------------------------
 
-				tabelaDocumento.AddCell(tabelaLinha);
-			}
+			bool showCoordinates = false;
+			string ativ = "QUADRO_AATIV";
+			string title = "AATIV - Áreas da Atividade e suas relações";
+			string header = "Sobreposição com coordenada interna da AATIV";
+			string header2 = "Sobreposição com AATIV";
+			int i = 0;
 
-			//Quadro Total
+			if ((hashData[ativ] != null) && (hashData[ativ] != DBNull.Value))
+				hashList = hashData[ativ] as List<Hashtable>;
+			else
+				hashList = new List<Hashtable>();
+
+
+			//Pontos da atividade - PATIV
 			tabelaDocumento.AddCell("\n");
 			tabelaDocumento.DefaultCell.PaddingBottom = 10;
-			tabelaDocumento.AddCell(new Phrase(new Chunk("Área Total", PdfMetodosAuxiliares.arial10Negrito)));
-			tabelaDocumento.DefaultCell.PaddingBottom = 2;
 
-			tabelaLinha = new PdfPTable(new float[] { 19, 55, 13, 13 });
-			tabelaLinha.DefaultCell.PaddingLeft = 3;
-			tabelaLinha.DefaultCell.PaddingRight = 3;
-			tabelaLinha.DefaultCell.PaddingBottom = 3;
-			tabelaLinha.DefaultCell.PaddingTop = 3;
-			tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-			tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
 
-			tabelaLinha.AddCell(new Phrase(new Chunk("Classe", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Descrição", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Área (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Área (ha)", PdfMetodosAuxiliares.arial8Negrito)));
+			//tabelaDocumento.AddCell(new Phrase(new Chunk(titleArray[i], PdfMetodosAuxiliares.arial10Negrito)));
+			tabelaDocumento.AddCell(new Phrase(new Chunk(title, PdfMetodosAuxiliares.arial10Negrito)));
 
-			tabelaLinha.DefaultCell.BackgroundColor = null;
-			tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-			tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-
-			decimal areaTotal = 0;
-			int count = hashList.Count;
-			for (int i = 0; i < count; i++)
+			if (hashList.Count == 0)
 			{
-				Hashtable ht = hashList[i];
-
-				string descricao = "";
-				int countClasse = 1;
-
-				int otherClasse = i + 1;
-				while ((otherClasse < count) && (hashList[otherClasse]["CLASSE"].ToString() == ht["CLASSE"].ToString()))
-				{
-					if (descricao != FormatStringField(hashList[otherClasse], "DESCRICAO"))
-					{
-						descricao = FormatStringField(hashList[otherClasse], "DESCRICAO");
-						countClasse++;
-					}
-
-					otherClasse++;
-				}
-
-				tabelaLinha.DefaultCell.Rowspan = countClasse;
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "CLASSE"), PdfMetodosAuxiliares.arial8)));
-				tabelaLinha.DefaultCell.Rowspan = 1;
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "DESCRICAO"), PdfMetodosAuxiliares.arial8)));
-
-				AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AREA_M2"));
-				AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["AREA_M2"]) / 10000, 4));
-
-				descricao = "";
-
-				List<Hashtable> subTipos = new List<Hashtable>();
-				while (++i <= otherClasse)
-				{
-					if (i == otherClasse || descricao != FormatStringField(hashList[i], "DESCRICAO"))
-					{
-						if (descricao != "")
-						{
-							if (subTipos.Count != 1 || subTipos[0]["SUBTIPO"].ToString() != "")
-							{
-								descricao += "\n[";
-								foreach (Hashtable hash in subTipos)
-								{
-									if (Convert.ToDecimal(hash["AREA_M2"]) > 0)
-										descricao += Math.Round(100 * Convert.ToDecimal(hash["AREA_M2"]) / areaTotal) + "% " + hash["SUBTIPO"] + ", ";
-								}
-								descricao += "]";
-								descricao = descricao.Replace(", ]", "]");
-							}
-
-							tabelaLinha.AddCell(new Phrase(new Chunk(descricao, PdfMetodosAuxiliares.arial8)));
-
-							AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(areaTotal));
-							AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(areaTotal / 10000, 4));
-						}
-
-						if (i == otherClasse)
-							break;
-
-						descricao = FormatStringField(hashList[i], "DESCRICAO");
-						subTipos = new List<Hashtable>();
-						areaTotal = 0;
-					}
-
-					areaTotal += Convert.ToDecimal(hashList[i]["AREA_M2"]);
-
-					subTipos.Add(hashList[i]);
-				}
-
-				i--;
+				tabelaDocumento.AddCell(new Phrase(new Chunk("- Nenhum registro encontrado.", PdfMetodosAuxiliares.arial8)));
 			}
-
-			tabelaDocumento.AddCell(tabelaLinha);
-
-			#endregion Quadros de Áreas
-
-			doc.NewPage();
-			doc.Add(tabelaDocumento);
-
-			if (matriculas.Count > 1)
+			else
 			{
-				doc.SetPageSize(doc.PageSize.Rotate());
-				doc.NewPage();
-				hashList = matriculas;
-
-				#region Áreas e Perímetros de Matrícula/Posse
-
-				tabelaDocumento = new PdfPTable(1);
-				tabelaDocumento.WidthPercentage = 100;
-				tabelaDocumento.SetWidths(new float[] { 100 });
-				tabelaDocumento.SplitLate = false;
-				tabelaDocumento.SplitRows = true;
-
-				tabelaDocumento.DefaultCell.Border = 0;
-				tabelaDocumento.DefaultCell.PaddingLeft = 0;
-				tabelaDocumento.DefaultCell.PaddingRight = 0;
-				tabelaDocumento.DefaultCell.PaddingBottom = 2;
-				tabelaDocumento.DefaultCell.PaddingTop = 2;
-				tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-				tabelaDocumento.HeaderRows = 1;
-
-				tabelaDocumento.DefaultCell.PaddingBottom = 10;
-				tabelaDocumento.AddCell(new Phrase(new Chunk("Áreas e Perímetros de Matrícula/Posse", PdfMetodosAuxiliares.arial10Negrito)));
+				showCoordinates = totalAATIV > 0;
 				tabelaDocumento.DefaultCell.PaddingBottom = 2;
 
-				tabelaLinha = new PdfPTable(new float[] { 20, 20, 20, 20, 20 });
+				if (i == 0)
+					tabelaLinha = new PdfPTable(new float[] { 8, 15, 10, 10, 6F, 12F, 18.5F, 18.5F, 6F, 6F, 6F, 6F, 10 });
+				else
+					tabelaLinha = new PdfPTable(new float[] { 8, 15, 8, 6, 7, 13, 18.5F, 18.5F, 7, 7, 7, 7, 10 });
+
 				tabelaLinha.DefaultCell.PaddingLeft = 3;
 				tabelaLinha.DefaultCell.PaddingRight = 3;
 				tabelaLinha.DefaultCell.PaddingBottom = 3;
 				tabelaLinha.DefaultCell.PaddingTop = 3;
 				tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
 				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
+				tabelaDocumento.HeaderRows = 2;
 
-				tabelaLinha.AddCell(new Phrase(new Chunk("Nome", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Tipo", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Área (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Área (ha)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Perímetro (m)", PdfMetodosAuxiliares.arial8Negrito)));
-
-				tabelaLinha.DefaultCell.BackgroundColor = null;
-				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-
-				foreach (Hashtable ht in hashList)
-				{
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_TIPO"), PdfMetodosAuxiliares.arial8)));
-
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APMP_AREA"));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["APMP_AREA"]) / 10000, 4));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APMP_PERIMETER", 3));
-				}
-
-				tabelaDocumento.AddCell(tabelaLinha);
-				tabelaDocumento.AddCell("\n");
-				doc.Add(tabelaDocumento);
-
-				#endregion Áreas e Perímetros de Matrícula/Posse
-
-				#region Áreas de Uso do Solo por Matrícula/Posse
-
-				tabelaDocumento = new PdfPTable(1);
-				tabelaDocumento.WidthPercentage = 100;
-				tabelaDocumento.SetWidths(new float[] { 100 });
-				tabelaDocumento.SplitLate = false;
-				tabelaDocumento.SplitRows = true;
-
-				tabelaDocumento.DefaultCell.Border = 0;
-				tabelaDocumento.DefaultCell.PaddingLeft = 0;
-				tabelaDocumento.DefaultCell.PaddingRight = 0;
-				tabelaDocumento.DefaultCell.PaddingBottom = 2;
-				tabelaDocumento.DefaultCell.PaddingTop = 2;
-				tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-				tabelaDocumento.HeaderRows = 1;
-
-				tabelaDocumento.DefaultCell.PaddingBottom = 10;
-				tabelaDocumento.AddCell(new Phrase(new Chunk("Áreas de Uso do Solo por Matrícula/Posse", PdfMetodosAuxiliares.arial10Negrito)));
-				tabelaDocumento.DefaultCell.PaddingBottom = 2;
-
-				tabelaLinha = new PdfPTable(new float[] { 1, 1, 1, 1.2f, 1, 1, 1, 1, 1 });
-				tabelaLinha.DefaultCell.PaddingLeft = 3;
-				tabelaLinha.DefaultCell.PaddingRight = 3;
-				tabelaLinha.DefaultCell.PaddingBottom = 3;
-				tabelaLinha.DefaultCell.PaddingTop = 3;
-				tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-
+				tabelaLinha.DefaultCell.Rowspan = 2;
+				tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+				tabelaLinha.AddCell(new Phrase(new Chunk("Código", PdfMetodosAuxiliares.arial8Negrito)));
 				tabelaLinha.AddCell(new Phrase(new Chunk("Matrícula/Posse", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("AFS (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Rocha (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Massa d'água (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("AVN (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("AA (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("RPPN (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("ARL (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("APP (m²)", PdfMetodosAuxiliares.arial8Negrito)));
+				//coluna opcional
+
+				tabelaLinha.DefaultCell.Colspan = 2;
+				tabelaLinha.DefaultCell.Rowspan = 1;
+				tabelaLinha.AddCell(new Phrase(new Chunk("Coordenada", PdfMetodosAuxiliares.arial8Negrito)));
+							
+				tabelaLinha.DefaultCell.Colspan = 9;
+				tabelaLinha.AddCell(new Phrase(new Chunk(header, PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.DefaultCell.Colspan = 1;
+				
+				tabelaLinha.AddCell(new Phrase(new Chunk("Norte", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("Este", PdfMetodosAuxiliares.arial8Negrito)));				
+
+				tabelaLinha.AddCell(new Phrase(new Chunk("Rocha", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("Massa d'água", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("AVN", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("AA", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("AFS", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("RPPN", PdfMetodosAuxiliares.arial8Negrito)));
+
+				tabelaLinha.AddCell(new Phrase(new Chunk("ARL", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("APP", PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.AddCell(new Phrase(new Chunk("Declividade", PdfMetodosAuxiliares.arial8Negrito)));
 
 				tabelaLinha.DefaultCell.BackgroundColor = null;
 				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-
+							   				 
 				foreach (Hashtable ht in hashList)
 				{
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "CODIGO"), PdfMetodosAuxiliares.arial8)));
+
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
 
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AFS_AREA"));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "ROCHA_AREA"));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "MASSA_DAGUA_AREA"));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["AVN_I_AREA"]) + Convert.ToDecimal(ht["AVN_M_AREA"]) + Convert.ToDecimal(ht["AVN_A_AREA"]) + Convert.ToDecimal(ht["AVN_D_AREA"])));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["AA_REC_AREA"]) + Convert.ToDecimal(ht["AA_USO_AREA"]) + Convert.ToDecimal(ht["AA_D_AREA"])));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "RPPN_AREA"));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["ARL_PRESERV_AREA"]) + Convert.ToDecimal(ht["ARL_REC_AREA"]) + Convert.ToDecimal(ht["ARL_USO_AREA"]) + Convert.ToDecimal(ht["ARL_D_AREA"])));
-					AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APP_APMP_AREA"));
-				}
-
-				tabelaDocumento.AddCell(tabelaLinha);
-				tabelaDocumento.AddCell("\n");
-				doc.Add(tabelaDocumento);
-
-				#endregion Áreas de Uso do Solo por Matrícula/Posse
-
-				//#region Detalhamento da cobertura vegetal em AVN e em AA por Matrícula/Posse
-
-				//tabelaDocumento = new PdfPTable(1);
-				//tabelaDocumento.WidthPercentage = 100;
-				//tabelaDocumento.SetWidths(new float[] { 100 });
-				//tabelaDocumento.SplitLate = false;
-				//tabelaDocumento.SplitRows = true;
-
-				//tabelaDocumento.DefaultCell.Border = 0;
-				//tabelaDocumento.DefaultCell.PaddingLeft = 0;
-				//tabelaDocumento.DefaultCell.PaddingRight = 0;
-				//tabelaDocumento.DefaultCell.PaddingBottom = 2;
-				//tabelaDocumento.DefaultCell.PaddingTop = 2;
-				//tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-				//tabelaDocumento.HeaderRows = 1;
-
-				//tabelaDocumento.DefaultCell.PaddingBottom = 10;
-				//tabelaDocumento.AddCell(new Phrase(new Chunk("Detalhamento da cobertura vegetal em AVN e em AA por Matrícula/Posse", PdfMetodosAuxiliares.arial10Negrito)));
-				//tabelaDocumento.DefaultCell.PaddingBottom = 2;
-
-				//tabelaLinha = new PdfPTable(new float[] { 1, 1, 1, 1, 1, 1, 1, 1 });
-				//tabelaLinha.DefaultCell.PaddingLeft = 3;
-				//tabelaLinha.DefaultCell.PaddingRight = 3;
-				//tabelaLinha.DefaultCell.PaddingBottom = 3;
-				//tabelaLinha.DefaultCell.PaddingTop = 3;
-				//tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-				//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-				//tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-
-				//tabelaLinha.DefaultCell.Rowspan = 2;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Matrícula/Posse", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.DefaultCell.Rowspan = 1;
-
-				//tabelaLinha.DefaultCell.Colspan = 4;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Estágio da AVN (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-
-				//tabelaLinha.DefaultCell.Colspan = 3;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Uso da AA (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.DefaultCell.Colspan = 1;
-
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Inicial", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Médio", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Avançado", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Não caracterizado", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Recuperação", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Uso", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Não caracterizada", PdfMetodosAuxiliares.arial8Negrito)));
-
-				//tabelaLinha.DefaultCell.BackgroundColor = null;
-				//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-
-				//foreach (Hashtable ht in hashList)
-				//{
-				//	tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
-
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AVN_I_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AVN_M_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AVN_A_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AVN_D_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AA_REC_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AA_USO_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "AA_D_AREA"));
-				//}
-
-				//tabelaDocumento.AddCell(tabelaLinha);
-				//tabelaDocumento.AddCell("\n");
-				//try
-				//{
-				//	doc.Add(tabelaDocumento);
-				//}
-				//catch
-				//{
-				//	doc.NewPage();
-				//	doc.Add(tabelaDocumento);
-				//}
-
-				//#endregion Detalhamento da cobertura vegetal em AVN e em AA por Matrícula/Posse
-
-				//#region Situação Ambiental por Matrícula/Posse
-
-				//tabelaDocumento = new PdfPTable(1);
-				//tabelaDocumento.WidthPercentage = 100;
-				//tabelaDocumento.SetWidths(new float[] { 100 });
-				//tabelaDocumento.SplitLate = false;
-				//tabelaDocumento.SplitRows = true;
-
-				//tabelaDocumento.DefaultCell.Border = 0;
-				//tabelaDocumento.DefaultCell.PaddingLeft = 0;
-				//tabelaDocumento.DefaultCell.PaddingRight = 0;
-				//tabelaDocumento.DefaultCell.PaddingBottom = 2;
-				//tabelaDocumento.DefaultCell.PaddingTop = 2;
-				//tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-				//tabelaDocumento.HeaderRows = 1;
-
-				//tabelaDocumento.DefaultCell.PaddingBottom = 10;
-				//tabelaDocumento.AddCell(new Phrase(new Chunk("Situação Ambiental por Matrícula/Posse", PdfMetodosAuxiliares.arial10Negrito)));
-				//tabelaDocumento.DefaultCell.PaddingBottom = 2;
-
-				//tabelaLinha = new PdfPTable(new float[] { 1, 0.8F, 1, 0.8F, 1.2F, 0.8F, 1, 0.8F, 1.25F, 1.25F });
-				//tabelaLinha.DefaultCell.PaddingLeft = 3;
-				//tabelaLinha.DefaultCell.PaddingRight = 3;
-				//tabelaLinha.DefaultCell.PaddingBottom = 3;
-				//tabelaLinha.DefaultCell.PaddingTop = 3;
-				//tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-				//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-				//tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-
-				//tabelaLinha.DefaultCell.Rowspan = 2;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Matrícula/Posse", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.DefaultCell.Rowspan = 1;
-
-				//tabelaLinha.DefaultCell.Colspan = 5;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("ARL (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-
-				//tabelaLinha.DefaultCell.Colspan = 4;
-				//tabelaLinha.AddCell(new Phrase(new Chunk("APP (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.DefaultCell.Colspan = 1;
-
-				////APMP ARL
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Preservada", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Recuperação", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Uso", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Preservação Permanente", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Não caracterizada", PdfMetodosAuxiliares.arial8Negrito)));
-
-				////APMP APP
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Preservada", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Recuperação", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Em Uso", PdfMetodosAuxiliares.arial8Negrito)));
-				//tabelaLinha.AddCell(new Phrase(new Chunk("Não caracterizada", PdfMetodosAuxiliares.arial8Negrito)));
-
-				//tabelaLinha.DefaultCell.BackgroundColor = null;
-				//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-
-				//foreach (Hashtable ht in hashList)
-				//{
-				//	tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
-
-				//	//APMP ARL
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "ARL_PRESERV_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "ARL_REC_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "ARL_USO_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APP_ARL_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "ARL_D_AREA"));
-
-				//	//APMP APP
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APP_AVN_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APP_AA_REC_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumberField(ht, "APP_AA_USO_AREA"));
-				//	AdicionarNumeroNaTabela(tabelaLinha, PdfMetodosAuxiliares.arial8, FormatNumber(Convert.ToDecimal(ht["APP_APMP_AREA"]) - Convert.ToDecimal(ht["APP_AVN_AREA"]) - Convert.ToDecimal(ht["APP_AA_REC_AREA"]) - Convert.ToDecimal(ht["APP_AA_USO_AREA"])));
-				//}
-
-				//tabelaDocumento.AddCell(tabelaLinha);
-				//try
-				//{
-				//	doc.Add(tabelaDocumento);
-				//}
-				//catch
-				//{
-				//	doc.NewPage();
-				//	doc.Add(tabelaDocumento);
-				//}
-
-				//#endregion Situação Ambiental por Matrícula/Posse
-			}
-
-			PdfPCell vazia = new PdfPCell();
-			vazia.Border = 0;
-			vazia.BorderWidth = 0;
-
-			if (matriculas.Count > 1)
-			{
-				doc.SetPageSize(doc.PageSize.Rotate());
-			}
-			doc.NewPage();
-
-			#region Lista de Coordenadas
-
-			tabelaDocumento = new PdfPTable(1);
-			tabelaDocumento.WidthPercentage = 100;
-			tabelaDocumento.SetWidths(new float[] { 100 });
-			tabelaDocumento.SplitLate = false;
-			tabelaDocumento.SplitRows = true;
-
-			tabelaDocumento.DefaultCell.Border = 0;
-			tabelaDocumento.DefaultCell.PaddingLeft = 0;
-			tabelaDocumento.DefaultCell.PaddingRight = 0;
-			tabelaDocumento.DefaultCell.PaddingBottom = 2;
-			tabelaDocumento.DefaultCell.PaddingTop = 2;
-			tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
-			//tabelaDocumento.HeaderRows = 1;
-
-			//Coordenadas da ATP
-			tabelaDocumento.AddCell("\n");
-			tabelaDocumento.DefaultCell.PaddingBottom = 10;
-			tabelaDocumento.AddCell(new Phrase(new Chunk("Lista de Coordenadas da ATP (SIRGAS 2000 / UTM zone 24S)", PdfMetodosAuxiliares.arial10Negrito)));
-			tabelaDocumento.DefaultCell.PaddingBottom = 2;
-
-			doc.Add(tabelaDocumento);
-
-			tabelaLinha = new PdfPTable(new float[] { 1, 1, 1, 1, 1, 1 });
-			tabelaLinha.HeaderRows = 1;
-			tabelaLinha.DefaultCell.PaddingLeft = 3;
-			tabelaLinha.DefaultCell.PaddingRight = 3;
-			tabelaLinha.DefaultCell.PaddingBottom = 3;
-			tabelaLinha.DefaultCell.PaddingTop = 3;
-			tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-			tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-			tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-			tabelaLinha.SpacingBefore = 15f;
-
-			tabelaLinha.AddCell(new Phrase(new Chunk("Coordenada Nº", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Norte", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Este", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Azimute", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(new Phrase(new Chunk("Distância (m)", PdfMetodosAuxiliares.arial8Negrito)));
-			tabelaLinha.AddCell(vazia);
-
-			tabelaLinha.DefaultCell.BackgroundColor = null;
-			tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-
-			List<Decimal> ordenadas = hashData["ORDENADAS_ATP"] as List<Decimal>;
-
-			if (ordenadas.Count > 1)
-			{
-				Decimal lastX = Convert.ToDecimal(ordenadas[0]);
-				Decimal lastY = Convert.ToDecimal(ordenadas[1]);
-
-				tabelaLinha.AddCell(new Phrase(new Chunk('1', PdfMetodosAuxiliares.arial8)));
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lastY), PdfMetodosAuxiliares.arial8)));
-				tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lastX), PdfMetodosAuxiliares.arial8)));
-
-				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-				tabelaLinha.AddCell("-");
-				tabelaLinha.AddCell("-");
-				tabelaLinha.AddCell(vazia);
-				tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-
-				Double azimute;
-				Double grau;
-				Double minuto;
-				Double segundo;
-
-				string gms;
-
-				for (int k = 3; k <= ordenadas.Count; k += 2)
-				{
-					tabelaLinha.AddCell(new Phrase(new Chunk(((k + 1) / 2).ToString(), PdfMetodosAuxiliares.arial8)));
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(ordenadas[k]), PdfMetodosAuxiliares.arial8)));
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(ordenadas[k - 1]), PdfMetodosAuxiliares.arial8)));
-
-					azimute = Decimal.ToDouble(CoordenadaBus.CalcularAzimute(lastX, lastY, ordenadas[k - 1], ordenadas[k]));
-					if (azimute < 0)
+					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+					if (i > 0)
 					{
-						gms = "-";
-						azimute = -azimute;
+						tabelaLinha.DefaultCell.Colspan = 2;
+						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(ht, (i > 1) ? "AREA_M2" : "COMPRIMENTO"), PdfMetodosAuxiliares.arial8)));
+						tabelaLinha.DefaultCell.Colspan = 1;
 					}
 					else
 					{
-						gms = "";
+
+						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(((List<Decimal>)ht["ORDENADAS"])[1]), PdfMetodosAuxiliares.arial8)));
+						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(((List<Decimal>)ht["ORDENADAS"])[0]), PdfMetodosAuxiliares.arial8)));
 					}
 
-					grau = Math.Floor(azimute);
-					azimute = (azimute - grau) * 60;
-					minuto = Math.Floor(azimute);
-					azimute = (azimute - minuto) * 60;
-					segundo = azimute;
+					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "ROCHA"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "MASSA_DAGUA"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "AVN"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "AA"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "AFS"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "RPPN"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "ARL"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "APP"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "REST_DECLIVIDADE"), PdfMetodosAuxiliares.arial8)));
 
-					gms += ((grau < 10) ? "0" : "") + grau.ToString() + "°";
-					gms += ((minuto < 10) ? "0" : "") + minuto.ToString() + "'";
-					gms += ((segundo < 10) ? "0" : "") + FormatNumber(segundo, 0) + "\"";
 
-					tabelaLinha.AddCell(new Phrase(new Chunk(gms, PdfMetodosAuxiliares.arial8)));
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(CoordenadaBus.CalcularDistancia(lastX, lastY, ordenadas[k - 1], ordenadas[k]), 3), PdfMetodosAuxiliares.arial8)));
-					tabelaLinha.AddCell(vazia);
-
-					lastX = Convert.ToDecimal(ordenadas[k - 1]);
-					lastY = Convert.ToDecimal(ordenadas[k]);
+					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
 				}
+
+				tabelaDocumento.AddCell(tabelaLinha);
 			}
+			doc.SetPageSize(doc.PageSize.Rotate());
+			doc.NewPage();
+			doc.Add(tabelaDocumento);
 
-			doc.Add(tabelaLinha);
+			//------------------------------------------------------------------------------------
 
-			//tabelaDocumento = new PdfPTable(1);
-			//tabelaDocumento.WidthPercentage = 100;
-			//tabelaDocumento.SetWidths(new float[] { 100 });
-			//tabelaDocumento.SplitLate = false;
-			//tabelaDocumento.SplitRows = true;
 
-			//tabelaDocumento.DefaultCell.Border = 0;
-			//tabelaDocumento.DefaultCell.PaddingLeft = 0;
-			//tabelaDocumento.DefaultCell.PaddingRight = 0;
-			//tabelaDocumento.DefaultCell.PaddingBottom = 2;
-			//tabelaDocumento.DefaultCell.PaddingTop = 2;
-			//tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
+			if (showCoordinates)
+			{
+				//------------------------------------------------------------------------------------
+				doc.SetPageSize(doc.PageSize.Rotate());
+				doc.NewPage();
 
-			//Coordenadas da ARL
-			//tabelaDocumento.AddCell("\n");
-			//tabelaDocumento.DefaultCell.PaddingBottom = 10;
-			//tabelaDocumento.AddCell(new Phrase(new Chunk("Lista de Coordenadas da ARL (SIRGAS 2000 / UTM zone 24S)", PdfMetodosAuxiliares.arial10Negrito)));
-			//tabelaDocumento.DefaultCell.PaddingBottom = 2;
+				tabelaDocumento = new PdfPTable(1);
+				tabelaDocumento.WidthPercentage = 100;
+				tabelaDocumento.SetWidths(new float[] { 100 });
+				tabelaDocumento.SplitLate = false;
+				tabelaDocumento.SplitRows = true;
 
-			//doc.Add(tabelaDocumento);
+				tabelaDocumento.DefaultCell.Border = 0;
+				tabelaDocumento.DefaultCell.PaddingLeft = 0;
+				tabelaDocumento.DefaultCell.PaddingRight = 0;
+				tabelaDocumento.DefaultCell.PaddingBottom = 2;
+				tabelaDocumento.DefaultCell.PaddingTop = 2;
+				tabelaDocumento.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
 
-			//tabelaLinha = new PdfPTable(new float[] { 0.9F, 0.9F, 1.2F, 1, 1, 1, 1 });
-			//tabelaLinha.HeaderRows = 1;
-			//tabelaLinha.DefaultCell.PaddingLeft = 3;
-			//tabelaLinha.DefaultCell.PaddingRight = 3;
-			//tabelaLinha.DefaultCell.PaddingBottom = 3;
-			//tabelaLinha.DefaultCell.PaddingTop = 3;
-			//tabelaLinha.DefaultCell.BackgroundColor = corCinzaClaro;
-			//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-			//tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-			//tabelaLinha.SpacingBefore = 15f;
 
-			//tabelaLinha.AddCell(new Phrase(new Chunk("ARL", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(new Phrase(new Chunk("Coordenada Nº", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(new Phrase(new Chunk("Norte", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(new Phrase(new Chunk("Este", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(new Phrase(new Chunk("Azimute", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(new Phrase(new Chunk("Distância (m)", PdfMetodosAuxiliares.arial8Negrito)));
-			//tabelaLinha.AddCell(vazia);
+				//Coordenadas da ATP
+				tabelaDocumento.AddCell("\n");
+				tabelaDocumento.DefaultCell.PaddingBottom = 0;
+				tabelaDocumento.AddCell(new Phrase(new Chunk("Lista de Coordenadas das Atividades (SIRGAS 2000 / UTM zone 24S)", PdfMetodosAuxiliares.arial10Negrito)));
+				tabelaDocumento.AddCell("\n");
 
-			//tabelaLinha.DefaultCell.BackgroundColor = null;
-			//tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+				doc.Add(tabelaDocumento);
 
-			//Dictionary<String, List<Decimal>> dicOrdArls = hashData["ORDENADAS_ARL"] as Dictionary<String, List<Decimal>>;
+				if ((hashData[ativ[i]] != null) && (hashData[ativ] != DBNull.Value))
+					hashList = hashData[ativ] as List<Hashtable>;
+				else
+					hashList = new List<Hashtable>();
 
-			//foreach (var arlkey in dicOrdArls.Keys)
-			//{
-			//	List<Decimal> lstOrdenadasArls = dicOrdArls[arlkey];
-
-			//	if (lstOrdenadasArls != null && lstOrdenadasArls.Count > 1)
-			//	{
-			//		Decimal lastX = Convert.ToDecimal(lstOrdenadasArls[0]);
-			//		Decimal lastY = Convert.ToDecimal(lstOrdenadasArls[1]);
-
-			//		tabelaLinha.AddCell(new Phrase(new Chunk(arlkey, PdfMetodosAuxiliares.arial8)));
-			//		tabelaLinha.AddCell(new Phrase(new Chunk('1', PdfMetodosAuxiliares.arial8)));
-			//		tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lastY), PdfMetodosAuxiliares.arial8)));
-			//		tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lastX), PdfMetodosAuxiliares.arial8)));
-
-			//		tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-			//		tabelaLinha.AddCell("-");
-			//		tabelaLinha.AddCell("-");
-			//		tabelaLinha.AddCell(vazia);
-			//		tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-
-			//		Double azimute;
-			//		Double grau;
-			//		Double minuto;
-			//		Double segundo;
-
-			//		string gms;
-
-			//		for (int k = 3; k <= lstOrdenadasArls.Count; k += 2)
-			//		{
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(arlkey, PdfMetodosAuxiliares.arial8)));
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(((k + 1) / 2).ToString(), PdfMetodosAuxiliares.arial8)));
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lstOrdenadasArls[k]), PdfMetodosAuxiliares.arial8)));
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(lstOrdenadasArls[k - 1]), PdfMetodosAuxiliares.arial8)));
-
-			//			azimute = Decimal.ToDouble(CoordenadaBus.CalcularAzimute(lastX, lastY, lstOrdenadasArls[k - 1], lstOrdenadasArls[k]));
-			//			if (azimute < 0)
-			//			{
-			//				gms = "-";
-			//				azimute = -azimute;
-			//			}
-			//			else
-			//			{
-			//				gms = "";
-			//			}
-
-			//			grau = Math.Floor(azimute);
-			//			azimute = (azimute - grau) * 60;
-			//			minuto = Math.Floor(azimute);
-			//			azimute = (azimute - minuto) * 60;
-			//			segundo = azimute;
-
-			//			gms += ((grau < 10) ? "0" : "") + grau.ToString() + "°";
-			//			gms += ((minuto < 10) ? "0" : "") + minuto.ToString() + "'";
-			//			gms += ((segundo < 10) ? "0" : "") + FormatNumber(segundo, 0) + "\"";
-
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(gms, PdfMetodosAuxiliares.arial8)));
-			//			tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(CoordenadaBus.CalcularDistancia(lastX, lastY, lstOrdenadasArls[k - 1], lstOrdenadasArls[k]), 3), PdfMetodosAuxiliares.arial8)));
-			//			tabelaLinha.AddCell(vazia);
-
-			//			lastX = Convert.ToDecimal(lstOrdenadasArls[k - 1]);
-			//			lastY = Convert.ToDecimal(lstOrdenadasArls[k]);
-			//		}
-			//	}
-			//}
-
-			//doc.Add(tabelaLinha);
-
-			#endregion Lista de Coordenadas
+				foreach (Hashtable ht in hashList)
+				{
+					doc.Add(new Chunk("\n"));
+					doc.Add(GerarListaDeCoordenadasDaAtividade(ht, ativ.Replace("QUADRO_", ""), corCinzaClaro));
+				}				
+			}
 		}
 
 		#endregion

@@ -296,7 +296,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 
 			log.IniciarTime("Importar zip dos Shapes do Trackmaker");
 
-			string fileURL = @"C:\Users\joao.victor\Desktop\dominalidade.zip";//_bus.ObterCaminhoDoArquivoEnviado(Project.Id);
+			string fileURL = _bus.ObterCaminhoDoArquivoEnviado(Project.Id);
 
 			_bus.ApagarGeometriasTemporariasTrackmaker(Project.Id, Project.Type);
 
@@ -1169,8 +1169,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 					aliasList = "ATP,APMP,AFD,ROCHA,VERTICE,ARL,RPPN,AFS,AVN,AA,ACONSTRUIDA,DUTO,LTRANSMISSAO,ESTRADA,FERROVIA,NASCENTE,RIO_LINHA,RIO_AREA,LAGOA,REPRESA,DUNA,REST_DECLIVIDADE,ESCARPA,AREAS_CALCULADAS,CAR_AREAS_CALCULADAS".Split(',');
 					break;
 				case OPERACAO_REGULARIZACAO:
-					featureList = "TMP_RF_ATP_1,TMP_RF_APMP,TMP_RF_AFD,TMP_RF_AFS,TMP_RF_RIO_AREA".Split(',');
-					aliasList = "ATP,APMP,AFD,AFS,RIO_AREA".Split(',');
+					featureList = "TMP_AATIV".Split(',');
+					aliasList = "AATIV".Split(',');
 					break;
 			}
 

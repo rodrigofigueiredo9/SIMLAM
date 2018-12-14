@@ -239,11 +239,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 			{
 				return new List<LayerItem>()
 				{
-					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de servidão", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Área de matrícula/posse", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Área total da propriedade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de domínio", Query="PROJETO={0}"}
+					new LayerItem(){ Grupo=1, Name="Área da atividade", Query="PROJETO={0}"}
 				};
 			}
 			return null;
@@ -739,17 +735,17 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 
 				_mxd.ActivateMap("MINI_MAPA");
 				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
-				_mxd.ActivateMap("MAPA_PRINCIPAL");
 
 				//Setar as informações no mxd
+				_mxd.SetElementText("atividade", hashData["ATIVIDADE"].ToString());
 				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
 				_mxd.SetElementText("uf", hashData["UF"].ToString());
 				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 
 				//Definir Zoom
-				_mxd.ZoomToFeature("Área total da propriedade", "PROJETO", projetoId.ToString());
-				_mxd.ZoomPercentage(1.1);
+				_mxd.ZoomToFeature("Área da atividade", "PROJETO", projetoId.ToString());
+				_mxd.ZoomPercentage(1.5);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
 
@@ -761,13 +757,12 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.ZoomToBestScale("MINI_MAPA", 800000D);
 
 				_mxd.ActivateMap("MAPA_PRINCIPAL");
-
 				//----------------------------------------
 				//Mapa Tematico
 				_mxd.SetLayerVisibility("IMAGEM", false);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
-				_mxd.SetElementText("nome_croqui", "Croqui da Regularização Fundiária");
+				_mxd.SetElementText("nome_croqui", "Croqui da Atividade");
 				_mxd.SetElementText("imagem", String.Empty);
 				_mxd.ExportToPDF(tempFile1, 300);
 
