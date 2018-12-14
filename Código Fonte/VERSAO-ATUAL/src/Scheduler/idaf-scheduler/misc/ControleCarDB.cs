@@ -660,6 +660,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			catch (Exception exception)
 			{
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 			}
 		}
 
@@ -849,6 +850,23 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 			return mensagens;
 			//Ocorreu um erro ao processar 
+		}
+
+		public static bool VerificarCarValido(OracleConnection conn, int id)
+		{
+			try
+			{
+				using (var cmd = new OracleCommand(@"SELECT count(1) FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :id AND SITUACAO_ENVIO = 6", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", id));
+					return Convert.ToBoolean(cmd.ExecuteScalar());
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro VerificarCarValido:  - " + id + " ID -- " + exception + " + exception.Message, exception");
+			}
+			return false;
 		}
 	}
 }

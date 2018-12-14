@@ -146,14 +146,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				select.Selected = true;
 
 				var exploracoes = _busTitulo.ObterExploracoes(titulo.Id);
-				var exploracao = exploracoes.FirstOrDefault();
-				vm.TituloExploracaoDetalhes = exploracao.TituloExploracaoFlorestalExploracaoList;
-				vm.Exploracoes = ViewModelHelper.CriarSelectList(exploracoes.Select(x => new Lista()
+				var exploracao = exploracoes?.FirstOrDefault();
+				if(exploracao != null)
+					vm.TituloExploracaoDetalhes = exploracao.TituloExploracaoFlorestalExploracaoList;
+				vm.Exploracoes = ViewModelHelper.CriarSelectList(exploracoes?.Select(x => new Lista()
 				{
 					Id = x.ExploracaoFlorestalId.ToString(),
 					Codigo = x.Id.ToString(),
 					Texto = x.ExploracaoFlorestalTexto
-				}).ToList(), selecionado: exploracao.ExploracaoFlorestalId.ToString());
+				}).ToList(), selecionado: exploracao?.ExploracaoFlorestalId.ToString());
 			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
