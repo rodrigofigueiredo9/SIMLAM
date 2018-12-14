@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPessoa;
@@ -82,6 +83,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
 		public ActionResult CriarVerificarCpfCnpj(PessoaVM vmVerificar)
 		{
+			var requerimentoId = Request.UrlReferrer.AbsolutePath.Substring(Request.UrlReferrer.AbsolutePath.LastIndexOf(Convert.ToChar("/")) + 1);
+
+			var _busRequerimento = new RequerimentoCredenciadoBus(new RequerimentoCredenciadoValidar());
+			var  isAtividadeCorteAssociada = _busRequerimento.IsRequerimentoAtividadeCorte(Convert.ToInt32(requerimentoId));
+
 			PessoaVM vm = null;
 			Pessoa pessoa = new Pessoa();
 			bool isCpfCnpjValido = false;
@@ -90,16 +96,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			try
 			{
 				vm = new PessoaVM(ListaCredenciadoBus.EstadosCivil, ListaCredenciadoBus.Sexos, ListaCredenciadoBus.Profissoes, ListaCredenciadoBus.OrgaosClasse, ListaCredenciadoBus.Estados);
+				vm.IsAtividadeCorteAssociada = isAtividadeCorteAssociada;
 				isCpfCnpjValido = _bus.VerificarCriarCpfCnpj(vmVerificar.Pessoa);
 				if (isCpfCnpjValido)
 				{
 					pessoa = _bus.Obter(vmVerificar.Pessoa.CPFCNPJ, simplificado: true, credenciadoId: _bus.User.FuncionarioId);
 					pessoa.InternoId = _busInterno.ObterId(vmVerificar.Pessoa.CPFCNPJ);
-					
+
 					if (pessoa.InternoId > 0 && pessoa.Id <= 0)
 					{
 						urlAcao = Url.Action("Visualizar", "Pessoa");
-						Validacao.Add(Mensagem.Credenciado.PessoaExistenteInterno(pessoa.IsFisica ? "CPF": "CNPJ"));
+						Validacao.Add(Mensagem.Credenciado.PessoaExistenteInterno(pessoa.IsFisica ? "CPF" : "CNPJ"));
 						vm.Pessoa.IsCopiado = true;
 					}
 					else
@@ -136,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				Validacao.AddErro(exc);
 			}
 
-			return Json(new { IsCpfCnpjValido = isCpfCnpjValido, PessoaId = pessoa.Id, InternoId = pessoa.InternoId, isCopiado = vm.Pessoa.IsCopiado, UrlAcao = urlAcao, Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
+			return Json(new { IsCpfCnpjValido = isCpfCnpjValido, PessoaId = pessoa.Id, InternoId = pessoa.InternoId, isCopiado = vm.Pessoa.IsCopiado, UrlAcao = urlAcao, Msg = Validacao.Erros, isAtividadeCorteAssociada = vm.IsAtividadeCorteAssociada  }, JsonRequestBehavior.AllowGet);
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
@@ -215,7 +222,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			PessoaVM vm = new PessoaVM();
 			vm.IsConjuge = isConjuge;
-			
+
 			if (id > 0)
 			{
 				vm.Pessoa = _bus.Obter(id);
@@ -271,7 +278,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			vm.TipoCadastro = tipoCadastro;
 
 			CarregaCampos(vm);
-			PreencheSalvarVM(vm);	
+			PreencheSalvarVM(vm);
 
 			vm.UrlAcao = Url.Action("Editar", "Pessoa");
 
@@ -328,10 +335,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			vm.Pessoa.InternoId = internoId;
 			vm.TipoCadastro = vm.Pessoa.Tipo;
 
-			if (!string.IsNullOrEmpty(vm.Pessoa.Fisica.ConjugeCPF)) 
+			if (!string.IsNullOrEmpty(vm.Pessoa.Fisica.ConjugeCPF))
 			{
 				Pessoa conjuge = _bus.Obter(vm.Pessoa.Fisica.ConjugeCPF, simplificado: true, credenciadoId: _bus.User.FuncionarioId);
-				
+
 				vm.Pessoa.Fisica.Conjuge = new Pessoa()
 				{
 					Id = conjuge.Id,
@@ -448,7 +455,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				}
 			}
 
-            vm.CpfCnpjValido = true;
+			vm.CpfCnpjValido = true;
 			vm.ExibirMensagensPartial = true;
 			vm.OcultarLimparPessoa = true;
 			vm.IsVisualizar = true;

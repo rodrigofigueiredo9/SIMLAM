@@ -849,6 +849,7 @@ RequerimentoInteressado = {
 	},
 
 	onVerificarEnterInteressado: function () {
+		
 		var param = { requerimentoId: $('#hdnRequerimentoId').val() };
 
 		if (Requerimento.ReqInterEmp && Requerimento.ReqInterEmp.interessadoId && Requerimento.ReqInterEmp.interessadoId > 0) {

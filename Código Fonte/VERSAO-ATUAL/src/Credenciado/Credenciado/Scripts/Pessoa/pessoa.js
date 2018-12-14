@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../Lib/jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="profissao.js" />
@@ -22,7 +22,7 @@ var Pessoa = function () {
 			tipoCadastro: 0,
 			isCopiado: false,
 			isConjuge: false,
-			possuiConjuge:false,
+			possuiConjuge: false,
 			editarVisualizar: false,
 			conjugeEditarVisualizar: false,
 			urls: {
@@ -43,7 +43,7 @@ var Pessoa = function () {
 		},
 
 		content: null,
-		conjugeModal: null,		
+		conjugeModal: null,
 		representanteModal: null,
 
 		load: function (content, options, setDefaults) {
@@ -62,7 +62,7 @@ var Pessoa = function () {
 
 			_objRef.settings.isCopiado = eval(_objRef.settings.isCopiado.toString().toLowerCase());
 			_objRef.settings.isConjuge = eval(_objRef.settings.isConjuge.toString().toLowerCase());
-			
+
 			$('.rdbPessaoTipo', content).change(_objRef.onPessoaTipoChange);
 			$('.CpfPessoaContainer,.CnpjPessoaContainer', content).keyup(_objRef.onVerficarCpfCnpjKeyUp);
 			$('.btnAssociarReprensetante', content).click(_objRef.onAssociarRepresentanteClick);
@@ -80,8 +80,7 @@ var Pessoa = function () {
 			if (_objRef.settings.modoInline) {
 				$('.btnLimparCpfCnpj', content).remove();
 				_objRef.settings.isCopiado = $('.hdnIsCopiado', _objRef.content).val() == 'true';
-			} else
-			{
+			} else {
 				$('.hdnIsCopiado:not(.tabRepresentantes .hdnIsCopiado)', _objRef.content).val(_objRef.settings.isCopiado);
 			}
 
@@ -91,11 +90,11 @@ var Pessoa = function () {
 			$(content).delegate('.btnVisualizarConjuge', 'click', _objRef.onVisualizarConjuge);
 
 			$(content).find(':text:enabled:first').focus();
-			
+
 			if ($('.hdnOcultarIsCopiado').length > 0) {
 				$('.btnCopiarInterno', _objRef.content).remove();
 			}
-			
+
 			if (_objRef.settings.possuiConjuge == true) {
 				$('.divConjuge', _objRef.content).remove();
 			}
@@ -119,7 +118,7 @@ var Pessoa = function () {
 						tituloEditar: 'Editar Pessoa',
 						tituloVisualizar: 'Visualizar Pessoa',
 						onAssociarCallback: function (pessoa) {
-							
+
 							$('.hdnIsCopiado', _objRef.content).val(false);
 							$('.hdnConjugeId', _objRef.content).val(pessoa.Id);
 							$('.hdnConjugeInternoId', _objRef.content).val(pessoa.InternoId);
@@ -154,19 +153,19 @@ var Pessoa = function () {
 		},
 
 		copiarIdaf: function () {
-			
+
 			var content = $('.pessoaPartial', MasterPage.getContent(_objRef.content));
 			var params = { id: $('.pessoaId', content).val(), internoId: $('.internoId', content).val() };
 
 			MasterPage.carregando(true);
 
 			$.ajax({
-				url:  PessoaInline.settings.urls.copiarIdaf, data: params, cache: false, async: false,
+				url: PessoaInline.settings.urls.copiarIdaf, data: params, cache: false, async: false,
 				error: function (XMLHttpRequest, textStatus, erroThrown) {
 					Aux.error(XMLHttpRequest, textStatus, erroThrown, content);
 				},
 				success: function (response, textStatus, XMLHttpRequest) {
-					
+
 					if (response.Msg && response.Msg.length > 0 && !response.EhValido) {
 						Mensagem.gerar(MasterPage.getContent(objRef.content), response.Msg);
 						return;
@@ -190,9 +189,9 @@ var Pessoa = function () {
 		},
 
 		onChangeEstadoCivil: function () {
-		    
+
 			$('.divConjuge', _objRef.content).removeClass('hide');
-			
+
 			if ($(this).val() != 2 && $(this).val() != 5) {
 				_objRef.onLimparConjuge();
 				$('.divConjuge', _objRef.content).addClass('hide');
@@ -274,8 +273,9 @@ var Pessoa = function () {
 			params['isCopiado'] = _objRef.settings.isCopiado;
 			params['isConjuge'] = _objRef.settings.isConjuge;
 			_objRef.settings.conjugeEditarVisualizar = true;
-			
-			$.ajax({ url: _objRef.settings.urls.editar, data: params, cache: false, async: false,
+
+			$.ajax({
+				url: _objRef.settings.urls.editar, data: params, cache: false, async: false,
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
 					Aux.carregando(_objRef.content, false);
@@ -313,11 +313,12 @@ var Pessoa = function () {
 				tipoPessoaNum = 2;
 				cpfCnpj = $('input.inputCnpjPessoa', _objRef.content).val();
 			}
-
+			debugger;
 			var jsonVerificar = MasterPage.json(_objRef.content);
 			jsonVerificar.TipoCadastro = _objRef.settings.tipoCadastro;
 
-			$.ajax({ url: _objRef.settings.urls.verificar, data: jsonVerificar, cache: false, async: false, dataType: 'json',
+			$.ajax({
+				url: _objRef.settings.urls.verificar, data: jsonVerificar, cache: false, async: false, dataType: 'json',
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
 					Aux.carregando(_objRef.content, false);
@@ -335,48 +336,55 @@ var Pessoa = function () {
 							param = { cpfCnpj: cpfCnpj, tipoPessoa: tipoPessoaNum, TipoCadastro: _objRef.settings.tipoCadastro };
 						}
 
-						$.ajax({ url: response.UrlAcao, data: param, cache: false, async: false,
-							error: function (XMLHttpRequest, textStatus, errorThrown) {
-								Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
-							},
-							success: function (responseHtml, textStatus, XMLHttpRequest) {
+						//caso a atividade seja Informação de Corte e não tenha encontrado a pessoa
+						//não pode deixar que seja fieto o cadastro da pessoa
+						if (response.isAtividadeCorteAssociada && (response.PessoaId === 0 && response.InternoId === 0)) {
+							Mensagem.gerar(MasterPage.getContent(_objRef.content), response.Msg);
+							Aux.carregando(_objRef.content, false);
+						} else {
+							$.ajax({
+								url: response.UrlAcao, data: param, cache: false, async: false,
+								error: function (XMLHttpRequest, textStatus, errorThrown) {
+									Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
+								},
+								success: function (responseHtml, textStatus, XMLHttpRequest) {
+									if (typeof (responseHtml) === "object") {
+										return;
+									}
+									var pai = _objRef.content.parent();
+									_objRef.settings.isCopiado = response.isCopiado;
+									_objRef.content.replaceWith(responseHtml);
 
-								if (typeof (responseHtml) === "object") {
-									return;
+									var novoContent = $('.pessoaPartial', pai);
+
+									if (response.Msg != null && response.Msg.length > 0) {
+										Mensagem.gerar(MasterPage.getContent(pai), response.Msg);
+									}
+
+									_objRef.load(novoContent, _objRef.settings, false);
+									MasterPage.botoes(novoContent);
+									Mascara.load(novoContent);
+									MasterPage.redimensionar();
+
+									Modal.dimensionar(novoContent, Modal.tamanhoModalMedia.width, Modal.tamanhoModalMedia.minWidthPerc);
+									$('.fundoModal', novoContent).data['modalTamanho'] = Modal.tamanhoModalMedia;
+
+									if (response.PessoaId > 0 || response.InternoId > 0) {
+										_objRef.settings.onVisualizarEnter({ mostrarImportar: response.PessoaId <= 0 && response.InternoId > 0, mostrarEditar: true });
+									} else {
+										_objRef.settings.onCriarEnter();
+									}
+
+									$('.hdnIsConjuge', _objRef.content).val(_objRef.settings.isConjuge);
+
+									setTimeout(function () {
+										$(':text:enabled:first', _objRef.content).focus();
+									}, 300);
 								}
-								var pai = _objRef.content.parent();
-								_objRef.settings.isCopiado = response.isCopiado;
-								_objRef.content.replaceWith(responseHtml);
+							});
 
-								var novoContent = $('.pessoaPartial', pai);
-
-								if (response.Msg != null && response.Msg.length > 0) {
-									Mensagem.gerar(MasterPage.getContent(pai), response.Msg);
-								}
-
-								_objRef.load(novoContent, _objRef.settings, false);
-								MasterPage.botoes(novoContent);
-								Mascara.load(novoContent);
-								MasterPage.redimensionar();
-
-								Modal.dimensionar(novoContent, Modal.tamanhoModalMedia.width, Modal.tamanhoModalMedia.minWidthPerc);
-								$('.fundoModal', novoContent).data['modalTamanho'] = Modal.tamanhoModalMedia;
-
-								if (response.PessoaId > 0 || response.InternoId > 0) {
-									_objRef.settings.onVisualizarEnter({ mostrarImportar: response.PessoaId <= 0 && response.InternoId > 0, mostrarEditar: true });
-								} else {
-									_objRef.settings.onCriarEnter();
-								}
-
-								$('.hdnIsConjuge', _objRef.content).val(_objRef.settings.isConjuge);
-
-								setTimeout(function () {
-									$(':text:enabled:first', _objRef.content).focus();
-								}, 300);
-							}
-						});
-
-						Aux.carregando(_objRef.content, false);
+							Aux.carregando(_objRef.content, false);
+						}
 					}
 					else {
 						if (response.Msg != null && response.Msg.length > 0) {
@@ -391,7 +399,8 @@ var Pessoa = function () {
 		onLimparClick: function () {
 			Mensagem.limpar(MasterPage.getContent(_objRef.content));
 
-			$.ajax({ url: _objRef.settings.urls.limpar, cache: false, async: false, data: { tipoCadastro: _objRef.settings.tipoCadastro },
+			$.ajax({
+				url: _objRef.settings.urls.limpar, cache: false, async: false, data: { tipoCadastro: _objRef.settings.tipoCadastro },
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
 				},
@@ -447,7 +456,7 @@ var Pessoa = function () {
 			Mensagem.limpar();
 			var jsonPessoa = _objRef.obter();
 			var urlAcao;
-			
+
 			if (_objRef.obterIdPessoa().id == 0) {
 				urlAcao = _objRef.settings.urls.criar;
 			} else {
@@ -456,14 +465,15 @@ var Pessoa = function () {
 
 			var retorno = null;
 
-			$.ajax({ url: urlAcao, data: JSON.stringify(jsonPessoa), type: 'POST', typeData: 'json',
+			$.ajax({
+				url: urlAcao, data: JSON.stringify(jsonPessoa), type: 'POST', typeData: 'json',
 				contentType: 'application/json; charset=utf-8', cache: false, async: false,
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					Aux.error(XMLHttpRequest, textStatus, errorThrown, MasterPage.getContent(_objRef.content));
 				},
 
 				success: function (responseJson, textStatus, XMLHttpRequest) {
-					
+
 					if (responseJson.IsPessoaSalva) {
 						if (_objRef.settings.onSalvar != null) {
 							_objRef.settings.onSalvar(_objRef.content, responseJson, (urlAcao == _objRef.settings.urls.editar));
@@ -475,7 +485,7 @@ var Pessoa = function () {
 							MasterPage.carregando(false);
 						}
 					}
-					
+
 				}
 			});
 
@@ -507,9 +517,8 @@ var Pessoa = function () {
 			}
 
 			$('.tabRepresentantes tbody tr', _objRef.content).each(function () {
-				
-				if (pessoaRepresentante.Fisica.Conjuge != null && ($('.hdnRepresentanteId', this).val() == pessoaRepresentante.Fisica.Conjuge.InternoId))
-				{
+
+				if (pessoaRepresentante.Fisica.Conjuge != null && ($('.hdnRepresentanteId', this).val() == pessoaRepresentante.Fisica.Conjuge.InternoId)) {
 					$('.hdnConjugeId', this).val(pessoaRepresentante.Id)
 					$('.hdnConjugeInternoId', this).val(pessoaRepresentante.InternoId)
 				}
@@ -571,7 +580,8 @@ var Pessoa = function () {
 
 			_objRef.representanteModal.associarAbrir(
 				_objRef.settings.urls.pessoaModalVisualizar,
-				{ onAssociarCallback: _objRef.associarRepresentante,
+				{
+					onAssociarCallback: _objRef.associarRepresentante,
 					tituloVerificar: 'Verificar CPF/CNPJ',
 					tituloCriar: 'Cadastrar Representante',
 					tituloEditar: 'Editar Representante',
