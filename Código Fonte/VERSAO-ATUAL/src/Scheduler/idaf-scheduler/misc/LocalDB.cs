@@ -163,7 +163,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							conn))
 				{
 					cmd.Parameters.Add(new OracleParameter("sucesso", ((sucesso) ? "verdadeiro" : "falso")));
-					cmd.Parameters.Add(new OracleParameter("resultado", String.IsNullOrWhiteSpace(resultado) ? "" : resultado.Substring(0, 4000)));
+					cmd.Parameters.Add(new OracleParameter("resultado", (String.IsNullOrWhiteSpace(resultado) || resultado.Length < 4000) ? resultado : resultado.Substring(0, 4000)));
 					cmd.Parameters.Add(new OracleParameter("id", id));
 
 
