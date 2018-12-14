@@ -34,7 +34,8 @@ TituloAutorizacaoExploracaoFlorestal = {
 		);
 
 		var exploracoes = [];
-		exploracoes.push(TituloExploracaoFlorestal);
+		if (TituloExploracaoFlorestal.ExploracaoFlorestalId > 0)
+			exploracoes.push(TituloExploracaoFlorestal);
 
 		return exploracoes;
 	},
