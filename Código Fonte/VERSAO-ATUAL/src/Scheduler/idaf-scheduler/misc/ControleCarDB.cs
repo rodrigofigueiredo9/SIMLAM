@@ -751,6 +751,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			catch (Exception exception)
 			{
 				Log.Error("Erro ao conectar ao Banco de dados:" + exception.Message, exception);
+				throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 			}
 		}
 

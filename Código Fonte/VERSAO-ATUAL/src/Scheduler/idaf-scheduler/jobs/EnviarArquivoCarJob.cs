@@ -265,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                     catch (Exception ex) 
                     {
 						Log.Error("EnviarArquivoCARFunction: " + ex.Message + " + ---- +" + localArquivoCar);
-                        return ex.Message;
+						throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");						
 					}
 				}
 			}
