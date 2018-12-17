@@ -11,16 +11,19 @@
 		<!-- #region Dominio -->
 
 		<div class="block">
-			<div class="coluna21 append1">
+			<div class="coluna21 append2 block ultima">
+				<label for="Identificacao">Identificação</label>
+				<%= Html.TextBox("Identificacao", Model.Caracterizacao.Posse.Identificacao, new { @class = "text txtIdentificacaoComprovacao disabled", @disabled = "disabled" })%>
+				<input type="hidden" class="hdnIdentificacao" value='<%=Model.Caracterizacao.Posse.Identificacao%>' />
+			</div>
+
+			<div class="coluna21 append12">
 				<label for="ZonaLocalizacao">Zona de localização</label>
 				<%= Html.TextBox("ZonaLocalizacao", ((eZonaLocalizacao)Model.Caracterizacao.Posse.Zona).ToString(), new { @class = "text txtZonaLocalizacao disabled", @disabled = "disabled" })%>
 			</div>
-
-			<div class="block ultima">
-				<label for="Identificacao">Identificação - Comprovação</label>
-				<%= Html.TextBox("Identificacao", Model.Caracterizacao.Posse.Identificacao + " - " + Model.Caracterizacao.Posse.ComprovacaoTexto, new { @class = "text txtIdentificacaoComprovacao disabled", @disabled = "disabled" })%>
-				<input type="hidden" class="hdnIdentificacao" value='<%=Model.Caracterizacao.Posse.Identificacao%>' />
-				<input type="hidden" class="hdnComprovacaoTexto" value='<%=Model.Caracterizacao.Posse.ComprovacaoTexto%>' />
+			<div class="coluna21 apprend1">
+				<label for="Dominio_ComprovacaoId">Comprovação</label>
+				<%= Html.DropDownList("DominioComprovacaoId", Model.Caracterizacao.Posse.Comprovacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlComprovacao setarFoco"}))%>				
 			</div>
 		</div>
 
@@ -35,7 +38,8 @@
 				<%= Html.TextBox("AreaTotalPosse", Model.Caracterizacao.Posse.AreaCroqui.ToStringTrunc(2), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaTotalPosse maskDecimalPonto", @maxlength = "24" }))%>
 			</div>
 
-			<% if (!Model.IsVisualizar) { %>
+			<% if (!Model.IsVisualizar)
+				{ %>
 			<div class="coluna11">
 				<button type="button" class="inlineBotao btnCarregarCroqui">Carregar</button>
 			</div>
@@ -46,7 +50,8 @@
 				<%= Html.TextBox("Perimetro", Model.Caracterizacao.Posse.Perimetro.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtPerimetro maskDecimalPonto3", @maxlength = "25" }))%>
 			</div>
 
-			<% if (!Model.IsVisualizar) { %>
+			<% if (!Model.IsVisualizar)
+				{ %>
 			<div class="coluna11">
 				<button type="button" class="inlineBotao btnCarregarPerimetro">Carregar</button>
 			</div>
@@ -55,11 +60,35 @@
 
 		<div class="block" >
 			<div class="coluna43 append2">
+				<label for="AreaPosseDocumento">Área posse Documento(m²) *</label>
+				<%= Html.TextBox("AreaPosseDocumento", Model.Caracterizacao.Posse.AreaPosseDocumento.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaPosse maskDecimalPonto3", @maxlength = "25" })) %>
+			</div>
+			<div class="coluna43 append2">
 				<label for="Caracterizacao_Posse_RegularizacaoTipo">Tipo de regularização *</label>
-				<%= Html.DropDownList("Caracterizacao.Posse.RegularizacaoTipo", Model.TipoRegularizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlRegularizacaoTipo " }))%>
+				<%= Html.DropDownList("Caracterizacao_Posse_RegularizacaoTipo", Model.TipoRegularizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlRegularizacaoTipo " }))%>
 			</div>
 		</div>
+		<div class="block">
+			<div class="coluna43">
+				<label for="Descricao_Comprovacao">Descrição da Comprovação *</label>
+				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao"})) %>
+			</div>			
+		</div>
 
+		<div class="block">
+			<div class="coluna21 append2 ">
+				<label for ="NumeroCCIR">CCIR N°</label>
+				<%= Html.TextBox("NumeroCCIR", Model.Caracterizacao.Posse.NumeroCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroCCIR"})) %>
+			</div>
+			<div class="coluna21 append5">
+				<label for ="AreaCCIR">Área no CCIR</label>
+				<%= Html.TextBox("AreaCCIR", Model.Caracterizacao.Posse.AreaCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCCIR"})) %>
+			</div>
+			<div class="coluna21 DataUltimaAtualizacaoCCIR">
+				<label for ="DataUltimaAtualizacaoCCIR">Data da ultima atualização do CCIR</label>
+				<%= Html.TextBox("DataUltimaAtulizacaoCCIR", Model.Caracterizacao.Posse.DataUltimaAtualizacaoCCIR.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtDataUltimaAtualizacaoCCIR "})) %>
+			</div>
+		</div>
 		<!-- #endregion -->
 
 		<fieldset class="boxBranca block" id="fsAreaAnexaPosse">
@@ -146,7 +175,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						<% foreach (var anexada in Model.Caracterizacao.Matriculas) { %>
+						<% foreach (var anexada in Model.Caracterizacao.Matriculas)
+							{ %>
 							<tr>
 								<td><span class="identificacao"><%: anexada.Identificacao %></span></td>
 								<td><span class="matriculaFolhaLivro"> <%: anexada.Matricula %> - <%: anexada.Folha %> - <%: anexada.Livro %></span></td>
@@ -159,7 +189,8 @@
 								</td>
 							</tr>
 						<% } %>
-						<% foreach (var anexada in Model.Caracterizacao.Posse.DominiosAvulsos) { %>
+						<% foreach (var anexada in Model.Caracterizacao.Posse.DominiosAvulsos)
+							{ %>
 							<tr>
 								<td><span class="identificacao"><%: anexada.Identificacao %></span></td>
 								<td><span class="matriculaFolhaLivro"><%: anexada.Matricula %> - <%: anexada.Folha %> - <%: anexada.Livro %></span></td>
@@ -169,7 +200,8 @@
 								<td class="tdAcoes">
 									<input type="hidden" class="hdnDominioJSON" value='<%: ViewModelHelper.Json(anexada) %>' />
 									<input title="Visualizar" type="button" class="icone visualizar btnDominioVisualizar" value="Visualizar" />
-									<% if (!Model.IsVisualizar) { %>
+									<% if (!Model.IsVisualizar)
+										{ %>
 									<input title="Editar" type="button" class="icone editar btnDominioEditar" value="Editar" />
 									<input title="Excluir" type="button" class="icone excluir btnDominioExcluir" value="Excluir" />
 									<% } %>

@@ -217,11 +217,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				Dominialidade dominialidade = _busDominialidade.ObterPorEmpreendimento(empreendimento);
 				int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
 
-				dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
-				{
-					caracterizacao.Posses.Add(new Posse(x, zona));
-				});
-
+				//dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
+				//{
+				//	caracterizacao.Posses.Add(new Posse(x, zona));
+				//});
+				caracterizacao.Posses = ObterPosses(empreendimento, zona);
 				caracterizacao.Matriculas = dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 				return caracterizacao;
 			}
@@ -230,6 +230,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				Validacao.AddErro(exc);
 			}
 
+			return null;
+		}
+
+		public List<Posse> ObterPosses(int empreendimento, int zona)
+		{
+			List<Posse> posses = new List<Posse>();
+
+			posses = _da.ObterPosses(empreendimento);
+
+			//caracterizacao.Posses.Add(new Posse(x, zona));
 			return null;
 		}
 

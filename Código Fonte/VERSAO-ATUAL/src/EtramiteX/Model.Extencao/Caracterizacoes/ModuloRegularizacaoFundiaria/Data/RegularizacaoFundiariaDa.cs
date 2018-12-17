@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					foreach (Posse item in regularizacao.Posses)
 					{
 						#region Domínios/Posse
-
+						//ver se vai retirar o dominio
 						comando = bancoDeDados.CriarComando(@"
 						insert into {0}crt_regularizacao_dominio d (id, regularizacao, dominio, zona, identificacao, area_requerida, area_croqui, perimetro, regularizacao_tipo, 
 						relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid) 
@@ -1142,6 +1142,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			}
 
 			return listArea;
+		}
+
+		internal RegularizacaoFundiaria ObterPosses(int id,BancoDeDados banco = null)
+		{
+
+			return null;
 		}
 
 		#endregion
