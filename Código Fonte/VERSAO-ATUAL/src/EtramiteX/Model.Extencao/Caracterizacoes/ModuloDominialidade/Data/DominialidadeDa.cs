@@ -1648,9 +1648,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDom
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				//Reservas
-				comando = bancoDeDados.CriarComando(@"delete from crt_dominialidade_reserva r where r.dominio in (select d.id from crt_dominialidade_dominio d where d.dominialidade = :dominialidade) ", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"delete from crt_dominialidade_reserva r
+				where r.dominio in (select d.id from crt_dominialidade_dominio d ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where d.dominialidade = :dominialidade{0})",
+				comando.AdicionarNotIn("and", "d.identificacao", DbType.String, caracterizacao.Dominios.Select(x => x.Identificacao).ToList()));
 				comando.AdicionarParametroEntrada("dominialidade", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
+
 
 				//Dominios
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_dominialidade_reserva r where
