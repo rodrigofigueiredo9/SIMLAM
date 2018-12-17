@@ -229,6 +229,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem AtividadesSetoresDiferentes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível solicitar atividades de departamentos diferentes, verifique a atividade solicitada ou faça novo requerimento." }; } }
 
+		public Mensagem RequerimentoBarragemVariasAtividades { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O requerimento não pode possuir mais de uma atividade, se a atividade Barragem Dispensada de Licenciamento Ambiental for selecionada." }; } }
+
 		public Mensagem AtividadeNaoEstaNoSetorInformado(string atividadeNome)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("A atividade {0} não está no setor informado.", atividadeNome) };

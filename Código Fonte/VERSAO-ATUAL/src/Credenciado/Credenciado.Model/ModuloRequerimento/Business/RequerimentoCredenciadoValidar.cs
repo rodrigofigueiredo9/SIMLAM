@@ -306,6 +306,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 					#endregion
 				}
 
+				if (atividade.NomeAtividade.ToLower() == "barragem dispensada de licenciamento ambiental"
+					&& atividades.Count() > 1)
+				{
+					Validacao.Add(Msg.RequerimentoBarragemVariasAtividades);
+					return Validacao.EhValido;
+				}
+
 				#endregion
 			}
 
