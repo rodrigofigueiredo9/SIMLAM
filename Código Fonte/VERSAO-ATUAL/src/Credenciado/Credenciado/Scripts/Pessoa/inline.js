@@ -91,13 +91,13 @@ PessoaInline = function () {
 			_objRef.settings.onVerificarEnter();
 		},
 
-		onSalvarClick: function () {
+		onSalvarClick: function (requerimento = 0) {
 			var objPessoa = _objRef.pessoaObj.obterIdPessoa();
 			var retorno = null;
 
 			switch (_objRef.modo) {
 				case 1:
-					retorno = _objRef.pessoaObj.salvar();
+					retorno = _objRef.pessoaObj.salvar(requerimento);
 					if (retorno != null) {
 						objPessoa.id = retorno.Pessoa.Id;
 					} else {
@@ -107,7 +107,7 @@ PessoaInline = function () {
 
 				case 2:
 					if (objPessoa.id == '0') {
-						retorno = _objRef.pessoaObj.salvar();
+						retorno = _objRef.pessoaObj.salvar(requerimento);
 						if (retorno != null) {
 							objPessoa.id = retorno.Pessoa.Id;
 						}

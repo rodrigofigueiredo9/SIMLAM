@@ -712,7 +712,7 @@ RequerimentoInteressado = {
 
 		var param = { requerimentoId: null, interessadoId: null };
 
-		param.interessadoId = RequerimentoInteressado.pessoaInLineObj.onSalvarClick();
+		param.interessadoId = RequerimentoInteressado.pessoaInLineObj.onSalvarClick(Requerimento.ReqInterEmp.requerimentoId);
 		param.requerimentoId = $('#hdnRequerimentoId').val();
 
 		if (param.interessadoId == -1) {
@@ -776,7 +776,6 @@ RequerimentoInteressado = {
 	},
 
 	atualizarSituacaoRequerimento: function (data) {
-
 		var ehValido = true;
 
 		$.ajax({
@@ -808,10 +807,15 @@ RequerimentoInteressado = {
 	},
 
 	onVisualizarEnterInteressado: function () {
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnEditar", Requerimento.container).bind('click').addClass('hide');
+			//$(".btnSalvar", Requerimento.container).unbind('click');
+			//$(".btnSalvar", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
+		}
 		RequerimentoInteressado.configurarVisualizar();
 	},
 
-	onEditarEnterInteressado: function () {		
+	onEditarEnterInteressado: function () {
 		if (Requerimento.ReqInterEmp && Requerimento.ReqInterEmp.interessadoId > 0) {
 			Requerimento.configurarBtnCancelarStep(2);
 			Requerimento.salvarEdicao = true;
@@ -887,7 +891,7 @@ RequerimentoInteressado = {
 		Requerimento.configurarBtnCancelarStep(2);
 	},
 
-	obterInteressado: function (data) {		
+	obterInteressado: function (data) {
 		Requerimento.onObterStep(RequerimentoInteressado.urlObterInteressado, data, function () {
 			RequerimentoInteressado.callBackObterInteressado();
 			RequerimentoInteressado.configurarVisualizar();
