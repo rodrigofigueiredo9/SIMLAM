@@ -83,10 +83,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
 		public ActionResult CriarVerificarCpfCnpj(PessoaVM vmVerificar)
 		{
-			var requerimentoId = Request.UrlReferrer.AbsolutePath.Substring(Request.UrlReferrer.AbsolutePath.LastIndexOf(Convert.ToChar("/")) + 1);
+			//var requerimentoId = Request.UrlReferrer.AbsolutePath.Substring(Request.UrlReferrer.AbsolutePath.LastIndexOf(Convert.ToChar("/")) + 1);
 
 			var _busRequerimento = new RequerimentoCredenciadoBus(new RequerimentoCredenciadoValidar());
-			var  isAtividadeCorteAssociada = _busRequerimento.IsRequerimentoAtividadeCorte(Convert.ToInt32(requerimentoId));
+			var  isAtividadeCorteAssociada = _busRequerimento.IsRequerimentoAtividadeCorte(Convert.ToInt32(vmVerificar.requerimentoId));
 
 			PessoaVM vm = null;
 			Pessoa pessoa = new Pessoa();

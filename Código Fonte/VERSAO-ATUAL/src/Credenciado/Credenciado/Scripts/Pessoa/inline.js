@@ -130,9 +130,9 @@ PessoaInline = function () {
 			_objRef.pessoaObj.onLimparClick();
 		},
 
-		onVerificarClick: function () {
-			debugger;
-			_objRef.pessoaObj.onVerificarClick();
+		onVerificarClick: function (requerimento = 0) {
+			
+			_objRef.pessoaObj.onVerificarClick(requerimento);
 		}
 	};
 };

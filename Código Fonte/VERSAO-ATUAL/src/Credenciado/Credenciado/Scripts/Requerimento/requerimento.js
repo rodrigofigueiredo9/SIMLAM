@@ -116,7 +116,7 @@ Requerimento = {
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
 				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
-				
+				debugger;
 				if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
@@ -664,14 +664,13 @@ RequerimentoInteressado = {
 	pessoaInLineObj: null,
 
 	callBackObterInteressado: function () {
-
 		RequerimentoInteressado.pessoaInLineObj = new PessoaInline();
 
 		RequerimentoInteressado.pessoaInLineObj.load(Requerimento.container, {
 			onVisualizarEnter: RequerimentoInteressado.onVisualizarEnterInteressado,
 			onEditarEnter: RequerimentoInteressado.onEditarEnterInteressado,
 			onVerificarEnter: RequerimentoInteressado.onVerificarEnterInteressado,
-			onCriarEnter: RequerimentoInteressado.onCriarEnterInteressado			
+			onCriarEnter: RequerimentoInteressado.onCriarEnterInteressado
 		});
 
 		Requerimento.stepAtual = 2;
@@ -694,6 +693,11 @@ RequerimentoInteressado = {
 			});
 		} else {
 			Requerimento.botoes({ btnSalvar: true, spnCancelarCadastro: true });
+		}
+		
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnVerificarCpfCnpj", Requerimento.container).unbind('click');
+			$(".btnVerificarCpfCnpj", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
 		}
 
 		Requerimento.salvarEdicao = false;
@@ -849,9 +853,8 @@ RequerimentoInteressado = {
 	},
 
 	onVerificarEnterInteressado: function () {
-		
 		var param = { requerimentoId: $('#hdnRequerimentoId').val() };
-
+		
 		if (Requerimento.ReqInterEmp && Requerimento.ReqInterEmp.interessadoId && Requerimento.ReqInterEmp.interessadoId > 0) {
 
 			$.ajax({
@@ -875,15 +878,24 @@ RequerimentoInteressado = {
 			});
 		}
 
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnVerificarCpfCnpj", Requerimento.container).unbind('click');
+			$(".btnVerificarCpfCnpj", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
+		}
+
 		Requerimento.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		Requerimento.configurarBtnCancelarStep(2);
 	},
 
-	obterInteressado: function (data) {
+	obterInteressado: function (data) {		
 		Requerimento.onObterStep(RequerimentoInteressado.urlObterInteressado, data, function () {
 			RequerimentoInteressado.callBackObterInteressado();
 			RequerimentoInteressado.configurarVisualizar();
 		});
+	},
+
+	verificarCpf: function () {
+		RequerimentoInteressado.pessoaInLineObj.onVerificarClick(Requerimento.ReqInterEmp.requerimentoId);
 	}
 }
 
@@ -1276,7 +1288,6 @@ RequerimentoEmpreendimento = {
 	},
 
 	onVisualizarEnterEmpreendimento: function () {
-		
 		if (Requerimento.ReqInterEmp && parseInt(Requerimento.ReqInterEmp.empreendimentoId) > 0) {
 			Requerimento.botoes({ btnEditar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 			RequerimentoEmpreendimento.salvarEmpreendimento = false;
