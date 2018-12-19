@@ -24,11 +24,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					using (
 						var cmd =
 							new OracleCommand(@"update " + schema + @".tab_scheduler_fila set data_criacao = current_timestamp
-								where id = (select min(id) from " + schema + @".tab_scheduler_fila where tipo = :tipo and data_criacao is null)
+								where id = (select min(id) from " + schema + @".tab_scheduler_fila where id = 274419 and data_criacao isnull)
 								returning id, requisitante, requisicao, empreendimento 
 								into :id, :requisitante, :requisicao, :empreendimento", conn))
 					{
-						cmd.Parameters.Add(new OracleParameter("tipo", tipo));
+						//cmd.Parameters.Add(new OracleParameter("tipo", tipo));
 						OracleParameter paramId = cmd.Parameters.Add(new OracleParameter("id", OracleDbType.Int32, System.Data.ParameterDirection.Output));
 						OracleParameter paramRequisitante = cmd.Parameters.Add(new OracleParameter("requisitante", OracleDbType.Int32, System.Data.ParameterDirection.Output));
 						OracleParameter paramRequisicao = cmd.Parameters.Add(new OracleParameter("requisicao", OracleDbType.Varchar2, 500) { Direction = System.Data.ParameterDirection.Output });

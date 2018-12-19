@@ -14,6 +14,9 @@ using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using System.Collections.Generic;
 using System.Threading;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -23,10 +26,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static HttpClientHandler _httpClientHandler = new HttpClientHandler()
 		{
 			PreAuthenticate = true,
-			UseDefaultCredentials = false,
+			UseDefaultCredentials = false
 		};
 		private static HttpClient _client;
 		private static int count = 1;
+
+		private const string MediaTypeConst = "application/json";
+		public CancellationTokenSource cancelToken = new CancellationTokenSource();
 
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -96,6 +102,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
 						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3205176-34D5.AF4C.7A88.DF99.E3D2.969C.335B.33F3.car", DateTime.Now.ToString(""));
+
 						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
 							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
@@ -236,60 +244,187 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				};
 			}
 
-			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") }");
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz") }");
 
 			//verifica se objeto já foi instanciado
 			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 			if (_client == null)
 			{
-				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")} ");
-				_client = new HttpClient(_httpClientHandler);
-				_client.BaseAddress = new Uri(sicarUrl);
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")} ");
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
+
+				_client.DefaultRequestHeaders.Clear();
+
+				_client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+				_client.DefaultRequestHeaders.Add("Keep-Alive", "3600");
+
+				//set Accept headers
+				//_client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml,application/json");
+				_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				//set User agent
+				_client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; EN; rv:11.0) like Gecko");
+				_client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
+
 				_client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
 				count++;
 			}
 
-			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
 			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				try
 				{
-					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
 					using (var content = new MultipartFormDataContent())
 					{
-						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
 						var fileName = Path.GetFileName(localArquivoCar);
 
-						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
 						var streamContent = new StreamContent(stream);
-						content.Add(streamContent, "car", fileName);
 
-						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
+						//content.Add(streamContent, "car", fileName);
 
-						Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						HttpResponseMessage response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
+						//Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						//content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
 
-						Log.Info($"SUCESS STATUS CODE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						if (response.IsSuccessStatusCode)
+						//Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						//var response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
+
+						//Log.Info($"SUCESS STATUS CODE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						//if (response.IsSuccessStatusCode)
+						//{
+						//	Log.Info($"READ RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						//	var responseContent = await response.Content.ReadAsStringAsync();
+
+						//	Log.Info($"RETURN RESPONSE CONTENT: {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						//	return responseContent;
+						//}
+
+						Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+						var response = await this.PostAsync("/sincronia/quick", streamContent);
+
+						//verifica se enviado foi realizado com sucesso
+						if (!string.IsNullOrWhiteSpace(response))
 						{
-							Log.Info($"READ RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-							var responseContent = await response.Content.ReadAsStringAsync();
-
-							Log.Info($"RETURN RESPONSE CONTENT: {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-							return responseContent;
+							Log.Info($"RETORNO ENVIO: {response}");
+							return response;
 						}
 
-						Log.Error("ERRO RESPONSE::::?? //  " + response);
+						Log.Error("ERRO RESPONSE: " + response);
 						throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+
 					}
 				}
 				catch (Exception ex)
 				{
-					Log.Error("EnviarArquivoCARFunction: " + ex.Message + " + ---- +" + localArquivoCar + " ____ exx __ " + ex.StackTrace);
+					Log.Error("*************************************************************************************************************************");
+					Log.Error("*************************************************************************************************************************");
+					Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+					Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
+					Log.Error($"Error Message: {ex.Message}");
+					Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
+					Log.Error($"ERROR FULL: {ex.ToString()}");
+					Log.Error("*************************************************************************************************************************");
+					Log.Error("*************************************************************************************************************************");
 					return ex.Message;
 				}
 
+			}
+		}
+
+		/// <summary>
+		/// Send a POST request with a cancellation token as an asynchronous operation
+		/// </summary>
+		/// <typeparam name="T">Entity to serializable</typeparam>
+		/// <param name="url">The Uri the request is sent to.</param>
+		/// <param name="data">object that will be serialized and sent</param>
+		/// <returns>The task object representing the asynchronous operation</returns>
+		public async Task<string> PostAsync(string url, StreamContent data)
+		{
+			if (string.IsNullOrWhiteSpace(url))
+				throw new ArgumentException(nameof(url), $"{nameof(url)} é de preenchimento obrigatório");
+
+			if (data == null)
+				throw new ArgumentException(nameof(data), $"{nameof(data)} é de preenchimento obrigatório");
+
+			try
+			{
+				using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, url))
+				{
+					//requestMessage.Content = stringContent;
+					requestMessage.Content = data;
+					var response = await _client.SendAsync(requestMessage, this.cancelToken.Token);
+
+					Log.Info($"Verificando se enviado foi realizado com sucesso - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+					if (response.IsSuccessStatusCode)
+					{
+						Log.Info($"ARQUIVO ENVIADO COM SUCESSO - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+						var jsonResult = await response.Content.ReadAsStringAsync();
+						return jsonResult;
+					}
+
+					Log.Info($"OCORREU ERRO AO ENVIAR O ARQUIVO - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+					return string.Empty;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
+		}
+
+		private byte[] ReadToEnd(Stream stream)
+		{
+			long originalPosition = 0;
+
+			if (stream.CanSeek)
+			{
+				originalPosition = stream.Position;
+				stream.Position = 0;
+			}
+
+			try
+			{
+				byte[] readBuffer = new byte[4096];
+
+				int totalBytesRead = 0;
+				int bytesRead;
+
+				while ((bytesRead = stream.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
+				{
+					totalBytesRead += bytesRead;
+
+					if (totalBytesRead == readBuffer.Length)
+					{
+						int nextByte = stream.ReadByte();
+						if (nextByte != -1)
+						{
+							byte[] temp = new byte[readBuffer.Length * 2];
+							Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+							Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+							readBuffer = temp;
+							totalBytesRead++;
+						}
+					}
+				}
+
+				byte[] buffer = readBuffer;
+				if (readBuffer.Length != totalBytesRead)
+				{
+					buffer = new byte[totalBytesRead];
+					Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+				}
+				return buffer;
+			}
+			finally
+			{
+				if (stream.CanSeek)
+				{
+					stream.Position = originalPosition;
+				}
 			}
 		}
 	}

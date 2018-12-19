@@ -62,6 +62,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				{
 					//Update item as Started
 
+					Log.Info($"PROCESSANDO ITEM DE ID: {nextItem.Id} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
                     var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 					if (controleSicar == null)
