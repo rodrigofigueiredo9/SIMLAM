@@ -233,14 +233,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			return null;
 		}
 
-		public List<Posse> ObterPosses(int empreendimento, int zona)
+		//public RegularizacaoFundiaria ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
+		//{
+		//	RegularizacaoFundiaria caracterizacao = new RegularizacaoFundiaria();
+
+		//	try
+		//	{
+		//		Dominialidade dominialidade = _busDominialidade.ObterPorEmpreendimento(empreendimento);
+		//		int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
+
+		//		dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
+		//		{
+		//			caracterizacao.Posses.Add(new Posse(x, zona));
+		//		});
+
+		//		caracterizacao.Matriculas = dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
+		//		return caracterizacao;
+		//	}
+		//	catch (Exception exc)
+		//	{
+		//		Validacao.AddErro(exc);
+		//	}
+
+		//	return null;
+		//}
+
+		public List<Posse> ObterPosses(int empreendimento, int zona, BancoDeDados banco = null)
 		{
 			List<Posse> posses = new List<Posse>();
 
-			posses = _da.ObterPosses(empreendimento);
+			try
+			{
+				posses = _da.ObterPosses(empreendimento,zona,banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
-			//caracterizacao.Posses.Add(new Posse(x, zona));
-			return null;
+			return posses;
 		}
 
 		public RegularizacaoFundiaria MergiarGeo(RegularizacaoFundiaria caracterizacaoAtual)

@@ -192,13 +192,6 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\TerraplanagemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMExploracaoFlorestal\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
-    <Compile Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominio.ascx.cs">
-      <DependentUpon>ConfrontacoesDominio.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominio.ascx.designer.cs">
-      <DependentUpon>ConfrontacoesDominio.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Areas\Especificidades\Controllers\AtividadeEspecificidadeController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AutorizacaoController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\CadastroController.cs" />
@@ -404,7 +397,7 @@
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\ConsumoPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\RegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\Visualizar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominio.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominioPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Shared\TituloAdicionar.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Editar.aspx" />
