@@ -1181,9 +1181,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
 					from {0}crt_regularizacao_dominio p
 					inner join crt_regularizacao r on r.id = p.regularizacao
-					where r.empreendimento = :empreendimento", EsquemaBanco);
+					where p.id = 2006", EsquemaBanco);
+				//"where r.empreendimento = :empreendimento", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				//comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -1214,7 +1215,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Distancia.EsAPosse = reader.GetValue<decimal>("es_km");
 						posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
 						posse.ConfrontacoesNorte = reader["confrontante_norte"].ToString();
-						posse.ConfrontacoesSul = reader["Confrontacoe_sul"].ToString();
+						posse.ConfrontacoesSul = reader["confrontante_sul"].ToString();
 						posse.ConfrontacoesLeste = reader["confrontante_leste"].ToString();
 						posse.ConfrontacoesOeste = reader["confrontante_oeste"].ToString();
 						posse.Zona = zona;

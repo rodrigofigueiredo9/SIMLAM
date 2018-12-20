@@ -233,6 +233,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			return null;
 		}
 
+		// funcao inicial antes de ser alterada
 		//public RegularizacaoFundiaria ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		//{
 		//	RegularizacaoFundiaria caracterizacao = new RegularizacaoFundiaria();
