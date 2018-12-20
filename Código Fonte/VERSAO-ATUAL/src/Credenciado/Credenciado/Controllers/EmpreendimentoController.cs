@@ -210,7 +210,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			vm.SetCoordenada();
 			PreencherSalvar(vm);
-			if (_bus.Salvar(vm.Empreendimento))
+
+			bool isInfCorte = _busRequerimento.IsRequerimentoAtividadeCorte(vm.requerimentoId);
+			if (_bus.Salvar(vm.Empreendimento, isInfCorte))
 			{
 				Validacao.Add(Mensagem.Empreendimento.Salvar);
 				string urlRedireciona = Url.Action("Criar", "Empreendimento");

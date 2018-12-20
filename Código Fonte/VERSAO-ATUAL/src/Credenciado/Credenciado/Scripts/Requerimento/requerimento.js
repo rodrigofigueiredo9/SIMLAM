@@ -1223,14 +1223,14 @@ RequerimentoEmpreendimento = {
 	},
 
 	onSalvarEmpreendimento: function (partialContent, responseJson, isEditar) {
-		
+		debugger;
 		var retorno = false;
 		var param = { requerimentoId: null, empreendimentoId: null };
 
 		param.requerimentoId = $('#hdnRequerimentoId').val();
 
 		if (RequerimentoEmpreendimento.salvarEmpreendimento) {
-			param.empreendimentoId = EmpreendimentoInline.onSalvarClick();
+			param.empreendimentoId = EmpreendimentoInline.onSalvarClick(Requerimento.ReqInterEmp.requerimentoId);
 
 			if (param.empreendimentoId == 0) {
 				return retorno;
@@ -1274,6 +1274,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	onNovoEmpreendimentoEnter: function () {
+		debugger;
 		Requerimento.salvarEdicao = false;
 		Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 	},

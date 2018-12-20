@@ -63,11 +63,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 
 		#region Ações de DML
 
-		public bool Salvar(Empreendimento empreendimento)
+		public bool Salvar(Empreendimento empreendimento, bool isInfCorte = false)
 		{
 			try
 			{
-				if (_validar.Salvar(empreendimento))
+				if (_validar.Salvar(empreendimento, isInfCorte))
 				{
 					Mensagem erros = VerificarLocalizacaoEmpreendimento(empreendimento.Coordenada.EastingUtmTexto, empreendimento.Coordenada.NorthingUtmTexto, empreendimento.Enderecos[0].EstadoId, empreendimento.Enderecos[0].MunicipioId);
 					if (erros.Texto != null)
