@@ -95,7 +95,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
-						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
 						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
 							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
@@ -104,7 +104,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
 						{
-							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
 							if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 							{
 								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
@@ -224,7 +224,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// </summary>
 		/// <param name="localArquivoCar">The local arquivo car.</param>
 		/// <returns></returns>
-		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual)
+		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual, int solicitacao)
 		{
 			var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
 			if (!String.IsNullOrWhiteSpace(proxyUrl))
@@ -236,47 +236,48 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				};
 			}
 
-			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") }");
+			Log.Info($"Entrou na função de envio - Solicitacao CAR :: {solicitacao}  --- {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff") }");
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff") }");
 
 			//verifica se objeto já foi instanciado
 			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 			if (_client == null)
 			{
-				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")} ");
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")} ");
 				_client = new HttpClient(_httpClientHandler);
 				_client.BaseAddress = new Uri(sicarUrl);
 				_client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
 				count++;
 			}
 
-			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				try
 				{
-					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 					using (var content = new MultipartFormDataContent())
 					{
-						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff.fff")}");
 						var fileName = Path.GetFileName(localArquivoCar);
 
-						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 						var streamContent = new StreamContent(stream);
 						content.Add(streamContent, "car", fileName);
 
-						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
 
-						Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 						HttpResponseMessage response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
 
-						Log.Info($"SUCESS STATUS CODE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						Log.Info($"STATUS RETORNO RESPONSE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 						if (response.IsSuccessStatusCode)
 						{
-							Log.Info($"READ RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+							Log.Info($"LENDO O RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 							var responseContent = await response.Content.ReadAsStringAsync();
 
-							Log.Info($"RETURN RESPONSE CONTENT: {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+							Log.Info($"RETORNANDO RESPONSE CONTENT (FINAL): {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
 							return responseContent;
 						}
 
@@ -286,7 +287,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				}
 				catch (Exception ex)
 				{
-					Log.Error("EnviarArquivoCARFunction: " + ex.Message + " + ---- +" + localArquivoCar + " ____ exx __ " + ex.StackTrace);
+					Log.Error($@"	CATCH função EnviarArquivoCar: \n
+									Mensagem de erro:: {ex.Message}  + ---- + \n
+									Local do arquivo :: {localArquivoCar} \n
+									____ exx __ {ex}");
 					return ex.Message;
 				}
 
