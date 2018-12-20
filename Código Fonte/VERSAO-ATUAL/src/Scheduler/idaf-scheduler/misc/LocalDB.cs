@@ -24,7 +24,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					using (
 						var cmd =
 							new OracleCommand(@"update " + schema + @".tab_scheduler_fila set data_criacao = current_timestamp
-								where id = (select min(id) from " + schema + @".tab_scheduler_fila where id = 274419 and data_criacao isnull)
+								where id = (select min(id) from " + schema + @".tab_scheduler_fila where id in
+									(274419,277122,277121,277119,277118,277117,277115,277114,277111,277110) and data_criacao is null)
 								returning id, requisitante, requisicao, empreendimento 
 								into :id, :requisitante, :requisicao, :empreendimento", conn))
 					{

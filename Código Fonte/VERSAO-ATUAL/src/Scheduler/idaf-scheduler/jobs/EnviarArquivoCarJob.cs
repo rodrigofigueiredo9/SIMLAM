@@ -31,8 +31,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		private static HttpClient _client;
 		private static int count = 1;
 
-		private const string MediaTypeConst = "application/json";
-		public CancellationTokenSource cancelToken = new CancellationTokenSource();
+		private const string MediaTypeConst = "multipart/form-data";
+		public CancellationTokenSource cancelToken = new CancellationTokenSource(TimeSpan.FromMinutes(2));
 
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -102,7 +102,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
 						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3205176-34D5.AF4C.7A88.DF99.E3D2.969C.335B.33F3.car", DateTime.Now.ToString(""));
+						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3201209-38DB.3282.CFF3.61AE.400C.F4AF.D516.B008.car", DateTime.Now.ToString(""));
 
 						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
@@ -253,20 +253,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")} ");
 				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
-
 				_client.DefaultRequestHeaders.Clear();
-
-				_client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-				_client.DefaultRequestHeaders.Add("Keep-Alive", "3600");
-
-				//set Accept headers
-				//_client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml,application/json");
-				_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				//set User agent
-				_client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; EN; rv:11.0) like Gecko");
-				_client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
-
+				_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
 				_client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
+
 				count++;
 			}
 
@@ -283,27 +273,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
 						var streamContent = new StreamContent(stream);
+						content.Add(streamContent, "car", fileName);
 
-						//content.Add(streamContent, "car", fileName);
-
-						//Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						//content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-
-						//Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						//var response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
-
-						//Log.Info($"SUCESS STATUS CODE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						//if (response.IsSuccessStatusCode)
-						//{
-						//	Log.Info($"READ RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						//	var responseContent = await response.Content.ReadAsStringAsync();
-
-						//	Log.Info($"RETURN RESPONSE CONTENT: {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						//	return responseContent;
-						//}
+						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
 
 						Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-						var response = await this.PostAsync("/sincronia/quick", streamContent);
+						var response = await this.PostAsync("/sincronia/quick", content);
 
 						//verifica se enviado foi realizado com sucesso
 						if (!string.IsNullOrWhiteSpace(response))
@@ -314,7 +290,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						Log.Error("ERRO RESPONSE: " + response);
 						throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-
 					}
 				}
 				catch (Exception ex)
@@ -341,7 +316,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// <param name="url">The Uri the request is sent to.</param>
 		/// <param name="data">object that will be serialized and sent</param>
 		/// <returns>The task object representing the asynchronous operation</returns>
-		public async Task<string> PostAsync(string url, StreamContent data)
+		public async Task<string> PostAsync(string url, MultipartFormDataContent data)
 		{
 			if (string.IsNullOrWhiteSpace(url))
 				throw new ArgumentException(nameof(url), $"{nameof(url)} é de preenchimento obrigatório");
