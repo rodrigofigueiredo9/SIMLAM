@@ -22,6 +22,8 @@
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimento.js") %>"></script>
 
+	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+
 	<script type="text/javascript">
 		Requerimento.urlIndex = '<%= Url.Action("Operar", "ProjetoDigital", (Model.ProjetoDigitalId > 0) ? new { id = Model.ProjetoDigitalId } : null) %>';
 		Requerimento.urlAvancar = '<%= Url.Action("Salvar", "Requerimento") %>';

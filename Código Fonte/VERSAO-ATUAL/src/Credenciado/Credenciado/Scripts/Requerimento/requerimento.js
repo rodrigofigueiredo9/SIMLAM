@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.json-2.2.min.js" />
+/// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../Pessoa/inline.js" />
 /// <reference path="../Empreendimento/inline.js" />
 /// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
@@ -215,7 +215,6 @@ Requerimento = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
 					return;
@@ -605,9 +604,48 @@ RequerimentoObjetivoPedido = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
 				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+					if (response.acoes.contains('RTFaltandoInformacoesProfissao') == true) {
+						var mensagem = '\
+						<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
+							<div class=\"textoMensagem \">\
+								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
+								<p> Mensagem do Sistema</p>\
+								<ul>';
+						var i = 0;
+						for (i = 0; i < response.Msg.length; i++) {
+							mensagem = mensagem + '<li>' + response.Msg[i].Texto + '</li>';
+						}
+						mensagem = mensagem + '\
+								</ul>\
+							</div>';
+
+						if (i > 1) {
+							mensagem = mensagem + '<a class="linkVejaMaisMensagens" title="Clique aqui para ver mais detalhes desta mensagem">Clique aqui para ver mais detalhes desta mensagem</a>';
+						}
+
+						mensagem = mensagem + '\
+							<br>\
+							<div class=\"redirecinamento block containerAcoes hide\">\
+								<h5> O que deseja fazer agora ?</h5>\
+								<p class=\"hide\">#DESCRICAO</p>\
+								<div class=\"coluna100 margem0 divAcoesContainer\">\
+									<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+									<div class=\"containerBotoes\"></div>\
+								</div>\
+							</div>\
+						</div>';
+						$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+
+						//if (mensagem.Campo == 'AlertaEPTVAprovada') {
+						ContainerAcoes.load($(".containerAcoes"), {
+							botoes: [
+								{ label: 'Cancelar cadastro da declaração' },
+								{ label: 'Atualizar cadastro pessoal', url: '/Credenciado/AlterarDados/' + response.idUsuario }]
+						});
+					} else {
+						Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+					}
 					return;
 				}
 
@@ -640,8 +678,7 @@ RequerimentoObjetivoPedido = {
 		});
 
 		return isSalvo;
-
-	}
+	},
 }
 
 RequerimentoInteressado = {

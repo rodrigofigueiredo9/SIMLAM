@@ -177,7 +177,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			requerimento.SituacaoId = (int)eRequerimentoSituacao.EmAndamento;
 			_busRequerimento.SalvarObjetivoPedido(requerimento);
 
-			return Json(new { id = requerimento.Id, projetoDigitalId = requerimento.ProjetoDigitalId, Msg = Validacao.Erros });
+			List<string> acoesErros = new List<string>();
+			if (Validacao.Erros.Find(x => x.Texto == Mensagem.Requerimento.RTFaltandoInformacoesProfissao.Texto) != null)
+			{
+				acoesErros.Add("RTFaltandoInformacoesProfissao");
+			}
+
+			return Json(new
+			{
+				id = requerimento.Id,
+				projetoDigitalId = requerimento.ProjetoDigitalId,
+				Msg = Validacao.Erros,
+				acoes = acoesErros,
+				idUsuario = (User.Identity as EtramiteIdentity).FuncionarioId
+			});
 		}
 
 		[Permite(Tipo = ePermiteTipo.Logado)]

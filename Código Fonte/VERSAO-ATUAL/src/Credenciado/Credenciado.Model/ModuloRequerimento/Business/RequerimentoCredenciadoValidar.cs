@@ -19,6 +19,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloChecagemRoteiro.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRoteiro.Business;
@@ -40,6 +41,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 		AtividadeInternoBus _atividadeBus;
 		TituloModeloInternoBus _tituloModeloBus;
 		ChecagemRoteiroInternoBus _checkListRoteiroBus;
+		CredenciadoBus _busCredenciado;
 
 		public String UsuarioCredenciado
 		{
@@ -114,7 +116,52 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 			ValidarAtividade(requerimento.Atividades);
 
+			#region Validação título declaratório de barragem
+
+			//327 == Barragem dispensada de licenciamento ambiental
+			if (requerimento.Atividades.FirstOrDefault(a => a.Id == 327) != null)
+			{
+				if (requerimento.Atividades.Count() > 1)
+				{
+					Validacao.Add(Msg.RequerimentoBarragemVariasAtividades);
+				}
+
+				if (!ValidarRTProfissao())
+				{
+					Validacao.Add(Msg.RTFaltandoInformacoesProfissao);
+				}
+			}
+
+			#endregion Validação título declaratório de barragem
+
 			return Validacao.EhValido;
+		}
+
+		//Retorna true se o usuário for um RT e todos os campos de profissão estiverem corretamente preenchidos.
+		public bool ValidarRTProfissao()
+		{
+			_busCredenciado = new CredenciadoBus(new CredenciadoValidar());
+			CredenciadoPessoa usuarioLogado = _busCredenciado.Obter(User.EtramiteIdentity.FuncionarioId);
+			usuarioLogado.Pessoa = _busCredenciado.ObterPessoaCredenciado(usuarioLogado.Pessoa.Id);
+
+			//tipo 2 == Responsável Técnico
+			if (usuarioLogado.Tipo != 2)
+			{
+				return false;
+			}
+
+			if (!usuarioLogado.Pessoa.IsFisica || usuarioLogado.Pessoa.Fisica == null)
+			{
+				return false;
+			}
+
+			var fisProfissao = usuarioLogado.Pessoa.Fisica.Profissao;
+			if (fisProfissao == null || string.IsNullOrWhiteSpace(fisProfissao.ProfissaoTexto) || fisProfissao.OrgaoClasseId.GetValueOrDefault(0) == 0 || string.IsNullOrWhiteSpace(fisProfissao.Registro))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		public bool ValidarAtividade(List<Atividade> atividades, string local = null)
@@ -304,13 +351,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 						#endregion
 					}
 					#endregion
-				}
-
-				if (atividade.NomeAtividade.ToLower() == "barragem dispensada de licenciamento ambiental"
-					&& atividades.Count() > 1)
-				{
-					Validacao.Add(Msg.RequerimentoBarragemVariasAtividades);
-					return Validacao.EhValido;
 				}
 
 				#endregion
