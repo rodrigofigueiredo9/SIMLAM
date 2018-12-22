@@ -649,6 +649,8 @@ RegularizacaoFundiaria = {
 		obj.Observacoes = $('.txtObservacoes', RegularizacaoFundiaria.container).val();
 		obj.RelacaoTrabalho = RegularizacaoFundiaria.somarRelacaoTrabalho();
 
+		obj.AreaDocumento = $('.txtAreaPosse', RegularizacaoFundiaria.container).val();
+
 		obj.PossuiDominioAvulso = $('.radioPossuiDominioAvulso:checked', RegularizacaoFundiaria.container).val();
 		$('.tabAreasAnexadas tbody tr', RegularizacaoFundiaria.container).each(function (i, linha) {
 			var dominio = JSON.parse($('.hdnDominioJSON', linha).val());
