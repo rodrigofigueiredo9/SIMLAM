@@ -66,6 +66,9 @@ namespace Tecnomapas.EtramiteX.Scheduler
 			var enviarArquivoCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("EnviarArquivoCarJob").Build();
 			JobDictionary.Add("EnviarArquivoCarJob", enviarArquivoCar);
 
+			var reenvioCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("ReenvioCarJob").Build();
+			JobDictionary.Add("ReenvioCarJob", reenvioCar);
+
 			//var ajustarStatusCar = JobBuilder.Create<AjustarStatusCarJob>().WithIdentity("AjustarStatusCarJob").Build();
 			//JobDictionary.Add("AjustarStatusCarJob", ajustarStatusCar);
 
@@ -77,6 +80,7 @@ namespace Tecnomapas.EtramiteX.Scheduler
 		{
 			_scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   //("A cada 15 Segundos"));
 			_scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));
+			_scheduler.ScheduleJob(JobDictionary["ReenvioCarJob"], CreateTrigger("A CADA 6H COMEÇANDO AS 5"));
 			//_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
 			//_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}
@@ -173,6 +177,16 @@ namespace Tecnomapas.EtramiteX.Scheduler
 							WithIntervalInHours(24)
 							.OnEveryDay()
 							.StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6 - localTimeZone, 0))
+							.InTimeZone(TimeZoneInfo.Utc))
+						.Build();
+
+				case "A CADA 6H COMEÇANDO AS 5":
+					return TriggerBuilder.Create()
+						.WithDescription("Todo dia as 6AM (UTC-4)")
+						.WithDailyTimeIntervalSchedule(x => x.
+							WithIntervalInHours(24)
+							.OnEveryDay()
+							.StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(5 - localTimeZone, 0))
 							.InTimeZone(TimeZoneInfo.Utc))
 						.Build();
 
