@@ -206,7 +206,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.IsCredenciado = false;
             vm.UrlVoltar = Url.Action("../Caracterizacao/Index", new { id = empreendimento });
 
-			vm.Projeto = _bus.ObterProjeto(id);
+			vm.Projeto = _bus.ObterProjeto(id, tipo);
 
 			Dominialidade dominialidade = null;
 			if (vm.IsFinalizado)

@@ -771,7 +771,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return projeto;
 		}
 
-		internal ProjetoGeografico Obter(int id, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
+		internal ProjetoGeografico Obter(int id, int? tipo = null, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
 		{
 			ProjetoGeografico projeto = new ProjetoGeografico();
 
@@ -867,7 +867,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				//Busca os arquivos
 				if (projeto.Id > 0)
 				{
-					projeto.Arquivos = ObterArquivos(projeto.Id, banco: bancoDeDados, finalizado: finalizado);
+					projeto.Arquivos = ObterArquivos(projeto.Id, tipo, banco: bancoDeDados, finalizado: finalizado);
 
 					projeto.ArquivosOrtofotos = ObterOrtofotos(projeto.Id, banco: bancoDeDados, finalizado: finalizado);
 
@@ -897,7 +897,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (tid == null)
 				{
-					projeto = Obter(id, bancoDeDados, simplificado, finalizado);
+					projeto = Obter(id,null, bancoDeDados, simplificado, finalizado);
 				}
 				else
 				{
@@ -906,7 +906,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, tid);
 
-					projeto = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id, bancoDeDados, simplificado, finalizado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
+					projeto = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id,null, bancoDeDados, simplificado, finalizado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
 				}
 
 				#endregion
@@ -1176,7 +1176,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return arquivo;
 		}
 
-		public List<ArquivoProjeto> ObterArquivos(int projetoId, BancoDeDados banco = null, bool finalizado = false)
+		public List<ArquivoProjeto> ObterArquivos(int projetoId,int? tipo = null, BancoDeDados banco = null, bool finalizado = false)
 		{
 			List<ArquivoProjeto> arquivos = new List<ArquivoProjeto>();
 
@@ -1185,11 +1185,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Projeto Geográfico/Arquivos
+				Comando comando = null;
 
-				Comando comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
-				lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
-				{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and t.tipo = tf.tipo(+) 
-				and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria)
+				{
+					comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
+						lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
+						{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and tf.tipo(+) = "+ (int)eFilaTipoGeo.RegularizacaoFundiaria +
+						"and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
+						lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
+						{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and t.tipo = tf.tipo(+) 
+						and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				}
 
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
 
@@ -1688,8 +1699,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_fila t where t.projeto = :projeto and t.etapa = 3 and t.situacao = 4 and t.tipo = :tipo", EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("tipo", (tipo == eCaracterizacao.Dominialidade) ? (int)eFilaTipoGeo.Dominialidade :
-					(int)eFilaTipoGeo.Atividade, DbType.Int32);
+
+				if(tipo == eCaracterizacao.Dominialidade)
+					comando.AdicionarParametroEntrada("tipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
+				else if(tipo == eCaracterizacao.RegularizacaoFundiaria)				
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.RegularizacaoFundiaria, DbType.Int32);
+				else
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.Atividade, DbType.Int32);
 
 				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}
