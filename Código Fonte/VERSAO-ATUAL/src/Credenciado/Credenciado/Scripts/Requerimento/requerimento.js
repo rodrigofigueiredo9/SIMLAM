@@ -604,9 +604,10 @@ RequerimentoObjetivoPedido = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
+				var mensagem = "";
 				if (response.Msg && response.Msg.length > 0) {
 					if (response.acoes.contains('RTFaltandoInformacoesProfissao') == true) {
-						var mensagem = '\
+						mensagem = '\
 						<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
 							<div class=\"textoMensagem \">\
 								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
@@ -637,7 +638,6 @@ RequerimentoObjetivoPedido = {
 						</div>';
 						$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
 
-						//if (mensagem.Campo == 'AlertaEPTVAprovada') {
 						ContainerAcoes.load($(".containerAcoes"), {
 							botoes: [
 								{ label: 'Cancelar cadastro da declaração' },
@@ -647,38 +647,70 @@ RequerimentoObjetivoPedido = {
 						Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
 					}
 					return;
+				} else {	//Não houve mensagens de  erro
+					mensagem = '\
+						<div class=\"mensagemSistema info ui-draggable\" style=\"position: relative;\">\
+							<div class=\"textoMensagem \">\
+								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
+								<p> Mensagem do Sistema</p>\
+								<ul>\
+									<li>O cadastramento da Declaração de Dispensa de Licenciamento Ambiental de Barragem somente é autorizado ao profissional elaborador do estudo ambiental ou do projeto técnico ou laudo de barragem construída, conforme o caso.</li>\
+							    </ul>\
+							</div><br>\
+							<div class=\"redirecinamento block containerAcoes hide\">\
+								<h5> O que deseja fazer agora ?</h5>\
+								<p class=\"hide\">#DESCRICAO</p>\
+								<div class=\"coluna100 margem0 divAcoesContainer\">\
+									<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+									<div class=\"containerBotoes\"></div>\
+								</div>\
+							</div>\
+						</div>';
+					$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+					
+					ContainerAcoes.load($(".containerAcoes"), {
+						botoes: [
+							{ label: 'Continuar', url: '/CFO/AtivarConfirm/', abrirModal: function () { CFOListar.ativarItem({ SituacaoId: '1', Id: '2375' }); } },
+							{ label: 'Cancelar cadastro da declaração' }]
+					});
+					return;
 				}
 
-				var arrayMensagem = new Array();
+				//Essa parte agora estará em outro lugar, é a parte que vai pra outra aba
+				//var arrayMensagem = new Array();
 
-				if (objetivoPedido.Id === 0) {
+				//if (objetivoPedido.Id === 0) {
 
-					$('#hdnRequerimentoId', Requerimento.containerMensagem).val(response.id);
-					$('#hdnProjetoDigitalId', Requerimento.containerMensagem).val(response.projetoDigitalId);
+				//	$('#hdnRequerimentoId', Requerimento.containerMensagem).val(response.id);
+				//	$('#hdnProjetoDigitalId', Requerimento.containerMensagem).val(response.projetoDigitalId);
 
-					var url = $('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href');
+				//	var url = $('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href');
 
-					if (url.indexOf(response.projetoDigitalId) <= 0) {
-						$('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href', url.concat('/', response.projetoDigitalId));
-					}
+				//	if (url.indexOf(response.projetoDigitalId) <= 0) {
+				//		$('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href', url.concat('/', response.projetoDigitalId));
+				//	}
 
-					var objetoMensagem = Requerimento.Mensagens.RequerimentoSalvar;
+				//	var objetoMensagem = Requerimento.Mensagens.RequerimentoSalvar;
 
-					objetoMensagem.Texto = objetoMensagem.Texto.replace("#id#", response.id);
+				//	objetoMensagem.Texto = objetoMensagem.Texto.replace("#id#", response.id);
 
-					arrayMensagem.push(objetoMensagem);
+				//	arrayMensagem.push(objetoMensagem);
 
-				} else {
-					arrayMensagem.push(Requerimento.Mensagens.RequerimentoEditar);
-				}
-				Mensagem.gerar(MasterPage.getContent(Requerimento.container), arrayMensagem);
+				//} else {
+				//	arrayMensagem.push(Requerimento.Mensagens.RequerimentoEditar);
+				//}
+				//Mensagem.gerar(MasterPage.getContent(Requerimento.container), arrayMensagem);
 
-				isSalvo = true;
+				//isSalvo = true;
 			}
 		});
 
 		return isSalvo;
 	},
+
+	gerarMensagemBotoes: function (tipoMsg, msg) {
+
+	}
 }
 
 RequerimentoInteressado = {
