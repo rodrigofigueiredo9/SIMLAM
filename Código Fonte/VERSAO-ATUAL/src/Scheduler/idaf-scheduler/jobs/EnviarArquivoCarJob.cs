@@ -102,15 +102,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
-						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
-						{
-							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
-							if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
-							{
-								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-							}
-							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
-						}
+						//if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
+						//{
+						//	resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
+						//	if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
+						//	{
+						//		throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+						//	}
+						//	resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
+						//}
 						//resultadoEnvio.codigoResposta = 200;
 
 						//Salvar no diretorio de arquivos do SIMLAM Institucional
