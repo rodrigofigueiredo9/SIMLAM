@@ -381,6 +381,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
+			vm.IsDeclaratorio = modelo.TipoDocumento == (int)eTituloModeloTipoDocumento.TituloDeclaratorio;
 
 			string htmlEspecificidade = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Especificidades/Views/Outros/OutrosInformacaoCorte.ascx", vm);
 			return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = htmlEspecificidade }, JsonRequestBehavior.AllowGet);

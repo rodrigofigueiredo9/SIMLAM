@@ -9,30 +9,34 @@
         <div class="block">
             <div class="coluna20 append1">
                 <label>Código</label>
-                <%= Html.TextBox("EmpreendimentoId", Model.EmpreendimentoCodigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
+                <%= Html.TextBox("EmpreendimentoId", Model.Empreendimento.EmpreendimentoCodigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
             </div>
-            <div class="coluna77">
-                <label><%=Model.DenominadorTexto%> *</label>
-                <%= Html.TextBox("DenominadorValor", Model.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
+            <div class="coluna54 append1">
+                <label>Denominação</label>
+                <%= Html.TextBox("DenominadorValor", Model.Empreendimento.DenominadorValor, new { @maxlength = "100", @class = "text denominador disabled", @disabled = "disabled" })%>
+            </div>
+            <div class="coluna20">
+                <label>Área do imóvel (ha)</label>
+                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), new { @maxlength = "100", @class = "text areaImovel disabled", @disabled = "disabled" })%>
             </div>
         </div>
 
         <div class="block">
             <div class="coluna20 append1">
                 <label>Zona de localização *</label>
-                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.EmpreendimentoZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
+                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.Empreendimento.EmpreendimentoZonaLocalizacao, new { disabled = "disabled", @class = "text disabled" })%>
             </div>
             <div class="coluna7 append1">
                 <label>UF</label>
-                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.EmpreendimentoUf, new { disabled = "disabled", @class = "text disabled" })%>
+                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.Empreendimento.EmpreendimentoUf, new { disabled = "disabled", @class = "text disabled" })%>
             </div>
             <div class="coluna45 append1">
                 <label>Município</label>
-                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.EmpreendimentoMunicipio, new { disabled = "disabled", @class = "text disabled" })%>
+                <%= Html.DropDownList("SelecionarPrimeiroItem", Model.Empreendimento.EmpreendimentoMunicipio, new { disabled = "disabled", @class = "text disabled" })%>
             </div>
             <div class="coluna20 ">
-                <label>CNPJ</label>
-                <%= Html.TextBox("CNPJ", Model.EmpreendimentoCNPJ, new { @maxlength = "100", @class = "text cnpj disabled", @disabled = "disabled" })%>
+                <label>Área de Floresta Plantada *</label>
+                <%= Html.TextBox("AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
             </div>
         </div>
     </fieldset>
@@ -42,35 +46,41 @@
         <div class="block">
             <div class="coluna10">
                 <label>N.º Licença</label>
-                <%= Html.TextBox("NumeroLicenca", Model.NumeroLicena, new { @class = "text numeroLicenca" })%>
+                <%= Html.TextBox("NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca" }))%>
             </div>
 
-            <div class="coluna10">
+			 <div class="coluna10">
+                <label>Tipo de Licença</label>
+                <%= Html.TextBox("TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca"}))%>
+            </div>
+
+            <div class="coluna17">
                 <label>Atividade</label>
-                <%= Html.TextBox("Atividade", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text atividade"}))%>
+                <%= Html.TextBox("Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade"}))%>
             </div>
 
-            <div class="coluna15">
+            <div class="coluna17">
                 <label>Área Licenciada / Plantada (ha)</label>
-                <%= Html.TextBox("AreaLicenciada", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text areaLicenciada"}))%>
+                <%= Html.TextBox("AreaLicenciada", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaLicenciada", @maxlength = "12"}))%>
             </div>
 
             <div class="coluna10">
                 <label>Data Vencimento</label>
-                <%= Html.TextBox("DataVencimento", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataVencimento"}))%>
+                <%= Html.TextBox("DataVencimento", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData dataVencimento"}))%>
             </div>
 
             <div class="coluna10">
                 <br />
-                <input class="icone adicionar btnAdicioinar" type="button" />
+                <input class="icone adicionar btnAdicionar" type="button" />
             </div>
         </div>
 
         <div class="dataGrid">
-            <table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <table class="tabLicencas dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
                         <th width="9%">Nº Linceça</th>
+                        <th width="9%">Tipo de Licença</th>
                         <th width="9%">Atividade</th>
                         <th width="19%">Área Licenciada/Plantada (ha)</th>
                         <th width="12%">Vencimento</th>
@@ -79,63 +89,232 @@
                 </thead>
 
                 <tbody>
-                    <% foreach (var item in Model.Resultados)
+                    <% foreach (var item in Model.InformacaoCorteLicencaList)
 						{ %>
                     <tr>
-                        <td title="<%= Html.Encode(item.Numero.Texto)%>"><%= Html.Encode(item.Numero.Texto)%></td>
-                        <td title="<%= Html.Encode(item.Modelo.Nome)%>"><%= Html.Encode(item.Modelo.Sigla)%></td>
-                        <td title="<%= Html.Encode(item.Protocolo.Numero)%>"><%= Html.Encode(item.Protocolo.Numero)%></td>
-                        <td title="<%= Html.Encode(item.EmpreendimentoTexto)%>"><%= Html.Encode(item.EmpreendimentoTexto)%></td>
-                        <td title="<%= Html.Encode(item.DataVencimento.DataTexto)%>"><%= Html.Encode(item.DataVencimento.DataTexto)%></td>
                         <td>
-                            <input type="hidden" class="itemJson" value="<%= Model.ObterJSon(item) %>" />
-
+                            <span class="numero" title="<%= Html.Encode(item.NumeroLicenca)%>"><%= Html.Encode(item.NumeroLicenca)%></span>
+                        </td>
+						<td>
+                            <span class="tipoLicenca" title="<%= Html.Encode(item.TipoLicenca)%>"><%= Html.Encode(item.TipoLicenca)%></span>
+                        </td>
+                        <td>
+                            <span class="atividade" title="<%= Html.Encode(item.Atividade)%>"><%= Html.Encode(item.Atividade)%></span>
+                        </td>
+                        <td>
+                            <span class="areaPlantada" title="<%= Html.Encode(item.AreaLicenca.ToStringTrunc(2))%>"><%= Html.Encode(item.AreaLicenca.ToStringTrunc())%></span>
+                        </td>
+                        <td>
+                            <span class="dataVencimento" title="<%= Html.Encode(item.DataVencimento.DataTexto)%>"><%= Html.Encode(item.DataVencimento.DataTexto)%></span>
+                        </td>
+                        <td class="tdAcoes">
+                            <input type="hidden" class="itemJson" value="<%= ViewModelHelper.Json(item) %>" />
                             <%if (Model.IsPodeExcluir)
 								{%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
                         </td>
                     </tr>
                     <% } %>
+                    <tr class="trTemplateRow hide">
+                        <td><span class="numero" title=""></span></td>
+                        <td><span class="tipoLicenca" title=""></span></td>
+                        <td><span class="atividade" title=""></span></td>
+                        <td><span class="areaPlantada" title=""></span></td>
+                        <td><span class="dataVencimento" title=""></span></td>
+                        <td class="tdAcoes">
+                            <input type="hidden" value="" class="itemJson" />
+                            <input type="button" title="Excluir" class="icone excluir btnExcluir" />
+                        </td>
+                    </tr>
                 </tbody>
             </table>
+            <br />
+            <label>* A partir de 100ha de área plantada é obrigatória a indicação de licença ambiental.</label>
         </div>
 
     </fieldset>
 
     <fieldset class="block box">
-        <legend>Objeto Declarado</legend>
+        <legend>Informação de Corte</legend>
         <div class="block">
             <div class="coluna20 append1">
                 <label>Código</label>
-                <%= Html.TextBox("codigoObjetoDeclarado", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text codigoObjetoDeclarado"}))%>
+                <%= Html.TextBox("codigoInformacaoCorte", Model.Id > 0 ? Model.Id.ToString() : "Preenchido automaticamente", ViewModelHelper.SetaDisabled(true, new { @class = "text codigoInformacaoCorte"}))%>
             </div>
 
-            <div class="coluna10">
-                <label>Data Informação *</label>
-                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
+            <div class="coluna20">
+                <label>Data da Informação *</label>
+                <%= Html.TextBox("dataInformacao", Model.DataInformacao.DataTexto, ViewModelHelper.SetaDisabled(true, new { @class = "text maskData dataInformacao"}))%>
             </div>
         </div>
+        <fieldset class="block boxBranca">
+            <div class="block">
+                <div class="coluna20 append1">
+                    <label>Tipo de Corte *</label>
+                    <%= Html.DropDownList("InformacaoCorte_TipoCorte", Model.InformacaoCorteTipo.TipoCorte, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoCorte"}))%>
+                </div>
+                <div class="coluna20 append1">
+                    <label>Espécie Informada *</label>
+                    <%= Html.DropDownList("InformacaoCorte_EspecieInformada", Model.InformacaoCorteTipo.Especie, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text especieInformada"}))%>
+                </div>
+                <div class="coluna20">
+                    <label>Área Corte(ha) / N.º Árvore *</label>
+                    <%= Html.TextBox("InformacaoCorte_AreaCorte", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaCorte"}))%>
+                </div>
+                <div class="coluna15 append2">
+                    <label>Idade Plantio (anos) *</label>
+                    <%= Html.TextBox("InformacaoCorte_IdadePlantio", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskInteger idadePlantio", @maxlength = "3"}))%>
+                </div>
+
+                <div class="coluna2 adicionarTipo">
+                    <br />
+                    <input class="icone adicionar btnAdicionarTipo" type="button" />
+                </div>
+				<div class="coluna5 limparTipo hide">
+                    <br />
+                    <input class="btnLimparTipo" type="button"  value="Limpar" />
+                </div>
+            </div>
+            <div class="block">
+
+                <fieldset class="block box">
+                    <div class="coluna20 append1">
+                        <label>Destinação do Material *</label>
+                        <%= Html.DropDownList("InformacaoCorte_DestinacaoMaterial", Model.InformacaoCorteDestinacao.DestinacaoMaterial, ViewModelHelper.SetaDisabled(true, new { @class = "text destinacaoMaterial"}))%>
+                    </div>
+                    <div class="coluna20 append1">
+                        <label>Produto *</label>
+                        <%= Html.DropDownList("InformacaoCorte_Produto", Model.InformacaoCorteDestinacao.Produto, ViewModelHelper.SetaDisabled(true, new { @class = "text produto"}))%>
+                    </div>
+                    <div class="coluna20 append2">
+                        <label>Quantidade *</label>
+                        <%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto quantidade"}))%>
+                    </div>
+                    <div class="coluna10">
+                        <br />
+                        <input class="icone adicionar btnAdicionarDestinacao" type="button" disabled="disabled"  />
+                    </div>
+
+                    <div class="dataGrid">
+                        <table class="tabDestinacao dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <thead>
+                                <tr>
+                                    <th width="9%">Destinação Material</th>
+                                    <th width="9%">Produto</th>
+                                    <th width="19%">Quantidade</th>
+                                    <th class="semOrdenacao" width="9%">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% foreach (var item in Model.InformacaoCorteDestinacaoList)
+									{ %>
+                                <tr>
+                                    <td>
+                                        <span class="destinacaoMaterial" title="<%= Html.Encode(item.DestinacaoMaterialTexto)%>"><%= Html.Encode(item.DestinacaoMaterialTexto)%></span>
+                                    </td>
+                                    <td>
+                                        <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
+                                    </td>
+                                    <td>
+                                        <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
+                                    </td>
+                                    <td class="tdAcoes">
+                                        <input type="hidden" class="itemJson" value="<%= ViewModelHelper.Json(item) %>" />
+                                        <%if (Model.IsPodeExcluir)
+											{%><input type="button" title="Excluir" class="icone excluir btnExcluirDestinacao" /><% } %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                <tr class="trTemplateRow hide">
+                                    <td><span class="destinacaoMaterial" title=""></span></td>
+                                    <td><span class="produto" title=""></span></td>
+                                    <td><span class="quantidade" title=""></span></td>
+                                    <td class="tdAcoes">
+                                        <input type="hidden" value="" class="itemJson" />
+                                        <input type="button" title="Excluir" class="icone excluir btnExcluirDestinacao" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                        <input class="btnAdicionarInformacao" type="button" title="OK" value="OK" disabled="disabled" />
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="dataGrid">
+                <table class="tabInformacaoCorte dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            <th width="9%">Tipo de Corte</th>
+                            <th width="9%">Espécie</th>
+                            <th width="19%">Área corte (ha)/ N° árvores</th>
+                            <th width="9%">Idade Plantio (anos)</th>
+                            <th width="9%">Destinação Material</th>
+                            <th width="9%">Produto</th>
+                            <th width="9%">Qtde</th>
+                            <th class="semOrdenacao" width="9%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% foreach (var item in Model.InformacaoCorteResultados)
+							{ %>
+                        <tr>
+                            <td rowspan="<%= item.Linhas %>">
+                                <span class="tipoCorte" title="<%= Html.Encode(item.TipoCorte)%>"><%= Html.Encode(item.TipoCorte)%></span>
+                            </td>
+                            <td rowspan="<%= item.Linhas %>">
+                                <span class="especie" title="<%= Html.Encode(item.Especie)%>"><%= Html.Encode(item.Especie)%></span>
+                            </td>
+                            <td rowspan="<%= item.Linhas %>">
+                                <span class="areaCorte" title="<%= Html.Encode(item.AreaCorte.ToStringTrunc(2))%>"><%= Html.Encode(item.AreaCorte.ToStringTrunc())%></span>
+                            </td>
+                            <td rowspan="<%= item.Linhas %>">
+                                <span class="idadePlantio" title="<%= Html.Encode(item.IdadePlantio)%>"><%= Html.Encode(item.IdadePlantio)%></span>
+                            </td>
+                            <td>
+                                <span class="destinacaoMaterial" title="<%= Html.Encode(item.DestinacaoMaterialTexto)%>"><%= Html.Encode(item.DestinacaoMaterialTexto)%></span>
+                            </td>
+                            <td>
+                                <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
+                            </td>
+                            <td>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
+                            </td>
+                            <td class="tdAcoes">
+                                <input type="hidden" class="itemJson" value="<%= ViewModelHelper.Json(item) %>" />
+                                <%if (Model.IsPodeExcluir)
+									{%><input type="button" title="Excluir" class="icone excluir btnExcluirInformacao" /><% } %>
+                            </td>
+                        </tr>
+                        <% } %>
+                        <tr class="trTemplateRow hide">
+                            <td><span class="tipoCorte" title=""></span></td>
+                            <td><span class="especie" title=""></span></td>
+                            <td><span class="areaCorte" title=""></span></td>
+                            <td><span class="idadePlantio" title=""></span></td>
+                            <td><span class="destinacaoMaterial" title=""></span></td>
+                            <td><span class="produto" title=""></span></td>
+                            <td><span class="quantidade" title=""></span></td>
+                            <td class="tdAcoes">
+                                <input type="hidden" value="" class="itemJson" />
+                                <input type="button" title="Excluir" class="icone excluir btnExcluirInformacao" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+    </fieldset>
+    <fieldset class="block box">
+        <legend>Declarações (aceitas)</legend>
         <div class="block">
-            <div class="coluna20 append1">
-                <label>Tipo de Corte</label>
-                <%= Html.DropDownList("tipoCorteList", Model.EmpreendimentoZonaLocalizacao, ViewModelHelper.SetaDisabled(false, new { @class = "text tipoCorteList"}))%>
+            <div class="coluna60">
+                <%=Html.CheckBox("InformacaoCorte.DeclaracaoVerdadeira", Model.DeclaracaoVerdadeira, new { @class = "ckbDeclaracaoVerdadeira" })%>
+                <label for="InformacaoCorte_DeclaracaoVerdadeira">Declaro que as informações prestadas são verdadeiras, assumindo inteira responsabilidade pelas mesmas</label>
             </div>
-			<div class="coluna20 append1">
-                <label>Espécie Informada</label>
-                <%= Html.DropDownList("especieInformadaList", Model.EmpreendimentoZonaLocalizacao, ViewModelHelper.SetaDisabled(false, new { @class = "text especieInformadaList"}))%>
-            </div>
-			<div class="coluna20">
-                <label>Área Corte(ha) / N.º Árvore</label>
-                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
-            </div>
-
-			<div class="coluna10">
-                <label>Idade Plantio (anos)</label>
-                <%= Html.TextBox("dataInformacao", Model.Atividade, ViewModelHelper.SetaDisabled(false, new { @class = "text maskData dataInformacao"}))%>
-            </div>
-
-			<div class="coluna10">
-                <br />
-                <input class="icone adicionar btnAdicioinar" type="button" />
+            <div class="coluna35">
+                <%=Html.CheckBox("InformacaoCorte.ResponsavelPelasDeclaracoes", Model.ResponsavelPelasDeclaracoes, new {  @class = "ckbResponsabilidadePelasDeclaracoes" })%>
+                <label for="InformacaoCorte_ResponsavelPelasDeclaracoes">As informações aqui presentes são de minha responsabilidade</label>
             </div>
         </div>
     </fieldset>

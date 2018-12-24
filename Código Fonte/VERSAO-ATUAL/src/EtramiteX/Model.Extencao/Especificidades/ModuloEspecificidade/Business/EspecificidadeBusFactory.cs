@@ -137,6 +137,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 					return new OutrosLegitimacaoTerraDevolutaBus();
 
 				case eEspecificidade.OutrosInformacaoCorte:
+				case eEspecificidade.OutrosInformacaoCorteDeclaratorio:
 					return new OutrosInformacaoCorteBus();
 
 				case eEspecificidade.CertidaoDebito:
@@ -147,6 +148,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 
 				case eEspecificidade.CadastroAmbientalRuralTitulo:
 					return new CadastroAmbientalRuralTituloBus();
+
 
 				case eEspecificidade.TermoCompromissoAmbiental:
 					return new TermoCompromissoAmbientalBus();
