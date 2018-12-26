@@ -86,45 +86,47 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 				if (_validar.ObjetivoPedidoValidar(requerimento))
 				{
-					GerenciadorTransacao.ObterIDAtual();
-
-
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+					if (requerimento.Atividades.Count(x => x.Id == 327) == 0)
 					{
-						bancoDeDados.IniciarTransacao();
+						GerenciadorTransacao.ObterIDAtual();
 
-						requerimento.CredenciadoId = User.FuncionarioId;
-
-						_da.Salvar(requerimento, bancoDeDados);
-
-						#region Projeto Digital
-
-						ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
-						ProjetoDigital projetoDigital = new ProjetoDigital();
-
-						if (!criarRequerimento)
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 						{
-							projetoDigital = projetoDigitalCredenciadoBus.Obter(idRequerimento: requerimento.Id, banco: bancoDeDados);
+							bancoDeDados.IniciarTransacao();
+
+							requerimento.CredenciadoId = User.FuncionarioId;
+
+							_da.Salvar(requerimento, bancoDeDados);
+
+							#region Projeto Digital
+
+							ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
+							ProjetoDigital projetoDigital = new ProjetoDigital();
+
+							if (!criarRequerimento)
+							{
+								projetoDigital = projetoDigitalCredenciadoBus.Obter(idRequerimento: requerimento.Id, banco: bancoDeDados);
+							}
+
+							projetoDigital.RequerimentoId = requerimento.Id;
+							projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Requerimento;
+							projetoDigitalCredenciadoBus.Salvar(projetoDigital, bancoDeDados, criarRequerimento);
+
+							ProjetoDigitalCredenciadoDa projetoDigitalCredenciadoDa = new ProjetoDigitalCredenciadoDa();
+							projetoDigitalCredenciadoDa.DesassociarDependencias(projetoDigital, bancoDeDados);
+
+							requerimento.ProjetoDigitalId = projetoDigital.Id;
+
+							#endregion
+
+							if (!Validacao.EhValido)
+							{
+								bancoDeDados.Rollback();
+								return;
+							}
+
+							bancoDeDados.Commit();
 						}
-
-						projetoDigital.RequerimentoId = requerimento.Id;
-						projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Requerimento;
-						projetoDigitalCredenciadoBus.Salvar(projetoDigital, bancoDeDados, criarRequerimento);
-
-						ProjetoDigitalCredenciadoDa projetoDigitalCredenciadoDa = new ProjetoDigitalCredenciadoDa();
-						projetoDigitalCredenciadoDa.DesassociarDependencias(projetoDigital, bancoDeDados);
-
-						requerimento.ProjetoDigitalId = projetoDigital.Id;
-
-						#endregion
-
-						if (!Validacao.EhValido)
-						{
-							bancoDeDados.Rollback();
-							return;
-						}
-
-						bancoDeDados.Commit();
 					}
 				}
 			}

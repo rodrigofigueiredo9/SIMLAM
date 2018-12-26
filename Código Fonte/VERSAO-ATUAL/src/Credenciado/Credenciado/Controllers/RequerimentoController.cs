@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -178,10 +179,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			_busRequerimento.SalvarObjetivoPedido(requerimento);
 
 			List<string> acoesErros = new List<string>();
-			if (Validacao.Erros.Find(x => x.Texto == Mensagem.Requerimento.RTFaltandoInformacoesProfissao.Texto) != null)
+			bool temBarragemDispensada = false;
+
+			//327 == Barragem dispensada de licenciamento ambiental
+			if (requerimento.Atividades.Count(x => x.Id == 327) > 0)
 			{
-				acoesErros.Add("RTFaltandoInformacoesProfissao");
+				temBarragemDispensada = true;
+				if (Validacao.Erros.Find(x => x.Texto == Mensagem.Requerimento.RTFaltandoInformacoesProfissao.Texto) != null)
+				{
+					acoesErros.Add("RTFaltandoInformacoesProfissao");
+				}
 			}
+				
 
 			return Json(new
 			{
@@ -189,6 +198,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				projetoDigitalId = requerimento.ProjetoDigitalId,
 				Msg = Validacao.Erros,
 				acoes = acoesErros,
+				temBarragemDeclaratoria  = temBarragemDispensada,
 				idUsuario = (User.Identity as EtramiteIdentity).FuncionarioId
 			});
 		}

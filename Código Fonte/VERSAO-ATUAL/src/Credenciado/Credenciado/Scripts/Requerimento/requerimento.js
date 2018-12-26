@@ -604,28 +604,70 @@ RequerimentoObjetivoPedido = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-				var mensagem = "";
+				if (response.temBarragemDeclaratoria) {
+					RequerimentoObjetivoPedido.possuiBarragemDeclaratoria(response);
+					return;
+				}
+
 				if (response.Msg && response.Msg.length > 0) {
-					if (response.acoes.contains('RTFaltandoInformacoesProfissao') == true) {
-						mensagem = '\
+					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+					return;
+				}
+
+				var arrayMensagem = new Array();
+
+				if (objetivoPedido.Id === 0) {
+
+					$('#hdnRequerimentoId', Requerimento.containerMensagem).val(response.id);
+					$('#hdnProjetoDigitalId', Requerimento.containerMensagem).val(response.projetoDigitalId);
+
+					var url = $('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href');
+
+					if (url.indexOf(response.projetoDigitalId) <= 0) {
+						$('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href', url.concat('/', response.projetoDigitalId));
+					}
+
+					var objetoMensagem = Requerimento.Mensagens.RequerimentoSalvar;
+
+					objetoMensagem.Texto = objetoMensagem.Texto.replace("#id#", response.id);
+
+					arrayMensagem.push(objetoMensagem);
+
+				} else {
+					arrayMensagem.push(Requerimento.Mensagens.RequerimentoEditar);
+				}
+				Mensagem.gerar(MasterPage.getContent(Requerimento.container), arrayMensagem);
+
+				isSalvo = true;
+			}
+		});
+
+		return isSalvo;
+	},
+
+	possuiBarragemDeclaratoria: function (response) {
+		var mensagem = "";
+		if (response.Msg && response.Msg.length > 0) {
+			if (response.acoes.contains('RTFaltandoInformacoesProfissao') == true) {
+				mensagem = '\
 						<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
 							<div class=\"textoMensagem \">\
 								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
 								<p> Mensagem do Sistema</p>\
 								<ul>';
-						var i = 0;
-						for (i = 0; i < response.Msg.length; i++) {
-							mensagem = mensagem + '<li>' + response.Msg[i].Texto + '</li>';
-						}
-						mensagem = mensagem + '\
+				var i = 0;
+				for (i = 0; i < response.Msg.length; i++) {
+					mensagem = mensagem + '<li>' + response.Msg[i].Texto + '</li>';
+				}
+				mensagem = mensagem + '\
 								</ul>\
 							</div>';
 
-						if (i > 1) {
-							mensagem = mensagem + '<a class="linkVejaMaisMensagens" title="Clique aqui para ver mais detalhes desta mensagem">Clique aqui para ver mais detalhes desta mensagem</a>';
-						}
+				if (i > 1) {
+					mensagem = mensagem + '<a class="linkVejaMaisMensagens" title="Clique aqui para ver mais detalhes desta mensagem">Clique aqui para ver mais detalhes desta mensagem</a>';
+				}
 
-						mensagem = mensagem + '\
+				mensagem = mensagem + '\
 							<br>\
 							<div class=\"redirecinamento block containerAcoes hide\">\
 								<h5> O que deseja fazer agora ?</h5>\
@@ -636,19 +678,18 @@ RequerimentoObjetivoPedido = {
 								</div>\
 							</div>\
 						</div>';
-						$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+				$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
 
-						ContainerAcoes.load($(".containerAcoes"), {
-							botoes: [
-								{ label: 'Cancelar cadastro da declaração' },
-								{ label: 'Atualizar cadastro pessoal', url: '/Credenciado/AlterarDados/' + response.idUsuario }]
-						});
-					} else {
-						Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
-					}
-					return;
-				} else {	//Não houve mensagens de  erro
-					mensagem = '\
+				ContainerAcoes.load($(".containerAcoes"), {
+					botoes: [
+						{ label: 'Cancelar cadastro da declaração' },
+						{ label: 'Atualizar cadastro pessoal', url: '/Credenciado/AlterarDados/' + response.idUsuario }]
+				});
+			} else {
+				Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+			}
+		} else {	//Não houve mensagens de  erro
+			mensagem = '\
 						<div class=\"mensagemSistema info ui-draggable\" style=\"position: relative;\">\
 							<div class=\"textoMensagem \">\
 								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
@@ -666,50 +707,14 @@ RequerimentoObjetivoPedido = {
 								</div>\
 							</div>\
 						</div>';
-					$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
-					
-					ContainerAcoes.load($(".containerAcoes"), {
-						botoes: [
-							{ label: 'Continuar', url: '/CFO/AtivarConfirm/', abrirModal: function () { CFOListar.ativarItem({ SituacaoId: '1', Id: '2375' }); } },
-							{ label: 'Cancelar cadastro da declaração' }]
-					});
-					return;
-				}
+			$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
 
-				//Essa parte agora estará em outro lugar, é a parte que vai pra outra aba
-				//var arrayMensagem = new Array();
-
-				//if (objetivoPedido.Id === 0) {
-
-				//	$('#hdnRequerimentoId', Requerimento.containerMensagem).val(response.id);
-				//	$('#hdnProjetoDigitalId', Requerimento.containerMensagem).val(response.projetoDigitalId);
-
-				//	var url = $('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href');
-
-				//	if (url.indexOf(response.projetoDigitalId) <= 0) {
-				//		$('.spnCancelarCadastro .linkCancelar', Requerimento.containerMensagem).attr('href', url.concat('/', response.projetoDigitalId));
-				//	}
-
-				//	var objetoMensagem = Requerimento.Mensagens.RequerimentoSalvar;
-
-				//	objetoMensagem.Texto = objetoMensagem.Texto.replace("#id#", response.id);
-
-				//	arrayMensagem.push(objetoMensagem);
-
-				//} else {
-				//	arrayMensagem.push(Requerimento.Mensagens.RequerimentoEditar);
-				//}
-				//Mensagem.gerar(MasterPage.getContent(Requerimento.container), arrayMensagem);
-
-				//isSalvo = true;
-			}
-		});
-
-		return isSalvo;
-	},
-
-	gerarMensagemBotoes: function (tipoMsg, msg) {
-
+			ContainerAcoes.load($(".containerAcoes"), {
+				botoes: [
+					{ label: 'Continuar', url: '/CFO/AtivarConfirm/', abrirModal: function () { CFOListar.ativarItem({ SituacaoId: '1', Id: '2375' }); } },
+					{ label: 'Cancelar cadastro da declaração' }]
+			});
+		}
 	}
 }
 
