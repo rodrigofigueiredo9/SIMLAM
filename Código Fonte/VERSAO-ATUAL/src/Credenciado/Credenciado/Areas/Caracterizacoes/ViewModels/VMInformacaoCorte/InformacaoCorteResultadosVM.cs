@@ -10,6 +10,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMIn
 	public class InformacaoCorteResultadosVM
 	{
 		public int? Id { get; set; }
+		public int? DestinacaoId { get; set; }
 		public string TipoCorte { get; set; }
 		public string Especie { get; set; }
 		public Decimal AreaCorte { get; set; }

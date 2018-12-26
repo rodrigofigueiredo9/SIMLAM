@@ -11,7 +11,7 @@
 		$(function () {
 			InformacaoCorte.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("Criar", "Dominialidade") %>'
+					salvar: '<%= Url.Action("Criar", "InformacaoCorte") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

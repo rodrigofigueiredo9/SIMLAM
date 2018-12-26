@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
@@ -24,6 +25,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 	public class InformacaoCorteController : DefaultController
 	{
 		CaracterizacaoBus _bus = new CaracterizacaoBus(new CaracterizacaoValidar());
+		InformacaoCorteBus _informacaoCorteBus = new InformacaoCorteBus();
 
 		[Permite(Tipo = ePermiteTipo.Logado)]
 		public ActionResult Criar(int id, int projetoDigitalId, bool visualizar = false)
@@ -32,6 +34,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>());
 			return View(informacaoCorteVM);
+		}
+
+		[HttpPost]
+		public ActionResult Criar(InformacaoCorte caracterizacao, int projetoDigitalId = 0)
+		{
+			_informacaoCorteBus.Salvar(caracterizacao);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

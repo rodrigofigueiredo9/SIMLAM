@@ -570,7 +570,6 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalGeo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorte.cs" />
-    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteInformacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteDestinacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloPatioLavagem\PatioLavagem.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloProducaoCarvaoVegetal\Forno.cs" />

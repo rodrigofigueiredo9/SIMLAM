@@ -16,6 +16,7 @@ InformacaoCorte = {
 		if (options) { $.extend(InformacaoCorte.settings, options); }
 		InformacaoCorte.container = MasterPage.getContent(container);
 
+		InformacaoCorte.container.delegate('.btnSalvar', 'click', InformacaoCorte.salvar);
 		InformacaoCorte.container.delegate('.btnAdicionar', 'click', InformacaoCorte.adicionar);
 		InformacaoCorte.container.delegate('.btnExcluir', 'click', InformacaoCorte.excluir);
 		InformacaoCorte.container.delegate('.btnAdicionarTipo', 'click', InformacaoCorte.adicionarTipo);
@@ -232,16 +233,19 @@ InformacaoCorte = {
 		$('.btnAdicionarInformacao', container).button({ disabled: true });
 
 		var objeto = {
+			Id: 0,
 			TipoCorte: $('.tipoCorte option:selected', container).val(),
 			TipoCorteTexto: $('.tipoCorte option:selected', container).text(),
 			Especie: $('.especieInformada option:selected', container).val(),
 			EspecieTexto: $('.especieInformada option:selected', container).text(),
 			AreaCorte: $('.areaCorte', container).val(),
 			IdadePlantio: $('.idadePlantio', container).val(),
+			DestinacaoId: 0,
 			DestinacaoMaterial: '',
 			DestinacaoMaterialTexto: '',
 			Produto: '',
 			ProdutoTexto: '',
+			Quantidade: 0,
 			Linhas: $('.tabDestinacao > tbody > tr:not(".trTemplateRow")', container).length
 		};
 
@@ -349,5 +353,101 @@ InformacaoCorte = {
 				InformacaoCorte.downRowspan(previousRow.index() - 1);
 			}
 		}
+	},
+
+	obter: function () {
+		var container = InformacaoCorte.container;
+		var informacaoCorte = {
+			Id: $('.codigoInformacaoCorte', container).val() > 0 ? $('.codigoInformacaoCorte', container).val() : 0,
+			EmpreendimentoId: $('.hdnEmpreendimentoId', container).val(),
+			DataInformacao: { DataTexto: $('.dataInformacao', container).val() },
+			AreaFlorestaPlantada: $('.areaPlantada', container).val(),
+			InformacaoCorteLicenca: [],
+			InformacaoCorteTipo: []
+		};
+		var informacaoCorteTipo = {
+			Id: 0,
+			TipoCorte: '',
+			Especie: '',
+			AreaCorte: '',
+			IdadePlantio: '',
+			InformacaoCorteDestinacao: []
+		};
+
+		$('.tabLicencas > tbody > tr:not(".trTemplateRow") > td.tdAcoes > input.itemJson').toArray().map(x =>
+			informacaoCorte.InformacaoCorteLicenca.push(JSON.parse(x.value))
+		);
+
+		$('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow") > td.tdAcoes > input.itemJson', container).toArray().map(function (x) {
+			var item = JSON.parse(x.value);
+
+			var informacaoCorteDestinacao = {
+				Id: item.DestinacaoId,
+				DestinacaoMaterial: item.DestinacaoMaterial,
+				Produto: item.Produto,
+				Quantidade: item.Quantidade
+			};
+
+			if (!(informacaoCorteTipo.TipoCorte == item.TipoCorte &&
+				informacaoCorteTipo.Especie == item.Especie &&
+				informacaoCorteTipo.AreaCorte == item.AreaCorte &&
+				informacaoCorteTipo.IdadePlantio == item.IdadePlantio)) {
+				informacaoCorteTipo = {
+					Id: item.Id,
+					TipoCorte: item.TipoCorte,
+					Especie: item.Especie,
+					AreaCorte: item.AreaCorte,
+					IdadePlantio: item.IdadePlantio,
+					InformacaoCorteDestinacao: []
+				};
+			}
+			informacaoCorteTipo.InformacaoCorteDestinacao.push(informacaoCorteDestinacao);
+			if (!informacaoCorte.InformacaoCorteTipo.contains(informacaoCorteTipo))
+				informacaoCorte.InformacaoCorteTipo.push(informacaoCorteTipo);
+		});
+
+		return informacaoCorte;
+	},
+
+	salvar: function () {
+		var container = InformacaoCorte.container;
+		Mensagem.limpar(container);
+		var msgValidacao = [];
+		var objeto = InformacaoCorte.obter();
+
+		if (!$('.ckbDeclaracaoVerdadeira', container).prop('checked')) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.Declaracao1Obrigatoria);
+		}
+
+		if (!$('.ckbResponsabilidadePelasDeclaracoes', container).prop('checked')) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.Declaracao2Obrigatoria);
+		}
+
+		if (msgValidacao.length > 0) {
+			Mensagem.gerar(InformacaoCorte.container, msgValidacao);
+			return;
+		}
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: InformacaoCorte.settings.urls.salvar,
+			data: JSON.stringify({ caracterizacao: objeto, projetoDigitalId: $('.hdnProjetoDigitalId', InformacaoCorte.container).val() }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(UnidadeProducao.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
 	}
 };

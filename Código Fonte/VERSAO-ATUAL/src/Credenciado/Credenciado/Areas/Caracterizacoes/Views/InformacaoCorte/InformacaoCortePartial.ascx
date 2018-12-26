@@ -3,13 +3,14 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 
 <div class="containerDesenhador">
-
+	<%= Html.Hidden("EmpreendimentoId", Model.Empreendimento.EmpreendimentoId, new { @class = "hdnEmpreendimentoId" }) %>
+	<%= Html.Hidden("ProjetoDigitalId", Request.Params["ProjetoDigitalId"], new { @class="hdnProjetoDigitalId" })%>
     <fieldset class="block box">
         <legend>Empreendimento</legend>
         <div class="block">
             <div class="coluna20 append1">
                 <label>Código</label>
-                <%= Html.TextBox("EmpreendimentoId", Model.Empreendimento.EmpreendimentoCodigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
+                <%= Html.TextBox("EmpreendimentoCodigo", Model.Empreendimento.EmpreendimentoCodigo, new { @class = "text cnpj disabled", @disabled = "disabled" })%>
             </div>
             <div class="coluna54 append1">
                 <label>Denominação</label>
@@ -205,25 +206,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% foreach (var item in Model.InformacaoCorteDestinacaoList)
-									{ %>
-                                <tr>
-                                    <td>
-                                        <span class="destinacaoMaterial" title="<%= Html.Encode(item.DestinacaoMaterialTexto)%>"><%= Html.Encode(item.DestinacaoMaterialTexto)%></span>
-                                    </td>
-                                    <td>
-                                        <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
-                                    </td>
-                                    <td>
-                                        <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
-                                    </td>
-                                    <td class="tdAcoes">
-                                        <input type="hidden" class="itemJson" value="<%= ViewModelHelper.Json(item) %>" />
-                                        <%if (Model.IsPodeExcluir)
-											{%><input type="button" title="Excluir" class="icone excluir btnExcluirDestinacao" /><% } %>
-                                    </td>
-                                </tr>
-                                <% } %>
                                 <tr class="trTemplateRow hide">
                                     <td><span class="destinacaoMaterial" title=""></span></td>
                                     <td><span class="produto" title=""></span></td>
@@ -309,11 +291,11 @@
         <legend>Declarações (aceitas)</legend>
         <div class="block">
             <div class="coluna60">
-                <%=Html.CheckBox("InformacaoCorte.DeclaracaoVerdadeira", Model.DeclaracaoVerdadeira, new { @class = "ckbDeclaracaoVerdadeira" })%>
+                <%=Html.CheckBox("InformacaoCorte.DeclaracaoVerdadeira", Model.Id > 0, new { @class = "ckbDeclaracaoVerdadeira" })%>
                 <label for="InformacaoCorte_DeclaracaoVerdadeira">Declaro que as informações prestadas são verdadeiras, assumindo inteira responsabilidade pelas mesmas</label>
             </div>
             <div class="coluna35">
-                <%=Html.CheckBox("InformacaoCorte.ResponsavelPelasDeclaracoes", Model.ResponsavelPelasDeclaracoes, new {  @class = "ckbResponsabilidadePelasDeclaracoes" })%>
+                <%=Html.CheckBox("InformacaoCorte.ResponsavelPelasDeclaracoes", Model.Id > 0, new {  @class = "ckbResponsabilidadePelasDeclaracoes" })%>
                 <label for="InformacaoCorte_ResponsavelPelasDeclaracoes">As informações aqui presentes são de minha responsabilidade</label>
             </div>
         </div>

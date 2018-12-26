@@ -66,6 +66,9 @@
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a caracterização informação de corte deste empreendimento? " }; } }
 		public Mensagem ItemExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a informação de corte dessa caracterização? " }; } }
 
+		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
+		public Mensagem Declaracao2Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_ResponsavelPelasDeclaracoes", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
+
 		#region TipoCorte
 		public Mensagem TipoCorteObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_TipoCorte", Texto = @"Tipo de Corte é obrigatório." }; } }
 		public Mensagem EspecieObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_EspecieInformada", Texto = @"Espécie Informada é obrigatória." }; } }

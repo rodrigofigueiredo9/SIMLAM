@@ -68,11 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
 
 		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
-		public List<InformacaoCorteDestinacao> InformacaoCorteDestinacaoList { get; set; } = new List<InformacaoCorteDestinacao>();
 		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();
-
-		public bool DeclaracaoVerdadeira { get; set; }
-		public bool ResponsavelPelasDeclaracoes { get; set; }
 
 		public String Mensagens
 		{
@@ -86,7 +82,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 					@IdadePlantioObrigatoria = Mensagem.InformacaoCorte.IdadePlantioObrigatoria,
 					@DestinacaoMaterialObrigatoria = Mensagem.InformacaoCorte.DestinacaoMaterialObrigatoria,
 					@ProdutoObrigatorio = Mensagem.InformacaoCorte.ProdutoObrigatorio,
-					@QuantidadeObrigatoria = Mensagem.InformacaoCorte.QuantidadeObrigatoria
+					@QuantidadeObrigatoria = Mensagem.InformacaoCorte.QuantidadeObrigatoria,
+					@Declaracao1Obrigatoria = Mensagem.InformacaoCorte.Declaracao1Obrigatoria,
+					@Declaracao2Obrigatoria = Mensagem.InformacaoCorte.Declaracao2Obrigatoria
 				});
 			}
 		}

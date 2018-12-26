@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte
 {
@@ -13,5 +14,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 
 		public Decimal AreaCorte { get; set; }
 		public String IdadePlantio { get; set; }
+
+		private List<InformacaoCorteDestinacao> _informacaoCorteDestinacao = new List<InformacaoCorteDestinacao>();
+		public List<InformacaoCorteDestinacao> InformacaoCorteDestinacao
+		{
+			get { return _informacaoCorteDestinacao; }
+			set { _informacaoCorteDestinacao = value; }
+		}
 	}
 }
