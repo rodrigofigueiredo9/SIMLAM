@@ -27,7 +27,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		{
 			PreAuthenticate = true,
 			UseDefaultCredentials = false
-		};
+};
 		private static HttpClient _client;
 		private static int count = 1;
 
@@ -101,8 +101,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
-						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3201209-38DB.3282.CFF3.61AE.400C.F4AF.D516.B008.car", DateTime.Now.ToString(""));
+						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3201209-38DB.3282.CFF3.61AE.400C.F4AF.D516.B008.car", "29/05/2018 16:53");
 
 						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
@@ -179,14 +179,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-
-					//Apagar arquivo do diretorio temporário
-					//TODO:NÃO VAI 
-					//try
-					//{
-					//	File.Delete(pathArquivoTemporario + nextItem.Requisicao);
-					//}
-					//catch (Exception) { /*ignored*/ }
+					
 				}
 
 				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
@@ -252,6 +245,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			{
 				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")} ");
 				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 				_client.DefaultRequestHeaders.Clear();
 				_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
