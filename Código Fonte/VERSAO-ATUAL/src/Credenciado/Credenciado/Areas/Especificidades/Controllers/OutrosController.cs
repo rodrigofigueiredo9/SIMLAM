@@ -73,6 +73,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = htmlEspecificidade }, JsonRequestBehavior.AllowGet);
 		}
 
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioCriar, ePermissao.TituloDeclaratorioEditar, ePermissao.TituloDeclaratorioVisualizar })]
+		public ActionResult OutrosInformacaoCorteDeclaratorio(EspecificidadeVME especificidade) => OutrosInformacaoCorte(especificidade);
+
 		#region Auxiliares
 
 		#endregion

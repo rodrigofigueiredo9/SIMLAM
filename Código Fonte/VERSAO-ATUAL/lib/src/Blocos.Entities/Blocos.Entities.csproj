@@ -90,6 +90,9 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\eTipoExploracao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalProduto.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ListarExploracaoFlorestalFiltro.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eEspecieInformada.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eTipoCorte.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteLicenca.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeConsolidacao\UnidadeConsolidacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoUnidadeMedida.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoTipoProducao.cs" />
@@ -565,10 +568,10 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestal.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalExploracao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalGeo.cs" />
-    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Especie.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorte.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteInformacao.cs" />
-    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Produto.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteDestinacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloPatioLavagem\PatioLavagem.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloProducaoCarvaoVegetal\Forno.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloProducaoCarvaoVegetal\ProducaoCarvaoVegetal.cs" />

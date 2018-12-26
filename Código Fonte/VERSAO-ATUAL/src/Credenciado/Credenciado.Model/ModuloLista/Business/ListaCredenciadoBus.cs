@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Tecnomapas.Blocos.Entities.Configuracao;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
@@ -580,6 +583,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 				GerenciadorConfiguracao<ConfiguracaoPTV> configuracao = new GerenciadorConfiguracao<ConfiguracaoPTV>(new ConfiguracaoPTV());
 				return configuracao.Obter<List<Lista>>(ConfiguracaoPTV.KeyTipoTransporte);
 			}
+		}
+
+		public static List<Lista> DestinacaoMaterial
+		{
+			get
+			{
+				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
+				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyDestinacaoMaterial);
+			}
+		}
+
+		public static List<Lista> Produto
+		{
+			get
+			{
+				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
+				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosExploracao);
+			}
+		}
+
+		public static List<Lista> ListaEnumerado<TEnum>()
+		{
+				return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => new Lista() { Id = x.ToString(), Texto = x.ToDescription() }).ToList();
 		}
 	}
 }

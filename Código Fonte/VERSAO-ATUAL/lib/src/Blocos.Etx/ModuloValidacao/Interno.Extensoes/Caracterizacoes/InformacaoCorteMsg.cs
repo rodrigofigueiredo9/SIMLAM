@@ -66,6 +66,18 @@
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a caracterização informação de corte deste empreendimento? " }; } }
 		public Mensagem ItemExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a informação de corte dessa caracterização? " }; } }
 
+		#region TipoCorte
+		public Mensagem TipoCorteObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_TipoCorte", Texto = @"Tipo de Corte é obrigatório." }; } }
+		public Mensagem EspecieObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_EspecieInformada", Texto = @"Espécie Informada é obrigatória." }; } }
+		public Mensagem AreaCorteObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_AreaCorte", Texto = @"Área de Corte(ha) / N° Árvores é obrigatório." }; } }
+		public Mensagem IdadePlantioObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_IdadePlantio", Texto = @"Idade Plantio (anos) é obrigatório." }; } }
+		#endregion
+
+		#region Destinacao
+		public Mensagem DestinacaoMaterialObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DestinacaoMaterial", Texto = @"Destinação Material é obrigatório	." }; } }
+		public Mensagem ProdutoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Produto", Texto = @"Produto é obrigatório." }; } }
+		public Mensagem QuantidadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Quantidade", Texto = @"Quantidade é obrigatória." }; } } 
+		#endregion
 	}
 
 }

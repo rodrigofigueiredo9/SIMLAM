@@ -21,7 +21,7 @@
 		</div>
 	</div>
 
-	<<%--div class="block">
+	<%--<div class="block">
 		<div class="coluna75">
 			<label for="Interessado">Interessado *</label>
 			<%= Html.TextBox("Interessado", Model.Certidao.Interessado, ViewModelHelper.SetaDisabledReadOnly(true, new { @class = "text txtInteressado" }))%>
