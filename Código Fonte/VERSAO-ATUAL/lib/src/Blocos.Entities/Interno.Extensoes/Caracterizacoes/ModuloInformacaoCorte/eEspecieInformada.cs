@@ -6,10 +6,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	public enum eEspecieInformada
 	{
 		[Description("Eucalipto")]
-		Eucalipto,
+		Eucalipto = 1,
 		[Description("Pinus")]
-		Pinus,
+		Pinus = 2,
 		[Description("Palmito")]
-		Palmito
+		Palmito = 3
 	}
 }

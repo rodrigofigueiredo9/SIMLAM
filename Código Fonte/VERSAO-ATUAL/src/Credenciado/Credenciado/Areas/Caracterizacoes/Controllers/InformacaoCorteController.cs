@@ -26,6 +26,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 	{
 		CaracterizacaoBus _bus = new CaracterizacaoBus(new CaracterizacaoValidar());
 		InformacaoCorteBus _informacaoCorteBus = new InformacaoCorteBus();
+		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
+		InformacaoCorteValidar _validar = new InformacaoCorteValidar();
+
+		#region Criar
 
 		[Permite(Tipo = ePermiteTipo.Logado)]
 		public ActionResult Criar(int id, int projetoDigitalId, bool visualizar = false)
@@ -39,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[HttpPost]
 		public ActionResult Criar(InformacaoCorte caracterizacao, int projetoDigitalId = 0)
 		{
-			_informacaoCorteBus.Salvar(caracterizacao);
+			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
 
 			return Json(new
 			{
@@ -48,5 +52,47 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+		#endregion
+
+		#region Editar
+
+		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		public ActionResult Editar(int id, int projetoDigitalId)
+		{
+			if (!_caracterizacaoValidar.Basicas(id))
+			{
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+			}
+
+			if (!_validar.Acessar(id, projetoDigitalId))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+			}
+
+			var caracterizacao = _informacaoCorteBus.ObterPorEmpreendimento(id);
+			var vm = new InformacaoCorteVM(caracterizacao.Empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
+			{
+				ProjetoDigitalId = projetoDigitalId
+			};
+
+			return View(vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		public ActionResult Editar(InformacaoCorte caracterizacao, int projetoDigitalId)
+		{
+			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
 	}
 }

@@ -9,7 +9,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	{
 		public Int32 Id { get; set; }
 		public Int32 EmpreendimentoId { get; set; }
-		public EmpreendimentoCaracterizacao Emprendimento { get; set; }
+		public EmpreendimentoCaracterizacao Empreendimento { get; set; }
 
 		private DateTecno _dataInformacao = new DateTecno();
 		public DateTecno DataInformacao { get { return _dataInformacao; } set { _dataInformacao = value; } }
@@ -32,6 +32,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 
 		public List<Dependencia> Dependencias { get; set; }
 
+		public int? InternoID { get; set; }
+		public string InternoTID { get; set; }
 		public String Tid { get; set; }
 	}
 }

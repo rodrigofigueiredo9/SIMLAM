@@ -39,12 +39,45 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#endregion
 
-		internal bool Salvar(InformacaoCorte caracterizacao)
+		internal bool Salvar(InformacaoCorte caracterizacao, int projetoDigitalId)
 		{
-			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.Empreendimento.Id))
+				return false;
+
+			InformacaoCorte auxiliar = _da.ObterPorEmpreendimento(caracterizacao.Empreendimento.Id, true) ?? new InformacaoCorte();
+
+			if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
 			{
+				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
 				return false;
 			}
+
+			if (!Acessar(caracterizacao.Empreendimento.Id, projetoDigitalId))
+				return false;
+
+			if (caracterizacao.AreaFlorestaPlantada > 100)
+			{
+				if (caracterizacao.InformacaoCorteLicenca.Count < 1)
+					Validacao.Add(Mensagem.InformacaoCorte.LicencaObrigatoria);
+			}
+
+			if (caracterizacao.InformacaoCorteTipo.Count < 1)
+				Validacao.Add(Mensagem.InformacaoCorte.InformacaoCorteListaObrigatorio);
+
+			return Validacao.EhValido;
+		}
+
+		public bool Acessar(int empreendimentoId, int projetoDigitalId)
+		{
+			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.InformacaoCorte);
+
+			return Validacao.EhValido;
+		}
+
+		internal bool CopiarDadosInstitucional(InformacaoCorte caracterizacao)
+		{
+			if (caracterizacao.InternoID <= 0)
+				Validacao.Add(Mensagem.Dominialidade.CopiarCaractizacaoCadastrada);
 
 			return Validacao.EhValido;
 		}

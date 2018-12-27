@@ -605,7 +605,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 
 		public static List<Lista> ListaEnumerado<TEnum>()
 		{
-				return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => new Lista() { Id = x.ToString(), Texto = x.ToDescription() }).ToList();
+			return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => new Lista() { Id = Convert.ToInt32(x).ToString(), Texto = x.ToDescription() }).ToList();
 		}
 	}
 }

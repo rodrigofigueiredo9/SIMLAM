@@ -359,7 +359,7 @@ InformacaoCorte = {
 		var container = InformacaoCorte.container;
 		var informacaoCorte = {
 			Id: $('.codigoInformacaoCorte', container).val() > 0 ? $('.codigoInformacaoCorte', container).val() : 0,
-			EmpreendimentoId: $('.hdnEmpreendimentoId', container).val(),
+			Empreendimento: { Id: $('.hdnEmpreendimentoId', container).val() },
 			DataInformacao: { DataTexto: $('.dataInformacao', container).val() },
 			AreaFlorestaPlantada: $('.areaPlantada', container).val(),
 			InformacaoCorteLicenca: [],
@@ -444,7 +444,7 @@ InformacaoCorte = {
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(UnidadeProducao.container, response.Msg);
+					Mensagem.gerar(InformacaoCorte.container, response.Msg);
 				}
 			}
 		});

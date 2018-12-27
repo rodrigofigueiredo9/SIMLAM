@@ -8,12 +8,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	{
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
+		public Int32 Corte { get; set; }
 
 		public Int32 TipoCorte { get; set; }
 		public Int32 EspecieInformada { get; set; }
 
 		public Decimal AreaCorte { get; set; }
-		public String IdadePlantio { get; set; }
+		public Int32 IdadePlantio { get; set; }
 
 		private List<InformacaoCorteDestinacao> _informacaoCorteDestinacao = new List<InformacaoCorteDestinacao>();
 		public List<InformacaoCorteDestinacao> InformacaoCorteDestinacao

@@ -7,6 +7,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	{
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
+		public Int32 TipoCorteId { get; set; }
 
 		public Int32 DestinacaoMaterial { get; set; }
 		public Int32 DestinacaoMaterialTexto { get; set; }

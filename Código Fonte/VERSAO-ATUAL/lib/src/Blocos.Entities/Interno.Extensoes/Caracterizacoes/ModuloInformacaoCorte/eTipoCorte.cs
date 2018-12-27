@@ -5,8 +5,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	public enum eTipoCorte
 	{
 		[Description("Corte Raso")]
-		CorteRaso,
+		CorteRaso = 1,
 		[Description("Corte Seletivo")]
-		CorteSeletivo
+		CorteSeletivo = 2
 	}
 }

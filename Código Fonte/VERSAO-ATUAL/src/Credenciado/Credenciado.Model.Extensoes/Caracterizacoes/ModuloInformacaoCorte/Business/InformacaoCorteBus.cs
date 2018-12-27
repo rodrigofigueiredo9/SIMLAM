@@ -69,14 +69,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Comandos DML
 
-		public bool Salvar(InformacaoCorte caracterizacao)
+		public bool Salvar(InformacaoCorte caracterizacao, int projetoDigitalId)
 		{
 			try
 			{
 				CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-				EmpreendimentoCaracterizacao empreendimento = caracterizacaoBus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+				EmpreendimentoCaracterizacao empreendimento = caracterizacaoBus.ObterEmpreendimentoSimplificado(caracterizacao.Empreendimento.Id);
 
-				if (!_validar.Salvar(caracterizacao))
+				InformacaoCorteInternoBus informacaoCorteInternoBus = new InformacaoCorteInternoBus();
+				InformacaoCorte caracterizacaoInterno = informacaoCorteInternoBus.ObterPorEmpreendimento(empreendimento.InternoID, true);
+
+				caracterizacao.InternoID = caracterizacaoInterno.Id;
+				caracterizacao.InternoTID = caracterizacaoInterno.Tid;
+
+				if (!_validar.Salvar(caracterizacao, projetoDigitalId))
 					return Validacao.EhValido;
 
 				GerenciadorTransacao.ObterIDAtual();
@@ -120,7 +126,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					_da.Excluir(empreendimento, bancoDeDados);
 
-					Validacao.Add(Mensagem.UnidadeProducao.ExcluidoSucesso);
+					Validacao.Add(Mensagem.InformacaoCorte.Excluir);
 
 					bancoDeDados.Commit();
 				}
@@ -131,6 +137,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 
 			return Validacao.EhValido;
+		}
+
+		#endregion
+
+		#region Obter/Filtrar
+
+		public InformacaoCorte ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false)
+		{
+			InformacaoCorte caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.ObterPorEmpreendimento(empreendimentoInternoId, simplificado: simplificado);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
 		}
 
 		#endregion

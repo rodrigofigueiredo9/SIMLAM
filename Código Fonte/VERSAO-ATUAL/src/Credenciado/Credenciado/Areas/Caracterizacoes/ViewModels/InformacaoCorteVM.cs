@@ -20,8 +20,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 
 		public InformacaoCorteVM() { }
 
-		public InformacaoCorteVM(EmpreendimentoCaracterizacao empreendimento, List<Lista> destinacao, List<Lista> produto, List<Lista> tipoCorte, List<Lista> especie)
+		public InformacaoCorteVM(EmpreendimentoCaracterizacao empreendimento, List<Lista> destinacao, List<Lista> produto, List<Lista> tipoCorte,
+			List<Lista> especie, InformacaoCorte caracterizacao = null)
 		{
+			if(caracterizacao != null)
+			{
+				this.Id = caracterizacao.Id;
+				this.DataInformacao = caracterizacao.DataInformacao;
+				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
+			}
+
 			var municipio = new ListaValor() { Id = 1, Texto = empreendimento.Municipio, IsAtivo = true };
 			var uf = new ListaValor() { Id = 1, Texto = empreendimento.Uf, IsAtivo = true };
 			var zonalocalizacao = new ListaValor() { Id = 1, Texto = empreendimento.ZonaLocalizacaoTexto, IsAtivo = true };
