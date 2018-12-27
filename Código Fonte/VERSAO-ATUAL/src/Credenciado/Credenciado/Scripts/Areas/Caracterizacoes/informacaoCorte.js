@@ -35,7 +35,8 @@ InformacaoCorte = {
 
 	adicionar: function () {
 		var container = InformacaoCorte.container;
-	
+		Mensagem.limpar(container);
+
 		//monta o objeto
 		var objeto = {
 			NumeroLicenca: container.find('.numeroLicenca').val(),
@@ -44,6 +45,33 @@ InformacaoCorte = {
 			AreaLicenca: container.find('.areaLicenciada').val(),
 			DataVencimento: { DataTexto: container.find('.dataVencimento').val() }
 		};
+
+		var msgs = [];
+
+		if (objeto.NumeroLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.NumeroLicencaObrigatoria);
+		}
+
+		if (objeto.TipoLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.TipoLicencaObrigatoria);
+		}
+
+		if (objeto.Atividade == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.AtividadeObrigatoria);
+		}
+
+		if (objeto.AreaLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.AreaLicencaObrigatoria);
+		}
+
+		if (objeto.DataVencimento.DataTexto == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.DataVencimentoObrigatoria);
+		}
+		
+		if (msgs.length > 0) {
+			Mensagem.gerar(container, msgs);
+			return;
+		}
 
 		var linha = ''; 
 		linha = $('.trTemplateRow', $('.tabLicencas', container)).clone();
@@ -412,6 +440,7 @@ InformacaoCorte = {
 	salvar: function () {
 		var container = InformacaoCorte.container;
 		Mensagem.limpar(container);
+
 		var msgValidacao = [];
 		var objeto = InformacaoCorte.obter();
 

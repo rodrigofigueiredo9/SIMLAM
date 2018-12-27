@@ -46,28 +46,28 @@
         <legend>Licença</legend>
         <div class="block">
             <div class="coluna10">
-                <label>N.º Licença</label>
-                <%= Html.TextBox("NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca" }))%>
+                <label>N.º Licença *</label>
+                <%= Html.TextBox("InformacaoCorte_NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca" }))%>
             </div>
 
 			 <div class="coluna10">
-                <label>Tipo de Licença</label>
-                <%= Html.TextBox("TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca"}))%>
+                <label>Tipo de Licença *</label>
+                <%= Html.TextBox("InformacaoCorte_TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca"}))%>
             </div>
 
             <div class="coluna17">
-                <label>Atividade</label>
-                <%= Html.TextBox("Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade"}))%>
+                <label>Atividade *</label>
+                <%= Html.TextBox("InformacaoCorte_Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade"}))%>
             </div>
 
             <div class="coluna17">
-                <label>Área Licenciada / Plantada (ha)</label>
-                <%= Html.TextBox("AreaLicenciada", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaLicenciada", @maxlength = "12"}))%>
+                <label>Área Licenciada / Plantada (ha) *</label>
+                <%= Html.TextBox("InformacaoCorte_AreaLicenciada", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaLicenciada", @maxlength = "12"}))%>
             </div>
 
             <div class="coluna10">
-                <label>Data Vencimento</label>
-                <%= Html.TextBox("DataVencimento", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData dataVencimento"}))%>
+                <label>Data Vencimento *</label>
+                <%= Html.TextBox("InformacaoCorte_DataVencimento", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData dataVencimento"}))%>
             </div>
 
             <div class="coluna10">

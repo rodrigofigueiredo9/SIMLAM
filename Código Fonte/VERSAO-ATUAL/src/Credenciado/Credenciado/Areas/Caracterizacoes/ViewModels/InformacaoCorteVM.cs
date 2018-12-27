@@ -92,7 +92,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 					@ProdutoObrigatorio = Mensagem.InformacaoCorte.ProdutoObrigatorio,
 					@QuantidadeObrigatoria = Mensagem.InformacaoCorte.QuantidadeObrigatoria,
 					@Declaracao1Obrigatoria = Mensagem.InformacaoCorte.Declaracao1Obrigatoria,
-					@Declaracao2Obrigatoria = Mensagem.InformacaoCorte.Declaracao2Obrigatoria
+					@Declaracao2Obrigatoria = Mensagem.InformacaoCorte.Declaracao2Obrigatoria,
+					@NumeroLicencaObrigatoria = Mensagem.InformacaoCorte.NumeroLicencaObrigatoria,
+					@TipoLicencaObrigatoria = Mensagem.InformacaoCorte.TipoLicencaObrigatoria,
+					@AtividadeObrigatoria = Mensagem.InformacaoCorte.AtividadeObrigatoria,
+					@AreaLicencaObrigatoria = Mensagem.InformacaoCorte.AreaLicencaObrigatoria,
+					@DataVencimentoObrigatoria = Mensagem.InformacaoCorte.DataVencimentoObrigatoria
 				});
 			}
 		}

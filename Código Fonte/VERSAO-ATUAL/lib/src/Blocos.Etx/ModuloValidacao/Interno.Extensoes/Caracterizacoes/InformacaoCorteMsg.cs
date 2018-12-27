@@ -18,11 +18,20 @@
 		public Mensagem InformacaoCorteListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma Informação de corte adicionada. Pelo menos uma informação de corte deve ser adicionado." }; } }
 		public Mensagem InformacaoCorteUltimoItemListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Não é possivel excluir todas as informações de corte da lista." }; } }
 
-		public Mensagem LicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma licença adicionada. Pelo menos uma licença deve ser adicionada." }; } }
-		public Mensagem AtividadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Atividade", Texto = @"Atividade da informação de corte é obrigatório." }; } }
 
 		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
 		public Mensagem Declaracao2Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_ResponsavelPelasDeclaracoes", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
+
+		#region Licenca
+
+		public Mensagem LicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma licença adicionada. Pelo menos uma licença deve ser adicionada." }; } }
+		public Mensagem NumeroLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_NumeroLicenca", Texto = @"Nº Licença é obrigatória." }; } }
+		public Mensagem TipoLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_TipoLicenca", Texto = @"Tipo de Licença é obrigatória." }; } }
+		public Mensagem AtividadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Atividade", Texto = @"Atividade é obrigatória." }; } }
+		public Mensagem AreaLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_AreaLicenciada", Texto = @"Área Licenciada / Plantada (ha) é obrigatória." }; } }
+		public Mensagem DataVencimentoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DataVencimento", Texto = @"Data de Vencimento é obrigatória." }; } }
+
+		#endregion
 
 		#region TipoCorte
 		public Mensagem TipoCorteObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_TipoCorte", Texto = @"Tipo de Corte é obrigatório." }; } }
