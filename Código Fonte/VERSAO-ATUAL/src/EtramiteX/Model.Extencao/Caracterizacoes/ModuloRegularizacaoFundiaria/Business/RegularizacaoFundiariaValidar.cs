@@ -447,5 +447,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 		{
 			return _da.EmpreendimentoZonaAlterada(empreendimentoId);
 		}
+
+		public bool ValidarProjetoGeo(int empreendimento)
+		{
+			RegularizacaoFundiariaBus bus = new RegularizacaoFundiariaBus();
+			RegularizacaoFundiaria caracterizacao = bus.ObterDadosGeo(empreendimento);
+			caracterizacao.EmpreendimentoId = empreendimento;
+			if (Acessar(caracterizacao))
+			{
+				return true;
+			}
+			return false;
+		}
 	}
 }

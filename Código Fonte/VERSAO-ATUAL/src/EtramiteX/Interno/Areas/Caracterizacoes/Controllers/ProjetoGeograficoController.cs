@@ -24,6 +24,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracte
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDominialidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
@@ -38,11 +39,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		ListaBus _listaBus = new ListaBus();
 		ProjetoGeograficoBus _bus = new ProjetoGeograficoBus();
-
+		
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 		ProjetoGeograficoValidar _validar = new ProjetoGeograficoValidar();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
+		RegularizacaoFundiariaValidar _validarReg = new RegularizacaoFundiariaValidar();
 		ExploracaoFlorestalBus _exploracaoFlorestalBus = new ExploracaoFlorestalBus();
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 		GerenciadorConfiguracao<ConfiguracaoSistema> _config = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
@@ -52,9 +54,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Index(int id, int empreendimento, int tipo, bool isCadastrarCaracterizacao = true, bool mostrarModalDependencias = true)
 		{
 			PermissaoValidar permissaoValidar = new PermissaoValidar();
-
-			//if(tipo != (int)eCaracterizacao.RegularizacaoFundiaria && )
-
+			
 			if (isCadastrarCaracterizacao && permissaoValidar.ValidarAny(new[] { ePermissao.ProjetoGeograficoCriar }, false))
 			{
 				return Criar(empreendimento, tipo, isCadastrarCaracterizacao);
@@ -173,12 +173,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar })]
 		public ActionResult Criar(int empreendimento, int tipo, bool isCadastrarCaracterizacao = true)
 		{
+			PermissaoValidar permissaoValidar = new PermissaoValidar();
+
 			if (empreendimento <= 0 || empreendimento <= 0)
 			{
 				return RedirectToAction("Index", "../Empreendimento");
 			}
 
 			if (!_validar.Dependencias(empreendimento, tipo))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaCriar })
+				&& !_validarReg.ValidarProjetoGeo(empreendimento))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
