@@ -12,7 +12,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public Int32 Empreendimento { get; set; }
 		private DateTecno _dataInformacao = new DateTecno();
 		public DateTecno DataInformacao { get { return _dataInformacao; } set { _dataInformacao = value; } }
-		
+
 		//public String AreaCorte
 		//{
 		//	get

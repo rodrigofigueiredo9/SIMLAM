@@ -20,6 +20,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 
 		public InformacaoCorteVM() { }
 
+		public InformacaoCorteVM(EmpreendimentoCaracterizacao empreendimento) {
+			var municipio = new ListaValor() { Id = 1, Texto = empreendimento.Municipio, IsAtivo = true };
+			var uf = new ListaValor() { Id = 1, Texto = empreendimento.Uf, IsAtivo = true };
+			var zonalocalizacao = new ListaValor() { Id = 1, Texto = empreendimento.ZonaLocalizacaoTexto, IsAtivo = true };
+
+			this.Empreendimento = new EmpreendimentoCaracterizacaoVM
+			{
+				EmpreendimentoId = empreendimento.Id,
+				EmpreendimentoCodigo = empreendimento.Codigo,
+				EmpreendimentoCNPJ = empreendimento.CNPJ ?? "-",
+				DenominadorValor = empreendimento.Denominador,
+				DenominadorTexto = empreendimento.DenominadorTipo,
+				AreaImovel = empreendimento.AreaImovelHA,
+				EmpreendimentoMunicipio = ViewModelHelper.CriarSelectList(new List<ListaValor>() { municipio }, true, selecionado: "1"),
+				EmpreendimentoUf = ViewModelHelper.CriarSelectList(new List<ListaValor>() { uf }, true, selecionado: "1"),
+				EmpreendimentoZonaLocalizacao = ViewModelHelper.CriarSelectList(new List<ListaValor>() { zonalocalizacao }, true, selecionado: "1")
+			};
+		}
+
 		public InformacaoCorteVM(EmpreendimentoCaracterizacao empreendimento, List<Lista> destinacao, List<Lista> produto, List<Lista> tipoCorte, List<Lista> especie)
 		{
 			var municipio = new ListaValor() { Id = 1, Texto = empreendimento.Municipio, IsAtivo = true };
@@ -67,6 +86,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		public InformacaoCorteTipoVM InformacaoCorteTipo { get; set; }
 		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
 
+		public List<InformacaoCorte> InformacoesCortes { get; set; } = new List<InformacaoCorte>();
 		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
 		public List<InformacaoCorteDestinacao> InformacaoCorteDestinacaoList { get; set; } = new List<InformacaoCorteDestinacao>();
 		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();

@@ -14,6 +14,9 @@ InformacaoCorte = {
 
 	load: function (container, options) {
 		if (options) { $.extend(InformacaoCorte.settings, options); }
+
+		InformacoesCortesInformacoes.load(container, { mensagens: InformacaoCorte.settings.mensagens });
+
 		InformacaoCorte.container = MasterPage.getContent(container);
 
 		InformacaoCorte.container.delegate('.btnAdicionar', 'click', InformacaoCorte.adicionar);
@@ -24,7 +27,7 @@ InformacaoCorte = {
 		InformacaoCorte.container.delegate('.btnAdicionarDestinacao', 'click', InformacaoCorte.adicionarDestinacao);
 		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
 		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
-		
+
 		Aux.setarFoco(InformacaoCorte.container);
 
 		if (InformacaoCorte.settings.textoMerge) {
@@ -34,7 +37,7 @@ InformacaoCorte = {
 
 	adicionar: function () {
 		var container = InformacaoCorte.container;
-	
+
 		//monta o objeto
 		var objeto = {
 			NumeroLicenca: container.find('.numeroLicenca').val(),
@@ -44,7 +47,7 @@ InformacaoCorte = {
 			DataVencimento: { DataTexto: container.find('.dataVencimento').val() }
 		};
 
-		var linha = ''; 
+		var linha = '';
 		linha = $('.trTemplateRow', $('.tabLicencas', container)).clone();
 
 		//Monta a nova linha e insere na tabela 
@@ -52,16 +55,16 @@ InformacaoCorte = {
 		linha.find('.numero').text(objeto.NumeroLicenca);
 		linha.find('.numero').attr('title', objeto.NumeroLicenca);
 		linha.find('.tipoLicenca').text(objeto.TipoLicenca);
-		linha.find('.tipoLicenca').attr('title', objeto.TipoLicenca); 
-		linha.find('.atividade').text(objeto.Atividade); 
-		linha.find('.atividade').attr('title', objeto.Atividade); 
-		linha.find('.areaPlantada').text(objeto.AreaLicenca); 
-		linha.find('.areaPlantada').attr('title', objeto.AreaLicenca); 
-		linha.find('.dataVencimento').text(objeto.DataVencimento.DataTexto); 
+		linha.find('.tipoLicenca').attr('title', objeto.TipoLicenca);
+		linha.find('.atividade').text(objeto.Atividade);
+		linha.find('.atividade').attr('title', objeto.Atividade);
+		linha.find('.areaPlantada').text(objeto.AreaLicenca);
+		linha.find('.areaPlantada').attr('title', objeto.AreaLicenca);
+		linha.find('.dataVencimento').text(objeto.DataVencimento.DataTexto);
 		linha.find('.dataVencimento').attr('title', objeto.DataVencimento.DataTexto);
 
 		linha.removeClass('trTemplateRow hide');
-		$('.tabLicencas > tbody:last', container).append(linha); 
+		$('.tabLicencas > tbody:last', container).append(linha);
 		Listar.atualizarEstiloTable($('.tabLicencas', container));
 
 		//limpa os campos de texto 
@@ -174,7 +177,7 @@ InformacaoCorte = {
 
 	adicionarDestinacao: function () {
 		var container = InformacaoCorte.container;
-        Mensagem.limpar(container);
+		Mensagem.limpar(container);
 
 		var objeto = {
 			DestinacaoMaterial: $('.destinacaoMaterial option:selected', container).val(),
@@ -183,7 +186,7 @@ InformacaoCorte = {
 			ProdutoTexto: $('.produto option:selected', container).text(),
 			Quantidade: $('.quantidade', container).val()
 		};
-		
+
 		var msgs = [];
 
 		if (objeto.DestinacaoMaterial <= 0) {
@@ -350,4 +353,104 @@ InformacaoCorte = {
 			}
 		}
 	}
+},
+
+InformacoesCortesInformacoes = {
+	settings: {
+		urls: {
+			salvar: '',
+			editar: '',
+			visualizar: '',
+			Excluir: '',
+			ExcluirConfirm: ''
+		},
+		salvarCallBack: null,
+		mensagens: null
+	},
+	container: null,
+
+	load: function (container, options) {
+		if (options) { $.extend(InformacoesCortesInformacoes.settings, options); }
+		InformacoesCortesInformacoes.container = MasterPage.getContent(container);
+
+		InformacoesCortesInformacoes.container.delegate('.btnAdicionarInformacaoCorte', 'click', InformacoesCortesInformacoes.adicionar);
+		InformacoesCortesInformacoes.container.delegate('.btnVisualizarInformacaoCorte', 'click', InformacoesCortesInformacoes.visualizar);
+		InformacoesCortesInformacoes.container.delegate('.btnEditarInformacaoCorte', 'click', InformacoesCortesInformacoes.editar);
+		InformacoesCortesInformacoes.container.delegate('.btnExcluirInformacaoCorte', 'click', InformacoesCortesInformacoes.excluir);
+	},
+
+	adicionar: function () {
+
+		var empreendimentoId = $('.hdnEmpreendimentoId').val();
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: InformacaoCorte.settings.urls.criarInformacaoCorte,
+			data: JSON.stringify({ id: empreendimentoId }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+
+				if (response.Html) {
+
+					$('.divInformacao', InformacaoCorte.container).empty();
+					$('.divInformacao', InformacaoCorte.container).html(response.Html);
+					$('.divLinkVoltar', InformacaoCorte.container).hide()
+					InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
+
+					MasterPage.botoes(InformacaoCorte.container);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(InformacaoCorte.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
+
+		//MasterPage.redireciona(InformacaoCorte.settings.urls.criarInformacaoCorte + "/" + empreendimentoId);
+
+		//debugger;
+		//var empreendimento = $('.hdnEmpreendimentoId').val();
+		////MasterPage.redireciona(InformacaoCorte.settings.urls.salvar"/" + empreendimento);
+		//MasterPage.redireciona("InformacaoCorteInformacaoCriar/" + empreendimento);
+
+		//$(this).closest('fieldset').find('.dataGridTable tbody tr').removeClass('editando');
+
+		//MasterPage.carregando(true);
+		//$.ajax({ url: InformacoesCortesInformacoes.settings.urls.salvar,
+		//	data: null,
+		//	cache: false,
+		//	async: false,
+		//	type: 'POST',
+		//	dataType: 'json',
+		//	contentType: 'application/json; charset=utf-8',
+		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
+		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
+		//	},
+		//	success: function (response, textStatus, XMLHttpRequest) {
+
+		//		if (response.Html) {
+
+		//			$('.divInformacao', InformacaoCorte.container).empty();
+		//			$('.divInformacao', InformacaoCorte.container).html(response.Html);
+		//			$('.divLinkVoltar', InformacaoCorte.container).hide()
+		//			InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
+
+		//			MasterPage.botoes(InformacaoCorte.container);
+		//		}
+
+		//		if (response.Msg && response.Msg.length > 0) {
+		//			Mensagem.gerar(InformacaoCorte.container, response.Msg);
+		//		}
+		//	}
+		//});
+		//MasterPage.carregando(false);
+	},
 };

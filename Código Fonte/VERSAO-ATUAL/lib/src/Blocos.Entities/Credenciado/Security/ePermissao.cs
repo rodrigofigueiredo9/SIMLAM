@@ -107,5 +107,7 @@
 		TituloDeclaratorioExcluir,
 		TituloDeclaratorioVisualizar,
 		TituloDeclaratorioAlterarSituacao,
+
+		InformacaoCorteCriar,
 	}
 }

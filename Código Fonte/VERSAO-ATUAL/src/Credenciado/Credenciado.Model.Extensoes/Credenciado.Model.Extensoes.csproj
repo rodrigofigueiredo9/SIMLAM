@@ -74,6 +74,9 @@
     <Compile Include="Caracterizacoes\ModuloDominialidade\Business\DominialidadeValidar.cs" />
     <Compile Include="Caracterizacoes\ModuloDominialidade\Da\DominialidadeDa.cs" />
     <Compile Include="Caracterizacoes\ModuloDominialidade\Da\DominialidadeInternoDa.cs" />
+    <Compile Include="Caracterizacoes\ModuloInformacaoCorte\Business\InformacaoCorteValidar.cs" />
+    <Compile Include="Caracterizacoes\ModuloInformacaoCorte\Business\InformacaoCorteBus.cs" />
+    <Compile Include="Caracterizacoes\ModuloInformacaoCorte\Da\InformacaoCorteDa.cs" />
     <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoBus.cs" />
     <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoInternoBus.cs" />
     <Compile Include="Caracterizacoes\ModuloProjetoGeografico\Bussiness\ProjetoGeograficoValidar.cs" />

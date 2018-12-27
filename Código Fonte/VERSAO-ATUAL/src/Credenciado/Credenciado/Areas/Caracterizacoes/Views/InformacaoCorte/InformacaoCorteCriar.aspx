@@ -11,7 +11,7 @@
 		$(function () {
 			InformacaoCorte.load($('#central'), {
 				urls: {
-					criarInformacaoCorte: '<%= Url.Action("InformacaoCorteCriar", "InformacaoCorte") %>'
+					salvar: '<%= Url.Action("Criar", "Dominialidade") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});
@@ -21,10 +21,8 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">	
 	<div id="central">
-		<h2>Visualizar Informação de Corte</h2>
-		</br>
 		<div class="divCaracterizacao">
-			<%Html.RenderPartial("InformacaoCorte", Model);%>
+			<%Html.RenderPartial("InformacaoCortePartial", Model);%>
 		</div>
 
 		<div class="block box">
