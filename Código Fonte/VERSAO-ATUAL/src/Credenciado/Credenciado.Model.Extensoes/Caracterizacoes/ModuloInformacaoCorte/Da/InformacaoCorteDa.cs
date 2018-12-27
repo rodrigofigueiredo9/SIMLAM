@@ -475,6 +475,54 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return caracterizacao;
 		}
 
+		internal List<InformacaoCorte> FiltrarPorEmpreendimento(int id, BancoDeDados banco = null, string esquema = null)
+		{
+			var caracterizacao = new List<InformacaoCorte>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Informação de Corte
+
+				if (esquema == null) esquema = EsquemaBanco;
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada,
+				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
+				from {0}crt_informacao_corte c where c.empreendimento = :id", esquema);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						caracterizacao.Add(new InformacaoCorte()
+						{
+							Id = reader.GetValue<int>("id"),
+							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
+							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
+							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
+							Tid = reader.GetValue<string>("tid")
+						});
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+
+				if (esquema == EsquemaBanco)
+				{
+					var credenciado = this.FiltrarPorEmpreendimento(id, banco, EsquemaCredenciadoBanco);
+					if (credenciado?.Count > 0)
+						caracterizacao.AddRange(credenciado);
+				}
+			}
+
+			return caracterizacao;
+		}
+
+
 		#endregion
 	}
 }

@@ -35,5 +35,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public int? InternoID { get; set; }
 		public string InternoTID { get; set; }
 		public String Tid { get; set; }
+
+		public Decimal AreaCorteCalculada { get; set; }
 	}
 }

@@ -13,6 +13,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels;
+using Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
@@ -94,5 +95,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		#endregion
+
+		[Permite(Tipo = ePermiteTipo.Logado)]
+		public ActionResult Listar(int id, int projetoDigitalId, bool visualizar = false)
+		{
+			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var first = resultados?.FirstOrDefault();
+			var vm = new ListarVM(empreendimento)
+			{
+				Resultados = resultados,
+				IsVisualizar = visualizar,
+				ProjetoDigitalId = projetoDigitalId,
+				AreaPlantada = first.AreaFlorestaPlantada
+			};
+
+			return View(vm);
+		}
 	}
 }

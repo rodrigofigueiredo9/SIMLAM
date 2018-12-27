@@ -151,7 +151,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					x.ProjetoGeograficoId = (cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao()).ProjetoId;
 				}
 
-				x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
+				if(x.Tipo == eCaracterizacao.InformacaoCorte)
+					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
+				else
+					x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
 			});
 
 			#endregion

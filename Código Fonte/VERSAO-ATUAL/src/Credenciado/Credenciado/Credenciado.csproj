@@ -108,6 +108,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteDestinacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteResultadosVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteTipoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ArquivoProcessamentoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\BaseReferenciaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\DesenhadorVM.cs" />
@@ -252,8 +253,10 @@
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\ListarPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\BaseReferenciaPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ImportadorShapePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\DesenhadorPartial.ascx" />

@@ -158,6 +158,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return caracterizacao;
 		}
 
+		public List<InformacaoCorte> FiltrarPorEmpreendimento(int empreendimentoInternoId)
+		{
+			List<InformacaoCorte> caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.FiltrarPorEmpreendimento(empreendimentoInternoId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
 		#endregion
 
 		#region Caracterizacao
