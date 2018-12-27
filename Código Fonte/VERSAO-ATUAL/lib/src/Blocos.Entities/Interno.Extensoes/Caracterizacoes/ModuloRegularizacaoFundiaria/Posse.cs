@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		public eDominioTipo Tipo { get { return eDominioTipo.Posse; } }
 		public String Tid { get; set; }
 		public String Identificacao { get; set; }
+		public Int32 ComprovacaoId { get; set; }
 		public String ComprovacaoTexto { get; set; }
 		public Decimal AreaCroqui { get; set; }
 		public Decimal Perimetro { get; set; }
@@ -22,10 +23,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		public Int32 RelacaoTrabalho { set; get; }
 		public String Benfeitorias { get; set; }
 		public String Observacoes { get; set; }
-
+	
 		public Decimal AreaPosseDocumento { get; set; }
 		public String DescricaoComprovacao { get; set; }
-		public Int32 NumeroCCIR { get; set; }
+		public Int32? NumeroCCIR { get; set; }
 		public Decimal AreaCCIR { get; set; }
 
 		private DateTecno _dataUltimaAtualizacaoCCIR = new DateTecno();

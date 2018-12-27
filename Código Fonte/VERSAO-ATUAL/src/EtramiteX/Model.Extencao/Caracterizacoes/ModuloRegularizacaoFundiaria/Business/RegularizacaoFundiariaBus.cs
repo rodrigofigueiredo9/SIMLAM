@@ -166,10 +166,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.RegularizacaoFundiaria, eCaracterizacaoDependenciaTipo.Caracterizacao, banco);
 
 				int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
-				caracterizacao.Posses.ForEach(x =>
-				{
-					x.Zona = zona;
-				});
+				//caracterizacao.Posses.ForEach(x =>
+				//{
+				//	x.Zona = zona;
+				//});
+				caracterizacao.Posses = ObterPosses(empreendimento, zona);
 
 				caracterizacao.Matriculas = _busDominialidade.ObterPorEmpreendimento(empreendimento).Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 			}

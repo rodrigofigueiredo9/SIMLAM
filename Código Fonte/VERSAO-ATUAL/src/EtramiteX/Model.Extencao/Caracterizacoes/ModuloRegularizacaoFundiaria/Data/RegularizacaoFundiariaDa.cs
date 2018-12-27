@@ -67,6 +67,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				#region Regularização fundiária
 
+				
+
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao c (id, empreendimento, tid) values
@@ -75,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				comando.AdicionarParametroEntrada("empreendimento", regularizacao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
-
+				
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				regularizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
@@ -114,9 +116,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
-						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoTexto, DbType.Int32);
+						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
-						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR, DbType.Date);
+						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
 						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
 						comando.AdicionarParametroEntrada("numero_ccri",item.NumeroCCIR , DbType.Int32);
 						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR , DbType.Decimal);
@@ -126,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
 
 						bancoDeDados.ExecutarNonQuery(comando);
-
+						
 						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 						#endregion
@@ -243,7 +245,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				Historico.Gerar(regularizacao.Id, eHistoricoArtefatoCaracterizacao.regularizacaofundiaria, eHistoricoAcao.criar, bancoDeDados, null);
 
-			//	bancoDeDados.Commit();
+				bancoDeDados.Commit();
 
 				return regularizacao.Id;
 			}
@@ -352,7 +354,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						{
 							comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set d.dominio = :dominio, d.zona = :zona, d.identificacao = :identificacao, 
 							d.area_requerida = :area_requerida, d.area_croqui = :area_croqui, d.perimetro = :perimetro, d.regularizacao_tipo = :regularizacao_tipo, d.relacao_trabalho= :relacao_trabalho, 
-							d.benfeitorias = :benfeitorias, d.observacoes = :observacoes, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao :data_ultima_atualizacao,
+							d.benfeitorias = :benfeitorias, d.observacoes = :observacoes, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao = :data_ultima_atualizacao,
 							d.registro = :registro, d.numero_ccri = :numero_ccri, d.area_ccri = :area_ccri, d.confrontante_norte = :confrontante_norte,  d.confrontante_sul = :confrontante_sul, d.confrontante_leste = :confrontante_leste, d.confrontante_oeste = :confrontante_oeste where d.id = :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
@@ -385,12 +387,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoTexto, DbType.Int32);
+						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
-						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR, DbType.Date);
+						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
 						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
-						comando.AdicionarParametroEntrada("numero_ccri", DbType.Int32);
-						comando.AdicionarParametroEntrada("area_ccri", DbType.Decimal);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int32);
+						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
 						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
 						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
@@ -576,7 +578,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				Historico.Gerar(regularizacao.Id, eHistoricoArtefatoCaracterizacao.regularizacaofundiaria, eHistoricoAcao.atualizar, bancoDeDados, null);
 
-			//	bancoDeDados.Commit();
+				bancoDeDados.Commit();
 			}
 		}
 
@@ -1184,10 +1186,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
 					from {0}crt_regularizacao_dominio p
 					inner join crt_regularizacao r on r.id = p.regularizacao
-					where p.id = 2006", EsquemaBanco);
-				//"where r.empreendimento = :empreendimento", EsquemaBanco);
-
-				//comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+					where r.empreendimento = :empreendimento", EsquemaBanco);
+			
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -1196,7 +1197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse = new Posse();
 
 						posse.Id = Convert.ToInt32(reader["id"]);
-						posse.Dominio = Convert.ToInt32(reader["dominio"]);
+						posse.Dominio = reader.GetValue<int>("dominio");
 						posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
 						posse.NumeroCCIR = Convert.ToInt32(reader["numero_ccri"]);
 						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
@@ -1205,7 +1206,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
 						posse.Identificacao = reader["identificacao"].ToString();
 						posse.DescricaoComprovacao = reader["registro"].ToString();
-						posse.Dominio = Convert.ToInt32(reader["dominio"]);
 						//posse.Zona = Convert.ToInt32(reader["zona"]);
 						posse.RegularizacaoTipo = Convert.ToInt32(reader["regularizacao_tipo"]);
 						posse.RelacaoTrabalho = Convert.ToInt32(reader["relacao_trabalho"]);
@@ -1231,12 +1231,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			}
 
 			if (regularizacao.Posses?.Count == 0)
-				return ConsultaPosseObterPosseGeoAATIV(empreendimento,banco);
+				return ConsultaPosseObterPosseGeoAATIV(empreendimento, zona, banco);
 
 			return regularizacao.Posses;
 		}
 
-		private List<Posse> ConsultaPosseObterPosseGeoAATIV(int empreendimento, BancoDeDados banco = null)
+		private List<Posse> ConsultaPosseObterPosseGeoAATIV(int empreendimento, int zona, BancoDeDados banco = null)
 		{
 			RegularizacaoFundiaria regularizacao = new RegularizacaoFundiaria();
 			Posse posse;
@@ -1245,7 +1245,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				Comando comando = null;
 
-				comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo  FROM IDAFGEO.geo_aativ a INNER JOIN tmp_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO = 2 AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo  FROM IDAFGEO.geo_aativ a INNER JOIN crt_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO = 2 AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
 				//comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo FROM IDAFGEO.geo_aativ a INNER JOIN tmp_projeto_geo b ON a.projeto = b.id WHERE a.id = 415", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -1261,6 +1261,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Identificacao = reader["codigo"].ToString();
 						posse.AreaCroqui = reader.GetValue<decimal>("area_m2");
 						posse.Perimetro = reader.GetValue<decimal>("area_m2");
+						posse.Zona = zona;
 
 						regularizacao.Posses.Add(posse);
 

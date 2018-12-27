@@ -69,7 +69,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna43">
+			<div class="coluna87">
 				<label for="Descricao_Comprovacao">Descrição da Comprovação *</label>
 				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao"})) %>
 			</div>			
@@ -81,8 +81,8 @@
 				<%= Html.TextBox("NumeroCCIR", Model.Caracterizacao.Posse.NumeroCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNumeroCCIR"})) %>
 			</div>
 			<div class="coluna21 append5">
-				<label for ="AreaCCIR">Área no CCIR</label>
-				<%= Html.TextBox("AreaCCIR", Model.Caracterizacao.Posse.AreaCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCCIR"})) %>
+				<label for ="AreaCCIR">Área no CCIR(m²)</label>
+				<%= Html.TextBox("AreaCCIR", Model.Caracterizacao.Posse.AreaCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCCIR maskDecimalPonto", @maxlength = "25"})) %>
 			</div>
 			<div class="coluna21 DataUltimaAtualizacaoCCIR">
 				<label for ="DataUltimaAtualizacaoCCIR">Data da ultima atualização do CCIR</label>
