@@ -53,6 +53,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			PermissaoValidar permissaoValidar = new PermissaoValidar();
 
+			//if(tipo != (int)eCaracterizacao.RegularizacaoFundiaria && )
+
 			if (isCadastrarCaracterizacao && permissaoValidar.ValidarAny(new[] { ePermissao.ProjetoGeograficoCriar }, false))
 			{
 				return Criar(empreendimento, tipo, isCadastrarCaracterizacao);

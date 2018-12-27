@@ -1701,7 +1701,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
 
 				if(tipo == eCaracterizacao.Dominialidade)
-					comando.AdicionarParametroEntrada("tipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
 				else if(tipo == eCaracterizacao.RegularizacaoFundiaria)				
 					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.RegularizacaoFundiaria, DbType.Int32);
 				else
