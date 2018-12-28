@@ -28,6 +28,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 				this.Id = caracterizacao.Id;
 				this.DataInformacao = caracterizacao.DataInformacao;
 				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
+				this.InformacaoCorteLicencaList = caracterizacao.InformacaoCorteLicenca;
+				foreach(var item in caracterizacao.InformacaoCorteTipo)
+				{
+					var linhas = item.InformacaoCorteDestinacao.Count;
+					foreach (var dest in item.InformacaoCorteDestinacao)
+					{
+						var resultado = new InformacaoCorteResultadosVM();
+						resultado.Id = item.Id;
+						resultado.IdadePlantio = item.IdadePlantio;
+						resultado.AreaCorte = item.AreaCorte;
+						resultado.TipoCorte= item.TipoCorte;
+						resultado.TipoCorteTexto = item.TipoCorteTexto;
+						resultado.Especie = item.EspecieInformada;
+						resultado.EspecieTexto = item.EspecieInformadaTexto;
+						resultado.DestinacaoId = dest.Id;
+						resultado.Quantidade = dest.Quantidade;
+						resultado.DestinacaoMaterial = dest.DestinacaoMaterial;
+						resultado.DestinacaoMaterialTexto = dest.DestinacaoMaterialTexto;
+						resultado.Produto = dest.Produto;
+						resultado.ProdutoTexto = dest.ProdutoTexto;
+						resultado.Linhas = linhas;
+						this.InformacaoCorteResultados.Add(resultado);
+						linhas = 0;
+					}
+				}
 			}
 
 			var municipio = new ListaValor() { Id = 1, Texto = empreendimento.Municipio, IsAtivo = true };

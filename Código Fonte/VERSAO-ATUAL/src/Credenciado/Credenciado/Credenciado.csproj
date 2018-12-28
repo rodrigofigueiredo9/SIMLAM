@@ -253,6 +253,8 @@
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
@@ -945,6 +947,7 @@
     <None Include="leiame.txt" />
     <Content Include="Scripts\Agrotoxicos\listar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeConsolidacao.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducaoItem.js" />

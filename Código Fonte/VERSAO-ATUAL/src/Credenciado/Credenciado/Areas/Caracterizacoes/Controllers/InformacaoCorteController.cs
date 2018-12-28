@@ -20,6 +20,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
+using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -35,9 +36,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(Tipo = ePermiteTipo.Logado)]
 		public ActionResult Criar(int id, int projetoDigitalId, bool visualizar = false)
 		{
+			if (!_caracterizacaoValidar.Basicas(id))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+
+			if (!_validar.Acessar(id, projetoDigitalId))
+				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
-				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>());
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>())
+			{
+				ProjetoDigitalId = projetoDigitalId
+			};
+
 			return View(informacaoCorteVM);
 		}
 
@@ -62,20 +73,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		public ActionResult Editar(int id, int projetoDigitalId)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
-			{
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-			}
 
 			if (!_validar.Acessar(id, projetoDigitalId))
-			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-			}
 
-			var caracterizacao = _informacaoCorteBus.ObterPorEmpreendimento(id);
-			var vm = new InformacaoCorteVM(caracterizacao.Empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+			var caracterizacao = _informacaoCorteBus.Obter(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
-				ProjetoDigitalId = projetoDigitalId
+				ProjetoDigitalId = projetoDigitalId,
+				IsPodeExcluir = true
 			};
 
 			return View(vm);
@@ -96,6 +105,66 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#endregion
 
+		#region Editar
+
+		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		public ActionResult Visualizar(int id, int projetoDigitalId)
+		{
+			//if (!_caracterizacaoValidar.Basicas(id))
+			//{
+			//	return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+			//}
+
+			//if (!_validar.Acessar(id, projetoDigitalId))
+			//{
+			//	return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+			//}
+
+			var caracterizacao = _informacaoCorteBus.Obter(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
+			{
+				ProjetoDigitalId = projetoDigitalId,
+				IsVisualizar = true
+			};
+
+			return View(vm);
+		}
+
+		#endregion
+
+		#region Excluir
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoExcluir })]
+		public ActionResult ExcluirConfirm(int id, int projetoDigitalId)
+		{
+			ConfirmarVM vm = new ConfirmarVM();
+			vm.Id = id;
+			vm.AuxiliarID = projetoDigitalId;
+			vm.Mensagem = Mensagem.InformacaoCorte.ExcluirMensagem;
+			vm.Titulo = "Excluir Informação de Corte";
+
+			return PartialView("Confirmar", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoExcluir })]
+		public ActionResult Excluir(int id, int projetoDigitalId)
+		{
+			string urlRedireciona = string.Empty;
+
+			if (_informacaoCorteBus.Excluir(id))
+				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		#region Filtrar
+
 		[Permite(Tipo = ePermiteTipo.Logado)]
 		public ActionResult Listar(int id, int projetoDigitalId, bool visualizar = false)
 		{
@@ -106,11 +175,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
 				Resultados = resultados,
 				IsVisualizar = visualizar,
+				IsPodeExcluir = true,
 				ProjetoDigitalId = projetoDigitalId,
-				AreaPlantada = first.AreaFlorestaPlantada
+				AreaPlantada = first?.AreaFlorestaPlantada ?? 0
 			};
 
 			return View(vm);
 		}
+
+		#endregion
 	}
 }

@@ -11,7 +11,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public Int32 Corte { get; set; }
 
 		public Int32 TipoCorte { get; set; }
+		public String TipoCorteTexto { get; set; }
 		public Int32 EspecieInformada { get; set; }
+		public String EspecieInformadaTexto { get; set; }
 
 		public Decimal AreaCorte { get; set; }
 		public Int32 IdadePlantio { get; set; }

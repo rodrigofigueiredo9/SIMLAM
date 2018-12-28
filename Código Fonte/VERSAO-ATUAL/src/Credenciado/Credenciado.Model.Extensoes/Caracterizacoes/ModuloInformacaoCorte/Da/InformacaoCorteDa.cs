@@ -19,6 +19,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecif
 using Tecnomapas.Blocos.Entities.Interno.ModuloVegetal.Cultura;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Data
 {
@@ -91,14 +92,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (var item in caracterizacao.InformacaoCorteLicenca)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, numero_licenca, atividade, area_licenca) values
-					(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :numero_licenca, :atividade, :area_licenca)", EsquemaCredenciadoBanco);
+					insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+					(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
 					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
 					comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
 					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+					comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -189,14 +192,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id == 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, numero_licenca, atividade, area_licenca) values
-						(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :numero_licenca, :atividade, :area_licenca)", EsquemaCredenciadoBanco);
+						insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+						(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
+						comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
 						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
-						comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.Int32);
+						comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
 						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+						comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
@@ -260,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal void Excluir(int empreendimento, BancoDeDados banco = null)
+		internal void ExcluirPorEmpreendimento(int empreendimento, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
@@ -318,24 +323,71 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+		internal void Excluir(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				#region Histórico
+
+				//Atualizar o tid para a nova ação
+				var comando = bancoDeDados.CriarComandoPlSql(@"
+				begin
+					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+					update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+				end;", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.unidadeproducao, eHistoricoAcao.excluir, bancoDeDados, null);
+
+				#endregion
+
+				#region Apaga os dados da caracterização
+
+				comando = bancoDeDados.CriarComandoPlSql(
+				@"begin
+					delete from {0}crt_informacao_corte c where c.id = :id;
+					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+				end;", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
 		#endregion
 
 		#region Obter/Filtrar
 
-		internal InformacaoCorte ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
+		internal List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
-			InformacaoCorte caracterizacao = new InformacaoCorte();
+			var caracterizacao = new List<InformacaoCorte>();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}crt_informacao_corte t where t.empreendimento = :empreendimento", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
-				object valor = bancoDeDados.ExecutarScalar(comando);
-
-				if (valor != null && !Convert.IsDBNull(valor))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					caracterizacao = Obter(Convert.ToInt32(valor), bancoDeDados, simplificado);
+					while (reader.Read())
+					{
+						var id = reader.GetValue<int>("id");
+						if (id > 0)
+							caracterizacao.Add(Obter(id, bancoDeDados, simplificado));
+					}
+					reader.Close();
 				}
 			}
 
@@ -346,13 +398,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			InformacaoCorte caracterizacao = new InformacaoCorte();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, e.codigo empreendimento_codigo
-				from {0}crt_informacao_corte c, tab_empreendimento e where c.empreendimento = e.id and c.id = :id", EsquemaCredenciadoBanco);
+				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				from {0}crt_informacao_corte c where c.id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -361,8 +413,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
-						caracterizacao.Empreendimento.Id = reader.GetValue<int>("empreendimento");
-						caracterizacao.Empreendimento.Codigo = reader.GetValue<int>("empreendimento_codigo");
+						caracterizacao.EmpreendimentoId= reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
@@ -383,8 +434,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação de Corte Licença
 
 				comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.corte_id, c.licenca, c.numero_licenca, c.atividade, c.area_licenca
-				from crt_inf_corte_licenca c
+				select c.id, c.tid, c.corte_id, c.licenca, c.tipo_licenca, c.numero_licenca, c.atividade, c.area_licenca, c.data_vencimento
+				from {0}crt_inf_corte_licenca c
 				where c.corte_id = :corte_id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -399,9 +450,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							Tid = reader.GetValue<string>("tid"),
 							Corte = reader.GetValue<int>("corte_id"),
 							Licenca = reader.GetValue<int>("licenca"),
+							TipoLicenca = reader.GetValue<string>("tipo_licenca"),
 							NumeroLicenca = reader.GetValue<string>("numero_licenca"),
 							Atividade = reader.GetValue<string>("atividade"),
-							AreaLicenca = reader.GetValue<decimal>("area_licenca")
+							AreaLicenca = reader.GetValue<decimal>("area_licenca"),
+							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") }
 						});
 					}
 
@@ -414,7 +467,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComando(@"
 				select c.id, c.tid, c.corte_id, c.tipo_corte, c.especie, c.area_corte, c.idade_plantio
-				from crt_inf_corte_tipo c
+				from {0}crt_inf_corte_tipo c
 				where c.corte_id = :corte_id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -429,7 +482,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							Tid = reader.GetValue<string>("tid"),
 							Corte = reader.GetValue<int>("corte_id"),
 							TipoCorte = reader.GetValue<int>("tipo_corte"),
+							TipoCorteTexto = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription(),
 							EspecieInformada = reader.GetValue<int>("especie"),
+							EspecieInformadaTexto = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription(),
 							AreaCorte = reader.GetValue<decimal>("area_corte"),
 							IdadePlantio = reader.GetValue<int>("idade_plantio")
 						};
@@ -437,9 +492,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade
-						from crt_inf_corte_dest_material c
-						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, lv.texto as dest_material_texto,
+							lvp.texto as produto_texto
+						from {0}crt_inf_corte_dest_material c
+						left join {1}lov_crt_inf_corte_inf_dest_mat lv
+							on(c.dest_material = lv.id)
+						left join {1}lov_crt_produto lvp
+							on(c.produto = lvp.id)
+						where c.tipo_corte_id = :tipo_corte_id", EsquemaCredenciadoBanco, "idaf");
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", informacaoCorteTipo.Id, DbType.Int32);
 
@@ -449,12 +509,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							{
 								informacaoCorteTipo.InformacaoCorteDestinacao.Add(new InformacaoCorteDestinacao()
 								{
-									Id = reader.GetValue<int>("id"),
-									Tid = reader.GetValue<string>("tid"),
-									TipoCorteId = reader.GetValue<int>("tipo_corte_id"),
-									DestinacaoMaterial = reader.GetValue<int>("DestinacaoMaterial"),
-									Produto = reader.GetValue<int>("produto"),
-									Quantidade = reader.GetValue<int>("quantidade")
+									Id = readerDestinacao.GetValue<int>("id"),
+									Tid = readerDestinacao.GetValue<string>("tid"),
+									TipoCorteId = readerDestinacao.GetValue<int>("tipo_corte_id"),
+									DestinacaoMaterial = readerDestinacao.GetValue<int>("dest_material"),
+									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
+									Produto = readerDestinacao.GetValue<int>("produto"),
+									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
+									Quantidade = readerDestinacao.GetValue<int>("quantidade")
 								});
 							}
 
@@ -486,9 +548,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (esquema == null) esquema = EsquemaBanco;
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada,
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, " +
+				(esquema == EsquemaCredenciadoBanco ? "c.interno_id, c.interno_tid," : "c.id as interno_id, c.tid as interno_tid,") + @"
 				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
-				from {0}crt_informacao_corte c where c.empreendimento = :id", esquema);
+				from {0}crt_informacao_corte c where c.empreendimento = :id" + (esquema == EsquemaCredenciadoBanco ? " and c.interno_id is null" : ""), esquema);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -499,9 +562,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.Add(new InformacaoCorte()
 						{
 							Id = reader.GetValue<int>("id"),
+							InternoID = reader.GetValue<int>("interno_id"),
 							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
 							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
 							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
+							InternoTID = reader.GetValue<string>("interno_tid"),
 							Tid = reader.GetValue<string>("tid")
 						});
 					}

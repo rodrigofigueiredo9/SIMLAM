@@ -396,7 +396,7 @@ InformacaoCorte = {
 		var informacaoCorteTipo = {
 			Id: 0,
 			TipoCorte: '',
-			Especie: '',
+			EspecieInformada: '',
 			AreaCorte: '',
 			IdadePlantio: '',
 			InformacaoCorteDestinacao: []
@@ -417,13 +417,13 @@ InformacaoCorte = {
 			};
 
 			if (!(informacaoCorteTipo.TipoCorte == item.TipoCorte &&
-				informacaoCorteTipo.Especie == item.Especie &&
+				informacaoCorteTipo.EspecieInformada == item.Especie &&
 				informacaoCorteTipo.AreaCorte == item.AreaCorte &&
 				informacaoCorteTipo.IdadePlantio == item.IdadePlantio)) {
 				informacaoCorteTipo = {
 					Id: item.Id,
 					TipoCorte: item.TipoCorte,
-					Especie: item.Especie,
+					EspecieInformada: item.Especie,
 					AreaCorte: item.AreaCorte,
 					IdadePlantio: item.IdadePlantio,
 					InformacaoCorteDestinacao: []
