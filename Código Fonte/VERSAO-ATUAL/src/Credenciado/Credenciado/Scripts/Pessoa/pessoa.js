@@ -299,7 +299,7 @@ var Pessoa = function () {
 			});
 		},
 
-		onVerificarClick: function () {
+		onVerificarClick: function (requerimento = 0) {
 			Aux.carregando(_objRef.content, true);
 			Mensagem.limpar(MasterPage.getContent(_objRef.content));
 
@@ -313,9 +313,11 @@ var Pessoa = function () {
 				tipoPessoaNum = 2;
 				cpfCnpj = $('input.inputCnpjPessoa', _objRef.content).val();
 			}
-			debugger;
+			
 			var jsonVerificar = MasterPage.json(_objRef.content);
 			jsonVerificar.TipoCadastro = _objRef.settings.tipoCadastro;
+			if (typeof (requerimento) === "number" && requerimento > 0)
+				jsonVerificar.requerimentoId = requerimento;
 
 			$.ajax({
 				url: _objRef.settings.urls.verificar, data: jsonVerificar, cache: false, async: false, dataType: 'json',
@@ -452,9 +454,10 @@ var Pessoa = function () {
 			return jsonPessoa;
 		},
 
-		salvar: function () {
+		salvar: function (requerimento = 0) {
 			Mensagem.limpar();
 			var jsonPessoa = _objRef.obter();
+			jsonPessoa.requerimentoId = requerimento;
 			var urlAcao;
 
 			if (_objRef.obterIdPessoa().id == 0) {

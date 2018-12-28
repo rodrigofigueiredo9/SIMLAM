@@ -58,7 +58,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			lstEnderecosNome = "Enderecos";
 		}
 
-		public bool Salvar(Empreendimento empreendimento)
+		public bool Salvar(Empreendimento empreendimento, bool isInfCorte = false)
 		{
 			if (empreendimento.Id > 0 && !EmpreendimentoEmPosse(empreendimento.Id))
 			{
@@ -67,9 +67,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			}
 
 			ValidacoesBasicas(empreendimento);
-			VerificarResponsaveis(empreendimento.Responsaveis);
-			VerificarEnderecos(empreendimento);
 			VerificarCoordenada(empreendimento.Coordenada, "Empreendimento");
+			if (isInfCorte)
+			{
+				VerificarEnderecosInformacaoDeCorte(empreendimento);
+				if (!Validacao.EhValido)
+					Validacao.Add(Mensagem.Empreendimento.ContatoComIdaf);
+			}else
+			{
+				VerificarResponsaveis(empreendimento.Responsaveis);
+				VerificarEnderecos(empreendimento);
+			}
 
 			return Validacao.EhValido;
 		}
@@ -264,6 +272,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			}
 		}
 
+		private void VerificarEnderecosInformacaoDeCorte(Empreendimento empreendimento)
+		{
+			if (empreendimento.Enderecos == null || empreendimento.Enderecos.Count <= 0)
+			{
+				Validacao.Add(endMsg.EnderecoObrigatorio(objPaiNome, lstEnderecosNome, 0, "localização"));
+			}
+			else
+			{
+				if (empreendimento.Enderecos.Count > 0)
+				{
+					VerificarDadosEnderecoInformacaoDeCorte(empreendimento.Enderecos[0], objPaiNome, lstEnderecosNome, 0, "localização", true);
+				}
+			}
+		}
+
 		private void VerificarDadosEndereco(Endereco endereco, string objPaiNome, string lstEndNome, int index, string nomeEndereco, bool localizacao = false)
 		{
 			if (String.IsNullOrWhiteSpace(endereco.Cep))
@@ -322,6 +345,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			if (localizacao && String.IsNullOrWhiteSpace(endereco.Complemento))
 			{
 				Validacao.Add(endMsg.EnderecoComplementoObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+		}
+
+		private void VerificarDadosEnderecoInformacaoDeCorte(Endereco endereco, string objPaiNome, string lstEndNome, int index, string nomeEndereco, bool localizacao = false)
+		{
+			if (String.IsNullOrWhiteSpace(endereco.Logradouro))
+			{
+				Validacao.Add(endMsg.EnderecoLogradouroObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+
+			if (localizacao && String.IsNullOrWhiteSpace(endereco.DistritoLocalizacao))
+			{
+				Validacao.Add(endMsg.EnderecoDistritoObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+
+			if (endereco.EstadoId <= 0)
+			{
+				Validacao.Add(endMsg.EnderecoEstadoObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+			else if (!_da.ExisteEstado(endereco.EstadoId))
+			{
+				Validacao.Add(endMsg.EnderecoEstadoInvalido(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+
+			if (endereco.MunicipioId <= 0)
+			{
+				Validacao.Add(endMsg.EnderecoMunicipioObrigatorio(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+			else if (!_da.ExisteMunicipio(endereco.MunicipioId))
+			{
+				Validacao.Add(endMsg.EnderecoMunicipioInvalido(objPaiNome, lstEnderecosNome, index, nomeEndereco));
+			}
+
+			if (endereco.MunicipioId > 0 && endereco.EstadoId > 0 && _da.ObterMunicipio(endereco.MunicipioId).Estado.Id != endereco.EstadoId)
+			{
+				Validacao.Add(endMsg.EnderecoMunicipioOutroEstado(objPaiNome, lstEnderecosNome, index, nomeEndereco));
 			}
 		}
 

@@ -26,6 +26,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMPessoa
 		public String UrlAcao { get; set; }
 		public bool ExibirMensagensPartial { get; set; }
 		public bool IsAtividadeCorteAssociada { get; set; }
+		public int requerimentoId { get; set; }
 
 		public Pessoa Pessoa { get; set; }
 		public ContatoVME Contato { get; set; }

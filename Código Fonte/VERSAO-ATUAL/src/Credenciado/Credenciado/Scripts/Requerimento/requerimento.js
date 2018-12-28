@@ -116,7 +116,7 @@ Requerimento = {
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
 				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
-				
+				debugger;
 				if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
@@ -664,14 +664,13 @@ RequerimentoInteressado = {
 	pessoaInLineObj: null,
 
 	callBackObterInteressado: function () {
-
 		RequerimentoInteressado.pessoaInLineObj = new PessoaInline();
 
 		RequerimentoInteressado.pessoaInLineObj.load(Requerimento.container, {
 			onVisualizarEnter: RequerimentoInteressado.onVisualizarEnterInteressado,
 			onEditarEnter: RequerimentoInteressado.onEditarEnterInteressado,
 			onVerificarEnter: RequerimentoInteressado.onVerificarEnterInteressado,
-			onCriarEnter: RequerimentoInteressado.onCriarEnterInteressado			
+			onCriarEnter: RequerimentoInteressado.onCriarEnterInteressado
 		});
 
 		Requerimento.stepAtual = 2;
@@ -695,6 +694,11 @@ RequerimentoInteressado = {
 		} else {
 			Requerimento.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		}
+		
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnVerificarCpfCnpj", Requerimento.container).unbind('click');
+			$(".btnVerificarCpfCnpj", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
+		}
 
 		Requerimento.salvarEdicao = false;
 		$('.pessoaf', Requerimento.container).focus();
@@ -708,7 +712,7 @@ RequerimentoInteressado = {
 
 		var param = { requerimentoId: null, interessadoId: null };
 
-		param.interessadoId = RequerimentoInteressado.pessoaInLineObj.onSalvarClick();
+		param.interessadoId = RequerimentoInteressado.pessoaInLineObj.onSalvarClick(Requerimento.ReqInterEmp.requerimentoId);
 		param.requerimentoId = $('#hdnRequerimentoId').val();
 
 		if (param.interessadoId == -1) {
@@ -772,7 +776,6 @@ RequerimentoInteressado = {
 	},
 
 	atualizarSituacaoRequerimento: function (data) {
-
 		var ehValido = true;
 
 		$.ajax({
@@ -804,10 +807,15 @@ RequerimentoInteressado = {
 	},
 
 	onVisualizarEnterInteressado: function () {
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnEditar", Requerimento.container).bind('click').addClass('hide');
+			//$(".btnSalvar", Requerimento.container).unbind('click');
+			//$(".btnSalvar", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
+		}
 		RequerimentoInteressado.configurarVisualizar();
 	},
 
-	onEditarEnterInteressado: function () {		
+	onEditarEnterInteressado: function () {
 		if (Requerimento.ReqInterEmp && Requerimento.ReqInterEmp.interessadoId > 0) {
 			Requerimento.configurarBtnCancelarStep(2);
 			Requerimento.salvarEdicao = true;
@@ -849,9 +857,8 @@ RequerimentoInteressado = {
 	},
 
 	onVerificarEnterInteressado: function () {
-		
 		var param = { requerimentoId: $('#hdnRequerimentoId').val() };
-
+		
 		if (Requerimento.ReqInterEmp && Requerimento.ReqInterEmp.interessadoId && Requerimento.ReqInterEmp.interessadoId > 0) {
 
 			$.ajax({
@@ -875,6 +882,11 @@ RequerimentoInteressado = {
 			});
 		}
 
+		if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
+			$(".btnVerificarCpfCnpj", Requerimento.container).unbind('click');
+			$(".btnVerificarCpfCnpj", Requerimento.container).click(RequerimentoInteressado.verificarCpf);
+		}
+
 		Requerimento.botoes({ btnSalvar: true, spnCancelarCadastro: true });
 		Requerimento.configurarBtnCancelarStep(2);
 	},
@@ -884,6 +896,10 @@ RequerimentoInteressado = {
 			RequerimentoInteressado.callBackObterInteressado();
 			RequerimentoInteressado.configurarVisualizar();
 		});
+	},
+
+	verificarCpf: function () {
+		RequerimentoInteressado.pessoaInLineObj.onVerificarClick(Requerimento.ReqInterEmp.requerimentoId);
 	}
 }
 
@@ -1207,14 +1223,14 @@ RequerimentoEmpreendimento = {
 	},
 
 	onSalvarEmpreendimento: function (partialContent, responseJson, isEditar) {
-		
+		debugger;
 		var retorno = false;
 		var param = { requerimentoId: null, empreendimentoId: null };
 
 		param.requerimentoId = $('#hdnRequerimentoId').val();
 
 		if (RequerimentoEmpreendimento.salvarEmpreendimento) {
-			param.empreendimentoId = EmpreendimentoInline.onSalvarClick();
+			param.empreendimentoId = EmpreendimentoInline.onSalvarClick(Requerimento.ReqInterEmp.requerimentoId);
 
 			if (param.empreendimentoId == 0) {
 				return retorno;
@@ -1258,6 +1274,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	onNovoEmpreendimentoEnter: function () {
+		debugger;
 		Requerimento.salvarEdicao = false;
 		Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 	},
@@ -1276,7 +1293,6 @@ RequerimentoEmpreendimento = {
 	},
 
 	onVisualizarEnterEmpreendimento: function () {
-		
 		if (Requerimento.ReqInterEmp && parseInt(Requerimento.ReqInterEmp.empreendimentoId) > 0) {
 			Requerimento.botoes({ btnEditar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 			RequerimentoEmpreendimento.salvarEmpreendimento = false;

@@ -73,6 +73,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem Inexistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Pessoa inexistente" }; } }
 
+		public Mensagem ContatoComIdaf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Favor entrar em contato com o IDAF" }; } }
+
 		public Mensagem MensagemExcluir(string nome)
 		{
 			return new Mensagem() { Texto = String.Format("Tem certeza que deseja excluir a pessoa {0}?", nome) };
