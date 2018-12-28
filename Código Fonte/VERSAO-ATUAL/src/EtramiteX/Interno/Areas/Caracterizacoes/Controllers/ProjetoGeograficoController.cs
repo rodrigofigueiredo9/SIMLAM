@@ -46,6 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		RegularizacaoFundiariaValidar _validarReg = new RegularizacaoFundiariaValidar();
 		ExploracaoFlorestalBus _exploracaoFlorestalBus = new ExploracaoFlorestalBus();
+		PermissaoValidar permissaoValidar = new PermissaoValidar();
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 		GerenciadorConfiguracao<ConfiguracaoSistema> _config = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
@@ -172,8 +173,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar })]
 		public ActionResult Criar(int empreendimento, int tipo, bool isCadastrarCaracterizacao = true)
-		{
-			PermissaoValidar permissaoValidar = new PermissaoValidar();
+		{		
 
 			if (empreendimento <= 0 || empreendimento <= 0)
 			{
@@ -185,8 +185,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
 
-			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaCriar })
-				&& !_validarReg.ValidarProjetoGeo(empreendimento))
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && (!_validarReg.ValidarProjetoGeo(empreendimento) ||
+				!permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaCriar })))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
@@ -207,6 +207,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Editar(int id, int empreendimento, int tipo, bool isCadastrarCaracterizacao = true, bool mostrarModalDependencias = true)
 		{
 			if (!_validar.Dependencias(empreendimento, tipo))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && !permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaEditar }))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
@@ -238,6 +243,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizarprojetogeografico, Artefato = (int)eHistoricoArtefatoCaracterizacao.projetogeografico)]
 		public ActionResult Visualizar(int id, int empreendimento, int tipo, bool isCadastrarCaracterizacao = true, bool mostrarModalDependencias = true)
 		{
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && !permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaVisualizar }))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
 			ProjetoGeograficoVM vm = new ProjetoGeograficoVM();
 			vm.isCadastrarCaracterizacao = isCadastrarCaracterizacao;
 			vm.Projeto = _bus.ObterProjeto(id);
