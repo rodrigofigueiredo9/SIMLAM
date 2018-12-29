@@ -2,7 +2,7 @@
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
-TituloListar = {
+Dua = {
 	urlEditar: null,
 	urlVisualizar: null,
 	urlExcluir: null,
@@ -24,7 +24,6 @@ TituloListar = {
 		container.delegate('.btnVisualizar', 'click', TituloListar.visualizar);
 		container.delegate('.btnAssociar', 'click', TituloListar.onAssociarTitulo);
 		container.delegate('.btnPDF', 'click', TituloListar.gerarPdf);
-		container.delegate('.btnEmitirDua', 'click', TituloListar.emitirDua);
 
 		container.delegate('.radioCpfCnpj', 'change', Aux.onChangeRadioCpfCnpjMask);
 		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpj', container));
@@ -85,10 +84,5 @@ TituloListar = {
 		if (retorno.FecharModal) {
 			Modal.fechar(TituloListar.container);
 		}
-	},
-
-	emitirDua: function () {
-		var itemId = $.parseJSON($(this).closest('tr').find('.itemJson').val()).Id;
-		MasterPage.redireciona(TituloListar.urlEmitirDua + "/" + itemId);
 	}
 }

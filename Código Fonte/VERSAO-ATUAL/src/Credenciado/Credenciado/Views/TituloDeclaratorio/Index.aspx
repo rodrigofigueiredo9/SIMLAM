@@ -12,6 +12,7 @@
 			TituloListar.urlExcluir = '<%= Url.Action("Excluir", "TituloDeclaratorio") %>';
 			TituloListar.urlExcluirConfirm = '<%= Url.Action("ExcluirConfirm", "TituloDeclaratorio") %>';
 			TituloListar.urlAlterarSituacao = '<%= Url.Action("AlterarSituacao", "TituloDeclaratorio") %>';
+			TituloListar.urlEmitirDua = '<%= Url.Action("EmitirDua", "DUA") %>';
 			TituloListar.load($('#central'));
 
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>

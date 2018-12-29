@@ -83,6 +83,11 @@
     <Compile Include="ModuloCredenciado\Business\CredenciadoIntBus.cs" />
     <Compile Include="ModuloCredenciado\Business\CredenciadoIntValidar.cs" />
     <Compile Include="ModuloCredenciado\Data\CredenciadoIntDa.cs" />
+    <Compile Include="ModuloDUA\Business\DuaBus.cs" />
+    <Compile Include="ModuloDUA\Business\DuaInternoBus.cs" />
+    <Compile Include="ModuloDUA\Business\DuaValidar.cs" />
+    <Compile Include="ModuloDUA\Data\DuaDa.cs" />
+    <Compile Include="ModuloDUA\Data\DuaInternoDa.cs" />
     <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCBus.cs" />
     <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCValidar.cs" />
     <Compile Include="ModuloEmissaoCFOC\Data\EmissaoCFOCDa.cs" />

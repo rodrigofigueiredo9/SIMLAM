@@ -1,22 +1,20 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels.VMTitulo" %>
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels.VMDUA" %>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DUAVM>" %>
 
-<input type="hidden" class="paginaAtual" value="" />
-<input type="hidden" class="numeroPaginas" value="<%= Model.Paginacao.NumeroPaginas %>" />
+<%= Html.Hidden("TituloId", Model.Titulo.Id, new { @class = "hdnTituloId" })%>
+<%= Html.Hidden("TituloSituacao", Model.Titulo.Situacao.Id, new { @class = "hdnTituloSituacao" })%>
 
-<div class="dataGrid <%= ((Model.Paginacao.QuantidadeRegistros > 0) ? string.Empty : "hide") %> ">
-	<% Html.RenderPartial("Paginacao", Model.Paginacao); %>
-
+<div class="block box">
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th width="10%">Nº título</th>
-				<th width="9%">Modelo</th>
-				<th width="19%">Nº Requerimento</th>
-				<th>Empreendimento</th>
+				<th width="10%">Código</th>
+				<th width="9%">Valor R$	</th>
+				<th width="19%">Situação</th>
+				<th>N° do DUA</th>
 				<th width="11%">Situação</th>
 				<th width="12%">Vencimento</th>
-				<th class="semOrdenacao" width=" <%= (Model.PodeAssociar) ? "9%" : "23%" %>">Ações</th>
+				<th class="semOrdenacao" width="9%">Ações</th>
 			</tr>
 		</thead>
 
