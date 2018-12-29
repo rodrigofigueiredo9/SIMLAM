@@ -63,7 +63,7 @@
 							<span class="dataInformacao" title="<%:informacao.DataInformacao.DataTexto%>"><%:informacao.DataInformacao.DataTexto%></span>
 						</td>
 						<td>
-							<span class="areaCorte" title="<%:informacao.AreaCorteCalculada%>"><%:informacao.AreaCorteCalculada%></span>
+							<span class="areaCorte" title="<%:informacao.AreaCorteCalculada.ToStringTrunc()%>"><%:informacao.AreaCorteCalculada.ToStringTrunc()%></span>
 						</td>
 						<td class="tdAcoes">
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(informacao)%>' />

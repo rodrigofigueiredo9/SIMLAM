@@ -33,14 +33,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#region Criar
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
 		public ActionResult Criar(int id, int projetoDigitalId, bool visualizar = false)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
 			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
@@ -53,6 +53,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
 		public ActionResult Criar(InformacaoCorte caracterizacao, int projetoDigitalId = 0)
 		{
 			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
@@ -61,7 +62,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
@@ -69,17 +70,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#region Editar
 
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
 		public ActionResult Editar(int id, int projetoDigitalId)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
 			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var caracterizacao = _informacaoCorteBus.Obter(id);
-			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
@@ -91,7 +92,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
 		public ActionResult Editar(InformacaoCorte caracterizacao, int projetoDigitalId)
 		{
 			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
@@ -99,29 +100,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.Empreendimento.Id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
 
-		#region Editar
+		#region Visualizar
 
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
 		public ActionResult Visualizar(int id, int projetoDigitalId)
 		{
-			//if (!_caracterizacaoValidar.Basicas(id))
-			//{
-			//	return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-			//}
+			if (!_caracterizacaoValidar.Basicas(id))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
-			//if (!_validar.Acessar(id, projetoDigitalId))
-			//{
-			//	return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-			//}
+			if (!_validar.Acessar(id, projetoDigitalId))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var caracterizacao = _informacaoCorteBus.Obter(id);
-			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
@@ -137,7 +134,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Excluir
 
 		[HttpGet]
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoExcluir })]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
 		public ActionResult ExcluirConfirm(int id, int projetoDigitalId)
 		{
 			ConfirmarVM vm = new ConfirmarVM();
@@ -150,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoExcluir })]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
 		public ActionResult Excluir(int id, int projetoDigitalId)
 		{
 			string urlRedireciona = string.Empty;
@@ -165,7 +162,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#region Filtrar
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteListar })]
 		public ActionResult Listar(int id, int projetoDigitalId, bool visualizar = false)
 		{
 			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
