@@ -107,7 +107,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				Resultados = resultados,
 				IsVisualizar = visualizar,
 				ProjetoDigitalId = projetoDigitalId,
-				AreaPlantada = first.AreaFlorestaPlantada
+				AreaPlantada = first?.AreaFlorestaPlantada ?? 0
 			};
 
 			return View(vm);

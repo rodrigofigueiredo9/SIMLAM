@@ -18,7 +18,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			var esp = especificidade as OutrosInformacaoCorte;
-
+			/*
 			DeclaratorioRequerimentoAtividade(esp);
 
 			if (esp.VinculoPropriedade <= 0)
@@ -26,7 +26,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				Validacao.Add(Mensagem.CertidaoDispensaLicenciamentoAmbiental.VinculoPropriedadeObrigatorio);
 			}
 
-			/*if (esp.VinculoPropriedade == (int)eCertidaoDispLicAmbVinculoProp.Outros && string.IsNullOrWhiteSpace(esp.VinculoPropriedadeOutro))
+			if (esp.VinculoPropriedade == (int)eCertidaoDispLicAmbVinculoProp.Outros && string.IsNullOrWhiteSpace(esp.VinculoPropriedadeOutro))
 			{
 				Validacao.Add(Mensagem.CertidaoDispensaLicenciamentoAmbiental.VinculoPropriedadeOutroObrigatorio);
 			}*/

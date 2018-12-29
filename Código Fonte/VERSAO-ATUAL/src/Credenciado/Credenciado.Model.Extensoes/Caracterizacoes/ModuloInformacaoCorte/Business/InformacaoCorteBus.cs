@@ -173,6 +173,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return caracterizacao;
 		}
 
+		public List<Lista> ObterListaInfCorte (int empreendimento)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterListaInfCorte(empreendimento);
+			}catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
 		#endregion
 
 		#region Caracterizacao

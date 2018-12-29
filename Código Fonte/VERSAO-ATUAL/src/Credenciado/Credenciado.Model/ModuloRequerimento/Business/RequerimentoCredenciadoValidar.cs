@@ -84,7 +84,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				return Validacao.EhValido;
 			}
 
-			if (!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id)) 
+			if (requerimento.Atividades.Any(item => item.Id == 209) &&
+				!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id)) 
 				Validacao.Add(Msg.NaoExisteEmpreendimentoAssociadoResponsavel);
 
 			return Validacao.EhValido;

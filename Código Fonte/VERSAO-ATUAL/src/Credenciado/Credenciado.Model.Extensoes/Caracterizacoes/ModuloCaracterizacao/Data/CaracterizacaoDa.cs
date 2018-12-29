@@ -1130,7 +1130,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				foreach (var item in cadastradas)
 				{
-					if (!string.IsNullOrWhiteSpace(query)) query += " union all ";
 					switch (item.Tipo)
 					{
 						case eCaracterizacao.Dominialidade:
@@ -1174,6 +1173,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							break;
 					}
 
+					query += " union all ";
 
 					comando.AdicionarParametroEntrada("tipo", (int)item.Tipo, DbType.Int32);
 				}

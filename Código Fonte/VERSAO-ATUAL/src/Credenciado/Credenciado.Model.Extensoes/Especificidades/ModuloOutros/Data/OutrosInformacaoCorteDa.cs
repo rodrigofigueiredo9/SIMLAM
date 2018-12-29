@@ -58,13 +58,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				bancoDeDados.IniciarTransacao();
 				//Verifica a existencia da especificidade
-				Comando comando = bancoDeDados.CriarComando(@"select e.id from {0}esp_cert_disp_amb e where e.titulo = :titulo", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select e.id from {0}esp_out_informacao_corte e where e.titulo = :titulo", EsquemaBanco);
 				comando.AdicionarParametroEntrada("titulo", certidao.Titulo.Id, DbType.Int32);
 				id = bancoDeDados.ExecutarScalar(comando);
 
 				if (id != null && !Convert.IsDBNull(id))
 				{
-					comando = bancoDeDados.CriarComando(@"update esp_cert_disp_amb t set t.vinculo_propriedade = :vinculo_propriedade, t.vinculo_propriedade_outro = :vinculo_propriedade_outro, t.tid = :tid where t.titulo = :titulo", EsquemaBanco);
+					comando = bancoDeDados.CriarComando(@"update esp_out_informacao_corte t set
+					t.informacao_corte = :informacao_corte,
+					t.validade = :validade,
+					t.tid = :tid where t.titulo = :titulo", EsquemaBanco);
 
 					acao = eHistoricoAcao.atualizar;
 					certidao.Id = Convert.ToInt32(id);
@@ -72,8 +75,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				else
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into esp_cert_disp_amb (id, tid, titulo, vinculo_propriedade, vinculo_propriedade_outro)
-					values (seq_esp_cert_disp_amb.nextval, :tid, :titulo, :vinculo_propriedade, :vinculo_propriedade_outro) returning id into :id", EsquemaBanco);
+					insert into esp_out_informacao_corte (id, tid, titulo, informacao_corte, validade)
+					values (seq_esp_out_informacao_corte.nextval, :tid, :titulo, :informacao_corte, :validade) returning id into :id", EsquemaBanco);
 
 					acao = eHistoricoAcao.criar;
 					comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -81,8 +84,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("titulo", certidao.Titulo.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("vinculo_propriedade", certidao.VinculoPropriedade, DbType.Int32);
-				//comando.AdicionarParametroEntrada("vinculo_propriedade_outro", DbType.String, 50, certidao.VinculoPropriedadeOutro);
+				comando.AdicionarParametroEntrada("informacao_corte", certidao.InformacaoCorte, DbType.Int32);
+				comando.AdicionarParametroEntrada("validade", certidao.Validade, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -94,7 +97,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#endregion
 
-				Historico.Gerar(Convert.ToInt32(certidao.Titulo.Id), eHistoricoArtefatoEspecificidade.certdisplicenamb, acao, bancoDeDados);
+				Historico.Gerar(Convert.ToInt32(certidao.Titulo.Id), eHistoricoArtefatoEspecificidade.outrosinformacaocorte, acao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -108,18 +111,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#region Atualizar o tid para a nova ação
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}esp_cert_disp_amb c set c.tid = :tid where c.titulo = :titulo", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}esp_out_informacao_corte c set c.tid = :tid where c.titulo = :titulo", EsquemaBanco);
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				#endregion
 
-				Historico.Gerar(titulo, eHistoricoArtefatoEspecificidade.certdisplicenamb, eHistoricoAcao.excluir, bancoDeDados);
+				Historico.Gerar(titulo, eHistoricoArtefatoEspecificidade.outrosinformacaocorte, eHistoricoAcao.excluir, bancoDeDados);
 
 				#region Apaga os dados da especificidade
 
-				comando = bancoDeDados.CriarComando(@"delete from {0}esp_cert_disp_amb e where e.titulo = :titulo", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"delete from {0}esp_out_informacao_corte e where e.titulo = :titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
@@ -154,7 +157,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					(case when tt.credenciado is null then (select nvl(p.nome, p.razao_social) from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = tt.requerimento) else 
 					(select nvl(p.nome, p.razao_social) from cre_requerimento r, cre_pessoa p where p.id = r.interessado and r.id = tt.requerimento) end) Interessado
 				from
-					esp_cert_disp_amb     e,
+					esp_out_informacao_corte     e,
 					tab_titulo            tt,
 					tab_titulo_atividades tta
 				where
@@ -191,7 +194,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#region Dados da Especificidade
 
 				Comando comando = bancoDeDados.CriarComando(@"select l.texto vinculo_propriedade, vinculo_propriedade_outro 
-				from esp_cert_disp_amb e, tab_titulo t, lov_esp_cert_disp_amb l where t.id = e.titulo and l.id  = e.vinculo_propriedade and e.titulo = :id", EsquemaBanco);
+				from esp_out_informacao_corte e, tab_titulo t, lov_esp_out_informacao_corte l where t.id = e.titulo and l.id  = e.vinculo_propriedade and e.titulo = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
 

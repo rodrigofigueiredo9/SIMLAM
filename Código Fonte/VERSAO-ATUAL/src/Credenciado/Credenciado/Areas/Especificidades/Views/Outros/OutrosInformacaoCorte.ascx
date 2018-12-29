@@ -7,7 +7,7 @@
 
 <script type="text/javascript">
 	$(function () {
-		CertidaoDispensaLicenciamentoAmbiental.urlObterDadosRequerimento = '<%= Url.Action("ObterDadosRequerimeto", "TituloDeclaratorio", new {area=""}) %>';
+		OutrosInformacaoCorte.urlObterDadosRequerimento = '<%= Url.Action("ObterDadosRequerimeto", "Outros", new {area=""}) %>';
 	});
 </script>
 
@@ -17,26 +17,26 @@
 	<div class="block">
 		<div class="coluna75">
 			<label for="Atividade">Atividade Dispensada *</label>
-			<%= Html.DropDownList("Certidao.Atividade", Model.Atividade, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Atividade.Count == 1, new { @class = "text ddlAtividades" }))%>
+			<%= Html.DropDownList("Certidao.Atividade", Model.Atividade, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlAtividades" }))%>
 		</div>
 	</div>
 
-	<%--<div class="block">
+	<div class="block">
 		<div class="coluna75">
 			<label for="Interessado">Interessado *</label>
-			<%= Html.TextBox("Interessado", Model.Certidao.Interessado, ViewModelHelper.SetaDisabledReadOnly(true, new { @class = "text txtInteressado" }))%>
+			<%= Html.TextBox("Interessado", Model.Outros.Destinatario, ViewModelHelper.SetaDisabledReadOnly(true, new { @class = "text txtInteressado" }))%>
 		</div>
 	</div>
 
 	<div class="block">
 		<div class="coluna30">
-			<label for="Vinculo">Vinculo com a propriedade *</label>
-			<%= Html.DropDownList("Vinculo", Model.VinculoPropriedade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlVinculo" }))%>
+			<label for="Vinculo">Informação de corte *</label>
+			<%= Html.DropDownList("Vinculo", Model.VinculoPropriedade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlInformacaoCorte" }))%>
 		</div>
 
-		<div class="coluna43 prepend1 <%= Model.Certidao.VinculoPropriedade == (int)eCertidaoDispLicAmbVinculoProp.Outros ? "" : "hide" %>  divOutros">
-			<label for="VinculoPropOutro">Especificar *</label>
-			<%= Html.TextBox("VinculoPropOutro", Model.Certidao.VinculoPropriedadeOutro, ViewModelHelper.SetaDisabledReadOnly(Model.IsVisualizar, new { @class = "text txtVinculoPropOutro", @maxlength="50" }))%>
+		<div class="coluna43 prepend1 divOutros">
+			<label for="VinculoPropOutro">Validade de Informação de corte (dias) *</label>
+			<%= Html.TextBox("VinculoPropOutro", Model.Outros.Destinatario, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValidadeInfCorte", @maxlength="3" }))%>
 		</div>
-	</div>--%>
+	</div>
 </fieldset>
