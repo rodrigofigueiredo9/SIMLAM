@@ -43,6 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			var _busOutros = new OutrosInformacaoCorteBus();
 			List<AtividadeSolicitada> lstAtividades = new List<AtividadeSolicitada>();
+			List<Lista> lstInformacaoCorte = new List<Lista>();
 
 			var titulo = new Titulo();
 			var outros = new OutrosInformacaoCorte();
@@ -54,6 +55,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				titulo = _busTitulo.ObterSimplificado(especificidade.TituloId);
 				titulo.Atividades = _busTitulo.ObterAtividades(especificidade.TituloId);
 				outros = _busOutros.Obter(especificidade.TituloId) as OutrosInformacaoCorte;
+				lstInformacaoCorte = _busInfCorte.ObterListaInfCorteTitulo(especificidade.TituloId);
 
 				if (titulo.CredenciadoId > 0)
 				{
@@ -65,7 +67,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					lstAtividades = atividadeInternoBus.ObterAtividadesListaReq(titulo.RequerimetoId.GetValueOrDefault());
 				}
 			}
-			OutrosInformacaoCorteVM vm = new OutrosInformacaoCorteVM(outros, lstAtividades, ListaCredenciadoBus.ObterVinculoPropriedade, especificidade.IsVisualizar);
+			OutrosInformacaoCorteVM vm = new OutrosInformacaoCorteVM(outros, lstAtividades, lstInformacaoCorte, especificidade.IsVisualizar);
 			try
 			{
 				htmlEspecificidade = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Especificidades/Views/Outros/OutrosInformacaoCorte.ascx", vm);
@@ -82,7 +84,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			var req = _busRequerimento.ObterSimplificado(requerimentoId);
 
-			var lstInformacaoDeCorte = _busInfCorte.ObterListaInfCorte(req.Empreendimento.Id);
+			var lstInformacaoDeCorte = _busInfCorte.ObterListaInfCorteEmpreendimento(req.Empreendimento.Id);
 			AtividadeCredenciadoBus atividadeBus = new AtividadeCredenciadoBus();
 			var listAtividades = atividadeBus.ObterAtividadesListaReq(requerimentoId);
 

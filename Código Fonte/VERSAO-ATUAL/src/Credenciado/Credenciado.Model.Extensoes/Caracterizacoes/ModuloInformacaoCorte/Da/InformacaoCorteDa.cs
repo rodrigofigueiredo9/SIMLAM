@@ -522,7 +522,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return caracterizacao;
 		}
 
-		internal List<Lista> ObterListaInfCorte(int empreendimento)
+		internal List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
 		{
 			List<Lista> retorno = new List<Lista>();
 
@@ -543,6 +543,39 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						Lista item = new Lista();
 						item.Id = reader.GetValue<string>("ID");
 						item.Texto = reader.GetValue<string>("informacaoCorte");
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+		
+		internal List<Lista> ObterListaInfCorteTitulo(int titulo)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
+					FROM {0}CRT_INFORMACAO_CORTE CRT 
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.INFORMACAO_CORTE
+				WHERE INF.TITULO = :titulo", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("ID");
+						item.Texto = reader.GetValue<string>("informacaoCorte");
+						item.IsAtivo = true;
 
 						retorno.Add(item);
 					}

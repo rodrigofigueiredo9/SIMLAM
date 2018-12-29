@@ -24,19 +24,19 @@
 	<div class="block">
 		<div class="coluna75">
 			<label for="Interessado">Interessado *</label>
-			<%= Html.TextBox("Interessado", Model.Outros.Destinatario, ViewModelHelper.SetaDisabledReadOnly(true, new { @class = "text txtInteressado" }))%>
+			<%= Html.TextBox("Interessado", Model.Outros.Interessado, ViewModelHelper.SetaDisabledReadOnly(true, new { @class = "text txtInteressado" }))%>
 		</div>
 	</div>
 
 	<div class="block">
 		<div class="coluna30">
-			<label for="Vinculo">Informação de corte *</label>
-			<%= Html.DropDownList("Vinculo", Model.VinculoPropriedade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlInformacaoCorte" }))%>
+			<label for="InformacaoCorte">Informação de corte *</label>
+			<%= Html.DropDownList("Certidao.InformacaoCorte", Model.InformacaoCorte, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlInformacaoCorte" }))%>
 		</div>
 
 		<div class="coluna43 prepend1 divOutros">
-			<label for="VinculoPropOutro">Validade de Informação de corte (dias) *</label>
-			<%= Html.TextBox("VinculoPropOutro", Model.Outros.Destinatario, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValidadeInfCorte", @maxlength="3" }))%>
+			<label for="Validade">Validade de Informação de corte (dias) *</label>
+			<%= Html.TextBox("Validade", Model.Outros.Validade, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtValidadeInfCorte", @maxlength="3" }))%>
 		</div>
 	</div>
 </fieldset>
