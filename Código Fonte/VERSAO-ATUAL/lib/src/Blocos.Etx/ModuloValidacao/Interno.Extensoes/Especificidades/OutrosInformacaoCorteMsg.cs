@@ -30,5 +30,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("O modelo de título informação de corte não pode ser utilizado para atividade {0}.", atividade) };
 		}
+
+		public Mensagem ValidadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Validade obrigatória." }; } }
 	}
 }
