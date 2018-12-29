@@ -271,25 +271,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				bancoDeDados.IniciarTransacao();
 
-				#region Obter id da caracterização
-
 				Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}crt_informacao_corte c where c.empreendimento = :empreendimento", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
-				int id = 0;
-				object retorno = bancoDeDados.ExecutarScalar(comando);
-
-				if (retorno != null && !Convert.IsDBNull(retorno))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					id = Convert.ToInt32(retorno);
-				}
+					int id = reader.GetValue<int>("id");
 
-				#endregion
+					#region Histórico
 
-				#region Histórico
-
-				//Atualizar o tid para a nova ação
-				comando = bancoDeDados.CriarComandoPlSql(@"
+					//Atualizar o tid para a nova ação
+					comando = bancoDeDados.CriarComandoPlSql(@"
 				begin
 					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
 					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
@@ -297,29 +289,30 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
 				end;", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				bancoDeDados.ExecutarNonQuery(comando);
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+					bancoDeDados.ExecutarNonQuery(comando);
 
-				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.unidadeproducao, eHistoricoAcao.excluir, bancoDeDados, null);
+					Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.unidadeproducao, eHistoricoAcao.excluir, bancoDeDados, null);
 
-				#endregion
+					#endregion
 
-				#region Apaga os dados da caracterização
+					#region Apaga os dados da caracterização
 
-				comando = bancoDeDados.CriarComandoPlSql(
-				@"begin
+					comando = bancoDeDados.CriarComandoPlSql(
+					@"begin
 					delete from {0}crt_informacao_corte c where c.id = :id;
 					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
 					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
 					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
 				end;", EsquemaCredenciadoBanco);
 
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-				bancoDeDados.Commit();
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+					bancoDeDados.Commit();
 
-				#endregion
+					#endregion
+				}
 			}
 		}
 

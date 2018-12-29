@@ -84,8 +84,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				if (x.ProjetoGeograficoId <= 0)
 				{
 					x.ProjetoGeograficoId = cadastrada.ProjetoId;
-				}
-
+				}				
 				x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
 			});
 
@@ -114,12 +113,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				if (x.Tipo == eCaracterizacao.ExploracaoFlorestal)
 				{
 					var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
-					if(exploracao.Id > 0)
+					if (exploracao.Id > 0)
 					{
 						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
 						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
 					}
-				}
+				}				
 				else
 				{
 					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
@@ -127,10 +126,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				}
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 
-                // #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
+				// #2377: Alteração para resolver o problema de "sequence contains more than one matching element"
 				//Caracterizacao cadastrada = cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
 
-                Caracterizacao cadastrada = cadastradas.FirstOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
+				Caracterizacao cadastrada = cadastradas.FirstOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao();
 				x.ProjetoGeograficoId = cadastrada.ProjetoId;
 				if(cadastrada.ProjetoId == 0 && cadastrada.Tipo == eCaracterizacao.ExploracaoFlorestal)
 					x.ProjetoGeograficoId = cadastrada.ProjetoRascunhoId;
@@ -140,6 +139,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 				x.UrlExcluirConfirm = Url.Action("ExcluirConfirm", x.Tipo.ToString());
 				x.UrlExcluir = Url.Action("Excluir", x.Tipo.ToString());
+
+				if (x.Tipo == eCaracterizacao.InformacaoCorte)
+				{
+					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlExcluir = Url.Action("Listar", x.Tipo.ToString());
+				}
 			});
 
 			#region CAR

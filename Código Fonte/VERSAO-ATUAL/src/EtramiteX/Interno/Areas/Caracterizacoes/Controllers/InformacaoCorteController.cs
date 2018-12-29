@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInforma
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
+using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
@@ -16,15 +17,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
 	public class InformacaoCorteController : DefaultController
 	{
-		#region Propriedades
-
 		ListaBus _listaBus = new ListaBus();
-		InformacaoCorteBus _bus = new InformacaoCorteBus();
-		InformacaoCorteValidar _validar = new InformacaoCorteValidar();
+		CaracterizacaoBus _bus = new CaracterizacaoBus(new CaracterizacaoValidar());
+		InformacaoCorteBus _informacaoCorteBus = new InformacaoCorteBus();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
-		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
-
-		#endregion
+		InformacaoCorteValidar _validar = new InformacaoCorteValidar();
 
 		#region Criar
 
@@ -32,32 +29,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Criar(int id)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
-			{
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-			}
 
+			if (!_validar.Acessar(id))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
-			InformacaoCorte caracterizacao = _bus.ObterPorEmpreendimento(id) ?? new InformacaoCorte();
-			caracterizacao.EmpreendimentoId = id;
-			caracterizacao.Emprendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>());
 
-			if (caracterizacao.Id > 0) 
-			{
-				return RedirectToAction("Editar", new { id = caracterizacao.EmpreendimentoId });
-			}
-
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
-			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
-
-			caracterizacao.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
-			InformacaoCorteVM vm = new InformacaoCorteVM(caracterizacao);
-
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-
-			return View(vm);
-
+			return View(informacaoCorteVM);
 		}
 
 		#endregion
@@ -65,35 +46,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Editar
 
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
-		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorte)]
 		public ActionResult Editar(int id)
 		{
-			if (!_caracterizacaoValidar.Basicas(id))
-			{
+			InformacaoCorte caracterizacao = _informacaoCorteBus.Obter(id);
+
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-			}
 
-			if (!_validar.Acessar(id))
+			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
-
-			InformacaoCorte caracterizacao = _bus.ObterPorEmpreendimento(id);
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				caracterizacao.EmpreendimentoId,
-				(int)eCaracterizacao.InformacaoCorte,
-				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				caracterizacao.Dependencias);
-
-			if (!string.IsNullOrEmpty(textoMerge))
-			{
-				caracterizacao = _bus.MergiarGeo(caracterizacao);
-			}
-
-			InformacaoCorteVM vm = new InformacaoCorteVM(caracterizacao);
-
-			vm.TextoMerge = textoMerge;
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+				IsPodeExcluir = true
+			};
 
 			return View(vm);
 		}
@@ -106,23 +74,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar, ePermissao.InformacaoCorteEditar })]
 		public ActionResult Salvar(InformacaoCorte caracterizacao)
 		{
-			caracterizacao.Id = _bus.Salvar(caracterizacao);
-			caracterizacao = _bus.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId);
-			caracterizacao.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(caracterizacao.EmpreendimentoId, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
-
-			InformacaoCorteVM vm = new InformacaoCorteVM(caracterizacao);
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-
-			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorte", vm);
+			_informacaoCorteBus.Salvar(caracterizacao);
 
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@CaracterizacaoId = caracterizacao.Id,
-				@Html = html,
-				@Dependencias = ViewModelHelper.Json(caracterizacao.Dependencias),
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.Empreendimento.Id, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
@@ -131,30 +89,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Visualizar
 
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
-		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorte)]
 		public ActionResult Visualizar(int id)
 		{
-			if (!_validar.Acessar(id))
+			InformacaoCorte caracterizacao = _informacaoCorteBus.Obter(id);
+
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
+				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
+
+			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
-
-			InformacaoCorte caracterizacao = _bus.ObterPorEmpreendimento(id);
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				caracterizacao.EmpreendimentoId,
-				(int)eCaracterizacao.InformacaoCorte,
-				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				caracterizacao.Dependencias);
-
-			if (!string.IsNullOrEmpty(textoMerge))
-			{
-				caracterizacao = _bus.MergiarGeo(caracterizacao);
-			}
-
-			InformacaoCorteVM vm = new InformacaoCorteVM(caracterizacao, true);
-
-			vm.TextoMerge = textoMerge;
-			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
+				IsVisualizar = true
+			};
 
 			return View(vm);
 		}
@@ -167,12 +117,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
 		public ActionResult ExcluirConfirm(int id)
 		{
-			ExcluirVM vm = new ExcluirVM();
+			ConfirmarVM vm = new ConfirmarVM();
 			vm.Id = id;
 			vm.Mensagem = Mensagem.InformacaoCorte.ExcluirMensagem;
 			vm.Titulo = "Excluir Informação de Corte";
 
-			return PartialView("Excluir", vm);
+			return PartialView("Confirmar", vm);
 		}
 
 		[HttpPost]
@@ -181,139 +131,33 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			string urlRedireciona = string.Empty;
 
-			if (_bus.Excluir(id))
-			{
-				urlRedireciona = Url.Action("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
+			if (_informacaoCorteBus.Excluir(id))
+				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
 
-		#region Informacoes Corte Informacao
-
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
-		public ActionResult InformacaoCorteInformacaoCriar()
-		{
-			InformacaoCorteVM vm = new InformacaoCorteVM(new InformacaoCorte(), false);
-			//InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(new InformacaoCorteInformacao(), _listaBus.SilviculturaCulturasFlorestais,_listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial);
-			//String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
-			vm.Caracterizacao.Emprendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(26190);
-
-			return View("InformacaoCorteInformacao", vm);
-
-			//if (Request.IsAjaxRequest())
-			//{
-			//	return PartialView("VisualizarPartial", vm);
-			//}
-			//else
-			//{
-			//	return View("Visualizar", vm);
-			//}
-
-			//return RedirectToAction("Index", Validacao.QueryParamSerializer());
-
-
-			//return Json(new
-			//{
-			//	@Html = html,
-			//	@Msg = Validacao.Erros
-			//}, JsonRequestBehavior.AllowGet);
-
-		}
-
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
-		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorteinformacao)]
-		public ActionResult InformacaoCorteInformacaoEditar(int id)
-		{
-			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(_bus.ObterInformacaoItem(id), _listaBus.SilviculturaCulturasFlorestais, _listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial);
-			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
-
-			return Json(new
-			{
-				@Html = html,
-				@Msg = Validacao.Erros
-			}, JsonRequestBehavior.AllowGet);
-		}
+		#region Filtrar
 
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
-		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorteinformacao)]
-		public ActionResult InformacaoCorteInformacaoVisualizar(int id)
+		public ActionResult Listar(int id)
 		{
-			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(_bus.ObterInformacaoItem(id), _listaBus.SilviculturaCulturasFlorestais, _listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial, true);
-			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
-
-			return Json(new
+			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var last = resultados?.LastOrDefault();
+			var vm = new ListarVM(empreendimento)
 			{
-				@Html = html,
-				@Msg = Validacao.Erros
-			}, JsonRequestBehavior.AllowGet);
-		}
+				Resultados = resultados,
+				PodeCriar = User.IsInRole(ePermissao.InformacaoCorteCriar.ToString()),
+				PodeEditar = User.IsInRole(ePermissao.InformacaoCorteEditar.ToString()),
+				PodeExcluir = User.IsInRole(ePermissao.InformacaoCorteExcluir.ToString()),
+				PodeVisualizar = User.IsInRole(ePermissao.InformacaoCorteVisualizar.ToString()),
+				AreaPlantada = last?.AreaFlorestaPlantada ?? 0
+			};
 
-		[HttpGet]
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
-		public ActionResult InformacaoCorteInformacaoExcluirConfirm(int id)
-		{
-			ExcluirVM vm = new ExcluirVM();
-			vm.Id = id;
-			vm.Mensagem = Mensagem.InformacaoCorte.ItemExcluirMensagem;
-			vm.Titulo = "Excluir Informação de Corte";
-
-			return PartialView("Excluir", vm);
-		}
-
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
-		public ActionResult InformacaoCorteInformacaoExcluir(int itemId, int empreendimentoId)
-		{
-			InformacaoCorte caracterizacao = _bus.ObterPorEmpreendimento(empreendimentoId);
-
-			if (caracterizacao.InformacoesCortes.Count > 1)
-			{
-				_bus.ExcluirInformacao(itemId);
-				caracterizacao = _bus.ObterPorEmpreendimento(empreendimentoId);
-			}
-			else 
-			{
-				Validacao.Add(Mensagem.InformacaoCorte.InformacaoCorteUltimoItemListaObrigatorio);
-			}
-
-			caracterizacao.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(empreendimentoId, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
-
-			InformacaoCorteVM vm = new InformacaoCorteVM(caracterizacao);
-			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorte", vm);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@CaracterizacaoId = caracterizacao.Id,
-				@Html = html,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
-		#endregion
-
-		#region GeoMergiar
-
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar, ePermissao.InformacaoCorteEditar })]
-		public ActionResult GeoMergiar(InformacaoCorte caracterizacao)
-		{
-			InformacaoCorteVM vm = new InformacaoCorteVM(_bus.MergiarGeo(caracterizacao));
-
-			vm.Caracterizacao.InformacaoCorteInformacao = vm.Caracterizacao.InformacoesCortes.First();
-			_bus.Salvar(vm.Caracterizacao);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorte", vm),
-				@Dependencias = ViewModelHelper.Json(vm.Caracterizacao.Dependencias)
-			}, JsonRequestBehavior.AllowGet);
+			return View(vm);
 		}
 
 		#endregion

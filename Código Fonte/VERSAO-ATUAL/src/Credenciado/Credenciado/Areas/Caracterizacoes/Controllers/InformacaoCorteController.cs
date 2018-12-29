@@ -51,21 +51,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			return View(informacaoCorteVM);
 		}
-
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
-		public ActionResult Criar(InformacaoCorte caracterizacao, int projetoDigitalId = 0)
-		{
-			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
+		
 		#endregion
 
 		#region Editar
@@ -91,9 +77,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return View(vm);
 		}
 
+		#endregion
+
+		#region Salvar
+
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
-		public ActionResult Editar(InformacaoCorte caracterizacao, int projetoDigitalId)
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar, ePermissao.InformacaoCorteEditar })]
+		public ActionResult Salvar(InformacaoCorte caracterizacao, int projetoDigitalId)
 		{
 			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
 			return Json(new
@@ -167,14 +157,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
-			var first = resultados?.FirstOrDefault();
+			var last = resultados?.LastOrDefault();
 			var vm = new ListarVM(empreendimento)
 			{
 				Resultados = resultados,
 				IsVisualizar = visualizar,
 				IsPodeExcluir = true,
 				ProjetoDigitalId = projetoDigitalId,
-				AreaPlantada = first?.AreaFlorestaPlantada ?? 0
+				AreaPlantada = last?.AreaFlorestaPlantada ?? 0
 			};
 
 			return View(vm);
