@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria
@@ -11,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		public eDominioTipo Tipo { get { return eDominioTipo.Posse; } }
 		public String Tid { get; set; }
 		public String Identificacao { get; set; }
+		public Int32 ComprovacaoId { get; set; }
 		public String ComprovacaoTexto { get; set; }
 		public Decimal AreaCroqui { get; set; }
 		public Decimal Perimetro { get; set; }
@@ -20,6 +23,24 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		public Int32 RelacaoTrabalho { set; get; }
 		public String Benfeitorias { get; set; }
 		public String Observacoes { get; set; }
+	
+		public Decimal AreaPosseDocumento { get; set; }
+		public String DescricaoComprovacao { get; set; }
+		public Int32? NumeroCCIR { get; set; }
+		public Decimal AreaCCIR { get; set; }
+
+		private DateTecno _dataUltimaAtualizacaoCCIR = new DateTecno();
+		public DateTecno DataUltimaAtualizacaoCCIR
+		{
+			get { return _dataUltimaAtualizacaoCCIR; }
+			set { _dataUltimaAtualizacaoCCIR = value; }
+		}
+
+		public string ConfrontacoesNorte { get; set; }
+		public string ConfrontacoesSul { get; set; }
+		public string ConfrontacoesLeste { get; set; }
+		public string ConfrontacoesOeste { get; set; }
+
 		public Distancia Distancia { set; get; }
 		public List<Opcao> Opcoes { set; get; }
 		public List<TransmitentePosse> Transmitentes { set; get; }
@@ -35,6 +56,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		{
 			get { return _dominioPosse; }
 			set { _dominioPosse = value; }
+		}
+
+		private List<SelectListItem> _comprovacoes = new List<SelectListItem>();
+		public List<SelectListItem> Comprovacoes
+		{
+			get { return _comprovacoes; }
+			set { _comprovacoes = value; }
 		}
 
 		public Posse(Dominio dominio, int zona)

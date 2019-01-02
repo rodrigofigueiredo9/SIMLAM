@@ -186,7 +186,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						if (arquivosSalvos.Count > 1)
 						{
 							_da.ExcluirArquivoDuplicados(arquivoEnviado.ProjetoId, bancoDeDados);
-							arquivosSalvos = _da.ObterArquivos(arquivoEnviado.ProjetoId, bancoDeDados).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado).ToList();
+							arquivosSalvos = _da.ObterArquivos(arquivoEnviado.ProjetoId,null, bancoDeDados).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado).ToList();
 						}
 
 						#endregion
@@ -669,12 +669,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 		#region Obter
 
-		public ProjetoGeografico ObterProjeto(int id, bool simplificado = false)
+		public ProjetoGeografico ObterProjeto(int id,int? tipo = null, bool simplificado = false)
 		{
 			ProjetoGeografico projeto = null;
 			try
 			{
-				projeto = _da.Obter(id, null, simplificado, (!_da.ValidarProjetoGeograficoTemporario(id)));
+				projeto = _da.Obter(id, tipo, null, simplificado, (!_da.ValidarProjetoGeograficoTemporario(id)));
 
 				if (projeto.Id > 0 && !simplificado)
 				{
@@ -724,7 +724,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (lstOrtofoto == null || lstOrtofoto.Count == 0)
 				{
-					ProjetoGeografico projeto = ObterProjeto(projetoId, true);
+					ProjetoGeografico projeto = ObterProjeto(projetoId,null, true);
 					lstOrtofoto = ObterArquivosOrtofotoWebService(projeto);
 				}
 			}
@@ -830,7 +830,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (dependencia != null)
 				{
-					ProjetoGeografico dominio = _da.Obter(dependencia.DependenciaId, null, false, true);
+					ProjetoGeografico dominio = _da.Obter(dependencia.DependenciaId,null, banco:null, simplificado:false, finalizado:true);
 
 					projeto.MenorX = dominio.MenorX;
 					projeto.MenorY = dominio.MenorY;

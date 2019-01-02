@@ -1118,7 +1118,125 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				#endregion
 			}
+			else if (ticketType == OperacoesGeoDa.OPERACAO_REGULARIZACAO)
+			{
+				#region CADASTRO_PROPRIEDADE
 
+				strSQL = @"select 'ATP' classe, 'Área Total da Propriedade' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_atp_1 where projeto=:projeto
+                    union all select 'AFD' classe, 'Área de Faixa de Domínio' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_afd where projeto=:projeto
+                    union all select 'APMP' classe, 'Área da Propriedade por Matrícula ou Posse' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_apmp where projeto=:projeto
+                    union all select 'AFS' classe, 'Área de Faixa de Servidão' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_afs where projeto=:projeto";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["QUADRO_TOTAL"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_TOTAL"])
+				//{
+				//	if (hs["CLASSE"].ToString() == "ARL")
+				//	{
+				//		result["AREA_ARL"] = hs["AREA_M2"];
+				//		break;
+				//	}
+				//}
+
+
+				//Ordenadas TMP_ATP
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from tmp_rf_atp_1 t where t.projeto=:projeto) t";
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["ORDENADAS_ATP"] = this.banco.ExecutarList<Decimal>(comando);
+				}
+				
+				//strSQL = @"select
+    //                            upper(a.nome) apmp_nome,
+    //                            (case a.tipo when 'M' then 'Matrícula' when 'P' then 'Posse' else 'Desconhecido' end) apmp_tipo,
+    //                            a.area_m2 apmp_area,
+    //                            sdo_geom.sdo_length(a.geometry, 0.0001) apmp_perimeter,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_afs b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) afs_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_rocha b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rocha_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='MASSA_DAGUA_APMP'), 0) massa_dagua_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='I'), 0) avn_i_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='M'), 0) avn_m_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='A'), 0) avn_a_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='D'), 0) avn_d_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='REC'), 0) aa_rec_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='USO'), 0) aa_uso_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='D'), 0) aa_d_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='PRESERV'), 0) arl_preserv_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='REC'), 0) arl_rec_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='USO'), 0) arl_uso_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='D'), 0) arl_d_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_rppn b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rppn_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_APMP'), 0) app_apmp_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AVN'), 0) app_avn_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_REC'), 0) app_aa_rec_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_USO'), 0) app_aa_uso_area,
+    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_ARL'), 0) app_arl_area
+    //                        from tmp_apmp a where a.projeto=:projeto order by 1";
+
+				//strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+
+				//using (Comando comando = this.banco.CriarComando(strSQL))
+				//{
+				//	comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+				//	result["QUADRO_DE_AREAS"] = this.banco.ExecutarHashtable(comando);
+				//}
+
+
+				strSQL = @"select 
+                                p.empreendimento, 
+                                (select a.texto from {0}lov_crt_projeto_geo_nivel a where a.id = p.nivel_precisao) precisao, 
+                                (select a.sigla from {0}lov_estado a where a.id=t.estado) uf, 
+                                (select a.texto from {0}lov_municipio a where a.id=t.municipio) municipio,
+                                (select a.texto from {0}lov_caracterizacao_tipo a where a.id=p.caracterizacao) atividade,
+                                (select a.id from {0}crt_projeto_geo a where a.empreendimento=p.empreendimento and a.caracterizacao=1) dominialidade,
+                                (select round(a.geometry.sdo_point.x) ||';'|| round(a.geometry.sdo_point.y) from geo_emp_localizacao a where a.empreendimento=p.empreendimento) coordenada,
+								(select sdo_geom.sdo_length(a.geometry, 0.0001) from tmp_rf_atp_1 a where a.projeto=p.id) atp_perimetro   
+                            from 
+                                {0}tmp_projeto_geo p, 
+                                {0}tab_empreendimento_endereco t 
+                            where 
+                                p.id=:projeto and 
+                                p.empreendimento=t.empreendimento(+) and
+                                t.correspondencia(+)=0";
+
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
+
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					using (IDataReader reader = banco.ExecutarReader(comando))
+					{
+						while (reader.Read())
+						{
+							result["EMPREENDIMENTO"] = reader["empreendimento"];
+							result["PRECISAO"] = reader["precisao"];
+							result["MUNICIPIO"] = (reader["municipio"] is DBNull) ? "" : reader["municipio"].ToString();
+							result["ATIVIDADE"] = (reader["atividade"] is DBNull) ? "" : reader["atividade"].ToString();
+							result["DOMINIALIDADE"] = reader["dominialidade"];
+							result["UF"] = (reader["uf"] is DBNull) ? "" : reader["uf"].ToString();
+							result["COORDENADA"] = reader["coordenada"];
+							result["ATP_PERIMETRO"] = reader["ATP_PERIMETRO"];
+						}
+
+						reader.Close();
+					}
+
+				}
+				#endregion
+			}
 			return result;
 		}
 	}

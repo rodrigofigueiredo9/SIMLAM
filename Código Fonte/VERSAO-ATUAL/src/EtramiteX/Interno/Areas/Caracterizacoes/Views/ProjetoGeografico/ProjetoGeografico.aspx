@@ -23,7 +23,8 @@
 			ProjetoGeografico.settings.isVisualizar = <%= Model.IsVisualizar.ToString().ToLower() %>;
 			ProjetoGeografico.settings.isFinalizado = <%= Model.IsFinalizado.ToString().ToLower() %>;
 			ProjetoGeografico.settings.isVisualizarCredenciado = <%= Model.IsVisualizarCredenciado.ToString().ToLower() %>;
-
+			ProjetoGeografico.settings.ArquivoEnviadoFilaTipo = <%= Model.ArquivoEnviadoFilaTipo %>;
+			
 			EnviarProjeto.mensagens =  <%= Model.MensagensImportador %>;
 			Desenhador.mensagens = <%= Model.MensagensDesenhador %>;
 
