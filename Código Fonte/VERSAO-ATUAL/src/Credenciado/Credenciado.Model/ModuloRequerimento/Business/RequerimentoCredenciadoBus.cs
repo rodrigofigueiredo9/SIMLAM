@@ -367,13 +367,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 				ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
 				ProjetoDigital projetoDigital = projetoDigitalCredenciadoBus.Obter(idRequerimento: requerimento.Id);
-				projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Caracterizacao;
 				requerimento.ProjetoDigitalId = projetoDigital.Id;
 
 				#endregion
 
 				requerimento = Obter(requerimento.Id);
-				requerimento.SituacaoId = (int)eRequerimentoSituacao.Finalizado;
+				Mensagem msgSucesso;
+
+				if (IsRequerimentoRegularizacaoFundiaria(requerimento.Atividades.First()))
+				{
+					msgSucesso = Mensagem.ProjetoDigital.AtividadeSemCaracterizacao(requerimento.Atividades.First().NomeAtividade);
+					projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Envio;
+				}
+				else
+				{
+					msgSucesso = Mensagem.Requerimento.FinalizarCredenciado(requerimento.Numero);
+					projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Caracterizacao;
+				}
 
 				if (_validar.Finalizar(requerimento))
 				{
@@ -382,8 +392,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 					{
 						bancoDeDados.IniciarTransacao();
-
-						Mensagem msgSucesso = Mensagem.Requerimento.FinalizarCredenciado(requerimento.Numero);
 
 						_da.Editar(requerimento);
 
@@ -751,7 +759,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			return null;
 		}
 
-		public List<int> ObterResponsavelTecnico (int requerimento =0)
+		public List<int> ObterResponsavelTecnico(int requerimento = 0)
 		{
 			try
 			{
@@ -885,6 +893,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 		public bool VerificarRequerimentoPossuiModelo(int modeloId, int requerimentoId)
 		{
 			return _da.VerificarRequerimentoPossuiModelo(modeloId, requerimentoId);
+		}
+
+		public bool IsRequerimentoRegularizacaoFundiaria(Atividade atividade)
+		{
+			if (atividade.NomeAtividade.ToUpper().Contains("REGULARIZAÇÃO FUNDIÁRIA"))
+				return true;
+			return false;
 		}
 
 		public bool IsRequerimentoAtividadeCorte(int requerimento)
