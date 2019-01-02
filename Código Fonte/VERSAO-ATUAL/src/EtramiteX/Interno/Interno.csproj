@@ -397,6 +397,7 @@
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\ConsumoPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\RegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominioPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Shared\TituloAdicionar.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Editar.aspx" />

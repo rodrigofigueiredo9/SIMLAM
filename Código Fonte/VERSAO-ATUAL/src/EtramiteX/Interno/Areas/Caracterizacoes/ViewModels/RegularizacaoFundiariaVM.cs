@@ -75,14 +75,15 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public List<SelectListItem> TipoUso { set; get; }
 
 		public RegularizacaoFundiariaVM(RegularizacaoFundiaria regularizacao, bool isVisualizar = false)
-		{
+		{			
 			Caracterizacao = regularizacao;
 			IsVisualizar = isVisualizar;
 		}
 
 		public RegularizacaoFundiariaVM(RegularizacaoFundiaria regularizacao, List<RelacaoTrabalho> relacoesTrabalho, List<Lista> limite,
-			List<Lista> regularizacaoTipo, List<UsoAtualSoloLst> tipoUso, List<Lista> homologacoes, bool isVisualizar = false)
+			List<Lista> regularizacaoTipo, List<UsoAtualSoloLst> tipoUso, List<Lista> homologacoes, List<Lista> comprovacoes, bool isVisualizar = false, int comprovacaoId = 0)
 		{
+			regularizacao.Posse.Comprovacoes = ViewModelHelper.CriarSelectList(comprovacoes, isFiltrarAtivo: true, selecionado: comprovacaoId.ToString());
 			Caracterizacao = regularizacao;
 			IsVisualizar = isVisualizar;
 			Opcao opcaoAux = null;

@@ -838,15 +838,6 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							leitorFeicao.Atual.Atributos.Adicionar(atributo);
 						}
 
-						if (leitorFeicao.Atual.Atributos.IndiceDe("TIPOEXP") == -1)
-						{
-							Atributo atributo = new Atributo();
-							atributo.Nome = "TIPOEXP";
-							atributo.Valor = "";
-							leitorFeicao.Atual.Atributos.Adicionar(atributo);
-
-						}
-
 						Feicao otherFeicao = adpt.Transformar(leitorFeicao.Atual);
 
 						escritorFeicao.Inserir(otherFeicao);
@@ -1129,11 +1120,12 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 				case "TMP_REST_DECLIVIDADE":
 					result = result + "=" + convertToString(atributos["TIPO"].Valor);
 					break;
-
 				case "TMP_AATIV":
+				case "TMP_PATIV":
+					result = result + "=" + convertToString(atributos["CODIGO"].Valor) + "=" + convertToString(atributos["TIPO_EXPLORACAO"].Valor);
+					break;
 				case "TMP_AIATIV":
 				case "TMP_LATIV":
-				case "TMP_PATIV":
 					result = result + "=" + convertToString(atributos["CODIGO"].Valor);
 					break;
 
@@ -1433,6 +1425,11 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							if (classeFeicao.Atributos.IndiceDe("VEGETACAO") >= 0)
 							{
 								atributos.Adicionar(classeFeicao.Atributos["VEGETACAO"]);
+							}
+
+							if (classeFeicao.Atributos.IndiceDe("TIPO_EXPLORACAO") >= 0)
+							{
+								atributos.Adicionar(classeFeicao.Atributos["TIPO_EXPLORACAO"]);
 							}
 
 							escritor = (OperadorFeicaoShape)destino.CriarClasseFeicao(alias, leitor.Atual.Geometria.ObterTipo(), 2, false, atributos);

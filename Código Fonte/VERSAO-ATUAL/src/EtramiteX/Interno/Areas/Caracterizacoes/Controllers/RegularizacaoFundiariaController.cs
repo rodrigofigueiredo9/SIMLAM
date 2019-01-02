@@ -33,6 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.RegularizacaoFundiariaCriar })]
 		public ActionResult Criar(int id)
 		{
+
 			if (!_caracterizacaoValidar.Basicas(id))
 			{
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
@@ -119,7 +120,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_listaBus.RegularizacaoFundiariaTipoLimite,
 				_listaBus.RegularizacaoFundiariaTipoRegularizacao,
 				_listaBus.RegularizacaoFundiariaTipoUso,
-				_listaBus.RegularizacaoFundiariaHomologacao);
+				_listaBus.RegularizacaoFundiariaHomologacao,
+				_listaBus.DominialidadeComprovacoes);
 
 			vm.TextoMerge = textoMerge;
 			vm.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
@@ -237,7 +239,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			caracterizacao.Matriculas = matriculas ?? new List<Dominio>();
 			caracterizacao.Posse = posse;
 
-			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao);
+			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao, _listaBus.DominialidadeComprovacoes);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "RegularizacaoFundiariaPartial", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
@@ -250,7 +252,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			caracterizacao.Matriculas = matriculas ?? new List<Dominio>();
 			caracterizacao.Posse = posse;
 
-			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao);
+			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao, _listaBus.DominialidadeComprovacoes);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "RegularizacaoFundiariaPartial", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
@@ -263,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			caracterizacao.Matriculas = matriculas ?? new List<Dominio>();
 			caracterizacao.Posse = posse;
 
-			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao, true);
+			RegularizacaoFundiariaVM vm = new RegularizacaoFundiariaVM(caracterizacao, _listaBus.RegularizacaoFundiariaRelacaoTrabalho, _listaBus.RegularizacaoFundiariaTipoLimite, _listaBus.RegularizacaoFundiariaTipoRegularizacao, _listaBus.RegularizacaoFundiariaTipoUso, _listaBus.RegularizacaoFundiariaHomologacao, _listaBus.DominialidadeComprovacoes, true);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "RegularizacaoFundiariaPartial", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
