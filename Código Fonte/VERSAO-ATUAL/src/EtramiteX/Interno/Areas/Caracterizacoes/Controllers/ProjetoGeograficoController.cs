@@ -489,7 +489,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
-		[HttpPost]
+		//[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar, ePermissao.ProjetoGeograficoEditar })]
 		public ActionResult ExcluirRascunho(ProjetoGeografico projeto, bool isCadastrarCaracterizacao)
 		{
@@ -497,8 +497,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
 			}
+			if(projeto.CaracterizacaoId != (int)eCaracterizacao.RegularizacaoFundiaria)
+				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
 
-			_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
 			if (Validacao.EhValido) Validacao.Erros.Clear();
 			_bus.ExcluirRascunho(projeto);
 

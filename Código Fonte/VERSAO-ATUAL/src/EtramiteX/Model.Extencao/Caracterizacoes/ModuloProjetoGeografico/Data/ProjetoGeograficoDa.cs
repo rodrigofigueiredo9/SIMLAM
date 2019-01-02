@@ -534,9 +534,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					update {1}tab_fila f set f.etapa = (case when f.tipo in (1,2) then 2 else 3 end), f.situacao = 4 where f.projeto = :projeto; 
 					
 					select c.caracterizacao into v_caract_tipo from {0}crt_projeto_geo c where c.id = :projeto;					
-					v_fila_tipo := :filaTipoAtividade;
+					
 					if v_caract_tipo = :dominialidadeTipo then 
 						v_fila_tipo := :filaTipoDominialidade;
+					elsif v_caract_tipo = :regularizacaoTipo then
+						v_fila_tipo := :filaTipoRegularizacao;
+					else
+						v_fila_tipo := :filaTipoAtividade;
 					end if;					
 					
 					{0}geo_operacoesprocessamentogeo.ApagarGeometriasTMP(:projeto, v_fila_tipo);
@@ -549,6 +553,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("regularizacaoTipo", (int)eCaracterizacao.RegularizacaoFundiaria, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoRegularizacao", (int)eFilaTipoGeo.RegularizacaoFundiaria, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
