@@ -17,52 +17,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 	{
 		public bool Salvar(IEspecificidade especificidade)
 		{
-			#region Variáveis
 
 			OutrosInformacaoCorteDa _da = new OutrosInformacaoCorteDa();
-			CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-			CaracterizacaoValidar caracterizacaoValidar = new CaracterizacaoValidar();
-			List<Dependencia> dependencias = new List<Dependencia>();
-			OutrosInformacaoCorte esp = especificidade as OutrosInformacaoCorte;
-			List<Caracterizacao> caracterizacoes = caracterizacaoBus.ObterCaracterizacoesEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault());
-			int idCaracterizacao;
+			var esp = especificidade as OutrosInformacaoCorte;
 
-			#endregion
+			DeclaratorioRequerimentoAtividade(esp);
 
-			RequerimentoAtividade(esp);
-			Destinatario(esp.ProtocoloReq.Id, esp.Destinatario, "Outros_Destinatarios");
-
-			// Atividade Informação de corte
-			if (esp.Atividades[0].Id != ConfiguracaoAtividade.ObterId((int)eAtividadeCodigo.InformacaoDeCorte))
-			{
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.AtividadeInvalida(esp.Atividades[0].NomeAtividade));
-			}
-
-			idCaracterizacao = caracterizacaoBus.Existe(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(), eCaracterizacao.InformacaoCorte);
-			if (idCaracterizacao > 0)
-			{
-				dependencias = caracterizacaoBus.ObterDependencias(idCaracterizacao, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
-				if (caracterizacaoValidar.DependenciasAlteradas(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(), (int)eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao, dependencias) != String.Empty)
-				{
-					Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoValida(caracterizacoes.Single(x => x.Tipo == eCaracterizacao.InformacaoCorte).Nome));
-				}
-			}
-			else
-			{
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoCadastrada);
-			}
-
-			if (esp.InformacaoCorte == 0)
+			if (esp.InformacaoCorte <= 0)
 			{
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 			}
-			else if (!_da.IsInformacaoCorteCadastrado(esp.InformacaoCorte))
+
+			if (esp.Validade <= 0)
 			{
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteInexistente);
-			}
-			else if (_da.IsInformacaoCorteAssociado(esp.InformacaoCorte, esp.Id))
-			{
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteAssociado);
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);
 			}
 
 

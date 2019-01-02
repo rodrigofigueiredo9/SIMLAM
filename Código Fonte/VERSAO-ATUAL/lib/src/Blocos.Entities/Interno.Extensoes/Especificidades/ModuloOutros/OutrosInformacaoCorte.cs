@@ -12,5 +12,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOut
 		public Int32 Atividade { get; set; }
 		public Int32 Validade { get; set; }
 		public String Interessado { get; set; }
+
+		public Int32 Destinatario { get; set; }
+		public String DestinatarioNomeRazao { get; set; }
+		public Int32 VinculoPropriedade { get; set; }
 	}
 }

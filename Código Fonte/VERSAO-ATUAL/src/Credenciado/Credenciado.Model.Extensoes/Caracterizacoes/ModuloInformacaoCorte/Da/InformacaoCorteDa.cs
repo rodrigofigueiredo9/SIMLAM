@@ -98,9 +98,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
-					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
+					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
 					comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
-					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
 					comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -198,9 +198,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
 						comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
-						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
+						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
 						comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
-						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 

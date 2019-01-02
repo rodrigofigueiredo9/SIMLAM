@@ -49,17 +49,17 @@
 			<div class="block">
 				<div class="coluna10">
 					<label>N.º Licença *</label>
-					<%= Html.TextBox("InformacaoCorte_NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca" }))%>
+					<%= Html.TextBox("InformacaoCorte_NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca", @maxlength = "30"}))%>
 				</div>
 
 				 <div class="coluna10">
 					<label>Tipo de Licença *</label>
-					<%= Html.TextBox("InformacaoCorte_TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca"}))%>
+					<%= Html.TextBox("InformacaoCorte_TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca", @maxlength = "250"}))%>
 				</div>
 
 				<div class="coluna17">
 					<label>Atividade *</label>
-					<%= Html.TextBox("InformacaoCorte_Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade"}))%>
+					<%= Html.TextBox("InformacaoCorte_Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade", @maxlength = "250"}))%>
 				</div>
 
 				<div class="coluna17">

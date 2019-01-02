@@ -18,7 +18,7 @@
 			</tr>
 		</thead>
 
-		<tbody>
+		<%--<tbody>
 			<% foreach (var item in Model.Resultados) { %>
 			<tr>
 				<td title="<%= Html.Encode(item.Numero.Texto)%>"><%= Html.Encode(item.Numero.Texto)%></td>
@@ -40,6 +40,6 @@
 				</td>
 			</tr>
 		<% } %>
-		</tbody>
+		</tbody>--%>
 	</table>
 </div>

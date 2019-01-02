@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -207,6 +208,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 		public object ObterDadosPdfTitulo(int empreendimento, int atividade, IEspecificidade especificidade, BancoDeDados banco = null)
 		{
 			throw new NotImplementedException();
+		}
+
+		public List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterListaInfCorteEmpreendimento(empreendimento);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
+		public List<Lista> ObterListaInfCorteTitulo(int titulo)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterListaInfCorteTitulo(titulo);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
 		}
 
 		#endregion

@@ -144,7 +144,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					return;
 				}
 
-				if (!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
+				if (!String.IsNullOrEmpty(titulo.Numero.Texto) && !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
 				{
 					Validacao.Add(Mensagem.Titulo.NumeroInvalido);
 				}

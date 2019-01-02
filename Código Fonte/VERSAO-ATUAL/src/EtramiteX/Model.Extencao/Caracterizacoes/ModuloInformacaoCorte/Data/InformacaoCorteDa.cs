@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
@@ -91,9 +92,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
-					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
+					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
 					comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
-					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
 					comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -194,9 +195,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
 						comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
-						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.Int64);
+						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
 						comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
-						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.String);
+						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -719,6 +720,70 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return caracterizacao;
 		}
 
+		internal List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				/*SELECT id, concat(concat(lpad(id, 4, '0'), '-'), data_informacao) informacaoCorte FROM crt_informacao_corte;*/
+					SELECT ID, (LPAD(ID, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
+						FROM {0}CRT_INFORMACAO_CORTE CRT WHERE EMPREENDIMENTO = :empreendimento
+					/*AND ID NOT IN (SELECT ID FROM TAB_EMPREENDIMENTO E WHERE CRT.ID = E.ID)*/", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("ID");
+						item.Texto = reader.GetValue<string>("informacaoCorte");
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
+		internal List<Lista> ObterListaInfCorteTitulo(int titulo)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
+					FROM {0}CRT_INFORMACAO_CORTE CRT 
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.INFORMACAO_CORTE
+				WHERE INF.TITULO = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("ID");
+						item.Texto = reader.GetValue<string>("informacaoCorte");
+						item.IsAtivo = true;
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
 		#endregion
 	}
 }

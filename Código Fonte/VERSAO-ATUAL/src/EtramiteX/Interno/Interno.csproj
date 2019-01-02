@@ -482,9 +482,11 @@
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Areas\Especificidades\Views\Outros\OutrosInformacaoCorteDeclaratorio.ascx" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorteDeclaratorio.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
