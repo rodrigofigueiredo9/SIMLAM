@@ -154,8 +154,8 @@ InformacaoCorte = {
 		InformacaoCorte.configurarTipo(false);
 		InformacaoCorte.configurarDestinacao(true);
 
-		$('.tipoCorte', container).val('');
-		$('.especieInformada', container).val('');
+		$('.tipoCorte', container).val('0');
+		$('.especieInformada', container).val('0');
 		$('.areaCorte', container).val('');
 		$('.idadePlantio', container).val('');
 		$('.destinacaoMaterial', container).val('');
@@ -249,8 +249,8 @@ InformacaoCorte = {
 		Listar.atualizarEstiloTable($('.tabDestinacao', container));
 
 		//limpa os campos de texto 
-		$('.destinacaoMaterial', container).val('');
-		$('.produto', container).val('');
+		$('.destinacaoMaterial', container).val('0');
+		$('.produto', container).val('0');
 		$('.quantidade', container).val('');
 
 		$('.btnAdicionarInformacao', container).button({ disabled: false });
@@ -334,21 +334,23 @@ InformacaoCorte = {
 			var rowspan = linha.find('.tipoCorte').parent().attr('rowspan');
 			if (rowspan == 1) {
 				$(this).closest('tr').remove();
+				Listar.atualizarEstiloTable($('.tabInformacaoCorte', InformacaoCorte.container));
 				return;
 			}
+
+			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
+			$(this).closest('tr').remove();
+			if (nextLinha.find('.tipoCorte').length > 0) return;
+
 			var tipoCorte = linha.find('.tipoCorte').parent().clone();
 			var especie = linha.find('.especie').parent().clone();
 			var areaCorte = linha.find('.areaCorte').parent().clone();
 			var idadePlantio = linha.find('.idadePlantio').parent().clone();
 
-			$(this).closest('tr').remove();
-
 			tipoCorte.attr('rowspan', rowspan - 1);
 			especie.attr('rowspan', rowspan - 1);
 			areaCorte.attr('rowspan', rowspan - 1);
 			idadePlantio.attr('rowspan', rowspan - 1);
-			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
-			if (nextLinha.find('.tipoCorte').length > 0) return;
 
 			var children = nextLinha.children();
 			children.remove();
@@ -364,6 +366,7 @@ InformacaoCorte = {
 			InformacaoCorte.downRowspan(linha.index());
 			$(this).closest('tr').remove();
 		}
+		Listar.atualizarEstiloTable($('.tabInformacaoCorte', InformacaoCorte.container));
 	},
 
 	downRowspan: function (index) {
@@ -378,7 +381,7 @@ InformacaoCorte = {
 				previousRow.find('.areaCorte').parent().attr('rowspan', rowspan - 1);
 				previousRow.find('.idadePlantio').parent().attr('rowspan', rowspan - 1);
 			} else {
-				InformacaoCorte.downRowspan(previousRow.index() - 1);
+				InformacaoCorte.downRowspan(previousRow.index());
 			}
 		}
 	},
@@ -396,7 +399,7 @@ InformacaoCorte = {
 		var informacaoCorteTipo = {
 			Id: 0,
 			TipoCorte: '',
-			Especie: '',
+			EspecieInformada: '',
 			AreaCorte: '',
 			IdadePlantio: '',
 			InformacaoCorteDestinacao: []
@@ -417,13 +420,13 @@ InformacaoCorte = {
 			};
 
 			if (!(informacaoCorteTipo.TipoCorte == item.TipoCorte &&
-				informacaoCorteTipo.Especie == item.Especie &&
+				informacaoCorteTipo.EspecieInformada == item.Especie &&
 				informacaoCorteTipo.AreaCorte == item.AreaCorte &&
 				informacaoCorteTipo.IdadePlantio == item.IdadePlantio)) {
 				informacaoCorteTipo = {
 					Id: item.Id,
 					TipoCorte: item.TipoCorte,
-					Especie: item.Especie,
+					EspecieInformada: item.Especie,
 					AreaCorte: item.AreaCorte,
 					IdadePlantio: item.IdadePlantio,
 					InformacaoCorteDestinacao: []

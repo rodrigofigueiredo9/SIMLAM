@@ -1,10 +1,9 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="containerDesenhador">
 	<%= Html.Hidden("EmpreendimentoId", Model.Empreendimento.EmpreendimentoId, new { @class = "hdnEmpreendimentoId" }) %>
-	<%= Html.Hidden("ProjetoDigitalId", Request.Params["ProjetoDigitalId"], new { @class="hdnProjetoDigitalId" })%>
    <fieldset class="block box">
         <legend>Empreendimento</legend>
         <div class="block">
@@ -50,7 +49,7 @@
 						<th width="7%">Código</th>
 						<th width="7%">Data</th>
 						<th width="15%">Área Corte (ha) / N° Árvores</th>
-						<%if (Model.IsVisualizar){%><th width="6%">Ação</th><%} else{%><th width="11%">Ações</th><%} %>
+						<th width="11%">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,9 +67,9 @@
 						<td class="tdAcoes">
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(informacao)%>' />
 							<input type="hidden" class="itemId" value="<%= informacao.Id %>" />
-							<input title="Visualizar" type="button" class="icone visualizar btnVisualizarInformacaoCorte" value="" />
-							<%if (!Model.IsVisualizar){%><input title="Editar" type="button" class="icone editar btnEditarInformacaoCorte" value="" /><%} %>
-							<%if (Model.IsPodeExcluir && informacao.InternoID == 0){%><input title="Excluir" type="button" class="icone excluir btnExcluirInformacaoCorte" value="" /><%} %>
+							<%if (Model.PodeVisualizar){%><input title="Visualizar" type="button" class="icone visualizar btnVisualizarInformacaoCorte" value="" /><%} %>
+							<%if (Model.PodeEditar){%><input title="Editar" type="button" class="icone editar btnEditarInformacaoCorte" value="" /><%} %>
+							<%if (Model.PodeExcluir){%><input title="Excluir" type="button" class="icone excluir btnExcluirInformacaoCorte" value="" /><%} %>
 						</td>
 					</tr>
 					<% } %>

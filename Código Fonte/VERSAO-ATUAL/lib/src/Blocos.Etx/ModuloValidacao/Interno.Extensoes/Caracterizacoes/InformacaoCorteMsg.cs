@@ -13,11 +13,8 @@
 	public class InformacaoCorteMsg
 	{
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte excluída com sucesso." }; } }
-		public Mensagem ItemExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Informação de corte excluída com sucesso." }; } }
+		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Excluir caracterização Informação de Corte?" }; } }
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte salva com sucesso." }; } }
-		public Mensagem InformacaoCorteListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma Informação de corte adicionada. Pelo menos uma informação de corte deve ser adicionado." }; } }
-		public Mensagem InformacaoCorteUltimoItemListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Não é possivel excluir todas as informações de corte da lista." }; } }
-
 
 		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
 		public Mensagem Declaracao2Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_ResponsavelPelasDeclaracoes", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
@@ -44,6 +41,14 @@
 		public Mensagem DestinacaoMaterialObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DestinacaoMaterial", Texto = @"Destinação Material é obrigatório	." }; } }
 		public Mensagem ProdutoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Produto", Texto = @"Produto é obrigatório." }; } }
 		public Mensagem QuantidadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Quantidade", Texto = @"Quantidade é obrigatória." }; } } 
+		#endregion
+
+		#region Remover
+
+		public Mensagem ItemExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Informação de corte excluída com sucesso." }; } }
+		public Mensagem InformacaoCorteListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma Informação de corte adicionada. Pelo menos uma informação de corte deve ser adicionado." }; } }
+		public Mensagem InformacaoCorteUltimoItemListaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Não é possivel excluir todas as informações de corte da lista." }; } }
+
 		#endregion
 	}
 }

@@ -21,7 +21,7 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">	
 	<div id="central">
-		<h1 class="titTela">Salvar Informação de Corte</h1>
+		<h1 class="titTela">Visualizar Informação de Corte</h1>
 		<br />
 
 		<div class="divCaracterizacao">
@@ -29,8 +29,7 @@
 		</div>
 
 		<div class="block box">
-			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
-			<span class="cancelarCaixa"><span class="btnModalOu">ou</span> <a class="linkCancelar" href="<%= Url.Action("Listar", "InformacaoCorte", new { id = Model.Empreendimento.EmpreendimentoId , Model.ProjetoDigitalId}) %>">Cancelar</a></span>
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("Listar", "InformacaoCorte", new { id = Model.Empreendimento.EmpreendimentoId , Model.ProjetoDigitalId}) %>">Cancelar</a></span>
 		</div>
 	</div>
 </asp:Content>

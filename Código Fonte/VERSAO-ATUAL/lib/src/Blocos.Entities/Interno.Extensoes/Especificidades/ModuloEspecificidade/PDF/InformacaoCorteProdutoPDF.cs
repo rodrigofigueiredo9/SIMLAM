@@ -9,19 +9,19 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String QdeComercializacao { get; set; }
 		public String QdeUsoProprio { get; set; }
 
-		//public InformacaoCorteProdutoPDF(Produto produto)
-		//{
-		//	this.Produto = produto.ProdutoTipoTexto;
+		public InformacaoCorteProdutoPDF(InformacaoCorteDestinacao produto)
+		{
+			this.Produto = produto.ProdutoTexto;
 
-		//	switch (produto.DestinacaoTipo)
-		//	{
-		//		case 1:
-		//			this.QdeComercializacao = produto.Quantidade;
-		//			break;
-		//		case 2:
-		//			this.QdeUsoProprio = produto.Quantidade;
-		//			break;
-		//	}
-		//}
+			switch (produto.DestinacaoMaterial)
+			{
+				case 1:
+					this.QdeComercializacao = produto.Quantidade.ToStringTrunc();
+					break;
+				case 2:
+					this.QdeUsoProprio = produto.Quantidade.ToStringTrunc();
+					break;
+			}
+		}
 	}
 }

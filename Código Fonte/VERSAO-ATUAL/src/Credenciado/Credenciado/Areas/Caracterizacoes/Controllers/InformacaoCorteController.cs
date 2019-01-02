@@ -20,6 +20,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
+using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -32,85 +33,143 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#region Criar
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar })]
 		public ActionResult Criar(int id, int projetoDigitalId, bool visualizar = false)
 		{
-			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
-			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
-				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>());
-			return View(informacaoCorteVM);
-		}
-
-		[HttpPost]
-		public ActionResult Criar(InformacaoCorte caracterizacao, int projetoDigitalId = 0)
-		{
-			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
-		#endregion
-
-		#region Editar
-
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
-		public ActionResult Editar(int id, int projetoDigitalId)
-		{
 			if (!_caracterizacaoValidar.Basicas(id))
-			{
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-			}
 
 			if (!_validar.Acessar(id, projetoDigitalId))
-			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-			}
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
-			var caracterizacao = _informacaoCorteBus.ObterPorEmpreendimento(id);
-			var vm = new InformacaoCorteVM(caracterizacao.Empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
-				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>())
 			{
 				ProjetoDigitalId = projetoDigitalId
 			};
 
+			return View(informacaoCorteVM);
+		}
+		
+		#endregion
+
+		#region Editar
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
+		public ActionResult Editar(int id, int projetoDigitalId)
+		{
+			if (!_caracterizacaoValidar.Basicas(id))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+
+			if (!_validar.Acessar(id, projetoDigitalId))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
+			var caracterizacao = _informacaoCorteBus.Obter(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
+			{
+				ProjetoDigitalId = projetoDigitalId,
+				IsPodeExcluir = true
+			};
+
 			return View(vm);
 		}
 
+		#endregion
+
+		#region Salvar
+
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.UnidadeProducaoEditar })]
-		public ActionResult Editar(InformacaoCorte caracterizacao, int projetoDigitalId)
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteCriar, ePermissao.InformacaoCorteEditar })]
+		public ActionResult Salvar(InformacaoCorte caracterizacao, int projetoDigitalId)
 		{
 			_informacaoCorteBus.Salvar(caracterizacao, projetoDigitalId);
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.Empreendimento.Id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
 
-		[Permite(Tipo = ePermiteTipo.Logado)]
-		public ActionResult Listar(int id, int projetoDigitalId, bool visualizar = false)
+		#region Visualizar
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		public ActionResult Visualizar(int id, int projetoDigitalId)
 		{
-			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
-			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
-			var first = resultados?.FirstOrDefault();
-			var vm = new ListarVM(empreendimento)
+			if (!_caracterizacaoValidar.Basicas(id))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+
+			if (!_validar.Acessar(id, projetoDigitalId))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
+			var caracterizacao = _informacaoCorteBus.Obter(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
+				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
-				Resultados = resultados,
-				IsVisualizar = visualizar,
 				ProjetoDigitalId = projetoDigitalId,
-				AreaPlantada = first?.AreaFlorestaPlantada ?? 0
+				IsVisualizar = true
 			};
 
 			return View(vm);
 		}
+
+		#endregion
+
+		#region Excluir
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
+		public ActionResult ExcluirConfirm(int id, int projetoDigitalId)
+		{
+			ConfirmarVM vm = new ConfirmarVM();
+			vm.Id = id;
+			vm.AuxiliarID = projetoDigitalId;
+			vm.Mensagem = Mensagem.InformacaoCorte.ExcluirMensagem;
+			vm.Titulo = "Excluir Informação de Corte";
+
+			return PartialView("Confirmar", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteExcluir })]
+		public ActionResult Excluir(int id, int projetoDigitalId)
+		{
+			string urlRedireciona = string.Empty;
+
+			if (_informacaoCorteBus.Excluir(id))
+				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		#region Filtrar
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteListar })]
+		public ActionResult Listar(int id, int projetoDigitalId, bool visualizar = false)
+		{
+			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
+			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
+			var last = resultados?.LastOrDefault();
+			var vm = new ListarVM(empreendimento)
+			{
+				Resultados = resultados,
+				IsVisualizar = visualizar,
+				IsPodeExcluir = true,
+				ProjetoDigitalId = projetoDigitalId,
+				AreaPlantada = last?.AreaFlorestaPlantada ?? 0
+			};
+
+			return View(vm);
+		}
+
+		#endregion
 	}
 }

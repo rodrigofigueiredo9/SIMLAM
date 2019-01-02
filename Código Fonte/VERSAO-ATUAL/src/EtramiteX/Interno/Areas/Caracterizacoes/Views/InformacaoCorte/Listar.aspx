@@ -1,5 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte" %>
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Credenciado.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ListarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento -  Informação de Corte</asp:Content>
 
@@ -16,10 +16,9 @@
 					visualizar: '<%= Url.Action("Visualizar", "InformacaoCorte") %>',
 					excluirConfirm: '<%= Url.Action("ExcluirConfirm", "InformacaoCorte") %>',
 					excluir: '<%= Url.Action("Excluir", "InformacaoCorte") %>',
-					voltar: '<%= Url.Action("", "Caracterizacao", new { id = Model.Empreendimento.EmpreendimentoId, Model.ProjetoDigitalId }) %>'
+					voltar: '<%= Url.Action("", "Caracterizacao", new { id = Model.Empreendimento.EmpreendimentoId }) %>'
 				},
-				empreendimentoID: '<%= Model.Empreendimento.EmpreendimentoId %>',
-				projetoDigitalID: '<%= Model.ProjetoDigitalId %>',
+				empreendimentoID: '<%= Model.Empreendimento.EmpreendimentoId %>'
 			});
 		});
 	</script>
@@ -36,7 +35,7 @@
 
 		<div class="block box">
 			<input class="floatLeft btnVoltarInformacao" type="button" value="Voltar" />
-			<input class="floatRight btnAdicionarInformacao" type="button" value="Incluir Informação de Corte" />
+			<%if (Model.PodeCriar) {%><input class="floatRight btnAdicionarInformacao" type="button" value="Incluir Informação de Corte" /><%} %>
 		</div>
 	</div>
 </asp:Content>

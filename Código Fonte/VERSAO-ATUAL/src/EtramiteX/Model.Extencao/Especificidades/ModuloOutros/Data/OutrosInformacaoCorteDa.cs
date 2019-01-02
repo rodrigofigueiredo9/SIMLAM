@@ -195,8 +195,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 		{
 			Outros outros = new Outros();
 			InformacaoCorteBus infoCorteBus = new InformacaoCorteBus();
-			InformacaoCorte infoCorte = null;
-			InformacaoCorteInformacao infoCorteInfo = null;
+			List<InformacaoCorte> infoCorte = null;
+			InformacaoCorte infoCorteInfo = null;
 			int infoCorteInfoId = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -246,7 +246,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 				if (infoCorte != null)
 				{
-					infoCorteInfo = infoCorte.InformacoesCortes.SingleOrDefault(x => x.Id == infoCorteInfoId);
+					infoCorteInfo = infoCorte.SingleOrDefault(x => x.Id == infoCorteInfoId);
 
 					if (infoCorteInfo != null)
 					{

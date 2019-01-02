@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<InformacaoCorteVM>" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 
 <div class="containerDesenhador">
 	<%= Html.Hidden("EmpreendimentoId", Model.Empreendimento.EmpreendimentoId, new { @class = "hdnEmpreendimentoId" }) %>
@@ -167,7 +167,7 @@
 					</div>
 					<div class="coluna20">
 						<label>Área Corte(ha) / Nº Árvores *</label>
-						<%= Html.TextBox("InformacaoCorte_AreaCorte", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaCorte"}))%>
+						<%= Html.TextBox("InformacaoCorte_AreaCorte", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaCorte", @maxlength = "12"}))%>
 					</div>
 					<div class="coluna15 append2">
 						<label>Idade Plantio (anos) *</label>
@@ -196,7 +196,7 @@
 						</div>
 						<div class="coluna20 append2">
 							<label>Quantidade *</label>
-							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto quantidade"}))%>
+							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto quantidade", @maxlength = "12"}))%>
 						</div>
 						<div class="coluna10">
 							<br />

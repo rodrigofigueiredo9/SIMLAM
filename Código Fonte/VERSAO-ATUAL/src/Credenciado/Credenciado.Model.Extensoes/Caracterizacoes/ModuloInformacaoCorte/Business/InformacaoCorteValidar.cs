@@ -44,14 +44,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.Empreendimento.Id))
 				return false;
 
-			InformacaoCorte auxiliar = _da.ObterPorEmpreendimento(caracterizacao.Empreendimento.Id, true) ?? new InformacaoCorte();
-
-			if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
-			{
-				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-				return false;
-			}
-
 			if (!Acessar(caracterizacao.Empreendimento.Id, projetoDigitalId))
 				return false;
 

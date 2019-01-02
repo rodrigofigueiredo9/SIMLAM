@@ -76,11 +76,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
 				EmpreendimentoCaracterizacao empreendimento = caracterizacaoBus.ObterEmpreendimentoSimplificado(caracterizacao.Empreendimento.Id);
 
-				InformacaoCorteInternoBus informacaoCorteInternoBus = new InformacaoCorteInternoBus();
-				InformacaoCorte caracterizacaoInterno = informacaoCorteInternoBus.ObterPorEmpreendimento(empreendimento.InternoID, true);
+				//TODO: Ao realizar importação automática para Institucional, preencher o InternoID e InternoTID
+				//InformacaoCorteInternoBus informacaoCorteInternoBus = new InformacaoCorteInternoBus();
+				//InformacaoCorte caracterizacaoInterno = informacaoCorteInternoBus.ObterPorEmpreendimento(empreendimento.InternoID, true);
 
-				caracterizacao.InternoID = caracterizacaoInterno.Id;
-				caracterizacao.InternoTID = caracterizacaoInterno.Tid;
+				//caracterizacao.InternoID = caracterizacaoInterno.Id;
+				//caracterizacao.InternoTID = caracterizacaoInterno.Tid;
 
 				if (!_validar.Salvar(caracterizacao, projetoDigitalId))
 					return Validacao.EhValido;
@@ -106,14 +107,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
-		public bool Excluir(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
-				if (!_caracterizacaoValidar.Basicas(empreendimento))
-				{
+				var caracterizacao = this.Obter(id, simplificado: true);
+
+				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 					return Validacao.EhValido;
-				}
 
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -121,10 +122,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				{
 					bancoDeDados.IniciarTransacao();
 
-					CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-					caracterizacaoBus.ConfigurarEtapaExcluirCaracterizacao(empreendimento, bancoDeDados);
+					var caracterizacoes = this.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, simplificado: true);
+					if (caracterizacoes?.Count == 1)
+					{
+						CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
+						caracterizacaoBus.ConfigurarEtapaExcluirCaracterizacao(caracterizacao.EmpreendimentoId, bancoDeDados);
+					}
 
-					_da.Excluir(empreendimento, bancoDeDados);
+					_da.Excluir(id, bancoDeDados);
 
 					Validacao.Add(Mensagem.InformacaoCorte.Excluir);
 
@@ -143,9 +148,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Obter/Filtrar
 
-		public InformacaoCorte ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false)
+		public InformacaoCorte Obter(int id, bool simplificado = false)
 		{
 			InformacaoCorte caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.Obter(id, simplificado: simplificado);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
+
+		public List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false)
+		{
+			List<InformacaoCorte> caracterizacao = null;
 			try
 			{
 				caracterizacao = _da.ObterPorEmpreendimento(empreendimentoInternoId, simplificado: simplificado);

@@ -17,17 +17,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public List<InformacaoCorteEspeciePDF> Especies { get; set; }
 		public List<InformacaoCorteProdutoPDF> Produtos { get; set; }
 
-		//public InformacaoCorteInfoPDF(InformacaoCorteInformacao informacao)
-		//{
-		//	this.Especies = informacao.Especies.Select(x => new InformacaoCorteEspeciePDF(x)).ToList();
-		//	this.Produtos = informacao.Produtos.Select(x => new InformacaoCorteProdutoPDF(x)).ToList();
+		public InformacaoCorteInfoPDF(InformacaoCorte informacao)
+		{
+			this.Especies = informacao.InformacaoCorteTipo.Select(x => new InformacaoCorteEspeciePDF(x)).ToList();
+			this.Produtos = informacao.InformacaoCorteTipo.SelectMany(x => x.InformacaoCorteDestinacao).Select(x => new InformacaoCorteProdutoPDF(x)).ToList();
 
-		//	this.ArvoresRestantes = Convert.ToDecimal(informacao.ArvoresIsoladasRestantes).ToString("N0");
-		//	this.AreaRestantes = Convert.ToDecimal(informacao.AreaCorteRestante).ToString("N4");
+			this.ArvoresRestantes = Convert.ToDecimal(informacao.AreaFlorestaPlantada).ToString("N0");
+			this.AreaRestantes = Convert.ToDecimal(informacao.AreaCorteCalculada).ToString("N4");
 
-		//	this.DiaEmissao = informacao.DataInformacao.Data.Value.ToString("dd");
-		//	this.MesEmissao = informacao.DataInformacao.Data.Value.ToString("MMMM");
-		//	this.AnoEmissao = informacao.DataInformacao.Data.Value.Year.ToString();
-		//}
+			this.DiaEmissao = informacao.DataInformacao.Data.Value.ToString("dd");
+			this.MesEmissao = informacao.DataInformacao.Data.Value.ToString("MMMM");
+			this.AnoEmissao = informacao.DataInformacao.Data.Value.Year.ToString();
+		}
 	}
 }
