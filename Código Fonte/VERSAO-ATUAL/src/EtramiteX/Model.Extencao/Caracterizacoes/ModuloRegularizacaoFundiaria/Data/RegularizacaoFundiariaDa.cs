@@ -1182,10 +1182,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				Comando comando = null;
 					comando = bancoDeDados.CriarComando(@"select p.id, p.regularizacao, p.dominio, p.zona, p.identificacao, p.area_requerida, p.area_croqui, p.regularizacao_tipo,
-					p.relacao_trabalho, p.centro_comercial_km, p.br_km, p.es_km, p.benfeitorias, p.observacoes, p.tid, p.possui_dominio_avulso, p.perimetro, p.comprovacao, p.area_documento,
+					p.relacao_trabalho, p.centro_comercial_km, p.br_km, p.es_km, p.benfeitorias, p.observacoes, p.tid, p.possui_dominio_avulso, p.perimetro, p.comprovacao, lc.texto as comprovacaotexto, p.area_documento,
 					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
 					from {0}crt_regularizacao_dominio p
 					inner join crt_regularizacao r on r.id = p.regularizacao
+					inner join lov_crt_domin_comprovacao lc on lc.id  = p.comprovacao
 					where r.empreendimento = :empreendimento", EsquemaBanco);
 			
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -1201,12 +1202,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
 						posse.NumeroCCIR = Convert.ToInt32(reader["numero_ccri"]);
 						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
-						posse.ComprovacaoTexto = reader["comprovacao"].ToString();
+						posse.ComprovacaoTexto = reader["comprovacaotexto"].ToString();
+						posse.ComprovacaoId = Convert.ToInt32(reader["comprovacao"]);
 						posse.AreaPosseDocumento = reader.GetValue<decimal>("area_documento");
 						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
 						posse.Identificacao = reader["identificacao"].ToString();
 						posse.DescricaoComprovacao = reader["registro"].ToString();
-						//posse.Zona = Convert.ToInt32(reader["zona"]);
 						posse.RegularizacaoTipo = Convert.ToInt32(reader["regularizacao_tipo"]);
 						posse.RelacaoTrabalho = Convert.ToInt32(reader["relacao_trabalho"]);
 						posse.Benfeitorias = reader["benfeitorias"].ToString();
