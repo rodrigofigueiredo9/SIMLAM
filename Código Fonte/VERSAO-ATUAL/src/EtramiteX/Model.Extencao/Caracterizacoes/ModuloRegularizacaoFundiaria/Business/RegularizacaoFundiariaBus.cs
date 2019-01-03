@@ -166,11 +166,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.RegularizacaoFundiaria, eCaracterizacaoDependenciaTipo.Caracterizacao, banco);
 
 				int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
-				//caracterizacao.Posses.ForEach(x =>
-				//{
-				//	x.Zona = zona;
-				//});
-				caracterizacao.Posses = ObterPosses(empreendimento, zona);
+				caracterizacao.Posses.ForEach(x =>
+				{
+					x.Zona = zona;
+				});
 
 				caracterizacao.Matriculas = _busDominialidade.ObterPorEmpreendimento(empreendimento).Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 			}
@@ -218,10 +217,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				Dominialidade dominialidade = _busDominialidade.ObterPorEmpreendimento(empreendimento);
 				int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
 
-				//dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
-				//{
-				//	caracterizacao.Posses.Add(new Posse(x, zona));
-				//});
 				caracterizacao.Posses = ObterPosses(empreendimento, zona);
 				caracterizacao.Matriculas = dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 				return caracterizacao;
@@ -233,32 +228,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 			return null;
 		}
-
-		// funcao inicial antes de ser alterada
-		//public RegularizacaoFundiaria ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
-		//{
-		//	RegularizacaoFundiaria caracterizacao = new RegularizacaoFundiaria();
-
-		//	try
-		//	{
-		//		Dominialidade dominialidade = _busDominialidade.ObterPorEmpreendimento(empreendimento);
-		//		int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
-
-		//		dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
-		//		{
-		//			caracterizacao.Posses.Add(new Posse(x, zona));
-		//		});
-
-		//		caracterizacao.Matriculas = dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
-		//		return caracterizacao;
-		//	}
-		//	catch (Exception exc)
-		//	{
-		//		Validacao.AddErro(exc);
-		//	}
-
-		//	return null;
-		//}
 
 		public List<Posse> ObterPosses(int empreendimento, int zona, BancoDeDados banco = null)
 		{
