@@ -1244,29 +1244,37 @@ RequerimentoEmpreendimento = {
 		Requerimento.configurarBtnCancelarStep(4);
 	},
 
-	onBuscarNovoToCorte: function () {
-		debugger;
+	onBuscarNovoToCorte: function (empreendimento = "0") {
+		if (typeof empreendimento !== 'string') empreendimento = "0";
+		
 		var params = {
 			id: 0,
-			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
+			requerimentoId: Requerimento.ReqInterEmp.requerimentoId,
+			codigo: parseInt(empreendimento.split('.').join(""))
 		};
 
 		Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
-		Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true });
+		
+		if(empreendimento !== "0" )
+			Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true, btnSalvar: true });
+		else
+			Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true });
+
 		MasterPage.grid();
 	},
 
 	buscarPorCodigo: function () {
-		debugger;
 		Mensagem.limpar(Requerimento.container);
-		if ($('.txtCodigo', Requerimento.container).val() == "") {
+		var empreendimento = $('.txtCodigo', Requerimento.container).val();
+
+		if (empreendimento  == "") {
 			Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoObrigatorio]);
 		} else {
 			$('tbody > tr', Requerimento.container).toArray().filter(x => Array.from(x.children).filter(y => y.className == 'itemCodigo')[0].innerText != $('.txtCodigo', Requerimento.container).val()).map(x => x.remove());
 			if ($('tbody > tr', Requerimento.container).toArray().length == 0)
 			{
-				Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoNaoEncontradoCorte]);
-				RequerimentoEmpreendimento.onBuscarNovoToCorte();
+				//Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoNaoEncontradoCorte]);
+				RequerimentoEmpreendimento.onBuscarNovoToCorte(empreendimento);
 			}
 		}
 	},
