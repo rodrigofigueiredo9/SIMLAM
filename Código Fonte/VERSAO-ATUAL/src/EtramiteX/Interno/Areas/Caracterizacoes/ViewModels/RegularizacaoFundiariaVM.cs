@@ -101,11 +101,12 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				}
 			}
 
+			regularizacao.Posse.Comprovacoes = ViewModelHelper.CriarSelectList(comprovacoes, isFiltrarAtivo: true, selecionado:Caracterizacao.Posse.ComprovacaoId.ToString());
 			RelacoesTrabalho = relacoesTrabalho;
 			Homologacoes = ViewModelHelper.CriarSelectList(homologacoes, true, selecionado: homologacaoSelecionada);
 			TipoLimite = ViewModelHelper.CriarSelectList(limite, true, selecionado: limiteSelecionado);
 			TipoUso = ViewModelHelper.CriarSelectList(tipoUso, true);
-			TipoRegularizacao = ViewModelHelper.CriarSelectList(regularizacaoTipo, true);
+			TipoRegularizacao = ViewModelHelper.CriarSelectList(regularizacaoTipo, true, selecionado: Caracterizacao.Posse.RegularizacaoTipo.ToString());			
 		}
 
 		public Opcao MontarRadioCheck(eTipoOpcao tipo)
