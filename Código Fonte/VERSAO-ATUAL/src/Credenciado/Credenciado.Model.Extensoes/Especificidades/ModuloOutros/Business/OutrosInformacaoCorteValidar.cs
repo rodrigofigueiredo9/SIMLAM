@@ -19,17 +19,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			var esp = especificidade as OutrosInformacaoCorte;
 			
-			DeclaratorioRequerimentoAtividade(esp);
+			if (especificidade.RequerimentoId <= 0)
+				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
 
-			if(esp.InformacaoCorte <= 0)
-			{
+			if (especificidade.Atividades == null || especificidade.Atividades.Count == 0 || especificidade.Atividades[0].Id == 0)
+				Validacao.Add(Mensagem.Especificidade.AtividadeObrigatoria);
+
+			if (esp.InformacaoCorte <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
-			}
 
 			if(esp.Validade <= 0)
-			{
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);
-			}
 			
 			return Validacao.EhValido;
 		}

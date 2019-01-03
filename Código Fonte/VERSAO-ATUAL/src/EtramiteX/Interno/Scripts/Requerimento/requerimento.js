@@ -1245,6 +1245,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	onBuscarNovoToCorte: function () {
+		debugger;
 		var params = {
 			id: 0,
 			requerimentoId: Requerimento.ReqInterEmp.requerimentoId
@@ -1256,6 +1257,7 @@ RequerimentoEmpreendimento = {
 	},
 
 	buscarPorCodigo: function () {
+		debugger;
 		Mensagem.limpar(Requerimento.container);
 		if ($('.txtCodigo', Requerimento.container).val() == "") {
 			Mensagem.gerar(Requerimento.container, [EmpreendimentoInline.settings.msgs.CodigoObrigatorio]);

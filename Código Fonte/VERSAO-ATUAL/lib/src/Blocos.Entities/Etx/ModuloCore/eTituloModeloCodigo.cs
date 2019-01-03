@@ -5,6 +5,7 @@
 		LaudoVistoriaFlorestal = 4,
 		AutorizacaoExploracaoFlorestal = 5,
 		CertificadoRegistroAtividadeFlorestal = 19,
-		LaudoVistoriaQueimaControlada = 60
+		LaudoVistoriaQueimaControlada = 60,
+		OutrosInformacaoCorte = 61
 	}
 }
