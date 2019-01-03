@@ -86,7 +86,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 				if (_validar.ObjetivoPedidoValidar(requerimento))
 				{
-					if (requerimento.Atividades.Count(x => x.Id == 327) == 0)
+					if (requerimento.Atividades.Count(x => x.Id == 327) == 0 || requerimento.InfoPreenchidas == true)
 					{
 						GerenciadorTransacao.ObterIDAtual();
 

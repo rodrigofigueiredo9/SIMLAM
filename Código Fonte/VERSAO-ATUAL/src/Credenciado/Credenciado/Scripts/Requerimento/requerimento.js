@@ -293,6 +293,8 @@ RequerimentoObjetivoPedido = {
 	urlBaixarPdf: null,
 	urlObterRoteirosAtividade: null,
 	urlVerificarPassoDois: null,
+	BarragemPreenchida: false,
+	objetivoPedido: null,
 
 	configurarBtnEditar: function () {
 		$(".btnEditar", Requerimento.container).unbind('click');
@@ -592,6 +594,12 @@ RequerimentoObjetivoPedido = {
 			objetivoPedido.Roteiros.push({ Id: $('.hdnRoteiroId', this).val(), Tid: $('.hdnTidRoteiro', this).val() });
 		});
 
+		if (RequerimentoObjetivoPedido.BarragemPreenchida == true) {
+			objetivoPedido = RequerimentoObjetivoPedido.objetivoPedido;
+		} else {
+			RequerimentoObjetivoPedido.objetivoPedido = objetivoPedido;
+		}
+
 		$.ajax({
 			url: RequerimentoObjetivoPedido.urlCriarObjetivoPedido,
 			type: "POST",
@@ -604,7 +612,7 @@ RequerimentoObjetivoPedido = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.temBarragemDeclaratoria) {
+				if (response.temBarragemDeclaratoria && RequerimentoObjetivoPedido.BarragemPreenchida == false) {
 					RequerimentoObjetivoPedido.possuiBarragemDeclaratoria(response);
 					return;
 				}
@@ -641,6 +649,8 @@ RequerimentoObjetivoPedido = {
 				isSalvo = true;
 			}
 		});
+
+		RequerimentoObjetivoPedido.BarragemPreenchida = false;
 
 		return isSalvo;
 	},
@@ -711,9 +721,116 @@ RequerimentoObjetivoPedido = {
 
 			ContainerAcoes.load($(".containerAcoes"), {
 				botoes: [
-					{ label: 'Continuar', url: '/CFO/AtivarConfirm/', abrirModal: function () { CFOListar.ativarItem({ SituacaoId: '1', Id: '2375' }); } },
+					{ label: 'Continuar', url: '/Requerimento/ResponsabilidadeRTBarragem/', abrirModal: function () { RequerimentoObjetivoPedido.funcaoRTBarragem(); } },
 					{ label: 'Cancelar cadastro da declaração' }]
 			});
+		}
+	},
+
+	funcaoRTBarragem: function () {
+		Mensagem.limpar(RequerimentoObjetivoPedido.container);
+		
+
+		Modal.abrir('/Requerimento/ResponsabilidadeRTBarragem/', RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+			Modal.defaultButtons(container, function (container) {
+				var objeto = RequerimentoObjetivoPedido.objetivoPedido;
+				objeto.ResponsabilidadeRT = $('.rbFuncaoRT:checked').val() || 0;
+
+				if (objeto.ResponsabilidadeRT <= 0) {
+					var msgErro = {
+						Texto: 'É obrigatório escolher uma das opções.',
+						Tipo: 3
+					};
+
+					var arrayMsg = [msgErro];
+
+					Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+					return;
+				}
+
+				RequerimentoObjetivoPedido.objetivoPedido = objeto;
+
+				Modal.fechar(container[0]);
+
+				Modal.abrir('/Requerimento/InformacoesBarragem/', RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+					$(".rbInfoBarragem").change(RequerimentoObjetivoPedido.infoBarragemChange);
+					$(".rbBarragensContiguas").change(RequerimentoObjetivoPedido.barragensContiguasChange);
+
+					//container.delegate('.btnSalvar', 'click', Requerimento.gerenciarWizard);
+
+					Modal.defaultButtons(container, function (container) {
+						var objeto = RequerimentoObjetivoPedido.objetivoPedido;
+
+						objeto.AbastecimentoPublico = $('.rbAbastecimentoPublico:checked').val() || -1;
+						objeto.UnidadeConservacao = $('.rbUnidadeConservacao:checked').val() || -1;
+						objeto.SupressaoVegetacao = $('.rbSupressaoVegetacao:checked').val() || -1;
+						objeto.Realocacao = $('.rbRealocacao:checked').val() || -1;
+
+						var msgErro;
+						var arrayMsg;
+						
+						//Todas as perguntas devem estar respondidas
+						if (objeto.AbastecimentoPublico < 0 || objeto.UnidadeConservacao < 0
+							|| objeto.SupressaoVegetacao < 0 || objeto.Realocacao < 0) {
+							msgErro = {
+								Texto: 'A resposta a todas as perguntas é obrigatória.',
+								Tipo: 3
+							};
+							arrayMsg = [msgErro];
+
+							Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+							return;
+						}
+
+						//Se a resposta a pelo menos uma das perguntas for Sim, não será possível cadastrar o requerimento
+						if (objeto.AbastecimentoPublico == 1 || objeto.UnidadeConservacao == 1
+							|| objeto.SupressaoVegetacao == 1 || objeto.Realocacao == 1) {
+							msgErro = {
+								Texto: 'A dispensa de licenciamento ambiental não se aplica a esta barragem, devendo, neste caso, ser instaurado procedimento regular de licenciamento ambiental junto ao IDAF.',
+								Tipo: 3
+							};
+							arrayMsg = [msgErro];
+
+							Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+							return;
+						}
+
+						RequerimentoObjetivoPedido.BarragemPreenchida = true;
+
+						Modal.fechar(container[0]);
+						
+						$('.btnSalvar').click();
+
+					}, 'Continuar');
+				});
+			}, 'Continuar');
+		});
+	},
+
+	infoBarragemChange: function () {
+		var pergunta01 = $('.rbAbastecimentoPublico:checked').val() || -1;
+		var pergunta02 = $('.rbUnidadeConservacao:checked').val() || -1;
+		var pergunta03 = $('.rbSupressaoVegetacao:checked').val() || -1;
+		var pergunta04 = $('.rbRealocacao:checked').val() || -1;
+		
+		if (pergunta01 == 0 && pergunta02 == 0 && pergunta03 == 0 && pergunta04 == 0) {
+			$('.divBarragensContiguas').removeClass('hide');
+		} else {
+			$('.divBarragensContiguas').addClass('hide');
+		}
+	},
+
+	barragensContiguasChange: function () {
+		if ($('.rbBarragensContiguas:checked').val() == 1) {
+			var msgAviso = {
+				Texto: 'Para barragens contíguas em um mesmo imóvel, as informações locacionais e de dimensionamento deverão se referir ao primeiro barramento de jusante, enquanto as demais informações, como área alagada e volume armazenado, deverão considerar o somatório de todos os reservatórios contíguos.',
+				Tipo: 0
+			};
+			var arrayMsg = [msgAviso];
+
+			Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+		} else {
+			Mensagem.limpar(Requerimento.containerMensagem);
 		}
 	}
 }

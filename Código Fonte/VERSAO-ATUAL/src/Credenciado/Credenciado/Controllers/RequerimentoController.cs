@@ -278,6 +278,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros });
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.CFOAlterarSituacao })]
+		public ActionResult ResponsabilidadeRTBarragem(RequerimentoVM vm)
+		{
+			Requerimento requerimento = GerarRequerimento(vm);
+
+			return PartialView("RTBarragemPartial", requerimento);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.CFOAlterarSituacao })]
+		public ActionResult InformacoesBarragem(RequerimentoVM vm)
+		{
+			Requerimento requerimento = GerarRequerimento(vm);
+
+			return PartialView("InfoBarragemPartial", requerimento);
+		}
+
 		#region  Atividade Solicitada
 
 		[Permite(RoleArray = new Object[] { ePermissao.RequerimentoCriar, ePermissao.RequerimentoEditar })]
@@ -481,6 +497,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			req.AgendamentoVistoria = vm.AgendamentoVistoriaId;
 			req.SetorId = vm.SetorId;
 			req.Informacoes = vm.InformacaoComplementar;
+			req.InfoPreenchidas = (vm.AbastecimentoPublico.HasValue && vm.AbastecimentoPublico == 0
+								   && vm.UnidadeConservacao.HasValue && vm.UnidadeConservacao == 0
+								   && vm.SupressaoVegetacao.HasValue && vm.SupressaoVegetacao == 0
+								   && vm.Realocacao.HasValue && vm.Realocacao == 0);
 
 			return req;
 		}
