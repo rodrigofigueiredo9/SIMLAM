@@ -765,13 +765,15 @@ RequerimentoObjetivoPedido = {
 						objeto.UnidadeConservacao = $('.rbUnidadeConservacao:checked').val() || -1;
 						objeto.SupressaoVegetacao = $('.rbSupressaoVegetacao:checked').val() || -1;
 						objeto.Realocacao = $('.rbRealocacao:checked').val() || -1;
+						objeto.BarragensContiguas = $('.rbBarragensContiguas:checked').val() || -1;
 
 						var msgErro;
 						var arrayMsg;
 						
 						//Todas as perguntas devem estar respondidas
 						if (objeto.AbastecimentoPublico < 0 || objeto.UnidadeConservacao < 0
-							|| objeto.SupressaoVegetacao < 0 || objeto.Realocacao < 0) {
+							|| objeto.SupressaoVegetacao < 0 || objeto.Realocacao < 0
+							|| ($('.divBarragensContiguas').hasClass('hide') == false && objeto.BarragensContiguas < 0)) {
 							msgErro = {
 								Texto: 'A resposta a todas as perguntas é obrigatória.',
 								Tipo: 3
@@ -782,7 +784,7 @@ RequerimentoObjetivoPedido = {
 							return;
 						}
 
-						//Se a resposta a pelo menos uma das perguntas for Sim, não será possível cadastrar o requerimento
+						//Se a resposta a pelo menos uma das quatro primeiras perguntas for Sim, não será possível cadastrar o requerimento
 						if (objeto.AbastecimentoPublico == 1 || objeto.UnidadeConservacao == 1
 							|| objeto.SupressaoVegetacao == 1 || objeto.Realocacao == 1) {
 							msgErro = {
@@ -796,6 +798,8 @@ RequerimentoObjetivoPedido = {
 						}
 
 						RequerimentoObjetivoPedido.BarragemPreenchida = true;
+
+						RequerimentoObjetivoPedido.objetivoPedido = objeto;
 
 						Modal.fechar(container[0]);
 						
