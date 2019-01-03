@@ -6,82 +6,127 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMInformacaoCorte;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 {
 	public class InformacaoCorteVM
 	{
-
 		#region Constructores
 
 		public InformacaoCorteVM() { }
 
-		#endregion
-
-		#region Properties
-
-		public long EmpreendimentoId { get; set; }
-		public int? EmpreendimentoCodigo { get; set; }
-
-		public string DenominadorTexto { get; set; }
-		public string DenominadorValor { get; set; }
-		public string EmpreendimentoCNPJ { get; set; }
-
-		public long ProjetoDigitalId { get; set; }
-		public bool IsVisualizar { get; set; }
-		public bool IsPodeExcluir { get; set; }
-
-		public string NumeroLicena { get; set; }
-		public string Atividade { get; set; }
-		public decimal AreaLicenciada { get; set; }
-		public DateTime? DataVencimento { get; set; }
-		public Paginacao Paginacao { get; set; } = new Paginacao();
-
-		public List<Titulo> Resultados { get; set; } = new List<Titulo>();
-		public List<SelectListItem> EmpreendimentoUf { get; set; } = new List<SelectListItem>();
-		public List<SelectListItem> EmpreendimentoZonaLocalizacao { get; set; } = new List<SelectListItem>();
-		public List<SelectListItem> EmpreendimentoMunicipio { get; set; } = new List<SelectListItem>();
-
-		#endregion
-
-		#region Methods
-
-		public void CarregarEmpreendimento(EmpreendimentoCaracterizacao empreendimento)
+		public InformacaoCorteVM(EmpreendimentoCaracterizacao empreendimento, List<Lista> destinacao, List<Lista> produto, List<Lista> tipoCorte,
+			List<Lista> especie, InformacaoCorte caracterizacao = null)
 		{
-			this.EmpreendimentoId = empreendimento.Id;
-			this.EmpreendimentoCodigo = empreendimento.Codigo;
-			this.EmpreendimentoCNPJ = empreendimento.CNPJ;
-
-			this.DenominadorValor = empreendimento.Denominador;
-			this.DenominadorTexto = empreendimento.DenominadorTipo;
+			if(caracterizacao != null)
+			{
+				this.Id = caracterizacao.Id;
+				this.DataInformacao = caracterizacao.DataInformacao;
+				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
+				this.InformacaoCorteLicencaList = caracterizacao.InformacaoCorteLicenca;
+				foreach(var item in caracterizacao.InformacaoCorteTipo)
+				{
+					var linhas = item.InformacaoCorteDestinacao.Count;
+					foreach (var dest in item.InformacaoCorteDestinacao)
+					{
+						var resultado = new InformacaoCorteResultadosVM();
+						resultado.Id = item.Id;
+						resultado.IdadePlantio = item.IdadePlantio;
+						resultado.AreaCorte = item.AreaCorte;
+						resultado.TipoCorte= item.TipoCorte;
+						resultado.TipoCorteTexto = item.TipoCorteTexto;
+						resultado.Especie = item.EspecieInformada;
+						resultado.EspecieTexto = item.EspecieInformadaTexto;
+						resultado.DestinacaoId = dest.Id;
+						resultado.Quantidade = dest.Quantidade;
+						resultado.DestinacaoMaterial = dest.DestinacaoMaterial;
+						resultado.DestinacaoMaterialTexto = dest.DestinacaoMaterialTexto;
+						resultado.Produto = dest.Produto;
+						resultado.ProdutoTexto = dest.ProdutoTexto;
+						resultado.Linhas = linhas;
+						this.InformacaoCorteResultados.Add(resultado);
+						linhas = 0;
+					}
+				}
+			}
 
 			var municipio = new ListaValor() { Id = 1, Texto = empreendimento.Municipio, IsAtivo = true };
 			var uf = new ListaValor() { Id = 1, Texto = empreendimento.Uf, IsAtivo = true };
 			var zonalocalizacao = new ListaValor() { Id = 1, Texto = empreendimento.ZonaLocalizacaoTexto, IsAtivo = true };
 
-			this.EmpreendimentoMunicipio = ViewModelHelper.CriarSelectList(new List<ListaValor>() { municipio }, true, selecionado: "1");
-			this.EmpreendimentoUf = ViewModelHelper.CriarSelectList(new List<ListaValor>() { uf }, true, selecionado: "1");
-			this.EmpreendimentoZonaLocalizacao = ViewModelHelper.CriarSelectList(new List<ListaValor>() { zonalocalizacao }, true, selecionado: "1");
-		}
-
-		public String ObterJSon(Titulo titulo)
-		{
-			object objeto = new
+			this.Empreendimento = new EmpreendimentoCaracterizacaoVM
 			{
-				@Id = titulo.Id,
-				@Tid = titulo.Tid,
-				@Numero = titulo.Numero.Texto,
-				@Modelo = titulo.Modelo.Nome,
-				@ModeloTipo = titulo.Modelo.Tipo,
-				@ModeloSigla = titulo.Modelo.Sigla
+				EmpreendimentoId = empreendimento.Id,
+				EmpreendimentoCodigo = empreendimento.Codigo,
+				EmpreendimentoCNPJ = empreendimento.CNPJ,
+				DenominadorValor = empreendimento.Denominador,
+				DenominadorTexto = empreendimento.DenominadorTipo,
+				AreaImovel = empreendimento.AreaImovelHA,
+				EmpreendimentoMunicipio = ViewModelHelper.CriarSelectList(new List<ListaValor>() { municipio }, true, selecionado: "1"),
+				EmpreendimentoUf = ViewModelHelper.CriarSelectList(new List<ListaValor>() { uf }, true, selecionado: "1"),
+				EmpreendimentoZonaLocalizacao = ViewModelHelper.CriarSelectList(new List<ListaValor>() { zonalocalizacao }, true, selecionado: "1")
 			};
 
-			return HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(objeto));
+			this.InformacaoCorteDestinacao = new InformacaoCorteDestinacaoVM()
+			{
+				DestinacaoMaterial = ViewModelHelper.CriarSelectList(destinacao),
+				Produto = ViewModelHelper.CriarSelectList(produto)
+			};
+
+			this.InformacaoCorteTipo = new InformacaoCorteTipoVM() {
+				TipoCorte = ViewModelHelper.CriarSelectList(tipoCorte),
+				Especie = ViewModelHelper.CriarSelectList(especie)
+			};
 		}
 
 		#endregion
 
+		#region Properties
+
+		public int? Id { get; set; }
+		public DateTecno DataInformacao { get; set; } = new DateTecno { Data = DateTime.Now };
+		public Decimal AreaPlantada { get; set; }
+
+		public long ProjetoDigitalId { get; set; }
+		public bool IsVisualizar { get; set; }
+		public bool IsPodeExcluir { get; set; }
+
+		public InformacaoCorteDestinacaoVM InformacaoCorteDestinacao { get; set; }
+		public InformacaoCorteTipoVM InformacaoCorteTipo { get; set; }
+		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
+
+		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
+		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();
+
+		public String Mensagens
+		{
+			get
+			{
+				return ViewModelHelper.Json(new
+				{
+					@TipoCorteObrigatorio = Mensagem.InformacaoCorte.TipoCorteObrigatorio,
+					@EspecieObrigatoria = Mensagem.InformacaoCorte.EspecieObrigatoria,
+					@AreaCorteObrigatoria = Mensagem.InformacaoCorte.AreaCorteObrigatoria,
+					@IdadePlantioObrigatoria = Mensagem.InformacaoCorte.IdadePlantioObrigatoria,
+					@DestinacaoMaterialObrigatoria = Mensagem.InformacaoCorte.DestinacaoMaterialObrigatoria,
+					@ProdutoObrigatorio = Mensagem.InformacaoCorte.ProdutoObrigatorio,
+					@QuantidadeObrigatoria = Mensagem.InformacaoCorte.QuantidadeObrigatoria,
+					@Declaracao1Obrigatoria = Mensagem.InformacaoCorte.Declaracao1Obrigatoria,
+					@Declaracao2Obrigatoria = Mensagem.InformacaoCorte.Declaracao2Obrigatoria,
+					@NumeroLicencaObrigatoria = Mensagem.InformacaoCorte.NumeroLicencaObrigatoria,
+					@TipoLicencaObrigatoria = Mensagem.InformacaoCorte.TipoLicencaObrigatoria,
+					@AtividadeObrigatoria = Mensagem.InformacaoCorte.AtividadeObrigatoria,
+					@AreaLicencaObrigatoria = Mensagem.InformacaoCorte.AreaLicencaObrigatoria,
+					@DataVencimentoObrigatoria = Mensagem.InformacaoCorte.DataVencimentoObrigatoria
+				});
+			}
+		}
+
+		#endregion
 	}
 }

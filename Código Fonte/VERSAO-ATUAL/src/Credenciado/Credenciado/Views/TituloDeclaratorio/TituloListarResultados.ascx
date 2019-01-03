@@ -38,6 +38,7 @@
 					<%if (Model.PodeEditar) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
 					<%if (Model.PodeExcluir) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
 					<%if (Model.PodeAlterarSituacao){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
+					<%if (true){%><input type="button" title="Emitir DUA" class="icone dolar btnEmitirDua" /><% } %>
 				</td>
 			</tr>
 		<% } %>

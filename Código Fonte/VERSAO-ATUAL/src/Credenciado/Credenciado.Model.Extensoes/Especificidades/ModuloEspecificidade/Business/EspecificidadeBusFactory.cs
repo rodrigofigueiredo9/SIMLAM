@@ -27,6 +27,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					return new CertidaoDispensaLicenciamentoAmbientalBus();
 
 				case eEspecificidade.OutrosInformacaoCorte:
+				case eEspecificidade.OutrosInformacaoCorteDeclaratorio:
 					return new OutrosInformacaoCorteBus();
 
 				default:

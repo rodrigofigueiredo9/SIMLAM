@@ -12,6 +12,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros
 	{
 		public bool IsVisualizar { set; get; }
 		public bool IsCondicionantes { set; get; }
+		public bool IsDeclaratorio { set; get; }
 
 		private List<SelectListItem> _destinatarios = new List<SelectListItem>();
 		public List<SelectListItem> Destinatarios
@@ -25,6 +26,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros
 		{
 			get { return _atividades; }
 			set { _atividades = value; }
+		}
+
+		private List<SelectListItem> _atividadeList = new List<SelectListItem>();
+		public List<SelectListItem> AtividadeList
+		{
+			get { return _atividadeList; }
+			set { _atividadeList = value; }
 		}
 
 		private List<SelectListItem> _informacaoCortes = new List<SelectListItem>();
@@ -62,6 +70,14 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros
 			Condicionantes.Condicionantes = condicionantes ?? new List<TituloCondicionante>();
 
 			Destinatarios = ViewModelHelper.CriarSelectList(destinatarios, true);
+		}
+
+		public OutrosInformacaoCorteVM(OutrosInformacaoCorte outros, List<AtividadeSolicitada> atividades, List<Lista> infCorte, bool isVisualizar = false)
+		{
+			IsVisualizar = isVisualizar;
+			Outros = outros;
+			AtividadeList = ViewModelHelper.CriarSelectList(atividades, true, true, outros.Atividade.ToString());
+			InformacaoCortes = ViewModelHelper.CriarSelectList(infCorte, true, true, outros.InformacaoCorte.ToString());
 		}
 
 		public OutrosInformacaoCorteVM() { }

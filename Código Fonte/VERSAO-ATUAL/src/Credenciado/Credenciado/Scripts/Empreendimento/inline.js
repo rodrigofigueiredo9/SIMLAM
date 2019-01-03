@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="partial.js" />
@@ -83,13 +83,15 @@ EmpreendimentoInline = {
 		$('.titTela', EmpreendimentoInline.content).remove();
 	},
 
-	onSalvarClick: function () {
+	onSalvarClick: function (requerimento = 0) {
 		var objEmpreendimento = Empreendimento.obterEmpreendimentoIds();
 		var retorno = null;
 
+		requerimento = (typeof (requerimento) === "number" && requerimento > 0) ? requerimento : 0;
+
 		switch (EmpreendimentoInline.modo) {
 			case 1:
-				retorno = Empreendimento.salvar(false);
+				retorno = Empreendimento.salvar(false, requerimento);
 				if (retorno != null) {
 					objEmpreendimento.id = retorno.Id;
 				} else {
@@ -100,7 +102,7 @@ EmpreendimentoInline = {
 
 			case 2:
 				if (!objEmpreendimento.id) {
-					retorno = Empreendimento.salvar(false);
+					retorno = Empreendimento.salvar(false, requerimento );
 					if (retorno != null) {
 						objEmpreendimento.id = retorno.Id;
 					}

@@ -255,6 +255,7 @@
     <Compile Include="Especificidades\ModuloOficio\Data\OficioUsucapiaoDa.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosConclusaoTransferenciaDominioBus.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosConclusaoTransferenciaDominioValidar.cs" />
+    <Compile Include="Especificidades\ModuloOutros\Business\OutrosInformacaoCorteDeclaratorioBus.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosInformacaoCorteBus.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosInformacaoCorteValidar.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosLegitimacaoTerraDevolutaBus.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosReciboEntregaCopiaBus.cs" />
     <Compile Include="Especificidades\ModuloOutros\Business\OutrosReciboEntregaCopiaValidar.cs" />
     <Compile Include="Especificidades\ModuloOutros\Data\OutrosConclusaoTransferenciaDominioDa.cs" />
+    <Compile Include="Especificidades\ModuloOutros\Data\OutrosInformacaoCorteDeclaratorioDa.cs" />
     <Compile Include="Especificidades\ModuloOutros\Data\OutrosInformacaoCorteDa.cs" />
     <Compile Include="Especificidades\ModuloOutros\Data\OutrosLegitimacaoTerraDevolutaDa.cs" />
     <Compile Include="Especificidades\ModuloOutros\Data\OutrosReciboEntregaCopiaDa.cs" />

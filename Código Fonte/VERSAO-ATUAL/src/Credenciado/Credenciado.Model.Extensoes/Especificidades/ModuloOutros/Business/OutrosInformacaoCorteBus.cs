@@ -95,21 +95,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			try
 			{
-				CertidaoDispensaLicenciamentoAmbientalPDF certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
+				Outros certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
 				DataEmissaoPorExtenso(certidao.Titulo);
-
-				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
-				{
-					certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
-				}
 
 				//certidao.Caracterizacao = new BarragemDispensaLicencaPDF(new BarragemDispensaLicencaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
-				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
-				List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
+				//GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
+				//List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
 
-				certidao.Caracterizacao.CampoNome = "Finalidade";
-				certidao.Caracterizacao.CampoValor = Mensagem.Concatenar(finalidades.Where(x => (int.Parse(x.Codigo) & certidao.Caracterizacao.FinalidadeAtividade) != 0).Select(x => x.Texto).ToList());
+				//certidao.Caracterizacao.CampoNome = "Finalidade";
+				//certidao.Caracterizacao.CampoValor = Mensagem.Concatenar(finalidades.Where(x => (int.Parse(x.Codigo) & certidao.Caracterizacao.FinalidadeAtividade) != 0).Select(x => x.Texto).ToList());
 
 				return certidao;
 			}

@@ -234,7 +234,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				e.tid, ee.zona, ee.municipio  municipio_id, (select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio,
 				(select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
-				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid from {0}tab_empreendimento e,
+				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid,
+				(select sum(dd.area_croqui) from crt_dominialidade_dominio dd
+					where exists
+					(select 1 from crt_dominialidade d
+					where d.id = dd.dominialidade
+					and d.empreendimento = e.interno)) area_croqui
+				from {0}tab_empreendimento e,
 				{0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento  ls, {0}tab_empreendimento_endereco ee,
 				{0}cnf_municipio_mod_fiscal cm where e.atividade = a.id(+) and e.segmento = ls.id and ee.correspondencia = 0
 				and ee.empreendimento = e.id and ee.municipio = cm.municipio(+) and e.id = :id", EsquemaBancoCredenciado);
@@ -261,6 +267,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						empreendimento.ZonaLocalizacaoTexto = reader.GetValue<string>("zona_texto");
 						empreendimento.CNPJ = reader.GetValue<string>("cnpj");
 						empreendimento.InternoTID = reader.GetValue<string>("interno_tid");
+						empreendimento.AreaImovelHA = reader.GetValue<decimal>("area_croqui");
 					}
 
 					reader.Close();
@@ -1130,7 +1137,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				foreach (var item in cadastradas)
 				{
-					if (!string.IsNullOrWhiteSpace(query)) query += " union all ";
 					switch (item.Tipo)
 					{
 						case eCaracterizacao.Dominialidade:
@@ -1171,9 +1177,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 							break;
 						default:
+							query = query.Remove(query.Length - 11);
 							break;
 					}
 
+					query += " union all ";
 
 					comando.AdicionarParametroEntrada("tipo", (int)item.Tipo, DbType.Int32);
 				}

@@ -175,8 +175,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				x.ProjetoGeograficoId = cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo).ProjetoId;
 
-				x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());
-				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+				if (x.Tipo == eCaracterizacao.InformacaoCorte)
+				{
+					x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+				}
+				else
+				{
+					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+				}
 				x.UrlExcluirConfirm = Url.Action("ExcluirConfirm", x.Tipo.ToString());
 				x.UrlExcluir = Url.Action("Excluir", x.Tipo.ToString());
 			});
@@ -195,7 +203,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				}
 
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
-				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+				if (x.Tipo == eCaracterizacao.InformacaoCorte)
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+				else
+					x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 			});
 
 			#endregion

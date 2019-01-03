@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="partial.js" />
@@ -91,13 +91,13 @@ PessoaInline = function () {
 			_objRef.settings.onVerificarEnter();
 		},
 
-		onSalvarClick: function () {
+		onSalvarClick: function (requerimento = 0) {
 			var objPessoa = _objRef.pessoaObj.obterIdPessoa();
 			var retorno = null;
 
 			switch (_objRef.modo) {
 				case 1:
-					retorno = _objRef.pessoaObj.salvar();
+					retorno = _objRef.pessoaObj.salvar(requerimento);
 					if (retorno != null) {
 						objPessoa.id = retorno.Pessoa.Id;
 					} else {
@@ -107,7 +107,7 @@ PessoaInline = function () {
 
 				case 2:
 					if (objPessoa.id == '0') {
-						retorno = _objRef.pessoaObj.salvar();
+						retorno = _objRef.pessoaObj.salvar(requerimento);
 						if (retorno != null) {
 							objPessoa.id = retorno.Pessoa.Id;
 						}
@@ -130,8 +130,9 @@ PessoaInline = function () {
 			_objRef.pessoaObj.onLimparClick();
 		},
 
-		onVerificarClick: function () {
-			_objRef.pessoaObj.onVerificarClick();
+		onVerificarClick: function (requerimento = 0) {
+			
+			_objRef.pessoaObj.onVerificarClick(requerimento);
 		}
 	};
 };

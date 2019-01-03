@@ -28,15 +28,31 @@
 				carregarEspecificidade: <%= Model.CarregarEspecificidade.ToString().ToLower() %>
 			});
 
-			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>
-			ContainerAcoes.load($(".containerAcoes"), {
-				botoes: [
-					{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "Titulo", new {id = Request.Params["acaoId"].ToString() }) %>' },
-					{ label: 'Alterar Situação', url: '<%= Url.Action("AlterarSituacao", "TituloDeclaratorio", new {id = Request.Params["acaoId"].ToString() }) %>' },
-					{ label: 'Editar', url: '<%= Url.Action("Editar", "TituloDeclaratorio", new {id = Request.Params["acaoId"].ToString() }) %>' }
-				]
-			});
-			<% } %>
+			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"]))
+			{
+				if (Request.Params["modelo"].ToString() == "61") /*_Informacao de corte_*/
+				{
+					%>
+				ContainerAcoes.load($(".containerAcoes"), {
+						
+					botoes: [
+						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() })%>' },
+						{ label: 'Editar', url: '<%= Url.Action("Editar", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() })%>' },
+						{ label: 'Emitir DUA', url: '<%= Url.Action("EmitirDua", "DUA", new { id = Request.Params["acaoId"].ToString() })%>' }
+					]
+					});
+			<% }
+			else
+			{ %>
+					ContainerAcoes.load($(".containerAcoes"), {
+						urls:{
+							urlGerarPdf: '<%= Url.Action("GerarPdf", "Titulo", new { id = Request.Params["acaoId"].ToString() }) %>',
+							urlAlterarSituacao: '<%= Url.Action("AlterarSituacao", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() }) %>',
+							urlEditar: '<%= Url.Action("Editar", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() }) %>'
+						}
+					});
+				<%}
+			}%>
 		});
 	</script>
 </asp:Content>

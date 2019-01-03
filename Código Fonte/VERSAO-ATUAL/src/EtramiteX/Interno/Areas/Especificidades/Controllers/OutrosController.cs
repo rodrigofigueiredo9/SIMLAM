@@ -13,12 +13,14 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Especificidade;
 using Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOutros.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
@@ -33,6 +35,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		TituloModeloBus _tituloModeloBus = new TituloModeloBus();
 		AtividadeBus _busAtividade = new AtividadeBus();
 		EspecificidadeValidarBase _busEspecificidade = new EspecificidadeValidarBase();
+		RequerimentoBus _busRequerimento = new RequerimentoBus();
+		InformacaoCorteBus _busInfCorte = new InformacaoCorteBus();
 
 		#endregion
 
@@ -381,10 +385,72 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}
 
 			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
+			vm.IsDeclaratorio = modelo.TipoDocumento == (int)eTituloModeloTipoDocumento.TituloDeclaratorio;
 
 			string htmlEspecificidade = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Especificidades/Views/Outros/OutrosInformacaoCorte.ascx", vm);
+
 			return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = htmlEspecificidade }, JsonRequestBehavior.AllowGet);
 		}
+
+		[HttpGet]
+		[Permite(RoleArray = new Object[] { ePermissao.TituloCriar, ePermissao.TituloEditar, ePermissao.TituloVisualizar })]
+		public ActionResult OutrosInformacaoCorteDeclaratorio(EspecificidadeVME especificidade)
+		{
+
+			OutrosInformacaoCorteDeclaratorioBus bus = new OutrosInformacaoCorteDeclaratorioBus();
+			List<AtividadeSolicitada> lstAtividades = new List<AtividadeSolicitada>();
+			List<Lista> lstInformacaoCorte = new List<Lista>();
+
+			Titulo titulo = new Titulo();
+			TituloModelo modelo = _tituloModeloBus.Obter(especificidade.ModeloId ?? 0);
+			OutrosInformacaoCorte outros = new OutrosInformacaoCorte();
+
+			int atividadeSelecionada = 0;
+
+			if (especificidade.TituloId > 0)
+			{
+				titulo = _busTitulo.Obter(especificidade.TituloId);
+				titulo.Atividades = _busTitulo.ObterAtividades(especificidade.TituloId);
+				lstInformacaoCorte = _busInfCorte.ObterListaInfCorteTitulo(especificidade.TituloId);
+				lstAtividades = _busAtividade.ObterAtividadesListaReq(titulo.RequerimetoId ?? 0);
+
+				//if (titulo.Atividades.Count > 0)
+				//{
+				//	atividadeSelecionada = titulo.Atividades[0].Id;
+				//}
+
+				outros = bus.Obter(especificidade.TituloId) as OutrosInformacaoCorte;
+				//especificidade.AtividadeProcDocReq = _busTitulo.ObterProcDocReqEspecificidade(especificidade.TituloId);
+			}
+
+			if (especificidade.TituloId > 0) 
+			{
+				if (!especificidade.IsVisualizar)
+				{
+					_busEspecificidade.PossuiAtividadeEmAndamento(especificidade.ProtocoloId);
+				}
+			}
+
+			if (!Validacao.EhValido)
+			{
+				return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = string.Empty }, JsonRequestBehavior.AllowGet);
+			}
+
+			OutrosInformacaoCorteVM vm = new OutrosInformacaoCorteVM(outros, lstAtividades, lstInformacaoCorte, especificidade.IsVisualizar);
+
+			//if (especificidade.TituloId > 0)
+			//{
+			//	vm.Atividades.Atividades = titulo.Atividades;
+			//}
+
+			vm.IsCondicionantes = modelo.Regra(eRegra.Condicionantes) || (titulo.Condicionantes != null && titulo.Condicionantes.Count > 0);
+			vm.IsDeclaratorio = modelo.TipoDocumento == (int)eTituloModeloTipoDocumento.TituloDeclaratorio;
+
+			string htmlEspecificidade = ViewModelHelper.RenderPartialViewToString(ControllerContext, "~/Areas/Especificidades/Views/Outros/OutrosInformacaoCorteDeclaratorio.ascx", vm);
+
+			return Json(new { Msg = Validacao.Erros, EhValido = Validacao.EhValido, @Html = htmlEspecificidade }, JsonRequestBehavior.AllowGet);
+		}
+	
 
 		#region Auxiliar
 
@@ -457,6 +523,22 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				@InformacaoCortes = bus.ObterInformacaoCortes(protocolo.Id.GetValueOrDefault())
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioCriar, ePermissao.TituloDeclaratorioEditar, ePermissao.TituloDeclaratorioVisualizar })]
+		public ActionResult ObterDadosOutrosInformacaoCorteDeclaratorio(int requerimentoId)
+		{
+			var req = _busRequerimento.ObterSimplificado(requerimentoId);
+			var lstInformacaoDeCorte = _busInfCorte.ObterListaInfCorteEmpreendimento(req.Empreendimento.Id);
+			var listAtividades = _busAtividade.ObterAtividadesListaReq(requerimentoId);
+
+			return Json(new
+			{
+				Atividades = listAtividades,
+				Interessado = req.Interessado,
+				InformacoesDeCorte = lstInformacaoDeCorte
+			}, JsonRequestBehavior.AllowGet);
+		}
+
 
 		#endregion
 	}

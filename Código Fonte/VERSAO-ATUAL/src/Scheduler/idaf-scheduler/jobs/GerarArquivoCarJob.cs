@@ -864,7 +864,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				using (var dr = cmd.ExecuteReader())
 					if (dr.Read())
                     {
-                        using (var cmdr = new OracleCommand(q1, conn))
+                        using (var cmdr = new OracleCommand(q4, conn))
                         {
 
                             cmdr.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));
@@ -883,7 +883,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                 }
                                 else
                                 {
-                                    using (var cmdrr = new OracleCommand(q4, conn))
+                                    using (var cmdrr = new OracleCommand(q1, conn))
                                     {
 
                                         cmdrr.Parameters.Add(new OracleParameter("id", requisicao.solicitacao_car));

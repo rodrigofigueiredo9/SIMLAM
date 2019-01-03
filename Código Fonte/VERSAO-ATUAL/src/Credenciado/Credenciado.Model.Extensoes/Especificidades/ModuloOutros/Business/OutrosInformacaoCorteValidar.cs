@@ -18,19 +18,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			var esp = especificidade as OutrosInformacaoCorte;
+			
+			if (especificidade.RequerimentoId <= 0)
+				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
 
-			DeclaratorioRequerimentoAtividade(esp);
+			if (especificidade.Atividades == null || especificidade.Atividades.Count == 0 || especificidade.Atividades[0].Id == 0)
+				Validacao.Add(Mensagem.Especificidade.AtividadeObrigatoria);
 
-			if (esp.VinculoPropriedade <= 0)
-			{
-				Validacao.Add(Mensagem.CertidaoDispensaLicenciamentoAmbiental.VinculoPropriedadeObrigatorio);
-			}
+			if (esp.InformacaoCorte <= 0)
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 
-			/*if (esp.VinculoPropriedade == (int)eCertidaoDispLicAmbVinculoProp.Outros && string.IsNullOrWhiteSpace(esp.VinculoPropriedadeOutro))
-			{
-				Validacao.Add(Mensagem.CertidaoDispensaLicenciamentoAmbiental.VinculoPropriedadeOutroObrigatorio);
-			}*/
-
+			if(esp.Validade <= 0)
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);
+			
 			return Validacao.EhValido;
 		}
 

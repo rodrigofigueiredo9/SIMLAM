@@ -81,10 +81,6 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Tecnomapas.Blocos.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.EtramiteX.Perfil, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Tecnomapas.EtramiteX.Perfil.dll</HintPath>
@@ -103,11 +99,16 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\BarragemDispensaLicencaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\EmpreendimentoCaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\ReservaLegalVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\DominialidadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\DominioVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteDestinacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteResultadosVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteTipoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\ArquivoProcessamentoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\BaseReferenciaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\DesenhadorVM.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
     <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
     <Compile Include="Areas\GeoProcessamento\ViewModels\VMMapa\CoordenadaVM.cs" />
+    <Compile Include="Controllers\DUAController.cs" />
     <Compile Include="Controllers\CFOCController.cs" />
     <Compile Include="Controllers\CFOController.cs" />
     <Compile Include="Controllers\CFOCFOCController.cs" />
@@ -194,6 +196,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\CulturaListarVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\CredenciadoVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\ListarVM.cs" />
+    <Compile Include="ViewModels\VMDUA\DUAVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\EmpreendimentoVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
@@ -252,8 +255,12 @@
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\ListarPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\BaseReferenciaPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ImportadorShapePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\DesenhadorPartial.ascx" />
@@ -943,6 +950,8 @@
     <None Include="leiame.txt" />
     <Content Include="Scripts\Agrotoxicos\listar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeConsolidacao.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducaoItem.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeProducao.js" />
@@ -973,6 +982,7 @@
     <Content Include="Scripts\Documento\documento.js" />
     <Content Include="Scripts\CFO\emitir.js" />
     <Content Include="Scripts\CFO\listar.js" />
+    <Content Include="Scripts\DUA\dua.js" />
     <Content Include="Scripts\Empreendimento\associar.js" />
     <Content Include="Scripts\Empreendimento\listar.js" />
     <Content Include="Scripts\Empreendimento\empreendimento.js" />
@@ -1114,6 +1124,8 @@
     <Content Include="Views\CFO\Index.aspx" />
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
+    <Content Include="Views\DUA\EmitirDua.aspx" />
+    <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoInlineCorte.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoPartialCorte.ascx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
@@ -1238,7 +1250,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Especificidades\Views\Shared\" />
@@ -1262,6 +1276,10 @@
     <ProjectReference Include="..\..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj">
       <Project>{722befca-5026-44e7-b158-c9da30d20c3f}</Project>
       <Name>Blocos.Autenticacao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
       <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
