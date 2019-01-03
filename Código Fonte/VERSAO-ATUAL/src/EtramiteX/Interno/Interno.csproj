@@ -96,7 +96,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.Helpers" />
     <Reference Include="Tecnomapas.Blocos.Arquivo">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Arquivo.dll</HintPath>
     </Reference>
@@ -2832,7 +2831,9 @@
     <Folder Include="ViewModels\VMPassivo\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Caracterizacoes\Views\Web.config" />
+    <Content Include="Areas\Caracterizacoes\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.sitemap">
@@ -2843,7 +2844,9 @@
     <Content Include="Views\Shared\Login.Master" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Relatorios\Views\Web.config" />
+    <Content Include="Areas\Relatorios\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\GeoProcessamento\Views\Web.config" />

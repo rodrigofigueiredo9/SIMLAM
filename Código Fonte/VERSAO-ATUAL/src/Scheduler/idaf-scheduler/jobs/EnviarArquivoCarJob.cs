@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -180,36 +181,36 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//catch (Exception) { /*ignored*/ }
 				}
 
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Value cannot be null.%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%TCP%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Houve um problema%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Erro de conexão com o SICAR%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Value cannot be null.%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%TCP%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Houve um problema%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Erro de conexão com o SICAR%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
 
 				conn.Close();
 			}
@@ -235,36 +236,52 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				};
 			}
 
-			Log.Error($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") }");
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss") }");
 
 			//verifica se objeto já foi instanciado
+			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 			if (_client == null)
 			{
-				Log.Error($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")} ");
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")} ");
 				_client = new HttpClient(_httpClientHandler);
-				var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 				_client.BaseAddress = new Uri(sicarUrl);
 				_client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
 				count++;
 			}
 
+			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
 			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				var fileName = Path.GetFileName(localArquivoCar);
-
 				try
 				{
+					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
 					using (var content = new MultipartFormDataContent())
 					{
-						content.Add(new StreamContent(stream), "car", fileName);
+						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						var fileName = Path.GetFileName(localArquivoCar);
+
+						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						var streamContent = new StreamContent(stream);
+						content.Add(streamContent, "car", fileName);
+
+						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
 						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-						HttpResponseMessage response = await _client.PostAsync("/sincronia/quick", content);
-						
-						if (!response.IsSuccessStatusCode)
+
+						Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						HttpResponseMessage response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
+
+						Log.Info($"SUCESS STATUS CODE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+						if (response.IsSuccessStatusCode)
 						{
-							Log.Error("ERRO RESPONSE::::?? //  " + response);
-							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+							Log.Info($"READ RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+							var responseContent = await response.Content.ReadAsStringAsync();
+
+							Log.Info($"RETURN RESPONSE CONTENT: {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
+							return responseContent;
 						}
+
+						Log.Error("ERRO RESPONSE::::?? //  " + response);
+						throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 					}
 				}
 				catch (Exception ex)

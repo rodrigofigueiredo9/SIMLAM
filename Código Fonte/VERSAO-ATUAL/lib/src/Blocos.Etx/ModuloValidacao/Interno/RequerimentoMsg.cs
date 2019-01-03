@@ -229,6 +229,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem AtividadesSetoresDiferentes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível solicitar atividades de departamentos diferentes, verifique a atividade solicitada ou faça novo requerimento." }; } }
 
+		public Mensagem RequerimentoBarragemVariasAtividades { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O requerimento não pode possuir mais de uma atividade, se a atividade Barragem Dispensada de Licenciamento Ambiental for selecionada." }; } }
+
+		public Mensagem RTFaltandoInformacoesProfissao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O cadastramento da Declaração de Dispensa de Licenciamento Ambiental de Barragem somente é autorizado ao profissional elaborador do estudo ambiental ou do projeto técnico ou laudo de barragem construída, conforme o caso." }; } }
+
 		public Mensagem AtividadeNaoEstaNoSetorInformado(string atividadeNome)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("A atividade {0} não está no setor informado.", atividadeNome) };

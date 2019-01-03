@@ -157,11 +157,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             cmd.ExecuteNonQuery();
                         }
-                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado = '%Transporte de Rede%'", conn))
-                {
-                    cmd.ExecuteNonQuery();
-                }
+                //using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                //                                WHERE resultado = '%Transporte de Rede%'", conn))
+                //{
+                //    cmd.ExecuteNonQuery();
+                //}
 				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL AND (DATA_CRIACAO + 1 < SYSDATE)", conn))
                 {

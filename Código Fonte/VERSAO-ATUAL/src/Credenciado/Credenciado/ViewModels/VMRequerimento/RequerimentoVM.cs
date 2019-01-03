@@ -27,6 +27,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMRequerimento
 		public int SetorId { get; set; }
 		public string InformacaoComplementar { get; set; }
 
+		//utilizado somente para requerimentos que possuam título declaratório de barragem
+		#region Barragem
+
+		public int? ResponsabilidadeRT { get; set; }
+		public int? AbastecimentoPublico { get; set; }
+		public int? UnidadeConservacao { get; set; }
+		public int? SupressaoVegetacao { get; set; }
+		public int? Realocacao { get; set; }
+
+		#endregion Barragem
+
 		private List<ResponsavelTecnico> _responsaveis = new List<ResponsavelTecnico>();
 		public List<ResponsavelTecnico> Responsaveis
 		{
