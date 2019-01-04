@@ -369,13 +369,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 
 				ProjetoDigitalCredenciadoBus projetoDigitalCredenciadoBus = new ProjetoDigitalCredenciadoBus();
 				ProjetoDigital projetoDigital = projetoDigitalCredenciadoBus.Obter(idRequerimento: requerimento.Id);
-				projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Caracterizacao;
 				requerimento.ProjetoDigitalId = projetoDigital.Id;
 
 				#endregion
 
 				requerimento = Obter(requerimento.Id);
-				requerimento.SituacaoId = (int)eRequerimentoSituacao.Finalizado;
+				Mensagem msgSucesso;
+
+				if (IsRequerimentoRegularizacaoFundiaria(requerimento.Atividades.First()))
+				{
+					msgSucesso = Mensagem.ProjetoDigital.AtividadeSemCaracterizacao(requerimento.Atividades.First().NomeAtividade);
+					projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Envio;
+				}
+				else
+				{
+					msgSucesso = Mensagem.Requerimento.FinalizarCredenciado(requerimento.Numero);
+					projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Caracterizacao;
+				}
 
 				if (_validar.Finalizar(requerimento))
 				{
@@ -384,8 +394,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 					{
 						bancoDeDados.IniciarTransacao();
-
-						Mensagem msgSucesso = Mensagem.Requerimento.FinalizarCredenciado(requerimento.Numero);
 
 						_da.Editar(requerimento);
 
