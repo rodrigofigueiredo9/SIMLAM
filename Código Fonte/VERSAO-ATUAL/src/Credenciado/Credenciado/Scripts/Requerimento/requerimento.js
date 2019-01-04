@@ -1084,7 +1084,6 @@ RequerimentoResponsavel = {
 	pessoaModalResp: null,
 
 	callBackObterResponsavelVisualizar: function () {
-
 		$('.btnSalvar', Requerimento.container).val('Salvar');
 		Requerimento.botoes({ btnEditar: true, spnCancelarCadastro: true });
 		Requerimento.stepAtual = 3;
@@ -1102,6 +1101,15 @@ RequerimentoResponsavel = {
 		$(".btnEditar", Requerimento.container).click(RequerimentoResponsavel.onBtnEditar);
 
 		RequerimentoResponsavel.configurarAssociarMultiploResponsavel();
+
+		if ($('.hdnBarragemDeclataroria').val() == 'True') {
+			$('.btnAsmAssociar').addClass('hide');
+			$('.btnAsmLimpar').addClass('hide');
+			$('.btnAsmEditar').addClass('hide');
+			$('.funcao').addClass('disabled').attr('disabled', 'disabled');
+			$('.fsAssociarMultiplo').addClass('hide');
+		}
+
 		MasterPage.carregando(false);
 	},
 
