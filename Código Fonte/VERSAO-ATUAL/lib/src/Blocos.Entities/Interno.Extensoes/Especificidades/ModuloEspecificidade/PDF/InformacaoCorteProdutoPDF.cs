@@ -16,10 +16,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			switch (produto.DestinacaoMaterial)
 			{
 				case 1:
-					this.QdeComercializacao = produto.Quantidade.ToStringTrunc();
+					this.QdeComercializacao = produto.Quantidade.ToString();
 					break;
 				case 2:
-					this.QdeUsoProprio = produto.Quantidade.ToStringTrunc();
+					this.QdeUsoProprio = produto.Quantidade.ToString();
 					break;
 			}
 		}

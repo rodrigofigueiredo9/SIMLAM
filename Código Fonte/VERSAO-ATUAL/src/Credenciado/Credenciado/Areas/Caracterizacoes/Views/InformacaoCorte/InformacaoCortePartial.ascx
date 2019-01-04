@@ -196,7 +196,7 @@
 						</div>
 						<div class="coluna20 append2">
 							<label>Quantidade *</label>
-							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto quantidade"}))%>
+							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskInteger quantidade", @maxlenght = "10"}))%>
 						</div>
 						<div class="coluna10">
 							<br />
@@ -272,7 +272,7 @@
                                 <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
                             </td>
                             <td>
-                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade)%>"><%= Html.Encode(item.Quantidade)%></span>
                             </td>
 							<% if(!Model.IsVisualizar) { %>
 								<td class="tdAcoes">

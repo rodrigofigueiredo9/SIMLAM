@@ -21,7 +21,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMIn
 		public string DestinacaoMaterialTexto { get; set; }
 		public int Produto { get; set; }
 		public string ProdutoTexto { get; set; }
-		public Decimal Quantidade { get; set; }
+		public int Quantidade { get; set; }
 		public int Linhas { get; set; }
 	}
 }

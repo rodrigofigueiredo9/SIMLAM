@@ -132,7 +132,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
 						comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
-						comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Decimal);
+						comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
@@ -243,7 +243,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
 							comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
-							comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Decimal);
+							comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
 							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 							bancoDeDados.ExecutarNonQuery(comando);
