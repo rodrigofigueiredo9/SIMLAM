@@ -164,6 +164,7 @@
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\FiscalizacaoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\FuncionarioPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteEspeciePDF.cs" />
+    <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCortePDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteInfoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteProdutoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\Laudo.cs" />

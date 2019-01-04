@@ -285,39 +285,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				return null;
 			}
 
-			if (titulo.ArquivoPdf.Id > 0)
-			{
-				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
-				titulo.ArquivoPdf = busArquivo.Obter(titulo.ArquivoPdf.Id.Value);
-				string auxiliar = string.Empty;
+			//if (titulo.ArquivoPdf.Id > 0)
+			//{
+			//	ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
+			//	titulo.ArquivoPdf = busArquivo.Obter(titulo.ArquivoPdf.Id.Value);
+			//	string auxiliar = string.Empty;
 
-				switch (titulo.Situacao.Id)
-				{
-					case (int)eTituloSituacao.Encerrado:
-						auxiliar = _busLista.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
-						break;
+			//	switch (titulo.Situacao.Id)
+			//	{
+			//		case (int)eTituloSituacao.Encerrado:
+			//			auxiliar = _busLista.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+			//			titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+			//			break;
 
-					case (int)eTituloSituacao.Prorrogado:
-						auxiliar = String.Format("{0} até {1}", titulo.Situacao.Nome, titulo.DataVencimento.DataTexto);
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVerde(titulo.ArquivoPdf.Buffer, auxiliar);
-						break;
+			//		case (int)eTituloSituacao.Prorrogado:
+			//			auxiliar = String.Format("{0} até {1}", titulo.Situacao.Nome, titulo.DataVencimento.DataTexto);
+			//			titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVerde(titulo.ArquivoPdf.Buffer, auxiliar);
+			//			break;
 
-					case (int)eTituloSituacao.Suspenso:
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
-						break;
+			//		case (int)eTituloSituacao.Suspenso:
+			//			titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
+			//			break;
 
-					case (int)eTituloSituacao.EncerradoDeclaratorio:
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
-						break;
+			//		case (int)eTituloSituacao.EncerradoDeclaratorio:
+			//			titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
+			//			break;
 
-					default:
-						break;
-				}
+			//		default:
+			//			break;
+			//	}
 
-				titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
-                return titulo.ArquivoPdf;
-			}
+			//	titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
+   //             return titulo.ArquivoPdf;
+			//}
 
 			if ((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
 				titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal) &&

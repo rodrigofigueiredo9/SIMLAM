@@ -16,15 +16,18 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public TituloPDF Titulo { get; set; }
 		public ProtocoloPDF Protocolo { get; set; }
 		public EmpreendimentoPDF Empreendimento { get; set; }
+		public PessoaPDF Interessado { set; get; }
 		public PessoaPDF Destinatario { set; get; }
-		public List<PessoaPDF> Destinatarios { set; get; }
-		public List<PessoaPDF> ResponsaveisEmpreendimento { set; get; }
-		public List<PessoaPDF> Interessados { set; get; }
 		public DominioPDF Dominio { get; set; }
 		public DominialidadePDF Dominialidade { get; set; }
 		public RegularizacaoFundiariaPDF RegularizacaoFundiaria { get; set; }
+		public InformacaoCortePDF InformacaoCorte { get; set; }
 		public InformacaoCorteInfoPDF InformacaoCorteInfo { get; set; }
 		public List<CondicionantePDF> Condicionantes { set; get; }
+
+		public List<PessoaPDF> Destinatarios { get; set; }
+		public List<PessoaPDF> ResponsaveisEmpreendimento { get; set; }
+		public List<PessoaPDF> Interessados { get; set; }
 
 		public String ResponsaveisEmpreendimentoStragg
 		{
@@ -58,7 +61,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			{
 				if (Interessados != null)
 				{
-					return String.Join(", ", Interessados.Select(x => x	.NomeRazaoSocial));
+					return String.Join(", ", Interessados.Select(x => x.NomeRazaoSocial));
 				}
 
 				return string.Empty;
@@ -90,6 +93,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Protocolo = new ProtocoloPDF();
 			Empreendimento = new EmpreendimentoPDF();
 			Destinatario = new PessoaPDF();
+			Interessado = new PessoaPDF();
 			Destinatarios = new List<PessoaPDF>();
 			ResponsaveisEmpreendimento = new List<PessoaPDF>();
 			Interessados = new List<PessoaPDF>();
@@ -97,6 +101,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Dominialidade = new DominialidadePDF();
 			RegularizacaoFundiaria = new RegularizacaoFundiariaPDF();
 			Condicionantes = new List<CondicionantePDF>();
+			InformacaoCorte = new InformacaoCortePDF();
 		}
 	}
 }
