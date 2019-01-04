@@ -36,6 +36,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMRequerimento
 		public int? SupressaoVegetacao { get; set; }
 		public int? Realocacao { get; set; }
 
+		public bool contemBarragemDeclaratoria
+		{
+			get
+			{
+				return (this.AtividadesSolicitadas != null && this.AtividadesSolicitadas.Exists(x => x.Id == 327));
+			}
+		}
+
 		#endregion Barragem
 
 		private List<ResponsavelTecnico> _responsaveis = new List<ResponsavelTecnico>();
