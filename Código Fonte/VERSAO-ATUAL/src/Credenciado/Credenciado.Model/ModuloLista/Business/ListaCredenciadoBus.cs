@@ -599,7 +599,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 			get
 			{
 				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
-				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosExploracao);
+				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosInformacaoCorte);
 			}
 		}
 
