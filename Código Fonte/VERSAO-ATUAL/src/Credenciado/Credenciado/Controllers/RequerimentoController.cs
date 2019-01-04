@@ -351,7 +351,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					vm.CarregarRequerimentoVM(requerimento);
 					vm.CarregarListas(ListaCredenciadoBus.ResponsavelFuncoes, ListaCredenciadoBus.AgendamentoVistoria);
 
-					view = (requerimento.Responsaveis.Count > 0) ? "ResponsavelTecnicoVisualizar" : "CriarRespTecnico";
+					if (requerimento.Atividades.FirstOrDefault(x => x.Id == 327) != null && requerimento.Responsaveis.FirstOrDefault()?.IdRelacionamento == 0)
+					{
+						view = "CriarRespTecnico";
+					}
+					else
+					{
+						view = (requerimento.Responsaveis.Count > 0) ? "ResponsavelTecnicoVisualizar" : "CriarRespTecnico";
+					}
 				}
 			}
 
