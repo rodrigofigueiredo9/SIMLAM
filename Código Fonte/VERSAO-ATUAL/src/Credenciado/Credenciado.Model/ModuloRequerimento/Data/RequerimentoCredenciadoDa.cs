@@ -660,7 +660,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				 */
 				#region Barragem
 
-				if (requerimento.Atividades.Where(x => x.Id == 327) != null)
+				if (requerimento.Atividades.FirstOrDefault(x => x.Id == 327) != null)
 				{
 					CredenciadoBus _busCredenciado = new CredenciadoBus(new CredenciadoValidar());
 					CredenciadoPessoa usuarioLogado = _busCredenciado.Obter(User.EtramiteIdentity.FuncionarioId);

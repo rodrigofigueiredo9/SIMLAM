@@ -1125,6 +1125,15 @@ RequerimentoResponsavel = {
 		Requerimento.botoes({ btnSalvar: true, spnCancelarEdicao: true });
 
 		Requerimento.configurarBtnCancelarStep(3);
+
+		if ($('.hdnBarragemDeclataroria').val() == 'True') {
+			$('.btnAsmAssociar').addClass('hide');
+			$('.btnAsmLimpar').addClass('hide');
+			$('.btnAsmEditar').addClass('hide');
+			$('.funcao').addClass('disabled').attr('disabled', 'disabled');
+			$('.fsAssociarMultiplo').addClass('hide');
+		}
+
 		MasterPage.carregando(false);
 	},
 

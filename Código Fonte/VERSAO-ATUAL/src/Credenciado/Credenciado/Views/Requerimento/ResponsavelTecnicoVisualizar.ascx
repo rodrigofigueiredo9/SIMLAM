@@ -5,6 +5,7 @@
 	<div class="divConteudoResponsavelTec associarMultiplo <%= Model.IsAbaFinalizar ? "" : "block box" %>">
 		<input type="hidden" class="hdnResonsavelVisualizar" value="true" />
 		<input type="hidden" class="hdnQuantidadeItem" value="<%= Model.Responsaveis.Count %>" />
+		<input type="hidden" class="hdnBarragemDeclataroria" value="<%= Model.contemBarragemDeclaratoria %>" />
 		<div class="asmItens">
 			<% for (int count = 0; count < Model.Responsaveis.Count; count++) { %>
 			<div class="asmItemContainer boxBranca borders">
