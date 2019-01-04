@@ -49,6 +49,9 @@
 		RequerimentoObjetivoPedido.urlObterRoteirosAtividade = '<%= Url.Action("ObterRoteirosAtividade", "Requerimento") %>';
 		RequerimentoObjetivoPedido.urlBaixarPdf = '<%= Url.Action("RelatorioRoteiro", "Roteiro") %>';
 		RequerimentoObjetivoPedido.urlVerificarPassoDois = '<%= Url.Action("VerificarPassoDois", "Requerimento") %>';
+		RequerimentoObjetivoPedido.urlAlterarDadosCredenciado = '<%= Url.Action("AlterarDados", "Credenciado") %>';
+		RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem = '<%= Url.Action("ResponsabilidadeRTBarragem", "Requerimento") %>';
+		RequerimentoObjetivoPedido.urlInformacoesBarragem = '<%= Url.Action("InformacoesBarragem", "Requerimento") %>';
 
 		RequerimentoInteressado.urlObterInteressado = '<%= Url.Action("PessoaInline", "Pessoa") %>';
 		RequerimentoInteressado.urlAssociarInteressado = '<%= Url.Action("AssociarInteressado", "Requerimento") %>';

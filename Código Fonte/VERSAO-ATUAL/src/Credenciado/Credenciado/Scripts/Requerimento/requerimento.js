@@ -295,6 +295,9 @@ RequerimentoObjetivoPedido = {
 	urlVerificarPassoDois: null,
 	BarragemPreenchida: false,
 	objetivoPedido: null,
+	urlAlterarDadosCredenciado: null,
+	urlResponsabilidadeRTBarragem: null,
+	urlInformacoesBarragem: null,
 
 	configurarBtnEditar: function () {
 		$(".btnEditar", Requerimento.container).unbind('click');
@@ -693,7 +696,7 @@ RequerimentoObjetivoPedido = {
 				ContainerAcoes.load($(".containerAcoes"), {
 					botoes: [
 						{ label: 'Cancelar cadastro da declaração' },
-						{ label: 'Atualizar cadastro pessoal', url: '/Credenciado/AlterarDados/' + response.idUsuario }]
+						{ label: 'Atualizar cadastro pessoal', url: RequerimentoObjetivoPedido.urlAlterarDadosCredenciado + '/' + response.idUsuario }]
 				});
 			} else {
 				Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
@@ -721,7 +724,7 @@ RequerimentoObjetivoPedido = {
 
 			ContainerAcoes.load($(".containerAcoes"), {
 				botoes: [
-					{ label: 'Continuar', url: '/Requerimento/ResponsabilidadeRTBarragem/', abrirModal: function () { RequerimentoObjetivoPedido.funcaoRTBarragem(); } },
+					{ label: 'Continuar', url: RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem, abrirModal: function () { RequerimentoObjetivoPedido.funcaoRTBarragem(); } },
 					{ label: 'Cancelar cadastro da declaração' }]
 			});
 		}
@@ -731,7 +734,7 @@ RequerimentoObjetivoPedido = {
 		Mensagem.limpar(RequerimentoObjetivoPedido.container);
 		
 
-		Modal.abrir('/Requerimento/ResponsabilidadeRTBarragem/', RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+		Modal.abrir(RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem, RequerimentoObjetivoPedido.objetivoPedido, function (container) {
 			Modal.defaultButtons(container, function (container) {
 				var objeto = RequerimentoObjetivoPedido.objetivoPedido;
 				objeto.ResponsabilidadeRT = $('.rbFuncaoRT:checked').val() || 0;
@@ -752,7 +755,7 @@ RequerimentoObjetivoPedido = {
 
 				Modal.fechar(container[0]);
 
-				Modal.abrir('/Requerimento/InformacoesBarragem/', RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+				Modal.abrir(RequerimentoObjetivoPedido.urlInformacoesBarragem, RequerimentoObjetivoPedido.objetivoPedido, function (container) {
 					$(".rbInfoBarragem").change(RequerimentoObjetivoPedido.infoBarragemChange);
 					$(".rbBarragensContiguas").change(RequerimentoObjetivoPedido.barragensContiguasChange);
 
