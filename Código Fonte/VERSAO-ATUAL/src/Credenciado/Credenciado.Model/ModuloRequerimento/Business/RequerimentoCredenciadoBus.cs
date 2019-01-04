@@ -386,6 +386,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 					msgSucesso = Mensagem.Requerimento.FinalizarCredenciado(requerimento.Numero);
 					projetoDigital.Etapa = (int)eProjetoDigitalEtapa.Caracterizacao;
 				}
+				requerimento.SituacaoId = (int)eRequerimentoSituacao.Finalizado;
 
 				if (_validar.Finalizar(requerimento))
 				{
