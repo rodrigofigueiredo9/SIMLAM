@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Data;
-using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
-using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloDUA;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 
-namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
+namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 {
 	public class DuaDa
 	{
@@ -78,6 +77,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 
 			return retorno;
 		}
-		
+
 	}
 }

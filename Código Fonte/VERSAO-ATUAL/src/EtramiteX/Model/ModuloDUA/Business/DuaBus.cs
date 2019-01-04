@@ -10,7 +10,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data;
 
-namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
+namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 {
 	public class DuaBus
 	{
