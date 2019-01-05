@@ -82,6 +82,9 @@
     <Compile Include="ModuloCredenciado\Business\HabilitarEmissaoCFOCFOCValidar.cs" />
     <Compile Include="ModuloCredenciado\Data\LiberacaoNumeroCFOCFOCDa.cs" />
     <Compile Include="ModuloCredenciado\Data\HabilitarEmissaoCFOCFOCDa.cs" />
+    <Compile Include="ModuloDUA\Business\DuaBus.cs" />
+    <Compile Include="ModuloDUA\Business\DuaValidar.cs" />
+    <Compile Include="ModuloDUA\Data\DuaDa.cs" />
     <Compile Include="ModuloFichaFundiaria\Business\FichaFundiariaBus.cs" />
     <Compile Include="ModuloFichaFundiaria\Business\FichaFundiariaValidar.cs" />
     <Compile Include="ModuloFichaFundiaria\Data\FichaFundiariaDa.cs" />

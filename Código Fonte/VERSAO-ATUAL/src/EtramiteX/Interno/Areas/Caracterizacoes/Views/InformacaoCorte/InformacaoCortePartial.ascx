@@ -272,7 +272,7 @@
                                 <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
                             </td>
                             <td>
-                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade)%>"><%= Html.Encode(item.Quantidade)%></span>
                             </td>
 							<% if(!Model.IsVisualizar) { %>
 								<td class="tdAcoes">
