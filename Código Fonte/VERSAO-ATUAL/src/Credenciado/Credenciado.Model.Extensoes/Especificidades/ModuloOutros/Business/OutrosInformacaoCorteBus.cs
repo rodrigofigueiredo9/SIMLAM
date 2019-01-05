@@ -95,18 +95,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			try
 			{
-				Outros certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
-				DataEmissaoPorExtenso(certidao.Titulo);
+				Outros Outros = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
+				DataEmissaoPorExtenso(Outros.Titulo);
 
-				//certidao.Caracterizacao = new BarragemDispensaLicencaPDF(new BarragemDispensaLicencaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-
-				//GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
-				//List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
-
-				//certidao.Caracterizacao.CampoNome = "Finalidade";
-				//certidao.Caracterizacao.CampoValor = Mensagem.Concatenar(finalidades.Where(x => (int.Parse(x.Codigo) & certidao.Caracterizacao.FinalidadeAtividade) != 0).Select(x => x.Texto).ToList());
-
-				return certidao;
+				return Outros;
 			}
 			catch (Exception exc)
 			{

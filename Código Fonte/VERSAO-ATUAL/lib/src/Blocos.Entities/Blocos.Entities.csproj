@@ -163,6 +163,7 @@
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\FiscalizacaoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\FuncionarioPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteEspeciePDF.cs" />
+    <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCortePDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteInfoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\InformacaoCorteProdutoPDF.cs" />
     <Compile Include="Interno.Extensoes\Especificidades\ModuloEspecificidade\PDF\Laudo.cs" />
@@ -295,6 +296,7 @@
     <Compile Include="Interno\ModuloCredenciado\Praga.cs" />
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />
+    <Compile Include="Interno\ModuloDUA\Dua.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\CobrancaParcelamento.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\CobrancaListarFiltro.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ParametrizacaoListarFiltro.cs" />
@@ -892,7 +894,6 @@
   <ItemGroup>
     <Folder Include="Configuracao\Publico\" />
     <Folder Include="Interno.Extensoes\Especificidades\ModuloParecer\" />
-    <Folder Include="Interno\ModuloDUA\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

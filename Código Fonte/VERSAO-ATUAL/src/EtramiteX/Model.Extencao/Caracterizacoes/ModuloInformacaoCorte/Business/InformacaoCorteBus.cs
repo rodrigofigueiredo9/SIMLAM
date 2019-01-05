@@ -210,6 +210,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			throw new NotImplementedException();
 		}
 
+		public object ObterDadosPdf(IEspecificidade especificidade, BancoDeDados banco = null)
+		{
+			throw new NotImplementedException();
+		}
+
 		public List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
 		{
 			List<Lista> retorno = new List<Lista>();

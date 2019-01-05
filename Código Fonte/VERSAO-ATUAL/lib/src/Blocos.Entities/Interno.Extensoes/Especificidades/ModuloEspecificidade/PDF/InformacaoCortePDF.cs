@@ -5,19 +5,8 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInforma
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
 {
-	public class InformacaoCorteInfoPDF
+	public class InformacaoCortePDF
 	{
-		public String TipoCorte { get; set; }
-		public String Especie { get; set; }
-		public Decimal AreaCorte { get; set; }
-		public Int32 IdadePlantio { get; set; }
-		public String DestMaterial { get; set; }
-		public String Produto { get; set; }
-		public Decimal Quantidade { get; set; }
-
-		public InformacaoCorteInfoPDF() { }
-
-
 		public String ArvoresRestantes { get; set; }
 		public String AreaRestantes { get; set; }
 
@@ -25,10 +14,20 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String MesEmissao { get; set; }
 		public String AnoEmissao { get; set; }
 
+		public String LicençaAmbiental { get; set; }
+		public Decimal AreaPlantada { get; set; }
+
 		public List<InformacaoCorteEspeciePDF> Especies { get; set; }
 		public List<InformacaoCorteProdutoPDF> Produtos { get; set; }
 
-		public InformacaoCorteInfoPDF(InformacaoCorte informacao)
+		public List<InformacaoCorteInfoPDF> InformacoesDeCorte { get; set; }
+
+		public InformacaoCortePDF()
+		{
+			InformacoesDeCorte = new List<InformacaoCorteInfoPDF>();
+		}
+
+		public InformacaoCortePDF(InformacaoCorte informacao)
 		{
 			this.Especies = informacao.InformacaoCorteTipo.Select(x => new InformacaoCorteEspeciePDF(x)).ToList();
 			this.Produtos = informacao.InformacaoCorteTipo.SelectMany(x => x.InformacaoCorteDestinacao).Select(x => new InformacaoCorteProdutoPDF(x)).ToList();

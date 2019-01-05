@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using System.Web;
 
-namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
+namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 {
 	public class DuaValidar
 	{
@@ -15,7 +14,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
 		}
 
-		public DuaValidar() {	}
+		public DuaValidar()
+		{
+
+		}
 
 		#endregion
 
