@@ -52,12 +52,11 @@ InformacaoCorte = {
 
 	excluir: function () {
 		var linha = $(this).closest('tr');
-		var id = $('.itemId', linha).val();
 
 		Modal.excluir({
-			'urlConfirm': InformacaoCorte.settings.urls.excluirConfirm + '/' + id,
+			'urlConfirm': InformacaoCorte.settings.urls.excluirConfirm,
 			'urlAcao': InformacaoCorte.settings.urls.excluir,
-			'data': { id: id },
+			'id': $('.itemId', linha).val(),
 			'callBack': InformacaoCorte.callBackExcluir,
 			'naoExecutarUltimaBusca': true
 		});
