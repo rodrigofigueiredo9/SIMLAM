@@ -127,8 +127,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					foreach (var destinacao in item.InformacaoCorteDestinacao)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade) values
-						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade)", EsquemaBanco);
+						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+						(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -238,8 +239,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"
-						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade) values
-						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade)", EsquemaBanco);
+							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+							(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -501,8 +503,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, lv.texto as dest_material_texto,
-							lvp.texto as produto_texto
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz,
+							lv.texto as dest_material_texto, lvp.texto as produto_texto
 						from {0}crt_inf_corte_dest_material c
 						left join {0}lov_crt_inf_corte_inf_dest_mat lv
 							on(c.dest_material = lv.id)
@@ -525,7 +527,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
 									Produto = readerDestinacao.GetValue<int>("produto"),
 									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
-									Quantidade = readerDestinacao.GetValue<int>("quantidade")
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
 								});
 							}
 
@@ -642,7 +645,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.dest_material_texto, c.produto_texto
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz, c.dest_material_texto, c.produto_texto
 						from {0}hst_crt_inf_corte_dest_material c
 						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
 
@@ -661,7 +664,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
 									Produto = readerDestinacao.GetValue<int>("produto"),
 									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
-									Quantidade = readerDestinacao.GetValue<int>("quantidade")
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
 								});
 							}
 
@@ -784,6 +788,40 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				return retorno;
 			}
 		}
+
+		internal List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select s.inf_corte_produto, p.texto from {0}lov_inf_codigo_sefaz s
+				inner join lov_crt_produto_inf_corte p
+				on (p.id = s.inf_corte_produto)
+				where inf_destinacao_material = :inf_destinacao_material", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("inf_destinacao_material", destinacaoId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("inf_corte_produto");
+						item.Texto = reader.GetValue<string>("texto");
+						item.IsAtivo = true;
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
 		#endregion
 	}
 }

@@ -22,6 +22,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels.VMIn
 		public int Produto { get; set; }
 		public string ProdutoTexto { get; set; }
 		public int Quantidade { get; set; }
+		public int CodigoSefazId { get; set; }
 		public int Linhas { get; set; }
 	}
 }

@@ -4,14 +4,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento -  Informação de Corte</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Empreendimento/listar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/informacaoCorte.js") %>"></script>
 
 	<script type="text/javascript">
 		$(function () {
 			InformacaoCorte.load($('#central'), {
 				urls: {
-					salvar: '<%= Url.Action("Salvar", "InformacaoCorte") %>'
+					salvar: '<%= Url.Action("Salvar", "InformacaoCorte") %>',
+					obterProdutos: '<%= Url.Action("ObterProdutos", "InformacaoCorte") %>'
 				},
 				mensagens: <%= Model.Mensagens %>
 			});

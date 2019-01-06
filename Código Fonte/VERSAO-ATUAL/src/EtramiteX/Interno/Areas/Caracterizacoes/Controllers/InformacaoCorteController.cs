@@ -161,5 +161,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult ObterProdutos(int destinacaoId) => Json(_informacaoCorteBus.ObterProdutos(destinacaoId), JsonRequestBehavior.AllowGet);
 	}
 }
