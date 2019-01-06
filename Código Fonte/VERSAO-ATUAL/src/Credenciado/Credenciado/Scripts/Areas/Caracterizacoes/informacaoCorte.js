@@ -4,7 +4,8 @@
 InformacaoCorte = {
 	settings: {
 		urls: {
-			salvar: ''
+			salvar: '',
+			obterProdutos: ''
 		},
 		mensagens: null,
 		textoMerge: null,
@@ -25,7 +26,8 @@ InformacaoCorte = {
 		InformacaoCorte.container.delegate('.btnAdicionarDestinacao', 'click', InformacaoCorte.adicionarDestinacao);
 		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
 		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
-		
+		InformacaoCorte.container.delegate('.ddlDestinacaoMaterial', 'change', InformacaoCorte.carregarProdutos);
+
 		Aux.setarFoco(InformacaoCorte.container);
 
 		if (InformacaoCorte.settings.textoMerge) {
@@ -158,9 +160,9 @@ InformacaoCorte = {
 		$('.especieInformada', container).val('0');
 		$('.areaCorte', container).val('');
 		$('.idadePlantio', container).val('');
-		$('.destinacaoMaterial', container).val('');
-		$('.produto', container).val('');
-		$('.quantidade', container).val('');
+		$('.ddlDestinacaoMaterial', container).val('');
+		$('.ddlProduto', container).val('');
+		$('.txtQuantidade', container).val('');
 	},
 
 	configurarTipo: function (disabled) {
@@ -186,18 +188,18 @@ InformacaoCorte = {
 	configurarDestinacao: function (disabled) {
 		var container = InformacaoCorte.container;
 
-		$('.destinacaoMaterial', container).toggleClass('disabled', disabled);
-		$('.produto', container).toggleClass('disabled', disabled);
-		$('.quantidade', container).toggleClass('disabled', disabled);
+		$('.ddlDestinacaoMaterial', container).toggleClass('disabled', disabled);
+		$('.ddlProduto', container).toggleClass('disabled', disabled);
+		$('.txtQuantidade', container).toggleClass('disabled', disabled);
 		$('.btnAdicionarDestinacao', container).button({ disabled: disabled });
 		if (disabled) {
-			$('.destinacaoMaterial', container).attr('disabled', disabled);
-			$('.produto', container).attr('disabled', disabled);
-			$('.quantidade', container).attr('disabled', disabled);
+			$('.ddlDestinacaoMaterial', container).attr('disabled', disabled);
+			$('.ddlProduto', container).attr('disabled', disabled);
+			$('.txtQuantidade', container).attr('disabled', disabled);
 		} else {
-			$('.destinacaoMaterial', container).removeAttr('disabled');
-			$('.produto', container).removeAttr('disabled');
-			$('.quantidade', container).removeAttr('disabled');
+			$('.ddlDestinacaoMaterial', container).removeAttr('disabled');
+			$('.ddlProduto', container).removeAttr('disabled');
+			$('.txtQuantidade', container).removeAttr('disabled');
 		}
 	},
 
@@ -206,11 +208,11 @@ InformacaoCorte = {
         Mensagem.limpar(container);
 
 		var objeto = {
-			DestinacaoMaterial: $('.destinacaoMaterial option:selected', container).val(),
-			DestinacaoMaterialTexto: $('.destinacaoMaterial option:selected', container).text(),
-			Produto: $('.produto option:selected', container).val(),
-			ProdutoTexto: $('.produto option:selected', container).text(),
-			Quantidade: $('.quantidade', container).val()
+			DestinacaoMaterial: $('.ddlDestinacaoMaterial option:selected', container).val(),
+			DestinacaoMaterialTexto: $('.ddlDestinacaoMaterial option:selected', container).text(),
+			Produto: $('.ddlProduto option:selected', container).val(),
+			ProdutoTexto: $('.ddlProduto option:selected', container).text(),
+			Quantidade: $('.txtQuantidade', container).val()
 		};
 		
 		var msgs = [];
@@ -223,7 +225,7 @@ InformacaoCorte = {
 			msgs.push(InformacaoCorte.settings.mensagens.ProdutoObrigatorio);
 		}
 
-		if (objeto.Quantidade <= 0) {
+		if (objeto.Quantidade <= 0 || objeto.Quantidade == '') {
 			msgs.push(InformacaoCorte.settings.mensagens.QuantidadeObrigatoria);
 		}
 
@@ -249,9 +251,9 @@ InformacaoCorte = {
 		Listar.atualizarEstiloTable($('.tabDestinacao', container));
 
 		//limpa os campos de texto 
-		$('.destinacaoMaterial', container).val('0');
-		$('.produto', container).val('0');
-		$('.quantidade', container).val('');
+		$('.ddlDestinacaoMaterial', container).val('0');
+		$('.ddlProduto', container).val('0');
+		$('.txtQuantidade', container).val('');
 
 		$('.btnAdicionarInformacao', container).button({ disabled: false });
 	},
@@ -481,5 +483,11 @@ InformacaoCorte = {
 			}
 		});
 		MasterPage.carregando(false);
+	},
+
+	carregarProdutos: function () {
+		$.get(InformacaoCorte.settings.urls.obterProdutos, { destinacaoId: $('.ddlDestinacaoMaterial', InformacaoCorte.container).val() }, function (lista) {
+			$('.ddlProduto', InformacaoCorte.container).ddlLoad(lista);
+		});
 	}
 };

@@ -17,6 +17,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMInform
 		public int Produto { get; set; }
 		public string ProdutoTexto { get; set; }
 		public int Quantidade { get; set; }
+		public int CodigoSefazId { get; set; }
 		public int Linhas { get; set; }
 	}
 }

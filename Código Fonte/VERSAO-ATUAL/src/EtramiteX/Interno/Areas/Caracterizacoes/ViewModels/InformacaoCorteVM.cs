@@ -40,6 +40,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 						resultado.EspecieTexto = item.EspecieInformadaTexto;
 						resultado.DestinacaoId = dest.Id;
 						resultado.Quantidade = dest.Quantidade;
+						resultado.CodigoSefazId = dest.CodigoSefazId;
 						resultado.DestinacaoMaterial = dest.DestinacaoMaterial;
 						resultado.DestinacaoMaterialTexto = dest.DestinacaoMaterialTexto;
 						resultado.Produto = dest.Produto;

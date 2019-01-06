@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz
 						from crt_inf_corte_dest_material c
 						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
 
@@ -175,7 +175,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 									TipoCorteId = reader.GetValue<int>("tipo_corte_id"),
 									DestinacaoMaterial = reader.GetValue<int>("DestinacaoMaterial"),
 									Produto = reader.GetValue<int>("produto"),
-									Quantidade = reader.GetValue<int>("quantidade")
+									Quantidade = reader.GetValue<int>("quantidade"),
+									CodigoSefazId = reader.GetValue<int>("inf_codigo_sefaz")
 								});
 							}
 

@@ -188,15 +188,15 @@
 					<fieldset class="block box">
 						<div class="coluna20 append1">
 							<label>Destinação do Material *</label>
-							<%= Html.DropDownList("InformacaoCorte_DestinacaoMaterial", Model.InformacaoCorteDestinacao.DestinacaoMaterial, ViewModelHelper.SetaDisabled(true, new { @class = "text destinacaoMaterial"}))%>
+							<%= Html.DropDownList("InformacaoCorte_DestinacaoMaterial", Model.InformacaoCorteDestinacao.DestinacaoMaterial, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlDestinacaoMaterial"}))%>
 						</div>
 						<div class="coluna20 append1">
 							<label>Produto *</label>
-							<%= Html.DropDownList("InformacaoCorte_Produto", Model.InformacaoCorteDestinacao.Produto, ViewModelHelper.SetaDisabled(true, new { @class = "text produto"}))%>
+							<%= Html.DropDownList("InformacaoCorte_Produto", Model.InformacaoCorteDestinacao.Produto, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlProduto"}))%>
 						</div>
 						<div class="coluna20 append2">
 							<label>Quantidade *</label>
-							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskInteger quantidade", @maxlenght = "10"}))%>
+							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskInteger txtQuantidade", @maxlenght = "10"}))%>
 						</div>
 						<div class="coluna10">
 							<br />
