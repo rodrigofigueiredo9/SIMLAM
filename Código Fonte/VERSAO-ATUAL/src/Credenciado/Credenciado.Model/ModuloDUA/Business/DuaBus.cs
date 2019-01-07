@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloDUA;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data;
@@ -46,6 +48,44 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			try
 			{
 				return _da.Obter(titulo, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		public string Emitir(int titulo)
+		{
+			try
+			{
+				RequestJson requestJson = new RequestJson();
+
+				var urlGerar = $"{ConfigurationManager.AppSettings["emitirDua"]}/{titulo}";
+				var strResposta = requestJson.Executar(urlGerar);
+				var resposta = requestJson.Deserializar<dynamic>(strResposta);
+				return resposta;
+			}
+			catch (Exception exc)
+			{
+				Validacao.Add(eTipoMensagem.Advertencia, "Empreendimento sem CNPJ, impossível emitir o DUA");
+			}
+
+			return null;
+		}
+
+		public string Reemitir(string dua)
+		{
+			try
+			{
+				RequestJson requestJson = new RequestJson();
+
+				var urlGerar = $"{ConfigurationManager.AppSettings["reemitirDua"]}/{dua}";
+				var strResposta = requestJson.Executar(urlGerar);
+				var resposta = requestJson.Deserializar<dynamic>(strResposta);
+				return resposta;
 			}
 			catch (Exception exc)
 			{

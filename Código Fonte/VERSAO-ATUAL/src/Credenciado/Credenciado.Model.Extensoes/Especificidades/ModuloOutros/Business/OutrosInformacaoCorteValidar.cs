@@ -28,7 +28,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			if (esp.InformacaoCorte <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 
-			if(esp.Validade <= 0)
+			if (esp.Validade < 20 || esp.Validade > 180)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);
 			
 			return Validacao.EhValido;

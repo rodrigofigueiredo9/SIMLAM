@@ -3,8 +3,8 @@
 
 <% if (Model.IsExibirCamposModelo) {%>
 
-	<% if (Model.IsExibirAssinate) {%> 
+	<%--<% if (Model.IsExibirAssinate) {%> 
 		<% Html.RenderPartial("Assinantes", Model.AssinantesVM); %>
-	<%} %>
+	<%} %>--%>
 
 <%} %>

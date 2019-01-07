@@ -91,7 +91,7 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalProduto.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ListarExploracaoFlorestalFiltro.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eEspecieInformada.cs" />
-    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eTipoCorte.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eSituacaoDua.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteLicenca.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeConsolidacao\UnidadeConsolidacao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloUnidadeProducao\eUnidadeProducaoUnidadeMedida.cs" />
@@ -298,6 +298,7 @@
     <Compile Include="Interno\ModuloCredenciado\PragaHabilitarEmissao.cs" />
     <Compile Include="Interno\ModuloCredenciado\HabilitarEmissaoCFOCFOC.cs" />
     <Compile Include="Interno\ModuloDUA\Dua.cs" />
+    <Compile Include="Interno\ModuloDUA\eTipoDua.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\CobrancaParcelamento.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\CobrancaListarFiltro.cs" />
     <Compile Include="Interno\ModuloFiscalizacao\Configuracoes\ParametrizacaoListarFiltro.cs" />

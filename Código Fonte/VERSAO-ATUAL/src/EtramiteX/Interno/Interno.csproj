@@ -489,11 +489,11 @@
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorteDeclaratorio.js" />
-    <Content Include="Scripts\DUA\duas.js" />
+    <Content Include="Scripts\DUA\dua.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\DUA\EmitirDuaListar.ascx" />
-    <Content Include="Views\DUA\EmitirDua.aspx" />
+    <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />

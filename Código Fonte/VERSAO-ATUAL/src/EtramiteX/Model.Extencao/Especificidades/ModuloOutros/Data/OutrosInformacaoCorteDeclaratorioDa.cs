@@ -197,7 +197,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			{
 				#region Dados do Titulo
 
-				DadosPDF dados = DaEsp.ObterDadosTitulo(151048, bancoDeDados);
+				DadosPDF dados = DaEsp.ObterDadosTitulo(titulo, bancoDeDados);
 
 				outros.Titulo = dados.Titulo;
 				outros.Titulo.SetorEndereco = DaEsp.ObterEndSetor(outros.Titulo.SetorId);
@@ -218,7 +218,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					  inner join lov_empreendimento_tipo_resp   lv  on er.tipo = lv.id
 					where tt.id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("id", 151048, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -263,6 +263,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					where ee.correspondencia = 0 and e.id = :empreendimento", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{

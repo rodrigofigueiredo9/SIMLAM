@@ -1,46 +1,62 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMDUA" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloDUA" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DUAVM>" %>
 
 
 <%= Html.Hidden("TituloId", Model.Titulo.Id, new { @class = "hdnTituloId" })%>
-<%= Html.Hidden("TituloSituacao", Model.Titulo.Situacao.Id, new { @class = "hdnTituloSituacao" })%>
+<%--<%= Html.Hidden("TituloSituacao", Model.Titulo.Situacao.Id, new { @class = "hdnTituloSituacao" })%>--%>
 
 <div class="block box">
-	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<table class="dataGridTable gridDua" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
 				<th width="10%">Código</th>
 				<th width="9%">Valor R$	</th>
 				<th width="19%">Situação</th>
 				<th>N° do DUA</th>
-				<th width="11%">Situação</th>
-				<th width="12%">Vencimento</th>
+				<th width="11%">Validade</th>
 				<th class="semOrdenacao" width="9%">Ações</th>
 			</tr>
 		</thead>
 
-		<%--<tbody>
-			<% foreach (var item in Model.Resultados) { %>
+		<tbody>
+			<% foreach (var item in Model.DuaLst) { %>
 			<tr>
-				<td title="<%= Html.Encode(item.Numero.Texto)%>"><%= Html.Encode(item.Numero.Texto)%></td>
-				<td title="<%= Html.Encode(item.Modelo.Nome)%>"><%= Html.Encode(item.Modelo.Sigla)%></td>
-				<td title="<%= Html.Encode(item.RequerimetoId)%>"><%= Html.Encode(item.RequerimetoId)%></td>
-				<td title="<%= Html.Encode(item.EmpreendimentoTexto)%>"><%= Html.Encode(item.EmpreendimentoTexto)%></td>
-				<td title="<%= Html.Encode(item.Situacao.Texto)%>"><%= Html.Encode(item.Situacao.Texto)%></td>
-				<td title="<%= Html.Encode(item.DataVencimento.DataTexto)%>"><%= Html.Encode(item.DataVencimento.DataTexto)%></td>
+				<td title="<%= Html.Encode(item.Codigo)%>"><%= Html.Encode(item.Codigo)%></td>
+				<td title="<%= Html.Encode(item.Valor)%>"><%= Html.Encode(item.Valor)%></td>
+				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
+				<td title="<%= Html.Encode(item.Numero)%>"><%= Html.Encode(item.Numero)%></td>
+				<td title="<%= Html.Encode(item.Validade.DataTexto)%>"><%= Html.Encode(item.Validade.DataTexto)%></td>
 				<td>
 					<input type="hidden" class="itemJson" value="<%= Model.ObterJSon(item) %>" />
 
-					<%if (Model.PodeAssociar) {%><input type="button" title="Associar" class="icone associar btnAssociar" /><% } %>
-					<%if (Model.PodeVisualizar){%><input type="button" title="PDF do título" class="icone pdf btnPDF" /><% } %>
-					<%if (!Model.PodeAssociar && Model.PodeVisualizar) {%><input type="button" title="Visualizar" class="icone visualizar btnVisualizar" /><% } %>
-					<%if (Model.PodeEditar) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
-					<%if (Model.PodeExcluir) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
-					<%if (Model.PodeAlterarSituacao){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
-					<%if (true){%><input type="button" title="Emitir DUA" class="icone dolar btnEmitirDua" /><% } %>
+					<%if (true){%><input type="button" title="PDF do DUA" class="icone pdf btnPDF" /><% } %>
+					<%if (item.Situacao == eSituacaoDua.Vencido){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>
+					<%--<%if (true){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>--%>
 				</td>
 			</tr>
 		<% } %>
-		</tbody>--%>
+		<tr class="trTemplate hide">
+				<td class="Codigo">
+					<label class="lblCodigo"></label>
+				</td>
+				<td class="ValorDua">
+					<label class="lblValor"></label>
+				</td>
+				<td class="Situacao">
+					<label class="lblSituacao"></label>
+				</td>
+				<td class="NumeroDua">
+					<label class="lblNumero"></label>
+				</td>
+				<td class="ValidadeDua">
+					<label class="lblValidade"></label>
+				</td>
+				<td>
+					<a class="icone pdf btnPDF" title="PDF do DUA"></a>
+					<input type="hidden" value="0" class="hdnItemJson" />
+				</td>
+			</tr>
+		</tbody>
 	</table>
 </div>

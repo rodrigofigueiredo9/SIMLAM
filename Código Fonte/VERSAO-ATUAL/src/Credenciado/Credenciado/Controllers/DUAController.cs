@@ -43,24 +43,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 		#endregion
 
-		[Permite(RoleArray = new Object[] {  })]
-		public ActionResult Index(int id)
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioListar })]
+		public ActionResult Listar(int id)
 		{
 			DUAVM vm = new DUAVM();
 			vm.Titulo.Id = id;
 			vm.DuaLst = _bus.Obter(id);
+
+			if (vm.DuaLst.Count() == 0)
+			{
+				_bus.Emitir(id);
+				vm.DuaLst = _bus.Obter(id);
+			}
 
 			return View(vm);
 		}
 
-		[Permite(RoleArray = new Object[] { })]
-		public ActionResult EmitirDua(int id)
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioListar })]
+		public ActionResult ReemitirDua(string dua, int titulo)
 		{
-			DUAVM vm = new DUAVM();
-			vm.Titulo.Id = id;
-			vm.DuaLst = _bus.Obter(id);
+			_bus.Reemitir(dua);
+			var lista = _bus.Obter(titulo);
 
-			return View(vm);
+			return Json(new { @lstDua = lista, Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
 		}
 	}
 }

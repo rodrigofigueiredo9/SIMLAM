@@ -9,6 +9,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloDUA;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
@@ -47,13 +48,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 		{
 			List<Dua> retorno = new List<Dua>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioInterno))
 			{
 				#region Solicitação
 
-				Comando comando = bancoDeDados.CriarComando(@"", UsuarioCredenciado);
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT  D.ID, LPAD(D.ID, 4, '0') || ' - ' || TO_CHAR(D.DATAHORA,'DD/MM/YYYY') codigo,
+							D.VALORTOTALDUA valor, D.SITUACAO, D.NUMERODUA numero_dua, TO_CHAR(E.DATA_VENCIMENTO,'DD/MM/YYYY') validade,
+							E.CNPJ_PESSOA
+						FROM TAB_INFCORTE_SEFAZDUA D 
+							INNER JOIN TAB_INFCORTE_EMISSAO_DUA E ON E.ID = D.EMISSAO_DUA
+						WHERE TITULO = :titulo", UsuarioInterno);
 
-				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -62,9 +69,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						Dua dua = new Dua();
 						dua.Codigo = reader.GetValue<String>("codigo");
 						dua.Valor = reader.GetValue<Decimal>("valor");
-						dua.Situacao = reader.GetValue<String>("situacao");
+						dua.Situacao = (eSituacaoDua)reader.GetValue<int>("situacao");
+						dua.SituacaoTexto = ((eSituacaoDua)reader.GetValue<int>("situacao")).ToDescription();
 						dua.Numero = reader.GetValue<String>("numero_dua");
-						dua.Validade = reader.GetValue<DateTecno>("validade");
+						dua.Validade = new DateTecno() { Data = reader.GetValue<DateTime>("validade") };
+						dua.CpfCnpj = reader.GetValue<String>("cnpj_pessoa");
 
 						retorno.Add(dua);
 					}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -19,9 +20,25 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDUA
 		public List<Dua> DuaLst { get; set; }
 		public Titulo Titulo { get; set; }
 
+		public String ObterJSon(Dua dua)
+		{
+			object objeto = new
+			{
+				@codigo = dua.Codigo,
+				@valor = dua.Valor,
+				@numeroDua = dua.Numero,
+				@situacao = dua.Situacao,
+				@situacaoTexto = dua.SituacaoTexto,
+				@validade = dua.Validade,
+				@cpfCnpj = dua.CpfCnpj
+			};
+
+			return HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(objeto));
+		}
+
 		public DUAVM()
 		{
-			DuaLst = new List<Dua>();
+			Titulo = new Titulo();
 		}
 	}
 }
