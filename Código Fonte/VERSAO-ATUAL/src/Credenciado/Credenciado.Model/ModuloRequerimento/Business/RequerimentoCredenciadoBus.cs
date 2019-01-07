@@ -144,6 +144,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				req.SituacaoId = (int)eRequerimentoSituacao.EmAndamento;
 				req.Interessado.Id = requerimento.Interessado.Id;
 
+				req.Responsaveis = requerimento.Responsaveis;
+
 				if (_validar.InteressadoValidar(req))
 				{
 					GerenciadorTransacao.ObterIDAtual();
