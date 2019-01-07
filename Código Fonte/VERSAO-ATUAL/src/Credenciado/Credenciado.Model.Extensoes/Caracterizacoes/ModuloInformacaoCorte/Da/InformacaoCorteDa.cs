@@ -92,7 +92,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (var item in caracterizacao.InformacaoCorteLicenca)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+					insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
 					(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (var item in caracterizacao.InformacaoCorteTipo)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+					insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
 					(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
 					returning id into :tipo_id", EsquemaCredenciadoBanco);
 
@@ -133,9 +133,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					foreach (var destinacao in item.InformacaoCorteDestinacao)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
 						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-						(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
+						(select s.id from idaf.lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -169,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
@@ -193,7 +193,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id == 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+						insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
 						(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -223,7 +223,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id == 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+						insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
 						(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
 						returning id into :tipo_id", EsquemaCredenciadoBanco);
 
@@ -242,9 +242,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
-						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-						(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
+							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+							(select s.id from {1}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco, EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -284,12 +284,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					//Atualizar o tid para a nova ação
 					comando = bancoDeDados.CriarComandoPlSql(@"
-				begin
-					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
-					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaCredenciadoBanco);
+					begin
+						update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+						update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -303,11 +303,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					comando = bancoDeDados.CriarComandoPlSql(
 					@"begin
-					delete from {0}crt_informacao_corte c where c.id = :id;
-					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaCredenciadoBanco);
+						delete from {0}crt_informacao_corte c where c.id = :id;
+						delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					bancoDeDados.ExecutarNonQuery(comando);
