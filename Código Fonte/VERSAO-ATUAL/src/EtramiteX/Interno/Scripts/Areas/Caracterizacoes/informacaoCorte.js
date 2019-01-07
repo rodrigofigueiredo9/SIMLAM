@@ -24,6 +24,7 @@ InformacaoCorte = {
 		InformacaoCorte.container.delegate('.btnExcluirTipo', 'click', InformacaoCorte.excluir);
 		InformacaoCorte.container.delegate('.btnLimparTipo', 'click', InformacaoCorte.limparTipo);
 		InformacaoCorte.container.delegate('.btnAdicionarDestinacao', 'click', InformacaoCorte.adicionarDestinacao);
+		InformacaoCorte.container.delegate('.btnExcluirDestinacao', 'click', InformacaoCorte.excluir);
 		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
 		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
 		
