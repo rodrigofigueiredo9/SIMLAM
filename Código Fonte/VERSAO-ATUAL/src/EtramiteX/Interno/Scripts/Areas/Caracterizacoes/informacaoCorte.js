@@ -27,7 +27,8 @@ InformacaoCorte = {
 		InformacaoCorte.container.delegate('.btnExcluirDestinacao', 'click', InformacaoCorte.excluir);
 		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
 		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
-		
+		InformacaoCorte.container.delegate('.ddlDestinacaoMaterial', 'change', InformacaoCorte.carregarProdutos);
+
 		Aux.setarFoco(InformacaoCorte.container);
 
 		if (InformacaoCorte.settings.textoMerge) {
@@ -340,7 +341,7 @@ InformacaoCorte = {
 				return;
 			}
 
-			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
+			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index()]);
 			$(this).closest('tr').remove();
 			if (nextLinha.find('.tipoCorte').length > 0) return;
 
