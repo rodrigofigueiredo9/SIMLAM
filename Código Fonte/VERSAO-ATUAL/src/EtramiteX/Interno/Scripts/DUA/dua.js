@@ -53,29 +53,12 @@ Dua = {
 	},
 
 	gerarPdf: function () {
-		var itemId = $.parseJSON($(this).closest('tr').find('.itemJson').val()).Id;
+		var item = $.parseJSON($(this).closest('tr').find('.itemJson').val());
 		var numeroDua = item.numeroDua;
 		var cpfcnpj = item.cpfCnpj;
 
-		$.ajax({
-			url: Dua.urlGerarPDF + "/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj,
-			data: JSON.stringify({ dua: item.numeroDua, titulo: titulo }),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, CARSolicitacaoListar.container);
-				MasterPage.carregando(false);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				console.log(response);
-				//window.open(response)
-
-
-			}
-		});
+		var urlGerar = Dua.urlGerarPDF + "/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj;
+		Aux.downloadAjax("downloadPdfDua", urlGerar, null, 'get');
 	},
 
 	reemitirDua: function () {
@@ -100,8 +83,8 @@ Dua = {
 				$('.gridDua > tbody > tr:not(".trTemplate")').remove();
 
 				$.each(response.lstDua, function (i, item) {
-					//.forEach(function (item) {
-					var linha = $('.trTemplate', tabela).clone();
+				//.forEach(function (item) {
+					var linha = $('.trTemplate', tabela).clone();	
 					$(linha).removeClass('hide trTemplate');
 
 					//adicionar na grid
@@ -114,8 +97,8 @@ Dua = {
 
 					$('tbody', tabela).append(linha);
 				});
-
-
+				
+				
 			}
 		});
 		MasterPage.carregando(false);

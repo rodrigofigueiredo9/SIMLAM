@@ -14,9 +14,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloDUA
 	{
 		public String Codigo { get; set; }
 		public Decimal Valor { get; set; }
-		public String Situacao { get; set; }
+		public eSituacaoDua Situacao { get; set; }
+		public String SituacaoTexto { get; set; }
 		public String Numero { get; set; }
 		public DateTecno Validade { get; set; }
+		public String CpfCnpj { get; set; }
 
 
 		public Dua(){ }

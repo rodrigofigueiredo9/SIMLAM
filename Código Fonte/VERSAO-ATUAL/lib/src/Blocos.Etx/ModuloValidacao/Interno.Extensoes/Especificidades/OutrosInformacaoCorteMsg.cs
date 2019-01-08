@@ -32,5 +32,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		public Mensagem ValidadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Validade obrigatória." }; } }
+		public Mensagem ExisteDuaTitulo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível editar esse título, porque todos os DUAS para esse título já foram emitidos." }; } }
 	}
 }

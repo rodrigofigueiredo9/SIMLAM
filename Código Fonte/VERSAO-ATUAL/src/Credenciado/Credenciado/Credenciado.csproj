@@ -1124,7 +1124,7 @@
     <Content Include="Views\CFO\Index.aspx" />
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
-    <Content Include="Views\DUA\EmitirDua.aspx" />
+    <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoInlineCorte.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoPartialCorte.ascx" />

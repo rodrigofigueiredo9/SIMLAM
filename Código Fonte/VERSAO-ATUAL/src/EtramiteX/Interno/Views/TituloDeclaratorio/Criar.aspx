@@ -37,7 +37,7 @@
 					botoes: [
 						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() })%>' },
 						{ label: 'Editar', url: '<%= Url.Action("Editar", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() })%>' },
-						{ label: 'Emitir DUA', url: '<%= Url.Action("EmitirDua", "DUA", new { id = Request.Params["acaoId"].ToString() })%>' }
+						{ label: 'Emitir DUA', url: '<%= Url.Action("Listar", "DUA", new { id = Request.Params["acaoId"].ToString() })%>' }
 					]
 					});
 			<% }

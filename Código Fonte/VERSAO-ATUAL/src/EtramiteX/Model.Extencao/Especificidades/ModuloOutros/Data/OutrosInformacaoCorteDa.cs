@@ -320,6 +320,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			}
 		}
 
+		internal bool ExisteDuaTitulo(int titulo)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT count(1) FROM TAB_INFCORTE_SEFAZDUA WHERE TITULO = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+
+			}
+		}
+
 		#endregion
 	}
 }
