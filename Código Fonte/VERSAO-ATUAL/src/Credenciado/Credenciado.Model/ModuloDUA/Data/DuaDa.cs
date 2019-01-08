@@ -88,5 +88,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 			return retorno;
 		}
 		
+		internal bool ExisteDuaTitulo(int titulo)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT count(1) FROM TAB_INFCORTE_SEFAZDUA WHERE TITULO = :titulo");
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+
+			}
+		}
+
 	}
 }

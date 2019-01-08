@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
@@ -202,6 +203,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			if (titulo.Modelo.SituacaoId != (int)eTituloModeloSituacao.Ativo)
 			{
 				Validacao.Add(Mensagem.Titulo.ModeloDesativado);
+			}
+
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+			{
+				DuaValidar _dua = new DuaValidar();
+				_dua.ExisteDuaTituloCorte(titulo.Id);
 			}
 
 			return Validacao.EhValido;
