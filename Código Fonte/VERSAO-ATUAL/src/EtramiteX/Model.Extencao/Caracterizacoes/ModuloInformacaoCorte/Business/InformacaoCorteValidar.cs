@@ -36,10 +36,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			foreach(var item in caracterizacao.InformacaoCorteLicenca)
 			{
 				if (!item.DataVencimento.IsValido)
-				{
-					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida);
-					return Validacao.EhValido;
-				}
+					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
 			}
 
 			return Validacao.EhValido;
