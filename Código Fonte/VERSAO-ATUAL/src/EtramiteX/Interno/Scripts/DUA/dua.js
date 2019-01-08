@@ -58,26 +58,7 @@ Dua = {
 		var cpfcnpj = item.cpfCnpj;
 
 		var urlGerar = Dua.urlGerarPDF + "/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj;
-
-		$.ajax({
-			url: urlGerar,
-			cache: false,
-			async: false,
-			type: 'GET',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, Dua.container);
-				MasterPage.carregando(false);
-			},
-			success: function (response) {
-				debugger;
-				console.log(response);
-				window.open(response)
-
-
-			}
-		});
+		Aux.downloadAjax("downloadPdfDua", urlGerar, null, 'get');
 	},
 
 	reemitirDua: function () {

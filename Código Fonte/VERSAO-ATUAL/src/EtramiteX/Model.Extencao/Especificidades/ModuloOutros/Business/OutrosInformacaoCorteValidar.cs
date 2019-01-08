@@ -8,9 +8,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 {
 	public class OutrosInformacaoCorteValidar : EspecificidadeValidarBase, IEspecificiadeValidar
 	{
+		OutrosInformacaoCorteDa _da = new OutrosInformacaoCorteDa();
+
 		public bool Salvar(IEspecificidade especificidade)
 		{
-			OutrosInformacaoCorteDa _da = new OutrosInformacaoCorteDa();
 			var esp = especificidade as OutrosInformacaoCorte;
 
 			if (especificidade.RequerimentoId <= 0)
@@ -36,6 +37,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			//}
 
 			return Salvar(especificidade);
+		}
+
+		public void ExisteDuaTitulo(int titulo)
+		{
+			if(_da.ExisteDuaTitulo(titulo))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.ExisteDuaTitulo);
 		}
 	}
 }

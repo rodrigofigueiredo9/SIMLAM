@@ -73,7 +73,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						dua.SituacaoTexto = ((eSituacaoDua)reader.GetValue<int>("situacao")).ToDescription();
 						dua.Numero = reader.GetValue<String>("numero_dua");
 						dua.Validade = new DateTecno() { Data = reader.GetValue<DateTime>("validade") };
-						dua.CpfCnpj = reader.GetValue<String>("cnpj_pessoa");
+						dua.CpfCnpj = reader.GetValue<String>("cnpj_pessoa").Replace("-", "").Replace("/", "").Replace(".", "");
 
 						retorno.Add(dua);
 					}
@@ -87,5 +87,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 			return retorno;
 		}
 
+		internal bool ExisteDuaTitulo(int titulo)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT count(1) FROM TAB_INFCORTE_SEFAZDUA WHERE TITULO = :titulo");
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+
+			}
+		}
 	}
 }
