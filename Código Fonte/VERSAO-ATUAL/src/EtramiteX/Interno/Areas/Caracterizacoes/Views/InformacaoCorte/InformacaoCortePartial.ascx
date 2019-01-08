@@ -62,7 +62,7 @@
 					<%= Html.TextBox("InformacaoCorte_Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade", @maxlength = "250"}))%>
 				</div>
 
-				<div class="coluna17">
+				<div class="coluna18">
 					<label>Área Licenciada / Plantada (ha) *</label>
 					<%= Html.TextBox("InformacaoCorte_AreaLicenciada", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaLicenciada", @maxlength = "12"}))%>
 				</div>
