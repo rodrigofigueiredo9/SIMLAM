@@ -27,6 +27,7 @@
 		public Mensagem AtividadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Atividade", Texto = @"Atividade é obrigatória." }; } }
 		public Mensagem AreaLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_AreaLicenciada", Texto = @"Área Licenciada / Plantada (ha) é obrigatória." }; } }
 		public Mensagem DataVencimentoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DataVencimento", Texto = @"Data de Vencimento é obrigatória." }; } }
+		public Mensagem DataVencimentoInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DataVencimento", Texto = @"Data de Vencimento inválida." }; } }
 
 		#endregion
 

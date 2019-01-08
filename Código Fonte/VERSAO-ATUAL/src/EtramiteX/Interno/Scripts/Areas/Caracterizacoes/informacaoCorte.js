@@ -383,7 +383,7 @@ InformacaoCorte = {
 				previousRow.find('.areaCorte').parent().attr('rowspan', rowspan - 1);
 				previousRow.find('.idadePlantio').parent().attr('rowspan', rowspan - 1);
 			} else {
-				InformacaoCorte.downRowspan(previousRow.index());
+				InformacaoCorte.downRowspan(index - 1);
 			}
 		}
 	},

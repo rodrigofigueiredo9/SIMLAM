@@ -179,6 +179,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				{
 					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
 					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.PodeExcluir = false;
 				}
 				else
 				{
