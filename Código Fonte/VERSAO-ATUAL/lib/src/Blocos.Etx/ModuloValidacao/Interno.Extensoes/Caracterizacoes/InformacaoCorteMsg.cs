@@ -15,9 +15,11 @@
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte excluída com sucesso." }; } }
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Excluir caracterização Informação de Corte?" }; } }
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte salva com sucesso." }; } }
+		public Mensagem ProibidoCriar { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível incluir Informação de Corte para o empreendimento, pois possui informação(s) de corte em aberto." }; } }
 
-		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
-		public Mensagem Declaracao2Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorteInformacao_ResponsavelPelasDeclaracoes", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
+		public Mensagem AreaPlantadaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_AreaPlantada", Texto = @"Área de Floresta Plantada é obrigatória." }; } }
+		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
+		public Mensagem Declaracao2Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_ResponsavelPelasDeclaracoes", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
 
 		#region Licenca
 

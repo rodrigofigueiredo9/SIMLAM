@@ -24,6 +24,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			if (!Acessar(caracterizacao.Empreendimento.Id))
 				return false;
 
+			if (caracterizacao.AreaFlorestaPlantada == 0)
+				Validacao.Add(Mensagem.InformacaoCorte.AreaPlantadaObrigatoria);
+
 			if (caracterizacao.AreaFlorestaPlantada > 100)
 			{
 				if (caracterizacao.InformacaoCorteLicenca.Count < 1)

@@ -450,6 +450,10 @@ InformacaoCorte = {
 		var msgValidacao = [];
 		var objeto = InformacaoCorte.obter();
 
+		if (objeto.AreaFlorestaPlantada <= 0) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.AreaPlantadaObrigatoria);
+		}
+
 		if (!$('.ckbDeclaracaoVerdadeira', container).prop('checked')) {
 			msgValidacao.push(InformacaoCorte.settings.mensagens.Declaracao1Obrigatoria);
 		}
