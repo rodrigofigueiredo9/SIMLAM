@@ -119,7 +119,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@TipoLicencaObrigatoria = Mensagem.InformacaoCorte.TipoLicencaObrigatoria,
 					@AtividadeObrigatoria = Mensagem.InformacaoCorte.AtividadeObrigatoria,
 					@AreaLicencaObrigatoria = Mensagem.InformacaoCorte.AreaLicencaObrigatoria,
-					@DataVencimentoObrigatoria = Mensagem.InformacaoCorte.DataVencimentoObrigatoria
+					@DataVencimentoObrigatoria = Mensagem.InformacaoCorte.DataVencimentoObrigatoria,
+					@AreaPlantadaObrigatoria = Mensagem.InformacaoCorte.AreaPlantadaObrigatoria
 				});
 			}
 		}

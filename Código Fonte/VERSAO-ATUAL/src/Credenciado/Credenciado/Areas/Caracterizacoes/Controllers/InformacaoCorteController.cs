@@ -42,6 +42,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			if (!_validar.Acessar(id, projetoDigitalId))
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
+			if (!_informacaoCorteBus.ValidarCriar(id))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>())

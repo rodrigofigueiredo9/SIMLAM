@@ -37,7 +37,7 @@
             </div>
             <div class="coluna20 ">
                 <label>Área de Floresta Plantada *</label>
-                <%= Html.TextBox("AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
+                <%= Html.TextBox("InformacaoCorte_AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
             </div>
         </div>
     </fieldset>
