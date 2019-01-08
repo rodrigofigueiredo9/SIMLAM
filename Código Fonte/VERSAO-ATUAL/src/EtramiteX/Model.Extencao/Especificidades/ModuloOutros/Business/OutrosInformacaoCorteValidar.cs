@@ -38,11 +38,5 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 			return Salvar(especificidade);
 		}
-
-		public void ExisteDuaTitulo(int titulo)
-		{
-			if(_da.ExisteDuaTitulo(titulo))
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.ExisteDuaTitulo);
-		}
 	}
 }
