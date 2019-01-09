@@ -29,6 +29,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		TituloInternoDa _da = new TituloInternoDa();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 		GerenciadorConfiguracao<ConfiguracaoTitulo> _configTitulo = new GerenciadorConfiguracao<ConfiguracaoTitulo>(new ConfiguracaoTitulo());
+		public List<int> listaSituacoesAceitas = new List<int>() { (int)eTituloSituacao.EmCadastro, (int)eTituloSituacao.AguardandoPagamento };
 
 		public List<int> ModeloCodigosPendencia
 		{
@@ -142,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		{
 			Titulo(titulo);
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				if (String.IsNullOrEmpty(titulo.Situacao.Texto) && titulo.Situacao.Id > 0)
 				{
@@ -193,7 +194,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				return false;
 			}
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				Validacao.Add(Mensagem.Titulo.SituacaoEditar(titulo.Situacao.Texto));
 				return false;

@@ -23,8 +23,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			if (esp.InformacaoCorte <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 
-			if (esp.Validade < 20 || esp.Validade > 180)
+			if (esp.Validade <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);
+			if (esp.Validade < 20 || esp.Validade > 180)
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeIntervalo);
 
 			return Validacao.EhValido;
 		}

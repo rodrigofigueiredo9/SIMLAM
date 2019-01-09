@@ -593,7 +593,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				/*SELECT id, concat(concat(lpad(id, 4, '0'), '-'), data_informacao) informacaoCorte FROM crt_informacao_corte;*/
 					SELECT ID, (LPAD(ID, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
 						FROM {0}CRT_INFORMACAO_CORTE CRT WHERE EMPREENDIMENTO = :empreendimento
-					/*AND ID NOT IN (SELECT ID FROM TAB_EMPREENDIMENTO E WHERE CRT.ID = E.ID)*/", EsquemaCredenciadoBanco);
+					AND ID NOT IN (
+						SELECT C.INFORMACAO_CORTE FROM ESP_OUT_INFORMACAO_CORTE
+							C WHERE C.CRT_INFORMACAO_CORTE = CRT.ID)", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -624,7 +626,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Comando comando = bancoDeDados.CriarComando(@"
 				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
 					FROM {0}CRT_INFORMACAO_CORTE CRT 
-					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.INFORMACAO_CORTE
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.CRT_INFORMACAO_CORTE
 				WHERE INF.TITULO = :titulo", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
@@ -688,7 +690,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
-					and not exists(select 1 from {0}esp_out_informacao_corte e where e.informacao_corte = t.id and e.validade is not null)", EsquemaCredenciadoBanco);
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id)", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
