@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						comando = bancoDeDados.CriarComando(@"
 						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
 						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-						(select s.id from idaf.lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
+						(select s.id from {0}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -244,7 +244,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							comando = bancoDeDados.CriarComando(@"
 							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
 							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-							(select s.id from {1}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco, EsquemaBanco);
+							(select s.id from {0}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -648,17 +648,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal List<Lista> ObterProdutos(int destinacaoId)
+		internal List<Lista> ObterProdutos(int destinacaoId, BancoDeDados banco = null)
 		{
 			List<Lista> retorno = new List<Lista>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 				select s.inf_corte_produto, p.texto from {0}lov_inf_codigo_sefaz s
-				inner join lov_crt_produto_inf_corte p
+				inner join {0}lov_crt_produto_inf_corte p
 				on (p.id = s.inf_corte_produto)
-				where inf_destinacao_material = :inf_destinacao_material", EsquemaBanco);
+				where inf_destinacao_material = :inf_destinacao_material", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("inf_destinacao_material", destinacaoId, DbType.Int32);
 
