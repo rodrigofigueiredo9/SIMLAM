@@ -652,6 +652,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			});
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVCriar, ePermissao.DestinatarioPTVEditar })]
+		public ActionResult VerificarDestinatarioExportacao(string nomeRazaoSocial)
+		{
+			DestinatarioPTVValidar validar = new DestinatarioPTVValidar();
+			validar.VerificarExportacao(nomeRazaoSocial.Trim());
+
+			if (Validacao.EhValido)
+			{
+				Validacao.Add(Mensagem.DestinatarioPTV.ExportacaoNaoAssociado);
+			}
+
+			return Json(new
+			{
+				@Valido = Validacao.EhValido,
+				@Erros = Validacao.Erros
+			});
+		}
+
 		#endregion
 
 		#endregion

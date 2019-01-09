@@ -242,6 +242,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
+		internal int ObterIdExportacao(String nomeRazaoSocial, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select p.id from {0}tab_destinatario_ptv p where p.tipo_pessoa = 3 and upper(p.nome) = :nome", EsquemaBanco);
+				comando.AdicionarParametroEntrada("nome", DbType.String, 80, nomeRazaoSocial);
+
+				object retorno = bancoDeDados.ExecutarScalar(comando);
+
+				return (retorno != null && !Convert.IsDBNull(retorno)) ? Convert.ToInt32(retorno) : 0;
+			}
+		}
+
 		/// <summary>
 		///	Recebe o ID do destinatário e retorna Verdadeiro se houver Associado ao PTV.
 		/// </summary>

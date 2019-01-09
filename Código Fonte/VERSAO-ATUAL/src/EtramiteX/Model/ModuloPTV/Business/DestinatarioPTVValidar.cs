@@ -98,5 +98,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			return Validacao.EhValido;
 		}
+
+		public bool VerificarExportacao(string nomeRazaoSocial)
+		{
+			if (string.IsNullOrEmpty(nomeRazaoSocial))
+			{
+				Validacao.Add(Mensagem.DestinatarioPTV.NomeObrigatorio);
+			}
+
+			if (!Validacao.EhValido)
+			{
+				return false;
+			}
+
+			int destinatarioId = _da.ObterIdExportacao(nomeRazaoSocial);
+
+			if (destinatarioId > 0)
+			{
+				Validacao.Add(Mensagem.DestinatarioPTV.ExportacaoDestinatarioJaExiste);
+			}
+
+			return Validacao.EhValido;
+		}
 	}
 }

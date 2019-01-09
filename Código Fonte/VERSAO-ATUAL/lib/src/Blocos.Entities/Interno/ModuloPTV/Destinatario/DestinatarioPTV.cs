@@ -21,5 +21,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV.Destinatario
 		public int MunicipioID { get; set; }
 		public string MunicipioTexto { get; set; }
 		public string Itinerario { get; set; }
+		public string Pais { get; set; }
 	}
 }
