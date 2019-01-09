@@ -336,10 +336,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				return false;
 			}
 
-			if (caracterizacao.Posses == null || caracterizacao.Posses.Count <= 0)
-			{
-				Validacao.Add(Mensagem.RegularizacaoFundiaria.PossesObrigatorio);
-			}
+			//if (caracterizacao.Posses == null || caracterizacao.Posses.Count <= 0)
+			//{
+			//	Validacao.Add(Mensagem.RegularizacaoFundiaria.PossesObrigatorio);
+			//}
 
 			return Validacao.EhValido;
 		}
