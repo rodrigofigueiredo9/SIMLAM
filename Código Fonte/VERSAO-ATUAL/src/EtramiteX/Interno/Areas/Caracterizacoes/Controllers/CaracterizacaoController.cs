@@ -142,6 +142,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				if (x.Tipo == eCaracterizacao.InformacaoCorte)
 				{
+					x.PodeExcluir = false;
 					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
 					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
 					x.UrlExcluir = Url.Action("Listar", x.Tipo.ToString());

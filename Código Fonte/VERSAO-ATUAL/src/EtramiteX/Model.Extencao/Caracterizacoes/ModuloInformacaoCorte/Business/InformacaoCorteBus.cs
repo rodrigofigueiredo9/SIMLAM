@@ -170,7 +170,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return caracterizacao;
 		}
 
-
 		public List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false, BancoDeDados banco = null)
 		{
 			List<InformacaoCorte> caracterizacao = null;
@@ -243,7 +242,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return retorno;
 		}
 
+		public List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterProdutos(destinacaoId);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
 		#endregion
+
+		public bool ValidarCriar(int empreendimentoId)
+		{
+			try
+			{
+				if (_da.PossuiCaracterizacaoEmAberto(empreendimentoId))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoCriar);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
 
 		public InformacaoCorte MergiarGeo(InformacaoCorte caracterizacaoAtual)
 		{

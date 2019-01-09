@@ -177,13 +177,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				if (x.Tipo == eCaracterizacao.InformacaoCorte)
 				{
-					x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());
-					x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.PodeExcluir = false;
 				}
 				else
 				{
-					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
-					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 				}
 				x.UrlExcluirConfirm = Url.Action("ExcluirConfirm", x.Tipo.ToString());
 				x.UrlExcluir = Url.Action("Excluir", x.Tipo.ToString());

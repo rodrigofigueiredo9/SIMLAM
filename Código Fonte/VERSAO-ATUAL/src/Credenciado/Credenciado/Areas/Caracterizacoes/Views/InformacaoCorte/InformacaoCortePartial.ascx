@@ -37,7 +37,7 @@
             </div>
             <div class="coluna20 ">
                 <label>Área de Floresta Plantada *</label>
-                <%= Html.TextBox("AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
+                <%= Html.TextBox("InformacaoCorte_AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
             </div>
         </div>
     </fieldset>
@@ -62,7 +62,7 @@
 					<%= Html.TextBox("InformacaoCorte_Atividade", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text atividade", @maxlength = "250"}))%>
 				</div>
 
-				<div class="coluna17">
+				<div class="coluna18">
 					<label>Área Licenciada / Plantada (ha) *</label>
 					<%= Html.TextBox("InformacaoCorte_AreaLicenciada", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaLicenciada", @maxlength = "12"}))%>
 				</div>
@@ -188,15 +188,15 @@
 					<fieldset class="block box">
 						<div class="coluna20 append1">
 							<label>Destinação do Material *</label>
-							<%= Html.DropDownList("InformacaoCorte_DestinacaoMaterial", Model.InformacaoCorteDestinacao.DestinacaoMaterial, ViewModelHelper.SetaDisabled(true, new { @class = "text destinacaoMaterial"}))%>
+							<%= Html.DropDownList("InformacaoCorte_DestinacaoMaterial", Model.InformacaoCorteDestinacao.DestinacaoMaterial, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlDestinacaoMaterial"}))%>
 						</div>
 						<div class="coluna20 append1">
 							<label>Produto *</label>
-							<%= Html.DropDownList("InformacaoCorte_Produto", Model.InformacaoCorteDestinacao.Produto, ViewModelHelper.SetaDisabled(true, new { @class = "text produto"}))%>
+							<%= Html.DropDownList("InformacaoCorte_Produto", Model.InformacaoCorteDestinacao.Produto, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlProduto"}))%>
 						</div>
 						<div class="coluna20 append2">
 							<label>Quantidade *</label>
-							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto quantidade"}))%>
+							<%= Html.TextBox("InformacaoCorte_Quantidade", string.Empty, ViewModelHelper.SetaDisabled(true, new { @class = "text maskInteger txtQuantidade", @maxlenght = "10"}))%>
 						</div>
 						<div class="coluna10">
 							<br />
@@ -272,7 +272,7 @@
                                 <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
                             </td>
                             <td>
-                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToStringTrunc(2))%>"><%= Html.Encode(item.Quantidade.ToStringTrunc())%></span>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToString("N0"))%>"><%= Html.Encode(item.Quantidade.ToString("N0"))%></span>
                             </td>
 							<% if(!Model.IsVisualizar) { %>
 								<td class="tdAcoes">

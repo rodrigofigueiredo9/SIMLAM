@@ -56,6 +56,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (caracterizacao.InformacaoCorteTipo.Count < 1)
 				Validacao.Add(Mensagem.InformacaoCorte.InformacaoCorteListaObrigatorio);
 
+			foreach (var item in caracterizacao.InformacaoCorteLicenca)
+			{
+				if (!item.DataVencimento.IsValido)
+					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
+			}
+
 			return Validacao.EhValido;
 		}
 

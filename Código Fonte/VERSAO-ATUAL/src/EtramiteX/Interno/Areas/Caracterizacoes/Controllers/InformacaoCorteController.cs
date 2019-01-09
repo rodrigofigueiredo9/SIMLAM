@@ -34,8 +34,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (!_validar.Acessar(id))
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
+			if (!_informacaoCorteBus.ValidarCriar(id))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
-			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
 				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>());
 
 			return View(informacaoCorteVM);
@@ -57,7 +60,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
-			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
 				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
 				IsPodeExcluir = true
@@ -100,7 +103,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
-			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosExploracao,
+			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
 				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
 				IsVisualizar = true
@@ -161,5 +164,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		#endregion
+
+		public ActionResult ObterProdutos(int destinacaoId) => Json(_informacaoCorteBus.ObterProdutos(destinacaoId), JsonRequestBehavior.AllowGet);
 	}
 }

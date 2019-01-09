@@ -220,6 +220,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return retorno;
 		}
 
+		public List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterProdutos(destinacaoId);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
 		#endregion
 
 		#region Caracterizacao
@@ -245,5 +259,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		}
 
 		#endregion
+
+		public bool ValidarCriar(int empreendimentoId)
+		{
+			try
+			{
+				if (_da.PossuiCaracterizacaoEmAberto(empreendimentoId))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoCriar);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
 	}
 }

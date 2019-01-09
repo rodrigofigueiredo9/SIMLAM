@@ -92,7 +92,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (var item in caracterizacao.InformacaoCorteLicenca)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+					insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
 					(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				foreach (var item in caracterizacao.InformacaoCorteTipo)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+					insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
 					(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
 					returning id into :tipo_id", EsquemaCredenciadoBanco);
 
@@ -133,13 +133,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					foreach (var destinacao in item.InformacaoCorteDestinacao)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade) values
-						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade)", EsquemaCredenciadoBanco);
+						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+						(select s.id from idaf.lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
 						comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
-						comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Decimal);
+						comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
@@ -168,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
@@ -192,7 +193,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id == 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+						insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
 						(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -222,7 +223,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (item.Id == 0)
 					{
 						comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+						insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
 						(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
 						returning id into :tipo_id", EsquemaCredenciadoBanco);
 
@@ -241,13 +242,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"
-						insert into crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade) values
-						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade)", EsquemaCredenciadoBanco);
+							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+							(select s.id from {1}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco, EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
 							comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
-							comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Decimal);
+							comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
 							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 							bancoDeDados.ExecutarNonQuery(comando);
@@ -282,12 +284,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					//Atualizar o tid para a nova ação
 					comando = bancoDeDados.CriarComandoPlSql(@"
-				begin
-					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
-					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaCredenciadoBanco);
+					begin
+						update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+						update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -301,11 +303,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					comando = bancoDeDados.CriarComandoPlSql(
 					@"begin
-					delete from {0}crt_informacao_corte c where c.id = :id;
-					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaCredenciadoBanco);
+						delete from {0}crt_informacao_corte c where c.id = :id;
+						delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -485,8 +487,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, lv.texto as dest_material_texto,
-							lvp.texto as produto_texto
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz,
+							lv.texto as dest_material_texto, lvp.texto as produto_texto
 						from {0}crt_inf_corte_dest_material c
 						left join {1}lov_crt_inf_corte_inf_dest_mat lv
 							on(c.dest_material = lv.id)
@@ -509,7 +511,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
 									Produto = readerDestinacao.GetValue<int>("produto"),
 									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
-									Quantidade = readerDestinacao.GetValue<int>("quantidade")
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
 								});
 							}
 
@@ -645,6 +648,51 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+		internal List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select s.inf_corte_produto, p.texto from {0}lov_inf_codigo_sefaz s
+				inner join lov_crt_produto_inf_corte p
+				on (p.id = s.inf_corte_produto)
+				where inf_destinacao_material = :inf_destinacao_material", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("inf_destinacao_material", destinacaoId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("inf_corte_produto");
+						item.Texto = reader.GetValue<string>("texto");
+						item.IsAtivo = true;
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
 		#endregion
+
+		internal bool PossuiCaracterizacaoEmAberto(int empreendimentoId, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.informacao_corte = t.id and e.validade is not null)", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
 	}
 }

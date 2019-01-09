@@ -14,6 +14,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public Int32 Produto { get; set; }
 		public String ProdutoTexto { get; set; }
 
-		public Decimal Quantidade { get; set; }
+		public Int32 Quantidade { get; set; }
+		public Int32 CodigoSefazId { get; set; }
 	}
 }

@@ -24,6 +24,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			if (!Acessar(caracterizacao.Empreendimento.Id))
 				return false;
 
+			if (caracterizacao.AreaFlorestaPlantada == 0)
+				Validacao.Add(Mensagem.InformacaoCorte.AreaPlantadaObrigatoria);
+
 			if (caracterizacao.AreaFlorestaPlantada > 100)
 			{
 				if (caracterizacao.InformacaoCorteLicenca.Count < 1)
@@ -32,6 +35,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 			if (caracterizacao.InformacaoCorteTipo.Count < 1)
 				Validacao.Add(Mensagem.InformacaoCorte.InformacaoCorteListaObrigatorio);
+
+			foreach(var item in caracterizacao.InformacaoCorteLicenca)
+			{
+				if (!item.DataVencimento.IsValido)
+					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
+			}
 
 			return Validacao.EhValido;
 		}
