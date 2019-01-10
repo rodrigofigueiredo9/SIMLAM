@@ -30,7 +30,7 @@
 
 					<%if (true){%><input type="button" title="PDF do DUA" class="icone pdf btnPDF" /><% } %>
 					<%--<%if (item.Situacao == eSituacaoDua.Vencido){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>--%>
-					<%if (true){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>
+					<%if (true){%><input type="button" title="Reemitir DUA" class="icone dolar btnReemitir" /><% } %>
 				</td>
 			</tr>
 		<% } %>

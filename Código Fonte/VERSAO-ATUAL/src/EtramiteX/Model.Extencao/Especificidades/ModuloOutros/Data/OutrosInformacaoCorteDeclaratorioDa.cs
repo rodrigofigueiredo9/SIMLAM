@@ -62,7 +62,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				if (id != null && !Convert.IsDBNull(id))
 				{
 					comando = bancoDeDados.CriarComando(@"update esp_out_informacao_corte t set
-					t.informacao_corte = :informacao_corte,
+					t.crt_informacao_corte = :informacao_corte,
 					t.validade = :validade,
 					t.tid = :tid where t.titulo = :titulo", EsquemaBanco);
 
@@ -72,8 +72,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				else
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into esp_out_informacao_corte (id, tid, titulo, informacao_corte, validade)
-					values (seq_esp_out_informacao_corte.nextval, :tid, :titulo, :informacao_corte, :validade) returning id into :id", EsquemaBanco);
+					insert into esp_out_informacao_corte (id, tid, titulo, crt_informacao_corte, validade, informacao_corte)
+					values (seq_esp_out_informacao_corte.nextval, :tid, :titulo, :informacao_corte, :validade, 0) returning id into :id", EsquemaBanco);
 
 					acao = eHistoricoAcao.criar;
 					comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -158,7 +158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					e.id Id,
 					e.tid Tid,
 					tta.atividade Atividade,
-					e.informacao_corte InformacaoCorte,
+					e.crt_informacao_corte InformacaoCorte,
 					e.validade Validade,
 					tt.requerimento RequerimentoId,
 					(case when tt.credenciado is null then (select nvl(p.nome, p.razao_social) from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = tt.requerimento) else 
@@ -253,7 +253,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 								where d.id = dd.dominialidade and d.empreendimento = e.id)) area_croqui,
 						(case ee.zona when 1 then 'Zona Urbana' when 2 then 'Zona Rural' end) zona,
 						(select max(c.area_flor_plantada) from {0}crt_informacao_corte c inner join esp_out_informacao_corte es 
-						  on c.id = es.informacao_corte where es.titulo = :titulo) area_plantada
+						  on c.id = es.crt_informacao_corte where es.titulo = :titulo) area_plantada
 						
 					from {0}tab_empreendimento e
 					inner join {0}tab_empreendimento_endereco ee on e.id = ee.empreendimento
@@ -295,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					select  oic.titulo, ict.tipo_corte, ict.especie, ict.area_corte, ict.idade_plantio, icd.dest_material,
 					lvd.texto dest_mat, lvp.texto produto, icd.quantidade
 						from {0}crt_informacao_corte ic
-							inner join esp_out_informacao_corte       oic on ic.id = oic.informacao_corte
+							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte
 							inner join {0}crt_inf_corte_tipo             ict on ic.id = ict.corte_id
 							inner join {0}crt_inf_corte_dest_material    icd on ict.id = icd.tipo_corte_id
 							inner join lov_crt_inf_corte_inf_dest_mat lvd on lvd.id = icd.dest_material
