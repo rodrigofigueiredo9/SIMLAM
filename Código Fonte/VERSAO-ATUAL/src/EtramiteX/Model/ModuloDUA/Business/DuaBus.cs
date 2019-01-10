@@ -63,10 +63,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 			{
 				RequestJson requestJson = new RequestJson();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["emitirDua"]}/{titulo}";
+				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/EmitirDuaSefaz/titulo/{titulo}";
 				var strResposta = requestJson.Executar(urlGerar);
 				var resposta = requestJson.Deserializar<dynamic>(strResposta);
+				if(resposta["sucess"] != true)
+					Validacao.AddAdvertencia("Não foi possível emitir o DUA");
 				return resposta;
+
 			}
 			catch (Exception exc)
 			{
@@ -82,7 +85,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 			{
 				RequestJson requestJson = new RequestJson();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["reemitirDua"]}/{dua}";
+				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/RemitirDuaSefaz/NumeroDua/{dua}";
 				var strResposta = requestJson.Executar(urlGerar);
 				var resposta = requestJson.Deserializar<dynamic>(strResposta);
 				return resposta;

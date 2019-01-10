@@ -239,6 +239,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 						item.Id = comando.ObterValorParametro<int>("tipo_id");
 
+						comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id = :tipo_corte_id ", EsquemaCredenciadoBanco);
+						comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, item.InformacaoCorteDestinacao.Where(x => x.Id > 0).Select(y => y.Id).ToList());
+						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
+						bancoDeDados.ExecutarNonQuery(comando);
+
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"

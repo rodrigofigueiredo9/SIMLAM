@@ -31,9 +31,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
 
-			if (!_validar.Acessar(id))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
-
 			if (!_informacaoCorteBus.ValidarCriar(id))
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
@@ -55,9 +52,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
@@ -98,9 +92,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,

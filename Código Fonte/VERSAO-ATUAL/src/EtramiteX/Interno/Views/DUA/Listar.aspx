@@ -9,7 +9,7 @@
 	<script>
 		$(function () {
 			
-			Dua.urlGerarPDF = '<%= System.Configuration.ConfigurationManager.AppSettings["gerarPdfDua"].ToString() %>';
+			Dua.urlGerarPDF = '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString() %>';
 			Dua.urlReemitirDUA = '<%= Url.Action("ReemitirDua", "DUA") %>';
 			Dua.load($('#central'));
 			
