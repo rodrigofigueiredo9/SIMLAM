@@ -39,9 +39,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-
 			if (!_informacaoCorteBus.ValidarCriar(id))
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
@@ -64,9 +61,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var caracterizacao = _informacaoCorteBus.Obter(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
@@ -106,9 +100,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var caracterizacao = _informacaoCorteBus.Obter(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);

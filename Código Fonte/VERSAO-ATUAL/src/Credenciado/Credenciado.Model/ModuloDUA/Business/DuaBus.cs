@@ -63,7 +63,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			{
 				RequestJson requestJson = new RequestJson();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["emitirDua"]}/{titulo}";
+				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/EmitirDuaSefaz/titulo/{titulo}";
 				var strResposta = requestJson.Executar(urlGerar);
 				var resposta = requestJson.Deserializar<dynamic>(strResposta);
 				return resposta;
@@ -82,7 +82,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			{
 				RequestJson requestJson = new RequestJson();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["reemitirDua"]}/{dua}";
+				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/RemitirDuaSefaz/NumeroDua/{dua}";
 				var strResposta = requestJson.Executar(urlGerar);
 				var resposta = requestJson.Deserializar<dynamic>(strResposta);
 				return resposta;
