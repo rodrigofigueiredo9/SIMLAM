@@ -53,6 +53,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
 
+			if (!_informacaoCorteBus.ValidarEditar(id))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
 				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
