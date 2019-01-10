@@ -66,14 +66,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/EmitirDuaSefaz/titulo/{titulo}";
 				var strResposta = requestJson.Executar(urlGerar);
 				var resposta = requestJson.Deserializar<dynamic>(strResposta);
-				if(resposta["sucess"] != true)
-					Validacao.AddAdvertencia("Não foi possível emitir o DUA");
+				
 				return resposta;
 
 			}
 			catch (Exception exc)
 			{
-				Validacao.AddErro(exc);
+				//Validacao.AddErro(exc);
+				Validacao.AddAdvertencia("Houve um erro ao emitir o Dua");
 			}
 
 			return null;
