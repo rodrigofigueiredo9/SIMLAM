@@ -54,8 +54,8 @@ Dua = {
 
 	gerarPdf: function () {
 		var item = $.parseJSON($(this).closest('tr').find('.itemJson').val());
-		var numeroDua = item.numeroDua;
-		var cpfcnpj = item.cpfCnpj;
+		var numeroDua = item.Numero;
+		var cpfcnpj = item.CpfCnpj;
 
 		var urlGerar = Dua.urlGerarPDF + "SefazDua/ObterPdfDua/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj;
 		Aux.downloadAjax("downloadPdfDua", urlGerar, null, 'get');
@@ -68,7 +68,7 @@ Dua = {
 		MasterPage.carregando(true);
 		$.ajax({
 			url: Dua.urlReemitirDUA,
-			data: JSON.stringify({ dua: item.numeroDua, titulo: titulo }),
+			data: JSON.stringify({ dua: item.Numero, titulo: titulo }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -83,12 +83,15 @@ Dua = {
 				$('.gridDua > tbody > tr:not(".trTemplate")').remove();
 
 				$.each(response.lstDua, function (i, item) {
+					debugger;
 				//.forEach(function (item) {
-					var linha = $('.trTemplate', tabela).clone();	
+					var linha = $('.trTemplate', tabela).clone();
+					if(item.Situacao == 2)
+						$('.btnReemitir', linha).removeClass('hide');
 					$(linha).removeClass('hide trTemplate');
 
 					//adicionar na grid
-					$('.hdnItemJson', linha).val(JSON.stringify(item));
+					$('.itemJson', linha).val(JSON.stringify(item));
 					$('.lblCodigo', linha).html(item.Codigo).attr('title', item.Codigo);
 					$('.lblValor', linha).html(item.Valor).attr('title', item.Valor);
 					$('.lblSituacao', linha).html(item.SituacaoTexto).attr('title', item.SituacaoTexto);
@@ -98,7 +101,7 @@ Dua = {
 					$('tbody', tabela).append(linha);
 				});
 				
-				
+				MasterPage.grid();
 			}
 		});
 		MasterPage.carregando(false);

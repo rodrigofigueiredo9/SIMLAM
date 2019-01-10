@@ -70,7 +70,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			}
 			catch (Exception exc)
 			{
-				Validacao.Add(eTipoMensagem.Advertencia, "Empreendimento sem CNPJ, impossível emitir o DUA");
+				Validacao.Add(eTipoMensagem.Advertencia, "Houve um erro ao emitir o DUA");
 			}
 
 			return null;
