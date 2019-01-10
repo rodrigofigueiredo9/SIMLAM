@@ -50,17 +50,30 @@ DestinatarioPTV = {
 
 		Aux.setarFoco(DestinatarioPTV.container);
 		if (parseInt($('.hdnDestinatarioID', DestinatarioPTV.container).val()) > 0) {
-			DestinatarioPTV.habilitarCampos(false, false);
+			if ($('.rbPessoaTipo:checked', DestinatarioPTV.container).val() == 3) {
+				DestinatarioPTV.habilitarCampos(false, true);
 
-			if ($('.rbPessoaTipoCPF', DestinatarioPTV.container).is(':checked')) {
-				$('.lblCPFCNPJ', DestinatarioPTV.container).text("CPF *");
-				$('.maskCpf', DestinatarioPTV.container).show();
-				$('.maskCnpj', DestinatarioPTV.container).hide();
+				$('.txtCPFCNPJ', DestinatarioPTV.container).hide();
+				$('.lblCPFCNPJ', DestinatarioPTV.container).hide();
+				$('.divPais', DestinatarioPTV.container).show();
+
+				$('.lblUF', DestinatarioPTV.container).text("UF");
+				$('.lblMunicipio', DestinatarioPTV.container).text("Município");
+				$('.lblItinerario', DestinatarioPTV.container).text("Itinerário");
 			}
 			else {
-				$('.lblCPFCNPJ', DestinatarioPTV.container).text("CNPJ *");
-				$('.maskCpf', DestinatarioPTV.container).hide();
-				$('.maskCnpj', DestinatarioPTV.container).show();
+				DestinatarioPTV.habilitarCampos(false, false);
+
+				if ($('.rbPessoaTipoCPF', DestinatarioPTV.container).is(':checked')) {
+					$('.lblCPFCNPJ', DestinatarioPTV.container).text("CPF *");
+					$('.maskCpf', DestinatarioPTV.container).show();
+					$('.maskCnpj', DestinatarioPTV.container).hide();
+				}
+				else {
+					$('.lblCPFCNPJ', DestinatarioPTV.container).text("CNPJ *");
+					$('.maskCpf', DestinatarioPTV.container).hide();
+					$('.maskCnpj', DestinatarioPTV.container).show();
+				}
 			}
 		}		
 	},
@@ -237,7 +250,7 @@ DestinatarioPTV = {
 	obter: function () {
 		var objeto = {
 			ID: $('.hdnDestinatarioID', DestinatarioPTV.container).val(),
-			PessoaTipo: ($('.rbPessoaTipoCPF', DestinatarioPTV.container).is(':checked') ? 1 : 2),
+			PessoaTipo: $('.rbPessoaTipo:checked', DestinatarioPTV.container).val(),
 			CPFCNPJ: $('.txtCPFCNPJ:visible', DestinatarioPTV.container).val(),
 			NomeRazaoSocial: $('.txtNomeRazaoSocial', DestinatarioPTV.container).val(),
 			Endereco: $('.txtEndereco', DestinatarioPTV.container).val(),
@@ -246,6 +259,7 @@ DestinatarioPTV = {
 			EstadoTexto: $('.ddlEstado :selected', DestinatarioPTV.container).text(),
 			MunicipioID: $('.ddlMunicipio', DestinatarioPTV.container).val(),
 			MunicipioTexto: $('.ddlMunicipio :selected', DestinatarioPTV.container).text(),
+			Pais: $('.txtPais', DestinatarioPTV.container).val(),
 			Itinerario: $('.txtItinerario', DestinatarioPTV.container).val()
 		};
 

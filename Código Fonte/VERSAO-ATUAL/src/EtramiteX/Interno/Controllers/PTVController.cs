@@ -583,7 +583,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult DestinatarioEditar(int id)
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID));
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID.Value));
 
 			return View("Destinatario/Editar", vm);
 		}
@@ -607,7 +607,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
 
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID), true);
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID.Value), true);
 
 			return View("Destinatario/Visualizar", vm);
 		}

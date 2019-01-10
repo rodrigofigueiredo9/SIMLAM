@@ -26,17 +26,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.DestinatarioPTV.EnderecoObrigatorio);
 			}
 
-			if (destinatario.EstadoID.Equals(0))
+			if (destinatario.EstadoID.Equals(0) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.EstadoObrigatorio);
 			}
 
-			if (destinatario.MunicipioID.Equals(0))
+			if (destinatario.MunicipioID.Equals(0) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.MunicipioObrigatorio);
 			}
 
-			if (string.IsNullOrWhiteSpace(destinatario.Itinerario))
+			if (string.IsNullOrWhiteSpace(destinatario.Itinerario) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.ItinerarioObrigatorio);
 			}

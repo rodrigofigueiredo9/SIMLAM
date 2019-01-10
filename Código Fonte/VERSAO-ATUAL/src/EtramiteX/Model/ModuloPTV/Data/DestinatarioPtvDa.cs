@@ -36,8 +36,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 				if (destinatario.ID == 0)
 				{
-					comando = bancoDeDados.CriarComando(@"insert into {0}tab_destinatario_ptv(id, tipo_pessoa, cpf_cnpj, nome, endereco, uf, municipio, itinerario, tid) 
-															values (seq_tab_destinatario_ptv.nextval,:tipo_pessoa, :cpf_cnpj, :nome, :endereco, :uf, :municipio, :itinerario, :tid)
+					comando = bancoDeDados.CriarComando(@"insert into {0}tab_destinatario_ptv(id, tipo_pessoa, cpf_cnpj, nome, endereco, uf, municipio, itinerario, tid, pais) 
+															values (seq_tab_destinatario_ptv.nextval,:tipo_pessoa, :cpf_cnpj, :nome, :endereco, :uf, :municipio, :itinerario, :tid, :pais)
 															returning id into :id", EsquemaBanco);
 
 					comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -46,7 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				else
 				{
 					comando = bancoDeDados.CriarComando(@"update {0}tab_destinatario_ptv d set d.tipo_pessoa = :tipo_pessoa, d.cpf_cnpj = :cpf_cnpj, d.nome = :nome, d.endereco = :endereco, 
-														d.uf = :uf, d.municipio = :municipio, d.itinerario = :itinerario, d.tid = :tid where d.id = :id", EsquemaBanco);
+														d.uf = :uf, d.municipio = :municipio, d.itinerario = :itinerario, d.tid = :tid, d.pais = :pais where d.id = :id", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("id", destinatario.ID, DbType.Int32);
 					historicoAcao = eHistoricoAcao.atualizar;
@@ -56,10 +56,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("cpf_cnpj", destinatario.CPFCNPJ, DbType.String);
 				comando.AdicionarParametroEntrada("nome", destinatario.NomeRazaoSocial, DbType.String);
 				comando.AdicionarParametroEntrada("endereco", destinatario.Endereco, DbType.String);
-				comando.AdicionarParametroEntrada("uf", destinatario.EstadoID, DbType.UInt32);
-				comando.AdicionarParametroEntrada("municipio", destinatario.MunicipioID, DbType.UInt32);
+				comando.AdicionarParametroEntrada("uf", destinatario.EstadoID > 0 ? destinatario.EstadoID : null, DbType.Int32);
+				comando.AdicionarParametroEntrada("municipio", destinatario.MunicipioID > 0 ? destinatario.MunicipioID : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("itinerario", destinatario.Itinerario, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("pais", destinatario.Pais, DbType.String);
 
 				bancoDeDados.ExecutarScalar(comando);
 
@@ -126,12 +127,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 																e.texto as estadoTexto,
 																d.municipio,
 																m.texto as municipioTexto,
+																d.pais,
 																d.itinerario,
 																d.tid
-															from tab_destinatario_ptv d,lov_estado e, lov_municipio m
-															where e.id = d.uf
-															  and m.id = d.municipio
-															  and d.id = :id", EsquemaBanco);
+															from tab_destinatario_ptv d
+															LEFT JOIN lov_estado e ON d.uf = e.id
+															LEFT JOIN lov_municipio m ON d.MUNICIPIO = m.id
+															where d.id = :id", EsquemaBanco);
 				#endregion
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -150,6 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 						destinatario.EstadoTexto = reader.GetValue<string>("estadoTexto");
 						destinatario.MunicipioID = reader.GetValue<int>("municipio");
 						destinatario.MunicipioTexto = reader.GetValue<string>("municipioTexto");
+						destinatario.Pais = reader.GetValue<string>("pais");
 						destinatario.Itinerario = reader.GetValue<string>("itinerario");
 						destinatario.TID = reader.GetValue<string>("tid");
 					}
