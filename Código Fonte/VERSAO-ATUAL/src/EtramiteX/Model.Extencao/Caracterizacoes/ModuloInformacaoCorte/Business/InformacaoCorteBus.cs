@@ -273,6 +273,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return Validacao.EhValido;
 		}
 
+		public bool ValidarEditar(int id)
+		{
+			try
+			{
+				if (_da.CaracterizacaoEmAberto(id))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoEditar);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		public InformacaoCorte MergiarGeo(InformacaoCorte caracterizacaoAtual)
 		{
 			caracterizacaoAtual.Dependencias = _busCaracterizacao.ObterDependenciasAtual(caracterizacaoAtual.EmpreendimentoId, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);

@@ -39,9 +39,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			if (!_caracterizacaoValidar.Basicas(id))
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-
 			if (!_informacaoCorteBus.ValidarCriar(id))
 				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
@@ -62,14 +59,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteEditar })]
 		public ActionResult Editar(int id, int projetoDigitalId)
 		{
-			if (!_caracterizacaoValidar.Basicas(id))
-				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-
 			var caracterizacao = _informacaoCorteBus.Obter(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+
+			if (!_informacaoCorteBus.ValidarEditar(id))
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+
 			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
@@ -104,14 +102,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
 		public ActionResult Visualizar(int id, int projetoDigitalId)
 		{
-			if (!_caracterizacaoValidar.Basicas(id))
-				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-
-			if (!_validar.Acessar(id, projetoDigitalId))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-
 			var caracterizacao = _informacaoCorteBus.Obter(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
+
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+
 			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
 			{
