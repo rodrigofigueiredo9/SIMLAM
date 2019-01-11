@@ -31,6 +31,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String DistanciaBR { get; set; }
 		public String DistanciaES { get; set; }
 		public String BenfeitoriasEdificacoes { get; set; }
+
+		public String Identificacao { get; set; }
+		public Int32 ComprovacaoId { get; set; }
+		public Decimal Perimetro { get; set; }
+		public Int32 RegularizacaoTipo { set; get; }
+		public String Benfeitorias { get; set; }
+
+		public Decimal AreaPosseDocumento { get; set; }
+		public String DescricaoComprovacao { get; set; }
+
+
 		public String TrabalhoPredominante
 		{
 			get
@@ -40,13 +51,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		}
 
 		/*Dominio*/
-		public long? NumeroCCIR { get { return Dominio.NumeroCCIR; } }
-		public String AreaCCIR { get { return Dominio.AreaCCIR; } }
-		public String DataAtualizacao { get { return Dominio.DataAtualizacao; } }
-		public String ConfrontacaoNorte { get { return Dominio.ConfrontacaoNorte; } }
-		public String ConfrontacaoLeste { get { return Dominio.ConfrontacaoLeste; } }
-		public String ConfrontacaoOeste { get { return Dominio.ConfrontacaoOeste; } }
-		public String ConfrontacaoSul { get { return Dominio.ConfrontacaoSul; } }
+		public long? NumeroCCIR { get; set; }
+		public String AreaCCIR { get; set; }
+		public String DataAtualizacao { get; set; }
+		public String ConfrontacaoNorte { get; set; }
+		public String ConfrontacaoLeste { get; set; }
+		public String ConfrontacaoOeste { get; set; }
+		public String ConfrontacaoSul { get; set; }
 
 		private String _naoPossuiAreaTituladaAnexa = "Não possui área titulada anexa à posse";
 		public String NaoPossuiAreaTituladaAnexa
@@ -178,6 +189,14 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			DominioId = posse.Dominio;
 			Dominio = new DominioPDF(posse.DominioPosse);
 			RelacaoTrabalho = posse.RelacaoTrabalho;
+
+			Identificacao = posse.Identificacao;
+			NumeroCCIR = posse.NumeroCCIR;
+			//ComprovacaoTexto = posse.DescricaoComprovacao;
+			ConfrontacaoNorte = posse.ConfrontacoesNorte;
+			ConfrontacaoSul = posse.ConfrontacoesSul;
+			ConfrontacaoLeste = posse.ConfrontacoesLeste;
+			ConfrontacaoOeste = posse.ConfrontacoesOeste;
 
 			#region Lists
 

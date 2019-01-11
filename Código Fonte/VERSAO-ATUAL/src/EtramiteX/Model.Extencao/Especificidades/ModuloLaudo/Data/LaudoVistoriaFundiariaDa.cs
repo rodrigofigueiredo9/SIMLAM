@@ -210,9 +210,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 			List<Lista> lista = new List<Lista>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select rd.id, lc.texto comp_texto, dd.area_croqui 
-				from {0}crt_regularizacao r, {0}crt_regularizacao_dominio rd, {0}crt_dominialidade_dominio dd, {0}lov_crt_domin_comprovacao lc
-				where r.id = rd.regularizacao and rd.dominio = dd.id and dd.comprovacao = lc.id and r.empreendimento = :empreendimento", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select rd.id, lc.texto comp_texto, rd.area_croqui 
+							from {0}crt_regularizacao r, {0}crt_regularizacao_dominio rd, {0}lov_crt_domin_comprovacao lc
+							where r.id = rd.regularizacao and rd.comprovacao = lc.id and r.empreendimento = :empreendimento", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 

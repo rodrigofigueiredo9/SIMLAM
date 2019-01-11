@@ -136,16 +136,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				#region Regularização Fundiaria
 
-				Dominialidade dominialidade = new DominialidadeBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
+				//Dominialidade dominialidade = new DominialidadeBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
 				RegularizacaoFundiaria regularizacao = new RegularizacaoFundiariaBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
-				regularizacao.Posses = regularizacao.Posses.Where(x => esp.RegularizacaoDominios.Exists(y => y.DominioId == x.Id)).OrderBy(x => x.Identificacao).ToList();
+				//regularizacao.Posses = regularizacao.Posses.Where(x => esp.RegularizacaoDominios.Exists(y => y.DominioId == x.Id)).OrderBy(x => x.Identificacao).ToList();
 				
 
 				laudo.RegularizacaoFundiaria = new RegularizacaoFundiariaPDF(regularizacao);
 
+				DominioPDF dominio;
+
 				foreach (var item in laudo.RegularizacaoFundiaria.Posses)
 				{
-					item.Dominio = new DominioPDF(dominialidade.Dominios.FirstOrDefault(x => x.Id == item.DominioId));
+					dominio = new DominioPDF();
+
+					dominio.Identificacao = item.Identificacao;
+					dominio.ComprovacaoTexto = item.ComprovacaoTexto;
+					dominio.NumeroCCIR = item.NumeroCCIR;
+					dominio.Registro = item.DescricaoComprovacao;
+					dominio.AreaCroquiDecimal = Convert.ToDecimal(item.AreaCroqui);
+					dominio.AreaDocumentoDecimal = Convert.ToDecimal(item.AreaPosseDocumento);
+					dominio.AreaCCIRDecimal = Convert.ToDecimal(item.AreaCCIR);
+					dominio.ConfrontacaoNorte = item.ConfrontacaoNorte;
+					dominio.ConfrontacaoSul = item.ConfrontacaoSul;
+					dominio.ConfrontacaoLeste = item.ConfrontacaoLeste;
+					dominio.ConfrontacaoOeste = item.ConfrontacaoOeste;
+
+					item.Dominio = dominio;
 				}
 
 				#endregion
