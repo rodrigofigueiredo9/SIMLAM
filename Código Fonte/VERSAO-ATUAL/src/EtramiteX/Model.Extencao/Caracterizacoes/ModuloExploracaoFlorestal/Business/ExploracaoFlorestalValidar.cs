@@ -40,7 +40,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					{
 						if (!String.IsNullOrWhiteSpace(item.AreaRequeridaTexto))
 						{
-							if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(item.AreaRequeridaTexto), 7, 2))
+							if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(item.AreaRequeridaTexto), 8, 2))
 								Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaInvalida(item.Identificacao));
 							else if (item.AreaRequerida <= 0)
 								Validacao.Add(Mensagem.ExploracaoFlorestal.AreaRequiridaMaiorZero(item.Identificacao));
@@ -110,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 								if (!String.IsNullOrWhiteSpace(produto.Quantidade))
 								{
-									if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 7, 2))
+									if (!ValidacoesGenericasBus.ValidarDecimal(DecimalEtx.ClearMask(produto.Quantidade), 8, 2))
 										Validacao.Add(Mensagem.Dominialidade.AreaInvalida("exploracao" + item.Identificacao, "Quantidade"));
 									else if (DecimalEtx.ToDecimalMask(produto.Quantidade).GetValueOrDefault() <= 0)
 										Validacao.Add(Mensagem.Dominialidade.AreaMaiorZero("exploracao" + item.Identificacao, "Quantidade"));

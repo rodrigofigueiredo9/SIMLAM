@@ -515,6 +515,102 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		internal void Reabrir(int id, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Atualizar o projeto geográfico
+
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				declare 
+					v_fila_tipo number:=0;
+					v_caract_tipo number:=0;
+					v_mecanismo number:=0;
+				begin 
+					delete from {0}tmp_projeto_geo_ortofoto t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_sobrepos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_arquivos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo t where t.id = :projeto; 
+
+					insert into {0}tmp_projeto_geo (id, empreendimento, caracterizacao, situacao, nivel_precisao, mecanismo_elaboracao, sobreposicoes_data, menor_x, menor_y, 
+					maior_x, maior_y, tid) (select g.id, g.empreendimento, g.caracterizacao, 4, g.nivel_precisao, g.mecanismo_elaboracao, g.sobreposicoes_data, g.menor_x, 
+					g.menor_y, g.maior_x, g.maior_y, g.tid from {0}crt_projeto_geo g where g.id = :projeto); 
+
+					insert into {0}tmp_projeto_geo_arquivos (id, projeto, tipo, arquivo, valido, tid) 
+					(select g.id, g.projeto, g.tipo, g.arquivo, g.valido, g.tid from {0}crt_projeto_geo_arquivos g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_ortofoto (id, projeto, caminho, tid) 
+					(select g.id, g.projeto, g.caminho, g.tid from {0}crt_projeto_geo_ortofoto g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_sobrepos (id, projeto, base, tipo, identificacao, tid) 
+					(select g.id, g.projeto, g.base, g.tipo, g.identificacao, g.tid from {0}crt_projeto_geo_sobrepos g where g.projeto = :projeto); 
+
+					select c.mecanismo_elaboracao, c.caracterizacao into v_mecanismo, v_caract_tipo from {0}crt_projeto_geo c where c.id = :projeto;
+
+					v_fila_tipo := :filaTipoAtividade;
+					if v_caract_tipo = :dominialidadeTipo then 
+						v_fila_tipo := :filaTipoDominialidade;
+					end if;
+
+					insert into {1}TMP_PATIV (id, projeto, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
+						(select a.id, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+							from {1}GEO_PATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_pativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal))));
+					insert into {1}TMP_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
+						(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+							from {1}GEO_AATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_aativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal))));
+
+					delete from {1}GEO_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					delete from {1}GEO_AATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_aativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+				end; ", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
 		internal void ExcluirRascunho(int id, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -694,7 +790,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando("begin update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;" +
+				Comando comando = bancoDeDados.CriarComando("begin " + (arquivo.TituloId > 0 ? "" : "update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;") +
 				"update {0}tab_fila t set t.etapa = :etapa, t.situacao = :situacao, t.data_fila = sysdate, t.data_inicio = null, t.data_fim = null, t.mecanismo_elaboracao = :mecanismo " +
 				"where t.projeto = :projeto and t.tipo = :tipo returning t.id into :id; end;", EsquemaBancoGeo, EsquemaBanco);
 

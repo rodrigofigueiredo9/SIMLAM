@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloRequerimento.Pdf;
@@ -32,6 +33,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		//PessoaBus _busPessoa = new PessoaBus(new PessoaValidar());
 		ListaBus _busLista = new ListaBus();
 		FuncionarioBus _busFuncionario = new FuncionarioBus();
+		ProtocoloBus _protocoloBus = new ProtocoloBus();
 
 		#endregion
 
@@ -373,6 +375,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			return Json(new { Msg = Validacao.Erros });
 		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.TituloCriar, ePermissao.TituloEditar, ePermissao.TituloVisualizar })]
+		public ActionResult ObterResponsaveis(int id) => Json(_protocoloBus.ObterResponsaveisTecnicosPorRequerimento(id), JsonRequestBehavior.AllowGet);
 
 		#endregion
 

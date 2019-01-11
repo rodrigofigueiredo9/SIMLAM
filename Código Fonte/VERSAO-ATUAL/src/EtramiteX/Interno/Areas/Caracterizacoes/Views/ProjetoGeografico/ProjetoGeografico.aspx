@@ -246,7 +246,7 @@
 			</span>
 
 			<span class="spanBotoes floatRight spanAtualizar">
-				<input class="btnAtualizar <%: Model.IsFinalizado && !Model.IsVisualizar && Model.CaracterizacaoTipo == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao.eCaracterizacao.ExploracaoFlorestal ? "" : "hide" %>" type="button" value="Novo" />
+				<input class="btnAtualizar <%: Model.ExibirBotaoNovo ? "" : "hide" %>" type="button" value="Novo" />
 			</span>
 
 			<span class="spanBotoes floatRight spanRecaregar <%: Model.Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmRascunho && !Model.IsVisualizar ? "" : "hide" %>">

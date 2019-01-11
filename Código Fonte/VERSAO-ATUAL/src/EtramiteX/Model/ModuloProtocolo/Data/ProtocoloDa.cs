@@ -1869,6 +1869,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data
 			return responsaveis;
 		}
 
+		internal List<PessoaLst> ObterResponsaveisTecnicosPorRequerimento(int id, BancoDeDados banco = null)
+		{
+			List<PessoaLst> responsaveis = new List<PessoaLst>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select tp.id, nvl(tp.nome, tp.razao_social) nome_razao_social
+				from {0}tab_requerimento_responsavel tpr, {0}tab_pessoa tp where tpr.responsavel = tp.id and tpr.requerimento = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						PessoaLst pessoa = new PessoaLst();
+						pessoa.Id = Convert.ToInt32(reader["id"]);
+						pessoa.Texto = reader["nome_razao_social"].ToString();
+						pessoa.IsAtivo = true;
+						responsaveis.Add(pessoa);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return responsaveis;
+		}
+
 		public List<Requerimento> ObterProtocoloRequerimentos(int protocolo)
 		{
 			List<Requerimento> requerimentos = new List<Requerimento>();

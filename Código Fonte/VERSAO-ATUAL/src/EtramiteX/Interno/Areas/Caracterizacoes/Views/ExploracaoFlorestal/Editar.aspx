@@ -14,7 +14,7 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <div id="central">
+    <div id="central">		
         <% Html.RenderPartial("ListarFiltros"); %>
 
 		<div class="block box">

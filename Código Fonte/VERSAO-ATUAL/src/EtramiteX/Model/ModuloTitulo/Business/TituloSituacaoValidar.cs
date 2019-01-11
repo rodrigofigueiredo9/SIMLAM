@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return Validacao.EhValido;
 		}
 
-		internal bool AlterarSituacao(Titulo titulo, int acao, bool gerouPdf = true)
+		public bool AlterarSituacao(Titulo titulo, int acao, bool gerouPdf = true)
 		{
 			Titulo tituloAux = _da.ObterSimplificado(titulo.Id);
 
@@ -257,6 +257,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						Validacao.Add(Mensagem.TituloAlterarSituacao.PrazoInvalido);
 					}
 
+					if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+					{
+						var associados = _da.ObterAssociados(titulo.Id);
+						if (associados.Exists(x => x.DataVencimento.Data < titulo.DataEmissao.Data.Value.AddDays(titulo.Prazo.Value)))
+							Validacao.Add(Mensagem.TituloAlterarSituacao.PrazoSuperiorAoLaudo);
+					}
 
 					#region [ Cadastro Ambiental Rural ]
 					if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
@@ -309,23 +315,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							{
 								case 1:
 									if (titulo.DataEncerramento.Data < tituloAux.DataEmissao.Data)
-									{
 										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "encerramento", "emissão"));
-									}
 									break;
 
 								case 2:
 									if (titulo.DataEncerramento.Data < tituloAux.DataAssinatura.Data)
-									{
 										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "encerramento", "assinatura"));
-									}
 									break;
 
 								case 3:
 									if (titulo.DataEncerramento.Data < tituloAux.DataEntrega.Data)
-									{
 										Validacao.Add(Mensagem.TituloAlterarSituacao.DataDeveSerSuperior("DataEncerramento", "encerramento", "entrega"));
-									}
 									break;
 							}
 
@@ -333,8 +333,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 
 					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
-					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoEncerramentoObrigatorio);
+
+					if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+					{
+						if(_da.ExistsTituloAssociadoNaoEncerrado(titulo.Id))
+							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiAssociadoNaoEncerrado);
 					}
 
 					break;
