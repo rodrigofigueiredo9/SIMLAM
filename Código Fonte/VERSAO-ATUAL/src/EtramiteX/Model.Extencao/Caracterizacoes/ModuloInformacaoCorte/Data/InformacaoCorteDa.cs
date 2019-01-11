@@ -290,12 +290,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 					//Atualizar o tid para a nova ação
 					comando = bancoDeDados.CriarComandoPlSql(@"
-				begin
-					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
-					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
-					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaBanco);
+					begin
+						update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+						update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
@@ -309,11 +309,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 					comando = bancoDeDados.CriarComandoPlSql(
 					@"begin
-					delete from {0}crt_informacao_corte c where c.id = :id;
-					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
-				end;", EsquemaBanco);
+						delete from {0}crt_informacao_corte c where c.id = :id;
+						delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
+					end;", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					bancoDeDados.ExecutarNonQuery(comando);
@@ -356,7 +356,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					delete from {0}crt_informacao_corte c where c.id = :id;
 					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
 					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -850,7 +850,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.id = :id
-					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
 					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
 					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
