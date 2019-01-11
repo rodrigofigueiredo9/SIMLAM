@@ -152,11 +152,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#endregion Informação de Corte
 
-				#region Histórico
-
-				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.criar, bancoDeDados, null);
-
-				#endregion
+				//Histórico
+				//Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.criar, bancoDeDados, null);
 
 				bancoDeDados.Commit();
 
@@ -263,11 +260,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#endregion Informação Corte Tipo
 
-				#region Histórico
-
-				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.atualizar, bancoDeDados, null);
-
-				#endregion
+				//Histórico
+				//Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.atualizar, bancoDeDados, null);
 
 				bancoDeDados.Commit();
 			}
@@ -301,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					bancoDeDados.ExecutarNonQuery(comando);
 
-					Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.excluir, bancoDeDados, null);
+					//Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.excluir, bancoDeDados, null);
 
 					#endregion
 
@@ -345,7 +339,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.excluir, bancoDeDados, null);
+				//Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.excluir, bancoDeDados, null);
 
 				#endregion
 
