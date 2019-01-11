@@ -347,6 +347,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar })]
+		public ActionResult ValidarDestinatarioExportacao(string nomeDestinatario)
+		{
+			DestinatarioPTV destinatario = _validar.ValidarDestinatarioExportacao(nomeDestinatario);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@NovoDestinatario = _validar.NovoDestinatario,
+				@Destinatario = destinatario
+			}, JsonRequestBehavior.AllowGet);
+		}
+
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
 		public ActionResult ObterDestinatario(int destinatarioId)
 		{

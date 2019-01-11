@@ -206,16 +206,20 @@
 				<div class="coluna35">
 					<label>Tipo</label><br />
 					<label for="Tipo">
-						<%=Html.RadioButton("Tipo", (int)ePessoaTipo.Fisica, Model.PTV.Destinatario.PessoaTipo == (int)ePessoaTipo.Fisica, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoDocumento rbTipoPessoaFisica"} ) ) %>
+						<%=Html.RadioButton("Tipo", (int)ePessoaTipo.Fisica, Model.PTV.Destinatario.PessoaTipo == (int)ePessoaTipo.Fisica, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoDestinatario rbTipoDestinatarioFisica"} ) ) %>
 					Pessoa Física
 					</label>
 					<label>
-						<%=Html.RadioButton("Tipo", (int)ePessoaTipo.Juridica, (Model.PTV.Destinatario.PessoaTipo == (int)ePessoaTipo.Juridica || Model.PTV.Destinatario.PessoaTipo == 0), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoDocumento rbTipoPessoaJuridica"} ) ) %>
+						<%=Html.RadioButton("Tipo", (int)ePessoaTipo.Juridica, (Model.PTV.Destinatario.PessoaTipo == (int)ePessoaTipo.Juridica || Model.PTV.Destinatario.PessoaTipo == 0), ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoDestinatario rbTipoDestinatarioJuridica"} ) ) %>
 					Pessoa Jurídica
+					</label>
+					<label for="Tipo">
+						<%=Html.RadioButton("Tipo", (int)ePessoaTipo.Exportacao, Model.PTV.Destinatario.PessoaTipo == (int)ePessoaTipo.Exportacao, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="rbTipoDestinatario rbTipoDestinatarioExportacao"} ) ) %>
+					Exportação
 					</label>
 				</div>
 
-				<div class="coluna15">
+				<div class="coluna15 divCPFCNPJ">
 					<label class="lblCPFCNPJ" for="DestinararioCPFCNPJ">CPF *</label>
 					<%= Html.TextBox("DestinararioCPFCNPJ",Model.PTV.Destinatario.CPFCNPJ, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text maskCpf txtDocumentoCpfCnpj" } ) ) %>
 				</div>
@@ -229,14 +233,22 @@
 				</div>
 			</div>
 
-			<div class="destinatarioDados <%= Model.PTV.Id <= 0 ? "hide":""%>">
-				<div class="block">
+			<div class="block divNomeRazaoSocial destinatarioDados <%= Model.PTV.Id <= 0 ? "hide":""%>">
 					<div class="coluna68">
 						<label for="DestinatarioNome">Nome do destinatário *</label>
 						<%= Html.TextBox("DestinatarioNome", Model.PTV.Destinatario.NomeRazaoSocial, ViewModelHelper.SetaDisabled(true, new { @class="text txtNomeDestinatario"})) %>
 						<input type="hidden" class="hdnDestinatarioID" value='<%= Model.PTV.Destinatario.ID %>' />
 					</div>
-				</div>
+					<div class="coluna6">
+						<button type="button" class="inlineBotao btnVerificarDestinatarioExportacao hide">Verificar</button>
+						<button type="button" class="inlineBotao btnLimparDestinatarioExportacao hide">Limpar</button>
+					</div>
+					<div class="coluna6 novoDestinatarioExportacao hide">
+						<button type="button" class="inlineBotao btnNovoDestinatarioExportacao">Novo</button>
+					</div>
+			</div>
+
+			<div class="destinatarioDados <%= Model.PTV.Id <= 0 ? "hide":""%>">
 				<div class="block">
 					<div class="coluna68">
 						<label for="Endereco">Endereço *</label>
@@ -251,6 +263,10 @@
 					<div class="coluna20">
 						<label for="Municipio">Município *</label>
 						<%= Html.TextBox("Municipio", Model.PTV.Destinatario.MunicipioTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtMunicipio"})) %>
+					</div>
+					<div class="coluna25 divPais hide">
+						<label for="Pais" class="lblPais">País</label>
+						<%= Html.TextBox("Pais", Model.PTV.Destinatario.Pais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtPais", @maxlength ="200" }) ) %>
 					</div>
 				</div>
 			</div>

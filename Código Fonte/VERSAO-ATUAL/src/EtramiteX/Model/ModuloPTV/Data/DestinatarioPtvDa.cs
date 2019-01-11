@@ -249,7 +249,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select p.id from {0}tab_destinatario_ptv p where p.tipo_pessoa = 3 and upper(p.nome) = :nome", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select p.id from {0}tab_destinatario_ptv p where p.tipo_pessoa = 3 and upper(p.nome) = upper(:nome)", EsquemaBanco);
 				comando.AdicionarParametroEntrada("nome", DbType.String, 80, nomeRazaoSocial);
 
 				object retorno = bancoDeDados.ExecutarScalar(comando);
