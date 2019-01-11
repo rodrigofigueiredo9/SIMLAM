@@ -238,11 +238,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			foreach (var item in caracterizacoesCredenciado)
 			{
-				Caracterizacao caracterizacao = caracterizacoesInterno.SingleOrDefault(x => x.Tipo == item.Tipo);
+				var caracterizacoes = caracterizacoesInterno.Where(x => x.Tipo == item.Tipo);
 
-				if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
+				foreach (var caracterizacao in caracterizacoes)
 				{
-					lista.Add(item);
+					if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
+						lista.Add(item);
 				}
 			}
 
