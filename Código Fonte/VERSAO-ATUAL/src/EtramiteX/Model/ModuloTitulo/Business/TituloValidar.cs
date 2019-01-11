@@ -513,8 +513,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 
 			#endregion
-
-
+			
 			#region [ Cadastro Ambiental Rural ]
 			if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
 			{
@@ -527,6 +526,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				{
 					Validacao.Add(Mensagem.TituloAlterarSituacao.TituloNaoPossuiSolicitacaoDeInscricao);
 				}
+			}
+			#endregion
+
+			#region [ Autorização de Exploração ]
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				if ((titulo.Exploracoes?.Count ?? 0) == 0)
+					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.ExploracaoInexistente);
 			}
 			#endregion
 
