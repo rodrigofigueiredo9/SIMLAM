@@ -92,15 +92,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloCore.Business
 				//Console.WriteLine(responseFromServer);
 				// Clean up the streams.
 			}
-			/*catch (WebException webExc)
+			catch (WebException webExc)
 			{
 				dataStream = webExc.Response.GetResponseStream();
 				reader = new StreamReader(dataStream);
 				jonsResponseFromServer = reader.ReadToEnd();
 
-				Validacao.AddErro(webExc);
-				Validacao.Add(new Mensagem() { Tipo = eTipoMensagem.Erro, Texto = jonsResponseFromServer });
-			}*/
+				//Validacao.AddErro(webExc);
+				//Validacao.Add(new Mensagem() { Tipo = eTipoMensagem.Erro, Texto = jonsResponseFromServer });
+			}
 			finally
 			{
 				if (reader != null)

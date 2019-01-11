@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						comando = bancoDeDados.CriarComando(@"
 						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
 						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-						(select s.id from idaf.lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
+						(select s.id from {0}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -239,12 +239,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 						item.Id = comando.ObterValorParametro<int>("tipo_id");
 
+						comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id = :tipo_corte_id ", EsquemaCredenciadoBanco);
+						comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, item.InformacaoCorteDestinacao.Where(x => x.Id > 0).Select(y => y.Id).ToList());
+						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
+						bancoDeDados.ExecutarNonQuery(comando);
+
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"
 							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
 							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
-							(select s.id from {1}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco, EsquemaBanco);
+							(select s.id from {0}lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaCredenciadoBanco);
 
 							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
@@ -593,7 +598,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				/*SELECT id, concat(concat(lpad(id, 4, '0'), '-'), data_informacao) informacaoCorte FROM crt_informacao_corte;*/
 					SELECT ID, (LPAD(ID, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
 						FROM {0}CRT_INFORMACAO_CORTE CRT WHERE EMPREENDIMENTO = :empreendimento
-					/*AND ID NOT IN (SELECT ID FROM TAB_EMPREENDIMENTO E WHERE CRT.ID = E.ID)*/", EsquemaCredenciadoBanco);
+					AND ID NOT IN (
+						SELECT C.INFORMACAO_CORTE FROM ESP_OUT_INFORMACAO_CORTE
+							C WHERE C.CRT_INFORMACAO_CORTE = CRT.ID)", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -624,7 +631,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Comando comando = bancoDeDados.CriarComando(@"
 				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
 					FROM {0}CRT_INFORMACAO_CORTE CRT 
-					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.INFORMACAO_CORTE
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.CRT_INFORMACAO_CORTE
 				WHERE INF.TITULO = :titulo", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
@@ -648,17 +655,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal List<Lista> ObterProdutos(int destinacaoId)
+		internal List<Lista> ObterProdutos(int destinacaoId, BancoDeDados banco = null)
 		{
 			List<Lista> retorno = new List<Lista>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 				select s.inf_corte_produto, p.texto from {0}lov_inf_codigo_sefaz s
-				inner join lov_crt_produto_inf_corte p
+				inner join {0}lov_crt_produto_inf_corte p
 				on (p.id = s.inf_corte_produto)
-				where inf_destinacao_material = :inf_destinacao_material", EsquemaBanco);
+				where inf_destinacao_material = :inf_destinacao_material", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("inf_destinacao_material", destinacaoId, DbType.Int32);
 
@@ -688,8 +695,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
-					and not exists(select 1 from {0}esp_out_informacao_corte e where e.informacao_corte = t.id and e.validade is not null)", EsquemaCredenciadoBanco);
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
+					and t.situacao = " + (int)eTituloSituacao.EncerradoDeclaratorio + "))", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
+		internal bool CaracterizacaoEmAberto(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.id = :id
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
+					and t.situacao = " + (int)eTituloSituacao.EncerradoDeclaratorio + "))", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
 			}

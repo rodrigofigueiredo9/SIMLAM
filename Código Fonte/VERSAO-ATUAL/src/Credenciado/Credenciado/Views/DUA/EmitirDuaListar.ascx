@@ -1,4 +1,5 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels.VMDUA" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloDUA" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DUAVM>" %>
 
 <%= Html.Hidden("TituloId", Model.Titulo.Id, new { @class = "hdnTituloId" })%>
@@ -30,7 +31,7 @@
 
 					<%if (true){%><input type="button" title="PDF do DUA" class="icone pdf btnPDF" /><% } %>
 					<%--<%if (item.Situacao == eSituacaoDua.Vencido){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>--%>
-					<%if (true){%><input type="button" title="Reemitir DUA" class="icone notificacao btnReemitir" /><% } %>
+					<%if (item.Situacao == eSituacaoDua.Vencido){%><input type="button" title="Reemitir DUA" class="icone dolar btnReemitir" /><% } %>
 				</td>
 			</tr>
 		<% } %>
@@ -52,37 +53,10 @@
 				</td>
 				<td>
 					<a class="icone pdf btnPDF" title="PDF do DUA"></a>
-					<input type="hidden" value="0" class="hdnItemJson" />
+					<a class="icone dolar btnReemitir hide" title="Reemitir DUA"></a>
+					<input type="hidden" value="0" class="itemJson" />
 				</td>
 			</tr>
 		</tbody>
 	</table>
-</div>	<thead>
-			<tr>
-				<th width="10%">Código</th>
-				<th width="9%">Valor R$	</th>
-				<th width="19%">Situação</th>
-				<th>N° do DUA</th>
-				<th width="11%">Validade</th>
-				<th class="semOrdenacao" width="9%">Ações</th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<% foreach (var item in Model.DuaLst) { %>
-			<tr>
-				<td title="<%= Html.Encode(item.Codigo)%>"><%= Html.Encode(item.Codigo)%></td>
-				<td title="<%= Html.Encode(item.Valor)%>"><%= Html.Encode(item.Valor)%></td>
-				<td title="<%= Html.Encode(item.Situacao)%>"><%= Html.Encode(item.Situacao)%></td>
-				<td title="<%= Html.Encode(item.Numero)%>"><%= Html.Encode(item.Numero)%></td>
-				<td title="<%= Html.Encode(item.Validade)%>"><%= Html.Encode(item.Validade)%></td>
-				<td>
-					<%--<input type="hidden" class="itemJson" value="<%= Model.ObterJSon(item) %>" />--%>
-
-					<%if (true){%><input type="button" title="PDF do título" class="icone pdf btnPDF" /><% } %>
-				</td>
-			</tr>
-		<% } %>
-		</tbody>
-	</table>
-</div>
+</div>	

@@ -54,7 +54,8 @@
 				</td>
 				<td>
 					<a class="icone pdf btnPDF" title="PDF do DUA"></a>
-					<input type="hidden" value="0" class="hdnItemJson" />
+					<a class="icone notificacao btnReemitir hide" title="Reemitir DUA"></a>
+					<input type="hidden" value="0" class="itemJson" />
 				</td>
 			</tr>
 		</tbody>

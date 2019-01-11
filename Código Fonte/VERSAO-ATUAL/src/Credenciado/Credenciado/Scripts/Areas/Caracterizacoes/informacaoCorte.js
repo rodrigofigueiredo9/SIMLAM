@@ -342,6 +342,8 @@ InformacaoCorte = {
 			}
 
 			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index()]);
+			if (linha.index() == nextLinha.index())
+				nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
 			$(this).closest('tr').remove();
 			if (nextLinha.find('.tipoCorte').length > 0) return;
 

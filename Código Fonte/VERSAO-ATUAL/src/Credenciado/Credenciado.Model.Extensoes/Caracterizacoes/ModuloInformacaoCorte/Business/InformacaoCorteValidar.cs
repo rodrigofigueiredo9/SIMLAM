@@ -44,8 +44,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.Empreendimento.Id))
 				return false;
 
-			if (!Acessar(caracterizacao.Empreendimento.Id, projetoDigitalId))
-				return false;
+			if (caracterizacao.AreaFlorestaPlantada == 0)
+				Validacao.Add(Mensagem.InformacaoCorte.AreaPlantadaObrigatoria);
 
 			if (caracterizacao.AreaFlorestaPlantada > 100)
 			{
@@ -61,13 +61,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (!item.DataVencimento.IsValido)
 					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
 			}
-
-			return Validacao.EhValido;
-		}
-
-		public bool Acessar(int empreendimentoId, int projetoDigitalId)
-		{
-			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.InformacaoCorte);
 
 			return Validacao.EhValido;
 		}

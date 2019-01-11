@@ -36,6 +36,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Propriedades
 
 		DuaBus _bus = new DuaBus();
+		TituloDeclaratorioBus _tituloBus = new TituloDeclaratorioBus();
 
 		public static EtramitePrincipal Usuario
 		{
@@ -53,6 +54,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			if (vm.DuaLst.Count() == 0)
 			{
 				_bus.Emitir(id);
+				_tituloBus.AlterarSituacao(id, eTituloSituacao.AguardandoPagamento);
 				vm.DuaLst = _bus.Obter(id);
 			}
 
