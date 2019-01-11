@@ -54,7 +54,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
 
 			if (!_informacaoCorteBus.ValidarEditar(id))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, Msg = Validacao.QueryParam() });
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 			var vm = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
@@ -128,8 +128,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			string urlRedireciona = string.Empty;
 
+			InformacaoCorte caracterizacao = _informacaoCorteBus.Obter(id);
+
 			if (_informacaoCorteBus.Excluir(id))
-				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = id, Msg = Validacao.QueryParam() });
+				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, Msg = Validacao.QueryParam() });
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
 		}

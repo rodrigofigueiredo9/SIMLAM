@@ -66,7 +66,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 
 			if (!_informacaoCorteBus.ValidarEditar(id))
-				return RedirectToAction("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+				return RedirectToAction("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			var vm = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>(), caracterizacao)
@@ -141,8 +141,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			string urlRedireciona = string.Empty;
 
+			var caracterizacao = _informacaoCorteBus.Obter(id);
 			if (_informacaoCorteBus.Excluir(id))
-				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+				urlRedireciona = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.EmpreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
 		}
