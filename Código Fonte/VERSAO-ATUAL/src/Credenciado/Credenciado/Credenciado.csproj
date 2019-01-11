@@ -48,12 +48,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\..\lib\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.Helpers.dll</HintPath>
@@ -1295,6 +1292,10 @@
     <ProjectReference Include="..\..\..\lib\src\Blocos.Autentication\Blocos.Autenticacao.csproj">
       <Project>{722befca-5026-44e7-b158-c9da30d20c3f}</Project>
       <Name>Blocos.Autenticacao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707f196a-8a05-4b96-92e1-e60335ddc933}</Project>
+      <Name>Blocos.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
       <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
