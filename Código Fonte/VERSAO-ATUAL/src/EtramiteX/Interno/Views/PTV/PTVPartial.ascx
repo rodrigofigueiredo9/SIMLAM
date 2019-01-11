@@ -220,7 +220,7 @@
 				</div>
 
 				<div class="coluna15 divCPFCNPJ">
-					<label class="lblCPFCNPJ" for="DestinararioCPFCNPJ">CPF *</label>
+					<label class="lblDocumentoCPFCNPJ" for="DestinararioCPFCNPJ">CPF *</label>
 					<%= Html.TextBox("DestinararioCPFCNPJ",Model.PTV.Destinatario.CPFCNPJ, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class="text maskCpf txtDocumentoCpfCnpj" } ) ) %>
 				</div>
 
@@ -236,8 +236,9 @@
 			<div class="block divNomeRazaoSocial destinatarioDados <%= Model.PTV.Id <= 0 ? "hide":""%>">
 					<div class="coluna68">
 						<label for="DestinatarioNome">Nome do destinatário *</label>
-						<%= Html.TextBox("DestinatarioNome", Model.PTV.Destinatario.NomeRazaoSocial, ViewModelHelper.SetaDisabled(true, new { @class="text txtNomeDestinatario"})) %>
+						<%= Html.TextBox("DestinatarioNome", Model.PTV.Destinatario.NomeRazaoSocial, ViewModelHelper.SetaDisabled(true, new { @class="text txtNomeDestinatario", @maxlength ="80"})) %>
 						<input type="hidden" class="hdnDestinatarioID" value='<%= Model.PTV.Destinatario.ID %>' />
+						<input type="hidden" class="hdnDestinatarioTipo" value='<%= Model.PTV.Destinatario.PessoaTipo %>' />
 					</div>
 					<div class="coluna6">
 						<button type="button" class="inlineBotao btnVerificarDestinatarioExportacao hide">Verificar</button>
@@ -252,7 +253,7 @@
 				<div class="block">
 					<div class="coluna68">
 						<label for="Endereco">Endereço *</label>
-						<%= Html.TextBox("Endereco", Model.PTV.Destinatario.Endereco, ViewModelHelper.SetaDisabled(true, new { @class="text txtEndereco" })) %>
+						<%= Html.TextBox("Endereco", Model.PTV.Destinatario.Endereco, ViewModelHelper.SetaDisabled(true, new { @class="text txtEndereco", @maxlength ="800" })) %>
 					</div>
 				</div>
 				<div class="block">
@@ -266,7 +267,7 @@
 					</div>
 					<div class="coluna25 divPais hide">
 						<label for="Pais" class="lblPais">País</label>
-						<%= Html.TextBox("Pais", Model.PTV.Destinatario.Pais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtPais", @maxlength ="200" }) ) %>
+						<%= Html.TextBox("Pais", Model.PTV.Destinatario.Pais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtPais", @maxlength ="100" }) ) %>
 					</div>
 				</div>
 			</div>

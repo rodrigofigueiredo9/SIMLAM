@@ -29,7 +29,7 @@
 	<div class="block hide esconder divNomeRazaoSocial">
 		<div class="coluna78">
 			<label for="NomeRazaoSocial">Nome do destinatário *</label>
-			<%= Html.TextBox("NomeRazaoSocial", Model.Destinatario.NomeRazaoSocial, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNomeRazaoSocial", @maxlength = "100" }) ) %>
+			<%= Html.TextBox("NomeRazaoSocial", Model.Destinatario.NomeRazaoSocial, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNomeRazaoSocial", @maxlength = "80" }) ) %>
 		</div>
 		<%if (Model.Destinatario.ID == 0) { %>
 		<div class="coluna20">
@@ -45,7 +45,7 @@
 	<div class="block">
 		<div class="coluna78">
 			<label for="Endereco">Endereço *</label>
-			<%= Html.TextBox("Endereco", Model.Destinatario.Endereco,  ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEndereco", @maxlength = "200" }) ) %>
+			<%= Html.TextBox("Endereco", Model.Destinatario.Endereco,  ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEndereco", @maxlength = "800" }) ) %>
 		</div>
 	</div>
 
@@ -60,7 +60,7 @@
 		</div>
 		<div class="coluna25 divPais prepend1 hide">
 			<label for="Pais" class="lblPais">País</label>
-			<%= Html.TextBox("Pais", Model.Destinatario.Pais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtPais", @maxlength ="200" }) ) %>
+			<%= Html.TextBox("Pais", Model.Destinatario.Pais, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtPais", @maxlength ="100" }) ) %>
 		</div>
 	</div>
 

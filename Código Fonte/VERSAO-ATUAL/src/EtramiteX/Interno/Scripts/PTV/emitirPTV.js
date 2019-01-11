@@ -74,6 +74,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.btnNovoDestinatario', 'click', PTVEmitir.onAssociarDestinatario);
 		PTVEmitir.container.delegate('.btnVerificarDestinatarioExportacao', 'click', PTVEmitir.onValidarDestinatarioExportacao);
 		PTVEmitir.container.delegate('.btnLimparDestinatarioExportacao', 'click', PTVEmitir.onLimparDestinatarioExportacao);
+		PTVEmitir.container.delegate('.btnNovoDestinatarioExportacao', 'click', PTVEmitir.onAssociarDestinatario);
 
 		PTVEmitir.container.delegate('.ddlTipoTransporte', 'change', function () { if ($(this).val() != '0') { $('.txtIdentificacaoVeiculo', PTVEmitir.container).focus(); } });
 
@@ -103,6 +104,14 @@ PTVEmitir = {
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
 			PTVEmitir.habilitarCampos(false);
 			$('.btnLimparPTV', PTVEmitir.container).hide();
+		}
+
+		//Destinatário associado é do tipo exportação
+		if ($('.hdnDestinatarioTipo', PTVEmitir.container).val() == 3) {
+			$('.divPais', PTVEmitir.container).removeClass('hide');
+
+			if ($('.txtUF', PTVEmitir.container).val() == '') $('.txtUF', PTVEmitir.container).val('-');
+			if ($('.txtMunicipio', PTVEmitir.container).val() == '') $('.txtMunicipio', PTVEmitir.container).val('-');
 		}
 
 		$('.txtNumeroDua', PTVEmitir.container).focus();
@@ -168,7 +177,9 @@ PTVEmitir = {
 	    Mensagem.limpar(PTVEmitir.container);
 	    var container = $(this).closest('.destinatario');
 	    $('.txtDocumentoCpfCnpj', container).val('');
-	    $('.novoDestinatario', container).addClass('hide');
+		$('.novoDestinatario', container).addClass('hide');
+		$('.novoDestinatarioExportacao', container).addClass('hide');
+		$('.txtNomeDestinatario', container).val('');
 
 		if ($('.rbTipoDestinatarioExportacao').is(':checked')) {
 			$('.divCPFCNPJ', container).addClass('hide');
@@ -176,6 +187,7 @@ PTVEmitir = {
 			$('.btnVerificarDestinatario', container).addClass('hide');
 			$('.btnVerificarDestinatarioExportacao', container).removeClass('hide');
 			$('.txtNomeDestinatario', container).removeClass('disabled').removeAttr('disabled');
+			$('.divPais', container).removeClass('hide');
 		}
 		else {
 			$('.divCPFCNPJ', container).removeClass('hide');
@@ -183,14 +195,15 @@ PTVEmitir = {
 			$('.btnVerificarDestinatario', container).removeClass('hide');
 			$('.btnVerificarDestinatarioExportacao', container).addClass('hide');
 			$('.txtNomeDestinatario', container).addClass('disabled').attr('disabled', 'disabled');
+			$('.divPais', container).addClass('hide');
 
 			if ($('.rbTipoDestinatarioFisica').is(':checked')) {
-				$('.lblCPFCNPJ', container).html('CPF *');
+				$('.lblDocumentoCPFCNPJ', container).html('CPF *');
 				$('.txtDocumentoCpfCnpj', container).removeClass('maskCnpj').unmask().addClass('maskCpf');
 			}
 			else if ($('.rbTipoDestinatarioJuridica').is(':checked')) {
 				$('.txtDocumentoCpfCnpj', container).removeClass('maskCpf').unmask().addClass('maskCnpj');
-				$('.lblCPFCNPJ', container).html('CNPJ *');
+				$('.lblDocumentoCPFCNPJ', container).html('CNPJ *');
 			}
 
 			Mascara.load(container);
@@ -785,7 +798,7 @@ PTVEmitir = {
 				if (response.EhValido) {
 					PTVEmitir.callBackAssociarDestinatario(response.Destinatario, true);
 				} else if (response.NovoDestinatario) {
-					$('.novoDestinatario', container).removeClass('hide');
+					$('.novoDestinatarioExportacao', container).removeClass('hide');
 				}
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 				MasterPage.carregando(false);
@@ -860,7 +873,8 @@ PTVEmitir = {
 		Modal.abrir(PTVEmitir.settings.urls.urlAssociarDestinatario, null, function (container) {
 			DestinatarioPTV.load(container, {
 				associarFuncao: PTVEmitir.callBackAssociarDestinatario,
-				destinatarioCPFCNPJ: $('.txtDocumentoCpfCnpj', PTVEmitir.container).val()
+				destinatarioCPFCNPJ: $('.txtDocumentoCpfCnpj', PTVEmitir.container).val(),
+				destinatarioNomeRazaoSocial: $('.txtNomeDestinatario', PTVEmitir.container).val()
 			});
 			Modal.defaultButtons(container, DestinatarioPTV.salvar, "Salvar");
 		}, Modal.tamanhoModalMedia);
@@ -875,6 +889,9 @@ PTVEmitir = {
 		$('.txtItinerario', PTVEmitir.container).val(destinatario.Itinerario);
 
 		if (isExportacao == true) {
+			if (destinatario.EstadoSigla == "" || destinatario.EstadoSigla == '*** Selecione ***') $('.txtUF', PTVEmitir.container).val('-');
+			if (destinatario.MunicipioTexto == "" || destinatario.MunicipioTexto == '*** Selecione ***') $('.txtMunicipio', PTVEmitir.container).val('-');
+
 			$('.txtPais', PTVEmitir.container).val(destinatario.Pais);
 			$('.btnVerificarDestinatarioExportacao, .novoDestinatarioExportacao', PTVEmitir.container).addClass('hide');
 			$('.btnLimparDestinatarioExportacao, .destinatarioDados, .divPais', PTVEmitir.container).removeClass('hide');

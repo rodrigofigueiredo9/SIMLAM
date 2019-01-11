@@ -12,6 +12,7 @@ DestinatarioPTV = {
 		},
 		associarFuncao: null,
 		destinatarioCPFCNPJ: null,
+		destinatarioNomeRazaoSocial: null
 	},
 	container: null,
 
@@ -19,7 +20,7 @@ DestinatarioPTV = {
 		if (options) {
 			$.extend(DestinatarioPTV.settings, options);
 			
-			//Documento vindo da tela de Emitir Permissão de Trânsito de Vegetais.
+			//Documento vindo da tela de Emitir Permissão de Trânsito de Vegetais - tipo pessoa Física ou Jurídica
 			if (DestinatarioPTV.settings.destinatarioCPFCNPJ) {
 				$('.txtCPFCNPJ', DestinatarioPTV.container).val(DestinatarioPTV.settings.destinatarioCPFCNPJ);
 				if (DestinatarioPTV.settings.destinatarioCPFCNPJ.length > 14) {
@@ -34,7 +35,24 @@ DestinatarioPTV = {
 					$('.maskCnpj', DestinatarioPTV.container).hide();
 				}
 
-				$('#DivTipoPessoa', DestinatarioPTV.container).removeClass('coluna30').addClass('coluna40');
+				$('#DivTipoPessoa', DestinatarioPTV.container).removeClass('coluna30').addClass('coluna50');
+			}
+			//Documento vindo da tela de Emitir Permissão de Trânsito de Vegetais - tipo pessoa Exportação
+			else if (DestinatarioPTV.settings.destinatarioNomeRazaoSocial) {
+				$('.txtNomeRazaoSocial', DestinatarioPTV.container).val(DestinatarioPTV.settings.destinatarioNomeRazaoSocial);
+				$('.rbPessoaTipoExportacao', DestinatarioPTV.container).attr('checked', true);				
+				$('.txtCPFCNPJ', DestinatarioPTV.container).hide();
+				$('.lblCPFCNPJ', DestinatarioPTV.container).hide();
+				$('.divNomeRazaoSocial', DestinatarioPTV.container).show();
+				$('.btnValidarCPFCNPJ', DestinatarioPTV.container).hide();
+				$('.btnValidarExportacao', DestinatarioPTV.container).show();
+				$('.divPais', DestinatarioPTV.container).show();
+
+				$('.lblUF', DestinatarioPTV.container).text("UF");
+				$('.lblMunicipio', DestinatarioPTV.container).text("Município");
+				$('.lblItinerario', DestinatarioPTV.container).text("Itinerário");
+
+				$('#DivTipoPessoa', DestinatarioPTV.container).removeClass('coluna30').addClass('coluna50');
 			}
 		}
 
@@ -286,7 +304,7 @@ DestinatarioPTV = {
 
 					if (DestinatarioPTV.settings.associarFuncao) {
 						Modal.fechar(DestinatarioPTV.container);
-						DestinatarioPTV.settings.associarFuncao(objeto);
+						DestinatarioPTV.settings.associarFuncao(objeto, objeto.PessoaTipo == 3);
 					} else {
 						MasterPage.redireciona(response.Url);
 					}
