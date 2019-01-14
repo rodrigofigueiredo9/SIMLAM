@@ -313,7 +313,7 @@ InformacaoCorte = {
 			objeto.DestinacaoMaterialTexto = item.DestinacaoMaterialTexto;
 			objeto.Produto = item.Produto;
 			objeto.ProdutoTexto = item.ProdutoTexto;
-			objeto.Quantidade = item.Quantidade;
+			objeto.Quantidade = parseInt(item.Quantidade.replace('.', ''));
 			linha.find('.itemJson').val(JSON.stringify(objeto));
 			linha.find('.destinacaoMaterial').text(objeto.DestinacaoMaterialTexto);
 			linha.find('.destinacaoMaterial').attr('title', objeto.DestinacaoMaterialTexto);
