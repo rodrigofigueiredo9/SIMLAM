@@ -22,9 +22,16 @@
 				<%= Html.TextBox("ZonaLocalizacao", ((eZonaLocalizacao)Model.Caracterizacao.Posse.Zona).ToString(), new { @class = "text txtZonaLocalizacao disabled", @disabled = "disabled" })%>
 			</div>
 			<div class="coluna21 apprend1">
-				<label for="Dominio_ComprovacaoId">Comprovação</label>
+				<label for="Dominio_ComprovacaoId">Comprovação *</label>
 				<%= Html.DropDownList("DominioComprovacaoId", Model.Caracterizacao.Posse.Comprovacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlComprovacao setarFoco"}))%>				
 			</div>
+		</div>
+
+		<div class="block">
+			<div class="coluna87">
+				<label for="Descricao_Comprovacao">Descrição da Comprovação *</label>
+				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao"})) %>
+			</div>			
 		</div>
 
 		<div class="block" >
@@ -61,19 +68,13 @@
 		<div class="block" >
 			<div class="coluna43 append2">
 				<label for="AreaPosseDocumento">Área posse Documento(m²) *</label>
-				<%= Html.TextBox("AreaPosseDocumento", Model.Caracterizacao.Posse.AreaPosseDocumento.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaPosse maskDecimalPonto3", @maxlength = "25" })) %>
+				<%= Html.TextBox("AreaPosseDocumento", Model.Caracterizacao.Posse.AreaPosseDocumento.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaPosse maskDecimalPonto", @maxlength = "25" })) %>
 			</div>
 			<div class="coluna43 append2">
 				<label for="Caracterizacao_Posse_RegularizacaoTipo">Tipo de regularização *</label>
 				<%= Html.DropDownList("Caracterizacao_Posse_RegularizacaoTipo", Model.TipoRegularizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlRegularizacaoTipo " }))%>
 			</div>
-		</div>
-		<div class="block">
-			<div class="coluna87">
-				<label for="Descricao_Comprovacao">Descrição da Comprovação *</label>
-				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao"})) %>
-			</div>			
-		</div>
+		</div>		
 
 		<div class="block">
 			<div class="coluna21 append2 ">

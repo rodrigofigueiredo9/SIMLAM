@@ -139,7 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				//Dominialidade dominialidade = new DominialidadeBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
 				RegularizacaoFundiaria regularizacao = new RegularizacaoFundiariaBus().ObterPorEmpreendimento(laudo.Empreendimento.Id.GetValueOrDefault());
 				//regularizacao.Posses = regularizacao.Posses.Where(x => esp.RegularizacaoDominios.Exists(y => y.DominioId == x.Id)).OrderBy(x => x.Identificacao).ToList();
-
+				regularizacao.Posses = regularizacao.Posses.OrderBy(x => x.Identificacao).ToList();
 
 				laudo.RegularizacaoFundiaria = new RegularizacaoFundiariaPDF(regularizacao);
 
