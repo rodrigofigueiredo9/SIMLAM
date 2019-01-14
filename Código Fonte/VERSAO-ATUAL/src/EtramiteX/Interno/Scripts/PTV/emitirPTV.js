@@ -109,6 +109,11 @@ PTVEmitir = {
 		//Destinatário associado é do tipo exportação
 		if ($('.hdnDestinatarioTipo', PTVEmitir.container).val() == 3) {
 			$('.divPais', PTVEmitir.container).removeClass('hide');
+			$('.btnLimparDestinatarioExportacao', PTVEmitir.container).removeClass('hide');
+
+			$('.divCPFCNPJ', PTVEmitir.container).addClass('hide');
+			$('.btnVerificarDestinatario', PTVEmitir.container).addClass('hide');
+			$('.btnLimparDestinatario', PTVEmitir.container).addClass('hide');
 
 			if ($('.txtUF', PTVEmitir.container).val() == '') $('.txtUF', PTVEmitir.container).val('-');
 			if ($('.txtMunicipio', PTVEmitir.container).val() == '') $('.txtMunicipio', PTVEmitir.container).val('-');
