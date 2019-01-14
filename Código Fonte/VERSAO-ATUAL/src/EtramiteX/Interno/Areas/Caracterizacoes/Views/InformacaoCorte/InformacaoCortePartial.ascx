@@ -18,7 +18,7 @@
             </div>
             <div class="coluna20">
                 <label>Área do imóvel (ha)</label>
-                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), new { @maxlength = "100", @class = "text areaImovel disabled", @disabled = "disabled" })%>
+                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Empreendimento.AreaImovel > 0, new { @maxlength = "100", @class = "text areaImovel"}))%>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
     </fieldset>
 
     <fieldset class="block box">
-        <legend>Licença</legend>
+        <legend>Licença de Silvicultura</legend>
 
 		<%if(!Model.IsVisualizar) { %>
 			<div class="block">
@@ -272,7 +272,7 @@
                                 <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
                             </td>
                             <td>
-                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToString("N0"))%>"><%= Html.Encode(item.Quantidade.ToString("N0"))%></span>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToString("N0"))%>"><%= Html.Encode(String.Concat(item.Quantidade.ToString("N0"), item.TipoCorte == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.eTipoCorte.CorteSeletivo ? " un" : " ha"))%></span>
                             </td>
 							<% if(!Model.IsVisualizar) { %>
 								<td class="tdAcoes">

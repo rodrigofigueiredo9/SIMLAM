@@ -319,7 +319,7 @@ InformacaoCorte = {
 			linha.find('.destinacaoMaterial').attr('title', objeto.DestinacaoMaterialTexto);
 			linha.find('.produto').text(objeto.ProdutoTexto);
 			linha.find('.produto').attr('title', objeto.ProdutoTexto);
-			linha.find('.quantidade').text(objeto.Quantidade);
+			linha.find('.quantidade').text(objeto.Quantidade + (objeto.TipoCorte == 2 ? " un" : " ha"));
 			linha.find('.quantidade').attr('title', objeto.Quantidade);
 
 			linha.removeClass('trTemplateRow hide');
@@ -342,6 +342,8 @@ InformacaoCorte = {
 			}
 
 			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index()]);
+			if (linha.index() == nextLinha.index())
+				nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
 			$(this).closest('tr').remove();
 			if (nextLinha.find('.tipoCorte').length > 0) return;
 
