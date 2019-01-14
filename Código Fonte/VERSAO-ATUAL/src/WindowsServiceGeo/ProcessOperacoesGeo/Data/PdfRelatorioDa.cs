@@ -1155,33 +1155,54 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 					result["ORDENADAS_ATP"] = this.banco.ExecutarList<Decimal>(comando);
 				}
-				
+
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from tmp_aativ t where t.projeto=:projeto order by 1";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+
+					result["QUADRO_AATIV"] = this.banco.ExecutarHashtable(comando);
+				}
+
+				//coordenadas
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from tmp_aativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				using (Comando comando = this.banco.CriarComando(strSQL))
+				{
+					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
+					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_AATIV"])
+					{
+						comando.SetarValorParametro("codigo", hs["CODIGO"]);
+						hs["ORDENADAS"] = this.banco.ExecutarList<Decimal>(comando);
+					}
+				}
+
 				//strSQL = @"select
-    //                            upper(a.nome) apmp_nome,
-    //                            (case a.tipo when 'M' then 'Matrícula' when 'P' then 'Posse' else 'Desconhecido' end) apmp_tipo,
-    //                            a.area_m2 apmp_area,
-    //                            sdo_geom.sdo_length(a.geometry, 0.0001) apmp_perimeter,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_afs b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) afs_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_rocha b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rocha_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='MASSA_DAGUA_APMP'), 0) massa_dagua_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='I'), 0) avn_i_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='M'), 0) avn_m_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='A'), 0) avn_a_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='D'), 0) avn_d_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='REC'), 0) aa_rec_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='USO'), 0) aa_uso_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='D'), 0) aa_d_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='PRESERV'), 0) arl_preserv_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='REC'), 0) arl_rec_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='USO'), 0) arl_uso_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='D'), 0) arl_d_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_rppn b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rppn_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_APMP'), 0) app_apmp_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AVN'), 0) app_avn_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_REC'), 0) app_aa_rec_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_USO'), 0) app_aa_uso_area,
-    //                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_ARL'), 0) app_arl_area
-    //                        from tmp_apmp a where a.projeto=:projeto order by 1";
+				//                            upper(a.nome) apmp_nome,
+				//                            (case a.tipo when 'M' then 'Matrícula' when 'P' then 'Posse' else 'Desconhecido' end) apmp_tipo,
+				//                            a.area_m2 apmp_area,
+				//                            sdo_geom.sdo_length(a.geometry, 0.0001) apmp_perimeter,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_afs b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) afs_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_rocha b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rocha_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='MASSA_DAGUA_APMP'), 0) massa_dagua_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='I'), 0) avn_i_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='M'), 0) avn_m_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='A'), 0) avn_a_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_avn b where b.projeto=a.projeto and b.cod_apmp = a.id and b.estagio='D'), 0) avn_d_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='REC'), 0) aa_rec_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='USO'), 0) aa_uso_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_aa b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='D'), 0) aa_d_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='PRESERV'), 0) arl_preserv_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='REC'), 0) arl_rec_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='USO'), 0) arl_uso_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_arl b where b.projeto=a.projeto and b.cod_apmp = a.id and b.situacao='D'), 0) arl_d_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_rppn b where b.projeto=a.projeto and b.cod_apmp = a.id), 0) rppn_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_APMP'), 0) app_apmp_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AVN'), 0) app_avn_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_REC'), 0) app_aa_rec_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_AA_USO'), 0) app_aa_uso_area,
+				//                            nvl( (select sum( b.area_m2 ) from tmp_areas_calculadas b where b.projeto=a.projeto and b.cod_apmp = a.id and b.tipo='APP_ARL'), 0) app_arl_area
+				//                        from tmp_apmp a where a.projeto=:projeto order by 1";
 
 				//strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 
