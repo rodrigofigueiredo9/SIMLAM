@@ -7,6 +7,7 @@ namespace Tecnomapas.Blocos.Entities.Configuracao.Interno
 	{
 		public const int FISICA = 1;
 		public const int JURIDICA = 2;
+		public const int EXPORTACAO = 3;
 
 		public int Id { get; set; }
 		[Display(Name = "Tipo")]

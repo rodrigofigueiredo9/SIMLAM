@@ -36,7 +36,8 @@
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
 				    urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
 				    urlVerificarDua: '<%= Url.Action("VerificarDua", "PTV") %>',
-				    urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>'
+					urlVerificarConsultaDUA: '<%= Url.Action("VerificarConsultaDUA", "PTV") %>',
+					urlValidarDestinatarioExportacao: '<%= Url.Action("ValidarDestinatarioExportacao","PTV") %>',
 				},
 			});
 

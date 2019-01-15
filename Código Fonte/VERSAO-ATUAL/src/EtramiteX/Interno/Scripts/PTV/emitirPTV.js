@@ -21,11 +21,11 @@ PTVEmitir = {
 			urlValidarDocumento: null,
 			urlObterDestinatario: null,
 			urlObterLaboratorio: null,
-			urlObterMunicipio: null,
 			urlObterDadosLaboratorio: null,
 			urlObterTratamentoFisso: null,
 			urlObterItinerario: null,
-			urlVerificarDocumentoOrigem: null
+			urlVerificarDocumentoOrigem: null,
+			urlValidarDestinatarioExportacao: null
 		},
 		Mensagens: null,
 		idsTela: null,
@@ -64,13 +64,19 @@ PTVEmitir = {
 		//2-Identificação do Produto
 		PTVEmitir.container.delegate('.btnAssociarCultura', 'click', PTVEmitir.associarCultura);
 		PTVEmitir.container.delegate('.rbPartidaLacradaOrigem', 'change', PTVEmitir.onChangePartidaLacrada);
-		PTVEmitir.container.delegate('.rbTipoDocumento', 'change', PTVEmitir.onTipoPessoaChange);
+		PTVEmitir.container.delegate('.btnVerificarDocumentoOrigem', 'click', PTVEmitir.verificarDocumentoOrigem);
+		$('.divNumeroDocumentoEnter', PTVEmitir.container).keyup(PTVEmitir.verificarNumeroDocumentoEnter);
+
+		//3-Destinatário
+		PTVEmitir.container.delegate('.rbTipoDestinatario', 'change', PTVEmitir.onTipoPessoaChange);
 		PTVEmitir.container.delegate('.btnVerificarDestinatario', 'click', PTVEmitir.onValidarDocumento);
 		PTVEmitir.container.delegate('.btnLimparDestinatario', 'click', PTVEmitir.onLimparDestinatario);
 		PTVEmitir.container.delegate('.btnNovoDestinatario', 'click', PTVEmitir.onAssociarDestinatario);
+		PTVEmitir.container.delegate('.btnVerificarDestinatarioExportacao', 'click', PTVEmitir.onValidarDestinatarioExportacao);
+		PTVEmitir.container.delegate('.btnLimparDestinatarioExportacao', 'click', PTVEmitir.onLimparDestinatarioExportacao);
+		PTVEmitir.container.delegate('.btnNovoDestinatarioExportacao', 'click', PTVEmitir.onAssociarDestinatario);
+
 		PTVEmitir.container.delegate('.ddlTipoTransporte', 'change', function () { if ($(this).val() != '0') { $('.txtIdentificacaoVeiculo', PTVEmitir.container).focus(); } });
-		PTVEmitir.container.delegate('.btnVerificarDocumentoOrigem', 'click', PTVEmitir.verificarDocumentoOrigem);
-		$('.divNumeroDocumentoEnter', PTVEmitir.container).keyup(PTVEmitir.verificarNumeroDocumentoEnter);
 
 		PTVEmitir.container.delegate('.rdbPessaoTipo', 'change', PTVEmitir.onTipoPessoaDuaChange);
 
@@ -95,11 +101,22 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscal', 'change', PTVEmitir.onChangeNumeroNotaFiscal);
 		PTVEmitir.container.delegate('.btnSalvar', 'click', PTVEmitir.onSalvar);
 
-		PTVEmitir.container.delegate('.rbTipoDocumento', 'change', PTVEmitir.onTipoPessoaChange);
-
 		if (parseInt($('.hdnID', PTVEmitir.container).val()) > 0) {
 			PTVEmitir.habilitarCampos(false);
 			$('.btnLimparPTV', PTVEmitir.container).hide();
+		}
+
+		//Destinatário associado é do tipo exportação
+		if ($('.hdnDestinatarioTipo', PTVEmitir.container).val() == 3) {
+			$('.divPais', PTVEmitir.container).removeClass('hide');
+			$('.btnLimparDestinatarioExportacao', PTVEmitir.container).removeClass('hide');
+
+			$('.divCPFCNPJ', PTVEmitir.container).addClass('hide');
+			$('.btnVerificarDestinatario', PTVEmitir.container).addClass('hide');
+			$('.btnLimparDestinatario', PTVEmitir.container).addClass('hide');
+
+			if ($('.txtUF', PTVEmitir.container).val() == '') $('.txtUF', PTVEmitir.container).val('-');
+			if ($('.txtMunicipio', PTVEmitir.container).val() == '') $('.txtMunicipio', PTVEmitir.container).val('-');
 		}
 
 		$('.txtNumeroDua', PTVEmitir.container).focus();
@@ -165,18 +182,38 @@ PTVEmitir = {
 	    Mensagem.limpar(PTVEmitir.container);
 	    var container = $(this).closest('.destinatario');
 	    $('.txtDocumentoCpfCnpj', container).val('');
-	    $('.novoDestinatario', container).addClass('hide');
+		$('.novoDestinatario', container).addClass('hide');
+		$('.novoDestinatarioExportacao', container).addClass('hide');
+		$('.txtNomeDestinatario', container).val('');
 
-	    if ($('.rbTipoPessoaFisica').is(':checked')) {
-	        $('.lblCPFCNPJ', container).html('CPF *');
-	        $('.txtDocumentoCpfCnpj', container).removeClass('maskCnpj').unmask().addClass('maskCpf');
-	    } else {
-	        $('.txtDocumentoCpfCnpj', container).removeClass('maskCpf').unmask().addClass('maskCnpj');
-	        $('.lblCPFCNPJ', container).html('CNPJ *');
-	    }
+		if ($('.rbTipoDestinatarioExportacao').is(':checked')) {
+			$('.divCPFCNPJ', container).addClass('hide');
+			$('.divNomeRazaoSocial', container).removeClass('hide');
+			$('.btnVerificarDestinatario', container).addClass('hide');
+			$('.btnVerificarDestinatarioExportacao', container).removeClass('hide');
+			$('.txtNomeDestinatario', container).removeClass('disabled').removeAttr('disabled');
+			$('.divPais', container).removeClass('hide');
+		}
+		else {
+			$('.divCPFCNPJ', container).removeClass('hide');
+			$('.divNomeRazaoSocial', container).addClass('hide');
+			$('.btnVerificarDestinatario', container).removeClass('hide');
+			$('.btnVerificarDestinatarioExportacao', container).addClass('hide');
+			$('.txtNomeDestinatario', container).addClass('disabled').attr('disabled', 'disabled');
+			$('.divPais', container).addClass('hide');
 
-	    Mascara.load(container);
-	    $('.txtDocumentoCpfCnpj', container).focus();
+			if ($('.rbTipoDestinatarioFisica').is(':checked')) {
+				$('.lblDocumentoCPFCNPJ', container).html('CPF *');
+				$('.txtDocumentoCpfCnpj', container).removeClass('maskCnpj').unmask().addClass('maskCpf');
+			}
+			else if ($('.rbTipoDestinatarioJuridica').is(':checked')) {
+				$('.txtDocumentoCpfCnpj', container).removeClass('maskCpf').unmask().addClass('maskCnpj');
+				$('.lblDocumentoCPFCNPJ', container).html('CNPJ *');
+			}
+
+			Mascara.load(container);
+			$('.txtDocumentoCpfCnpj', container).focus();
+		}
 	},
 
 	onTipoPessoaDuaChange: function () {
@@ -652,12 +689,12 @@ PTVEmitir = {
 		if (habilitado) {
 			$('.btnValidar', PTVEmitir.container).show();
 			$('.btnLimpar', PTVEmitir.container).hide();
-			$('.rbTipoDocumento', PTVEmitir.container).removeAttr('disabled');
+			$('.rbTipoDestinatario', PTVEmitir.container).removeAttr('disabled');
 		} else {
 			$('.btnValidar', PTVEmitir.container).hide();
 			$('.btnLimpar', PTVEmitir.container).show();
 			$('.block', PTVEmitir.container).removeClass('hide');
-			$('.rbTipoDocumento', PTVEmitir.container).attr('disabled', 'disabled');
+			$('.rbTipoDestinatario', PTVEmitir.container).attr('disabled', 'disabled');
 		}
 	},
 
@@ -719,28 +756,10 @@ PTVEmitir = {
 		}
 	},
 
-	onTipoPessoaChange: function () {
-		Mensagem.limpar(PTVEmitir.container);
-		var container = $(this).closest('.destinatario');
-		$('.txtDocumentoCpfCnpj', container).val('');
-		$('.novoDestinatario', container).addClass('hide');
-
-		if ($('.rbTipoPessoaFisica').is(':checked')) {
-			$('.lblCPFCNPJ', container).html('CPF *');
-			$('.txtDocumentoCpfCnpj', container).removeClass('maskCnpj').unmask().addClass('maskCpf');
-		} else {
-			$('.txtDocumentoCpfCnpj', container).removeClass('maskCpf').unmask().addClass('maskCnpj');
-			$('.lblCPFCNPJ', container).html('CNPJ *');
-		}
-
-		Mascara.load(container);
-		$('.txtDocumentoCpfCnpj', container).focus();
-	},
-
 	onValidarDocumento: function () {
 		Mensagem.limpar(PTVEmitir.container);
 		var container = $(this).closest('.destinatario');
-		var pessoaTipo = $('.rbTipoDocumento:checked', container).val() ? $('.rbTipoDocumento:checked', container).val() : 0;
+		var pessoaTipo = $('.rbTipoDestinatario:checked', container).val() ? $('.rbTipoDestinatario:checked', container).val() : 0;
 		var CpfCnpj = $('.txtDocumentoCpfCnpj', container).val();
 
 		MasterPage.carregando(true);
@@ -755,9 +774,36 @@ PTVEmitir = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					PTVEmitir.callBackAssociarDestinatario(response.Destinatario);
+					PTVEmitir.callBackAssociarDestinatario(response.Destinatario, false);
 				} else if (response.NovoDestinatario) {
 					$('.novoDestinatario', container).removeClass('hide');
+				}
+				Mensagem.gerar(PTVEmitir.container, response.Msg);
+				MasterPage.carregando(false);
+			}
+		});
+	},
+
+	onValidarDestinatarioExportacao: function () {
+		Mensagem.limpar(PTVEmitir.container);
+		var container = $(this).closest('.destinatario');
+		var nomeDestinatario = $('.txtNomeDestinatario', container).val();
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: PTVEmitir.settings.urls.urlValidarDestinatarioExportacao,
+			data: JSON.stringify({ nomeDestinatario: nomeDestinatario }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					PTVEmitir.callBackAssociarDestinatario(response.Destinatario, true);
+				} else if (response.NovoDestinatario) {
+					$('.novoDestinatarioExportacao', container).removeClass('hide');
 				}
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
 				MasterPage.carregando(false);
@@ -790,7 +836,7 @@ PTVEmitir = {
 
 					$('.btnVerificarDestinatario, .novoDestinatario', PTVEmitir.container).addClass('hide');
 					$('.btnLimparDestinatario, .destinatarioDados', PTVEmitir.container).removeClass('hide');
-					$('.rbTipoDocumento, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+					$('.rbTipoDestinatario, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
 				}
 
 				Mensagem.gerar(PTVEmitir.container, response.Msg);
@@ -809,8 +855,22 @@ PTVEmitir = {
 
 		$('.btnVerificarDestinatario', container).removeClass('hide');
 		$('.btnLimparDestinatario, .destinatarioDados, .novoDestinatario', container).addClass('hide');
-		$('.rbTipoDocumento, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', container).removeClass('disabled').removeAttr('disabled');
+		$('.rbTipoDestinatario, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', container).removeClass('disabled').removeAttr('disabled');
 		$('.txtDocumentoCpfCnpj', container).focus();
+	},
+
+	onLimparDestinatarioExportacao: function () {
+		var container = $(this).closest('.destinatario');
+		$('.txtNomeDestinatario', container).val("");
+		$('.txtEndereco', container).val("");
+		$('.txtUF', container).val("");
+		$('.txtMunicipio', container).val("");
+		$('.txtPais', container).val("");
+		
+		$('.btnLimparDestinatarioExportacao, .destinatarioDados, .novoDestinatarioExportacao, .divPais', container).addClass('hide');
+		$('.btnVerificarDestinatarioExportacao, .divNomeRazaoSocial', container).removeClass('hide');
+		$('.rbTipoDestinatario, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio, .txtPais', container).removeClass('disabled').removeAttr('disabled');
+		$('.txtNomeDestinatario', container).focus();
 	},
 
 	//Associar Destinatario
@@ -818,13 +878,14 @@ PTVEmitir = {
 		Modal.abrir(PTVEmitir.settings.urls.urlAssociarDestinatario, null, function (container) {
 			DestinatarioPTV.load(container, {
 				associarFuncao: PTVEmitir.callBackAssociarDestinatario,
-				destinatarioCPFCNPJ: $('.txtDocumentoCpfCnpj', PTVEmitir.container).val()
+				destinatarioCPFCNPJ: $('.txtDocumentoCpfCnpj', PTVEmitir.container).val(),
+				destinatarioNomeRazaoSocial: $('.txtNomeDestinatario', PTVEmitir.container).val()
 			});
 			Modal.defaultButtons(container, DestinatarioPTV.salvar, "Salvar");
 		}, Modal.tamanhoModalMedia);
 	},
 
-	callBackAssociarDestinatario: function (destinatario) {
+	callBackAssociarDestinatario: function (destinatario, isExportacao) {
 		$('.hdnDestinatarioID', PTVEmitir.container).val(destinatario.ID);
 		$('.txtNomeDestinatario', PTVEmitir.container).val(destinatario.NomeRazaoSocial);
 		$('.txtEndereco', PTVEmitir.container).val(destinatario.Endereco);
@@ -832,10 +893,20 @@ PTVEmitir = {
 		$('.txtMunicipio', PTVEmitir.container).val(destinatario.MunicipioTexto);
 		$('.txtItinerario', PTVEmitir.container).val(destinatario.Itinerario);
 
-		$('.btnVerificarDestinatario, .novoDestinatario', PTVEmitir.container).addClass('hide');
-		$('.btnLimparDestinatario, .destinatarioDados', PTVEmitir.container).removeClass('hide');
-		$('.rbTipoDocumento, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+		if (isExportacao == true) {
+			if (destinatario.EstadoSigla == "" || destinatario.EstadoSigla == '*** Selecione ***') $('.txtUF', PTVEmitir.container).val('-');
+			if (destinatario.MunicipioTexto == "" || destinatario.MunicipioTexto == '*** Selecione ***') $('.txtMunicipio', PTVEmitir.container).val('-');
 
+			$('.txtPais', PTVEmitir.container).val(destinatario.Pais);
+			$('.btnVerificarDestinatarioExportacao, .novoDestinatarioExportacao', PTVEmitir.container).addClass('hide');
+			$('.btnLimparDestinatarioExportacao, .destinatarioDados, .divPais', PTVEmitir.container).removeClass('hide');
+			$('.rbTipoDestinatario, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio, .txtPais', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+		}
+		else {
+			$('.btnVerificarDestinatario, .novoDestinatario', PTVEmitir.container).addClass('hide');
+			$('.btnLimparDestinatario, .destinatarioDados', PTVEmitir.container).removeClass('hide');
+			$('.rbTipoDestinatario, .txtDocumentoCpfCnpj, .txtNomeDestinatario, .txtEndereco, .txtUF, .txtMunicipio', PTVEmitir.container).addClass('disabled').attr('disabled', 'disabled');
+		}
 		PTVEmitir.onChangeRotaTransitoDefinida();
 	},
 
@@ -930,7 +1001,7 @@ PTVEmitir = {
 	onChangeRotaTransitoDefinida: function () {
 		if ($('.rdbRotaTransitoDefinidaSim', PTVEmitir.container).is(':checked')) {
 			$('.rota', PTVEmitir.container).removeClass('hide');
-			var pessoaTipo = $('.rbTipoDocumento:checked', PTVEmitir.container).val();
+			var pessoaTipo = $('.rbTipoDestinatario:checked', PTVEmitir.container).val();
 			$.ajax({
 				url: PTVEmitir.settings.urls.urlObterItinerario,
 				data: JSON.stringify({ destinatarioId: $('.hdnDestinatarioID', PTVEmitir.container).val() }),
@@ -1005,7 +1076,7 @@ PTVEmitir = {
 	},
 
 	obter: function () {
-	    var pessoaTipo = $('.rbTipoDocumento:checked', PTVEmitir.container).val();
+	    var pessoaTipo = $('.rbTipoDestinatario:checked', PTVEmitir.container).val();
 
 	 
 	    var dados = '';
@@ -1035,7 +1106,7 @@ PTVEmitir = {
 			LacreNumero: $('.txtNumeroLacre', PTVEmitir.container).val(),
 			PoraoNumero: $('.txtNumeroPorao', PTVEmitir.container).val(),
 			ContainerNumero: $('.txtNumeroContainer', PTVEmitir.container).val(),
-			Tipo: $('.rbTipoDocumento:checked', PTVEmitir.container).val(),
+			Tipo: $('.rbTipoDestinatario:checked', PTVEmitir.container).val(),
 			DestinatarioID: $('.hdnDestinatarioID', PTVEmitir.container).val(),
 			PossuiLaudoLaboratorial: $('.rbPossuiLaudo:checked', PTVEmitir.container).val(),
 			TransporteTipo: $('.ddlTipoTransporte', PTVEmitir.container).val(),
