@@ -296,8 +296,8 @@ InformacaoCorte = {
 				linha.find('.especie').text(objeto.EspecieTexto);
 				linha.find('.especie').attr('title', objeto.EspecieTexto);
 				linha.find('.especie').parent().attr('rowspan', objeto.Linhas);
-				linha.find('.areaCorte').text(objeto.AreaCorte);
-				linha.find('.areaCorte').attr('title', objeto.AreaCorte);
+				linha.find('.areaCorte').text(objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
+				linha.find('.areaCorte').attr('title', objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
 				linha.find('.areaCorte').parent().attr('rowspan', objeto.Linhas);
 				linha.find('.idadePlantio').text(objeto.IdadePlantio);
 				linha.find('.idadePlantio').attr('title', objeto.IdadePlantio);

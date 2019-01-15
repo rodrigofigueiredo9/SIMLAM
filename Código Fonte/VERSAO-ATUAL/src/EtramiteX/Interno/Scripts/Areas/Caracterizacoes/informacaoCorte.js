@@ -296,8 +296,8 @@ InformacaoCorte = {
 				linha.find('.especie').text(objeto.EspecieTexto);
 				linha.find('.especie').attr('title', objeto.EspecieTexto);
 				linha.find('.especie').parent().attr('rowspan', objeto.Linhas);
-				linha.find('.areaCorte').text(objeto.AreaCorte);
-				linha.find('.areaCorte').attr('title', objeto.AreaCorte);
+				linha.find('.areaCorte').text(objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
+				linha.find('.areaCorte').attr('title', objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
 				linha.find('.areaCorte').parent().attr('rowspan', objeto.Linhas);
 				linha.find('.idadePlantio').text(objeto.IdadePlantio);
 				linha.find('.idadePlantio').attr('title', objeto.IdadePlantio);
@@ -319,7 +319,7 @@ InformacaoCorte = {
 			linha.find('.destinacaoMaterial').attr('title', objeto.DestinacaoMaterialTexto);
 			linha.find('.produto').text(objeto.ProdutoTexto);
 			linha.find('.produto').attr('title', objeto.ProdutoTexto);
-			linha.find('.quantidade').text(objeto.Quantidade + (objeto.TipoCorte == 2 ? " un" : " ha"));
+			linha.find('.quantidade').text(objeto.Quantidade);
 			linha.find('.quantidade').attr('title', objeto.Quantidade);
 
 			linha.removeClass('trTemplateRow hide');
