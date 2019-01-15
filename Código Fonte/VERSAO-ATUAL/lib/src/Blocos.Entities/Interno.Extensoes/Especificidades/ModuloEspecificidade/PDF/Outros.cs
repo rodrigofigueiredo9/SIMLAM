@@ -13,10 +13,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public string ValorTerreno { get; set; }
 		public bool IsInalienabilidade { get; set; }
 		public string Municipio { get; set; }
+		public int Requerimento { get; set; }
 		public TituloPDF Titulo { get; set; }
 		public ProtocoloPDF Protocolo { get; set; }
 		public EmpreendimentoPDF Empreendimento { get; set; }
-		public PessoaPDF Interessado { set; get; }
+		public PessoaPDF Autor { set; get; }
 		public PessoaPDF Destinatario { set; get; }
 		public DominioPDF Dominio { get; set; }
 		public DominialidadePDF Dominialidade { get; set; }
@@ -93,7 +94,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Protocolo = new ProtocoloPDF();
 			Empreendimento = new EmpreendimentoPDF();
 			Destinatario = new PessoaPDF();
-			Interessado = new PessoaPDF();
+			Autor = new PessoaPDF();
 			Destinatarios = new List<PessoaPDF>();
 			ResponsaveisEmpreendimento = new List<PessoaPDF>();
 			Interessados = new List<PessoaPDF>();
