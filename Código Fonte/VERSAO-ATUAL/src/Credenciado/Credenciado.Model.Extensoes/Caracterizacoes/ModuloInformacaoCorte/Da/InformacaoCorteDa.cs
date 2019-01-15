@@ -214,7 +214,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação Corte Tipo
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_dest_material c where exists
-					(select 1 from {0}crt_inf_corte_tipo t where t.corte_id = :corte_id)", EsquemaCredenciadoBanco);
+					(select 1 from {0}crt_inf_corte_tipo t where t.corte_id = :corte_id and t.id = c.tipo_corte_id)", EsquemaCredenciadoBanco);
 				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.InformacaoCorteTipo.SelectMany(x => x.InformacaoCorteDestinacao).Where(x => x.Id > 0).Select(y => y.Id).ToList());
 				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
