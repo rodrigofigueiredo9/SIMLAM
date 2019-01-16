@@ -274,7 +274,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCad
 					v_projeto_id number(38) := 0;
 					v_caracterizacao_id number(38) := 0;
 				begin 
-					select p.id into v_projeto_id from {0}tmp_projeto_geo p where p.empreendimento = :empreendimento and p.caracterizacao = :caracterizacao_tipo;
+					select nvl((select p.id from {0}tmp_projeto_geo p where p.empreendimento = :empreendimento and p.caracterizacao = :caracterizacao_tipo), 0) into v_projeto_id from dual;
 
 					{0}geo_operacoesprocessamentogeo.ApagarGeometriasTMP(v_projeto_id, :fila_tipo);
 					{0}geo_operacoesprocessamentogeo.ApagarGeometriasOficial(v_projeto_id, :fila_tipo);

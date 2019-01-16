@@ -478,6 +478,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloHabil
 
 						emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao_id");
 						emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse == 9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
+						if (string.IsNullOrWhiteSpace(emissaoPTV.FuncionarioHabilitado.Registro))
+							emissaoPTV.FuncionarioHabilitado.Registro = emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea;
 					}
 
 					reader.Close();

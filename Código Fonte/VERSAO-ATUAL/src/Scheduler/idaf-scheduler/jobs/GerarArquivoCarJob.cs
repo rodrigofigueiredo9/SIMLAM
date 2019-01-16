@@ -157,11 +157,11 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             cmd.ExecuteNonQuery();
                         }
-                using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado = '%Transporte de Rede%'", conn))
-                {
-                    cmd.ExecuteNonQuery();
-                }
+                //using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+                //                                WHERE resultado = '%Transporte de Rede%'", conn))
+                //{
+                //    cmd.ExecuteNonQuery();
+                //}
 				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
                                                 WHERE DATA_CRIACAO IS NOT NULL AND DATA_CONCLUSAO IS NULL AND (DATA_CRIACAO + 1 < SYSDATE)", conn))
                 {
@@ -878,7 +878,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     requisicao.caracterizacao_tid = Convert.ToString(dra["caract_tid"]);
                                     requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
                                     requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
-									requisicao.carac_origem = 1; 
+									requisicao.carac_origem = 2; 
                                     dra.Close();
                                 }
                                 else
@@ -896,7 +896,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                                 requisicao.caracterizacao_tid = Convert.ToString(draa["caract_tid"]);
                                                 requisicao.projeto_geografico_id = Convert.ToInt32(draa["projeto_id"]);
                                                 requisicao.projeto_geografico_tid = Convert.ToString(draa["projeto_tid"]);
-												requisicao.carac_origem = 2;
+												requisicao.carac_origem = 1;
 												draa.Close();
                                             }
                                             
