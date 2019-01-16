@@ -129,6 +129,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							arquivoFinal = arquivoManager.Salvar(nextItem.Requisicao, stream, conn);
 						}
 
+
+
 						/*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
 							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
 								&& resultadoEnvio.mensagensResposta.Any( r=> r.Equals("Foi encontrada sobreposição de 100,00% com outro imóvel já inscrito no CAR que possui os mesmos documentos (CPF e/ou CNPJ).", StringComparison.CurrentCultureIgnoreCase))))
@@ -223,7 +225,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// </summary>
 		/// <param name="localArquivoCar">The local arquivo car.</param>
 		/// <returns></returns>
-		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual)
+		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual, int solicitacao)
 		{
 			var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
 			if (!String.IsNullOrWhiteSpace(proxyUrl))

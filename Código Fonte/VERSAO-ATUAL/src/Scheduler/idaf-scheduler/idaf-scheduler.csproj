@@ -219,6 +219,7 @@
     <Compile Include="jobs\ConsultarDUAJob.cs" />
     <Compile Include="jobs\EnviarArquivoCarJob.cs" />
     <Compile Include="jobs\GerarArquivoCarJob.cs" />
+    <Compile Include="jobs\ReenvioCarJob.cs" />
     <Compile Include="jobs\IntegracaoCarJob.cs" />
     <Compile Include="misc\WKT\GeoJSONFromWKT.cs" />
     <Compile Include="misc\LocalDB.cs" />

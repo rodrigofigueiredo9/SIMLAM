@@ -880,7 +880,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                     requisicao.caracterizacao_tid = Convert.ToString(dra["caract_tid"]);
                                     requisicao.projeto_geografico_id = Convert.ToInt32(dra["projeto_id"]);
                                     requisicao.projeto_geografico_tid = Convert.ToString(dra["projeto_tid"]);
-									requisicao.carac_origem = 1; 
+									requisicao.carac_origem = 2; 
                                     dra.Close();
                                 }
                                 else
@@ -898,7 +898,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                                                 requisicao.caracterizacao_tid = Convert.ToString(draa["caract_tid"]);
                                                 requisicao.projeto_geografico_id = Convert.ToInt32(draa["projeto_id"]);
                                                 requisicao.projeto_geografico_tid = Convert.ToString(draa["projeto_tid"]);
-												requisicao.carac_origem = 2;
+												requisicao.carac_origem = 1;
 												draa.Close();
                                             }
                                             
