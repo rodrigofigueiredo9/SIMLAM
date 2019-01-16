@@ -370,7 +370,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			titulo.ToEspecificidade();
 			IConfiguradorPdf configurador = busEspecificiade.ObterConfiguradorPdf(titulo.Especificidade) ?? new ConfiguracaoDefault();
 
-			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
+			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || (titulo.Situacao.Id == (int)eTituloSituacao.AguardandoPagamento);
 
 			Object dataSource = busEspecificiade.ObterDadosPdf(titulo.Especificidade, banco);
 

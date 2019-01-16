@@ -5,13 +5,12 @@ using System.Linq;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
-using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDominialidade.PDF;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOutros;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
-using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDominialidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 
@@ -239,6 +238,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 				#endregion
 
+				#region Assinantes
+				outros.Titulo.Assinantes1 = new List<IAssinante>();
+				outros.Titulo.Assinantes2 = new List<IAssinante>();
+
+				outros.Titulo.Assinantes1.Add(new AssinanteDefault { Cargo = "Declarante", Nome = outros.Destinatario.NomeRazaoSocial });
+				outros.Titulo.Assinantes2.Add(new AssinanteDefault { Cargo = "Responsável Técnico", Nome = outros.Titulo.AutorNome });
+
+				outros.Autor.NomeRazaoSocial = outros.Titulo.AutorNome;
+				#endregion
+
 				#region Empreendimento
 
 
@@ -314,7 +323,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 				#endregion
 
-
 				#region Informação de corte
 
 				comando = bancoDeDados.CriarComando(@"
@@ -349,18 +357,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					reader.Close();
 
 				}
-
-				//infoCorte = infoCorteBus.ObterPorEmpreendimento(outros.Empreendimento.Id.GetValueOrDefault(), banco: bancoDeDados);
-
-				//if (infoCorte != null)
-				//{
-				//	infoCorteInfo = infoCorte.SingleOrDefault(x => x.Id == infoCorteInfoId);
-
-				//	if (infoCorteInfo != null)
-				//	{
-				//		outros.InformacaoCorteInfo = new InformacaoCorteInfoPDF(infoCorteInfo);
-				//	}
-				//}
 
 				#endregion
 			}
