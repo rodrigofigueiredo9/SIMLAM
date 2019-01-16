@@ -151,7 +151,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					x.ProjetoGeograficoId = (cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo) ?? new Caracterizacao()).ProjetoId;
 				}
 
-				x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
+				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
+				{
+					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
+				}
+				else
+				{
+					x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
+				}
 			});
 
 			#endregion
@@ -166,6 +173,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				}
 
 				x.ProjetoGeograficoVisualizar = visualizar;
+				x.PodeCadastrar = User.IsInRole(String.Format("{0}Listar", x.Tipo.ToString()));
 				x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 				x.PodeExcluir = (User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString())) && (x.Tipo == eCaracterizacao.UnidadeConsolidacao || x.Tipo == eCaracterizacao.UnidadeProducao));
@@ -179,6 +187,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 				x.UrlExcluirConfirm = Url.Action("ExcluirConfirm", x.Tipo.ToString());
 				x.UrlExcluir = Url.Action("Excluir", x.Tipo.ToString());
+
+				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
+				{
+					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
+				}
+
 			});
 
 			#endregion

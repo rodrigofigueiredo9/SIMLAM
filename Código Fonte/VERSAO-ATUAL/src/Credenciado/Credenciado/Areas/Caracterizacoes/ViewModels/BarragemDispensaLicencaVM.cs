@@ -19,8 +19,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
         public List<SelectListItem> MongeTiposLst { get; set; }
         public List<SelectListItem> VertedouroTiposLst { get; set; }
         public bool IsVisualizar { get; set; }
+		public List<BarragemDispensaLicenca> CaracterizacoesCadastradas { get; set; } = new List<BarragemDispensaLicenca>();
+		public List<BarragemDispensaLicenca> CaracterizacoesAssociadas { get; set; } = new List<BarragemDispensaLicenca>();
 
-        public string Mensagens
+		public string Mensagens
         {
             get
             {
@@ -51,7 +53,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 
         public BarragemDispensaLicencaVM(BarragemDispensaLicenca entidade, Atividade atividade, List<Lista> finalidades, List<Lista> formacoesRT, List<Lista> barragemTipos, List<Lista> fases, List<Lista> mongeTipos, List<Lista> vertedouroTipos)
         {
-            Caracterizacao = entidade ?? new BarragemDispensaLicenca();
+            Caracterizacao = entidade ?? new BarragemDispensaLicenca();			
 
             List<Lista> atividades = new List<Lista>();
             atividades.Add(new Lista() { Id = atividade.Id.ToString(), Texto = atividade.NomeAtividade });

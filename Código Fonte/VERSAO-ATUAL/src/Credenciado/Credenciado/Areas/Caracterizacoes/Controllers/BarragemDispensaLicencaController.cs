@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Credenciado.Security;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -11,6 +13,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBar
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 using Tecnomapas.EtramiteX.Credenciado.ViewModels;
 
@@ -188,6 +191,68 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
         }
 
-        #endregion
-    }
+		#endregion
+
+		#region Listar
+
+		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
+		public ActionResult Listar(int id, int projetoDigitalId)
+		{
+			if (!_caracterizacaoValidar.Basicas(id))
+			{
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+			}
+
+			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
+			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
+			caracterizacao.EmpreendimentoID = id;
+
+			if (!_validar.Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+			}
+
+			AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
+
+			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
+				caracterizacao,
+				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
+				ListaCredenciadoBus.BarragemDispensaLicencaFinalidadeAtividade,
+				ListaCredenciadoBus.BarragemDispensaLicencaFormacaoRT,
+				ListaCredenciadoBus.BarragemDispensaLicencaBarragemTipo,
+				ListaCredenciadoBus.BarragemDispensaLicencaFase,
+				ListaCredenciadoBus.BarragemDispensaLicencaMongeTipo,
+				ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
+			);
+
+			vm.CaracterizacoesCadastradas = _bus.ObterListar(id);
+			vm.CaracterizacoesAssociadas = _bus.ObterListar(id);
+			return View(vm);
+		}
+
+		#endregion
+
+		[Permite(Tipo = ePermiteTipo.Logado)]
+		public ActionResult AssociarCaracterizacaoProjetoDigital(int projetoDigitalId, int caracterizacao, string tid)
+		{
+			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
+			var projetoDigital = projetoDigitalBus.Obter(projetoDigitalId);
+			projetoDigital.Dependencias.Add(new Dependencia()
+			{
+				DependenciaTipo = (int)eCaracterizacaoDependenciaTipo.Caracterizacao,
+				DependenciaCaracterizacao = (int)eCaracterizacao.BarragemDispensaLicenca,
+				DependenciaId = caracterizacao,
+				DependenciaTid = tid
+			});
+			projetoDigitalBus.AssociarDependencias(projetoDigital, caracterizacao);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("Listar", "BarragemDispensaLicenca", new { id = projetoDigital.EmpreendimentoId, projetoDigitalId = projetoDigital.Id, Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
+
+	}
 }

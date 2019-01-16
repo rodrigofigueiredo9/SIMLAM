@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -6,10 +6,13 @@
 BarragemDispensaLicenca = {
     settings: {
         urls: {
-            coordenadaGeo: null
+			coordenadaGeo: null,
+			salvar: null
         },
         mensagens: null,
-        idsTela: null
+		idsTela: null,
+		projetoDigitalId: null,
+		empreendimentoId: null
     },
     container: null,
 
@@ -28,8 +31,9 @@ BarragemDispensaLicenca = {
         BarragemDispensaLicenca.container.delegate('.cbFormacaoRT', 'change', function () { BarragemDispensaLicenca.changeFormacaoRT(); });
         BarragemDispensaLicenca.container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
         BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
-        BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
-
+		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
+		BarragemDispensaLicenca.container.delegate('.btnAdicionar', 'click', BarragemDispensaLicenca.criar);
+		BarragemDispensaLicenca.container.delegate('.btnAssociar', 'click', BarragemDispensaLicenca.associar);
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -364,5 +368,16 @@ BarragemDispensaLicenca = {
         });
 
         MasterPage.carregando(false);
-    }
+	},
+
+	criar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
+			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+	},
+
+	associar: function () {
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		var tid = $(this).closest('tr').find('.hdnTid').val();		
+		$.get(BarragemDispensaLicenca.settings.urls.associar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao });
+	}
 }

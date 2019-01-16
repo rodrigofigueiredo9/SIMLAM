@@ -232,9 +232,12 @@
     <Compile Include="ViewModels\VMValidacao\ValidacaoVM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemCadastradaBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemAssociadaBarragem.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\BarragemDispensaLicencaPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Caracterizacao\Caracterizacao.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />

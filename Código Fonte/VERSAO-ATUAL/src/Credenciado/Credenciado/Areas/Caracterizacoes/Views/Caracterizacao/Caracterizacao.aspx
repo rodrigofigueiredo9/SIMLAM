@@ -1,5 +1,6 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Credenciado.Master" Inherits="System.Web.Mvc.ViewPage<CaracterizacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento</asp:Content>
@@ -134,6 +135,7 @@
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>
 								<% if (item.PodeEditar) { %><input title="Editar" class="icone editar btnEditar" type="button"/><% } %>
 								<% if (item.PodeExcluir) { %><input title="Excluir" class="icone excluir btnExcluir" type="button"/><% } %>
+								
 							</td>
 						</tr>
 						<% } %>

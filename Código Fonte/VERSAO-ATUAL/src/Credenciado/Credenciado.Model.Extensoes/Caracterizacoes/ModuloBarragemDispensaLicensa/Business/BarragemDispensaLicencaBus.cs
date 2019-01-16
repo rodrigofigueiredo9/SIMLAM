@@ -282,6 +282,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return barragem;
 		}
 
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragens = _da.ObterLista(empreendimentoId, simplificado, banco); 
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragens;
+		}
+
 		public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
 		{
 			BarragemDispensaLicenca barragem = null;
