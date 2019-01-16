@@ -7,7 +7,7 @@
 <fieldset class="block box">
 	<%= Html.Hidden("DestinatarioID", Model.Destinatario.ID, new { @class = "hdnDestinatarioID" }) %>
 	<div class="block">
-		<div id="DivTipoPessoa" class="coluna30">
+		<div id="DivTipoPessoa" class="coluna32">
 			<label for="PessoaTipo">Tipo *</label><br/>
 			<label><%= Html.RadioButton("PessoaTipo", PessoaTipo.FISICA, (Model.Destinatario.PessoaTipo == PessoaTipo.FISICA), new { @class="radio rbPessoaTipo rbPessoaTipoCPF" }) %>Pessoa física</label>
 			<label><%= Html.RadioButton("PessoaTipo", PessoaTipo.JURIDICA, (Model.Destinatario.PessoaTipo == PessoaTipo.JURIDICA), new { @class="radio rbPessoaTipo rbPessoaTipoCNPJ" }) %>Pessoa jurídica</label>
