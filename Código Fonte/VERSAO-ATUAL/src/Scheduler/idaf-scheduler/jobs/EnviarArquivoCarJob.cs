@@ -1,22 +1,24 @@
-﻿using log4net;
-using Newtonsoft.Json;
-using Oracle.ManagedDataAccess.Client;
-using Quartz;
-using System;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+
+using log4net;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Oracle.ManagedDataAccess.Client;
+
+using Quartz;
+
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
-using System.Collections.Generic;
-using System.Threading;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -27,7 +29,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		{
 			PreAuthenticate = true,
 			UseDefaultCredentials = false
-};
+		};
 		private static HttpClient _client;
 		private static int count = 1;
 
@@ -101,22 +103,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
-						//resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-						resultado = await EnviarArquivoCAR(pathArquivoTemporario + $"ES-3201209-38DB.3282.CFF3.61AE.400C.F4AF.D516.B008.car", "29/05/2018 16:53");
+						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						//resultado = await EnviarArquivoCAR(@"D:\test\SICAR\" + $"ES-3204054-8956.84AD.7FD1.24C9.2346.9EB2.BC43.632F.car", "29/05/2018 16:53");
 
-						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
-						{
-							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-						}
+						if (string.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
+							throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
 						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
 						{
 							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
 							if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
-							{
-								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-							}
+								throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+
 							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 						}
 						//resultadoEnvio.codigoResposta = 200;
@@ -128,8 +128,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							var arquivoManager = new ArquivoManager();
 							arquivoFinal = arquivoManager.Salvar(nextItem.Requisicao, stream, conn);
 						}
-
-
 
 						/*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
 							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
@@ -176,10 +174,10 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						Log.Error("CATCH:" + nextItem.Requisicao + " ===== ++  " + ex.Message, ex);
 					}
 
-					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+					Thread.Sleep(TimeSpan.FromSeconds(30));
 
 					nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-					
+
 				}
 
 				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
@@ -237,13 +235,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				};
 			}
 
-			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz") }");
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now }");
 
 			//verifica se objeto já foi instanciado
 			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 			if (_client == null)
 			{
-				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")} ");
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now} ");
 				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
@@ -254,52 +252,60 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				count++;
 			}
 
-			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
+			try
 			{
-				try
+				Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now}");
+				using (var fs = File.OpenRead(localArquivoCar))
 				{
-					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-					using (var content = new MultipartFormDataContent())
+					using (var streamContent = new StreamContent(fs))
 					{
-						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-						var fileName = Path.GetFileName(localArquivoCar);
+						var imageContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
+						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
 
-						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-						var streamContent = new StreamContent(stream);
-						content.Add(streamContent, "car", fileName);
-
-						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}");
-						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-
-						Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-						var response = await this.PostAsync("/sincronia/quick", content);
-
-						//verifica se enviado foi realizado com sucesso
-						if (!string.IsNullOrWhiteSpace(response))
+						Log.Info($"Iniciando DataContent - {DateTime.Now}");
+						using (var form = new MultipartFormDataContent())
 						{
-							Log.Info($"RETORNO ENVIO: {response}");
-							return response;
-						}
+							form.Headers.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
 
-						Log.Error("ERRO RESPONSE: " + response);
-						throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+							Log.Info($"Nome do Arquivo: {localArquivoCar} - {DateTime.Now}");
+							form.Add(imageContent, "car", Path.GetFileName(localArquivoCar));
+
+							Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now}");
+							form.Add(new StringContent("28/12/2018 10:12"), "dataCadastroEstadual");
+
+							Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now}");
+							var response = await _client.PostAsync("/sincronia/quick", form);
+							Log.Info($"Concluído envio do Arquivo - {DateTime.Now}");
+
+
+							Log.Info($"Verificando se envio foi realizado com sucesso - {DateTime.Now}");
+							if (response.IsSuccessStatusCode)
+							{
+								var content = await response.Content.ReadAsStringAsync();
+								var jsonFormat = JToken.Parse(content).ToString();
+								Log.Info($"RETORNO ENVIO: {jsonFormat}");
+
+								return jsonFormat;
+							}
+
+							Log.Error("ERRO RESPONSE: " + response);
+							throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+						}
 					}
 				}
-				catch (Exception ex)
-				{
-					Log.Error("*************************************************************************************************************************");
-					Log.Error("*************************************************************************************************************************");
-					Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
-					Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
-					Log.Error($"Error Message: {ex.Message}");
-					Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
-					Log.Error($"ERROR FULL: {ex.ToString()}");
-					Log.Error("*************************************************************************************************************************");
-					Log.Error("*************************************************************************************************************************");
-					return ex.Message;
-				}
-
+			}
+			catch (Exception ex)
+			{
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now}");
+				Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
+				Log.Error($"Error Message: {ex.Message}");
+				Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
+				Log.Error($"ERROR FULL: {ex.ToString()}");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				return ex.Message;
 			}
 		}
 
@@ -324,17 +330,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				{
 					//requestMessage.Content = stringContent;
 					requestMessage.Content = data;
+
 					var response = await _client.SendAsync(requestMessage, this.cancelToken.Token);
 
-					Log.Info($"Verificando se enviado foi realizado com sucesso - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+					Log.Info($"Verificando se enviado foi realizado com sucesso - {DateTime.Now}");
 					if (response.IsSuccessStatusCode)
 					{
-						Log.Info($"ARQUIVO ENVIADO COM SUCESSO - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+						Log.Info($"ARQUIVO ENVIADO COM SUCESSO - {DateTime.Now}");
 						var jsonResult = await response.Content.ReadAsStringAsync();
 						return jsonResult;
 					}
 
-					Log.Info($"OCORREU ERRO AO ENVIAR O ARQUIVO - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss:zzz")}");
+					Log.Info($"OCORREU ERRO AO ENVIAR O ARQUIVO - {DateTime.Now}");
 					return string.Empty;
 				}
 			}
