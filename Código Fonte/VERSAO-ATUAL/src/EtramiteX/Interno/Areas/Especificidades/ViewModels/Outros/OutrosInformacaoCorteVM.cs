@@ -12,6 +12,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Outros
 	{
 		public bool IsVisualizar { set; get; }
 		public bool IsCondicionantes { set; get; }
+		public bool IsDeclaratorio { set; get; }
 
 		private List<SelectListItem> _destinatarios = new List<SelectListItem>();
 		public List<SelectListItem> Destinatarios

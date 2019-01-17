@@ -62,6 +62,9 @@
 
 		RequerimentoEmpreendimento.urlObterEmpreendimento = '<%= Url.Action("EmpreendimentoInline", "Empreendimento") %>';
 		RequerimentoEmpreendimento.urlAssociarEmpreendimento = '<%= Url.Action("AssociarEmpreendimento", "Requerimento") %>';
+		
+		RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado = '<%= Url.Action("EmpreendimentoInlineInteressado", "Empreendimento") %>';
+		RequerimentoEmpreendimento.urlIsAtividadeCorte = '<%= Url.Action("IsAtividadeCorte", "Requerimento") %>';
 
 		RequerimentoFinalizar.urlObterFinalizar = '<%= Url.Action("ObterFinalizar", "Requerimento") %>';
 		RequerimentoFinalizar.urlFinalizar = '<%= Url.Action("Finalizar", "Requerimento") %>';

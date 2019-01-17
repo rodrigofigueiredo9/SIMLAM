@@ -151,7 +151,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 				e.id, e.codigo, ls.texto segmento_texto, ls.denominador, e.cnpj, e.denominador denominador_nome, e.tid, ee.zona, ee.municipio municipio_id,
 				(select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio, (select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge, 
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado, 
-				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto 
+				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto,
+				(select sum(dd.area_croqui) from crt_dominialidade_dominio dd
+					where exists
+					(select 1 from crt_dominialidade d
+					where d.id = dd.dominialidade
+					and d.empreendimento = e.id)) area_croqui
 				from {0}tab_empreendimento e, {0}tab_empreendimento_atividade a, {0}lov_empreendimento_segmento ls, {0}tab_empreendimento_endereco ee, {0}cnf_municipio_mod_fiscal cm 
 				where e.atividade = a.id(+) and e.segmento = ls.id and ee.correspondencia = 0 and ee.empreendimento = e.id and ee.municipio = cm.municipio(+) and e.id = :id ", EsquemaBanco);
 
@@ -175,6 +180,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 						empreendimento.ZonaLocalizacaoTexto = reader.GetValue<string>("zona_texto");
 						empreendimento.CNPJ = reader.GetValue<string>("cnpj");
 						empreendimento.Codigo = reader.GetValue<int>("codigo");
+						empreendimento.AreaImovelHA = reader.GetValue<decimal>("area_croqui");
 					}
 
 					reader.Close();

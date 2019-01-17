@@ -1,7 +1,5 @@
-﻿using System;
-using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+﻿using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
-using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Data;
@@ -20,75 +18,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 		public bool Salvar(InformacaoCorte caracterizacao) 
 		{
-			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
-			{
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.Empreendimento.Id))
 				return false;
+
+			if (caracterizacao.AreaFlorestaPlantada == 0)
+				Validacao.Add(Mensagem.InformacaoCorte.AreaPlantadaObrigatoria);
+
+			if (caracterizacao.AreaFlorestaPlantada > 100)
+			{
+				if (caracterizacao.InformacaoCorteLicenca.Count < 1)
+					Validacao.Add(Mensagem.InformacaoCorte.LicencaObrigatoria);
 			}
 
-			if (caracterizacao.Id <= 0 && (_da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoId, true) ?? new InformacaoCorte()).Id > 0)
+			if (caracterizacao.InformacaoCorteTipo.Count < 1)
+				Validacao.Add(Mensagem.InformacaoCorte.InformacaoCorteListaObrigatorio);
+
+			foreach(var item in caracterizacao.InformacaoCorteLicenca)
 			{
-				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-				return false;
-			}
-
-			if (!Acessar(caracterizacao.EmpreendimentoId))
-			{
-				return false;
-			}
-
-			InformacaoCorteInformacaoSalvar(caracterizacao.InformacaoCorteInformacao);
-
-			return Validacao.EhValido;
-		}
-
-		public bool InformacaoCorteInformacaoSalvar(InformacaoCorteInformacao entidade) {
-
-			if (entidade.Especies.Count <= 0) 
-			{
-				Validacao.Add(Mensagem.InformacaoCorte.EspecieListaObrigatorio);
-			}
-
-			if (entidade.Produtos.Count <= 0)
-			{
-				Validacao.Add(Mensagem.InformacaoCorte.ProdutoListaObrigatorio);
-			}
-
-			ValidacoesGenericasBus.DataMensagem(entidade.DataInformacao, "InformacaoCorteInformacao_DataInformacao_DataTexto", "informação");
-
-			#region ArvoresIsoladasRestantes
-
-			if (!String.IsNullOrWhiteSpace(entidade.ArvoresIsoladasRestantes))
-			{
-				Decimal aux = 0;
-				if (!Decimal.TryParse(entidade.ArvoresIsoladasRestantes, out aux))
-				{
-					Validacao.Add(Mensagem.InformacaoCorte.ArvoresIsoladasRestantesInvalido);
-				}
-			}
-
-			#endregion 
-
-			#region AreaCorteRestante
-
-			if (!String.IsNullOrWhiteSpace(entidade.AreaCorteRestante))
-			{
-				Decimal aux = 0;
-				if (!Decimal.TryParse(entidade.AreaCorteRestante, out aux))
-				{
-					Validacao.Add(Mensagem.InformacaoCorte.AreaCorteRestantesInvalido);
-				}
-			}
-
-			#endregion
-
-			return Validacao.EhValido;
-		}
-
-		public bool Acessar(int empreendimentoId)
-		{
-			if (!_caracterizacaoValidar.Dependencias(empreendimentoId, (int)eCaracterizacao.InformacaoCorte))
-			{
-				return false;
+				if (!item.DataVencimento.IsValido)
+					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
 			}
 
 			return Validacao.EhValido;

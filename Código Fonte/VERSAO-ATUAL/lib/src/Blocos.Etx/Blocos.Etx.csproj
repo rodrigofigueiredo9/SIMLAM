@@ -113,6 +113,7 @@
     <Compile Include="ModuloCore\View\Tabela.cs" />
     <Compile Include="ModuloExtensao\Business\ExtensaoTitulo.cs" />
     <Compile Include="ModuloExtensao\Data\ExtensaoIDataReader.cs" />
+    <Compile Include="ModuloExtensao\Entities\ExtensaoEnum.cs" />
     <Compile Include="ModuloExtensao\Entities\ExtensaoIEnumerable.cs" />
     <Compile Include="ModuloExtensao\Entities\DictionaryEtx.cs" />
     <Compile Include="ModuloRelatorio\AsposeEtx\CabecalhoRodape\CabecalhoRodapeDa.cs" />

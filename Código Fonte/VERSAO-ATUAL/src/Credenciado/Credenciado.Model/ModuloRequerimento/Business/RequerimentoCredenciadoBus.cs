@@ -887,6 +887,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			return _da.VerificarRequerimentoPossuiModelo(modeloId, requerimentoId);
 		}
 
+		public bool IsRequerimentoAtividadeCorte(int requerimento)
+		{
+			try
+			{
+				return _da.IsRequerimentoAtividadeCorte(requerimento);
+			} catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return false;
+		}
+
 		#endregion
 	}
 }

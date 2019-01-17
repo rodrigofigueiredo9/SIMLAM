@@ -1,16 +1,13 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
-/// <reference path="../../jquery.ddl.js" />
 
 InformacaoCorte = {
 	settings: {
 		urls: {
-			salvar: ''
+			salvar: '',
+			obterProdutos: ''
 		},
-		salvarCallBack: null,
-		mensagens: {},
-		textoAbrirModal: null,
-		atualizarDependenciasModalTitulo: null,
+		mensagens: null,
 		textoMerge: null,
 		dependencias: null
 	},
@@ -19,356 +16,472 @@ InformacaoCorte = {
 	load: function (container, options) {
 		if (options) { $.extend(InformacaoCorte.settings, options); }
 		InformacaoCorte.container = MasterPage.getContent(container);
-		InformacoesCortesInformacoes.load(container, { mensagens: InformacaoCorte.settings.mensagens });
+
+		InformacaoCorte.container.delegate('.btnSalvar', 'click', InformacaoCorte.salvar);
+		InformacaoCorte.container.delegate('.btnAdicionar', 'click', InformacaoCorte.adicionar);
+		InformacaoCorte.container.delegate('.btnExcluir', 'click', InformacaoCorte.excluir);
+		InformacaoCorte.container.delegate('.btnAdicionarTipo', 'click', InformacaoCorte.adicionarTipo);
+		InformacaoCorte.container.delegate('.btnExcluirTipo', 'click', InformacaoCorte.excluir);
+		InformacaoCorte.container.delegate('.btnLimparTipo', 'click', InformacaoCorte.limparTipo);
+		InformacaoCorte.container.delegate('.btnAdicionarDestinacao', 'click', InformacaoCorte.adicionarDestinacao);
+		InformacaoCorte.container.delegate('.btnExcluirDestinacao', 'click', InformacaoCorte.excluir);
+		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
+		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
+		InformacaoCorte.container.delegate('.ddlDestinacaoMaterial', 'change', InformacaoCorte.carregarProdutos);
+
+		Aux.setarFoco(InformacaoCorte.container);
 
 		if (InformacaoCorte.settings.textoMerge) {
-			InformacaoCorte.abrirModalRedireciona(InformacaoCorte.settings.textoMerge, InformacaoCorte.settings.atualizarDependenciasModalTitulo);
+			InformacaoCorte.abrirModalRedireciona(InformacaoCorte.settings.textoMerge);
 		}
 	},
 
-	atualizarEstilo: function () {
-		MasterPage.botoes();
-		Listar.atualizarEstiloTable(InformacaoCorte.container.find('.dataGridTable'));
+	adicionar: function () {
+		var container = InformacaoCorte.container;
+		Mensagem.limpar(container);
+
+		//monta o objeto
+		var objeto = {
+			NumeroLicenca: container.find('.numeroLicenca').val(),
+			TipoLicenca: container.find('.tipoLicenca').val(),
+			Atividade: container.find('.atividade').val(),
+			AreaLicenca: container.find('.areaLicenciada').val(),
+			DataVencimento: { DataTexto: container.find('.dataVencimento').val() }
+		};
+
+		var msgs = [];
+
+		if (objeto.NumeroLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.NumeroLicencaObrigatoria);
+		}
+
+		if (objeto.TipoLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.TipoLicencaObrigatoria);
+		}
+
+		if (objeto.Atividade == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.AtividadeObrigatoria);
+		}
+
+		if (objeto.AreaLicenca == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.AreaLicencaObrigatoria);
+		}
+
+		if (objeto.DataVencimento.DataTexto == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.DataVencimentoObrigatoria);
+		}
+		
+		if (msgs.length > 0) {
+			Mensagem.gerar(container, msgs);
+			return;
+		}
+
+		var linha = ''; 
+		linha = $('.trTemplateRow', $('.tabLicencas', container)).clone();
+
+		//Monta a nova linha e insere na tabela 
+		linha.find('.itemJson').val(JSON.stringify(objeto));
+		linha.find('.numero').text(objeto.NumeroLicenca);
+		linha.find('.numero').attr('title', objeto.NumeroLicenca);
+		linha.find('.tipoLicenca').text(objeto.TipoLicenca);
+		linha.find('.tipoLicenca').attr('title', objeto.TipoLicenca); 
+		linha.find('.atividade').text(objeto.Atividade); 
+		linha.find('.atividade').attr('title', objeto.Atividade); 
+		linha.find('.areaPlantada').text(objeto.AreaLicenca); 
+		linha.find('.areaPlantada').attr('title', objeto.AreaLicenca); 
+		linha.find('.dataVencimento').text(objeto.DataVencimento.DataTexto); 
+		linha.find('.dataVencimento').attr('title', objeto.DataVencimento.DataTexto);
+
+		linha.removeClass('trTemplateRow hide');
+		$('.tabLicencas > tbody:last', container).append(linha); 
+		Listar.atualizarEstiloTable($('.tabLicencas', container));
+
+		//limpa os campos de texto 
+		$('.numeroLicenca', container).val('');
+		$('.tipoLicenca', container).val('');
+		$('.atividade', container).val('');
+		$('.areaLicenciada', container).val('');
+		$('.dataVencimento', container).val('');
 	},
 
-	atualizarInformacoesTotalEmpreendimento: function () {
-		var informacoes = InformacaoCorte.obter();
+	excluir: function () {
+		$(this).closest('tr').remove();
+	},
 
-		var arvoresIsoladasRestanteTotal = 0;
-		var areaCorteRestanteTotal = 0;
-		var arvoresIsoladas = 0;
-		var areaCorte = 0;
+	adicionarTipo: function () {
+		var container = InformacaoCorte.container;
+		Mensagem.limpar(container);
 
-		$(informacoes.InformacoesCortes).each(function () {
-			if (!isNaN(this.ArvoresIsoladasRestantes)) {
-				arvoresIsoladasRestanteTotal += Number(this.ArvoresIsoladasRestantes);
+		var objeto = {
+			TipoCorte: $('.tipoCorte option:selected', container).val(),
+			Especie: $('.especieInformada option:selected', container).val(),
+			AreaCorte: $('.areaCorte', container).val(),
+			IdadePlantio: $('.idadePlantio', container).val()
+		};
+
+		var msgs = [];
+
+		if (objeto.TipoCorte <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.TipoCorteObrigatorio);
+		}
+
+		if (objeto.Especie <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.EspecieObrigatoria);
+		}
+
+		if (objeto.AreaCorte <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.AreaCorteObrigatoria);
+		}
+
+		if (objeto.IdadePlantio <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.IdadePlantioObrigatoria);
+		}
+
+		if (msgs.length > 0) {
+			Mensagem.gerar(InformacaoCorte.container, msgs);
+			return;
+		}
+
+		$('.adicionarTipo', container).hide();
+		$('.limparTipo', container).show();
+
+		InformacaoCorte.configurarTipo(true);
+		InformacaoCorte.configurarDestinacao(false);
+	},
+
+	limparTipo: function () {
+		var container = InformacaoCorte.container;
+		$('.adicionarTipo', container).show();
+		$('.limparTipo', container).hide();
+
+		InformacaoCorte.configurarTipo(false);
+		InformacaoCorte.configurarDestinacao(true);
+
+		$('.tipoCorte', container).val('0');
+		$('.especieInformada', container).val('0');
+		$('.areaCorte', container).val('');
+		$('.idadePlantio', container).val('');
+		$('.ddlDestinacaoMaterial', container).val('');
+		$('.ddlProduto', container).val('');
+		$('.txtQuantidade', container).val('');
+	},
+
+	configurarTipo: function (disabled) {
+		var container = InformacaoCorte.container;
+		$('.tipoCorte', container).toggleClass('disabled', disabled);
+		$('.especieInformada', container).toggleClass('disabled', disabled);
+		$('.areaCorte', container).toggleClass('disabled', disabled);
+		$('.idadePlantio', container).toggleClass('disabled', disabled);
+		$('.btnAdicionarInformacao', container).button({ disabled: true });
+		if (disabled) {
+			$('.tipoCorte', container).attr('disabled', disabled);
+			$('.especieInformada', container).attr('disabled', disabled);
+			$('.areaCorte', container).attr('disabled', disabled);
+			$('.idadePlantio', container).attr('disabled', disabled);
+		} else {
+			$('.tipoCorte', container).removeAttr('disabled');
+			$('.especieInformada', container).removeAttr('disabled');
+			$('.areaCorte', container).removeAttr('disabled');
+			$('.idadePlantio', container).removeAttr('disabled');
+		}
+	},
+
+	configurarDestinacao: function (disabled) {
+		var container = InformacaoCorte.container;
+
+		$('.ddlDestinacaoMaterial', container).toggleClass('disabled', disabled);
+		$('.ddlProduto', container).toggleClass('disabled', disabled);
+		$('.txtQuantidade', container).toggleClass('disabled', disabled);
+		$('.btnAdicionarDestinacao', container).button({ disabled: disabled });
+		if (disabled) {
+			$('.ddlDestinacaoMaterial', container).attr('disabled', disabled);
+			$('.ddlProduto', container).attr('disabled', disabled);
+			$('.txtQuantidade', container).attr('disabled', disabled);
+		} else {
+			$('.ddlDestinacaoMaterial', container).removeAttr('disabled');
+			$('.ddlProduto', container).removeAttr('disabled');
+			$('.txtQuantidade', container).removeAttr('disabled');
+		}
+	},
+
+	adicionarDestinacao: function () {
+		var container = InformacaoCorte.container;
+        Mensagem.limpar(container);
+
+		var objeto = {
+			DestinacaoMaterial: $('.ddlDestinacaoMaterial option:selected', container).val(),
+			DestinacaoMaterialTexto: $('.ddlDestinacaoMaterial option:selected', container).text(),
+			Produto: $('.ddlProduto option:selected', container).val(),
+			ProdutoTexto: $('.ddlProduto option:selected', container).text(),
+			Quantidade: $('.txtQuantidade', container).val()
+		};
+		
+		var msgs = [];
+
+		if (objeto.DestinacaoMaterial <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.DestinacaoMaterialObrigatoria);
+		}
+
+		if (objeto.Produto <= 0) {
+			msgs.push(InformacaoCorte.settings.mensagens.ProdutoObrigatorio);
+		}
+
+		if (objeto.Quantidade <= 0 || objeto.Quantidade == '') {
+			msgs.push(InformacaoCorte.settings.mensagens.QuantidadeObrigatoria);
+		}
+
+		if (msgs.length > 0) {
+			Mensagem.gerar(InformacaoCorte.container, msgs);
+			return;
+		}
+
+		var linha = '';
+		linha = $('.trTemplateRow', $('.tabDestinacao', container)).clone();
+
+		//Monta a nova linha e insere na tabela 
+		linha.find('.itemJson').val(JSON.stringify(objeto));
+		linha.find('.destinacaoMaterial').text(objeto.DestinacaoMaterialTexto);
+		linha.find('.destinacaoMaterial').attr('title', objeto.DestinacaoMaterialTexto);
+		linha.find('.produto').text(objeto.ProdutoTexto);
+		linha.find('.produto').attr('title', objeto.ProdutoTexto);
+		linha.find('.quantidade').text(objeto.Quantidade);
+		linha.find('.quantidade').attr('title', objeto.Quantidade);
+
+		linha.removeClass('trTemplateRow hide');
+		$('.tabDestinacao > tbody:last', container).append(linha);
+		Listar.atualizarEstiloTable($('.tabDestinacao', container));
+
+		//limpa os campos de texto 
+		$('.ddlDestinacaoMaterial', container).val('0');
+		$('.ddlProduto', container).val('0');
+		$('.txtQuantidade', container).val('');
+
+		$('.btnAdicionarInformacao', container).button({ disabled: false });
+	},
+
+	adicionarInformacao: function () {
+		var container = InformacaoCorte.container;
+		$('.btnAdicionarInformacao', container).button({ disabled: true });
+
+		var objeto = {
+			Id: 0,
+			TipoCorte: $('.tipoCorte option:selected', container).val(),
+			TipoCorteTexto: $('.tipoCorte option:selected', container).text(),
+			Especie: $('.especieInformada option:selected', container).val(),
+			EspecieTexto: $('.especieInformada option:selected', container).text(),
+			AreaCorte: $('.areaCorte', container).val(),
+			IdadePlantio: $('.idadePlantio', container).val(),
+			DestinacaoId: 0,
+			DestinacaoMaterial: '',
+			DestinacaoMaterialTexto: '',
+			Produto: '',
+			ProdutoTexto: '',
+			Quantidade: 0,
+			Linhas: $('.tabDestinacao > tbody > tr:not(".trTemplateRow")', container).length
+		};
+
+		var first = true;
+
+		$('.tabDestinacao > tbody > tr:not(".trTemplateRow")', container).toArray().forEach(function (x) {
+			var item = JSON.parse($(x).find('.itemJson').val());
+			var linha = '';
+			linha = $('.trTemplateRow', $('.tabInformacaoCorte', container)).clone();
+
+			//Monta a nova linha e insere na tabela 
+			if (first) {
+				first = false;
+				linha.find('.tipoCorte').text(objeto.TipoCorteTexto);
+				linha.find('.tipoCorte').attr('title', objeto.TipoCorteTexto);
+				linha.find('.tipoCorte').parent().attr('rowspan', objeto.Linhas);
+				linha.find('.especie').text(objeto.EspecieTexto);
+				linha.find('.especie').attr('title', objeto.EspecieTexto);
+				linha.find('.especie').parent().attr('rowspan', objeto.Linhas);
+				linha.find('.areaCorte').text(objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
+				linha.find('.areaCorte').attr('title', objeto.AreaCorte + (objeto.TipoCorte == 2 ? " un" : " ha"));
+				linha.find('.areaCorte').parent().attr('rowspan', objeto.Linhas);
+				linha.find('.idadePlantio').text(objeto.IdadePlantio);
+				linha.find('.idadePlantio').attr('title', objeto.IdadePlantio);
+				linha.find('.idadePlantio').parent().attr('rowspan', objeto.Linhas);
+			} else {
+				linha.find('.tipoCorte').parent().remove();
+				linha.find('.especie').parent().remove();
+				linha.find('.areaCorte').parent().remove();
+				linha.find('.idadePlantio').parent().remove();
 			}
+
+			objeto.DestinacaoMaterial = item.DestinacaoMaterial;
+			objeto.DestinacaoMaterialTexto = item.DestinacaoMaterialTexto;
+			objeto.Produto = item.Produto;
+			objeto.ProdutoTexto = item.ProdutoTexto;
+			objeto.Quantidade = parseInt(item.Quantidade.replace('.', ''));
+			linha.find('.itemJson').val(JSON.stringify(objeto));
+			linha.find('.destinacaoMaterial').text(objeto.DestinacaoMaterialTexto);
+			linha.find('.destinacaoMaterial').attr('title', objeto.DestinacaoMaterialTexto);
+			linha.find('.produto').text(objeto.ProdutoTexto);
+			linha.find('.produto').attr('title', objeto.ProdutoTexto);
+			linha.find('.quantidade').text(objeto.Quantidade);
+			linha.find('.quantidade').attr('title', objeto.Quantidade);
+
+			linha.removeClass('trTemplateRow hide');
+			$('.tabInformacaoCorte > tbody:last', container).append(linha);
+			Listar.atualizarEstiloTable($('.tabInformacaoCorte', container));
 		});
 
-		$(informacoes.InformacoesCortes).each(function () {
-			areaCorteRestanteTotal += Number(Mascara.getFloatMask(this.AreaCorteRestante.toString()));
-		});
+		InformacaoCorte.limparTipo();
+		$('.tabDestinacao > tbody > tr:not(".trTemplateRow")', InformacaoCorte.container).remove();
+	},
 
-		$(informacoes.InformacoesCortes).each(function () {
-			if (!isNaN(this.ArvoresIsoladas)) {
-				arvoresIsoladas += Number(this.ArvoresIsoladas);
+	excluirInformacao: function () {
+		var linha = $(this).parent().parent();
+		if (linha.find('.tipoCorte').length > 0) {
+			var rowspan = linha.find('.tipoCorte').parent().attr('rowspan');
+			if (rowspan == 1) {
+				$(this).closest('tr').remove();
+				Listar.atualizarEstiloTable($('.tabInformacaoCorte', InformacaoCorte.container));
+				return;
 			}
-		});
 
-		$(informacoes.InformacoesCortes).each(function () {
-			areaCorte += Number(Mascara.getFloatMask(this.AreaCorte.toString()));
-		});
+			var nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index()]);
+			if (linha.index() == nextLinha.index())
+				nextLinha = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[linha.index() + 1]);
+			$(this).closest('tr').remove();
+			if (nextLinha.find('.tipoCorte').length > 0) return;
 
-		$('.txtArvoresIsoladasRestanteTotal', InformacaoCorte.container).val(arvoresIsoladasRestanteTotal);
-		$('.txtAreaCorteRestanteTotal', InformacaoCorte.container).val(areaCorteRestanteTotal.toString().replace('.', ','));
-		$('.txtArvoresIsoladasTotal', InformacaoCorte.container).val(arvoresIsoladas);
-		$('.txtAreaCorteTotal', InformacaoCorte.container).val(areaCorte.toString().replace('.', ','));
+			var tipoCorte = linha.find('.tipoCorte').parent().clone();
+			var especie = linha.find('.especie').parent().clone();
+			var areaCorte = linha.find('.areaCorte').parent().clone();
+			var idadePlantio = linha.find('.idadePlantio').parent().clone();
 
+			tipoCorte.attr('rowspan', rowspan - 1);
+			especie.attr('rowspan', rowspan - 1);
+			areaCorte.attr('rowspan', rowspan - 1);
+			idadePlantio.attr('rowspan', rowspan - 1);
+
+			var children = nextLinha.children();
+			children.remove();
+			nextLinha.append(tipoCorte);
+			nextLinha.append(especie);
+			nextLinha.append(areaCorte);
+			nextLinha.append(idadePlantio);
+			nextLinha.append(children);
+		} else if (linha.index() < 0) {
+			$(this).closest('tr').remove();
+		}
+		else {
+			InformacaoCorte.downRowspan(linha.index());
+			$(this).closest('tr').remove();
+		}
+		Listar.atualizarEstiloTable($('.tabInformacaoCorte', InformacaoCorte.container));
 	},
 
-	abrirModalRedireciona: function (textoModal, titulo) {
-		Modal.confirma({
-			removerFechar: true,
-			btnCancelCallback: function (conteudoModal) {
-				MasterPage.redireciona($('.linkCancelar', InformacaoCorte.container).attr('href'));
-			},
-			btnOkLabel: 'Confirmar',
-			btnOkCallback: function (conteudoModal) {
-
-				MasterPage.carregando(true);
-				$.ajax({ url: InformacaoCorte.settings.urls.mergiar,
-					data: JSON.stringify(InformacaoCorte.obter()),
-					cache: false,
-					async: false,
-					type: 'POST',
-					dataType: 'json',
-					contentType: 'application/json; charset=utf-8',
-					error: function (XMLHttpRequest, textStatus, erroThrown) {
-						Aux.error(XMLHttpRequest, textStatus, erroThrown, conteudoModal);
-					},
-					success: function (response, textStatus, XMLHttpRequest) {
-
-						if (response.Msg && response.Msg.length > 0 && !response.EhValido) {
-							Mensagem.gerar(InformacaoCorte.container, response.Msg);
-						}
-					}
-				});
-				MasterPage.carregando(false);
-
-				Modal.fechar(conteudoModal);
-			},
-			conteudo: textoModal,
-			titulo: titulo,
-			tamanhoModal: Modal.tamanhoModalMedia
-		});
-	},
-
-	abrirModalMerge: function (textoModal) {
-		Modal.confirma({
-			removerFechar: true,
-			btnOkLabel: 'Confirmar',
-			btnOkCallback: function (conteudoModal) {
-				MasterPage.carregando(true);
-				$.ajax({ url: InformacaoCorte.settings.urls.mergiar,
-					data: JSON.stringify(InformacaoCorte.obter()),
-					cache: false,
-					async: false,
-					type: 'POST',
-					dataType: 'json',
-					contentType: 'application/json; charset=utf-8',
-					error: function (XMLHttpRequest, textStatus, erroThrown) {
-						Aux.error(XMLHttpRequest, textStatus, erroThrown, conteudoModal);
-					},
-					success: function (response, textStatus, XMLHttpRequest) {
-						InformacaoCorte.settings.dependencias = response.Dependencias;
-						InformacaoCorte.atualizarEstilo();
-					}
-				});
-				MasterPage.carregando(false);
-				Modal.fechar(conteudoModal);
-			},
-			conteudo: textoModal,
-			titulo: InformacaoCorte.settings.atualizarDependenciasModalTitulo,
-			tamanhoModal: Modal.tamanhoModalMedia
-		});
+	downRowspan: function (index) {
+		if (index < 0) {
+			$(this).closest('tr').remove();
+		} else {
+			var previousRow = $($('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow")')[index - 1]);
+			if (previousRow.find('.tipoCorte').length > 0) {
+				var rowspan = previousRow.find('.tipoCorte').parent().attr('rowspan');
+				previousRow.find('.tipoCorte').parent().attr('rowspan', rowspan - 1);
+				previousRow.find('.especie').parent().attr('rowspan', rowspan - 1);
+				previousRow.find('.areaCorte').parent().attr('rowspan', rowspan - 1);
+				previousRow.find('.idadePlantio').parent().attr('rowspan', rowspan - 1);
+			} else {
+				InformacaoCorte.downRowspan(index - 1);
+			}
+		}
 	},
 
 	obter: function () {
 		var container = InformacaoCorte.container;
-		var obj = {
-			Id: $('.hdnCaracterizacaoId', container).val(),
-			Dependencias: JSON.parse(InformacaoCorte.settings.dependencias),
-			EmpreendimentoId: $('.hdnEmpreendimentoId', container).val(),
-			ArvoresIsoladasTotal: $('.txtArvoresIsoladasTotal', container).val(),
-			AreaCorteTotal: $('.txtAreaCorteTotal', container).val(),
-			ArvoresIsoladasRestanteTotal: $('.txtArvoresIsoladasRestanteTotal', container).val(),
-			AreaCorteRestanteTotal: $('.txtAreaCorteRestanteTotal', container).val(),
-			InformacoesCortes: []
-		}
+		var informacaoCorte = {
+			Id: $('.codigoInformacaoCorte', container).val() > 0 ? $('.codigoInformacaoCorte', container).val() : 0,
+			Empreendimento: { Id: $('.hdnEmpreendimentoId', container).val() },
+			DataInformacao: { DataTexto: $('.dataInformacao', container).val() },
+			AreaFlorestaPlantada: $('.areaPlantada', container).val(),
+			InformacaoCorteLicenca: [],
+			InformacaoCorteTipo: []
+		};
+		var informacaoCorteTipo = {
+			Id: 0,
+			TipoCorte: '',
+			EspecieInformada: '',
+			AreaCorte: '',
+			IdadePlantio: '',
+			InformacaoCorteDestinacao: []
+		};
 
-		$('.hdnItemJSon', container).each(function () {
-			var objInf = String($(this).val());
-			if (objInf != '') {
-				obj.InformacoesCortes.push(JSON.parse(objInf));
+		$('.tabLicencas > tbody > tr:not(".trTemplateRow") > td.tdAcoes > input.itemJson').toArray().map(x =>
+			informacaoCorte.InformacaoCorteLicenca.push(JSON.parse(x.value))
+		);
+
+		$('.tabInformacaoCorte > tbody > tr:not(".trTemplateRow") > td.tdAcoes > input.itemJson', container).toArray().map(function (x) {
+			var item = JSON.parse(x.value);
+
+			var informacaoCorteDestinacao = {
+				Id: item.DestinacaoId,
+				DestinacaoMaterial: item.DestinacaoMaterial,
+				Produto: item.Produto,
+				Quantidade: item.Quantidade
+			};
+
+			if (!(informacaoCorteTipo.TipoCorte == item.TipoCorte &&
+				informacaoCorteTipo.EspecieInformada == item.Especie &&
+				informacaoCorteTipo.AreaCorte == item.AreaCorte &&
+				informacaoCorteTipo.IdadePlantio == item.IdadePlantio)) {
+				informacaoCorteTipo = {
+					Id: item.Id,
+					TipoCorte: item.TipoCorte,
+					EspecieInformada: item.Especie,
+					AreaCorte: item.AreaCorte,
+					IdadePlantio: item.IdadePlantio,
+					InformacaoCorteDestinacao: []
+				};
 			}
+			informacaoCorteTipo.InformacaoCorteDestinacao.push(informacaoCorteDestinacao);
+			if (!informacaoCorte.InformacaoCorteTipo.contains(informacaoCorteTipo))
+				informacaoCorte.InformacaoCorteTipo.push(informacaoCorteTipo);
 		});
 
-		return obj;
-	}
-},
-
-InformacoesCortesInformacoes = {
-	settings: {
-		urls: {
-			salvar: '',
-			editar: '',
-			visualizar: '',
-			Excluir: '',
-			ExcluirConfirm: ''
-		},
-		salvarCallBack: null,
-		mensagens: null
-	},
-	container: null,
-
-	load: function (container, options) {
-		if (options) { $.extend(InformacoesCortesInformacoes.settings, options); }
-		InformacoesCortesInformacoes.container = MasterPage.getContent(container);
-
-		InformacoesCortesInformacoes.container.delegate('.btnAdicionarInformacaoCorte', 'click', InformacoesCortesInformacoes.adicionar);
-		InformacoesCortesInformacoes.container.delegate('.btnVisualizarInformacaoCorte', 'click', InformacoesCortesInformacoes.visualizar);
-		InformacoesCortesInformacoes.container.delegate('.btnEditarInformacaoCorte', 'click', InformacoesCortesInformacoes.editar);
-		InformacoesCortesInformacoes.container.delegate('.btnExcluirInformacaoCorte', 'click', InformacoesCortesInformacoes.excluir);
-	},
-
-	visualizar: function () {
-		MasterPage.carregando(true);
-
-		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
-
-		$.ajax({ url: InformacoesCortesInformacoes.settings.urls.visualizar + '/' + itemId,
-			data: null,
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-
-				if (response.Html) {
-
-					$('.divInformacao', InformacaoCorte.container).empty();
-					$('.divInformacao', InformacaoCorte.container).append(response.Html);
-					$('.divLinkVoltar', InformacaoCorte.container).hide()
-					InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
-
-					InformacaoCorte.atualizarEstilo();
-					MasterPage.botoes(InformacaoCorte.container);
-				}
-
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(InformacaoCorte.container, response.Msg);
-				}
-			}
-		});
-		MasterPage.carregando(false);
-	},
-
-	adicionar: function () {
-		$(this).closest('fieldset').find('.dataGridTable tbody tr').removeClass('editando');
-
-		MasterPage.carregando(true);
-		$.ajax({ url: InformacoesCortesInformacoes.settings.urls.salvar,
-			data: null,
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-
-				if (response.Html) {
-
-					$('.divInformacao', InformacaoCorte.container).empty();
-					$('.divInformacao', InformacaoCorte.container).html(response.Html);
-					$('.divLinkVoltar', InformacaoCorte.container).hide()
-					InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
-
-					MasterPage.botoes(InformacaoCorte.container);
-				}
-
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(InformacaoCorte.container, response.Msg);
-				}
-			}
-		});
-		MasterPage.carregando(false);
-	},
-
-	editar: function () {
-		MasterPage.carregando(true);
-
-		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
-
-		$.ajax({ url: InformacoesCortesInformacoes.settings.urls.editar + '/' + itemId,
-			data: null,
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-
-				if (response.Html) {
-
-					$('.divInformacao', InformacaoCorte.container).empty();
-					$('.divInformacao', InformacaoCorte.container).append(response.Html);
-					$('.divLinkVoltar', InformacaoCorte.container).hide()
-					InformacaoCorteInformacao.load(InformacaoCorte.container, { mensagens: InformacoesCortesInformacoes.settings.mensagens });
-
-					InformacaoCorte.atualizarEstilo();
-					MasterPage.botoes(InformacaoCorte.container);
-				}
-
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(InformacaoCorte.container, response.Msg);
-				}
-			}
-		});
-		MasterPage.carregando(false);
-	},
-
-	excluir: function () {
-		Mensagem.limpar(InformacaoCorte.container);
-
-		var id = $(this).closest('tr').find('.itemId:first').val();
-		var empreendimentoId = $('.hdnEmpreendimentoId', InformacaoCorte.container).val()
-
-		Modal.excluir({
-			'urlConfirm': InformacoesCortesInformacoes.settings.urls.ExcluirConfirm,
-			'urlAcao': InformacoesCortesInformacoes.settings.urls.Excluir + '?itemId=' + id + '&empreendimentoId=' + empreendimentoId,
-			'id': id,
-			'callBack': InformacoesCortesInformacoes.callBackExcluir,
-			'naoExecutarUltimaBusca': true
-		});
-	},
-
-	callBackExcluir: function (data) {
-		if (data.Msg && data.Msg.length > 0) {
-			Mensagem.gerar(InformacaoCorte.container, data.Msg);
-		}
-
-		$('.divCaracterizacao').empty();
-		$('.divCaracterizacao').html(data.Html);
-
-		InformacaoCorte.atualizarEstilo();
-	}
-}
-
-InformacaoCorteInformacao = {
-	settings: {
-		urls: {
-			salvar: '',
-			editar: '',
-			visualizar: ''
-		},
-		mensagens: null,
-		salvarCallBack: null,
-		isVisualizar: false
-	},
-
-	container: null,
-
-	load: function (container, options) {
-		if (options) { $.extend(InformacaoCorteInformacao.settings, options); }
-		InformacaoCorteInformacao.container = container.find('.divInformacaoCorteInformacao');
-
-		InformacaoCorteInformacao.container.delegate(".btnSalvarInformacao", "click", InformacaoCorteInformacao.salvar);
-		InformacaoCorteInformacao.container.delegate(".linkCancelar", "click", InformacaoCorteInformacao.limparInformacaoCorte);
-
-		Especie.load(container, { mensagens: InformacaoCorteInformacao.settings.mensagens });
-		Produto.load(container, { mensagens: InformacaoCorteInformacao.settings.mensagens });
-
-		Mascara.load();
+		return informacaoCorte;
 	},
 
 	salvar: function () {
+		var container = InformacaoCorte.container;
+		Mensagem.limpar(container);
+
+		var msgValidacao = [];
+		var objeto = InformacaoCorte.obter();
+
+		if (objeto.AreaFlorestaPlantada <= 0) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.AreaPlantadaObrigatoria);
+		}
+
+		if (!$('.ckbDeclaracaoVerdadeira', container).attr('checked')) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.Declaracao1Obrigatoria);
+		}
+
+		if (!$('.ckbResponsabilidadePelasDeclaracoes', container).attr('checked')) {
+			msgValidacao.push(InformacaoCorte.settings.mensagens.Declaracao2Obrigatoria);
+		}
+
+		if (msgValidacao.length > 0) {
+			Mensagem.gerar(InformacaoCorte.container, msgValidacao);
+			return;
+		}
+
 		MasterPage.carregando(true);
-		$.ajax({ url: InformacaoCorte.settings.urls.salvar,
-			data: JSON.stringify(InformacaoCorteInformacao.obter()),
+		$.ajax({
+			url: InformacaoCorte.settings.urls.salvar,
+			data: JSON.stringify({ caracterizacao: objeto }),
 			cache: false,
 			async: false,
 			type: 'POST',
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, InformacaoCorte.container);
-			},
+			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
-
-				if (response.TextoMerge) {
-					InformacaoCorte.abrirModalMerge(response.TextoMerge);
-					return;
-				}
-
 				if (response.EhValido) {
-					Mensagem.gerar(InformacaoCorte.container, response.Msg);
-					InformacaoCorteInformacao.limparInformacaoCorte();
-
-					$('.divCaracterizacao').empty();
-					$('.divCaracterizacao').append(response.Html);
-
-					InformacaoCorte.atualizarEstilo();
-					return;
+					MasterPage.redireciona(response.UrlRedirecionar);
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
@@ -379,294 +492,9 @@ InformacaoCorteInformacao = {
 		MasterPage.carregando(false);
 	},
 
-	limparInformacaoCorte: function () {
-		$('.divInformacaoCorteInformacao', InformacaoCorte.container).empty();
-		$('.divLinkVoltar', InformacaoCorte.container).show();
-	},
-
-	obter: function () {
-		var container = InformacaoCorteInformacao.container;
-
-		var obj = InformacaoCorte.obter();
-		obj.InformacaoCorteInformacao = {
-			Id: $('.hdnInformacaoCorteInformacaoId', container).val(),
-			CaracterizacaoId: $('.hdnCaracterizacaoId', InformacaoCorte.container).val(),
-			ArvoresIsoladasRestantes: $('.txtArvoresIsoladasRestantes', container).val(),
-			AreaCorteRestante: $('.txtAreaCorteRestante', container).val(),
-			DataInformacao: { DataTexto: $('.txtDataInformacao', container).val() },
-			ArvoresIsoladas: 0,
-			AreaCorte: 0,
-			Especies: Especie.obter(),
-			Produtos: Produto.obter()
-		}
-
-		$(obj.Especies).each(function () {
-			if (!isNaN(this.ArvoresIsoladas)) {
-				obj.ArvoresIsoladas += Number(this.ArvoresIsoladas);
-			}
+	carregarProdutos: function () {
+		$.get(InformacaoCorte.settings.urls.obterProdutos, { destinacaoId: $('.ddlDestinacaoMaterial', InformacaoCorte.container).val() }, function (lista) {
+			$('.ddlProduto', InformacaoCorte.container).ddlLoad(lista);
 		});
-
-		$(obj.Especies).each(function () {
-			if (this.AreaCorte) {
-				obj.AreaCorte += Number(Mascara.getFloatMask(this.AreaCorte.toString()));
-			}
-		});
-
-		return obj;
 	}
-}
-
-Especie = {
-	settings: {
-		idsTela: null,
-		mensagens: null
-	},
-	container: null,
-
-	load: function (container, options) {
-		if (options) { $.extend(Especie.settings, options); }
-		Especie.container = container.find('.informacaoCorteInformacaoEspecieContainer');
-
-		Especie.container.delegate('.btnAdicionarEspecie', 'click', Especie.adicionar);
-		Especie.container.delegate('.btnExcluirEspecie', 'click', Especie.excluir);
-		Especie.container.delegate('.ddlEspecieTipo', 'change', Especie.gerenciarEspecie);
-	},
-
-	gerenciarEspecie: function () {
-		var especie = $('.ddlEspecieTipo :selected', Especie.container).val();
-
-		$('.divEspecificar', Especie.container).addClass('hide');
-		if (especie == 4) {
-			$('.divEspecificar', Especie.container).removeClass('hide');
-		}
-	},
-
-	adicionar: function () {
-		var mensagens = new Array();
-		Mensagem.limpar(InformacaoCorte.container);
-		var container = Especie.container;
-
-		var especie = {
-			Id: 0,
-			Tid: '',
-			EspecieTipo: $('.ddlEspecieTipo :selected', container).val(),
-			EspecieTipoTexto: $('.ddlEspecieTipo :selected', container).text(),
-			EspecieEspecificarTexto: $('.txtEspecieEspecificarTexto', container).val(),
-			ArvoresIsoladas: $('.txtArvoresIsoladas', container).val(),
-			AreaCorte: Mascara.getFloatMask($('.txtAreaCorte', container).val()),
-			AreaCorteTexto: $('.txtAreaCorte', container).val(),
-			IdadePlantio: $('.txtIdadePlantio', container).val()
-		}
-
-		if (especie.EspecieTipo <= 0) {
-			mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieTipoObrigatorio));
-		} else {
-			if (especie.EspecieTipo == 4) {
-				if (especie.EspecieEspecificarTexto == '') {
-					mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieEspecificarObrigatorio));
-				}
-				especie.EspecieTipoTexto = especie.EspecieEspecificarTexto
-			}
-		}
-
-		$('.hdnItemJSon', container).each(function () {
-			var obj = String($(this).val());
-			if (obj != '') {
-				var esp = (JSON.parse(obj));
-				if (esp.EspecieTipoTexto.toLowerCase() == especie.EspecieTipoTexto.toLowerCase()) {
-					if (especie.EspecieTipo == 4) {
-						mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieEspecificarDuplicada));
-					} else {
-						mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieDuplicada));
-					}
-					Mensagem.gerar(InformacaoCorte.container, mensagens);
-					return;
-				}
-			}
-		});
-
-		if (especie.ArvoresIsoladas == '' && especie.AreaCorte == '') {
-			mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieArvoresOuAreaObrigatorio));
-		} else {
-
-			if (especie.ArvoresIsoladas != '') {
-				if (isNaN(especie.ArvoresIsoladas)) {
-					mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieArvoresIsoladasInvalido));
-				} else {
-					if (Number(especie.ArvoresIsoladas) <= 0) {
-						mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieArvoresIsoladasZero));
-					}
-				}
-			}
-
-			if (especie.AreaCorte != '') {
-				if (isNaN(especie.AreaCorte)) {
-					mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieAreaCorteInvalido));
-				} else {
-					if (Number(especie.AreaCorte) <= 0) {
-						mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieAreaCorteZero));
-					}
-				}
-			}
-		}
-
-		if (especie.IdadePlantio != '') {
-			if (isNaN(especie.IdadePlantio)) {
-				mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieIdadePlantioInvalido));
-			} else {
-				if (Number(especie.IdadePlantio) <= 0) {
-					mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.EspecieIdadePlantioMaiorZero));
-				}
-			}
-		}
-
-		if (mensagens.length > 0) {
-			Mensagem.gerar(InformacaoCorte.container, mensagens);
-			return;
-		}
-
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
-		linha.find('.hdnItemJSon').val(JSON.stringify(especie));
-
-		linha.find('.especieTipo').html(especie.EspecieTipoTexto).attr('title', especie.EspecieTipoTexto);
-		linha.find('.arvoresIsoladas').html(especie.ArvoresIsoladas).attr('title', especie.ArvoresIsoladas);
-		linha.find('.areaCorte').html(especie.AreaCorteTexto).attr('title', especie.AreaCorteTexto);
-		linha.find('.idadePlantio').html(especie.IdadePlantio).attr('title', especie.IdadePlantio);
-
-		$('.dataGridTable tbody:last', container).append(linha);
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-
-		$('.ddlEspecieTipo', container).ddlFirst();
-		$('.txtArvoresIsoladas', container).val('');
-		$('.txtEspecieEspecificarTexto', container).val('');
-		$('.txtAreaCorte', container).val('');
-		$('.txtIdadePlantio', container).val('');
-
-		Especie.gerenciarEspecie();
-
-	},
-
-	excluir: function () {
-		var linha = $(this).closest('tr');
-		linha.remove();
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-	},
-
-	obter: function () {
-		var container = Especie.container;
-		var objeto = [];
-
-		$('.hdnItemJSon', container).each(function () {
-			var objEspecie = String($(this).val());
-			if (objEspecie != '') {
-				objeto.push(JSON.parse(objEspecie));
-			}
-		});
-
-		return objeto;
-	}
-}
-
-Produto = {
-	settings: {
-		idsTela: null
-	},
-	container: null,
-
-	load: function (container, options) {
-		if (options) { $.extend(Produto.settings, options); }
-		Produto.container = container.find('.informacaoCorteInformacaoProdutoContainer');
-
-		Produto.container.delegate('.btnAdicionarProduto', 'click', Produto.adicionar);
-		Produto.container.delegate('.btnExcluirProduto', 'click', Produto.excluir);
-	},
-
-	adicionar: function () {
-		var mensagens = new Array();
-		Mensagem.limpar(InformacaoCorte.container);
-		var container = Produto.container;
-
-		var produto = {
-			Id: 0,
-			Tid: '',
-			ProdutoTipo: $('.ddlProdutoTipo :selected', container).val(),
-			ProdutoTipoTexto: $('.ddlProdutoTipo :selected', container).text(),
-			DestinacaoTipo: $('.ddlDestinacaoTipo :selected', container).val(),
-			DestinacaoTipoTexto: $('.ddlDestinacaoTipo :selected', container).text(),
-			Quantidade: Mascara.getFloatMask($('.txtProdutoQuantidade', container).val()),
-			QuantidadeTexto: $('.txtProdutoQuantidade', container).val()
-		}
-
-		if (produto.ProdutoTipo <= 0) {
-			mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoTipoObrigatorio));
-		} else {
-			$('.hdnItemJSon', container).each(function () {
-				var obj = String($(this).val());
-				if (obj != '') {
-					var prod = (JSON.parse(obj));
-					if (prod.ProdutoTipo == produto.ProdutoTipo && prod.DestinacaoTipo == produto.DestinacaoTipo) {
-						mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoDuplicado));
-					}
-				}
-			});
-		}
-
-		if (produto.DestinacaoTipo <= 0) {
-			mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoDestinacaoObrigatorio));
-		}
-
-		if (produto.Quantidade == '') {
-			mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoQuantidadeObrigatorio));
-		} else {
-			if (isNaN(produto.Quantidade)) {
-				mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoQuantidadeInvalido));
-			} else {
-				if (Number(produto.Quantidade) <= 0) {
-					mensagens.push(jQuery.extend(true, {}, Especie.settings.mensagens.ProdutoQuantidadeMaiorZero));
-				}
-			}
-		}
-
-		if (mensagens.length > 0) {
-			Mensagem.gerar(InformacaoCorte.container, mensagens);
-			return;
-		}
-
-
-		var linha = $('.trTemplateRow', container).clone().removeClass('trTemplateRow hide');
-
-		linha.find('.hdnItemJSon').val(JSON.stringify(produto));
-
-		linha.find('.produtoTipo').html(produto.ProdutoTipoTexto).attr('title', produto.ProdutoTipoTexto);
-		linha.find('.destinacaoTipo').html(produto.DestinacaoTipoTexto).attr('title', produto.DestinacaoTipoTexto);
-		linha.find('.quantidade').html(produto.QuantidadeTexto).attr('title', produto.QuantidadeTexto);
-
-		$('.dataGridTable tbody:last', container).append(linha);
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-
-		$('.ddlProdutoTipo', container).ddlFirst();
-		$('.ddlDestinacaoTipo', container).ddlFirst();
-		$('.txtProdutoQuantidade', container).val('');
-
-	},
-
-	excluir: function () {
-		var linha = $(this).closest('tr');
-		linha.remove();
-		Listar.atualizarEstiloTable(container.find('.dataGridTable'));
-	},
-
-	obter: function () {
-		var container = Produto.container;
-		var objeto = [];
-
-		$('.hdnItemJSon', container).each(function () {
-			var objProduto = String($(this).val());
-			if (objProduto != '') {
-				objeto.push(JSON.parse(objProduto));
-			}
-		});
-
-		return objeto;
-	}
-}
+};

@@ -1360,7 +1360,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return retorno;
 		}
 
-
 		public Tuple<eStatusArquivoSICAR, string> BuscaSituacaoAtualArquivoSICAR(int solicitacaoId, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))

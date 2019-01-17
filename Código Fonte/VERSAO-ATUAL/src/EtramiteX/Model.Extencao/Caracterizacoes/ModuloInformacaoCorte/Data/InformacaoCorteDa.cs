@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data;
@@ -44,38 +47,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 		#region Ações de DML
 
-		internal int Salvar(InformacaoCorte caracterizacao, BancoDeDados banco)
+		internal void Salvar(InformacaoCorte caracterizacao, BancoDeDados banco = null)
 		{
-
 			if (caracterizacao == null)
-			{
 				throw new Exception("A Caracterização é nula.");
-			}
 
 			if (caracterizacao.Id <= 0)
-			{
-				int? id = Criar(caracterizacao, banco);
-				return id.GetValueOrDefault(0);
-			}
+				Criar(caracterizacao, banco);
 			else
-			{
-				Editar(caracterizacao.InformacaoCorteInformacao, banco);
-				return caracterizacao.Id;
-			}
+				Editar(caracterizacao, banco);
 		}
 
-		internal int? Criar(InformacaoCorte caracterizacao, BancoDeDados banco = null)
+		private int Criar(InformacaoCorte caracterizacao, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				#region Informacao de Corte
-
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte(id, empreendimento, tid) 
-															values({0}seq_crt_informacao_corte.nextval, :empreendimento, :tid) returning id into :id", EsquemaBanco);
+				#region Informação Corte
 
-				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoId, DbType.Int32);
+				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte
+				(id, tid, empreendimento, data_informacao, area_flor_plantada) values
+				(seq_crt_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada)
+				returning id into :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("area_flor_plantada", caracterizacao.AreaFlorestaPlantada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -83,75 +81,70 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				caracterizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
-				#region Informacao de Corte Informacao
+				#region Informação Corte Licença
 
-				comando = bancoDeDados.CriarComando(@"insert into {0}crt_inf_corte_inf(id, caracterizacao, arvores_isoladas_restante, 
-													area_corte_restante, data_informacao, tid) values({0}seq_crt_inf_corte_inf.nextval,
-													:caracterizacao, :arvores_isoladas_restante, :area_corte_restante,  
-													:data_informacao, :tid) returning id into :id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("caracterizacao", caracterizacao.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("arvores_isoladas_restante", caracterizacao.InformacaoCorteInformacao.ArvoresIsoladasRestantes, DbType.Decimal);
-				comando.AdicionarParametroEntrada("area_corte_restante", caracterizacao.InformacaoCorteInformacao.AreaCorteRestante, DbType.Decimal);
-				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.InformacaoCorteInformacao.DataInformacao.DataTexto, DbType.DateTime);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroSaida("id", DbType.Int32);
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				caracterizacao.InformacaoCorteInformacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-
-				#region Especies
-
-				if (caracterizacao.InformacaoCorteInformacao.Especies != null && caracterizacao.InformacaoCorteInformacao.Especies.Count > 0)
+				foreach (var item in caracterizacao.InformacaoCorteLicenca)
 				{
-					foreach (Especie especie in caracterizacao.InformacaoCorteInformacao.Especies)
-					{
-						comando = bancoDeDados.CriarComando(@"insert into {0}crt_inf_corte_inf_especie(id, inf_corte_inf, especie, 
-															especie_especificar_texto, arvores_isoladas, area_corte, idade_plantio, tid)
-															values({0}seq_crt_inf_corte_inf_especie.nextval, :inf_corte_inf, 
-															:especie, :especie_especificar_texto, :arvores_isoladas, :area_corte, :idade_plantio, 
-															:tid)", EsquemaBanco);
+					comando = bancoDeDados.CriarComando(@"
+					insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+					(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaBanco);
 
-						comando.AdicionarParametroEntrada("inf_corte_inf", caracterizacao.InformacaoCorteInformacao.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("especie", especie.EspecieTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("especie_especificar_texto", String.IsNullOrWhiteSpace(especie.EspecieEspecificarTexto) ? (Object)DBNull.Value: especie.EspecieEspecificarTexto, DbType.String);
-						comando.AdicionarParametroEntrada("arvores_isoladas", especie.ArvoresIsoladas, DbType.Decimal);
-						comando.AdicionarParametroEntrada("area_corte", especie.AreaCorte, DbType.Decimal);
-						comando.AdicionarParametroEntrada("idade_plantio", especie.IdadePlantio, DbType.Decimal);
+					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
+					comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
+					comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
+					comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
+					comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
+
+				#endregion
+
+				#region Informação Corte Tipo Corte
+
+				foreach (var item in caracterizacao.InformacaoCorteTipo)
+				{
+					comando = bancoDeDados.CriarComando(@"
+					insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+					(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
+					returning id into :tipo_id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo_corte", item.TipoCorte, DbType.Int32);
+					comando.AdicionarParametroEntrada("especie", item.EspecieInformada, DbType.Int64);
+					comando.AdicionarParametroEntrada("area_corte", item.AreaCorte, DbType.Decimal);
+					comando.AdicionarParametroEntrada("idade_plantio", item.IdadePlantio, DbType.String);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+					comando.AdicionarParametroSaida("tipo_id", DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					item.Id = comando.ObterValorParametro<int>("tipo_id");
+
+					foreach (var destinacao in item.InformacaoCorteDestinacao)
+					{
+						comando = bancoDeDados.CriarComando(@"
+						insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+						(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+						(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
+						comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
+						comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
+
 					}
 				}
 
 				#endregion
 
-				#region Produtos
-
-				if (caracterizacao.InformacaoCorteInformacao.Produtos != null && caracterizacao.InformacaoCorteInformacao.Produtos.Count > 0)
-				{
-					foreach (Produto produto in caracterizacao.InformacaoCorteInformacao.Produtos)
-					{
-						comando = bancoDeDados.CriarComando(@"insert into crt_inf_corte_inf_produto(id, inf_corte_inf, produto,
-															destinacao_material, quantidade, tid) values({0}seq_crt_inf_corte_inf_produto.nextval, 
-															:inf_corte_inf, :produto, :destinacao_material, :quantidade, :tid)", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", caracterizacao.InformacaoCorteInformacao.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("produto", produto.ProdutoTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("destinacao_material", produto.DestinacaoTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Decimal);
-						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-						bancoDeDados.ExecutarNonQuery(comando);
-					}
-				}
-
-				#endregion
-
-				#endregion
-
-				#endregion
+				#endregion Informação de Corte
 
 				#region Histórico
 
@@ -165,166 +158,114 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			}
 		}
 
-		internal void Editar(InformacaoCorteInformacao informacao, BancoDeDados banco = null)
+		private void Editar(InformacaoCorte caracterizacao, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				#region Informacao de Corte
+				#region Informação de Corte
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte i set i.tid = :tid where i.id = :caracterizacao", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("caracterizacao", informacao.CaracterizacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.Empreendimento.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
+				comando.AdicionarParametroEntrada("area_flor_plantada", caracterizacao.AreaFlorestaPlantada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				#endregion
 
-				#region Limpar os dados do banco
+				#region Informação Corte Licença
 
-				#region Especies
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_inf_especie e
-													where e.inf_corte_inf = :inf_corte_inf", EsquemaBanco);
-
-				comando.DbCommand.CommandText += String.Format(" {0}", comando.AdicionarNotIn("and", "e.id", DbType.Int32, informacao.Especies.Select(x => x.Id).ToList()));
-
-				comando.AdicionarParametroEntrada("inf_corte_inf", informacao.Id, DbType.Int32);
-
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_licenca c where c.corte_id = :corte_id ", EsquemaBanco);
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.InformacaoCorteLicenca.Where(x => x.Id > 0).Select(y => y.Id).ToList());
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
-				#endregion
-
-				#region Produtos
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_inf_produto p
-													where p.inf_corte_inf = :inf_corte_inf", EsquemaBanco);
-
-				comando.DbCommand.CommandText += String.Format(" {0}", comando.AdicionarNotIn("and", "p.id", DbType.Int32, informacao.Produtos.Select(x => x.Id).ToList()));
-
-				comando.AdicionarParametroEntrada("inf_corte_inf", informacao.Id, DbType.Int32);
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#endregion
-
-				#region Informacao de Corte Informacao
-
-				if (informacao.Id > 0)
+				foreach (var item in caracterizacao.InformacaoCorteLicenca)
 				{
-					comando = bancoDeDados.CriarComando(@"update {0}crt_inf_corte_inf i set i.caracterizacao = :caracterizacao, 
-														i.arvores_isoladas_restante = :arvores_isoladas_restante, 
-														i.area_corte_restante = :area_corte_restante, 
-														i.data_informacao = :data_informacao, i.tid = :tid 
-														where i.id = :id", EsquemaBanco);
-
-					comando.AdicionarParametroEntrada("id", informacao.Id, DbType.Int32);
-				}
-				else
-				{
-					comando = bancoDeDados.CriarComando(@"insert into {0}crt_inf_corte_inf(id, caracterizacao, arvores_isoladas_restante, 
-														area_corte_restante, data_informacao, tid) values({0}seq_crt_inf_corte_inf.nextval,
-														:caracterizacao, :arvores_isoladas_restante, :area_corte_restante, 
-														:data_informacao, :tid) returning id into :id", EsquemaBanco);
-
-					comando.AdicionarParametroSaida("id", DbType.Int32);
-				}
-
-				comando.AdicionarParametroEntrada("caracterizacao", informacao.CaracterizacaoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("arvores_isoladas_restante", informacao.ArvoresIsoladasRestantes, DbType.Decimal);
-				comando.AdicionarParametroEntrada("area_corte_restante", informacao.AreaCorteRestante, DbType.Decimal);
-				comando.AdicionarParametroEntrada("data_informacao", informacao.DataInformacao.DataTexto, DbType.DateTime);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				if (informacao.Id <= 0)
-				{
-					informacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-				}
-
-				#region Especies
-
-				if (informacao.Especies != null && informacao.Especies.Count > 0)
-				{
-					foreach (Especie especie in informacao.Especies)
+					if (item.Id == 0)
 					{
-						if (especie.Id > 0)
-						{
-							comando = bancoDeDados.CriarComando(@"update {0}crt_inf_corte_inf_especie e set e.especie = :especie, 
-																e.especie_especificar_texto = :especie_especificar_texto, 
-																e.arvores_isoladas = :arvores_isoladas, e.area_corte = :area_corte, e.idade_plantio = :idade_plantio, 
-																e.tid = :tid where e.id = :id", EsquemaBanco);
+						comando = bancoDeDados.CriarComando(@"
+						insert into {0}crt_inf_corte_licenca (id, tid, corte_id, licenca, tipo_licenca, numero_licenca, atividade, area_licenca, data_vencimento) values
+						(seq_inf_corte_licenca.nextval, :tid, :corte_id, :licenca, :tipo_licenca, :numero_licenca, :atividade, :area_licenca, :data_vencimento)", EsquemaBanco);
 
-							comando.AdicionarParametroEntrada("id", especie.Id, DbType.Int32);
-						}
-						else
-						{
-							comando = bancoDeDados.CriarComando(@"insert into {0}crt_inf_corte_inf_especie(id, inf_corte_inf, especie, 
-																especie_especificar_texto, arvores_isoladas, area_corte, idade_plantio, tid)
-																values({0}seq_crt_inf_corte_inf_especie.nextval, :inf_corte_inf, 
-																:especie, :especie_especificar_texto, :arvores_isoladas, :area_corte, :idade_plantio, 
-																:tid)", EsquemaBanco);
-
-							comando.AdicionarParametroEntrada("inf_corte_inf", informacao.Id, DbType.Int32);
-						}
-
-						comando.AdicionarParametroEntrada("especie", especie.EspecieTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("especie_especificar_texto", String.IsNullOrWhiteSpace(especie.EspecieEspecificarTexto) ? (Object)DBNull.Value : especie.EspecieEspecificarTexto, DbType.String);
-						comando.AdicionarParametroEntrada("arvores_isoladas", especie.ArvoresIsoladas, DbType.Decimal);
-						comando.AdicionarParametroEntrada("area_corte", especie.AreaCorte, DbType.Decimal);
-						comando.AdicionarParametroEntrada("idade_plantio", especie.IdadePlantio, DbType.Decimal);
+						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("licenca", item.Licenca > 0 ? item.Licenca : null, DbType.Int32);
+						comando.AdicionarParametroEntrada("tipo_licenca", item.TipoLicenca, DbType.String);
+						comando.AdicionarParametroEntrada("numero_licenca", item.NumeroLicenca, DbType.String);
+						comando.AdicionarParametroEntrada("atividade", item.Atividade, DbType.String);
+						comando.AdicionarParametroEntrada("area_licenca", item.AreaLicenca, DbType.Decimal);
+						comando.AdicionarParametroEntrada("data_vencimento", item.DataVencimento.Data, DbType.Date);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 						bancoDeDados.ExecutarNonQuery(comando);
 					}
 				}
 
-				#endregion
+				#endregion Informação Corte Licença
 
-				#region Produtos
+				#region Informação Corte Tipo
 
-				if (informacao.Produtos != null && informacao.Produtos.Count > 0)
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_dest_material c where exists
+					(select 1 from {0}crt_inf_corte_tipo t where t.corte_id = :corte_id and t.id = c.tipo_corte_id)", EsquemaBanco);
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.InformacaoCorteTipo.SelectMany(x => x.InformacaoCorteDestinacao).Where(x => x.Id > 0).Select(y => y.Id).ToList());
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_tipo c where c.corte_id = :corte_id", EsquemaBanco);
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, caracterizacao.InformacaoCorteTipo.Where(x => x.Id > 0).Select(y => y.Id).ToList());
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				foreach (var item in caracterizacao.InformacaoCorteTipo)
 				{
-					foreach (Produto produto in informacao.Produtos)
+					if (item.Id == 0)
 					{
-						if (produto.Id > 0)
-						{
-							comando = bancoDeDados.CriarComando(@"update {0} crt_inf_corte_inf_produto p set p.produto = :produto, 
-																p.destinacao_material = :destinacao_material, p.quantidade = :quantidade, 
-																p.tid = :tid where p.id = :id", EsquemaBanco);
+						comando = bancoDeDados.CriarComando(@"
+						insert into {0}crt_inf_corte_tipo (id, tid, corte_id, tipo_corte, especie, area_corte, idade_plantio) values
+						(seq_inf_corte_tipo.nextval, :tid, :corte_id, :tipo_corte, :especie, :area_corte, :idade_plantio)
+						returning id into :tipo_id", EsquemaBanco);
 
-							comando.AdicionarParametroEntrada("id", produto.Id, DbType.Int32);
-						}
-						else
-						{
-							comando = bancoDeDados.CriarComando(@"insert into crt_inf_corte_inf_produto(id, inf_corte_inf, produto,
-																destinacao_material, quantidade, tid) values({0}seq_crt_inf_corte_inf_produto.nextval, 
-																:inf_corte_inf, :produto, :destinacao_material, :quantidade, :tid)", EsquemaBanco);
-
-							comando.AdicionarParametroEntrada("inf_corte_inf", informacao.Id, DbType.Int32);
-						}
-
-						comando.AdicionarParametroEntrada("produto", produto.ProdutoTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("destinacao_material", produto.DestinacaoTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("quantidade", produto.Quantidade, DbType.Decimal);
+						comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("tipo_corte", item.TipoCorte, DbType.Int32);
+						comando.AdicionarParametroEntrada("especie", item.EspecieInformada, DbType.Int64);
+						comando.AdicionarParametroEntrada("area_corte", item.AreaCorte, DbType.Decimal);
+						comando.AdicionarParametroEntrada("idade_plantio", item.IdadePlantio, DbType.String);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+						comando.AdicionarParametroSaida("tipo_id", DbType.Int32);
 
 						bancoDeDados.ExecutarNonQuery(comando);
+
+						item.Id = comando.ObterValorParametro<int>("tipo_id");
+
+						foreach (var destinacao in item.InformacaoCorteDestinacao)
+						{
+							comando = bancoDeDados.CriarComando(@"
+							insert into {0}crt_inf_corte_dest_material (id, tid, tipo_corte_id, dest_material, produto, quantidade, inf_codigo_sefaz) values
+							(seq_inf_corte_dest_material.nextval, :tid, :tipo_corte_id, :dest_material, :produto, :quantidade,
+							(select s.id from lov_inf_codigo_sefaz s where s.inf_corte_produto = :produto and s.inf_destinacao_material = :dest_material and rownum = 1))", EsquemaBanco);
+
+							comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("dest_material", destinacao.DestinacaoMaterial, DbType.Int32);
+							comando.AdicionarParametroEntrada("produto", destinacao.Produto, DbType.Int32);
+							comando.AdicionarParametroEntrada("quantidade", destinacao.Quantidade, DbType.Int32);
+							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+							bancoDeDados.ExecutarNonQuery(comando);
+
+						}
 					}
 				}
 
-				#endregion
-
-				#endregion
+				#endregion Informação Corte Tipo
 
 				#region Histórico
 
-				Historico.Gerar(informacao.CaracterizacaoId, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.atualizar, bancoDeDados, null);
+				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.atualizar, bancoDeDados, null);
 
 				#endregion
 
@@ -332,82 +273,75 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			}
 		}
 
-		internal void ExcluirInformacao(int informacaoItemId, BancoDeDados banco = null)
+		internal void ExcluirPorEmpreendimento(int empreendimento, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				bancoDeDados.IniciarTransacao();
 
-				#region Obter id da caracterização
-
-				Comando comando = bancoDeDados.CriarComando(@"select c.caracterizacao from {0}crt_inf_corte_inf c where c.id = :inf_corte_inf", EsquemaBanco);
-				comando.AdicionarParametroEntrada("inf_corte_inf", informacaoItemId, DbType.Int32);
-
-				int id = 0;
-				object retorno = bancoDeDados.ExecutarScalar(comando);
-
-				if (retorno != null && !Convert.IsDBNull(retorno))
-				{
-					id = Convert.ToInt32(retorno);
-				}
-
-				#endregion
-
-				#region Histórico
-
-				//Atualizar o tid para a nova ação
-				comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id", EsquemaBanco);
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.atualizar, bancoDeDados, null);
-
-				#endregion
-
-				#region Apaga os dados da caracterização
-
-				comando = bancoDeDados.CriarComando(@"begin " +
-													@"delete from {0}crt_inf_corte_inf_especie e where e.inf_corte_inf = :inf_corte_inf;" +
-													@"delete from {0}crt_inf_corte_inf_produto p where p.inf_corte_inf = :inf_corte_inf;" +
-													@"delete from {0}crt_inf_corte_inf c where c.id = :inf_corte_inf;" +
-													@"end;", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("inf_corte_inf", informacaoItemId, DbType.Int32);
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				bancoDeDados.Commit();
-
-				#endregion
-			}
-		}
-
-		internal void Excluir(int empreendimento, BancoDeDados banco = null)
-		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				bancoDeDados.IniciarTransacao();
-
-				#region Obter id da caracterização
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}crt_informacao_corte c where c.empreendimento = :empreendimento", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
-				int id = 0;
-				object retorno = bancoDeDados.ExecutarScalar(comando);
-
-				if (retorno != null && !Convert.IsDBNull(retorno))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					id = Convert.ToInt32(retorno);
-				}
+					int id = reader.GetValue<int>("id");
 
-				#endregion
+					#region Histórico
+
+					//Atualizar o tid para a nova ação
+					comando = bancoDeDados.CriarComandoPlSql(@"
+					begin
+						update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+						update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+						update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+					end;", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.informacaocorte, eHistoricoAcao.excluir, bancoDeDados, null);
+
+					#endregion
+
+					#region Apaga os dados da caracterização
+
+					comando = bancoDeDados.CriarComandoPlSql(
+					@"begin
+						delete from {0}crt_informacao_corte c where c.id = :id;
+						delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+						delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
+					end;", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+					bancoDeDados.Commit();
+
+					#endregion
+				}
+			}
+		}
+
+		internal void Excluir(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
 
 				#region Histórico
 
 				//Atualizar o tid para a nova ação
-				comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id", EsquemaBanco);
+				var comando = bancoDeDados.CriarComandoPlSql(@"
+				begin
+					update {0}crt_informacao_corte c set c.tid = :tid where c.id = :id;
+					update {0}crt_inf_corte_licenca c set c.tid = :tid where c.corte_id = :id;
+					update {0}crt_inf_corte_tipo c set c.tid = :tid where c.corte_id = :id;
+					update {0}crt_inf_corte_dest_material c set c.tid = :tid where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.tid = :tid and t.corte_id = :id);
+				end;", EsquemaBanco);
+
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -418,20 +352,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				#region Apaga os dados da caracterização
 
-				comando = bancoDeDados.CriarComando(@"begin " +
-					@"delete from {0}crt_dependencia d where d.dependente_tipo = :dependente_tipo and d.dependente_id = :caracterizacao and d.dependente_caracterizacao = :dependente_caracterizacao;" +
-					@"delete from {0}crt_inf_corte_inf_especie e where e.inf_corte_inf in (select d.id from {0}crt_inf_corte_inf d where d.caracterizacao = :caracterizacao);" +
-					@"delete from {0}crt_inf_corte_inf_produto p where p.inf_corte_inf in (select d.id from {0}crt_inf_corte_inf d where d.caracterizacao = :caracterizacao);" +
-					@"delete from {0}crt_inf_corte_inf i where i.caracterizacao = :caracterizacao;" +
-					@"delete from {0}crt_informacao_corte c where c.id = :caracterizacao;" +
-					@"end;", EsquemaBanco);
+				comando = bancoDeDados.CriarComandoPlSql(
+				@"begin
+					delete from {0}crt_informacao_corte c where c.id = :id;
+					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
+					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
+				end;", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("caracterizacao", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("dependente_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
-				comando.AdicionarParametroEntrada("dependente_caracterizacao", (int)eCaracterizacao.InformacaoCorte, DbType.Int32);
-
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
-
 				bancoDeDados.Commit();
 
 				#endregion
@@ -442,20 +372,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 		#region Obter
 
-		internal InformacaoCorte ObterPorEmpreendimento(int empreendimento, bool simplificado = false, BancoDeDados banco = null)
+		internal List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
-			InformacaoCorte caracterizacao = new InformacaoCorte();
+			var caracterizacao = new List<InformacaoCorte>();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_informacao_corte s where s.empreendimento = :empreendimento", EsquemaBanco);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}crt_informacao_corte t where t.empreendimento = :empreendimento", EsquemaBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
-				object valor = bancoDeDados.ExecutarScalar(comando);
-
-				if (valor != null && !Convert.IsDBNull(valor))
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					caracterizacao = Obter(Convert.ToInt32(valor), bancoDeDados, simplificado);
+					while (reader.Read())
+					{
+						var id = reader.GetValue<int>("id");
+						if (id > 0)
+							caracterizacao.Add(Obter(id, bancoDeDados, simplificado));
+					}
+					reader.Close();
 				}
 			}
 
@@ -468,34 +402,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				if (tid == null)
-				{
-					caracterizacao = Obter(id, bancoDeDados, simplificado);
-				}
-				else
-				{
-					Comando comando = bancoDeDados.CriarComando(@"select count(s.id) existe from {0}crt_informacao_corte s where s.id = :id and s.tid = :tid", EsquemaBanco);
-
-					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				Comando comando = bancoDeDados.CriarComando(@"select count(s.id) existe from {0}crt_informacao_corte s where s.id = :id " + (tid == null ? "" : "and s.tid = :tid"), EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				if (tid != null)
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, tid);
 
-					caracterizacao = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id, bancoDeDados, simplificado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
-				}
+				caracterizacao = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id, bancoDeDados, simplificado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
 			}
 
 			return caracterizacao;
 		}
 
-		internal InformacaoCorte Obter(int id, BancoDeDados banco = null, bool simplificado = false)
+		private InformacaoCorte Obter(int id, BancoDeDados banco = null, bool simplificado = false)
 		{
 			InformacaoCorte caracterizacao = new InformacaoCorte();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				#region Informacao de Corte
+				#region Informação de Corte
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.tid 
-															from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -504,8 +432,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
-						caracterizacao.EmpreendimentoId = Convert.ToInt32(reader["empreendimento"]);
-						caracterizacao.Tid = reader["tid"].ToString();
+						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
+						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
+						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
+						caracterizacao.Tid = reader.GetValue<string>("tid");
 					}
 
 					reader.Close();
@@ -513,128 +443,107 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				#endregion
 
-				if (caracterizacao.Id <= 0 || simplificado)
+				if (simplificado)
 				{
 					return caracterizacao;
 				}
 
-				#region Informacoes
+				#region Informação de Corte Licença
 
-				comando = bancoDeDados.CriarComando(@"select i.id, i.arvores_isoladas_restante, i.area_corte_restante, i.data_informacao, i.tid
-													from crt_inf_corte_inf i where i.caracterizacao = :caracterizacao order by i.id", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.corte_id, c.licenca, c.tipo_licenca, c.numero_licenca, c.atividade, c.area_licenca, c.data_vencimento
+				from {0}crt_inf_corte_licenca c
+				where c.corte_id = :corte_id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("caracterizacao", caracterizacao.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					InformacaoCorteInformacao informacaoCorte = null;
-
 					while (reader.Read())
 					{
-						informacaoCorte = new InformacaoCorteInformacao();
-						informacaoCorte.Id = Convert.ToInt32(reader["id"]);
-						informacaoCorte.CaracterizacaoId = caracterizacao.Id;
-						informacaoCorte.Tid = reader["tid"].ToString();
-
-						if (reader["arvores_isoladas_restante"] != null && !Convert.IsDBNull(reader["arvores_isoladas_restante"]))
+						caracterizacao.InformacaoCorteLicenca.Add(new InformacaoCorteLicenca()
 						{
-							informacaoCorte.ArvoresIsoladasRestantes = Convert.ToDecimal(reader["arvores_isoladas_restante"]).ToString("N0");
-						}
+							Id = reader.GetValue<int>("id"),
+							Tid = reader.GetValue<string>("tid"),
+							Corte = reader.GetValue<int>("corte_id"),
+							Licenca = reader.GetValue<int>("licenca"),
+							TipoLicenca = reader.GetValue<string>("tipo_licenca"),
+							NumeroLicenca = reader.GetValue<string>("numero_licenca"),
+							Atividade = reader.GetValue<string>("atividade"),
+							AreaLicenca = reader.GetValue<decimal>("area_licenca"),
+							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") }
+						});
+					}
 
-						if (reader["data_informacao"] != null && !Convert.IsDBNull(reader["data_informacao"]))
+					reader.Close();
+				}
+
+				#endregion
+
+				#region Informação de Corte Tipo
+
+				comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.corte_id, c.tipo_corte, c.especie, c.area_corte, c.idade_plantio
+				from {0}crt_inf_corte_tipo c
+				where c.corte_id = :corte_id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var informacaoCorteTipo = new InformacaoCorteTipo()
 						{
-							informacaoCorte.DataInformacao.DataTexto = Convert.ToDateTime(reader["data_informacao"]).ToShortDateString();
-						}
+							Id = reader.GetValue<int>("id"),
+							Tid = reader.GetValue<string>("tid"),
+							Corte = reader.GetValue<int>("corte_id"),
+							TipoCorte = reader.GetValue<int>("tipo_corte"),
+							TipoCorteTexto = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription(),
+							EspecieInformada = reader.GetValue<int>("especie"),
+							EspecieInformadaTexto = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription(),
+							AreaCorte = reader.GetValue<decimal>("area_corte"),
+							IdadePlantio = reader.GetValue<int>("idade_plantio")
+						};
 
-						if (reader["area_corte_restante"] != null && !Convert.IsDBNull(reader["area_corte_restante"]))
+						#region Informação Corte Destinação
+
+						comando = bancoDeDados.CriarComando(@"
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz,
+							lv.texto as dest_material_texto, lvp.texto as produto_texto
+						from {0}crt_inf_corte_dest_material c
+						left join {0}lov_crt_inf_corte_inf_dest_mat lv
+							on(c.dest_material = lv.id)
+						left join {0}lov_crt_produto lvp
+							on(c.produto = lvp.id)
+						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("tipo_corte_id", informacaoCorteTipo.Id, DbType.Int32);
+
+						using (IDataReader readerDestinacao = bancoDeDados.ExecutarReader(comando))
 						{
-							informacaoCorte.AreaCorteRestante= Convert.ToDecimal(reader["area_corte_restante"]).ToString("N4");
-						}
-
-						#region Especies
-
-						comando = bancoDeDados.CriarComando(@"select e.id, e.especie, le.texto especie_texto, e.especie_especificar_texto, 
-															e.arvores_isoladas, e.area_corte, e.idade_plantio, e.tid from crt_inf_corte_inf_especie e, 
-															lov_crt_silvicultura_cult_fl le where le.id = e.especie 
-															and e.inf_corte_inf = :inf_corte_inf order by e.id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", informacaoCorte.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Especie especie = null;
-
-							while (readerAux.Read())
+							while (readerDestinacao.Read())
 							{
-								especie = new Especie();
-								especie.Id = Convert.ToInt32(readerAux["id"]);
-								especie.EspecieTipo = Convert.ToInt32(readerAux["especie"]);
-								especie.EspecieTipoTexto = readerAux["especie_texto"].ToString();
-								especie.ArvoresIsoladas = readerAux["arvores_isoladas"].ToString();
-								especie.Tid = readerAux["tid"].ToString();
-
-								if (readerAux["especie_especificar_texto"] != null && !Convert.IsDBNull(readerAux["especie_especificar_texto"]))
+								informacaoCorteTipo.InformacaoCorteDestinacao.Add(new InformacaoCorteDestinacao()
 								{
-									especie.EspecieEspecificarTexto = readerAux["especie_especificar_texto"].ToString();
-									especie.EspecieTipoTexto = especie.EspecieEspecificarTexto;
-								}
-
-								if (readerAux["area_corte"] != null && !Convert.IsDBNull(readerAux["area_corte"]))
-								{
-									especie.AreaCorte = Convert.ToDecimal(readerAux["area_corte"]).ToString("N4");
-								}
-
-								if (readerAux["idade_plantio"] != null && !Convert.IsDBNull(readerAux["idade_plantio"]))
-								{
-									especie.IdadePlantio = Convert.ToDecimal(readerAux["idade_plantio"]).ToString("N0");
-								}
-
-								informacaoCorte.Especies.Add(especie);
+									Id = readerDestinacao.GetValue<int>("id"),
+									Tid = readerDestinacao.GetValue<string>("tid"),
+									TipoCorteId = readerDestinacao.GetValue<int>("tipo_corte_id"),
+									DestinacaoMaterial = readerDestinacao.GetValue<int>("dest_material"),
+									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
+									Produto = readerDestinacao.GetValue<int>("produto"),
+									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
+								});
 							}
 
-							readerAux.Close();
+							readerDestinacao.Close();
 						}
 
 						#endregion
 
-						#region Produtos
-
-						comando = bancoDeDados.CriarComando(@"select p.id, p.produto, lp.texto produto_texto, p.destinacao_material, 
-															lm.texto destinacao_material_texto, p.quantidade, p.tid 
-															from {0}crt_inf_corte_inf_produto p, {0}lov_crt_produto lp, 
-															{0}lov_crt_inf_corte_inf_dest_mat lm where lp.id = p.produto 
-															and lm.id = p.destinacao_material and p.inf_corte_inf = :inf_corte_inf order by p.id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", informacaoCorte.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Produto produto = null;
-
-							while (readerAux.Read())
-							{
-								produto = new Produto();
-								produto.Id = Convert.ToInt32(readerAux["id"]);
-								produto.ProdutoTipo = Convert.ToInt32(readerAux["produto"]);
-								produto.ProdutoTipoTexto = readerAux["produto_texto"].ToString();
-								produto.DestinacaoTipo = Convert.ToInt32(readerAux["destinacao_material"]);
-								produto.DestinacaoTipoTexto = readerAux["destinacao_material_texto"].ToString();
-								produto.Tid = readerAux["tid"].ToString();
-
-								if (readerAux["quantidade"] != null && !Convert.IsDBNull(readerAux["quantidade"]))
-								{
-									produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToString("N2");
-								}
-
-								informacaoCorte.Produtos.Add(produto);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						caracterizacao.InformacoesCortes.Add(informacaoCorte);
+						caracterizacao.InformacaoCorteTipo.Add(informacaoCorteTipo);
 					}
 
 					reader.Close();
@@ -644,169 +553,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			}
 
 			return caracterizacao;
-		}
-
-		internal InformacaoCorteInformacao ObterInformacaoItem(int id, BancoDeDados banco = null)
-		{
-			InformacaoCorteInformacao informacaoCorte = null;
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-
-				#region Informacao de Corte Informacao
-
-				Comando comando = bancoDeDados.CriarComando(@"select i.arvores_isoladas_restante, i.area_corte_restante, i.data_informacao, i.tid
-															from crt_inf_corte_inf i where i.id = :id order by i.id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-
-					if (reader.Read())
-					{
-						informacaoCorte = new InformacaoCorteInformacao();
-						informacaoCorte.Id = id;
-						informacaoCorte.Tid = reader["tid"].ToString();
-
-						if (reader["data_informacao"] != null && !Convert.IsDBNull(reader["data_informacao"]))
-						{
-							informacaoCorte.DataInformacao.DataTexto = Convert.ToDateTime(reader["data_informacao"]).ToShortDateString();
-						}
-
-						if (reader["arvores_isoladas_restante"] != null && !Convert.IsDBNull(reader["arvores_isoladas_restante"]))
-						{
-							informacaoCorte.ArvoresIsoladasRestantes = Convert.ToDecimal(reader["arvores_isoladas_restante"]).ToString("N0");
-						}
-
-						if (reader["area_corte_restante"] != null && !Convert.IsDBNull(reader["area_corte_restante"]))
-						{
-							informacaoCorte.AreaCorteRestante = Convert.ToDecimal(reader["area_corte_restante"]).ToString("N4");
-						}
-
-						#region Especies
-
-						comando = bancoDeDados.CriarComando(@"select e.id, e.especie, le.texto especie_texto, e.especie_especificar_texto, 
-															e.arvores_isoladas, e.area_corte, e.idade_plantio, e.tid from crt_inf_corte_inf_especie e, 
-															lov_crt_silvicultura_cult_fl le where le.id = e.especie 
-															and e.inf_corte_inf = :inf_corte_inf order by e.id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", informacaoCorte.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Especie especie = null;
-
-							while (readerAux.Read())
-							{
-								especie = new Especie();
-								especie.Id = Convert.ToInt32(readerAux["id"]);
-								especie.EspecieTipo = Convert.ToInt32(readerAux["especie"]);
-								especie.EspecieTipoTexto = readerAux["especie_texto"].ToString();
-
-								especie.Tid = readerAux["tid"].ToString();
-
-								if (readerAux["arvores_isoladas"] != null && !Convert.IsDBNull(readerAux["arvores_isoladas"]))
-								{
-									especie.ArvoresIsoladas = Convert.ToDecimal(readerAux["arvores_isoladas"]).ToString("N0");
-								}
-
-								if (readerAux["area_corte"] != null && !Convert.IsDBNull(readerAux["area_corte"]))
-								{
-									especie.AreaCorte = Convert.ToDecimal(readerAux["area_corte"]).ToString("N4");
-								}
-
-								if (readerAux["idade_plantio"] != null && !Convert.IsDBNull(readerAux["idade_plantio"]))
-								{
-									especie.IdadePlantio = Convert.ToDecimal(readerAux["idade_plantio"]).ToString("N0");
-								}
-
-								if (readerAux["especie_especificar_texto"] != null && !Convert.IsDBNull(readerAux["especie_especificar_texto"]))
-								{
-									especie.EspecieEspecificarTexto = readerAux["especie_especificar_texto"].ToString();
-									especie.EspecieTipoTexto = especie.EspecieEspecificarTexto;
-								}
-
-								informacaoCorte.Especies.Add(especie);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						#region Produtos
-
-						comando = bancoDeDados.CriarComando(@"select p.id, p.produto, lp.texto produto_texto, p.destinacao_material, 
-															lm.texto destinacao_material_texto, p.quantidade, p.tid 
-															from {0}crt_inf_corte_inf_produto p, {0}lov_crt_produto lp, 
-															{0}lov_crt_inf_corte_inf_dest_mat lm where lp.id = p.produto 
-															and lm.id = p.destinacao_material and p.inf_corte_inf = :inf_corte_inf order by p.id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", informacaoCorte.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Produto produto = null;
-
-							while (readerAux.Read())
-							{
-								produto = new Produto();
-								produto.Id = Convert.ToInt32(readerAux["id"]);
-								produto.ProdutoTipo = Convert.ToInt32(readerAux["produto"]);
-								produto.ProdutoTipoTexto = readerAux["produto_texto"].ToString();
-								produto.DestinacaoTipo = Convert.ToInt32(readerAux["destinacao_material"]);
-								produto.DestinacaoTipoTexto = readerAux["destinacao_material_texto"].ToString();
-
-								if (readerAux["quantidade"] != null && !Convert.IsDBNull(readerAux["quantidade"]))
-								{
-									produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToString("N2");
-								}
-
-								produto.Tid = readerAux["tid"].ToString();
-
-								informacaoCorte.Produtos.Add(produto);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-					}
-
-					reader.Close();
-				}
-
-				#endregion
-			}
-
-			return informacaoCorte;
 		}
 
 		private InformacaoCorte ObterHistorico(int id, BancoDeDados banco = null, string tid = null, bool simplificado = false)
 		{
 			InformacaoCorte caracterizacao = new InformacaoCorte();
-			int hst = 0;
-			int hst_inf_corte_inf = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				#region Informacao de Corte
+				#region Informação de Corte
 
-				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.empreendimento_id, c.tid 
-															from {0}hst_crt_informacao_corte c where c.caracterizacao = :id and c.tid = :tid", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				from {0}hst_crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, tid);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
-						caracterizacao.EmpreendimentoId = Convert.ToInt32(reader["empreendimento_id"]);
-						caracterizacao.Tid = reader["tid"].ToString();
-						hst = Convert.ToInt32(reader["id"]);
+						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
+						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
+						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
+						caracterizacao.Tid = reader.GetValue<string>("tid");
 					}
 
 					reader.Close();
@@ -814,107 +585,102 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				#endregion
 
-				if (caracterizacao.Id <= 0 || simplificado)
+				if (simplificado)
 				{
 					return caracterizacao;
 				}
 
-				#region Informacoes
+				#region Informação de Corte Licença
 
-				comando = bancoDeDados.CriarComando(@"select i.id, i.inf_corte_inf, i.arvores_isoladas_restante, i.area_corte_restante, i.data_informacao, i.tid
-													from hst_crt_inf_corte_inf i where i.caracterizacao = :caracterizacao and i.id_hst = :hst", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.corte_id, c.licenca, c.tipo_licenca, c.numero_licenca, c.atividade, c.area_licenca, c.data_vencimento
+				from {0}hst_crt_inf_corte_licenca c
+				where c.corte_id = :corte_id", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("id", hst, DbType.Int32);
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					InformacaoCorteInformacao informacaoCorte = null;
-
 					while (reader.Read())
 					{
-						informacaoCorte = new InformacaoCorteInformacao();
-						informacaoCorte.Id = Convert.ToInt32(reader["inf_corte_inf"]);
-						informacaoCorte.ArvoresIsoladasRestantes = reader["arvores_isoladas_restante"].ToString();
-						informacaoCorte.AreaCorteRestante = reader["area_corte_restante"].ToString();
-						informacaoCorte.DataInformacao.DataTexto = Convert.ToDateTime(reader["data_informacao"]).ToShortDateString();
-						informacaoCorte.Tid = reader["tid"].ToString();
-						hst_inf_corte_inf = Convert.ToInt32(reader["id"]);
-
-						#region Especies
-
-						comando = bancoDeDados.CriarComando(@"select e.especie_entidade_id, e.especie_id, e.especie_texto, e.especie_especificar_texto, 
-															e.arvores_isoladas, e.area_corte, e.idade_plantio, e.tid from hst_crt_inf_corte_inf_especie e
-															where e.id_hst = :hst_inf_corte_inf", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("inf_corte_inf", informacaoCorte.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("hst_inf_corte_inf", hst_inf_corte_inf, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+						caracterizacao.InformacaoCorteLicenca.Add(new InformacaoCorteLicenca()
 						{
-							Especie especie = null;
+							Id = reader.GetValue<int>("id"),
+							Tid = reader.GetValue<string>("tid"),
+							Corte = reader.GetValue<int>("corte_id"),
+							Licenca = reader.GetValue<int>("licenca"),
+							TipoLicenca = reader.GetValue<string>("tipo_licenca"),
+							NumeroLicenca = reader.GetValue<string>("numero_licenca"),
+							Atividade = reader.GetValue<string>("atividade"),
+							AreaLicenca = reader.GetValue<decimal>("area_licenca"),
+							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") }
+						});
+					}
 
-							while (readerAux.Read())
+					reader.Close();
+				}
+
+				#endregion
+
+				#region Informação de Corte Tipo
+
+				comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.corte_id, c.tipo_corte, c.especie, c.area_corte, c.idade_plantio
+				from {0}hst_crt_inf_corte_tipo c
+				where c.corte_id = :corte_id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var informacaoCorteTipo = new InformacaoCorteTipo()
+						{
+							Id = reader.GetValue<int>("id"),
+							Tid = reader.GetValue<string>("tid"),
+							Corte = reader.GetValue<int>("corte_id"),
+							TipoCorte = reader.GetValue<int>("tipo_corte"),
+							TipoCorteTexto = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription(),
+							EspecieInformada = reader.GetValue<int>("especie"),
+							EspecieInformadaTexto = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription(),
+							AreaCorte = reader.GetValue<decimal>("area_corte"),
+							IdadePlantio = reader.GetValue<int>("idade_plantio")
+						};
+
+						#region Informação Corte Destinação
+
+						comando = bancoDeDados.CriarComando(@"
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz, c.dest_material_texto, c.produto_texto
+						from {0}hst_crt_inf_corte_dest_material c
+						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
+
+						comando.AdicionarParametroEntrada("tipo_corte_id", informacaoCorteTipo.Id, DbType.Int32);
+
+						using (IDataReader readerDestinacao = bancoDeDados.ExecutarReader(comando))
+						{
+							while (readerDestinacao.Read())
 							{
-								especie = new Especie();
-								especie.Id = Convert.ToInt32(readerAux["especie_entidade_id"]);
-								especie.EspecieTipo = Convert.ToInt32(readerAux["especie_id"]);
-								especie.EspecieTipoTexto = readerAux["especie_texto"].ToString();
-								especie.ArvoresIsoladas = readerAux["arvores_isoladas"].ToString();
-								especie.AreaCorte = readerAux["area_corte"].ToString();
-								especie.Tid = readerAux["tid"].ToString();
-
-								if (readerAux["especie_especificar_texto"] != null && !Convert.IsDBNull(readerAux["especie_especificar_texto"]))
+								informacaoCorteTipo.InformacaoCorteDestinacao.Add(new InformacaoCorteDestinacao()
 								{
-									especie.EspecieEspecificarTexto = readerAux["especie_especificar_texto"].ToString();
-								}
-
-								if (readerAux["idade_plantio"] != null && !Convert.IsDBNull(readerAux["idade_plantio"]))
-								{
-									especie.IdadePlantio = Convert.ToDecimal(readerAux["idade_plantio"]).ToString("N0");
-								}
-
-								informacaoCorte.Especies.Add(especie);
+									Id = readerDestinacao.GetValue<int>("id"),
+									Tid = readerDestinacao.GetValue<string>("tid"),
+									TipoCorteId = readerDestinacao.GetValue<int>("tipo_corte_id"),
+									DestinacaoMaterial = readerDestinacao.GetValue<int>("dest_material"),
+									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
+									Produto = readerDestinacao.GetValue<int>("produto"),
+									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
+								});
 							}
 
-							readerAux.Close();
+							readerDestinacao.Close();
 						}
 
 						#endregion
 
-						#region Produtos
-
-						comando = bancoDeDados.CriarComando(@"select p.id, p.produto_entidade_id, p.produto_id, p.produto_texto, p.destinacao_material_id, 
-															p.destinacao_material_texto, p.quantidade, p.tid 
-															from {0}hst_crt_inf_corte_inf_produto p
-															where p.id_hst = :hst_inf_corte_inf", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("hst_inf_corte_inf", hst_inf_corte_inf, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Produto produto = null;
-
-							while (readerAux.Read())
-							{
-								produto = new Produto();
-								produto.Id = Convert.ToInt32(readerAux["produto_entidade_id"]);
-								produto.ProdutoTipo = Convert.ToInt32(readerAux["produto_id"]);
-								produto.ProdutoTipoTexto = readerAux["produto_texto"].ToString();
-								produto.DestinacaoTipo = Convert.ToInt32(readerAux["destinacao_material_id"]);
-								produto.DestinacaoTipoTexto = readerAux["destinacao_material_texto"].ToString();
-								produto.Quantidade = readerAux["quantidade"].ToString();
-								produto.Tid = readerAux["tid"].ToString();
-
-								informacaoCorte.Produtos.Add(produto);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						caracterizacao.InformacoesCortes.Add(informacaoCorte);
+						caracterizacao.InformacaoCorteTipo.Add(informacaoCorteTipo);
 					}
 
 					reader.Close();
@@ -926,6 +692,170 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return caracterizacao;
 		}
 
+		internal List<InformacaoCorte> FiltrarPorEmpreendimento(int id, BancoDeDados banco = null, string esquema = null)
+		{
+			var caracterizacao = new List<InformacaoCorte>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Informação de Corte
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, 
+				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
+				from {0}crt_informacao_corte c where c.empreendimento = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						caracterizacao.Add(new InformacaoCorte()
+						{
+							Id = reader.GetValue<int>("id"),
+							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
+							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
+							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
+							Tid = reader.GetValue<string>("tid")
+						});
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return caracterizacao;
+		}
+
+		internal List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				/*SELECT id, concat(concat(lpad(id, 4, '0'), '-'), data_informacao) informacaoCorte FROM crt_informacao_corte;*/
+					SELECT ID, (LPAD(ID, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
+						FROM {0}CRT_INFORMACAO_CORTE CRT WHERE EMPREENDIMENTO = :empreendimento
+					AND ID NOT IN (SELECT ID FROM TAB_EMPREENDIMENTO E WHERE CRT.ID = E.ID)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("ID");
+						item.Texto = reader.GetValue<string>("informacaoCorte");
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
+		internal List<Lista> ObterListaInfCorteTitulo(int titulo)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
+					FROM {0}CRT_INFORMACAO_CORTE CRT 
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.INFORMACAO_CORTE
+				WHERE INF.TITULO = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("ID");
+						item.Texto = reader.GetValue<string>("informacaoCorte");
+						item.IsAtivo = true;
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
+		internal List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select s.inf_corte_produto, p.texto from {0}lov_inf_codigo_sefaz s
+				inner join lov_crt_produto_inf_corte p
+				on (p.id = s.inf_corte_produto)
+				where inf_destinacao_material = :inf_destinacao_material", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("inf_destinacao_material", destinacaoId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						Lista item = new Lista();
+						item.Id = reader.GetValue<string>("inf_corte_produto");
+						item.Texto = reader.GetValue<string>("texto");
+						item.IsAtivo = true;
+
+						retorno.Add(item);
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
+
 		#endregion
+
+		internal bool PossuiCaracterizacaoEmAberto(int empreendimentoId)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
+					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
+		internal bool CaracterizacaoEmAberto(int id)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.id = :id
+					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
+					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
 	}
 }

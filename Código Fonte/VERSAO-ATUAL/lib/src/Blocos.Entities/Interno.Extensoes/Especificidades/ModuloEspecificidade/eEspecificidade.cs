@@ -39,6 +39,7 @@
 		TermoCPFARLR = 43,
 		OutrosLegitimacaoTerraDevoluta = 28,
 		OutrosInformacaoCorte = 46,
+		OutrosInformacaoCorteDeclaratorio = 61,
 		CertidaoDebito = 47,
 		OficioUsucapiao = 48,
 		CadastroAmbientalRuralTitulo = 49,

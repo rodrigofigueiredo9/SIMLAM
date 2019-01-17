@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -44,10 +45,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 		#region Comandos DML
 
-		public int Salvar(InformacaoCorte caracterizacao)
+		public bool Salvar(InformacaoCorte caracterizacao)
 		{
-			int id = 0;
-
 			try
 			{
 				if (_validar.Salvar(caracterizacao))
@@ -58,7 +57,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					{
 						bancoDeDados.IniciarTransacao();
 
-						id = _da.Salvar(caracterizacao, bancoDeDados);
+						_da.Salvar(caracterizacao, bancoDeDados);
 
 						//Gerencia as dependências da caracterização
 						if (caracterizacao.Dependencias != null && caracterizacao.Dependencias.Count > 0)
@@ -83,22 +82,51 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				Validacao.AddErro(e);
 			}
 
-			return id;
+			return Validacao.EhValido;
 		}
 
-		public bool Excluir(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
+		{
+			try
+			{
+				var caracterizacao = this.Obter(id, simplificado: true);
+
+				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
+					return Validacao.EhValido;
+
+				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(caracterizacao.EmpreendimentoId, eCaracterizacao.InformacaoCorte))
+					return Validacao.EhValido;
+
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.Excluir(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.InformacaoCorte.Excluir);
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool ExcluirPorEmpreendimento(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
 				if (!_caracterizacaoValidar.Basicas(empreendimento))
-				{
 					return Validacao.EhValido;
-				}
 
 				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(empreendimento, eCaracterizacao.InformacaoCorte))
-				{
 					return Validacao.EhValido;
-				}
 
 				GerenciadorTransacao.ObterIDAtual();
 
@@ -122,43 +150,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return Validacao.EhValido;
 		}
 
-		public bool ExcluirInformacao(int itemId)
-		{
-			try
-			{
-				GerenciadorTransacao.ObterIDAtual();
-
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-				{
-					bancoDeDados.IniciarTransacao();
-
-					_da.ExcluirInformacao(itemId, bancoDeDados);
-
-					Validacao.Add(Mensagem.InformacaoCorte.ItemExcluir);
-
-					bancoDeDados.Commit();
-				}
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return Validacao.EhValido;
-		}
-
-
 		#endregion
 
-		#region Obter
+		#region Obter/Filtrar
 
-		public InformacaoCorte ObterPorEmpreendimento(int EmpreendimentoId, bool simplificado = false, BancoDeDados banco = null)
+		public InformacaoCorte Obter(int id, bool simplificado = false)
 		{
-
 			InformacaoCorte caracterizacao = null;
 			try
 			{
-				caracterizacao = _da.ObterPorEmpreendimento(EmpreendimentoId, simplificado: simplificado);
+				caracterizacao = _da.Obter(id, simplificado: simplificado);
 				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
 			}
 			catch (Exception exc)
@@ -169,20 +170,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return caracterizacao;
 		}
 
-		public InformacaoCorteInformacao ObterInformacaoItem(int id, BancoDeDados banco = null)
+		public List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false, BancoDeDados banco = null)
 		{
-
-			InformacaoCorteInformacao item = null;
+			List<InformacaoCorte> caracterizacao = null;
 			try
 			{
-				item = _da.ObterInformacaoItem(id);
+				caracterizacao = _da.ObterPorEmpreendimento(empreendimentoInternoId, simplificado: simplificado, banco: banco);
+				foreach (var informacao in caracterizacao)
+					informacao.Dependencias = _busCaracterizacao.ObterDependencias(informacao.Id, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
 			}
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
 			}
 
-			return item;
+			return caracterizacao;
+		}
+
+		public List<InformacaoCorte> FiltrarPorEmpreendimento(int empreendimentoInternoId)
+		{
+			List<InformacaoCorte> caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.FiltrarPorEmpreendimento(empreendimentoInternoId);
+				foreach(var informacao in caracterizacao)
+					informacao.Dependencias = _busCaracterizacao.ObterDependencias(informacao.Id, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
 		}
 
 		public object ObterDadosPdfTitulo(int empreendimento, int atividade, IEspecificidade especificidade, BancoDeDados banco = null)
@@ -190,7 +209,84 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			throw new NotImplementedException();
 		}
 
+		public object ObterDadosPdf(IEspecificidade especificidade, BancoDeDados banco = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterListaInfCorteEmpreendimento(empreendimento);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
+		public List<Lista> ObterListaInfCorteTitulo(int titulo)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterListaInfCorteTitulo(titulo);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
+		public List<Lista> ObterProdutos(int destinacaoId)
+		{
+			List<Lista> retorno = new List<Lista>();
+			try
+			{
+				retorno = _da.ObterProdutos(destinacaoId);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return retorno;
+		}
+
 		#endregion
+
+		public bool ValidarCriar(int empreendimentoId)
+		{
+			try
+			{
+				if (_da.PossuiCaracterizacaoEmAberto(empreendimentoId))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoCriar);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool ValidarEditar(int id)
+		{
+			try
+			{
+				if (_da.CaracterizacaoEmAberto(id))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoEditar);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
 
 		public InformacaoCorte MergiarGeo(InformacaoCorte caracterizacaoAtual)
 		{

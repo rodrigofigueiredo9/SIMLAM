@@ -9,6 +9,32 @@
 
 <fieldset class="block box">
 	<legend>Especificidade</legend>
+	<div class="block">
+		<div class="coluna75">
+			<label for="Atividade">Atividade Dispensada *</label>
+			<%= Html.DropDownList("Outros.Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Atividades.Atividades.Count == 1, new { @class = "text ddlAtividades" }))%>
+		</div>
+	</div>
+	<%--<div class="coluna20">
+		<label for="Empreendimento.Codigo">Atividade Dispensada *</label>
+		<%= Html.TextBox("Empreendimento.Codigo", Model.Empreendimento.Codigo, new { @class = "text maskIntegerObrigatorio disabled", @disabled = "disabled" })%>
+	</div>
+	<div class="coluna20">
+		<label for="Empreendimento.Codigo">Interessado *</label>
+		<%= Html.TextBox("Empreendimento.Codigo", Model.Empreendimento.Codigo, new { @class = "text maskIntegerObrigatorio disabled", @disabled = "disabled" })%>
+	</div>
+	<div class="block">
+		<div class="coluna20">
+			<label for="Empreendimento.Codigo">Objeto Declarado *</label>
+			<%= Html.TextBox("Empreendimento.Codigo", Model.Empreendimento.Codigo, new { @class = "text maskIntegerObrigatorio disabled", @disabled = "disabled" })%>
+		</div>
+		<div class="coluna20">
+			<label for="Empreendimento.Codigo">Validade da Informação de Corte (dias) *</label>
+			<%= Html.TextBox("Empreendimento.Codigo", Model.Empreendimento.Codigo, new { @class = "text maskIntegerObrigatorio disabled", @disabled = "disabled" })%>
+		</div>
+	</div>--%>
+	
+
 	<% Html.RenderPartial("~/Views/Titulo/AtividadeEspecificidade.ascx", Model.Atividades); %>
 
 	<div class="block">

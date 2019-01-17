@@ -1,9 +1,9 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
-<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento" %>
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
+﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels"%>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMEmpreendimento"%>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>"%>
 
-<input type="hidden" class="paginaAtual" value="" />
-<input type="hidden" class="numeroPaginas" value="<%= Model.Paginacao.NumeroPaginas %>" />
+<input type="hidden" class="paginaAtual" value=""/>
+<input type="hidden" class="numeroPaginas" value="<%= Model.Paginacao.NumeroPaginas %>"/>
 
 <div class="dataGrid <%= ((Model.Paginacao.QuantidadeRegistros > 0) ? string.Empty : "hide") %> ">
 	<% Html.RenderPartial("Paginacao", Model.Paginacao); %>

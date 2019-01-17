@@ -170,10 +170,10 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CoordenadaAtividadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ConsumoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ExploracaoFlorestalListVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\SharedVM\EmpreendimentoCaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoVM.cs" />
-    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteInformacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\PatioLavagemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\PulverizacaoProdutoVM.cs" />
@@ -200,6 +200,10 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\SuinoculturaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\TerraplanagemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMExploracaoFlorestal\ListarVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteDestinacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteResultadosVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\InformacaoCorteTipoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMInformacaoCorte\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AtividadeEspecificidadeController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AutorizacaoController.cs" />
@@ -395,10 +399,9 @@
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
-    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorteInformacao.ascx" />
-    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorte.ascx" />
-    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Produto.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Listar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\ListarPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\PatioLavagem\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\PatioLavagem\Editar.aspx" />
@@ -495,9 +498,12 @@
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
@@ -1137,7 +1143,6 @@
     <Content Include="Scripts\Areas\Caracterizacoes\beneficiamentoMadeira.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\beneficiamentoMadeiraBeneficiamento.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\coordenadaAtividade.js" />
-    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\silviculturaAtv.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\registroAtividadeFlorestal.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\silvicultura.js" />
@@ -2828,6 +2833,7 @@
     <Folder Include="Areas\Especificidades\ViewModels\Parecer\" />
     <Folder Include="Areas\Especificidades\Views\Parecer\" />
     <Folder Include="Areas\GeoProcessamento\Views\Shared\" />
+    <Folder Include="DynamicData\FieldTemplates\" />
     <Folder Include="Scripts\Areas\Especificidades\Parecer\" />
     <Folder Include="ViewModels\VMPassivo\" />
   </ItemGroup>
@@ -2889,8 +2895,10 @@
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\Desenvolvimento.pubxml" />
     <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\Homologacao.pubxml" />
     <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\Publish.pubxml" />
     <None Include="Properties\PublishProfiles\Simlam_DEV.pubxml" />

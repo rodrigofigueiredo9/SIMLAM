@@ -9,5 +9,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento
 		public String SegmentoTexto { get; set; }
 		public String Denominador { get; set; }
 		public String Cnpj { get; set; }
+		public String Municipio { get; set; }
 	}
 }

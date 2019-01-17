@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRoteiro;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
@@ -359,6 +360,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 		public List<Lista> CaracterizacaoProdutosExploracao
 		{
 			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosExploracao); }
+		}
+
+		public List<Lista> CaracterizacaoProdutosInformacaoCorte
+		{
+			get { return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosInformacaoCorte); }
 		}
 
 		public List<Lista> CaracterizacaoDestinacaoMaterialLenhoso
@@ -1007,6 +1013,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 		public List<ListaValor> TipoRelatorioMapa
 		{
 			get { return _configRelatorio.Obter<List<ListaValor>>(ConfiguracaoRelatorioEspecifico.KeyTipoRelatorioMapa); }
+		}
+
+		public List<Lista> ListaEnumerado<TEnum>()
+		{
+			return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => new Lista() { Id = Convert.ToInt32(x).ToString(), Texto = x.ToDescription() }).ToList();
 		}
 	}
 }

@@ -1121,6 +1121,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data
 			return retorno;
 		}
 
+		public List<int> ObterEmpreendimentoResponsavel(int pessoa, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT E.ID FROM TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R ON R.RESPONSAVEL = PE.INTERNO
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO				E ON E.ID = R.EMPREENDIMENTO
+					WHERE PE.ID = :pessoa", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<int>(comando);
+			}
+		}
+
+		public List<String> ObterCodigoSicarPorEmpreendimento(Int64? codigo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@" select * from (
+						  select cs.codigo_imovel from tab_car_solicitacao c 
+							  inner join tab_empreendimento ec on ec.id = c.empreendimento 
+							  inner join tab_controle_sicar cs on cs.solicitacao_car = c.id and cs.solicitacao_car_esquema = 1
+							where ec.codigo = :codigo 
+							union
+							select cs.codigo_imovel from {0}tab_car_solicitacao c 
+							  inner join {0}tab_empreendimento ec on ec.id = c.empreendimento 
+							  inner join tab_controle_sicar cs on cs.solicitacao_car = c.id and cs.solicitacao_car_esquema = 2
+							where ec.codigo = :codigo ) ", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.Int32);
+
+				return bancoDeDados.ExecutarList<String>(comando);
+			}
+		}
+
 		#endregion
 
 		#region Validações
@@ -1284,6 +1321,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				return Convert.ToInt32(comando.ObterValorParametro("saida")) > 0;
+			}
+		}
+
+		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT count(1) FROM TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R   ON R.RESPONSAVEL = PE.INTERNO
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO				EI  ON EI.ID = R.EMPREENDIMENTO
+						INNER JOIN TAB_EMPREENDIMENTO                   EC  ON EC.CODIGO = EI.CODIGO
+					WHERE PE.ID = :pessoa AND EC.ID = :empreendimento", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
 
