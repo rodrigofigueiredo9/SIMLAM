@@ -67,7 +67,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				#region Regularização fundiária
 
-				
+
 
 				bancoDeDados.IniciarTransacao();
 
@@ -77,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				comando.AdicionarParametroEntrada("empreendimento", regularizacao.EmpreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
-				
+
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				regularizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
@@ -120,15 +120,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
 						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
-						comando.AdicionarParametroEntrada("numero_ccri",item.NumeroCCIR , DbType.Int32);
-						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR , DbType.Decimal);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int32);
+						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
 						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
 						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
 						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
 
 						bancoDeDados.ExecutarNonQuery(comando);
-						
+
 						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 						#endregion
@@ -296,7 +296,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_transmite c where c.dominio in 
 				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x=>x.Transmitentes).Select(x => x.Id).ToList());
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Transmitentes).Select(x => x.Id).ToList());
 
 				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -318,7 +318,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_edifica c where c.dominio in 
 				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x=>x.Edificacoes).Select(x => x.Id).ToList());
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Edificacoes).Select(x => x.Id).ToList());
 
 				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -602,7 +602,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					return;
 				}
 
-				id = Convert.ToInt32(retorno);;
+				id = Convert.ToInt32(retorno); ;
 
 				#endregion
 
@@ -726,7 +726,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							posse.Id = Convert.ToInt32(reader["id"]);
 							posse.Dominio = reader.GetValue<int>("dominio");
 							posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
-							posse.NumeroCCIR = Convert.ToInt32(reader["numero_ccri"]);
+							posse.NumeroCCIR = reader.GetValue<long?>("numero_ccri");
 							posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
 							posse.ComprovacaoTexto = reader["comprovacaotexto"].ToString();
 							posse.ComprovacaoId = Convert.ToInt32(reader["comprovacao"]);
@@ -739,10 +739,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							posse.Benfeitorias = reader["benfeitorias"].ToString();
 							posse.Observacoes = reader["observacoes"].ToString();
 							posse.Tid = reader["tid"].ToString();
-							posse.PossuiDominioAvulso = Convert.ToInt32(reader["possui_dominio_avulso"]);
-							posse.Perimetro = Convert.ToInt32(reader["perimetro"]);
-							posse.Distancia.BrAPosse = reader.GetValue<decimal>("br_km");
-							posse.Distancia.EsAPosse = reader.GetValue<decimal>("es_km");
+							posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
+							posse.Perimetro = reader.GetValue<decimal>("perimetro");
+							posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
+							posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
 							posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
 							posse.ConfrontacoesNorte = reader["confrontante_norte"].ToString();
 							posse.ConfrontacoesSul = reader["confrontante_sul"].ToString();
@@ -761,10 +761,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo, sdo_geom.sdo_length(a.geometry, 0.00001) perimetro
 							FROM IDAFGEO.geo_aativ a
 							INNER JOIN crt_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO =
-							" + (int)eCaracterizacao.RegularizacaoFundiaria  + " AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
-						
+							" + (int)eCaracterizacao.RegularizacaoFundiaria + " AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+
 						comando.AdicionarParametroEntrada("empreendimento", regularizacao.EmpreendimentoId, DbType.Int32);
-						
+
 						while (reader.Read())
 						{
 							posse = new Posse();
@@ -1224,26 +1224,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 
 				Comando comando = null;
-					comando = bancoDeDados.CriarComando(@"select p.id, p.regularizacao, p.dominio, p.zona, p.identificacao, p.area_requerida, p.area_croqui, p.regularizacao_tipo,
+				comando = bancoDeDados.CriarComando(@"select p.id, p.regularizacao, p.dominio, p.zona, p.identificacao, p.area_requerida, p.area_croqui, p.regularizacao_tipo,
 					p.relacao_trabalho, p.centro_comercial_km, p.br_km, p.es_km, p.benfeitorias, p.observacoes, p.tid, p.possui_dominio_avulso, p.perimetro, p.comprovacao, lc.texto as comprovacaotexto, p.area_documento,
 					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
 					from {0}crt_regularizacao_dominio p
 					inner join crt_regularizacao r on r.id = p.regularizacao
 					inner join lov_crt_domin_comprovacao lc on lc.id  = p.comprovacao
 					where r.empreendimento = :empreendimento", EsquemaBanco);
-			
+
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					while(reader.Read())
+					while (reader.Read())
 					{
 						posse = new Posse();
 
 						posse.Id = Convert.ToInt32(reader["id"]);
 						posse.Dominio = reader.GetValue<int>("dominio");
 						posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
-						posse.NumeroCCIR = Convert.ToInt32(reader["numero_ccri"]);
+						posse.NumeroCCIR = reader.GetValue<long?>("numero_ccri");
 						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
 						posse.ComprovacaoTexto = reader["comprovacaotexto"].ToString();
 						posse.ComprovacaoId = Convert.ToInt32(reader["comprovacao"]);
@@ -1256,10 +1256,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Benfeitorias = reader["benfeitorias"].ToString();
 						posse.Observacoes = reader["observacoes"].ToString();
 						posse.Tid = reader["tid"].ToString();
-						posse.PossuiDominioAvulso = Convert.ToInt32(reader["possui_dominio_avulso"]);
+						posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
 						posse.Perimetro = Convert.ToInt32(reader["perimetro"]);
-						posse.Distancia.BrAPosse = reader.GetValue<decimal>("br_km");
-						posse.Distancia.EsAPosse = reader.GetValue<decimal>("es_km");
+						posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
+						posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
 						posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
 						posse.ConfrontacoesNorte = reader["confrontante_norte"].ToString();
 						posse.ConfrontacoesSul = reader["confrontante_sul"].ToString();
@@ -1290,7 +1290,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				Comando comando = null;
 
 				comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo, sdo_geom.sdo_length(a.geometry, 0.0001) perimetro FROM IDAFGEO.geo_aativ a INNER JOIN crt_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO = 2 AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
-				
+
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -1311,7 +1311,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					}
 					reader.Close();
 				}
-				
+
 			}
 
 			return regularizacao.Posses;

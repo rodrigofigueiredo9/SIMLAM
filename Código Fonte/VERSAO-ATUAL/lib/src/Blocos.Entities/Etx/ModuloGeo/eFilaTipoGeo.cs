@@ -9,6 +9,7 @@
 		Fiscalizacao,
 		BaseReferenciaFiscalizacao,
 		CAR,
-		AtividadeTitulo
+		AtividadeTitulo,
+		RegularizacaoFundiaria
 	}
 }

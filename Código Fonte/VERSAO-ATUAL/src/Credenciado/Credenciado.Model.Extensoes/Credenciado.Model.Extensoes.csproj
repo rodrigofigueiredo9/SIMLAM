@@ -91,6 +91,8 @@
     <Compile Include="Caracterizacoes\ModuloUnidadeProducao\Data\UnidadeProducaoDa.cs" />
     <Compile Include="Especificidades\ModuloCertidao\Business\CertidaoDispensaLicenciamentoAmbientalBus.cs" />
     <Compile Include="Especificidades\ModuloCertidao\Business\CertidaoDispensaLicenciamentoAmbientalValidar.cs" />
+    <Compile Include="Especificidades\ModuloOutros\Business\OutrosInformacaoCorteBus.cs" />
+    <Compile Include="Especificidades\ModuloOutros\Business\OutrosInformacaoCorteValidar.cs" />
     <Compile Include="Especificidades\ModuloCertidao\Data\CertidaoDispensaLicenciamentoAmbientalDa.cs" />
     <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeBusBase.cs" />
     <Compile Include="Especificidades\ModuloEspecificidade\Business\EspecificidadeBusDefault.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Especificidades\ModuloEspecificidade\Data\eHistoricoArtefatoEspecificidade.cs" />
     <Compile Include="Especificidades\ModuloEspecificidade\Data\EspecificidadeDa.cs" />
     <Compile Include="Especificidades\ModuloEspecificidade\Data\Historico.cs" />
+    <Compile Include="Especificidades\ModuloOutros\Data\OutrosInformacaoCorteDa.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

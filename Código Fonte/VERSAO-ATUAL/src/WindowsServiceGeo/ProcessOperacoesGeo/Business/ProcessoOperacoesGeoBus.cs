@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.EtramiteX.WindowsService.ProcessControl;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business;
+using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Entities;
 using Tecnomapas.EtramiteX.WindowsService.Utilitarios;
 using Tecnomapas.TecnoGeo.Acessadores;
@@ -41,6 +42,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 		private const int OPERACAO_BASEREF_FISCAL = 6;
 		private const int OPERACAO_CAR = 7;
 		private const int OPERACAO_TITULO = 8;
+		private const int OPERACAO_REGULARIZACAO = 9;
 
 		private const int ETAPA_VALIDACAO = 1;
 		private const int ETAPA_PROCESSAMENTO = 2;
@@ -546,6 +548,31 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 							file = _bus.ObterArquivo(Project.Id, 7);
 							file.Buffer = new MemoryStream(ms.ToArray());
 							_bus.SalvarArquivo(file, Project.Id, Project.Type, 7, titulo);
+						}
+						#endregion
+
+						#region Alterar situação
+						log.IniciarTime("Alterar situação para PDF gerado");
+
+						_bus.SetConcluidoNaFila(Project.Id, Project.Type, Project.Step);
+						//_bus.SetProcessado(Project.Id);
+
+						log.FinalizarTime();
+						#endregion
+
+						break;
+					case OPERACAO_REGULARIZACAO:
+						mxd = new MxdLayout();
+						mxd.AbrirMxdLayout(ArquivoMxd.MAPA_REGULARIZACAO, PageSize.A4);
+
+						#region Salvar arquivo
+
+						using (MemoryStream ms = _pdfCroqui.GerarPdfRegularizacao(mxd))
+						{
+							//PDF com mapa = 7
+							file = _bus.ObterArquivo(Project.Id, 7);
+							file.Buffer = new MemoryStream(ms.ToArray());
+							_bus.SalvarArquivo(file, Project.Id, Project.Type, 7);
 						}
 						#endregion
 
@@ -1133,6 +1160,10 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 					featureList = "GEO_ATP,GEO_APMP,GEO_AFD,GEO_ROCHA,GEO_VERTICE,GEO_ARL,GEO_RPPN,GEO_AFS,GEO_AVN,GEO_AA,GEO_ACONSTRUIDA,GEO_DUTO,GEO_LTRANSMISSAO,GEO_ESTRADA,GEO_FERROVIA,GEO_NASCENTE,GEO_RIO_LINHA,GEO_RIO_AREA,GEO_LAGOA,GEO_REPRESA,GEO_DUNA,GEO_REST_DECLIVIDADE,GEO_ESCARPA,GEO_AREAS_CALCULADAS,TMP_CAR_AREAS_CALCULADAS".Split(',');
 					aliasList = "ATP,APMP,AFD,ROCHA,VERTICE,ARL,RPPN,AFS,AVN,AA,ACONSTRUIDA,DUTO,LTRANSMISSAO,ESTRADA,FERROVIA,NASCENTE,RIO_LINHA,RIO_AREA,LAGOA,REPRESA,DUNA,REST_DECLIVIDADE,ESCARPA,AREAS_CALCULADAS,CAR_AREAS_CALCULADAS".Split(',');
 					break;
+				case OPERACAO_REGULARIZACAO:
+					featureList = "TMP_AATIV".Split(',');
+					aliasList = "AATIV".Split(',');
+					break;
 			}
 
 			FonteFeicaoOracleSpatial origem = GetDatabaseFontFeicao();
@@ -1155,7 +1186,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 				string feicao = featureList[i];
 				string alias = aliasList[i];
 
-				classeFeicao = origem.ObterClasseFeicao(feicao);
+				classeFeicao = _bus.ObterClasseFeicao(feicao);
 				if (classeFeicao == null)
 					continue;
 
@@ -1304,7 +1335,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 								filtro = new ExpressaoLogicaOracleSpatial(filtro, TipoOperadorLogico.E, termoAux);
 								leitor = origem.ObterLeitorFeicao(feicao, null, filtro);
 							}
-							catch (Exception)
+							catch (Exception ex)
 							{
 								if (k < 4)
 								{

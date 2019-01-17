@@ -26,7 +26,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 	
 		public Decimal AreaPosseDocumento { get; set; }
 		public String DescricaoComprovacao { get; set; }
-		public Int32? NumeroCCIR { get; set; }
+		public long? NumeroCCIR { get; set; }
 		public Decimal AreaCCIR { get; set; }
 
 		private DateTecno _dataUltimaAtualizacaoCCIR = new DateTecno();
