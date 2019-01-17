@@ -12,7 +12,7 @@
 	<div class="block">
 		<div class="coluna75">
 			<label for="Atividade">Atividade Dispensada *</label>
-			<%= Html.DropDownList("Outros.Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Atividades.Atividades.Count == 1, new { @class = "text ddlAtividades" }))%>
+			<%--<%= Html.DropDownList("Outros.Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Atividades.Atividades.Count == 1, new { @class = "text ddlAtividades" }))%>--%>
 		</div>
 	</div>
 	<%--<div class="coluna20">

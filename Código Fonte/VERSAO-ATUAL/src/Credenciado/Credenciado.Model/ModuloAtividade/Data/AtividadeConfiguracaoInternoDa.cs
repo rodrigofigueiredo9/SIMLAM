@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Data
 				#region Roteiros
 
 				Comando comando = bancoDeDados.CriarComando(@"select tm.id, tm.nome from cnf_atividade_atividades a, cnf_atividade_modelos m, tab_titulo_modelo tm
-				where a.configuracao = m.configuracao and tm.id = m.modelo ");
+				where a.configuracao = m.configuracao and tm.id = m.modelo and tm.situacao != 2");
 
 				comando.DbCommand.CommandText += comando.AdicionarIn("and", "a.atividade", DbType.Int32, atividades.Select(x => x.Id).ToList());
 

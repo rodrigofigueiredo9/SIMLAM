@@ -150,7 +150,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			_bus.Salvar(titulo);
 
-			urlSucesso = Url.Action(acao, "TituloDeclaratorio", Validacao.QueryParamSerializer(new { acaoId = titulo.Id }));
+			urlSucesso = Url.Action(acao, "TituloDeclaratorio", Validacao.QueryParamSerializer(new { acaoId = titulo.Id, modelo = titulo.Modelo.Codigo }));
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @UrlSucesso = urlSucesso });
 		}

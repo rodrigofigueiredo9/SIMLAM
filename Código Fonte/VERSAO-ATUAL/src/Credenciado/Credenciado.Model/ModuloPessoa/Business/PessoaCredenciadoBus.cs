@@ -82,7 +82,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			_da.Salvar(pessoa, banco, executor);
 		}
 
-		public bool Salvar(Pessoa pessoa, BancoDeDados banco = null, bool isConjuge = false)
+		public bool Salvar(Pessoa pessoa, BancoDeDados banco = null, bool isConjuge = false, bool isAtividadeDeCorte = false)
 		{
 			try
 			{
@@ -159,8 +159,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 				#endregion
 
 				#endregion
-
-				_validar.Salvar(pessoa);
+				if (isAtividadeDeCorte)
+					_validar.SalvarInformacaoDeCorte(pessoa);
+				else
+					_validar.Salvar(pessoa);
 
 				if (Validacao.EhValido)
 				{

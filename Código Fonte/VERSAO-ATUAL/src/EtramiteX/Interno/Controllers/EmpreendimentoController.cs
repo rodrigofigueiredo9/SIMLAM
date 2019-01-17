@@ -566,7 +566,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.EmpreendimentoCriar })]
-		public ActionResult EmpreendimentoInlineInteressado(int id, int requerimentoId)
+		public ActionResult EmpreendimentoInlineInteressado(int id, int requerimentoId, int codigo = 0)
 		{
 			EmpreendimentoVM vm = new EmpreendimentoVM(
 						_busLista.Estados,
@@ -577,6 +577,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 						_busLista.Fusos,
 						_busLista.Hemisferios,
 						_busLista.TiposResponsavel);
+
+			if(codigo >= 0 && id <= 0)
+				id = _bus.ObterPorCodigo(codigo).Id;
 
 			if (requerimentoId > 0 && id <= 0)
 			{

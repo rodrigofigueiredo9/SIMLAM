@@ -39,6 +39,7 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -100,6 +101,11 @@
     <Compile Include="ModuloCredenciado\Business\CredenciadoIntBus.cs" />
     <Compile Include="ModuloCredenciado\Business\CredenciadoIntValidar.cs" />
     <Compile Include="ModuloCredenciado\Data\CredenciadoIntDa.cs" />
+    <Compile Include="ModuloDUA\Business\DuaBus.cs" />
+    <Compile Include="ModuloDUA\Business\DuaInternoBus.cs" />
+    <Compile Include="ModuloDUA\Business\DuaValidar.cs" />
+    <Compile Include="ModuloDUA\Data\DuaDa.cs" />
+    <Compile Include="ModuloDUA\Data\DuaInternoDa.cs" />
     <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCBus.cs" />
     <Compile Include="ModuloEmissaoCFOC\Business\EmissaoCFOCValidar.cs" />
     <Compile Include="ModuloEmissaoCFOC\Data\EmissaoCFOCDa.cs" />

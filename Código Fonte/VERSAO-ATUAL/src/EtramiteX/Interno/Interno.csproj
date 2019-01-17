@@ -278,6 +278,7 @@
     <Compile Include="Controllers\CFOController.cs" />
     <Compile Include="Controllers\FiscalizacaoCobrancaController.cs" />
     <Compile Include="Controllers\FiscalizacaoNotificacaoController.cs" />
+    <Compile Include="Controllers\DUAController.cs" />
     <Compile Include="Controllers\HabilitacaoEmissaoPTVController.cs" />
     <Compile Include="Controllers\CARSolicitacaoController.cs" />
     <Compile Include="Controllers\ConfiguracaoDocumentoFitossanitarioController.cs" />
@@ -308,6 +309,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
+    <Compile Include="ViewModels\VMDUA\DUAVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
@@ -491,11 +493,16 @@
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Areas\Especificidades\Views\Outros\OutrosInformacaoCorteDeclaratorio.ascx" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorteDeclaratorio.js" />
+    <Content Include="Scripts\DUA\dua.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\DUA\EmitirDuaListar.ascx" />
+    <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />

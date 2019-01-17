@@ -6,7 +6,7 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="JsHeadContent" runat="server">
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/TituloDeclaratorio/tituloDeclaratorio.js") %>"></script>
-	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
+	<script type="text/javascript" src="<%= Url.Content("~/Scripts/ProjetoDigital/listar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
 
 	<script type="text/javascript">
@@ -14,7 +14,8 @@
 			TituloDeclaratorio.load($('#central'), {
 				urls: {
 					modelosCadastrados: '<%= Url.Action("ObterModelosCadastradosSetor", "Titulo") %>',
-					associarRequerimento: '<%= Url.Action("Associar", "Requerimento") %>',
+					associarRequerimento: '<%= Url.Action("Associar", "ProjetoDigital") %>',
+					visualizarRequerimento: '<%= Url.Action("Visualizar", "Requerimento") %>',
 					validarAssociarRequerimento: '<%= Url.Action("ValidarAssociarRequerimento", "TituloDeclaratorio") %>',
 					tituloCamposModelo: '<%= Url.Action("TituloCamposModelo", "TituloDeclaratorio") %>',
 					obterAssinanteCargos: '<%= Url.Action("ObterAssinanteCargos", "TituloDeclaratorio") %>',

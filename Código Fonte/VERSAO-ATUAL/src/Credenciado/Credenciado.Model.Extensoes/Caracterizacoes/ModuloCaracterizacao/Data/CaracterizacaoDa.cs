@@ -234,7 +234,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				e.tid, ee.zona, ee.municipio  municipio_id, (select m.texto from {0}lov_municipio m where m.id = ee.municipio) municipio,
 				(select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
-				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid
+				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid,
 				(select sum(dd.area_croqui) from crt_dominialidade_dominio dd
 					where exists
 					(select 1 from crt_dominialidade d
@@ -1137,7 +1137,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				foreach (var item in cadastradas)
 				{
-					if (!string.IsNullOrWhiteSpace(query)) query += " union all ";
 					switch (item.Tipo)
 					{
 						case eCaracterizacao.Dominialidade:
@@ -1178,9 +1177,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 							break;
 						default:
+							query = query.Remove(query.Length - 11);
 							break;
 					}
 
+					query += " union all ";
 
 					comando.AdicionarParametroEntrada("tipo", (int)item.Tipo, DbType.Int32);
 				}

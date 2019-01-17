@@ -137,8 +137,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 					return new OutrosLegitimacaoTerraDevolutaBus();
 
 				case eEspecificidade.OutrosInformacaoCorte:
-				case eEspecificidade.OutrosInformacaoCorteDeclaratorio:
 					return new OutrosInformacaoCorteBus();
+
+				case eEspecificidade.OutrosInformacaoCorteDeclaratorio:
+					return new OutrosInformacaoCorteDeclaratorioBus();
 
 				case eEspecificidade.CertidaoDebito:
 					return new CertidaoDebitoBus();

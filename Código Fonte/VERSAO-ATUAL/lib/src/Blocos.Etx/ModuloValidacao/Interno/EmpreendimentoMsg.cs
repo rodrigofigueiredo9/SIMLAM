@@ -133,5 +133,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Empreendimento_Responsaveis.", Texto = "O município do representante não está conferindo com a coordenada selecionada. Favor corrigí-lo." }; }
 		}
+
+		public Mensagem ContatoComIdaf { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Favor entrar em contato com o IDAF" }; } }
 	}
 }

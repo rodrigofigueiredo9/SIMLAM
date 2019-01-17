@@ -141,6 +141,7 @@
     <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
     <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
     <Compile Include="Areas\GeoProcessamento\ViewModels\VMMapa\CoordenadaVM.cs" />
+    <Compile Include="Controllers\DUAController.cs" />
     <Compile Include="Controllers\CFOCController.cs" />
     <Compile Include="Controllers\CFOController.cs" />
     <Compile Include="Controllers\CFOCFOCController.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\CulturaListarVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\CredenciadoVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\ListarVM.cs" />
+    <Compile Include="ViewModels\VMDUA\DUAVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ContatoVME.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\EmpreendimentoVM.cs" />
     <Compile Include="ViewModels\VMEmpreendimento\ListarVM.cs" />
@@ -992,6 +994,7 @@
     <Content Include="Scripts\Documento\documento.js" />
     <Content Include="Scripts\CFO\emitir.js" />
     <Content Include="Scripts\CFO\listar.js" />
+    <Content Include="Scripts\DUA\dua.js" />
     <Content Include="Scripts\Empreendimento\associar.js" />
     <Content Include="Scripts\Empreendimento\listar.js" />
     <Content Include="Scripts\Empreendimento\empreendimento.js" />
@@ -1134,6 +1137,8 @@
     <Content Include="Views\CFO\Index.aspx" />
     <Content Include="Views\CFO\ListarFiltros.ascx" />
     <Content Include="Views\CFO\ListarResultados.ascx" />
+    <Content Include="Views\DUA\Listar.aspx" />
+    <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoInlineCorte.ascx" />
     <Content Include="Views\Empreendimento\EmpreendimentoPartialCorte.ascx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />

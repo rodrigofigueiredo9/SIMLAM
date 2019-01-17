@@ -27,10 +27,14 @@ OutrosInformacaoCorte = {
 	obterDadosRequerimento: function (requerimento) {
 		Mensagem.limpar(OutrosInformacaoCorte.container);
 		var ddlAtividades = $('.ddlAtividades', OutrosInformacaoCorte.container);
+		var ddlInformacaoCorte = $('.ddlInformacaoCorte', OutrosInformacaoCorte.container);
+		var interessado = $('.txtInteressado', OutrosInformacaoCorte.container);
 
 		if (!requerimento) {
 			ddlAtividades.ddlClear();
+			ddlInformacaoCorte.ddlClear();
 			$('.txtInteressado', OutrosInformacaoCorte.container).val('');
+			$('.txtValidadeInfCorte', OutrosInformacaoCorte.container).val('');
 			return;
 		}
 
@@ -46,11 +50,16 @@ OutrosInformacaoCorte = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.Atividades) {
-					ddlAtividades.ddlLoad(response.Atividades).removeClass('disabled').removeAttr('disabled');
+					ddlAtividades.ddlLoad(response.Atividades).addClass('disabled').attr('disabled', 'disabled');
 				}
 				if (response.Interessado) {
-					$('.txtInteressado', OutrosInformacaoCorte.container).val(response.Interessado.Fisica.Nome || response.Interessado.Juridica.RazaoSocial);
+					interessado.val(response.Interessado.Fisica.Nome || response.Interessado.Juridica.RazaoSocial);
+					interessado.addClass('disabled').attr('disabled', 'disabled');
 				}
+				if (response.InformacoesDeCorte) {
+					ddlInformacaoCorte.ddlLoad(response.InformacoesDeCorte);
+				}
+				
 			}
 		});
 		MasterPage.carregando(false);
@@ -63,8 +72,9 @@ OutrosInformacaoCorte = {
 	obterObjeto: function () {
 		var obj = {
 			Atividade: $('.ddlAtividades', OutrosInformacaoCorte.container).val(),
-			VinculoPropriedade: $('.ddlVinculo', OutrosInformacaoCorte.container).val(),
-			VinculoPropriedadeOutro: $('.txtVinculoPropOutro', OutrosInformacaoCorte.container).val()
+			InformacaoCorte: $('.ddlInformacaoCorte', OutrosInformacaoCorte.container).val(),
+			Interessado: $('.txtInteressado', OutrosInformacaoCorte.container).val(),
+			Validade: $('.txtValidadeInfCorte', OutrosInformacaoCorte.container).val()
 		};
 
 		return obj;

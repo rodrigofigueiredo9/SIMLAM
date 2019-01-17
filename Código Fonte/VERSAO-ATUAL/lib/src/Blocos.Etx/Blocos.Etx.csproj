@@ -235,6 +235,7 @@
     <Compile Include="ModuloValidacao\Interno\AtividadeConfiguracaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\AtividadeEspecificidadeMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\AtividadeMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\DuaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\CARSolicitacaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ChecagemPendenciaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno.Extensoes\Caracterizacoes\CaracterizacaoMsg.cs" />

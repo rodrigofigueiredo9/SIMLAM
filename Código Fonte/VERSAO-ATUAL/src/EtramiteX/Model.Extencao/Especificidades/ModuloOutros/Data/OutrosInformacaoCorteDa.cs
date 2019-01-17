@@ -318,7 +318,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
 
 			}
-		}
+		}	
 
 		#endregion
 	}
