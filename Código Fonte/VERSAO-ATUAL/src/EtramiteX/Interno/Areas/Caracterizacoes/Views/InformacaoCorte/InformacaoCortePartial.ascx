@@ -18,7 +18,7 @@
             </div>
             <div class="coluna20">
                 <label>Área do imóvel (ha)</label>
-                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Empreendimento.AreaImovel > 0, new { @maxlength = "100", @class = "text areaImovel"}))%>
+                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Empreendimento.AreaImovel > 0, new { @maxlength = "100", @class = "text maskDecimalPonto areaImovel"}))%>
             </div>
         </div>
 
@@ -259,7 +259,7 @@
                                 <span class="especie" title="<%= Html.Encode(item.EspecieTexto)%>"><%= Html.Encode(item.EspecieTexto)%></span>
                             </td>
                             <td rowspan="<%= item.Linhas %>">
-                                <span class="areaCorte" title="<%= Html.Encode(item.AreaCorte.ToStringTrunc(2))%>"><%= Html.Encode(item.AreaCorte.ToStringTrunc())%></span>
+                                <span class="areaCorte" title="<%= Html.Encode(item.AreaCorte.ToStringTrunc(2))%>"><%= Html.Encode(String.Concat(item.AreaCorte.ToStringTrunc(), item.TipoCorte == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.eTipoCorte.CorteSeletivo ? " un" : " ha"))%></span>
                             </td>
                             <td rowspan="<%= item.Linhas %>">
                                 <span class="idadePlantio" title="<%= Html.Encode(item.IdadePlantio)%>"><%= Html.Encode(item.IdadePlantio)%></span>
@@ -272,7 +272,7 @@
                                 <span class="produto" title="<%= Html.Encode(item.ProdutoTexto)%>"><%= Html.Encode(item.ProdutoTexto)%></span>
                             </td>
                             <td>
-                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToString("N0"))%>"><%= Html.Encode(String.Concat(item.Quantidade.ToString("N0"), item.TipoCorte == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.eTipoCorte.CorteSeletivo ? " un" : " ha"))%></span>
+                                <span class="quantidade" title="<%= Html.Encode(item.Quantidade.ToString("N0"))%>"><%= Html.Encode(item.Quantidade.ToString("N0"))%></span>
                             </td>
 							<% if(!Model.IsVisualizar) { %>
 								<td class="tdAcoes">

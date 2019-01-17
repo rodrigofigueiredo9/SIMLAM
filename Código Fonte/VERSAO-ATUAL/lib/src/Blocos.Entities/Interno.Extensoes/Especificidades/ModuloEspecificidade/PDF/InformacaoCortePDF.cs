@@ -14,8 +14,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public String MesEmissao { get; set; }
 		public String AnoEmissao { get; set; }
 
+		public String Caracterizacao { get; set; }
 		public String LicençaAmbiental { get; set; }
 		public Decimal AreaPlantada { get; set; }
+		public Decimal AreaCroqui { get; set; }
 
 		public List<InformacaoCorteEspeciePDF> Especies { get; set; }
 		public List<InformacaoCorteProdutoPDF> Produtos { get; set; }
