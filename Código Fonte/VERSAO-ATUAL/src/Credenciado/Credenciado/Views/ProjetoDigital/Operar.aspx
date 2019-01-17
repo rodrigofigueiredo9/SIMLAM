@@ -30,9 +30,13 @@
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])){%>
 				ContainerAcoes.load($(".containerAcoes"), {
 					botoes: new Array(
-						{ label: 'Listar', url: '<%= Url.Action("Index", "ProjetoDigital") %>' },
-						{ label: 'Cadastrar Novo', url: '<%= Url.Action("Operar", "ProjetoDigital") %>' }
-						<% if (Model.PossuiAtividadeCAR) { %>, { label: 'Cadastrar Solicitação CAR', url: '<%= Url.Action("Criar", "CARSolicitacao", new { id = Request.Params["acaoId"].ToString() }) %>' } <% } %>
+						<% if (Model.PossuiAtividadeBarragem == true) { %>
+							{ label: 'Cadastrar Título Declaratório', url: '<%= Url.Action("Criar", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() }) %>' },
+						<% } else { %>
+							{ label: 'Listar', url: '<%= Url.Action("Index", "ProjetoDigital") %>' },
+							{ label: 'Cadastrar Novo', url: '<%= Url.Action("Operar", "ProjetoDigital") %>' }
+							<% if (Model.PossuiAtividadeCAR) { %>, { label: 'Cadastrar Solicitação CAR', url: '<%= Url.Action("Criar", "CARSolicitacao", new { id = Request.Params["acaoId"].ToString() }) %>' } <% } %>
+						<% } %>
 					)
 				});
 			<% } %>

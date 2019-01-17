@@ -16,6 +16,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	public class ProjetoDigitalMsg
 	{
 		public Mensagem Enviar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital concluído com sucesso. Continue com o Passo 4 – Imprimir Documentos." }; } }
+		public Mensagem EnviarBarragem { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital concluído com sucesso. Continue com o cadastro do Título Declaratório." }; } }
 		public Mensagem CancelarEnvio { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "O envio do projeto digital foi cancelado com sucesso." }; } }
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital foi excluído com sucesso." }; } }
 

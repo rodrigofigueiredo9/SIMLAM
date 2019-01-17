@@ -113,6 +113,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					return RedirectToAction("Index", Validacao.QueryParamSerializer());
 				}
 
+				if (acaoId > 0)
+				{
+					Requerimento requerimento = requerimentoBus.Obter(vm.ProjetoDigital.RequerimentoId);
+
+					//327 == Barragem dispensada de licenciamento ambiental
+					vm.PossuiAtividadeBarragem = requerimento.Atividades.Count(x => x.Id == 327) > 0;
+				}
+
 				vm.UrlRequerimento = Url.Action("Editar", "Requerimento", new { id = vm.ProjetoDigital.RequerimentoId, projetoDigitalId = vm.ProjetoDigital.Id });
 				vm.UrlRequerimentoVisualizar = Url.Action("Visualizar", "Requerimento", new { id = vm.ProjetoDigital.RequerimentoId, projetoDigitalId = vm.ProjetoDigital.Id, isVisualizar = true });
 
@@ -210,7 +218,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				RequerimentoCredenciadoBus requerimentoBus = new RequerimentoCredenciadoBus();
 				if(requerimentoBus.RequerimentoDeclaratorio(projeto.RequerimentoId))
 				{
-					urlRedirecionar = Url.Action("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id }));
+					urlRedirecionar = Url.Action("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id, acaoId = projeto.Id }));
 				}
 				else
 				{
