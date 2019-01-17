@@ -304,9 +304,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				#region Regularizacao Dominios
 
 				comando = bancoDeDados.CriarComando(@"
-				select ed.id, ed.tid, ed.dominio dominio_id, d.comprovacao_texto, d.area_croqui 
-				from {0}hst_crt_dominialidade_dominio d, {0}hst_crt_regularizacao_dominio rd, {0}hst_esp_laudo_visto_fundiaria he, {0}esp_laudo_vist_fund_domin ed 
-				where d.dominialidade_dominio_id = rd.dominio_id and d.tid = rd.dominio_tid and rd.regularizacao_dominio_id = ed.dominio and rd.tid = ed.dominio_tid 
+				select ed.id, ed.tid, ed.dominio dominio_id, c.texto comprovacao_texto, rd.area_croqui 
+				from {0}hst_crt_regularizacao_dominio rd, {0}hst_esp_laudo_visto_fundiaria he, {0}esp_laudo_vist_fund_domin ed, {0}lov_crt_domin_comprovacao c 
+				where rd.regularizacao_dominio_id = ed.dominio and rd.tid = ed.dominio_tid and rd.comprovacao = c.id (+)
 				and rd.regularizacao_tid = he.regularizacao_fundiaria_tid and he.especificidade_id = ed.especificidade and he.tid = ed.tid  and ed.especificidade = :especificidade 
 				order by ed.id", EsquemaBanco);
 
