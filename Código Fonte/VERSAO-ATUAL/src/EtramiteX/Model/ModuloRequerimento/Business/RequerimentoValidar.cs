@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -39,6 +39,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 		public bool ObjetivoPedidoValidar(Requerimento requerimento)
 		{
 			RequerimentoBus _bus = new RequerimentoBus();
+
+		    //Atividade Barragem dispensada de licenciamento ambiental -> só pode ser feito no Credenciado
+			if (requerimento.Atividades.Count(x => x.Id == 327) > 0)
+			{
+				Validacao.Add(Msg.RequerimentoBarragemInstitucional);
+			}
 
 			if (requerimento.DataCadastro.ToString() == string.Empty)
 			{

@@ -191,6 +191,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = String.Format("resp_{0}__art", index), Texto = String.Format("Número da ART do responsável {0} é obrigatório.", index + 1) };
 		}
 
+		public Mensagem RequerimentoBarragemInstitucional { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Requerimentos para a atividade Barragem dispensada de licenciamento ambiental só podem ser criados por um Responsável Técnico, através do módulo Credenciado." }; } }
+
 		public Mensagem DataCriacaobrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Data de Criação é Obrigatório." }; } }
 		public Mensagem NaoExisteAssocicao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não existe #tela associado a este requerimento." }; } }
 
