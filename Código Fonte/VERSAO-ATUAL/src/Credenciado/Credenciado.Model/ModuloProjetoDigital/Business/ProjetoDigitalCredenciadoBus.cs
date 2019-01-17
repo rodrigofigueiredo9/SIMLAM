@@ -137,7 +137,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 
 						SalvarTemporario(projeto, bancoDeDados);
 
-						Validacao.Add(Mensagem.ProjetoDigital.Enviar);
+						//327 == Barragem dispensada de licenciamento ambiental
+						if (requerimento.Atividades.Count(x => x.Id == 327) > 0)
+						{
+							Validacao.Add(Mensagem.ProjetoDigital.EnviarBarragem);
+						}
+						else
+						{
+							Validacao.Add(Mensagem.ProjetoDigital.Enviar);
+						}
 
 						bancoDeDados.Commit();
 					}
