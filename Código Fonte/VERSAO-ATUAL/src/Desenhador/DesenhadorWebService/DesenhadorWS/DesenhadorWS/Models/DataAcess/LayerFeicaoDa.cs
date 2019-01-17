@@ -400,7 +400,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 					#endregion
                 }
 
-				if (idNavegador == 4)
+				if (idNavegador == 4 || idNavegador == 5)
 				{
 					#region CAR
 					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto union select empreendimento from crt_cad_ambiental_rural pg where pg.projeto_geo_id = :projeto )");

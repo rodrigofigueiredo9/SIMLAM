@@ -1365,15 +1365,16 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 				//coluna opcional
 
 				tabelaLinha.DefaultCell.Colspan = 2;
+				tabelaLinha.AddCell(new Phrase(new Chunk("Área (m²)", PdfMetodosAuxiliares.arial8Negrito)));
 				tabelaLinha.DefaultCell.Rowspan = 1;
-				tabelaLinha.AddCell(new Phrase(new Chunk("Coordenada", PdfMetodosAuxiliares.arial8Negrito)));
-							
-				tabelaLinha.DefaultCell.Colspan = 9;
-				tabelaLinha.AddCell(new Phrase(new Chunk(header, PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.DefaultCell.Colspan = 1;
 				
-				tabelaLinha.AddCell(new Phrase(new Chunk("Norte", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Este", PdfMetodosAuxiliares.arial8Negrito)));				
+				tabelaLinha.DefaultCell.Colspan = 1;
+
+				tabelaLinha.DefaultCell.Colspan = 6;
+				tabelaLinha.AddCell(new Phrase(new Chunk(header, PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.DefaultCell.Colspan = 3;
+				tabelaLinha.AddCell(new Phrase(new Chunk(header2, PdfMetodosAuxiliares.arial8Negrito)));
+				tabelaLinha.DefaultCell.Colspan = 1;
 
 				tabelaLinha.AddCell(new Phrase(new Chunk("Rocha", PdfMetodosAuxiliares.arial8Negrito)));
 				tabelaLinha.AddCell(new Phrase(new Chunk("Massa d'água", PdfMetodosAuxiliares.arial8Negrito)));
@@ -1396,18 +1397,10 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
 
 					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-					if (i > 0)
-					{
-						tabelaLinha.DefaultCell.Colspan = 2;
-						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(ht, (i > 1) ? "AREA_M2" : "COMPRIMENTO"), PdfMetodosAuxiliares.arial8)));
-						tabelaLinha.DefaultCell.Colspan = 1;
-					}
-					else
-					{
 
-						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(((List<Decimal>)ht["ORDENADAS"])[1]), PdfMetodosAuxiliares.arial8)));
-						tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumber(((List<Decimal>)ht["ORDENADAS"])[0]), PdfMetodosAuxiliares.arial8)));
-					}
+					tabelaLinha.DefaultCell.Colspan = 2;
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(ht, "AREA_M2"), PdfMetodosAuxiliares.arial8)));
+					tabelaLinha.DefaultCell.Colspan = 1;
 
 					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "ROCHA"), PdfMetodosAuxiliares.arial8)));
