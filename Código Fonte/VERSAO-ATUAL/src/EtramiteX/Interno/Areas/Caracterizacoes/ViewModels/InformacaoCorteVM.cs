@@ -24,6 +24,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				this.Id = caracterizacao.Id;
 				this.DataInformacao = caracterizacao.DataInformacao;
 				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
+				this.AreaImovel = caracterizacao.AreaImovel;
 				this.InformacaoCorteLicencaList = caracterizacao.InformacaoCorteLicenca;
 				foreach (var item in caracterizacao.InformacaoCorteTipo)
 				{
@@ -89,6 +90,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public int? Id { get; set; }
 		public DateTecno DataInformacao { get; set; } = new DateTecno { Data = DateTime.Now };
 		public Decimal AreaPlantada { get; set; }
+		public Decimal AreaImovel { get; set; }
 
 		public bool IsVisualizar { get; set; }
 		public bool IsPodeExcluir { get; set; }

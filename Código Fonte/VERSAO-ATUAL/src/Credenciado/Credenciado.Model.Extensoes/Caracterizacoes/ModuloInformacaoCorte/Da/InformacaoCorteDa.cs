@@ -72,7 +72,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte
 				(id, tid, empreendimento, data_informacao, area_flor_plantada, area_imovel, interno_id, interno_tid) values
-				(seq_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, area_imovel, :interno_id, :interno_tid)
+				(seq_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, :area_imovel, :interno_id, :interno_tid)
 				returning id into :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
@@ -558,7 +558,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (esquema == null) esquema = EsquemaBanco;
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, " +
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel, " +
 				(esquema == EsquemaCredenciadoBanco ? "c.interno_id, c.interno_tid," : "c.id as interno_id, c.tid as interno_tid,") + @"
 				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
 				from {0}crt_informacao_corte c where c.empreendimento = :id" + (esquema == EsquemaCredenciadoBanco ? " and c.interno_id is null" : ""), esquema);
@@ -576,6 +576,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
 							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
 							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
+							AreaImovel = reader.GetValue<decimal>("area_imovel"),
 							InternoTID = reader.GetValue<string>("interno_tid"),
 							Tid = reader.GetValue<string>("tid")
 						});
