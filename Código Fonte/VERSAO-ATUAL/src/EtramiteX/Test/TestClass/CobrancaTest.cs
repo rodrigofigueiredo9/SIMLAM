@@ -6,8 +6,12 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.EtramiteX.Interno.Controllers;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOutros.Business;
 using Tests.Fakes;
 using Tests.TestHelpers;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOutros;
 
 namespace Test.TestClass
 {
@@ -103,6 +107,16 @@ namespace Test.TestClass
 			var cobranca = this.GetCobranca(23);
 			var parcelamento = cobranca.Parcelamentos[0];
 			Assert.IsFalse(_bus.CalcularParcelas(cobranca, parcelamento));
+		}
+
+		[TestMethod]
+		public void ObterPDFInformacaoCorteTest()
+		{
+			OutrosInformacaoCorteDeclaratorioBus _bus = new OutrosInformacaoCorteDeclaratorioBus();
+			var outros = _bus.Obter(151048) as Especificidade;
+			outros.Titulo.Id = 151048;
+			_bus.ObterDadosPdf(outros, null) ;
+			Assert.IsFalse(true);
 		}
 	}
 }

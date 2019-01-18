@@ -74,8 +74,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 				if (titulo.Id <= 0)
 				{
-					titulo.Situacao.Id = (titulo.Modelo.Id == 92) ? /*Infomação de Corte*/
-						(int)eTituloSituacao.AguardandoPagamento : (int)eTituloSituacao.EmCadastro;
+					titulo.Situacao.Id = (int)eTituloSituacao.EmCadastro;
 					titulo.DataCriacao.Data = DateTime.Now;
 				}
 
@@ -492,6 +491,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
+			}
+		}
+
+		public void AlterarSituacao(int tituloId, eTituloSituacao situacao, BancoDeDados banco = null)
+		{
+			try
+			{
+				_da.AlterarSituacao(tituloId, (int)situacao, banco);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
 			}
 		}
 

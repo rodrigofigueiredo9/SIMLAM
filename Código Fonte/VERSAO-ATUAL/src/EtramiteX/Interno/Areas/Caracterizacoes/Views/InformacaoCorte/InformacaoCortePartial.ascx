@@ -18,7 +18,11 @@
             </div>
             <div class="coluna20">
                 <label>Área do imóvel (ha)</label>
-                <%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Empreendimento.AreaImovel > 0, new { @maxlength = "100", @class = "text areaImovel"}))%>
+				<%if (Model.Empreendimento.AreaImovel > 0) { %>
+					<%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(true, new { @maxlength = "100", @class = "text maskDecimalPonto areaImovel" }))%>
+				<%} else  {%>
+					<%= Html.TextBox("AreaImovel", Model.Empreendimento.AreaImovel.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "100", @class = "text maskDecimalPonto areaImovelInf" }))%>
+				<%} %>
             </div>
         </div>
 

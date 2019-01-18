@@ -13,6 +13,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMDUA;
 using Tecnomapas.EtramiteX.Interno.Controllers;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 {
@@ -21,6 +22,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Propriedades
 
 		DuaBus _bus = new DuaBus();
+		TituloDeclaratorioBus _busTitulo = new TituloDeclaratorioBus();
 
 		public static EtramitePrincipal Usuario
 		{
@@ -38,6 +40,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			if (vm.DuaLst.Count() == 0)
 			{
 				_bus.Emitir(id);
+				_busTitulo.AlterarSituacao(id, eTituloSituacao.AguardandoPagamento);
 				vm.DuaLst = _bus.Obter(id);
 			}
 

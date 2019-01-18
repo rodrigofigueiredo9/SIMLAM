@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
@@ -61,16 +62,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 		{
 			try
 			{
-				RequestJson requestJson = new RequestJson();
+				HttpClient _client = new HttpClient();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/EmitirDuaSefaz/titulo/{titulo}";
-				var strResposta = requestJson.Executar(urlGerar);
-				var resposta = requestJson.Deserializar<dynamic>(strResposta);
-				return resposta;
+				var apiUri = ConfigurationManager.AppSettings["api"];
+
+				HttpResponseMessage response = _client.GetAsync($"SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
+				if (response.IsSuccessStatusCode)
+					Validacao.Add(Mensagem.Dua.Sucesso);
+				else
+					Validacao.Add(Mensagem.Dua.Falha);
+				response.EnsureSuccessStatusCode();
+
+				return response.Content.ReadAsStringAsync().Result;
 			}
 			catch (Exception exc)
 			{
-				Validacao.Add(eTipoMensagem.Advertencia, "Empreendimento sem CNPJ, impossível emitir o DUA");
+				Validacao.Add(Mensagem.Dua.Falha);
 			}
 
 			return null;
@@ -80,12 +87,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 		{
 			try
 			{
-				RequestJson requestJson = new RequestJson();
+				HttpClient _client = new HttpClient();
 
-				var urlGerar = $"{ConfigurationManager.AppSettings["api"]}SefazDua/RemitirDuaSefaz/NumeroDua/{dua}";
-				var strResposta = requestJson.Executar(urlGerar);
-				var resposta = requestJson.Deserializar<dynamic>(strResposta);
-				return resposta;
+				var apiUri = ConfigurationManager.AppSettings["api"];
+
+				HttpResponseMessage response = _client.GetAsync($"SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;
+				response.EnsureSuccessStatusCode();
+
+				string responseBody = response.Content.ReadAsStringAsync().Result;
+
+				if (response.IsSuccessStatusCode)
+					Validacao.Add(eTipoMensagem.Sucesso, responseBody);
+				else
+					Validacao.Add(Mensagem.Dua.Falha);
 			}
 			catch (Exception exc)
 			{

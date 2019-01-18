@@ -15,6 +15,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 	public class DuaMsg
 	{
+		public Mensagem Sucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "DUAs emitidos com sucesso." }; } }
+		public Mensagem Falha { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Falha ao emitir DUAs." }; } }
 		public Mensagem ExisteDuaTitulo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível editar esse título, porque todos os DUAS para esse título já foram emitidos." }; } }
 		public Mensagem SolicitacaoSituacaoNaoPodeEditar (string situacaoAtual) 
 		{

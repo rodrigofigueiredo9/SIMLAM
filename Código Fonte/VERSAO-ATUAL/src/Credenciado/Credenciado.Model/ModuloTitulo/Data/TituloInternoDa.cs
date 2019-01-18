@@ -895,6 +895,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			}
 		}
 
+		internal void AlterarSituacao(int titulo, int situacao, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"
+					update tab_titulo t set t.situacao = :situacao where t.id = :id");
+
+				comando.AdicionarParametroEntrada("situacao", situacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(titulo, eHistoricoArtefato.titulo, eHistoricoAcao.atualizar, bancoDeDados);
+				Consulta.Gerar(titulo, eHistoricoArtefato.titulo, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion Ações de DML
 
 		#region Obter / Filtrar
