@@ -4,6 +4,9 @@
 	{
 		public ConfigurarVM() {}
 
-		public decimal ValorMaximoAtual { get; set; }
+		public bool IsVisualizar { get; set; }
+
+		public decimal MaximoAreaAlagada { get; set; }
+		public decimal MaximoVolumeArmazenado { get; set; }
 	}
 }
