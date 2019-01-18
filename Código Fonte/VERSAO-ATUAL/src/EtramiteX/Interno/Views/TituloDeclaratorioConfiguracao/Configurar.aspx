@@ -24,9 +24,9 @@
 		<fieldset class="block box">
 			<legend>Área alagada na soleira do vertedouro (ha)</legend>
 			<div class="block">
-				<div class="coluna20">
+				<div class="coluna20 append2">
 					<label for="Configurar_MaximoAreaAlagada">Valor máximo atual:</label>
-					<%= Html.TextBox("Configurar_MaximoAreaAlagada", Model.MaximoAreaAlagada, new { @class = "text maskDecimalPonto disabled", @disabled = "disabled" })%>
+					<%= Html.TextBox("Configurar_MaximoAreaAlagada", Model.Configuracao.MaximoAreaAlagada, new { @class = "text maskDecimalPonto disabled", @disabled = "disabled" })%>
 				</div>
 				<div class="coluna20">
 					<label for="Configurar_MaximoAreaAlagadaNovo">Novo valor máximo:</label>
@@ -37,13 +37,48 @@
 		<fieldset class="block box">
 			<legend>Volume armazenado (m³)</legend>
 			<div class="block">
-				<div class="coluna20">
+				<div class="coluna20 append2">
 					<label for="Configurar_MaximoVolumeArmazenado">Valor máximo atual:</label>
-					<%= Html.TextBox("Configurar_MaximoVolumeArmazenado", Model.MaximoVolumeArmazenado, new { @class = "text maskDecimalPonto disabled", @disabled = "disabled" })%>
+					<%= Html.TextBox("Configurar_MaximoVolumeArmazenado", Model.Configuracao.MaximoVolumeArmazenado, new { @class = "text maskDecimalPonto disabled", @disabled = "disabled" })%>
 				</div>
 				<div class="coluna20">
 					<label for="Configurar_MaximoVolumeArmazenadoNovo">Novo valor máximo:</label>
 					<%= Html.TextBox("Configurar_MaximoVolumeArmazenadoNovo", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMaximo", @maxlength ="8" }))%>
+				</div>
+			</div>
+		</fieldset>
+		<fieldset class="block box">
+			<legend>Condicionantes</legend>
+			<div class="block">
+				<div class="coluna40 inputFileDiv">
+					<label>Condicionante:Barragens sem APP</label>
+					<div class="block">
+						<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.Configuracao.BarragemSemAPP.Id }) %>" class="<%= string.IsNullOrEmpty(Model.Configuracao.BarragemSemAPP.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.Configuracao.BarragemSemAPP.Nome)%></a>
+					</div>
+					<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.BarragemSemAPPJSon) %>" />
+					<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Configuracao.BarragemSemAPP.Nome) ? "" : "hide" %>">
+						<input type="file" id="fileBarragemSemAPP" class="inputFile" style="display: block" name="file" />
+					</span>
+				</div>
+				<div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
+					<button type="button" class="inlineBotao botaoAdicionar btnAddArq <%= string.IsNullOrEmpty(Model.Configuracao.BarragemSemAPP.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
+					<button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.Configuracao.BarragemSemAPP.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
+				</div>
+			</div><br />
+			<div class="block">
+				<div class="coluna40 inputFileDiv">
+					<label>Condicionante:Barragens com APP</label>
+					<div class="block">
+						<a href="<%= Url.Action("Baixar", "Arquivo", new { id = Model.Configuracao.BarragemComAPP.Id }) %>" class="<%= string.IsNullOrEmpty(Model.Configuracao.BarragemComAPP.Nome) ? "hide" : "" %> txtArquivoNome"><%= Html.Encode(Model.Configuracao.BarragemComAPP.Nome)%></a>
+					</div>
+					<input type="hidden" class="hdnArquivoJson" value="<%= Html.Encode(Model.BarragemComAPPJSon) %>" />
+					<span class="spanInputFile <%= string.IsNullOrEmpty(Model.Configuracao.BarragemComAPP.Nome) ? "" : "hide" %>">
+						<input type="file" id="fileBarragemComAPP" class="inputFile" style="display: block" name="file" />
+					</span>
+				</div>
+				<div style="margin-top:8px" class="coluna40 prepend1 spanBotoes">
+					<button type="button" class="inlineBotao botaoAdicionar btnAddArq <%= string.IsNullOrEmpty(Model.Configuracao.BarragemComAPP.Nome) ? "" : "hide" %>" title="Enviar arquivo">Enviar</button>
+					<button type="button" class="inlineBotao btnLimparArq <%= string.IsNullOrEmpty(Model.Configuracao.BarragemComAPP.Nome) ? "hide" : "" %>" title="Limpar arquivo" >Limpar</button>
 				</div>
 			</div>
 		</fieldset>

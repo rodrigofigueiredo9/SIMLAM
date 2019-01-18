@@ -1,4 +1,6 @@
-﻿namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTItuloDeclaratorioConfiguracao
+﻿using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
+
+namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTItuloDeclaratorioConfiguracao
 {
 	public class ConfigurarVM
 	{
@@ -6,7 +8,8 @@
 
 		public bool IsVisualizar { get; set; }
 
-		public decimal MaximoAreaAlagada { get; set; }
-		public decimal MaximoVolumeArmazenado { get; set; }
+		public string BarragemSemAPPJSon { get; set; }
+		public string BarragemComAPPJSon { get; set; }
+		public TituloDeclaratorioConfiguracao Configuracao { get; set; } = new TituloDeclaratorioConfiguracao();
 	}
 }
