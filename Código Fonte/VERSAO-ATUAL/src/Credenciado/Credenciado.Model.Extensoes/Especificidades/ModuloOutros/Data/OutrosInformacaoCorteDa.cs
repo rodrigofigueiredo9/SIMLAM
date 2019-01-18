@@ -236,7 +236,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#region Assinantes
 
-				outros.Titulo.Assinante = new AssinanteDefault { Cargo = "Declarante", Nome = outros.Destinatario.NomeRazaoSocial };
+				outros.Titulo.Assinante = new AssinanteDefault { Cargo = "Proprietário", Nome = outros.Destinatario.NomeRazaoSocial };
 
 				comando = bancoDeDados.CriarComando(@"
 					SELECT NVL(P.NOME, P.RAZAO_SOCIAL) nome

@@ -242,10 +242,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				outros.Titulo.Assinantes1 = new List<IAssinante>();
 				outros.Titulo.Assinantes2 = new List<IAssinante>();
 
-				outros.Titulo.Assinantes1.Add(new AssinanteDefault { Cargo = "Declarante", Nome = outros.Destinatario.NomeRazaoSocial });
-				outros.Titulo.Assinantes2.Add(new AssinanteDefault { Cargo = "Responsável Técnico", Nome = outros.Titulo.AutorNome });
+				comando = bancoDeDados.CriarComando(@"
+					SELECT  f.NOME autor, c.NOME cargo
+					FROM TAB_TITULO						t
+					INNER JOIN TAB_FUNCIONARIO			f  ON f.id = t.autor
+					INNER JOIN TAB_FUNCIONARIO_CARGO	fc ON t.AUTOR = fc.FUNCIONARIO
+					INNER JOIN TAB_CARGO				c  ON c.ID = fc.CARGO
+					WHERE t.id = :titulo", EsquemaBanco);
 
-				outros.Autor.NomeRazaoSocial = outros.Titulo.AutorNome;
+				comando.AdicionarParametroEntrada("titulo", titulo);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						outros.Titulo.Assinantes2.Add(new AssinanteDefault {
+							Cargo = reader.GetValue<string>("cargo"),
+							Nome = reader.GetValue<string>("autor")
+						});
+					}
+				}
+
+				outros.Titulo.Assinantes1.Add(new AssinanteDefault { Cargo = "Proprietário", Nome = outros.Destinatario.NomeRazaoSocial });
+
+				outros.Autor.NomeRazaoSocial = outros.Titulo.Assinantes2[0].Nome;
 				#endregion
 
 				#region Empreendimento
