@@ -264,7 +264,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 							nvl(  (select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
 										where exists (select 1 from {0}crt_dominialidade d
 											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)), 
-								  999999
+								  i.area_imovel
 								) area_croqui,
 							'IC / ' || i.id || ' - ' || i.data_informacao carac
 						from {0}crt_informacao_corte i 

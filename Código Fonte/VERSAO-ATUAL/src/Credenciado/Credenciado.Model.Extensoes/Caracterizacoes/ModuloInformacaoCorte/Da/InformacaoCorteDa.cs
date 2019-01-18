@@ -71,13 +71,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte
-				(id, tid, empreendimento, data_informacao, area_flor_plantada, interno_id, interno_tid) values
-				(seq_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, :interno_id, :interno_tid)
+				(id, tid, empreendimento, data_informacao, area_flor_plantada, area_imovel, interno_id, interno_tid) values
+				(seq_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, area_imovel, :interno_id, :interno_tid)
 				returning id into :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("area_flor_plantada", caracterizacao.AreaFlorestaPlantada, DbType.Decimal);
+				comando.AdicionarParametroEntrada("area_imovel", caracterizacao.AreaImovel, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID > 0 ? caracterizacao.InternoID : null, DbType.Int32);
 				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
@@ -169,11 +170,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, tid = :tid where id = :id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_informacao_corte set empreendimento = :empreendimento, data_informacao = :data_informacao, area_flor_plantada = :area_flor_plantada, area_imovel = :area_imovel, tid = :tid where id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("area_flor_plantada", caracterizacao.AreaFlorestaPlantada, DbType.Decimal);
+				comando.AdicionarParametroEntrada("area_imovel", caracterizacao.AreaImovel, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
 
@@ -403,7 +405,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel
 				from {0}crt_informacao_corte c where c.id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -416,6 +418,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.EmpreendimentoId= reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
+						caracterizacao.AreaImovel = reader.GetValue<decimal>("area_imovel");
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 						caracterizacao.Tid = reader.GetValue<string>("tid");
