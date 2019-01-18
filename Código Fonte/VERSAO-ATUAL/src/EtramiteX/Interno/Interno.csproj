@@ -284,6 +284,7 @@
     <Compile Include="Controllers\PTVOutroController.cs" />
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
+    <Compile Include="Controllers\TituloDeclaratorioConfiguracaoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
     <Compile Include="Lib\Export\ExcelColumnDefinition.cs" />
     <Compile Include="Lib\Export\ExcelFileResult.cs" />

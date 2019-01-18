@@ -1,5 +1,5 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTItuloDeclaratorioConfiguracao" %>
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<SalvarVM>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Interno.Master" Inherits="System.Web.Mvc.ViewPage<ConfigurarVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Configurar Caracterização de Barragem Dispensada de Licenciamento Ambiental</asp:Content>
 
@@ -10,19 +10,9 @@
 		$(function () {
 			TituloDeclaratorioConfiguracao.load($('#central'), {
 				urls: {
-					modelosCadastrados: '<%= Url.Action("ObterModelosCadastradosSetor", "Titulo") %>',
-					associarRequerimento: '<%= Url.Action("Associar", "Requerimento") %>',
-					validarAssociarRequerimento: '<%= Url.Action("ValidarAssociarRequerimento", "TituloDeclaratorio") %>',
-					tituloCamposModelo: '<%= Url.Action("TituloCamposModelo", "TituloDeclaratorio") %>',
-					obterAssinanteCargos: '<%= Url.Action("ObterAssinanteCargos", "TituloDeclaratorio") %>',
-					obterAssinanteFuncionarios: '<%= Url.Action("ObterAssinanteFuncionarios", "TituloDeclaratorio") %>',
-					especificidade: '<%= Url.Action("Salvar", "Especificidade", new {area="Especificidades"}) %>',
-
-					redirecionar: '<%= Url.Action("Criar", "TituloDeclaratorio") %>',
 					salvar: '<%= Url.Action("Salvar", "TituloDeclaratorio") %>'
 				},
-				Mensagens: <%= Model.Mensagens %>,
-				carregarEspecificidade: <%= Model.CarregarEspecificidade.ToString().ToLower() %>
+				mensagens: <%= Model.Mensagens %>
 			});
 		});
 	</script>
@@ -32,6 +22,14 @@
 	<div id="central">
 		<h1 class="titTela">Configurar Caracterização de Barragem Dispensada de Licenciamento Ambiental</h1>
 		<br />
-		
+		<fieldset class="block box">
+			<legend>Área alagada na soleira do vertedouro (ha)</legend>
+			<div class="block">
+				<div class="coluna20">
+					<label for="Configurar_ValorMaximoAtual">Valor máximo atual:</label>
+					<%= Html.TextBox("Configurar_ValorMaximoAtual", Model.ValorMaximoAtual, new { @class = "text disabled", @disabled = "disabled" })%>
+				</div>
+			</div>
+		</fieldset>
 	</div>
 </asp:Content>

@@ -494,6 +494,6 @@
 			</siteMapNode>
 		</siteMapNode>
 		
-		<siteMapNode url="~/TituloDeclaratorioConfiguracao/Index" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+		<siteMapNode url="~/TituloDeclaratorioConfiguracao/Configurar" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 	</siteMapNode>
 </siteMap>
