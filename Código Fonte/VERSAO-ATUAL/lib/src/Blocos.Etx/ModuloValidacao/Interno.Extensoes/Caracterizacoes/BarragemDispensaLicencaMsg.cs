@@ -57,5 +57,7 @@
         public Mensagem InformeNumeroARTElaboracao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "NumeroARTElaboracao", Texto = "Informe o número da ART de elaboração do responsável técnico." }; } }
 
         public Mensagem CopiarCaractizacaoCadastrada { get { return new Mensagem() { Texto = "IDAF não possui Barragem para Dispensa de Licença Ambiental cadastrada.", Tipo = eTipoMensagem.Advertencia }; } }
-    }
+        
+		
+	}
 }

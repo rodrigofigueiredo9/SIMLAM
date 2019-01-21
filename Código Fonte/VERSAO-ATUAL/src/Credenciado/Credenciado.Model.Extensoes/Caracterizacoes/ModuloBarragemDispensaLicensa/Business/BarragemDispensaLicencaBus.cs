@@ -282,13 +282,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return barragem;
 		}
 
-		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
 		{
 			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
 
 			try
 			{
-				Barragens = _da.ObterLista(empreendimentoId, simplificado, banco); 
+				Barragens = _da.ObterLista(empreendimentoId, projetoDigitalId, simplificado, banco); 
 			}
 			catch (Exception exc)
 			{
@@ -298,7 +298,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Barragens;
 		}
 
-		public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
+		public List<BarragemDispensaLicenca> ObterBarragemAssociada(int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragem = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragem = _da.ObterBarragemAssociada(projetoDigitalId, simplificado, banco);
+			}
+			catch(Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragem;
+		}
+
+			public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
 		{
 			BarragemDispensaLicenca barragem = null;
 

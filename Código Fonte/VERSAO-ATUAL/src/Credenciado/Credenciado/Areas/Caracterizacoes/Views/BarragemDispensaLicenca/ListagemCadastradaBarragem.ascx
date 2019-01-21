@@ -27,7 +27,7 @@
 						<td title="<%=Html.Encode(item.FinalidadeAtividade)%>"><%=Html.Encode(item.FinalidadeAtividade)%></td>
 						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
 						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
-						<td title="Cadastrada">Cadastrada</td>
+						<td title="Valido">Válido</td>
 
 						<td>
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />

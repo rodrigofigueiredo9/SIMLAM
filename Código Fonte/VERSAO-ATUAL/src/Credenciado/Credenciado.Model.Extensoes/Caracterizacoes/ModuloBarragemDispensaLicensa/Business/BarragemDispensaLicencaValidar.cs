@@ -24,7 +24,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
             {
                 return false;
             }
-
             BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
 
             //if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
@@ -32,6 +31,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
             //    Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
             //    return false;
             //}
+
 
             if (!Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
             {

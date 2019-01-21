@@ -33,7 +33,13 @@ BarragemDispensaLicenca = {
         BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
 		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
 		BarragemDispensaLicenca.container.delegate('.btnAdicionar', 'click', BarragemDispensaLicenca.criar);
+
 		BarragemDispensaLicenca.container.delegate('.btnAssociar', 'click', BarragemDispensaLicenca.associar);
+		BarragemDispensaLicenca.container.delegate('.btnDesassociar', 'click', BarragemDispensaLicenca.desassociar);
+		BarragemDispensaLicenca.container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
+		BarragemDispensaLicenca.container.delegate('.btnEditar', 'click', BarragemDispensaLicenca.editar);
+
+
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -378,6 +384,64 @@ BarragemDispensaLicenca = {
 	associar: function () {
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
 		var tid = $(this).closest('tr').find('.hdnTid').val();		
-		$.get(BarragemDispensaLicenca.settings.urls.associar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao });
+		$.get(BarragemDispensaLicenca.settings.urls.associar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao, tid: tid },
+			function (response) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+					return;
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		);
+	},
+
+	desassociar: function () {
+		var linha = $(this).closest('tr');
+		var caracterizacaoTipo = $('.hdnCaracterizacaoTipo', linha).val();
+
+		var objeto = {
+			Id: BarragemDispensaLicenca.settings.projetoDigitalID,
+			EmpreendimentoId: BarragemDispensaLicenca.settings.empreendimentoID,
+			Dependencias: [{ DependenciaTipo: BarragemDispensaLicenca.settings.dependenciaTipos.TipoCaracterizacao, DependenciaCaracterizacao: caracterizacaoTipo }]
+		};
+
+		MasterPage.carregando(true);
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.DesassociarCaracterizacao,
+			data: JSON.stringify(objeto),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, Caracterizacao.container);
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+					return;
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		});
+		MasterPage.carregando(false);
+	},
+
+	editar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.editar + '/' + BarragemDispensaLicenca.settings.empreendimentoId + '?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+	},
+
+	visualizar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' +
+			BarragemDispensaLicenca.settings.empreendimentoId +
+			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
+			'&retornarVisualizar=' + ($('.btnFinalizarPasso', BarragemDispensaLicenca.container).length <= 0));
 	}
 }

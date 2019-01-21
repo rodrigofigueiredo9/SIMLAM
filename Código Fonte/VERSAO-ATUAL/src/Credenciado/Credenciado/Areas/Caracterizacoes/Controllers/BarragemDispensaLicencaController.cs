@@ -68,6 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         public ActionResult Criar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId = 0)
         {
             _bus.Salvar(caracterizacao, projetoDigitalId);
+			AssociarCaracterizacaoProjetoDigital(projetoDigitalId, caracterizacao.Id, caracterizacao.Tid);
 
             return Json(new
             {
@@ -225,8 +226,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
 			);
 
-			vm.CaracterizacoesCadastradas = _bus.ObterListar(id);
-			vm.CaracterizacoesAssociadas = _bus.ObterListar(id);
+			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
+			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, projetoDigitalId);
+			vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
+
 			return View(vm);
 		}
 

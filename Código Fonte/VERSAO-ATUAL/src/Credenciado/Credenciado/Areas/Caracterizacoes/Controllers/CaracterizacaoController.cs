@@ -212,6 +212,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+
+				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
+				{
+					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+				}
 			});
 
 			#endregion

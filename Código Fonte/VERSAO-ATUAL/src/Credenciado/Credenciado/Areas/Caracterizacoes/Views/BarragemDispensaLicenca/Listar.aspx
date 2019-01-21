@@ -12,7 +12,11 @@
 			BarragemDispensaLicenca.load($('#central'), {
 				urls: {
 					salvar: '<%= Url.Action("Criar", "BarragemDispensaLicenca") %>',
-					associar: '<%= Url.Action("AssociarCaracterizacaoProjetoDigital", "BarragemDispensaLicenca") %>'
+					associar: '<%= Url.Action("AssociarCaracterizacaoProjetoDigital", "BarragemDispensaLicenca") %>',
+					desassociar: '<%= Url.Action("DesassociarCaracterizacaoProjetoDigital", "Caracterizacao")%>',
+					visualizar: '<%= Url.Action("Visualizar", "BarragemDispensaLicenca")%>',
+					editar: '<%= Url.Action("Editar", "BarragemDispensaLicenca")%>',
+
 				},
 				mensagens: <%= Model.Mensagens %>,
 				idsTela: <%= Model.IdsTela %>,

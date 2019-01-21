@@ -34,6 +34,7 @@
 						<td>
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />
 							<input type="hidden" class="hdnTid" value="<%= item.Tid %>" />
+							<input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
 							<input title="Visualizar" class="icone visualizar btnVisualizar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
 							<input title="Editar" class="icone editar btnEditar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
 						</td>
