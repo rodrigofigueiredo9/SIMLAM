@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -28,12 +28,7 @@ BarragemDispensaLicenca = {
         BarragemDispensaLicenca.container.delegate('.cbFormacaoRT', 'change', function () { BarragemDispensaLicenca.changeFormacaoRT(); });
         BarragemDispensaLicenca.container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
         BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
-        BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
-
-        //BarragemDispensaLicenca.changeBarragemTipo();
-        //BarragemDispensaLicenca.changeFase();
-        //BarragemDispensaLicenca.changeMongeVertedouroTipo();
-        //BarragemDispensaLicenca.changeFormacaoRT($('.cbFormacaoRT', BarragemDispensaLicenca.container));
+		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvarConfirm);
 
         BarragemDispensaLicenca.configurarTela();
     },
@@ -337,7 +332,21 @@ BarragemDispensaLicenca = {
         });
 
         return objeto;
-    },
+	},
+
+	salvarConfirm: function () {
+		Modal.confirma({
+			btnOkLabel: 'Sim',
+			btCancelLabel: "Voltar para a caracterização",
+			titulo: 'Confirmação da veracidade das informações',
+			conteudo: 'Declaro que as informações prestadas são expressões da verdade sob as penas legais\
+			por omissão ou prestação de informação falsa ou imprecisa.',
+			btnOkCallback: function (conteudoModal) {
+				Modal.fechar(conteudoModal);
+				BarragemDispensaLicenca.salvar();
+			}
+		});
+	},
 
     salvar: function () {
         Mensagem.limpar(BarragemDispensaLicenca.container);
