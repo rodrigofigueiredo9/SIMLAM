@@ -2,6 +2,7 @@
 {
 	public class TituloDeclaratorioConfiguracao
 	{
+		public int Id { get; set; }
 		public decimal MaximoAreaAlagada { get; set; }
 		public decimal MaximoVolumeArmazenado { get; set; }
 		private Arquivo.Arquivo _barragemSemAPP = new Arquivo.Arquivo();
@@ -16,5 +17,6 @@
 			get { return _barragemComAPP; }
 			set { _barragemComAPP = value; }
 		}
+		public string Tid { get; set; }
 	}
 }

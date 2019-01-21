@@ -261,6 +261,7 @@
     <Compile Include="ModuloValidacao\Interno\RelatorioEspecificoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\RetificacaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\SetorMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\TituloDeclaratorioConfiguracaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\TramitacaoArquivoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno.Extensoes\Especificidades\EspecificidadeMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\DocumentoMsg.cs" />
