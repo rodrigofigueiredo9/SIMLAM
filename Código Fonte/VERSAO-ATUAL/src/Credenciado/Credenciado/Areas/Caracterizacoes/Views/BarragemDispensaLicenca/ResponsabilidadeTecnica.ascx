@@ -105,7 +105,7 @@
 				<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
 			</div>
 			<div class="coluna30">
-				<label for="DiametroTubulacaoVazaoMin">Responsável técnico pela elaboração do Estudo Ambiental *</label>
+				<label for="DiametroTubulacaoVazaoMin">Número de ART de execução da barragem *</label>
 				<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
 			</div>
 		</div>

@@ -6,12 +6,14 @@ using System.Text;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca
 {
-	public enum eFase
+	public enum eTipoCoordenadaBarragem
 	{
 		Nulo = 0,
-		[Description("Contruída")]
-		Construida = 1,
-		[Description("A construir")]
-		AConstruir = 2
+		[Description("Barramento")]
+		barramento,
+		[Description("Área de bota-fora")]
+		areaBotaFora,
+		[Description("Área de empréstimo")]
+		areaEmprestimo,
 	}
 }

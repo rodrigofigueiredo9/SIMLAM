@@ -78,7 +78,13 @@
     <Compile Include="Etx\ModuloRelatorio\AsposeEtx\AsposeData.cs" />
     <Compile Include="Etx\ModuloRelatorio\IAnexoPdf.cs" />
     <Compile Include="Home\Log.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemConstruidaAConstruir.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemRT.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemCoordenada.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemDispensaLicenca.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eTipoRT.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eTipoCoordenadaBarragem.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eRTElabocarao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eFase.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eBarragemTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eFormacaoRTCodigo.cs" />

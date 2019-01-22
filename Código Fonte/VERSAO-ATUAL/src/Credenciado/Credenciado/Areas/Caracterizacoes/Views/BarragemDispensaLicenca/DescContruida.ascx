@@ -26,11 +26,11 @@
 		
 		<div class="coluna40">
 			<label for="AreaAlagada">Qual a largura demarcada (m)? *</label>
-			<%= Html.TextBox("AreaAlagada", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAreaAlagada", maxlength = "14" })) %>
+			<%= Html.TextBox("AreaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAreaAlagada", maxlength = "14" })) %>
 		</div>
 		<div class="block coluna80">
 			<div class="coluna80">
-				<label for="PerguntaSupressao">A largura demarcada attende à legislaçao? *</label>
+				<label for="PerguntaSupressao">A largura demarcada atende à legislaçao? *</label>
 				<%= Html.RadioButton("PerguntaSupressao", String.Empty, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressao" })) %> Sim
 				<%= Html.RadioButton("PerguntaSupressao", String.Empty, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressao" })) %> Não
 			</div>
@@ -45,7 +45,7 @@
 		</div>
 		<div class="coluna86">
 			<label for="DescricaoDesenvolvimento">Descreva o estágio de desenvolvimento, a caracterização da vegetação na faixa de APP e as medidas necessárias para atendimento à legislação. *</label>
-			<%= Html.TextBox("DescricaoDesenvolvimento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "14" })) %>
+			<%= Html.TextBox("DescricaoDesenvolvimento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "14" })) %>
 		</div>
 	</div>
 
@@ -55,9 +55,9 @@
 			<%= Html.RadioButton("PerguntaBarramentoDimensionado", ConfiguracaoSistema.SIM, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaBarramentoDimensionado" })) %> Sim
 			<%= Html.RadioButton("PerguntaBarramentoDimensionado", ConfiguracaoSistema.NAO, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaBarramentoDimensionado" })) %> Não
 		</div><br />
-		<div class="coluna40 AdequacoesDimensionamentoBarramento">
+		<div class="coluna40 AdequacoesDimensionamentoBarramento hide">
 			<label for="AdequacoesDimensionamentoBarramento">Quais adequações serão realizadas? *</label>
-			<%= Html.TextBox("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento hide", maxlength = "14" })) %>
+			<%= Html.TextBox("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento", maxlength = "14" })) %>
 		</div>
 	</div>
 	 <br /> <br />
@@ -69,7 +69,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
 		</div>
 		<br />
 	</div>
@@ -87,9 +87,9 @@
 			<%= Html.RadioButton("PerguntaVazaoMinNormas", ConfiguracaoSistema.SIM, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaVazaoMinNormas" })) %> Sim
 			<%= Html.RadioButton("PerguntaVazaoMinNormas", ConfiguracaoSistema.NAO, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaVazaoMinNormas" })) %> Não
 		</div>
-		<div class="coluna40 AdequacoesDimensionamentoVazaoMin">
+		<div class="coluna40 AdequacoesDimensionamentoVazaoMin hide">
 			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
-			<%= Html.TextBox("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin hide", maxlength = "14" })) %>
+			<%= Html.TextBox("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin", maxlength = "14" })) %>
 		</div>
 	</div>
 	 <br /> <br />
@@ -101,7 +101,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMax">Largura e altura ou diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "14" })) %>
 		</div>
 		<br />
 	</div>
@@ -116,8 +116,8 @@
 		<%= Html.RadioButton("PerguntaVazaoMaxNormas", ConfiguracaoSistema.SIM, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaVazaoMaxNormas" })) %> Sim
 		<%= Html.RadioButton("PerguntaVazaoMaxNormas", ConfiguracaoSistema.NAO, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaVazaoMaxNormas" })) %> Não
 	</div>
-	<div class="coluna40 AdequacoesDimensionamentoVazaoMax">
+	<div class="coluna40 AdequacoesDimensionamentoVazaoMax hide">
 		<label for="AdequacoesDimensionamentoVazaoMax">Quais adequações serão realizadas? *</label>
-		<%= Html.TextBox("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax hide", maxlength = "14" })) %>
+		<%= Html.TextBox("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax", maxlength = "14" })) %>
 	</div>
 </fieldset>

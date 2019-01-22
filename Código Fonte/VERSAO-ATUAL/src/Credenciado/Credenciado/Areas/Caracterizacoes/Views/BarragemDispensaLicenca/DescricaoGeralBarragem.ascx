@@ -19,41 +19,41 @@
 			<div class="coluna80">
 			<label for="TipoBarragem">Tipo da barragem *</label>
 			<% foreach (var item in Model.BarragemTiposLst) { %>
-			<label><%= Html.RadioButton("TipoBarragem", item.Id, (Model.Caracterizacao.BarragemTipo == Convert.ToInt32(item.Id)), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
+			<label><%= Html.RadioButton("TipoBarragem", item.Id, ((int)Model.Caracterizacao.BarragemTipo == Convert.ToInt32(item.Id)), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
 			<% } %>
 		</div>
 		</div>
 		<br />				
 	<div class="block">
 		<div class="coluna40">
-			<label for="AreaAlagada">Área alagada na soleira do vertedouro (ha) *</label>
-			<%= Html.TextBox("AreaAlagada", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAreaAlagada", maxlength = "14" })) %>
+			<label for="areaAlagada">Área alagada na soleira do vertedouro (ha) *</label>
+			<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtareaAlagada", maxlength = "14" })) %>
 		</div>
 		<div class="coluna40">
 			<label for="VolumeArmazenamento">Volume armazenamento (m³) *</label>
-			<%= Html.TextBox("VolumeArmazenamento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtVolumeArmazenamento", maxlength = "14" })) %>
+			<%= Html.TextBox("VolumeArmazenamento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtVolumeArmazenamento", maxlength = "14" })) %>
 		</div>
 	</div>
 			
 	<div class="block">
 		<div class="coluna40">
 			<label for="AlturaBarramento">Altura do barramento (m) *</label>
-			<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
 		</div>
 		<div class="coluna40">
 			<label for="LarguraBaseBarramento">Largura da base do barramento (m) *</label>
-			<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
 		</div>
 	</div>
 			
 	<div class="block">
 		<div class="coluna40">
 			<label for="ComprimentoBarramento">Comprimento do barramento (m) *</label>
-			<%= Html.TextBox("ComprimentoBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtComprimentoBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("ComprimentoBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtComprimentoBarramento", maxlength = "14" })) %>
 		</div>
 		<div class="coluna40">
 			<label for="LarguraBarramento">Largura da crista do barramento (m) *</label>
-			<%= Html.TextBox("LarguraCristaBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("LarguraCristaBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBarramento", maxlength = "14" })) %>
 		</div>
 	</div>
 	<br />
@@ -63,11 +63,11 @@
 		<div class="block">
 			<div class="coluna20">
 				<label for="AlturaBarramento">Easting *</label>
-				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
 				<label for="LarguraBaseBarramento">Northing *</label>
-				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">
@@ -79,11 +79,11 @@
 		<div class="block">
 			<div class="coluna20">
 				<label for="AlturaBarramento">Easting *</label>
-				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
 				<label for="LarguraBaseBarramento">Northing *</label>
-				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">
@@ -95,11 +95,11 @@
 		<div class="block">
 			<div class="coluna20">
 				<label for="AlturaBarramento">Easting *</label>
-				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("AlturaBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAlturaBarramento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
 				<label for="LarguraBaseBarramento">Northing *</label>
-				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
+				<%= Html.TextBox("LarguraBaseBarramento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraBaseBarramento", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">
@@ -147,59 +147,59 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="NomeCursoHidrico">Nome do curso hídrico *</label>
-				<%= Html.TextBox("NomeCursoHidrico", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNomeCursoHidrico", maxlength = "14" })) %>
+				<%= Html.TextBox("NomeCursoHidrico", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNomeCursoHidrico", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="AreaBacia">Área da bacia de contribuição *</label>
-				<%= Html.TextBox("AreaBacia", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAreaBacia", maxlength = "14" })) %>
+				<%= Html.TextBox("AreaBacia", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtAreaBacia", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="IntensidadeMaxPrecipitacao">Intensidade máxima média de precipitação (mm/h) *</label>
-				<%= Html.TextBox("IntensidadeMaxPrecipitacao", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtIntensidadeMaxPrecipitacao", maxlength = "14" })) %>
+				<%= Html.TextBox("IntensidadeMaxPrecipitacao", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtIntensidadeMaxPrecipitacao", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">
 				<label for="FonteDadosIntensidade">Fonte de dados *</label>
-				<%= Html.TextBox("FonteDadosIntensidade", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosIntensidade", maxlength = "14" })) %>
+				<%= Html.TextBox("FonteDadosIntensidade", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosIntensidade", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="PeriodoRetorno">Período de retorno (em anos) *</label>
-				<%= Html.TextBox("PeriodoRetorno", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtPeriodoRetorno", maxlength = "14" })) %>
+				<%= Html.TextBox("PeriodoRetorno", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtPeriodoRetorno", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="CoeficienteEscoamento">Coeficiente de escoamento (C) *</label>
-				<%= Html.TextBox("CoeficienteEscoamento", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtCoeficienteEscoamento", maxlength = "14" })) %>
+				<%= Html.TextBox("CoeficienteEscoamento", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtCoeficienteEscoamento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">
 				<label for="FonteDadosCoeficiente">Fonte de dados *</label>
-				<%= Html.TextBox("FonteDadosCoeficiente", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosCoeficiente", maxlength = "14" })) %>
+				<%= Html.TextBox("FonteDadosCoeficiente", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosCoeficiente", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="TempoConcentracao">Tempo de concentração (em minutos) *</label>
-				<%= Html.TextBox("TempoConcentracao", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtTempoConcentracao", maxlength = "14" })) %>
+				<%= Html.TextBox("TempoConcentracao", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtTempoConcentracao", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">
 				<label for="EquacaoTempoConcentracao">Equação utilizada *</label>
-				<%= Html.TextBox("EquacaoTempoConcentracao", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEquacaoTempoConcentracao", maxlength = "14" })) %>
+				<%= Html.TextBox("EquacaoTempoConcentracao", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEquacaoTempoConcentracao", maxlength = "14" })) %>
 			</div>
 		</div>
 		<div class="block">
 			<div class="coluna40">
 				<label for="CoeficienteEscoamento">Vazão máxima de cheia (vazão de enchente)(m³) *</label>
-				<%= Html.TextBox("CoeficienteEscoamento", Model.Caracterizacao.VazaoEnchente, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtCoeficienteEscoamento", maxlength = "14" })) %>
+				<%= Html.TextBox("CoeficienteEscoamento", Model.Caracterizacao.vazaoEnchente, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtCoeficienteEscoamento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">
 				<label for="FonteDadosVazao">Fonte de dados *</label>
-				<%= Html.TextBox("FonteDadosVazao", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosVazao", maxlength = "14" })) %>
+				<%= Html.TextBox("FonteDadosVazao", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtFonteDadosVazao", maxlength = "14" })) %>
 			</div>
 		</div>
 	</div>
