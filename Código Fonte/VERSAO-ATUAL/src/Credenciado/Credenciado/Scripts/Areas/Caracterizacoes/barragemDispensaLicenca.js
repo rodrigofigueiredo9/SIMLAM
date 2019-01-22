@@ -29,7 +29,7 @@ BarragemDispensaLicenca = {
   //      container.delegate('.cbFormacaoRT', 'change', function () { BarragemDispensaLicenca.changeFormacaoRT(); });
   //      container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
   //      container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
-  //      container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
+  //      container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvarConfirm);
 
 		container.delegate('.rbPerguntaFaixaDemarcada', 'change', BarragemDispensaLicenca.onChangeFaixaDemarcada);
 		container.delegate('.rbPerguntaBarramentoDimensionado', 'change', BarragemDispensaLicenca.onChangeBarramento);
