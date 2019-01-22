@@ -4,12 +4,6 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BarragemDispensaLicencaVM>" %>
 
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
-<script type="text/javascript">
-	BarragemDispensaLicenca.settings.mensagens = <%= Model.Mensagens %>;
-	BarragemDispensaLicenca.settings.idsTela = <%= Model.IdsTela %>;
-</script>
-
 <input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoID %>" />
 <input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 <%=Html.Hidden("ProjetoDigitalId", Request.Params["ProjetoDigitalId"], new { @class="hdnProjetoDigitalId" })%>
@@ -22,16 +16,60 @@
 			<label for="Atividade">Atividade *</label>
 			<%= Html.DropDownList("Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlAtividade" }))%>
 		</div>
-		<div class="coluna80">
-			<label for="TipoBarragem">Tipo da barragem *</label>
-			<% foreach (var item in Model.BarragemTiposLst) { %>
-			<label><%= Html.RadioButton("TipoBarragem", item.Id, (Model.Caracterizacao.BarragemTipo == Convert.ToInt32(item.Id)), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
-			<% } %>
+		
+	</div>
+
+	<div class="block boxBranca">
+		<div>
+			<label>Esta declaração de dispensa tem como objetivo a regularização de barragem destinada ao abastecimento público?</label><br />
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
+		</div>
+		<div>
+			<label>A barragem está localizada em Unidade de Conservação ou em Zona de Amortecimento?</label><br />
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
+		</div>
+		<div>
+			<label>Há (houve) necessidade de supressão de vegetação em estágio médio de regeneração para implantação da barragem?</label><br />
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
+		</div>
+		<div>
+			<label>Haverá necessidade de realocação de núcleos populacionais ou rodovias?</label><br />
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
+		</div>
+		<div>
+			<label>Esta declaração de dispensa está sendo elaborada para barragens contíguas num mesmo imóvel?</label><br />
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
 		</div>
 	</div>
 
-	<!-- Finalidade da Atividade -->
 	<fieldset class="block boxBranca">
+		<legend>Dados da barragem</legend>
+		
+		<div class="divDescricaoBarragem">
+			<%Html.RenderPartial("DescricaoGeralBarragem", Model);%>
+		</div>
+		
+		<div class="divBarragemContruida hide">
+			<%Html.RenderPartial("DescContruida", Model);%>
+		</div>
+
+		<div class="divBarragemAContruir hide">
+			<%Html.RenderPartial("DescAContruir", Model);%>
+		</div>
+
+	</fieldset>
+	
+	<div class="divResponsabilidadeTecnica">
+		<%Html.RenderPartial("ResponsabilidadeTecnica", Model);%>
+	</div>
+		
+	<!-- Finalidade da Atividade -->
+	<%--<fieldset class="block boxBranca">
 		<legend>Finalidade da Atividade</legend>
 
 		<div class="block">
@@ -99,20 +137,13 @@
 				<%= Html.TextBox("VolumeArmazanado", Model.Caracterizacao.VolumeArmazanado, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto4 txtVolumeArmazenado", maxlength = "14" })) %>
 			</div>
 		</div>
-	</fieldset>
+	</fieldset>--%>
 
 	<!-- Fases -->
-	<fieldset class="block boxBranca">
+	<%--<fieldset class="block boxBranca">
 		<legend>Fases</legend>
 
-		<div class="block">
-			<div class="coluna80">
-				<label for="Fase">Fase *</label>
-				<% foreach (var item in Model.FasesLst) { %>
-				<label><%= Html.RadioButton("Fase", item.Id, (Model.Caracterizacao.Fase == Convert.ToInt32(item.Id)), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbFase" })) %><%= item.Texto %></label>
-				<% } %>
-			</div>
-		</div>
+		
 
 		<fieldset class="block box faseConstruida hide">
 			<legend>Fase: Construída</legend>
@@ -241,10 +272,10 @@
 				<%} %>
 			</div>
 		</fieldset>
-	</fieldset>
+	</fieldset>--%>
 
 	<!-- Responsabilidade Técnica -->
-	<fieldset class="block boxBranca">
+	<%--<fieldset class="block boxBranca">
 		<legend>Responsabilidade técnica</legend>
 
 		<fieldset class="block box">
@@ -309,5 +340,5 @@
 				<label>Nos casos de barragens a construir ou construídas com previsão de adequações é obrigatório o preenchimento do ART de elaboração e da ART de execução.</label>
 			</div>
 		</fieldset>
-	</fieldset>
+	</fieldset>--%>
 </fieldset>
