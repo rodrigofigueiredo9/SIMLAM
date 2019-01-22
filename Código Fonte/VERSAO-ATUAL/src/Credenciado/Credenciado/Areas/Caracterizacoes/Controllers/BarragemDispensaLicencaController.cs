@@ -74,11 +74,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        #endregion
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
+		public ActionResult SalvarConfirm(BarragemDispensaLicenca caracterizacao, int projetoDigitalId = 0)
+		{
+			_bus.ValidarSalvar(caracterizacao, projetoDigitalId);
 
-        #region Editar
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoID, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
 
-        [Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaEditar })]
+		#endregion
+
+		#region Editar
+
+		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaEditar })]
         public ActionResult Editar(int id, int projetoDigitalId)
         {
             if (!_caracterizacaoValidar.Basicas(id))

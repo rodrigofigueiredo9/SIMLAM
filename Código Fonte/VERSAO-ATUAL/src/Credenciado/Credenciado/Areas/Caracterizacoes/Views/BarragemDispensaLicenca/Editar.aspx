@@ -11,7 +11,8 @@
 			BarragemDispensaLicenca.load($('#central'), {
 				urls: {
 					coordenadaGeo: '<%= Url.Action("CoordenadaPartial", "Mapa", new {area="GeoProcessamento" })%>',
-					salvar: '<%= Url.Action("Editar", "BarragemDispensaLicenca") %>'
+					salvar: '<%= Url.Action("Editar", "BarragemDispensaLicenca") %>',
+					salvarConfirm: '<%= Url.Action("SalvarConfirm", "BarragemDispensaLicenca") %>'
 				}
 			});
 		});
