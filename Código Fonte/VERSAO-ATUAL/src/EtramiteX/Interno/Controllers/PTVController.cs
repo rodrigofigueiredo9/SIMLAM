@@ -353,6 +353,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar })]
+		public ActionResult ValidarDestinatarioExportacao(string nomeDestinatario)
+		{
+			DestinatarioPTV destinatario = _validar.ValidarDestinatarioExportacao(nomeDestinatario);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@NovoDestinatario = _validar.NovoDestinatario,
+				@Destinatario = destinatario
+			}, JsonRequestBehavior.AllowGet);
+		}
+
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
 		public ActionResult ObterDestinatario(int destinatarioId)
 		{
@@ -647,7 +661,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult DestinatarioEditar(int id)
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID));
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID.Value));
 
 			return View("Destinatario/Editar", vm);
 		}
@@ -671,7 +685,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
 
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID), true);
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, _busLista.Estados, _busLista.Municipios(destinatario.EstadoID.Value), true);
 
 			return View("Destinatario/Visualizar", vm);
 		}
@@ -707,6 +721,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (Validacao.EhValido)
 			{
 				Validacao.Add(pessoaTipo == PessoaTipo.FISICA ? Mensagem.DestinatarioPTV.CPFNaoAssociado : Mensagem.DestinatarioPTV.CNPJNaoAssociado);
+			}
+
+			return Json(new
+			{
+				@Valido = Validacao.EhValido,
+				@Erros = Validacao.Erros
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVCriar, ePermissao.DestinatarioPTVEditar })]
+		public ActionResult VerificarDestinatarioExportacao(string nomeRazaoSocial)
+		{
+			DestinatarioPTVValidar validar = new DestinatarioPTVValidar();
+			validar.VerificarExportacao(nomeRazaoSocial.Trim());
+
+			if (Validacao.EhValido)
+			{
+				Validacao.Add(Mensagem.DestinatarioPTV.ExportacaoNaoAssociado);
 			}
 
 			return Json(new

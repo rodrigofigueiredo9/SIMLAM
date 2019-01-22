@@ -164,7 +164,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
                 string schemaUsuario = ConfigurationManager.AppSettings["SchemaUsuario"].ToUpper();
                 BancoDeDados bancoDeDados = BancoDeDadosFactory.CriarBancoDeDados("StringConexao");
 
-                if (idFilaTipo != 5 && idFilaTipo != 7)
+                if (idFilaTipo != 5 && idFilaTipo != 7 && idFilaTipo != 9)
                 {
 					comando = bancoDeDados.GetComandoSql(@"select (case when a.caracterizacao =1 then 1 else 2 end ) navegador, a.empreendimento from crt_projeto_geo a where a.id = :projeto
 					union all

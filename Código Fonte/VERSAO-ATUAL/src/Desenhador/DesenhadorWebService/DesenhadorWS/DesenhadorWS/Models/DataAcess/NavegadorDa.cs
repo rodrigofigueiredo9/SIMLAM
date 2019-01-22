@@ -168,7 +168,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 						}
 					}
                 }
-				else if (idNavegador == 4)
+				else if (idNavegador == 4 || idNavegador == 5)
 				{
 					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto union select empreendimento from crt_cad_ambiental_rural pg where pg.projeto_geo_id = :projeto )");
 					comando.AdicionarParametroEntrada("projeto", idProjeto, DbType.Int32);

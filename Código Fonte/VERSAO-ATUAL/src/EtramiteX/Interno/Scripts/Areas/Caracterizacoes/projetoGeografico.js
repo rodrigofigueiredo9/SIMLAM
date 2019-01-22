@@ -11,6 +11,7 @@ ProjetoGeografico = {
 		isDominialidade: false,
 		possuiAPPNaoCaracterizada: false,
 		possuiARLNaoCaracterizada: false,
+		ArquivoEnviadoFilaTipo: null,
 		isVisualizar: false,
 		isFinalizado: false,
 		urls: {
@@ -1455,6 +1456,7 @@ Desenhador = {
 		function (container) {
 			Navegador.load(container, {
 				id: ProjetoGeografico.settings.projetoId,
+				tipo: ProjetoGeografico.settings.ArquivoEnviadoFilaTipo,
 				modo: desenhadorModo,
 				onCancelar: Desenhador.onCancelarProcessamento,
 				onProcessar: Desenhador.onProcessar,
