@@ -64,7 +64,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			vm.CaracterizacoesNaoCadastradas.ForEach(x =>
 			{
-				x.PodeCadastrar = User.IsInRole(String.Format("{0}Criar", x.Tipo.ToString()));
+				x.PodeCadastrar = User.IsInRole(String.Format("{0}Criar", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
 				x.ProjetoGeografico = User.IsInRole("ProjetoGeograficoCriar");
 				x.DscLicAtividade = User.IsInRole("DescricaoLicenciamentoAtividadeCriar");
 				x.ProjetoGeoObrigatorio = dependencias.Exists(y =>
@@ -122,8 +122,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				}
 				else
 				{
-					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
-					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
+					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
+					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
 				}
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 

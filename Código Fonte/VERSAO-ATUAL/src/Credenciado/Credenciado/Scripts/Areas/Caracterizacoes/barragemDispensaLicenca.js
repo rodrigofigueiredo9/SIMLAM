@@ -345,7 +345,43 @@ BarragemDispensaLicenca = {
         });
 
         return objeto;
-    },
+	},
+
+	salvarConfirm: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.salvarConfirm,
+			data: JSON.stringify({ caracterizacao: BarragemDispensaLicenca.obter(), projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+					return;
+				}
+
+				Modal.confirma({
+					btnOkLabel: 'Sim',
+					btCancelLabel: "Voltar para a caracterização",
+					titulo: 'Confirmação da veracidade das informações',
+					conteudo: '<b>Declaro que as informações prestadas são expressões da verdade sob as penas legais\
+								por omissão ou prestação de informação falsa ou imprecisa.</b>',
+					btnOkCallback: function (conteudoModal) {
+						Modal.fechar(conteudoModal);
+						BarragemDispensaLicenca.salvar();
+					}
+				});
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
 
     salvar: function () {
         Mensagem.limpar(BarragemDispensaLicenca.container);

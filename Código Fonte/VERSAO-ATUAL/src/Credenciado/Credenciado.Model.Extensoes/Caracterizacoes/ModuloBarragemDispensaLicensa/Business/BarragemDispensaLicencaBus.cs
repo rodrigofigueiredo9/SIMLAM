@@ -341,6 +341,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			return true;
 		}
+
+		public void ValidarSalvar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId)
+		{
+			try
+			{
+				_validar.Salvar(caracterizacao, projetoDigitalId);
+			}
+			catch (Exception e)
+			{
+				Validacao.AddErro(e);
+			}
+		}
+
 		#endregion
 	}
 }

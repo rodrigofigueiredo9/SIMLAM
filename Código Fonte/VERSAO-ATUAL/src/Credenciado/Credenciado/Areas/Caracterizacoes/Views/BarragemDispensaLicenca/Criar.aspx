@@ -12,10 +12,9 @@
 			BarragemDispensaLicenca.load($('#central'), {
 				urls: {
 					coordenadaGeo: '<%= Url.Action("CoordenadaPartial", "Mapa", new {area="GeoProcessamento" })%>',
-					salvar: '<%= Url.Action("Criar", "BarragemDispensaLicenca") %>'
-				},
-				mensagens: <%= Model.Mensagens %>,
-				idsTela: <%= Model.IdsTela %>
+					salvar: '<%= Url.Action("Criar", "BarragemDispensaLicenca") %>',
+					salvarConfirm: '<%= Url.Action("SalvarConfirm", "BarragemDispensaLicenca") %>'
+				}
 			});
 		});
 	</script>
